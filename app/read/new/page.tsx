@@ -695,16 +695,6 @@ function NewReadingPageContent() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-
-          {/* Debug Log */}
-          {debugLog.length > 0 && (
-            <div className="mt-8 p-4 bg-black/80 text-green-400 font-mono text-xs rounded-lg overflow-auto max-h-60">
-              <h3 className="font-bold mb-2 border-b border-green-400/30 pb-1">Debug Log</h3>
-              {debugLog.map((log, i) => (
-                <div key={i}>{log}</div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </TooltipProvider>

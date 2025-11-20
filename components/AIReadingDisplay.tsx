@@ -1,9 +1,9 @@
+import ReactMarkdown from 'react-markdown'
 import { AIReadingResponse } from '@/lib/deepseek'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Sparkles, RefreshCw, AlertCircle, ExternalLink } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null
@@ -52,7 +52,7 @@ export function AIReadingDisplay({
           <div>
             <h3 className="text-lg font-semibold text-foreground">Generating your reading...</h3>
             <p className="text-muted-foreground text-sm mt-1">
-              Just a moment...
+              Consulting the oracle...
             </p>
           </div>
         </CardContent>
@@ -97,14 +97,7 @@ export function AIReadingDisplay({
   }
 
   if (!aiReading) {
-    return (
-      <div className="p-4 border border-dashed border-border rounded-lg text-center text-muted-foreground bg-muted/30">
-        <p>Waiting for AI Reading...</p>
-        <p className="text-xs mt-2 opacity-70">
-          Debug: Loading={isLoading.toString()}, Error={error || 'None'}
-        </p>
-      </div>
-    )
+    return null
   }
 
   return (
@@ -117,10 +110,24 @@ export function AIReadingDisplay({
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
-          <div className="prose prose-invert max-w-none">
-            <div className="whitespace-pre-wrap text-foreground/90 leading-relaxed">
+          <div className="text-foreground/90 leading-relaxed">
+            <ReactMarkdown
+              components={{
+                h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4 text-primary" {...props} />,
+                h2: ({node, ...props}) => <h2 className="text-xl font-semibold mb-3 mt-6 text-primary/90" {...props} />,
+                h3: ({node, ...props}) => <h3 className="text-lg font-semibold mb-2 mt-4 text-primary/80" {...props} />,
+                p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />,
+                ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
+                li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-primary/30 pl-4 italic my-4 text-muted-foreground" {...props} />,
+                strong: ({node, ...props}) => <strong className="font-semibold text-primary" {...props} />,
+                em: ({node, ...props}) => <em className="italic text-foreground/80" {...props} />,
+                hr: ({node, ...props}) => <hr className="my-6 border-primary/20" {...props} />,
+              }}
+            >
               {aiReading.reading}
-            </div>
+            </ReactMarkdown>
           </div>
           
           <div className="pt-4 border-t border-border mt-4 flex justify-between items-center text-xs text-muted-foreground">
