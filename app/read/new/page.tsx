@@ -84,9 +84,8 @@ function NewReadingPageContent() {
   }, [physicalCards, selectedSpread, path, allCards])
 
    const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
-     setAiLoading(true)
-     setAiError(null)
-     setAiAttempted(true)
+      setAiLoading(true)
+      setAiError(null)
 
      try {
        const aiRequest = {
@@ -115,9 +114,10 @@ function NewReadingPageContent() {
 
        const aiResult = await response.json()
 
-       if (mountedRef.current) {
-         setAiReading(aiResult)
-       }
+        if (mountedRef.current) {
+          setAiReading(aiResult)
+          setAiAttempted(true)
+        }
      } catch (error) {
        if (mountedRef.current) {
          const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
@@ -136,7 +136,7 @@ function NewReadingPageContent() {
         aiStartedRef.current = true
         performAIAnalysis(drawnCards)
       }
-    }, [step, aiAttempted])
+    }, [step])
 
   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
