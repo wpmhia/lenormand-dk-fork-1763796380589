@@ -83,62 +83,60 @@ function NewReadingPageContent() {
     setCardSuggestions(suggestions)
   }, [physicalCards, selectedSpread, path, allCards])
 
-  const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
-    if (aiLoading) return
+   const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
+     setAiLoading(true)
+     setAiError(null)
+     setAiAttempted(true)
 
-    setAiLoading(true)
-    setAiError(null)
-    setAiAttempted(true)
+     try {
+       const aiRequest = {
+         question: question.trim() || 'What guidance do these cards have for me?',
+         cards: readingCards.map(card => ({
+           id: card.id,
+           name: getCardById(allCards, card.id)?.name || 'Unknown',
+           position: card.position
+         })),
+         spreadId: selectedSpread.id,
+         userLocale: navigator.language
+       }
 
-    try {
-      const aiRequest = {
-        question: question.trim() || 'What guidance do these cards have for me?',
-        cards: readingCards.map(card => ({
-          id: card.id,
-          name: getCardById(allCards, card.id)?.name || 'Unknown',
-          position: card.position
-        })),
-        spreadId: selectedSpread.id,
-        userLocale: navigator.language
-      }
+       const response = await fetch('/api/readings/interpret', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(aiRequest)
+       })
 
-      const response = await fetch('/api/readings/interpret', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(aiRequest)
-      })
+       if (!response.ok) {
+         const errorData = await response.json().catch(() => ({ error: 'Server error' }))
+         throw new Error(errorData.error || 'Server error')
+       }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Server error' }))
-        throw new Error(errorData.error || 'Server error')
-      }
+       const aiResult = await response.json()
 
-      const aiResult = await response.json()
+       if (mountedRef.current) {
+         setAiReading(aiResult)
+       }
+     } catch (error) {
+       if (mountedRef.current) {
+         const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
+         setAiError(errorMessage)
+       }
+     } finally {
+       if (mountedRef.current) {
+         setAiLoading(false)
+       }
+     }
+   }, [question, allCards, mountedRef])
 
-      if (mountedRef.current) {
-        setAiReading(aiResult)
-      }
-    } catch (error) {
-      if (mountedRef.current) {
-        const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
-        setAiError(errorMessage)
-      }
-    } finally {
-      if (mountedRef.current) {
-        setAiLoading(false)
-      }
-    }
-  }, [question, allCards, mountedRef, aiLoading])
-
-  // Auto-start AI analysis when entering results step
-  useEffect(() => {
-    if (step === 'results' && cardsDrawnRef.current && !aiAttempted && !aiStartedRef.current) {
-      aiStartedRef.current = true
-      performAIAnalysis(drawnCards)
-    }
-  }, [step, aiAttempted, drawnCards, performAIAnalysis])
+   // Auto-start AI analysis when entering results step
+   useEffect(() => {
+     if (step === 'results' && cardsDrawnRef.current && !aiAttempted && !aiStartedRef.current) {
+       aiStartedRef.current = true
+       performAIAnalysis(drawnCards)
+     }
+   }, [step, aiAttempted, drawnCards])
 
   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
