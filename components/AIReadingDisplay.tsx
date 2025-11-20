@@ -50,9 +50,9 @@ export function AIReadingDisplay({
             <Sparkles className="absolute inset-0 m-auto w-6 h-6 text-primary animate-pulse" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Consulting the Oracle...</h3>
+            <h3 className="text-lg font-semibold text-foreground">Generating your reading...</h3>
             <p className="text-muted-foreground text-sm mt-1">
-              Interpreting the cards and their positions...
+              Just a moment...
             </p>
           </div>
         </CardContent>

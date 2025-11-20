@@ -77,9 +77,6 @@ Focus on the narrative flow and how the cards interact with each other.
 If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.
 `
 
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
-
     try {
       const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
         method: 'POST',
@@ -95,11 +92,8 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
           ],
           temperature: 0.7,
           max_tokens: 1000
-        }),
-        signal: controller.signal
+        })
       })
-
-      clearTimeout(timeoutId)
 
       if (!response.ok) {
         console.error('DeepSeek API error:', response.status, response.statusText)
@@ -123,14 +117,7 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
         reading: content.trim()
       }
     } catch (error) {
-      clearTimeout(timeoutId)
       console.error('AI reading error:', error)
-      
-      if (error instanceof Error && error.name === 'AbortError') {
-         return {
-          reading: "The Oracle is taking longer than expected to commune with the spirits. Please try again later. (Request timed out)"
-        }
-      }
 
       return {
         reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (AI service temporarily unavailable)"
