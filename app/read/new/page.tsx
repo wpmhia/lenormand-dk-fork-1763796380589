@@ -39,11 +39,17 @@ function NewReadingPageContent() {
   const [aiAttempted, setAiAttempted] = useState(false)
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
   const [questionCharCount, setQuestionCharCount] = useState(0)
+  const [debugLog, setDebugLog] = useState<string[]>([])
 
    const cardsDrawnRef = useRef(false)
    const mountedRef = useRef(true)
    const aiStartedRef = useRef(false)
    const drawnCardsRef = useRef<ReadingCard[]>([])
+
+  const addLog = useCallback((msg: string) => {
+    console.log(msg)
+    setDebugLog(prev => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]} ${msg}`])
+  }, [])
 
   const canProceed = true
 
@@ -51,40 +57,13 @@ function NewReadingPageContent() {
   useEffect(() => {
     const cards = getCards()
     setAllCards(cards)
-  }, [])
+    addLog('Cards loaded: ' + cards.length)
+  }, [addLog])
 
-  // Parse physical cards input
-  useEffect(() => {
-    if (path !== 'physical' || !physicalCards.trim()) {
-      setParsedCards([])
-      setCardSuggestions([])
-      return
-    }
-
-    const cardInputs = physicalCards.trim().split(/[,;\s\n]+/).map(s => s.trim()).filter(s => s.length > 0)
-    const foundCards: CardType[] = []
-    const suggestions: string[] = []
-
-    cardInputs.forEach(input => {
-      const lower = input.toLowerCase()
-      if (!['cards', 'card', 'the', 'a', 'an'].includes(lower)) {
-        const card = allCards.find(c =>
-          c.name.toLowerCase().includes(lower) ||
-          c.keywords.some(k => k.toLowerCase().includes(lower))
-        )
-        if (card) {
-          foundCards.push(card)
-        } else {
-          suggestions.push(input)
-        }
-      }
-    })
-
-    setParsedCards(foundCards)
-    setCardSuggestions(suggestions)
-  }, [physicalCards, selectedSpread, path, allCards])
+  // ...
 
    const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
+      addLog(`performAIAnalysis started with ${readingCards.length} cards`)
       setAiLoading(true)
       setAiError(null)
 
@@ -100,6 +79,7 @@ function NewReadingPageContent() {
          userLocale: navigator.language
        }
 
+       addLog('Sending AI request...')
        const response = await fetch('/api/readings/interpret', {
          method: 'POST',
          headers: {
@@ -108,36 +88,46 @@ function NewReadingPageContent() {
          body: JSON.stringify(aiRequest)
        })
 
+       addLog(`Response status: ${response.status}`)
+
        if (!response.ok) {
          const errorData = await response.json().catch(() => ({ error: 'Server error' }))
          throw new Error(errorData.error || 'Server error')
        }
 
        const aiResult = await response.json()
+       addLog('AI Response received: ' + JSON.stringify(Object.keys(aiResult)))
 
         if (mountedRef.current) {
+          addLog('Setting AI reading state')
           setAiReading(aiResult)
           setAiAttempted(true)
+        } else {
+          addLog('Component unmounted, skipping state update')
         }
      } catch (error) {
+       addLog(`AI Analysis error: ${error}`)
        if (mountedRef.current) {
          const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
          setAiError(errorMessage)
        }
      } finally {
+       addLog('AI Analysis finally block')
        if (mountedRef.current) {
          setAiLoading(false)
        }
      }
-   }, [question, allCards, mountedRef])
+   }, [question, allCards, mountedRef, addLog, selectedSpread.id])
 
       // Auto-start AI analysis when entering results step
       useEffect(() => {
         if (step === 'results' && !aiStartedRef.current) {
+          addLog('Auto-starting AI analysis')
           aiStartedRef.current = true
           performAIAnalysis(drawnCardsRef.current)
         }
-      }, [step, performAIAnalysis])
+      }, [step, performAIAnalysis, addLog])
+
 
   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
@@ -710,6 +700,16 @@ function NewReadingPageContent() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* Debug Log */}
+          {debugLog.length > 0 && (
+            <div className="mt-8 p-4 bg-black/80 text-green-400 font-mono text-xs rounded-lg overflow-auto max-h-60">
+              <h3 className="font-bold mb-2 border-b border-green-400/30 pb-1">Debug Log</h3>
+              {debugLog.map((log, i) => (
+                <div key={i}>{log}</div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </TooltipProvider>

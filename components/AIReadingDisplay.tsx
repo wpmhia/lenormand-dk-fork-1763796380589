@@ -97,15 +97,18 @@ export function AIReadingDisplay({
   }
 
   if (!aiReading) {
-    return null
+    return (
+      <div className="p-4 border border-dashed border-border rounded-lg text-center text-muted-foreground bg-muted/30">
+        <p>Waiting for AI Reading...</p>
+        <p className="text-xs mt-2 opacity-70">
+          Debug: Loading={isLoading.toString()}, Error={error || 'None'}
+        </p>
+      </div>
+    )
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <Card className="border-primary/20 bg-card/50 backdrop-blur-sm overflow-hidden">
         <CardHeader className="bg-primary/5 border-b border-primary/10 pb-4">
           <CardTitle className="flex items-center gap-2 text-xl text-primary">
@@ -126,6 +129,6 @@ export function AIReadingDisplay({
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   )
 }

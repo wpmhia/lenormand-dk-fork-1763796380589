@@ -2,17 +2,22 @@ import { NextResponse } from 'next/server'
 import { getAIReading, AIReadingRequest } from '@/lib/deepseek'
 
 export async function POST(request: Request) {
+  console.log('API /api/readings/interpret called');
   try {
     const body: AIReadingRequest = await request.json()
+    console.log('Request body:', JSON.stringify(body, null, 2));
     
     if (!body.cards || body.cards.length === 0) {
+      console.log('Error: No cards provided');
       return NextResponse.json(
         { error: 'No cards provided' },
         { status: 400 }
       )
     }
 
+    console.log('Calling getAIReading...');
     const result = await getAIReading(body)
+    console.log('getAIReading result:', result ? 'Success' : 'Null');
     
     if (!result) {
       return NextResponse.json(

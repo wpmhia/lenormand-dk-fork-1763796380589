@@ -43,12 +43,15 @@ const SPREAD_RULES: Record<string, string> = {
 
 // Main function to get AI reading
 export async function getAIReading(request: AIReadingRequest): Promise<AIReadingResponse | null> {
+  console.log('getAIReading: Checking availability...');
   if (!isDeepSeekAvailable()) {
+    console.log('DeepSeek not available, returning fallback.');
     // Return a fallback response when API key is not available
     return {
       reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Note: AI analysis requires API key configuration)"
     }
   }
+  console.log('DeepSeek is available. Preparing request...');
 
   try {
     const cardsText = request.cards.map(card => `${card.position + 1}. ${card.name}`).join('\n')
@@ -78,6 +81,7 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
 `
 
     try {
+      console.log('Sending request to DeepSeek API...');
       const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -95,6 +99,8 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
         })
       })
 
+      console.log('DeepSeek API response status:', response.status);
+
       if (!response.ok) {
         console.error('DeepSeek API error:', response.status, response.statusText)
         const errorText = await response.text()
@@ -105,9 +111,11 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
       }
 
       const data = await response.json()
+      console.log('DeepSeek API response data received');
       const content = data.choices?.[0]?.message?.content
 
       if (!content) {
+        console.log('No content in DeepSeek response');
         return {
           reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Unable to generate AI interpretation)"
         }
