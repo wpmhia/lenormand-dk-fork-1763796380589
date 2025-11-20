@@ -40,9 +40,10 @@ function NewReadingPageContent() {
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
   const [questionCharCount, setQuestionCharCount] = useState(0)
 
-  const cardsDrawnRef = useRef(false)
-  const mountedRef = useRef(true)
-  const aiStartedRef = useRef(false)
+   const cardsDrawnRef = useRef(false)
+   const mountedRef = useRef(true)
+   const aiStartedRef = useRef(false)
+   const drawnCardsRef = useRef<ReadingCard[]>([])
 
   const canProceed = true
 
@@ -130,13 +131,13 @@ function NewReadingPageContent() {
      }
    }, [question, allCards, mountedRef])
 
-    // Auto-start AI analysis when entering results step
-    useEffect(() => {
-      if (step === 'results' && cardsDrawnRef.current && !aiAttempted && !aiStartedRef.current) {
-        aiStartedRef.current = true
-        performAIAnalysis(drawnCards)
-      }
-    }, [step])
+      // Auto-start AI analysis when entering results step
+      useEffect(() => {
+        if (step === 'results' && !aiStartedRef.current) {
+          aiStartedRef.current = true
+          performAIAnalysis(drawnCardsRef.current)
+        }
+      }, [step, performAIAnalysis])
 
   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
@@ -176,9 +177,10 @@ function NewReadingPageContent() {
         readingCards = drawCards(cards, currentSpread.cards);
       }
 
-      setDrawnCards(readingCards)
-      cardsDrawnRef.current = true
-      setStep('results')
+       setDrawnCards(readingCards)
+       drawnCardsRef.current = readingCards
+       cardsDrawnRef.current = true
+       setStep('results')
     } catch (error) {
       console.error('Error in handleDraw:', error)
       setError(error instanceof Error ? error.message : 'An error occurred while processing your cards')
