@@ -20,7 +20,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
   const [allCards, setAllCards] = useState<any[]>([])
 
   useEffect(() => {
-    getCards().then(setAllCards)
+    setAllCards(getCards())
   }, [])
 
   return (

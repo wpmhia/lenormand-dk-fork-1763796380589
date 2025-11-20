@@ -97,7 +97,9 @@ function NewReadingPageContent() {
           id: card.id,
           name: getCardById(allCards, card.id)?.name || 'Unknown',
           position: card.position
-        }))
+        })),
+        spreadId: selectedSpread.id,
+        userLocale: navigator.language
       }
 
       const response = await fetch('/api/readings/interpret', {
