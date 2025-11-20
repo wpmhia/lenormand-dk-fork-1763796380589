@@ -130,13 +130,13 @@ function NewReadingPageContent() {
      }
    }, [question, allCards, mountedRef])
 
-   // Auto-start AI analysis when entering results step
-   useEffect(() => {
-     if (step === 'results' && cardsDrawnRef.current && !aiAttempted && !aiStartedRef.current) {
-       aiStartedRef.current = true
-       performAIAnalysis(drawnCards)
-     }
-   }, [step, aiAttempted, drawnCards])
+    // Auto-start AI analysis when entering results step
+    useEffect(() => {
+      if (step === 'results' && cardsDrawnRef.current && !aiAttempted && !aiStartedRef.current) {
+        aiStartedRef.current = true
+        performAIAnalysis(drawnCards)
+      }
+    }, [step, aiAttempted])
 
   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
