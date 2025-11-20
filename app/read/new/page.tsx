@@ -98,26 +98,21 @@ function NewReadingPageContent() {
        const aiResult = await response.json()
        addLog('AI Response received: ' + JSON.stringify(Object.keys(aiResult)))
 
-        if (mountedRef.current) {
-          addLog('Setting AI reading state')
-          setAiReading(aiResult)
-          setAiAttempted(true)
-        } else {
-          addLog('Component unmounted, skipping state update')
-        }
+       // Force update regardless of mountedRef to test if component is actually alive
+       addLog('Attempting to set AI reading state...')
+       setAiReading(aiResult)
+       setAiAttempted(true)
+       addLog('State update requested')
+
      } catch (error) {
        addLog(`AI Analysis error: ${error}`)
-       if (mountedRef.current) {
-         const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
-         setAiError(errorMessage)
-       }
+       const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
+       setAiError(errorMessage)
      } finally {
        addLog('AI Analysis finally block')
-       if (mountedRef.current) {
-         setAiLoading(false)
-       }
+       setAiLoading(false)
      }
-   }, [question, allCards, mountedRef, addLog, selectedSpread.id])
+   }, [question, allCards, addLog, selectedSpread.id])
 
       // Auto-start AI analysis when entering results step
       useEffect(() => {
