@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Card as CardType, CardCombo } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { CardModal } from './CardModal'
@@ -104,10 +105,13 @@ export function Card({
       >
         {/* Card Image */}
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
-          <img
+          <Image
             src={card.imageUrl || ''}
             alt={card.name}
+            width={200}
+            height={300}
             className="h-full w-full object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       </div>

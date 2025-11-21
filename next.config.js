@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: { unoptimized: true },
+  images: { 
+    domains: ['localhost'],
+    formats: ['image/webp', 'image/avif']
+  },
   experimental: {
     // Force Node.js runtime for API routes (better for AI APIs)
     serverComponentsExternalPackages: ['@deepseek/sdk'],

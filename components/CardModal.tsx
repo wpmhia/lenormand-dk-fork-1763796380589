@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -53,10 +54,13 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           {/* Card Image */}
           <div className="flex justify-center md:justify-start">
             <div className="card-mystical relative h-72 w-56 overflow-hidden rounded-xl border border-purple-500/30 shadow-2xl">
-              <img
+              <Image
                 src={card.imageUrl || ''}
                 alt={card.name}
+                width={224}
+                height={288}
                 className="h-full w-full bg-card object-contain"
+                sizes="(max-width: 768px) 100vw, 224px"
               />
             </div>
           </div>
@@ -158,10 +162,13 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                         <div key={index} className="flex items-start gap-3 rounded-lg bg-muted p-3">
                           <div className="h-16 w-12 flex-shrink-0 overflow-hidden rounded border border-border bg-card">
                             {comboCard && (
-                              <img
+                              <Image
                                 src={comboCard.imageUrl || ''}
                                 alt={comboCard.name}
+                                width={48}
+                                height={64}
                                 className="h-full w-full object-cover"
+                                sizes="48px"
                               />
                             )}
                           </div>
