@@ -1,3 +1,5 @@
+"use client"
+
 import ReactMarkdown from 'react-markdown'
 import { AIReadingResponse } from '@/lib/deepseek'
 import { Button } from '@/components/ui/button'
@@ -26,6 +28,7 @@ interface AIReadingDisplayProps {
   allCards?: any[]
   spreadId?: string
   question?: string
+  isStreaming?: boolean
 }
 
 export function AIReadingDisplay({
@@ -38,9 +41,12 @@ export function AIReadingDisplay({
   cards,
   allCards,
   spreadId,
-  question
+  question,
+  isStreaming = false
 }: AIReadingDisplayProps) {
-  if (isLoading) {
+  const displayContent = aiReading?.reading || ''
+
+  if (isLoading && !displayContent) {
     return (
       <Card className="border-border bg-card/50 backdrop-blur-sm">
         <CardContent className="p-8 text-center space-y-4">
@@ -96,7 +102,7 @@ export function AIReadingDisplay({
     )
   }
 
-  if (!aiReading) {
+  if (!displayContent) {
     return null
   }
 
@@ -126,8 +132,9 @@ export function AIReadingDisplay({
                 hr: ({node, ...props}) => <hr className="my-6 border-primary/20" {...props} />,
               }}
             >
-              {aiReading.reading}
+              {displayContent}
             </ReactMarkdown>
+            {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
           </div>
           
           {spreadId && (

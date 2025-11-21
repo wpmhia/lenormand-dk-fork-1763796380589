@@ -41,32 +41,20 @@ const SPREAD_RULES: Record<string, string> = {
   "grand-tableau": "A full 36-card Grand Tableau. Focus on the position of the Gentleman (28) and Lady (29). Look for proximity to key cards like the Ring, Heart, Mice, etc. Use knighting and mirroring techniques if possible."
 }
 
-// Main function to get AI reading
-export async function getAIReading(request: AIReadingRequest): Promise<AIReadingResponse | null> {
-  console.log('getAIReading: Checking availability...');
-  if (!isDeepSeekAvailable()) {
-    console.log('DeepSeek not available, returning fallback.');
-    // Return a fallback response when API key is not available
-    return {
-      reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Note: AI analysis requires API key configuration)"
+function buildPrompt(request: AIReadingRequest): string {
+  const cardsText = request.cards.map(card => `${card.position + 1}. ${card.name}`).join('\n')
+  
+  let spreadContext = ""
+  let spreadRules = ""
+  
+  if (request.spreadId) {
+    spreadContext = `Spread Type: ${request.spreadId}`
+    if (SPREAD_RULES[request.spreadId]) {
+      spreadRules = `\nSpread Rules:\n${SPREAD_RULES[request.spreadId]}`
     }
   }
-  console.log('DeepSeek is available. Preparing request...');
 
-  try {
-    const cardsText = request.cards.map(card => `${card.position + 1}. ${card.name}`).join('\n')
-    
-    let spreadContext = ""
-    let spreadRules = ""
-    
-    if (request.spreadId) {
-      spreadContext = `Spread Type: ${request.spreadId}`
-      if (SPREAD_RULES[request.spreadId]) {
-        spreadRules = `\nSpread Rules:\n${SPREAD_RULES[request.spreadId]}`
-      }
-    }
-
-    const prompt = `
+  return `
 You are an expert Lenormand reader. Please interpret the following spread.
 
 Question: ${request.question || "General Reading"}
@@ -79,6 +67,21 @@ Provide a detailed and insightful interpretation based on traditional Lenormand 
 Focus on the narrative flow and how the cards interact with each other.
 If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.
 `
+}
+
+// Main function to get AI reading
+export async function getAIReading(request: AIReadingRequest): Promise<AIReadingResponse | null> {
+  console.log('getAIReading: Checking availability...');
+  if (!isDeepSeekAvailable()) {
+    console.log('DeepSeek not available, returning fallback.');
+    return {
+      reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Note: AI analysis requires API key configuration)"
+    }
+  }
+  console.log('DeepSeek is available. Preparing request...');
+
+  try {
+    const prompt = buildPrompt(request)
 
     try {
       console.log('Sending request to DeepSeek API...');
@@ -136,5 +139,68 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
     return {
       reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (AI service temporarily unavailable)"
     }
+  }
+}
+
+// Streaming function for AI reading
+export async function streamAIReading(request: AIReadingRequest): Promise<ReadableStream<Uint8Array> | null> {
+  console.log('streamAIReading: Checking availability...');
+  if (!isDeepSeekAvailable()) {
+    console.log('DeepSeek not available, returning fallback stream.');
+    const fallbackText = "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Note: AI analysis requires API key configuration)"
+    return new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(fallbackText))
+        controller.close()
+      }
+    })
+  }
+  
+  console.log('DeepSeek is available. Preparing streaming request...');
+
+  try {
+    const prompt = buildPrompt(request)
+
+    try {
+      console.log('Sending streaming request to DeepSeek API...');
+      const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            { role: 'system', content: "You are a helpful and mystical Lenormand card reader." },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000,
+          stream: true
+        })
+      })
+
+      console.log('DeepSeek streaming API response status:', response.status);
+
+      if (!response.ok) {
+        console.error('DeepSeek API error:', response.status, response.statusText)
+        const errorText = await response.text()
+        console.error('Error details:', errorText)
+        throw new Error('DeepSeek API error: ' + response.statusText)
+      }
+
+      if (!response.body) {
+        throw new Error('No response body')
+      }
+
+      return response.body
+    } catch (error) {
+      console.error('AI reading streaming error:', error)
+      throw error
+    }
+  } catch (error) {
+    console.error('AI reading setup error:', error)
+    throw error
   }
 }

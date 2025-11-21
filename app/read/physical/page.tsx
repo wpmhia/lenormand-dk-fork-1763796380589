@@ -44,6 +44,8 @@ function PhysicalReadingPage() {
   } | null>(null)
   const [aiRetryCount, setAiRetryCount] = useState(0)
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamedContent, setStreamedContent] = useState('')
 
   useEffect(() => {
     fetchCards()
@@ -119,10 +121,12 @@ function PhysicalReadingPage() {
     }
   }
 
-  const performAIAnalysis = async (readingCards: ReadingCard[], isRetry = false) => {
+   const performAIAnalysis = async (readingCards: ReadingCard[], isRetry = false) => {
     setAiLoading(true)
     setAiError(null)
     setAiErrorDetails(null)
+    setStreamedContent('')
+    setIsStreaming(false)
 
     if (!isRetry) {
       setAiRetryCount(0)
@@ -133,7 +137,7 @@ function PhysicalReadingPage() {
       console.log('AI loading timeout reached')
       setAiLoading(false)
       setAiError('AI analysis timed out. You can still save your reading.')
-    }, 35000) // 35 seconds
+    }, 45000) // 45 seconds
 
     try {
       const aiRequest: AIReadingRequest = {
@@ -148,9 +152,9 @@ function PhysicalReadingPage() {
       }
 
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 45000) // 45 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 50000) // 50 second timeout
 
-      const response = await fetch('/api/readings/interpret', {
+      const response = await fetch('/api/readings/interpret/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(aiRequest),
@@ -171,8 +175,41 @@ function PhysicalReadingPage() {
         throw new Error(errorData.error || 'AI analysis failed')
       }
 
-      const aiResult = await response.json()
-      setAiReading(aiResult)
+      setIsStreaming(true)
+      const reader = response.body?.getReader()
+      if (!reader) throw new Error('No response body')
+
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let content = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim()
+            if (data === '[DONE]') continue
+
+            try {
+              const parsed = JSON.parse(data)
+              const chunk = parsed.content || ''
+              content += chunk
+              setStreamedContent(content)
+            } catch (e) {
+              console.error('Error parsing stream data:', e)
+            }
+          }
+        }
+      }
+
+      setAiReading({ reading: content })
       setAiRetryCount(0) // Reset on success
     } catch (error) {
       console.error('AI analysis error:', error)
@@ -191,6 +228,7 @@ function PhysicalReadingPage() {
     } finally {
       clearTimeout(loadingTimeout)
       setAiLoading(false)
+      setIsStreaming(false)
     }
   }
 
@@ -204,7 +242,7 @@ function PhysicalReadingPage() {
     setShowStartOverConfirm(true)
   }
 
-  const confirmStartOver = () => {
+   const confirmStartOver = () => {
     setDrawnCards([])
     setStep('setup')
     setQuestion('')
@@ -217,6 +255,8 @@ function PhysicalReadingPage() {
     setAiErrorDetails(null)
     setPhysicalCards('')
     setShowStartOverConfirm(false)
+    setStreamedContent('')
+    setIsStreaming(false)
   }
 
   return (
@@ -407,22 +447,23 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                     />
                   )}
 
-                  <AIReadingDisplay
-                    aiReading={aiReading}
-                    isLoading={aiLoading}
-                    error={aiError}
-                    errorDetails={aiErrorDetails}
-                    onRetry={retryAIAnalysis}
-                    retryCount={aiRetryCount}
-                    cards={drawnCards.map(card => ({
-                      id: card.id,
-                      name: getCardById(allCards, card.id)?.name || 'Unknown',
-                      position: card.position
-                    }))}
-                    allCards={allCards}
-                    spreadId={selectedSpread.id}
-                    question={question}
-                  />
+                   <AIReadingDisplay
+                     aiReading={aiReading}
+                     isLoading={aiLoading}
+                     error={aiError}
+                     errorDetails={aiErrorDetails}
+                     onRetry={retryAIAnalysis}
+                     retryCount={aiRetryCount}
+                     cards={drawnCards.map(card => ({
+                       id: card.id,
+                       name: getCardById(allCards, card.id)?.name || 'Unknown',
+                       position: card.position
+                     }))}
+                     allCards={allCards}
+                     spreadId={selectedSpread.id}
+                     question={question}
+                     isStreaming={isStreaming}
+                   />
 
                   <div className="text-center pt-4">
                     <Button
