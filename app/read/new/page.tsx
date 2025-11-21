@@ -394,22 +394,22 @@ function NewReadingPageContent() {
                             >
                               ✨ Draw cards for me
                             </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() => {
-                                setPath('physical')
-                                // Set default spread and focus textarea
-                                setSelectedSpread(COMPREHENSIVE_SPREADS.find(s => s.id === 'past-present-future') || COMPREHENSIVE_SPREADS[0])
-                                setTimeout(() => {
-                                  const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
-                                  if (textarea) textarea.focus()
-                                }, 100)
-                              }}
-                              className="h-16 flex-1 border-border text-base font-medium text-foreground hover:bg-muted"
-                              size="lg"
-                            >
-                              🎴 I already have cards
-                            </Button>
+                             <Button
+                               variant="outline"
+                               onClick={() => {
+                                 setPath('physical')
+                                 // Set default spread and focus textarea
+                                 setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                 setTimeout(() => {
+                                   const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
+                                   if (textarea) textarea.focus()
+                                 }, 100)
+                               }}
+                               className="h-16 flex-1 border-border text-base font-medium text-foreground hover:bg-muted"
+                               size="lg"
+                             >
+                               🎴 I already have cards
+                             </Button>
                           </div>
                           <div className="mt-4 space-y-2 text-sm text-muted-foreground">
                             <p className="flex items-center justify-center gap-2">
@@ -443,17 +443,17 @@ function NewReadingPageContent() {
                             >
                               ✨ Virtual Draw
                             </Button>
-                            <Button
-                              size="sm"
-                              variant={path === 'physical' ? 'default' : 'ghost'}
-                              onClick={() => {
-                                setPath('physical')
-                                setSelectedSpread(COMPREHENSIVE_SPREADS.find(s => s.id === 'past-present-future') || COMPREHENSIVE_SPREADS[0])
-                              }}
-                              className="text-xs"
-                            >
-                              🎴 Physical Cards
-                            </Button>
+                             <Button
+                               size="sm"
+                               variant={path === 'physical' ? 'default' : 'ghost'}
+                               onClick={() => {
+                                 setPath('physical')
+                                 setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                               }}
+                               className="text-xs"
+                             >
+                               🎴 Physical Cards
+                             </Button>
                           </div>
                         </div>
 
