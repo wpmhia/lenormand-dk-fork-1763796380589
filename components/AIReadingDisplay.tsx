@@ -106,44 +106,44 @@ export function AIReadingDisplay({
     return null
   }
 
-  return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Card className="overflow-hidden border-primary/20 bg-card/50 backdrop-blur-sm">
-        <CardHeader className="border-b border-primary/10 bg-primary/5 pb-4">
-          <CardTitle className="flex items-center gap-2 text-xl text-primary">
-            <Sparkles className="h-5 w-5" />
-            AI Interpretation
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 p-6">
-          <div className="leading-relaxed text-foreground/90">
-            <ReactMarkdown
-              components={{
-                h1: ({node, ...props}) => <h1 className="mb-4 text-2xl font-bold text-primary" {...props} />,
-                h2: ({node, ...props}) => <h2 className="mb-3 mt-6 text-xl font-semibold text-primary/90" {...props} />,
-                h3: ({node, ...props}) => <h3 className="mb-2 mt-4 text-lg font-semibold text-primary/80" {...props} />,
-                p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
-                ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-primary/30 pl-4 italic text-muted-foreground" {...props} />,
-                strong: ({node, ...props}) => <strong className="font-semibold text-primary" {...props} />,
-                em: ({node, ...props}) => <em className="italic text-foreground/80" {...props} />,
-                hr: ({node, ...props}) => <hr className="my-6 border-primary/20" {...props} />,
-              }}
-            >
-              {displayContent}
-            </ReactMarkdown>
-            {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
-          </div>
-          
-          {spreadId && (
-            <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
-              <span>Spread: {spreadId}</span>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  )
+   return (
+     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+       <Card className="border-border bg-card">
+         <CardHeader className="border-b border-border">
+           <CardTitle className="flex items-center gap-2 text-primary">
+             <Sparkles className="h-5 w-5" />
+             AI Interpretation
+           </CardTitle>
+         </CardHeader>
+         <CardContent className="space-y-6 p-6">
+           <div className="text-foreground">
+             <ReactMarkdown
+               components={{
+                 h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                 h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                 h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                 p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                 ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                 ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                 li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                 blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                 strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                 em: ({node, ...props}) => <em className="italic" {...props} />,
+                 hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+               }}
+             >
+               {displayContent}
+             </ReactMarkdown>
+             {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
+           </div>
+           
+           {spreadId && (
+             <div className="border-t border-border pt-4 text-sm text-muted-foreground">
+               <span>Spread: {spreadId}</span>
+             </div>
+           )}
+         </CardContent>
+       </Card>
+     </div>
+   )
 }
