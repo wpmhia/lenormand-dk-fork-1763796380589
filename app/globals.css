@@ -174,7 +174,7 @@
     @apply mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row;
   }
 
-  .btn-group-hero button {
+  .btn-group-hero-item {
     @apply h-16 flex-1 rounded-xl;
   }
 
