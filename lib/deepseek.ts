@@ -70,24 +70,6 @@ If a specific spread type is mentioned, adhere to the positions and their meanin
 IMPORTANT: Start your response directly with the interpretation content. Do NOT include any introductory phrases like "Of course", "Certainly", "Here's", or similar preambles. Begin immediately with the reading.
 `
 }
-  }
-
-  return `
-You are an expert Lenormand reader. Please interpret the following spread.
-
-Question: ${request.question || "General Reading"}
-${spreadContext}${spreadRules}
-
-Cards:
-${cardsText}
-
-Provide a detailed and insightful interpretation based on traditional Lenormand meanings and card combinations. 
-Focus on the narrative flow and how the cards interact with each other.
-If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.
-
-IMPORTANT: Start your response directly with the interpretation content. Do NOT include any introductory phrases like "Of course", "Certainly", "Here's", or similar preambles. Begin immediately with the reading.
-`
-}
 
 // Main function to get AI reading
 export async function getAIReading(request: AIReadingRequest): Promise<AIReadingResponse | null> {
