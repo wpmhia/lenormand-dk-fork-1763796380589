@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "env": {
+    "DEEPSEEK_BASE_URL": "@deepseek_base_url"
+  },
+  "public": false
+}
