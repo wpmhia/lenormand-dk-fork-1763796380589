@@ -252,22 +252,22 @@ export function ReadingViewer({
 
            {/* 6x6 Grid */}
            <div className="mx-auto grid max-w-4xl grid-cols-6 gap-1 rounded-lg border-2 border-primary/20 bg-card/20 p-2">
-             {reading.cards.map((readingCard, index) => {
-               const card = getCardById(allCards, readingCard.id)
-            if (!card) return null
+           {reading.cards.map((readingCard, index) => {
+                const card = getCardById(allCards, readingCard.id)
+             if (!card) return null
 
-            const positionInfo = getPositionInfo(index, spreadId)
+             const positionInfo = getPositionInfo(index, spreadId)
 
-            return (
-              <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
-                <TooltipProvider>
-                  <div className="flex flex-col items-center space-y-3">
-                    <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex flex-col items-center space-y-2">
-                         <div className="rounded-full border border-primary/30 bg-card/60 px-3 py-1 text-sm font-medium text-muted-foreground/90 backdrop-blur-sm">
-                           {positionInfo.label}
-                         </div>
+             return (
+               <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
+                 <TooltipProvider>
+                   <div className="flex flex-col items-center space-y-3">
+                     <Tooltip>
+                     <TooltipTrigger asChild>
+                       <div className="flex flex-col items-center space-y-2">
+                          <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                            {positionInfo.label}
+                          </div>
                          <Card
                            card={card}
                            size="md"
@@ -297,28 +297,28 @@ export function ReadingViewer({
      )
      } else {
       // Linear layouts (3, 5 cards)
-      return (
-        <div className={`mx-auto grid gap-4 ${
-          reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
-          reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
-          'max-w-6xl grid-cols-1 sm:grid-cols-3'
-        }`}>
-          {reading.cards.map((readingCard, index) => {
-            const card = getCardById(allCards, readingCard.id)
-            if (!card) return null
+       return (
+         <div className={`mx-auto grid gap-4 ${
+           reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
+           reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
+           'max-w-6xl grid-cols-1 sm:grid-cols-3'
+         }`}>
+           {reading.cards.map((readingCard, index) => {
+             const card = getCardById(allCards, readingCard.id)
+             if (!card) return null
 
-            const positionInfo = getPositionInfo(index, spreadId)
+             const positionInfo = getPositionInfo(index, spreadId)
 
-            return (
-              <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
-                <TooltipProvider>
-                  <div className="flex flex-col items-center space-y-3">
-                    <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex flex-col items-center space-y-2">
-                         <div className="rounded-full border border-primary/30 bg-card/60 px-3 py-1 text-sm font-medium text-muted-foreground/90 backdrop-blur-sm">
-                           {positionInfo.label}
-                         </div>
+             return (
+               <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
+                 <TooltipProvider>
+                   <div className="flex flex-col items-center space-y-3">
+                     <Tooltip>
+                     <TooltipTrigger asChild>
+                       <div className="flex flex-col items-center space-y-2">
+                          <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                            {positionInfo.label}
+                          </div>
                          <Card
                            card={card}
                            size="md"
@@ -348,65 +348,60 @@ export function ReadingViewer({
     }
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Reading Header */}
-      {showReadingHeader && (
-        <div className="slide-in-up space-y-2 text-center">
-           <h2 className="relative text-3xl font-bold text-foreground">
-             {reading.title}
-              <div className="absolute -bottom-2 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/80"></div>
-           </h2>
-           {reading.question && reading.question !== reading.title && (
-              <p className="mt-4 text-lg italic text-muted-foreground/80">&ldquo;{reading.question}&rdquo;</p>
-           )}
-           <div className="mt-4 flex items-center justify-center gap-6 text-sm text-muted-foreground/70">
-             <div className="flex items-center gap-2">
-               <Calendar className="h-4 w-4 text-primary" />
-               {new Date(reading.createdAt).toLocaleDateString()}
-             </div>
-              <Badge variant="secondary">
-                {reading.layoutType} Cards
-              </Badge>
-           </div>
-        </div>
-      )}
+   return (
+     <div className="space-y-8">
+       {/* Reading Header */}
+       {showReadingHeader && (
+         <div className="animate-in fade-in slide-in-from-top-8 duration-500">
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <h2 className="text-3xl font-bold text-foreground">
+                {reading.title}
+              </h2>
+              {reading.question && reading.question !== reading.title && (
+                 <p className="mt-4 text-lg italic text-muted-foreground">&ldquo;{reading.question}&rdquo;</p>
+              )}
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-primary" />
+                  {new Date(reading.createdAt).toLocaleDateString()}
+                </div>
+                 <Badge variant="secondary">
+                   {reading.layoutType} Cards
+                 </Badge>
+                 {showShareButton && onShare && (
+                   <Button onClick={onShare} variant="outline" size="sm" className="border-border hover:bg-muted">
+                     <Share2 className="mr-2 h-4 w-4" />
+                     Share
+                   </Button>
+                 )}
+              </div>
+            </div>
+         </div>
+       )}
 
-      {/* Share Button */}
-      {showShareButton && onShare && (
-        <div className="slide-in-left flex justify-center">
-           <Button onClick={onShare} variant="outline" size="sm" className="border-primary/30 text-muted-foreground backdrop-blur-sm hover:border-primary/60 hover:bg-muted/50">
-             <Share2 className="mr-2 h-4 w-4" />
-             Share Wisdom
-           </Button>
-        </div>
-      )}
 
-      {/* Cards Layout */}
-      <div className="fade-in-scale py-6">
-        {renderLayout()}
-      </div>
+       {/* Cards Layout Section */}
+       <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 delay-150">
+         <div className="rounded-xl border border-border bg-card p-8">
+           <h3 className="mb-6 text-xl font-semibold text-foreground">Your Cards</h3>
+           {renderLayout()}
+         </div>
+       </div>
 
-      {/* Card Modal with Combinations */}
-      {selectedCard && (
-        <CardModal
-          card={selectedCard}
-          onClose={() => setSelectedCard(null)}
-          layoutType={reading.layoutType}
-          position={reading.cards.find(c => c.id === selectedCard.id)?.position}
-        />
-      )}
+       {/* Card Modal with Combinations */}
+       {selectedCard && (
+         <CardModal
+           card={selectedCard}
+           onClose={() => setSelectedCard(null)}
+           layoutType={reading.layoutType}
+           position={reading.cards.find(c => c.id === selectedCard.id)?.position}
+         />
+       )}
 
-      {/* Combinations Panel */}
-      {selectedCard && (
-          <div className="slide-in-up mt-6 rounded-xl border border-primary/20 bg-gradient-to-br from-card/60 via-muted/20 to-background/40 p-6 backdrop-blur-sm">
-           <div className="mb-4 flex items-center gap-2">
-             <h3 className="text-lg font-semibold text-foreground">Card Combinations</h3>
-             <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-               <Info className="h-3 w-3" />
-               <span>How this card interacts with nearby cards</span>
-             </div>
-           </div>
+       {/* Combinations Panel */}
+       {selectedCard && (
+           <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 rounded-xl border border-border bg-card p-8">
+            <h3 className="mb-6 text-xl font-semibold text-foreground">Card Combinations</h3>
           <div className="space-y-3">
             {(() => {
               const readingCard = reading.cards.find(c => c.id === selectedCard.id)
@@ -429,8 +424,8 @@ export function ReadingViewer({
 
                  const combination = getCombinationMeaning(selectedCard, card, readingCard.position, adjCard.position)
 
-                return (
-                   <div key={index} className="flex items-center gap-4 rounded-lg border border-primary/20 bg-card/40 p-4 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10">
+                 return (
+                    <div key={index} className="flex items-center gap-4 rounded-lg border border-border bg-card/50 p-4 transition-colors duration-300 hover:bg-card/70">
                      <div className="flex items-center gap-3">
                         <Card card={selectedCard} size="sm" />
                        <span className="text-lg font-medium text-primary">+</span>

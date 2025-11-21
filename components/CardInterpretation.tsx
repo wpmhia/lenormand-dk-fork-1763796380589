@@ -70,18 +70,19 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
     return fullCard?.keywords || []
   }
 
-  return (
-    <Card className="slide-in-left border-border bg-card">
-       <CardHeader>
-         <CardTitle className="flex items-center gap-2">
-           <BookOpen className="h-5 w-5 text-primary" />
-           Traditional Card Meanings
-         </CardTitle>
-         <p className="mt-2 text-sm text-muted-foreground">
-           Classic Lenormand interpretations for your question: &quot;{question}&quot;
-         </p>
-       </CardHeader>
-      <CardContent className="space-y-4">
+   return (
+     <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 delay-300">
+       <Card className="border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
+              Card Meanings
+            </CardTitle>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Interpretations for: &quot;{question}&quot;
+            </p>
+          </CardHeader>
+         <CardContent className="space-y-4">
         {cards.map((card, index) => {
           const fullCard = getCardById(allCards, card.id)
           const positionInfo = getPositionInfo(index, spreadId)
@@ -145,7 +146,8 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
              The AI analysis above weaves these individual meanings into a cohesive narrative tailored to your specific question.
            </p>
          </div>
-      </CardContent>
-    </Card>
-  )
-}
+         </CardContent>
+       </Card>
+     </div>
+   )
+ }
