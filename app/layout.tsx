@@ -30,7 +30,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
-          <div className="bg-background text-foreground flex flex-col min-h-screen">
+          <div className="flex min-h-screen flex-col bg-background text-foreground">
             <Header />
             <main className="flex-grow pt-14">
               {children}

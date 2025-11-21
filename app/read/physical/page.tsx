@@ -260,8 +260,8 @@ function PhysicalReadingPage() {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen">
-      <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="container relative z-10 mx-auto max-w-4xl px-4 py-8">
         {/* Back Button */}
         <div className="mb-6">
           <Button
@@ -269,17 +269,17 @@ function PhysicalReadingPage() {
             onClick={() => router.push('/read/new')}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="h-4 w-4" />
             Back to Virtual Reading
           </Button>
         </div>
 
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4 text-foreground relative">
+          <h1 className="relative mb-4 text-4xl font-bold text-foreground">
             Physical Card Reading
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full"></div>
+            <div className="absolute -bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
           </h1>
-          <p className="text-muted-foreground text-lg italic">
+          <p className="text-lg italic text-muted-foreground">
             Interpret the cards you&apos;ve drawn from your own deck
           </p>
         </div>
@@ -292,7 +292,7 @@ function PhysicalReadingPage() {
                 variant="link"
                 size="sm"
                 onClick={() => setError('')}
-                className="ml-2 text-destructive p-0 h-auto"
+                className="text-destructive ml-2 h-auto p-0"
               >
                 Dismiss
               </Button>
@@ -310,17 +310,17 @@ function PhysicalReadingPage() {
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="space-y-6"
             >
-              <Card className="border-border bg-card backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden">
+              <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-card-foreground text-xl flex items-center gap-2">
-                    <Shuffle className="w-5 h-5" />
+                  <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
+                    <Shuffle className="h-5 w-5" />
                     Your Physical Cards
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Question Input */}
                   <div className="space-y-3">
-                    <Label htmlFor="question" className="text-foreground font-medium">
+                    <Label htmlFor="question" className="font-medium text-foreground">
                       Your Question (Optional):
                     </Label>
                     <Textarea
@@ -331,7 +331,7 @@ function PhysicalReadingPage() {
                         setQuestionCharCount(e.target.value.length)
                       }}
                       placeholder="What guidance do the cards have for you?"
-                      className="bg-background border-border text-foreground placeholder:text-muted-foreground min-h-[100px] rounded-xl focus:border-primary focus:ring-primary/20 resize-none"
+                      className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
                       maxLength={500}
                     />
                     <div className="text-right text-xs text-muted-foreground">
@@ -341,15 +341,15 @@ function PhysicalReadingPage() {
 
                   {/* Spread Selection */}
                   <div className="space-y-2">
-                    <Label htmlFor="spread" className="text-foreground font-medium">Choose Your Spread:</Label>
+                    <Label htmlFor="spread" className="font-medium text-foreground">Choose Your Spread:</Label>
                     <Select value={selectedSpread.id} onValueChange={(value) => {
                       const spread = COMPREHENSIVE_SPREADS.find(s => s.id === value)
                       if (spread) setSelectedSpread(spread)
                     }}>
-                      <SelectTrigger className="bg-background border-border text-card-foreground rounded-xl focus:border-primary h-12">
+                      <SelectTrigger className="h-12 rounded-xl border-border bg-background text-card-foreground focus:border-primary">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-card border-border">
+                      <SelectContent className="border-border bg-card">
                         {COMPREHENSIVE_SPREADS.map((spread) => (
                           <SelectItem key={spread.id} value={spread.id} className="text-card-foreground hover:bg-accent focus:bg-accent">
                             <div className="flex flex-col">
@@ -364,7 +364,7 @@ function PhysicalReadingPage() {
 
                   {/* Physical Cards Input */}
                   <div className="space-y-2">
-                    <Label htmlFor="physical-cards" className="text-foreground font-medium">
+                    <Label htmlFor="physical-cards" className="font-medium text-foreground">
                       Enter Your {selectedSpread.cards} Cards:
                     </Label>
                     <Textarea
@@ -376,7 +376,7 @@ function PhysicalReadingPage() {
 Example: ${selectedSpread.cards === 3 ? '1, 15, 28' : selectedSpread.cards === 5 ? '1, 15, 28, 7, 22' : selectedSpread.cards === 36 ? '1, 15, 28, 7, 22, 33, 12, 19, 31...' : '1, 15, 28'}
 
 Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 5 ? 'Rider, Sun, Key, Snake, Paths' : selectedSpread.cards === 36 ? 'Rider, Sun, Key, Snake, Paths, Moon, Birds...' : 'Rider, Sun, Key'}`}
-                      className="bg-background border-border text-foreground placeholder:text-muted-foreground min-h-[120px] rounded-xl focus:border-primary focus:ring-primary/20 resize-none"
+                      className="min-h-[120px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
                     />
                     <div className="text-xs text-muted-foreground">
                       Enter card numbers (1-36) or names from your physical deck, separated by commas, spaces, or new lines
@@ -388,9 +388,9 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                     <Button
                       onClick={handleAnalyzeCards}
                       disabled={!physicalCards.trim()}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 rounded-xl py-3 font-semibold transition-all duration-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                     >
-                      <Sparkles className="w-4 h-4 mr-2" />
+                      <Sparkles className="mr-2 h-4 w-4" />
                       Analyze My Cards
                     </Button>
                   </div>
@@ -407,12 +407,12 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <Card className="border-border bg-card backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden relative">
+              <Card className="relative overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
-                <CardContent className="space-y-6 p-8 relative z-10">
+                <CardContent className="relative z-10 space-y-6 p-8">
                   <div className="text-center">
-                    <h2 className="text-2xl font-semibold mb-2 text-foreground flex items-center justify-center gap-2">
-                      <Sparkles className="w-6 h-6 text-primary" />
+                    <h2 className="mb-2 flex items-center justify-center gap-2 text-2xl font-semibold text-foreground">
+                      <Sparkles className="h-6 w-6 text-primary" />
                       Card Analysis
                     </h2>
                     <p className="text-muted-foreground">
@@ -465,7 +465,7 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                      isStreaming={isStreaming}
                    />
 
-                  <div className="text-center pt-4">
+                  <div className="pt-4 text-center">
                     <Button
                       onClick={handleStartOver}
                       variant="outline"
@@ -481,7 +481,7 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
 
         {/* Start Over Confirmation Dialog */}
         <Dialog open={showStartOverConfirm} onOpenChange={setShowStartOverConfirm}>
-          <DialogContent className="bg-card border-border">
+          <DialogContent className="border-border bg-card">
             <DialogHeader>
               <DialogTitle className="text-card-foreground">Start New Reading?</DialogTitle>
               <DialogDescription className="text-muted-foreground">
@@ -512,7 +512,7 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
 
 export default function PhysicalReadingPageWrapper() {
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
       <PhysicalReadingPage />
     </div>
   )

@@ -8,8 +8,8 @@ export default function Error({
   reset: () => void
 }) {
   return (
-    <div className="min-h-screen p-4 flex items-center justify-center">
-      <div className="max-w-md w-full space-y-6 text-center">
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6 text-center">
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">
             Something went wrong
@@ -22,13 +22,13 @@ export default function Error({
         <div className="flex flex-col justify-center gap-3">
           <button
             onClick={reset}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           >
             Try again
           </button>
           <button
             onClick={() => window.location.href = '/'}
-            className="px-4 py-2 border border-gray-300 hover:bg-gray-50 rounded"
+            className="rounded border border-gray-300 px-4 py-2 hover:bg-gray-50"
           >
             Go home
           </button>

@@ -15,56 +15,56 @@ export function Footer() {
 
   return (
     <>
-      <footer className="border-t border-border bg-card backdrop-blur-sm mt-auto">
+      <footer className="mt-auto border-t border-border bg-card backdrop-blur-sm">
         <div className="container mx-auto px-4 py-8">
           {/* Main Footer Content */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-3">
             
              {/* Brand Section */}
              <div className="space-y-4">
                <div className="flex items-center gap-2">
-                 <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" />
-                  <div className="text-lg sm:text-xl lg:text-2xl font-bold leading-normal" style={{ fontFamily: "'Crimson Pro', 'Crimson Text', serif" }}>
+                 <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
+                  <div className="text-lg font-bold leading-normal sm:text-xl lg:text-2xl" style={{ fontFamily: "'Crimson Pro', 'Crimson Text', serif" }}>
                     <span className="relative inline-block">
                       Lenormand
-                      <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-primary/80 to-primary/60 rounded-full opacity-80"></div>
+                      <div className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
                     </span>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/80 to-primary/60">
+                    <span className="block bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
                       Intelligence
                     </span>
                   </div>
                </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Mystical Card Wisdom for modern seekers. Discover guidance through the ancient art of Lenormand divination.
               </p>
-              <div className="flex items-center gap-1 text-muted-foreground text-xs">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <span>Made with</span>
-                <Heart className="w-3 h-3 text-primary" aria-hidden="true" />
+                <Heart className="h-3 w-3 text-primary" aria-hidden="true" />
                 <span>for divination enthusiasts</span>
               </div>
             </div>
 
             {/* Navigation Section */}
             <div className="space-y-4">
-              <h4 className="text-foreground font-medium">Navigation</h4>
+              <h4 className="font-medium text-foreground">Navigation</h4>
               <nav className="space-element" aria-label="Main navigation">
                 <Link 
                   href="/read/new" 
-                  className="block text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="block text-sm text-muted-foreground transition-colors hover:text-foreground"
                   aria-label="Start a new Lenormand reading analysis"
                 >
                   New Analysis
                 </Link>
                 <Link 
                   href="/cards" 
-                  className="block text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="block text-sm text-muted-foreground transition-colors hover:text-foreground"
                   aria-label="Explore all Lenormand cards and their meanings"
                 >
                   Explore Cards
                 </Link>
                  <Link
                    href="/learn/reading-basics"
-                   className="block text-muted-foreground hover:text-foreground text-sm transition-colors"
+                   className="block text-sm text-muted-foreground transition-colors hover:text-foreground"
                    aria-label="Learn how to read Lenormand cards"
                  >
                    How to Read
@@ -74,22 +74,22 @@ export function Footer() {
 
             {/* Legal & Privacy Section */}
             <div className="space-y-4">
-              <h4 className="text-foreground font-medium">Legal & Privacy</h4>
+              <h4 className="font-medium text-foreground">Legal & Privacy</h4>
               <nav className="space-element" aria-label="Legal and privacy links">
                 <Link 
                   href="/privacy" 
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   aria-label="Read our privacy policy and data protection practices"
                 >
-                  <Shield className="w-4 h-4" />
+                  <Shield className="h-4 w-4" />
                   Privacy Policy
                 </Link>
                 <Link 
                   href="/terms" 
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   aria-label="Read our terms of service and usage guidelines"
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="h-4 w-4" />
                   Terms of Service
                 </Link>
               </nav>
@@ -98,12 +98,12 @@ export function Footer() {
 
           {/* Bottom Bar */}
           <div className="border-t border-border pt-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-               <div className="text-muted-foreground text-sm">
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+               <div className="text-sm text-muted-foreground">
                  © 2025 Lenormand Intelligence
                </div>
               
-              <div className="text-muted-foreground text-xs">
+              <div className="text-xs text-muted-foreground">
                 For entertainment and spiritual guidance purposes only
               </div>
             </div>
@@ -114,16 +114,16 @@ export function Footer() {
       {/* Guide Dialog */}
       <Dialog open={showGuide} onOpenChange={setShowGuide}>
           <DialogContent 
-            className="bg-card border-border max-w-4xl max-h-[80vh] overflow-y-auto text-foreground"
+            className="max-h-[80vh] max-w-4xl overflow-y-auto border-border bg-card text-foreground"
             aria-labelledby="guide-dialog-title"
             id="lenormand-guide-dialog"
           >
           <DialogHeader>
             <DialogTitle 
               id="guide-dialog-title"
-              className="text-foreground flex items-center gap-2"
+              className="flex items-center gap-2 text-foreground"
             >
-              <BookOpen className="w-5 h-5 text-primary" aria-hidden="true" />
+              <BookOpen className="h-5 w-5 text-primary" aria-hidden="true" />
               How to Read Lenormand Cards
             </DialogTitle>
           </DialogHeader>

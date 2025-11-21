@@ -4,8 +4,8 @@ import { Home, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-md w-full text-center space-y-6">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md space-y-6 text-center">
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-foreground">
             404
@@ -18,10 +18,10 @@ export default function NotFound() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <Button asChild className="flex items-center gap-2">
             <Link href="/read">
-              <Home className="w-4 h-4" />
+              <Home className="h-4 w-4" />
               Reading Home
             </Link>
           </Button>
@@ -30,7 +30,7 @@ export default function NotFound() {
             onClick={() => window.history.back()}
             className="flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="h-4 w-4" />
             Go Back
           </Button>
         </div>

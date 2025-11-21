@@ -49,15 +49,15 @@ export function AIReadingDisplay({
   if (isLoading && !displayContent) {
     return (
       <Card className="border-border bg-card/50 backdrop-blur-sm">
-        <CardContent className="p-8 text-center space-y-4">
-          <div className="relative w-16 h-16 mx-auto">
-            <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-            <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <Sparkles className="absolute inset-0 m-auto w-6 h-6 text-primary animate-pulse" />
+        <CardContent className="space-y-4 p-8 text-center">
+          <div className="relative mx-auto h-16 w-16">
+            <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+            <div className="absolute inset-0 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <Sparkles className="absolute inset-0 m-auto h-6 w-6 animate-pulse text-primary" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-foreground">Generating your reading...</h3>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="mt-1 text-sm text-muted-foreground">
               Consulting the oracle...
             </p>
           </div>
@@ -81,9 +81,9 @@ export function AIReadingDisplay({
                   href={errorDetails.helpUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 underline hover:text-destructive-foreground mt-1"
+                  className="hover:text-destructive-foreground mt-1 inline-flex items-center gap-1 underline"
                 >
-                  View Help <ExternalLink className="w-3 h-3" />
+                  View Help <ExternalLink className="h-3 w-3" />
                 </a>
               )}
             </div>
@@ -94,7 +94,7 @@ export function AIReadingDisplay({
             onClick={onRetry}
             className="border-destructive/30 hover:bg-destructive/10 text-destructive-foreground mt-2"
           >
-            <RefreshCw className="w-3 h-3 mr-2" />
+            <RefreshCw className="mr-2 h-3 w-3" />
             Try Again
           </Button>
         </AlertDescription>
@@ -108,25 +108,25 @@ export function AIReadingDisplay({
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Card className="border-primary/20 bg-card/50 backdrop-blur-sm overflow-hidden">
-        <CardHeader className="bg-primary/5 border-b border-primary/10 pb-4">
+      <Card className="overflow-hidden border-primary/20 bg-card/50 backdrop-blur-sm">
+        <CardHeader className="border-b border-primary/10 bg-primary/5 pb-4">
           <CardTitle className="flex items-center gap-2 text-xl text-primary">
-            <Sparkles className="w-5 h-5" />
+            <Sparkles className="h-5 w-5" />
             AI Interpretation
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-4">
-          <div className="text-foreground/90 leading-relaxed">
+        <CardContent className="space-y-4 p-6">
+          <div className="leading-relaxed text-foreground/90">
             <ReactMarkdown
               components={{
-                h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4 text-primary" {...props} />,
-                h2: ({node, ...props}) => <h2 className="text-xl font-semibold mb-3 mt-6 text-primary/90" {...props} />,
-                h3: ({node, ...props}) => <h3 className="text-lg font-semibold mb-2 mt-4 text-primary/80" {...props} />,
+                h1: ({node, ...props}) => <h1 className="mb-4 text-2xl font-bold text-primary" {...props} />,
+                h2: ({node, ...props}) => <h2 className="mb-3 mt-6 text-xl font-semibold text-primary/90" {...props} />,
+                h3: ({node, ...props}) => <h3 className="mb-2 mt-4 text-lg font-semibold text-primary/80" {...props} />,
                 p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
-                ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />,
-                ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
+                ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
                 li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-primary/30 pl-4 italic my-4 text-muted-foreground" {...props} />,
+                blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-primary/30 pl-4 italic text-muted-foreground" {...props} />,
                 strong: ({node, ...props}) => <strong className="font-semibold text-primary" {...props} />,
                 em: ({node, ...props}) => <em className="italic text-foreground/80" {...props} />,
                 hr: ({node, ...props}) => <hr className="my-6 border-primary/20" {...props} />,
@@ -138,7 +138,7 @@ export function AIReadingDisplay({
           </div>
           
           {spreadId && (
-            <div className="pt-4 border-t border-border mt-4 flex justify-between items-center text-xs text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
               <span>Spread: {spreadId}</span>
             </div>
           )}

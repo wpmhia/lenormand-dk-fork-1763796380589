@@ -69,15 +69,15 @@ export function Card({
         aria-label="Lenormand card back. Click to draw or select card"
       >
         {/* Single background layer */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-muted/90 rounded-xl"></div>
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/90 via-primary/80 to-muted/90"></div>
 
         {/* Single opacity overlay for hover/focus - GPU accelerated */}
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-primary/10 to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none"></div>
+        <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent via-primary/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus:opacity-100"></div>
 
-        <div className="relative text-card-foreground text-center z-10">
-          <div className="text-4xl mb-2 opacity-90">✦</div>
-          <div className="text-sm font-bold tracking-wider opacity-90 text-muted-foreground group-hover:text-foreground transition-colors duration-300">LENORMAND</div>
-          <div className="text-xs text-muted-foreground mt-1 opacity-70 group-hover:opacity-90 transition-opacity duration-300">MYSTICAL DIVINATION</div>
+        <div className="relative z-10 text-center text-card-foreground">
+          <div className="mb-2 text-4xl opacity-90">✦</div>
+          <div className="text-sm font-bold tracking-wider text-muted-foreground opacity-90 transition-colors duration-300 group-hover:text-foreground">LENORMAND</div>
+          <div className="mt-1 text-xs text-muted-foreground opacity-70 transition-opacity duration-300 group-hover:opacity-90">MYSTICAL DIVINATION</div>
         </div>
       </div>
     )
@@ -103,11 +103,11 @@ export function Card({
         aria-label={`${card.name} card. Click to ${onClick ? 'select' : 'view details'}`}
       >
         {/* Card Image */}
-        <div className="relative w-full h-full rounded-lg overflow-hidden bg-card">
+        <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
           <img
             src={card.imageUrl || ''}
             alt={card.name}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
       </div>

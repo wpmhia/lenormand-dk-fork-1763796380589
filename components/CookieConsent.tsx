@@ -92,11 +92,11 @@ export function CookieConsent() {
     <>
       {/* Cookie Banner */}
       {showBanner && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-card/95 backdrop-blur-sm border-t border-border shadow-lg">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 shadow-lg backdrop-blur-sm">
           <div className="container mx-auto max-w-4xl">
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Cookie className="w-5 h-5 text-primary" />
+            <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
+              <div className="flex flex-shrink-0 items-center gap-2">
+                <Cookie className="h-5 w-5 text-primary" />
                 <span className="font-semibold text-foreground">Cookie Preferences</span>
               </div>
 
@@ -105,14 +105,14 @@ export function CookieConsent() {
                 Analytics cookies help us understand how you use our site.
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0">
+              <div className="flex flex-shrink-0 flex-col gap-2 sm:flex-row">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setShowSettings(true)}
                   className="text-xs"
                 >
-                  <Settings className="w-3 h-3 mr-1" />
+                  <Settings className="mr-1 h-3 w-3" />
                   Settings
                 </Button>
                 <Button
@@ -141,7 +141,7 @@ export function CookieConsent() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Cookie className="w-5 h-5" />
+              <Cookie className="h-5 w-5" />
               Cookie Preferences
             </DialogTitle>
             <DialogDescription>
@@ -151,7 +151,7 @@ export function CookieConsent() {
 
           <div className="space-y-4">
             {/* Necessary Cookies */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
               <div>
                 <Label className="font-medium">Essential Cookies</Label>
                 <p className="text-sm text-muted-foreground">
@@ -162,7 +162,7 @@ export function CookieConsent() {
             </div>
 
             {/* Analytics Cookies */}
-            <div className="flex items-center justify-between p-3 rounded-lg border">
+            <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
                 <Label className="font-medium">Analytics Cookies</Label>
                 <p className="text-sm text-muted-foreground">

@@ -201,8 +201,8 @@ export default function SharedReadingPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-300"></div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-slate-300"></div>
       </div>
     )
   }
@@ -214,7 +214,7 @@ export default function SharedReadingPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground">Shared Lenormand Reading</h1>
           <p className="text-muted-foreground">{reading.title}</p>
@@ -239,9 +239,9 @@ export default function SharedReadingPage({ params }: PageProps) {
         {/* AI Analysis Section */}
         <div className="mt-6">
           {aiLoading && (
-            <div className="text-center space-y-4 p-6 bg-muted/30 rounded-lg border">
+            <div className="space-y-4 rounded-lg border bg-muted/30 p-6 text-center">
               <div className="flex items-center justify-center gap-3">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary"></div>
                 <span className="text-muted-foreground">Consulting the ancient wisdom...</span>
               </div>
               <div className="text-sm text-muted-foreground">
@@ -270,7 +270,7 @@ export default function SharedReadingPage({ params }: PageProps) {
           )}
 
           {aiError && !aiLoading && (
-            <div className="text-center space-y-4 p-6 bg-destructive/5 rounded-lg border border-destructive/20">
+            <div className="bg-destructive/5 border-destructive/20 space-y-4 rounded-lg border p-6 text-center">
               <div className="text-destructive font-medium">AI Analysis Unavailable</div>
               <div className="text-sm text-muted-foreground">{aiError}</div>
               <Button

@@ -54,7 +54,7 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
           : "border-border bg-gradient-to-br from-background/80 to-muted/60 backdrop-blur-sm"}`}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-card-foreground">
-            <BookOpen className="w-5 h-5" />
+            <BookOpen className="h-5 w-5" />
             How to Read Lenormand Cards
           </CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -68,25 +68,25 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
              <CollapsibleTrigger asChild>
                <Button variant="ghost" className="w-full justify-between p-3 hover:bg-muted">
                  <div className="flex items-center gap-2">
-                   <HelpCircle className="w-4 h-4" />
+                   <HelpCircle className="h-4 w-4" />
                    <span className="font-medium">What are Lenormand Cards?</span>
                  </div>
-                 {openSections.basics ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                 {openSections.basics ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                </Button>
              </CollapsibleTrigger>
-             <CollapsibleContent className="space-y-3 mt-3 p-4 rounded-lg border bg-card border-border">
+             <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border bg-card p-4">
                <p className="text-sm leading-relaxed text-muted-foreground">
                 Lenormand cards are a 36-card oracle deck originating from 19th century Europe. Unlike Tarot, 
                 Lenormand cards are more direct and practical, focusing on everyday situations and concrete outcomes. 
                 Each card has specific meanings that combine to create detailed insights about your life.
               </p>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                 <div className="p-3 rounded-lg bg-muted">
-                   <h4 className="font-medium mb-1 text-foreground">Direct & Practical</h4>
+               <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                 <div className="rounded-lg bg-muted p-3">
+                   <h4 className="mb-1 font-medium text-foreground">Direct & Practical</h4>
                    <p className="text-xs text-muted-foreground">Focuses on real-life situations and concrete answers</p>
                  </div>
-                 <div className="p-3 rounded-lg bg-muted">
-                   <h4 className="font-medium mb-1 text-foreground">Combination-Based</h4>
+                 <div className="rounded-lg bg-muted p-3">
+                   <h4 className="mb-1 font-medium text-foreground">Combination-Based</h4>
                    <p className="text-xs text-muted-foreground">Cards modify each other to create nuanced meanings</p>
                  </div>
                </div>
@@ -100,17 +100,17 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
              <CollapsibleTrigger asChild>
                <Button variant="ghost" className="w-full justify-between p-3 hover:bg-muted">
                  <div className="flex items-center gap-2">
-                   <Target className="w-4 h-4" />
+                   <Target className="h-4 w-4" />
                    <span className="font-medium">How to Formulate Questions</span>
                  </div>
-                 {openSections.questions ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                 {openSections.questions ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                </Button>
              </CollapsibleTrigger>
-             <CollapsibleContent className="space-y-3 mt-3 p-4 rounded-lg border bg-card border-border">
+             <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border bg-card p-4">
                <div className="space-y-3">
                  <div>
-                   <h4 className="font-medium mb-2 text-foreground">Do&apos;s ✅</h4>
-                   <ul className="text-sm space-y-1 text-muted-foreground">
+                   <h4 className="mb-2 font-medium text-foreground">Do&apos;s ✅</h4>
+                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• Be specific and focused</li>
                     <li>• Ask about situations and actions</li>
                     <li>• Use &quot;what,&quot; &quot;how,&quot; or &quot;when&quot; questions</li>
@@ -119,8 +119,8 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
                   </ul>
                 </div>
                  <div>
-                   <h4 className="font-medium mb-2 text-foreground">Don&apos;ts ❌</h4>
-                   <ul className="text-sm space-y-1 text-muted-foreground">
+                   <h4 className="mb-2 font-medium text-foreground">Don&apos;ts ❌</h4>
+                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• Avoid yes/no questions</li>
                     <li>• Don&apos;t ask about others without their consent</li>
                     <li>• Avoid medical, legal, or financial advice</li>
@@ -130,20 +130,20 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
                 </div>
               </div>
 
-               <div className="mt-4 p-3 rounded-lg border bg-muted border-border">
-                 <div className="flex items-center gap-2 mb-2">
-                   <Lightbulb className="w-4 h-4 text-primary" />
+               <div className="mt-4 rounded-lg border border-border bg-muted p-3">
+                 <div className="mb-2 flex items-center gap-2">
+                   <Lightbulb className="h-4 w-4 text-primary" />
                    <h4 className="font-medium text-foreground">Example Questions</h4>
                  </div>
                 <div className="space-y-2">
                   {questionExamples.map((category, index) => (
                     <div key={index} className="space-y-1">
-                      <Badge variant="outline" className="text-xs bg-muted border-border text-foreground">
+                      <Badge variant="outline" className="border-border bg-muted text-xs text-foreground">
                         {category.category}
                       </Badge>
                       <div className="ml-2 space-y-1">
                         {category.examples.slice(0, 2).map((example, i) => (
-                          <p key={i} className="text-xs text-muted-foreground italic">&quot;{example}&quot;</p>
+                          <p key={i} className="text-xs italic text-muted-foreground">&quot;{example}&quot;</p>
                         ))}
                       </div>
                     </div>
@@ -160,25 +160,25 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
              <CollapsibleTrigger asChild>
                <Button variant="ghost" className="w-full justify-between p-3 hover:bg-muted">
                  <div className="flex items-center gap-2">
-                   <Target className="w-4 h-4" />
+                   <Target className="h-4 w-4" />
                    <span className="font-medium">Understanding Card Positions</span>
                  </div>
-                 {openSections.positions ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                 {openSections.positions ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                </Button>
              </CollapsibleTrigger>
-             <CollapsibleContent className="space-y-3 mt-3 p-4 bg-card rounded-lg border border-border">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="p-3 bg-muted rounded-lg">
-                  <h4 className="font-medium text-foreground mb-1">3-Card Spread</h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
+             <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border bg-card p-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="rounded-lg bg-muted p-3">
+                  <h4 className="mb-1 font-medium text-foreground">3-Card Spread</h4>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
                     <li><strong>Past:</strong> What led to this</li>
                     <li><strong>Present:</strong> Current situation</li>
                     <li><strong>Future:</strong> Where it&apos;s heading</li>
                   </ul>
                 </div>
-                <div className="p-3 bg-muted rounded-lg">
-                  <h4 className="font-medium text-foreground mb-1">5-Card Spread</h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
+                <div className="rounded-lg bg-muted p-3">
+                  <h4 className="mb-1 font-medium text-foreground">5-Card Spread</h4>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
                     <li><strong>Past:</strong> Background</li>
                     <li><strong>Present:</strong> Current state</li>
                     <li><strong>Future:</strong> What&apos;s coming</li>
@@ -186,16 +186,16 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
                     <li><strong>Advice:</strong> Guidance</li>
                   </ul>
                 </div>
-                <div className="p-3 bg-muted rounded-lg">
-                  <h4 className="font-medium text-foreground mb-1">9-Card Spread</h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
+                <div className="rounded-lg bg-muted p-3">
+                  <h4 className="mb-1 font-medium text-foreground">9-Card Spread</h4>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
                     <li><strong>Center:</strong> Core issue</li>
                     <li><strong>Around:</strong> Influences</li>
                     <li><strong>Corners:</strong> Outcomes</li>
                   </ul>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-3">
+              <p className="mt-3 text-sm text-muted-foreground">
                 <strong>Tip:</strong> Hover over position labels to see detailed explanations of what each position represents in your reading.
               </p>
             </CollapsibleContent>
@@ -208,17 +208,17 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
              <CollapsibleTrigger asChild>
                <Button variant="ghost" className="w-full justify-between p-3 hover:bg-muted">
                  <div className="flex items-center gap-2">
-                   <Lightbulb className="w-4 h-4" />
+                   <Lightbulb className="h-4 w-4" />
                    <span className="font-medium">Reading Tips & Best Practices</span>
                  </div>
-                 {openSections.tips ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                 {openSections.tips ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                </Button>
              </CollapsibleTrigger>
-             <CollapsibleContent className="space-y-3 mt-3 p-4 bg-card rounded-lg border border-border">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+             <CollapsibleContent className="mt-3 space-y-3 rounded-lg border border-border bg-card p-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div className="space-y-2">
                   <h4 className="font-medium text-foreground">Before Reading</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• Take a few deep breaths to center yourself</li>
                     <li>• Clear your mind of distractions</li>
                     <li>• Focus on your question while shuffling</li>
@@ -227,7 +227,7 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-medium text-foreground">During Reading</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• Click cards to see detailed meanings</li>
                     <li>• Look at how cards modify each other</li>
                     <li>• Consider the position meanings</li>
@@ -235,8 +235,8 @@ export function LenormandGuide({ className, darkTheme = false }: LenormandGuideP
                   </ul>
                 </div>
               </div>
-              <div className="mt-3 p-3 bg-muted rounded-lg border border-border">
-                <h4 className="font-medium text-foreground mb-1">Pro Tip</h4>
+              <div className="mt-3 rounded-lg border border-border bg-muted p-3">
+                <h4 className="mb-1 font-medium text-foreground">Pro Tip</h4>
                 <p className="text-sm text-muted-foreground">
                   Keep a reading journal! Note your questions, cards drawn, and how the reading played out. 
                   This helps you learn patterns and develop your personal connection with the cards.

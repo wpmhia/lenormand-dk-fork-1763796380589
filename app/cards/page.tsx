@@ -92,13 +92,13 @@ export default function CardsPage() {
             </p>
         </div>
 
-        <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {filteredCards.map((card) => (
-             <div key={card.id} className="group space-y-1 cursor-pointer">
-              <Card card={card} size="md" className="group-hover:scale-105 transition-all duration-600 mx-auto mystical-float" />
+             <div key={card.id} className="group cursor-pointer space-y-1">
+              <Card card={card} size="md" className="duration-600 mystical-float mx-auto transition-all group-hover:scale-105" />
               <div className="text-center">
-                <div className="font-medium text-foreground text-sm sm:text-xs truncate">{card.name}</div>
-                <div className="text-muted-foreground text-sm sm:text-xs">#{card.id}</div>
+                <div className="truncate text-sm font-medium text-foreground sm:text-xs">{card.name}</div>
+                <div className="text-sm text-muted-foreground sm:text-xs">#{card.id}</div>
               </div>
             </div>
           ))}

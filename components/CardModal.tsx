@@ -29,7 +29,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
         onClose()
       }
     }}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-card border-border text-card-foreground">
+      <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto border-border bg-card text-card-foreground">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
@@ -38,7 +38,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             </DialogTitle>
             <button
               onClick={onClose}
-              className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              className="focus:ring-ring rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2"
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
@@ -49,14 +49,14 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid gap-8 md:grid-cols-2">
           {/* Card Image */}
           <div className="flex justify-center md:justify-start">
-            <div className="relative w-56 h-72 card-mystical rounded-xl shadow-2xl overflow-hidden border border-purple-500/30">
+            <div className="card-mystical relative h-72 w-56 overflow-hidden rounded-xl border border-purple-500/30 shadow-2xl">
               <img
                 src={card.imageUrl || ''}
                 alt={card.name}
-                className="w-full h-full object-contain bg-card"
+                className="h-full w-full bg-card object-contain"
               />
             </div>
           </div>
@@ -65,7 +65,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           <div className="space-y-6">
             {/* Keywords */}
             <div>
-              <h3 className="font-semibold mb-2 text-foreground">Keywords</h3>
+              <h3 className="mb-2 font-semibold text-foreground">Keywords</h3>
               <div className="flex flex-wrap gap-2">
                 {card.keywords.map((keyword, index) => (
                   <Badge key={index} variant="secondary" className="bg-muted text-muted-foreground">
@@ -79,7 +79,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
 
              {/* Meaning */}
              <div>
-               <h3 className="font-semibold mb-2 text-foreground">
+               <h3 className="mb-2 font-semibold text-foreground">
                  Meaning
                </h3>
                <p className="text-muted-foreground">
@@ -92,10 +92,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                <>
                  <Separator className="bg-muted" />
                  <div>
-                   <h3 className="font-semibold mb-2 text-foreground">
+                   <h3 className="mb-2 font-semibold text-foreground">
                      House Meaning
                    </h3>
-                   <p className="text-muted-foreground text-sm">
+                   <p className="text-sm text-muted-foreground">
                      When this card appears in position {position + 1} of the Grand Tableau,
                      it represents matters of: <strong>
                      {(() => {
@@ -150,23 +150,23 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
               <>
                 <Separator className="bg-muted" />
                 <div>
-                  <h3 className="font-semibold mb-3 text-foreground">Card Combinations</h3>
+                  <h3 className="mb-3 font-semibold text-foreground">Card Combinations</h3>
                   <div className="space-y-2">
                     {combos.map((combo: any, index: number) => {
                       const comboCard = allCards.find(c => c.id === combo.withCardId)
                       return (
-                        <div key={index} className="flex items-start gap-3 p-3 bg-muted rounded-lg">
-                          <div className="flex-shrink-0 w-12 h-16 bg-card border border-border rounded overflow-hidden">
+                        <div key={index} className="flex items-start gap-3 rounded-lg bg-muted p-3">
+                          <div className="h-16 w-12 flex-shrink-0 overflow-hidden rounded border border-border bg-card">
                             {comboCard && (
                               <img
                                 src={comboCard.imageUrl || ''}
                                 alt={comboCard.name}
-                                className="w-full h-full object-cover"
+                                className="h-full w-full object-cover"
                               />
                             )}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium text-sm text-foreground">
+                            <div className="text-sm font-medium text-foreground">
                               {comboCard ? comboCard.name : `Card ${combo.withCardId}`}
                             </div>
                             <div className="text-sm text-muted-foreground">

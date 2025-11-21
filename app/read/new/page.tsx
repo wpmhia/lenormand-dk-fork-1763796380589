@@ -255,35 +255,35 @@ function NewReadingPageContent() {
 
   return (
     <TooltipProvider>
-      <div className="bg-background text-foreground min-h-screen">
-        <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+      <div className="min-h-screen bg-background text-foreground">
+        <div className="container relative z-10 mx-auto max-w-4xl px-4 py-8">
           <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold mb-4 text-foreground relative">
+            <h1 className="relative mb-4 text-4xl font-bold text-foreground">
               New Lenormand Reading
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full"></div>
+              <div className="absolute -bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
             </h1>
-            <p className="text-muted-foreground text-lg italic">
+            <p className="text-lg italic text-muted-foreground">
               Let the ancient cards reveal what your heart already knows
             </p>
 
             {/* Progress Indicator */}
             <div className="mt-8 flex items-center justify-center space-x-6" role="progressbar" aria-label="Reading progress">
               <div className={`flex items-center ${step === 'setup' ? 'text-primary' : 'text-muted-foreground'}`} aria-label="Step 1: Setup" aria-current={step === 'setup' ? 'step' : undefined}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 ${step === 'setup' ? 'bg-primary border-primary shadow-lg shadow-primary/30 text-primary-foreground' : 'bg-muted border-muted-foreground text-muted-foreground dark:bg-muted/50 dark:border-muted-foreground/50'}`} aria-hidden="true">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold ${step === 'setup' ? 'border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30' : 'border-muted-foreground bg-muted text-muted-foreground dark:border-muted-foreground/50 dark:bg-muted/50'}`} aria-hidden="true">
                   1
                 </div>
                 <span className="ml-3 text-sm font-medium">Setup</span>
               </div>
-              <div className={`w-12 h-0.5 rounded-full ${step === 'drawing' || step === 'results' ? 'bg-primary' : 'bg-muted'}`} aria-hidden="true"></div>
+              <div className={`h-0.5 w-12 rounded-full ${step === 'drawing' || step === 'results' ? 'bg-primary' : 'bg-muted'}`} aria-hidden="true"></div>
               <div className={`flex items-center ${step === 'drawing' ? 'text-primary' : 'text-muted-foreground'}`} aria-label={`Step 2: ${path === 'physical' ? 'Enter' : 'Draw'}`} aria-current={step === 'drawing' ? 'step' : undefined}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 ${step === 'drawing' ? 'bg-primary border-primary shadow-lg shadow-primary/30 text-primary-foreground' : 'bg-muted border-muted-foreground text-muted-foreground dark:bg-muted/50 dark:border-muted-foreground/50'}`} aria-hidden="true">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold ${step === 'drawing' ? 'border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30' : 'border-muted-foreground bg-muted text-muted-foreground dark:border-muted-foreground/50 dark:bg-muted/50'}`} aria-hidden="true">
                   2
                 </div>
                 <span className="ml-3 text-sm font-medium">{path === 'physical' ? 'Enter' : 'Draw'}</span>
               </div>
-              <div className={`w-12 h-0.5 rounded-full ${step === 'results' ? 'bg-primary' : 'bg-muted'}`} aria-hidden="true"></div>
+              <div className={`h-0.5 w-12 rounded-full ${step === 'results' ? 'bg-primary' : 'bg-muted'}`} aria-hidden="true"></div>
               <div className={`flex items-center ${step === 'results' ? 'text-primary' : 'text-muted-foreground'}`} aria-label="Step 3: Reading & AI Insights" aria-current={step === 'results' ? 'step' : undefined}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 ${step === 'results' ? 'bg-primary border-primary shadow-lg shadow-primary/30 text-primary-foreground' : 'bg-muted border-muted-foreground text-muted-foreground dark:bg-muted/50 dark:border-muted-foreground/50'}`} aria-hidden="true">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold ${step === 'results' ? 'border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30' : 'border-muted-foreground bg-muted text-muted-foreground dark:border-muted-foreground/50 dark:bg-muted/50'}`} aria-hidden="true">
                   3
                 </div>
                 <span className="ml-3 text-sm font-medium">Reading & AI Insights</span>
@@ -299,7 +299,7 @@ function NewReadingPageContent() {
                   variant="link"
                   size="sm"
                   onClick={() => setError('')}
-                  className="ml-2 text-destructive p-0 h-auto"
+                  className="text-destructive ml-2 h-auto p-0"
                 >
                   Dismiss
                 </Button>
@@ -318,10 +318,10 @@ function NewReadingPageContent() {
                 className="space-y-4"
               >
                 {/* Essential Section - Always Visible */}
-                <Card className="border-border bg-card backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden">
+                <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                   <CardHeader className="pb-4">
-                    <CardTitle className="text-card-foreground text-xl flex items-center gap-2">
-                      <Eye className="w-5 h-5" />
+                    <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
+                      <Eye className="h-5 w-5" />
                       Your Sacred Question
                     </CardTitle>
                   </CardHeader>
@@ -336,7 +336,7 @@ function NewReadingPageContent() {
                           setQuestionCharCount(e.target.value.length)
                         }}
                         placeholder="What guidance do the cards have for me today?"
-                        className="bg-background border-border text-foreground placeholder:text-muted-foreground min-h-[100px] rounded-xl focus:border-primary focus:ring-primary/20 resize-none"
+                        className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
                         maxLength={500}
                         aria-describedby="question-help question-count"
                         required
@@ -349,11 +349,11 @@ function NewReadingPageContent() {
                     {/* Hero Path Selection */}
                     {!path ? (
                       <div className="space-y-6">
-                        <div className="text-center space-y-4">
-                          <Label className="text-foreground font-medium text-lg mb-4 block">
+                        <div className="space-y-4 text-center">
+                          <Label className="mb-4 block text-lg font-medium text-foreground">
                             Choose your reading path
                           </Label>
-                          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
+                          <div className="mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row">
                             <Button
                               onClick={() => {
                                 setPath('virtual')
@@ -363,7 +363,7 @@ function NewReadingPageContent() {
                                   if (questionField) questionField.focus()
                                 }, 100)
                               }}
-                              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 h-16 text-base font-medium"
+                              className="h-16 flex-1 bg-primary text-base font-medium text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90"
                               size="lg"
                             >
                               ✨ Draw cards for me
@@ -379,19 +379,19 @@ function NewReadingPageContent() {
                                   if (textarea) textarea.focus()
                                 }, 100)
                               }}
-                              className="flex-1 border-border text-foreground hover:bg-muted h-16 text-base font-medium"
+                              className="h-16 flex-1 border-border text-base font-medium text-foreground hover:bg-muted"
                               size="lg"
                             >
                               🎴 I already have cards
                             </Button>
                           </div>
-                          <div className="text-sm text-muted-foreground space-y-2 mt-4">
+                          <div className="mt-4 space-y-2 text-sm text-muted-foreground">
                             <p className="flex items-center justify-center gap-2">
-                              <span className="w-2 h-2 bg-primary/60 rounded-full"></span>
+                              <span className="h-2 w-2 rounded-full bg-primary/60"></span>
                               Cards are shuffled in your browser—no account needed.
                             </p>
                             <p className="flex items-center justify-center gap-2">
-                              <span className="w-2 h-2 bg-muted-foreground/60 rounded-full"></span>
+                              <span className="h-2 w-2 rounded-full bg-muted-foreground/60"></span>
                               Your cards stay on your table; we only interpret them.
                             </p>
                           </div>
@@ -400,9 +400,9 @@ function NewReadingPageContent() {
                     ) : (
                       <div className="space-y-4">
                         {/* Path Switcher */}
-                        <div className="flex items-center justify-center gap-2 mb-4">
+                        <div className="mb-4 flex items-center justify-center gap-2">
                           <span className="text-sm text-muted-foreground">Reading method:</span>
-                          <div className="flex bg-muted rounded-lg p-1">
+                          <div className="flex rounded-lg bg-muted p-1">
                             <Button
                               size="sm"
                               variant={path === 'virtual' ? 'default' : 'ghost'}
@@ -434,22 +434,22 @@ function NewReadingPageContent() {
                         {/* Manual Spread Selection - Show for both paths */}
                         {(path === 'physical' || path === 'virtual') && (
                           <div className="space-y-2">
-                            <Label htmlFor="manual-spread" className="text-foreground font-medium">
+                            <Label htmlFor="manual-spread" className="font-medium text-foreground">
                               Choose Your Spread:
                             </Label>
                             <Select value={selectedSpread.id} onValueChange={(value) => {
                               const spread = COMPREHENSIVE_SPREADS.find(s => s.id === value)
                               if (spread) setSelectedSpread(spread)
                             }}>
-                              <SelectTrigger className="bg-background border-border text-card-foreground rounded-lg focus:border-primary h-10">
+                              <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="bg-card border-border">
+                              <SelectContent className="border-border bg-card">
                                 {COMPREHENSIVE_SPREADS.map((spread) => (
                                   <SelectItem
                                     key={spread.id}
                                     value={spread.id}
-                                    className="text-card-foreground hover:bg-accent focus:bg-accent py-3"
+                                    className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
                                   >
                                     {`${spread.label} (${spread.cards} cards)`}
                                   </SelectItem>
@@ -466,7 +466,7 @@ function NewReadingPageContent() {
                       <div className="space-y-4">
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="physical-cards" className="text-foreground font-medium">
+                            <Label htmlFor="physical-cards" className="font-medium text-foreground">
                               Enter Your Cards:
                             </Label>
                             <div className="flex items-center gap-2">
@@ -478,7 +478,7 @@ function NewReadingPageContent() {
                                 {parsedCards.length} / {selectedSpread.cards} cards
                               </span>
                               {parsedCards.length === selectedSpread.cards && (
-                                <span className="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></span>
+                                <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></span>
                               )}
                             </div>
                           </div>
@@ -503,7 +503,7 @@ function NewReadingPageContent() {
                               }
                             }}
                             placeholder={`Enter ${selectedSpread.cards} card numbers (1-36) or names\n\nExamples: 1 5 12 • Rider, Clover, Ship • Birds, 20, 36`}
-                            className={`bg-background border-border text-foreground placeholder:text-muted-foreground min-h-[120px] rounded-xl focus:border-primary focus:ring-primary/20 resize-none ${
+                            className={`min-h-[120px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 ${
                               physicalCardsError ? 'border-destructive focus:border-destructive' : ''
                             }`}
                             rows={4}
@@ -517,9 +517,9 @@ function NewReadingPageContent() {
                               {parsedCards.map((card, index) => (
                                 <div
                                   key={`${card.id}-${index}`}
-                                  className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-md text-sm font-medium border border-primary/20"
+                                  className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
                                 >
-                                  <span className="w-4 h-4 bg-primary/20 rounded-full flex items-center justify-center text-xs font-bold">
+                                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">
                                     {card.id}
                                   </span>
                                   {card.name}
@@ -540,7 +540,7 @@ function NewReadingPageContent() {
                           {/* Error and Help Text */}
                           <div className="space-y-1">
                             {physicalCardsError && (
-                              <p id="physical-cards-error" className="text-xs text-destructive" role="alert">
+                              <p id="physical-cards-error" className="text-destructive text-xs" role="alert">
                                 {physicalCardsError}
                               </p>
                             )}
@@ -557,7 +557,7 @@ function NewReadingPageContent() {
 
                 {/* Unified Primary Button - Always Visible */}
                 <div className="sticky bottom-4 z-10 mt-6">
-                  <Card className="border-border bg-card/95 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden">
+                  <Card className="overflow-hidden rounded-2xl border-border bg-card/95 shadow-lg backdrop-blur-sm">
                     <CardContent className="p-4">
                       <Button
                         data-draw-button
@@ -569,7 +569,7 @@ function NewReadingPageContent() {
                             setStep('drawing')
                           }
                         }}
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 rounded-xl py-3 font-semibold transition-all duration-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                        className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                         disabled={!canProceed}
                         aria-busy={aiLoading}
                       >
@@ -590,15 +590,15 @@ function NewReadingPageContent() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <Card className="border-border bg-card backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden relative">
+              <Card className="relative overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
-                <CardContent className="space-y-8 p-8 relative z-10">
+                <CardContent className="relative z-10 space-y-8 p-8">
                   <div className="text-center">
-                    <h2 className="text-3xl font-semibold mb-4 text-foreground relative">
+                    <h2 className="relative mb-4 text-3xl font-semibold text-foreground">
                       Draw Your Cards
-                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-primary to-primary/60 rounded-full"></div>
+                      <div className="absolute -bottom-2 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
                     </h2>
-                    <p className="text-muted-foreground text-lg italic">
+                    <p className="text-lg italic text-muted-foreground">
                       Drawing {selectedSpread.cards} cards from the sacred deck
                     </p>
                   </div>
@@ -671,7 +671,7 @@ function NewReadingPageContent() {
 
           {/* Start Over Confirmation Dialog */}
           <Dialog open={showStartOverConfirm} onOpenChange={setShowStartOverConfirm}>
-            <DialogContent className="bg-card border-border">
+            <DialogContent className="border-border bg-card">
               <DialogHeader>
                 <DialogTitle className="text-card-foreground">Start Over?</DialogTitle>
                 <DialogDescription className="text-muted-foreground">
@@ -703,9 +703,9 @@ function NewReadingPageContent() {
 
 export default function NewReadingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-background text-foreground">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
         <p className="text-muted-foreground">Loading your reading...</p>
       </div>
     </div>}>

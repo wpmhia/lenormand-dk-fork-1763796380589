@@ -16,10 +16,10 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-      <div className="max-w-md w-full space-y-6 text-center">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md space-y-6 text-center">
         <div className="flex justify-center">
-          <AlertTriangle className="w-16 h-16 text-destructive" />
+          <AlertTriangle className="text-destructive h-16 w-16" />
         </div>
 
         <div className="space-y-2">
@@ -31,9 +31,9 @@ export default function Error({
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-center gap-3">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <Button onClick={reset} className="flex items-center gap-2">
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="h-4 w-4" />
             Try again
           </Button>
           <Button
@@ -41,7 +41,7 @@ export default function Error({
             onClick={() => window.location.href = '/'}
             className="flex items-center gap-2"
           >
-            <Home className="w-4 h-4" />
+            <Home className="h-4 w-4" />
             Go home
           </Button>
         </div>
@@ -51,7 +51,7 @@ export default function Error({
             <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
               Error details (development only)
             </summary>
-            <pre className="mt-2 p-3 bg-muted text-xs overflow-auto rounded">
+            <pre className="mt-2 overflow-auto rounded bg-muted p-3 text-xs">
               {error.message}
               {error.stack && `\n\n${error.stack}`}
             </pre>

@@ -71,13 +71,13 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
   }
 
   return (
-    <Card className="border-border bg-card slide-in-left">
+    <Card className="slide-in-left border-border bg-card">
       <CardHeader>
-        <CardTitle className="text-card-foreground flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-primary/80" />
+        <CardTitle className="flex items-center gap-2 text-card-foreground">
+          <BookOpen className="h-5 w-5 text-primary/80" />
           Traditional Card Meanings
         </CardTitle>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Classic Lenormand interpretations for your question: &quot;{question}&quot;
         </p>
       </CardHeader>
@@ -91,34 +91,34 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
           return (
             <div 
               key={`${card.id}-${index}`} 
-              className="border border-slate-700 rounded-lg p-4 bg-muted/30 hover:bg-muted/50 transition-colors"
+              className="rounded-lg border border-slate-700 bg-muted/30 p-4 transition-colors hover:bg-muted/50"
             >
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="text-2xl" aria-hidden="true">
                     {fullCard?.emoji || '🃏'}
                   </div>
                   <div>
-                    <h3 className="text-foreground font-medium">
+                    <h3 className="font-medium text-foreground">
                       {fullCard?.name || 'Unknown Card'}
                     </h3>
-                    <p className="text-primary text-sm font-medium">
+                    <p className="text-sm font-medium text-primary">
                       {positionInfo.title}
                     </p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-muted-foreground border-border">
+                <Badge variant="outline" className="border-border text-muted-foreground">
                   #{card.id}
                 </Badge>
               </div>
               
               {positionInfo.description && (
-                <p className="text-muted-foreground text-xs mb-2 italic">
+                <p className="mb-2 text-xs italic text-muted-foreground">
                   {positionInfo.description}
                 </p>
               )}
               
-              <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+              <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
                 {meaning}
               </p>
               
@@ -128,7 +128,7 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
                     <Badge 
                       key={keywordIndex} 
                       variant="secondary" 
-                      className="text-xs bg-muted/50 text-muted-foreground border-border"
+                      className="border-border bg-muted/50 text-xs text-muted-foreground"
                     >
                       {keyword}
                     </Badge>
@@ -139,8 +139,8 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
           )
         })}
         
-        <div className="mt-6 p-4 bg-muted/20 border border-primary/20 rounded-lg">
-          <p className="text-muted-foreground text-sm leading-relaxed">
+        <div className="mt-6 rounded-lg border border-primary/20 bg-muted/20 p-4">
+          <p className="text-sm leading-relaxed text-muted-foreground">
             <strong>Traditional Wisdom:</strong> These classic interpretations provide the foundation for understanding your reading. 
             The AI analysis above weaves these individual meanings into a cohesive narrative tailored to your specific question.
           </p>

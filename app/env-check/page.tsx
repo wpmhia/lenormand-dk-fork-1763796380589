@@ -49,8 +49,8 @@ export default function EnvCheckPage() {
       <div className="container mx-auto max-w-4xl p-6">
         <div className="mb-6">
           <h1 className="mb-2 text-3xl font-bold text-foreground">Environment Variables Status</h1>
-        <p className="mt-2 text-base text-muted-foreground flex items-center flex-wrap gap-1">
-            <span className="bg-muted px-2 py-1 text-muted-foreground font-semibold rounded-md">Steps</span> Switch to{' '}
+        <p className="mt-2 flex flex-wrap items-center gap-1 text-base text-muted-foreground">
+            <span className="rounded-md bg-muted px-2 py-1 font-semibold text-muted-foreground">Steps</span> Switch to{' '}
           <span className="inline-flex items-center gap-1 font-medium text-primary">
             <Code className="h-4 w-4" />
             Code
@@ -70,7 +70,7 @@ export default function EnvCheckPage() {
 
       {missingCount > 0 && (
         <>
-           <Alert className="mb-3 p-3 bg-destructive/10 text-destructive border-destructive">
+           <Alert className="bg-destructive/10 text-destructive border-destructive mb-3 p-3">
             <div className="flex items-center gap-2">
               <XCircle className="h-4 w-4 flex-shrink-0" />
               <AlertDescription>
@@ -85,7 +85,7 @@ export default function EnvCheckPage() {
       )}
 
       {missingCount === 0 && (
-        <Alert className="mb-6 p-4 bg-primary/10 border-primary/20 text-primary dark:bg-primary/20 dark:border-primary/30 dark:text-primary">
+        <Alert className="mb-6 border-primary/20 bg-primary/10 p-4 text-primary dark:border-primary/30 dark:bg-primary/20 dark:text-primary">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4" />
@@ -94,9 +94,9 @@ export default function EnvCheckPage() {
               </AlertDescription>
             </div>
             <Link href="/">
-              <Button className="bg-primary hover:bg-primary/90 text-white">
+              <Button className="bg-primary text-white hover:bg-primary/90">
                 Go to App
-                <ArrowRight className="h-4 w-4 ml-2" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -123,7 +123,7 @@ export default function EnvCheckPage() {
                   <div>
                     <h4 className="mb-1 text-sm font-semibold">How to get this variable:</h4>
                     <div 
-                      className="prose prose-sm max-w-none text-muted-foreground text-sm"
+                      className="prose prose-sm max-w-none text-sm text-muted-foreground"
                       dangerouslySetInnerHTML={{
                         __html: envVar.instructions
                           .replace(/\n/g, '<br>')
@@ -137,7 +137,7 @@ export default function EnvCheckPage() {
                   {isSet && (
                     <div>
                       <h4 className="mb-1 text-sm font-semibold">Current value (debug):</h4>
-                      <div className="break-all bg-muted p-2 text-xs font-mono rounded">
+                      <div className="break-all rounded bg-muted p-2 font-mono text-xs">
                         {envVar.name.includes('KEY') 
                           ? `${envValues[envVar.name].substring(0, 8)}...${envValues[envVar.name].substring(envValues[envVar.name].length - 4)}`
                           : envValues[envVar.name]

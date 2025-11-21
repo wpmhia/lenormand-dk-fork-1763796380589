@@ -239,7 +239,7 @@ export function ReadingViewer({
       return (
         <div className="space-y-4">
           {/* Reading Guide */}
-          <div className="text-center space-y-2">
+          <div className="space-y-2 text-center">
             <h3 className="text-lg font-semibold text-foreground">Grand Tableau Reading Guide</h3>
             <div className="text-sm text-muted-foreground">
               {significatorCard ? (
@@ -251,7 +251,7 @@ export function ReadingViewer({
           </div>
 
            {/* 6x6 Grid */}
-           <div className="grid grid-cols-6 gap-1 max-w-4xl mx-auto border-2 border-primary/20 rounded-lg p-2 bg-card/20">
+           <div className="mx-auto grid max-w-4xl grid-cols-6 gap-1 rounded-lg border-2 border-primary/20 bg-card/20 p-2">
              {reading.cards.map((readingCard, index) => {
                const card = getCardById(allCards, readingCard.id)
             if (!card) return null
@@ -265,7 +265,7 @@ export function ReadingViewer({
                     <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex flex-col items-center space-y-2">
-                         <div className="text-sm font-medium text-muted-foreground/90 bg-card/60 px-3 py-1 rounded-full border border-primary/30 backdrop-blur-sm">
+                         <div className="rounded-full border border-primary/30 bg-card/60 px-3 py-1 text-sm font-medium text-muted-foreground/90 backdrop-blur-sm">
                            {positionInfo.label}
                          </div>
                          <Card
@@ -276,12 +276,12 @@ export function ReadingViewer({
                          />
                       </div>
                     </TooltipTrigger>
-                     <TooltipContent className="max-w-xs bg-card/95 border-primary/30 text-muted-foreground backdrop-blur-sm">
+                     <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
                        <div className="space-y-2">
                          <p className="font-semibold text-muted-foreground">{positionInfo.label}</p>
                          <p className="text-sm text-muted-foreground/80">{positionInfo.meaning}</p>
                          <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                           <Info className="w-3 h-3" />
+                           <Info className="h-3 w-3" />
                            <span>Click card for details</span>
                          </div>
                        </div>
@@ -298,10 +298,10 @@ export function ReadingViewer({
      } else {
       // Linear layouts (3, 5 cards)
       return (
-        <div className={`grid gap-4 mx-auto ${
-          reading.layoutType === 3 ? 'grid-cols-1 sm:grid-cols-3 max-w-4xl' :
-          reading.layoutType === 5 ? 'grid-cols-1 sm:grid-cols-3 md:grid-cols-5 max-w-6xl' :
-          'grid-cols-1 sm:grid-cols-3 max-w-6xl'
+        <div className={`mx-auto grid gap-4 ${
+          reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
+          reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
+          'max-w-6xl grid-cols-1 sm:grid-cols-3'
         }`}>
           {reading.cards.map((readingCard, index) => {
             const card = getCardById(allCards, readingCard.id)
@@ -316,7 +316,7 @@ export function ReadingViewer({
                     <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex flex-col items-center space-y-2">
-                         <div className="text-sm font-medium text-muted-foreground/90 bg-card/60 px-3 py-1 rounded-full border border-primary/30 backdrop-blur-sm">
+                         <div className="rounded-full border border-primary/30 bg-card/60 px-3 py-1 text-sm font-medium text-muted-foreground/90 backdrop-blur-sm">
                            {positionInfo.label}
                          </div>
                          <Card
@@ -327,12 +327,12 @@ export function ReadingViewer({
                          />
                       </div>
                     </TooltipTrigger>
-                     <TooltipContent className="max-w-xs bg-card/95 border-primary/30 text-muted-foreground backdrop-blur-sm">
+                     <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
                        <div className="space-y-2">
                          <p className="font-semibold text-muted-foreground">{positionInfo.label}</p>
                          <p className="text-sm text-muted-foreground/80">{positionInfo.meaning}</p>
                          <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                           <Info className="w-3 h-3" />
+                           <Info className="h-3 w-3" />
                            <span>Click card for details</span>
                          </div>
                        </div>
@@ -352,17 +352,17 @@ export function ReadingViewer({
     <div className="space-y-6">
       {/* Reading Header */}
       {showReadingHeader && (
-        <div className="text-center space-y-2 slide-in-up">
-           <h2 className="text-3xl font-bold text-foreground relative">
+        <div className="slide-in-up space-y-2 text-center">
+           <h2 className="relative text-3xl font-bold text-foreground">
              {reading.title}
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-primary to-primary/80 rounded-full"></div>
+              <div className="absolute -bottom-2 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/80"></div>
            </h2>
            {reading.question && reading.question !== reading.title && (
-              <p className="text-muted-foreground/80 italic text-lg mt-4">&ldquo;{reading.question}&rdquo;</p>
+              <p className="mt-4 text-lg italic text-muted-foreground/80">&ldquo;{reading.question}&rdquo;</p>
            )}
-           <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground/70 mt-4">
+           <div className="mt-4 flex items-center justify-center gap-6 text-sm text-muted-foreground/70">
              <div className="flex items-center gap-2">
-               <Calendar className="w-4 h-4 text-primary" />
+               <Calendar className="h-4 w-4 text-primary" />
                {new Date(reading.createdAt).toLocaleDateString()}
              </div>
               <Badge variant="secondary">
@@ -374,16 +374,16 @@ export function ReadingViewer({
 
       {/* Share Button */}
       {showShareButton && onShare && (
-        <div className="flex justify-center slide-in-left">
-           <Button onClick={onShare} variant="outline" size="sm" className="border-primary/30 text-muted-foreground hover:bg-muted/50 hover:border-primary/60 backdrop-blur-sm">
-             <Share2 className="w-4 h-4 mr-2" />
+        <div className="slide-in-left flex justify-center">
+           <Button onClick={onShare} variant="outline" size="sm" className="border-primary/30 text-muted-foreground backdrop-blur-sm hover:border-primary/60 hover:bg-muted/50">
+             <Share2 className="mr-2 h-4 w-4" />
              Share Wisdom
            </Button>
         </div>
       )}
 
       {/* Cards Layout */}
-      <div className="py-6 fade-in-scale">
+      <div className="fade-in-scale py-6">
         {renderLayout()}
       </div>
 
@@ -399,11 +399,11 @@ export function ReadingViewer({
 
       {/* Combinations Panel */}
       {selectedCard && (
-          <div className="mt-6 p-6 bg-gradient-to-br from-card/60 via-muted/20 to-background/40 rounded-xl slide-in-up border border-primary/20 backdrop-blur-sm">
-           <div className="flex items-center gap-2 mb-4">
-             <h3 className="font-semibold text-lg text-foreground">Card Combinations</h3>
+          <div className="slide-in-up mt-6 rounded-xl border border-primary/20 bg-gradient-to-br from-card/60 via-muted/20 to-background/40 p-6 backdrop-blur-sm">
+           <div className="mb-4 flex items-center gap-2">
+             <h3 className="text-lg font-semibold text-foreground">Card Combinations</h3>
              <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-               <Info className="w-3 h-3" />
+               <Info className="h-3 w-3" />
                <span>How this card interacts with nearby cards</span>
              </div>
            </div>
@@ -416,7 +416,7 @@ export function ReadingViewer({
               
               if (adjacentCards.length === 0) {
                 return (
-                   <div className="text-center py-8 text-muted-foreground/60">
+                   <div className="py-8 text-center text-muted-foreground/60">
                      <p className="mb-2 italic">No adjacent cards in this layout</p>
                      <p className="text-sm">In larger spreads, this card would interact with nearby cards</p>
                    </div>
@@ -430,14 +430,14 @@ export function ReadingViewer({
                  const combination = getCombinationMeaning(selectedCard, card, readingCard.position, adjCard.position)
 
                 return (
-                   <div key={index} className="flex items-center gap-4 p-4 bg-card/40 rounded-lg border border-primary/20 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 backdrop-blur-sm">
+                   <div key={index} className="flex items-center gap-4 rounded-lg border border-primary/20 bg-card/40 p-4 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10">
                      <div className="flex items-center gap-3">
                         <Card card={selectedCard} size="sm" />
-                       <span className="text-primary font-medium text-lg">+</span>
+                       <span className="text-lg font-medium text-primary">+</span>
                        <Card card={card} size="sm" />
                      </div>
                      <div className="flex-1">
-                       <div className="font-medium text-muted-foreground mb-1">
+                       <div className="mb-1 font-medium text-muted-foreground">
                           {selectedCard.name} + {card.name}
                        </div>
                        <div className="text-sm text-muted-foreground/80">

@@ -89,7 +89,7 @@ export function Deck({
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="flex gap-3 justify-center slide-in-up">
+      <div className="slide-in-up flex justify-center gap-3">
         <Button
           onClick={shuffle}
           disabled={isShuffling || !Array.isArray(deck) || deck.length < drawCount}
@@ -97,7 +97,7 @@ export function Deck({
           size="sm"
           aria-label={isShuffling ? 'Shuffling deck...' : 'Shuffle the deck to randomize card order'}
         >
-          <Shuffle className="w-4 h-4 mr-2" aria-hidden="true" />
+          <Shuffle className="mr-2 h-4 w-4" aria-hidden="true" />
           Shuffle
         </Button>
         
@@ -107,7 +107,7 @@ export function Deck({
           size="sm"
           aria-label={isDrawing ? `Drawing ${drawCount} cards...` : `Draw ${drawCount} cards from the deck`}
         >
-          <Play className="w-4 h-4 mr-2" aria-hidden="true" />
+          <Play className="mr-2 h-4 w-4" aria-hidden="true" />
           Draw {drawCount} Cards
         </Button>
         
@@ -124,7 +124,7 @@ export function Deck({
       </div>
 
       {/* Deck Display */}
-      <div className="flex justify-center fade-in-scale">
+      <div className="fade-in-scale flex justify-center">
         {/* Make this container a clickable, keyboard-accessible control */}
         <div
           className={cn(
@@ -179,8 +179,8 @@ export function Deck({
                       className={isDrawing || deck.length < drawCount ? 'opacity-75' : ''}
                     />
                     {/* removed the separate absolute inset overlay in favor of the container handler above */}
-                    <div className="absolute top-2 right-2 pointer-events-none">
-                      <span className="bg-card/90 px-2 py-1 rounded text-sm font-bold">
+                    <div className="pointer-events-none absolute right-2 top-2">
+                      <span className="rounded bg-card/90 px-2 py-1 text-sm font-bold">
                         {deck.length}
                       </span>
                     </div>
@@ -194,8 +194,8 @@ export function Deck({
 
       {/* Drawn Cards */}
       {drawnCards.length > 0 && (
-        <div className="space-y-4 slide-in-up">
-          <h3 className="text-lg font-semibold text-center">Drawn Cards</h3>
+        <div className="slide-in-up space-y-4">
+          <h3 className="text-center text-lg font-semibold">Drawn Cards</h3>
           <div className="flex flex-wrap justify-center gap-6 sm:gap-4">
             {drawnCards.map((item, index) => (
               <div
@@ -216,7 +216,7 @@ export function Deck({
       )}
 
       {/* Status */}
-      <div className="text-center text-sm text-muted-foreground slide-in-left">
+      <div className="slide-in-left text-center text-sm text-muted-foreground">
         {deck.length === 0 && drawnCards.length === 0 && (
           <p>No cards in deck</p>
         )}
