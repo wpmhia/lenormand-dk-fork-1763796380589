@@ -229,8 +229,54 @@ export function ReadingViewer({
     }
   }
 
-  const renderLayout = () => {
-    if (reading.layoutType === 36) {
+   const renderLayout = () => {
+     if (reading.layoutType === 1) {
+       // Single card layout
+       return (
+         <div className="flex justify-center py-4">
+           {reading.cards.map((readingCard, index) => {
+             const card = getCardById(allCards, readingCard.id)
+             if (!card) return null
+
+             const positionInfo = getPositionInfo(index, spreadId)
+
+             return (
+               <AnimatedCard key={index} delay={0} className="flex flex-col items-center space-y-3">
+                 <TooltipProvider>
+                   <div className="flex flex-col items-center space-y-3">
+                     <Tooltip>
+                     <TooltipTrigger asChild>
+                       <div className="flex flex-col items-center space-y-2">
+                          <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                            {positionInfo.label}
+                          </div>
+                          <Card
+                            card={card}
+                            size="lg"
+                            onClick={() => setSelectedCard(card)}
+                            className="cursor-pointer hover:shadow-lg"
+                          />
+                       </div>
+                     </TooltipTrigger>
+                      <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
+                        <div className="space-y-2">
+                          <p className="font-semibold text-muted-foreground">{positionInfo.label}</p>
+                          <p className="text-sm text-muted-foreground/80">{positionInfo.meaning}</p>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
+                            <Info className="h-3 w-3" />
+                            <span>Click card for details</span>
+                          </div>
+                        </div>
+                      </TooltipContent>
+                     </Tooltip>
+                   </div>
+                 </TooltipProvider>
+               </AnimatedCard>
+             )
+           })}
+         </div>
+       )
+     } else if (reading.layoutType === 36) {
       // Grand Tableau - 6x6 grid with house positions
       // Find significator (Woman #29 or Man #28)
       const significatorIndex = reading.cards.findIndex(rc => rc.id === 29 || rc.id === 28)
@@ -301,6 +347,8 @@ export function ReadingViewer({
          <div className={`mx-auto grid gap-4 ${
            reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
            reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
+           reading.layoutType === 7 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-7' :
+           reading.layoutType === 9 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-3' :
            'max-w-6xl grid-cols-1 sm:grid-cols-3'
          }`}>
            {reading.cards.map((readingCard, index) => {

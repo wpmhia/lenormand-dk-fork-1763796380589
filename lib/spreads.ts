@@ -7,12 +7,15 @@ export interface Spread {
 
 // Comprehensive spread selection - direct manual control
 export const COMPREHENSIVE_SPREADS: Spread[] = [
-  // 3-Card Spreads
-  { id: "sentence-3", cards: 3, label: "Sentence Reading", description: "Flowing 3-card sentence interpretation" },
+  // 3-Card Spreads (Default: Past, Present, Future)
   { id: "past-present-future", cards: 3, label: "Past, Present, Future", description: "Classic timeline reading" },
+  { id: "sentence-3", cards: 3, label: "Sentence Reading", description: "Flowing 3-card sentence interpretation" },
   { id: "yes-no-maybe", cards: 3, label: "Yes or No", description: "Binary decision guidance" },
   { id: "situation-challenge-advice", cards: 3, label: "Situation, Challenge, Advice", description: "Problem-solving spread" },
   { id: "mind-body-spirit", cards: 3, label: "Mind, Body, Spirit", description: "Holistic balance reading" },
+
+  // 1-Card Spread
+  { id: "single-card", cards: 1, label: "Single Card", description: "Quick insight and straightforward guidance" },
 
   // 5-Card Spreads
   { id: "sentence-5", cards: 5, label: "Sentence Reading", description: "Flowing 5-card sentence interpretation" },
@@ -23,7 +26,7 @@ export const COMPREHENSIVE_SPREADS: Spread[] = [
   { id: "relationship-double-significator", cards: 7, label: "Relationship Reading", description: "Love and partnership guidance" },
 
   // 9-Card Spreads
-  { id: "comprehensive", cards: 9, label: "Annual Forecast", description: "Year-ahead comprehensive reading" },
+  { id: "comprehensive", cards: 9, label: "Nine-Card Portrait", description: "Master spread for in-depth guidance" },
 
   // 36-Card Spreads
   { id: "grand-tableau", cards: 36, label: "Grand Tableau", description: "Full deck comprehensive reading" }
