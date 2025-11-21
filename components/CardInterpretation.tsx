@@ -72,15 +72,15 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
 
   return (
     <Card className="slide-in-left border-border bg-card">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-card-foreground">
-          <BookOpen className="h-5 w-5 text-primary/80" />
-          Traditional Card Meanings
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Classic Lenormand interpretations for your question: &quot;{question}&quot;
-        </p>
-      </CardHeader>
+       <CardHeader>
+         <CardTitle className="flex items-center gap-2">
+           <BookOpen className="h-5 w-5 text-primary" />
+           Traditional Card Meanings
+         </CardTitle>
+         <p className="mt-2 text-sm text-muted-foreground">
+           Classic Lenormand interpretations for your question: &quot;{question}&quot;
+         </p>
+       </CardHeader>
       <CardContent className="space-y-4">
         {cards.map((card, index) => {
           const fullCard = getCardById(allCards, card.id)
@@ -89,20 +89,20 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
           const keywords = getCardKeywords(card)
           
           return (
-            <div 
-              key={`${card.id}-${index}`} 
-              className="rounded-lg border border-slate-700 bg-muted/30 p-4 transition-colors hover:bg-muted/50"
-            >
+             <div 
+               key={`${card.id}-${index}`} 
+               className="rounded-lg border border-border bg-card p-4"
+             >
               <div className="mb-3 flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className="text-2xl" aria-hidden="true">
                     {fullCard?.emoji || '🃏'}
                   </div>
                   <div>
-                    <h3 className="font-medium text-foreground">
-                      {fullCard?.name || 'Unknown Card'}
-                    </h3>
-                    <p className="text-sm font-medium text-primary">
+                     <h3 className="text-foreground">
+                       {fullCard?.name || 'Unknown Card'}
+                     </h3>
+                     <p className="text-sm text-primary">
                       {positionInfo.title}
                     </p>
                   </div>
@@ -118,33 +118,33 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
                 </p>
               )}
               
-              <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
-                {meaning}
-              </p>
+               <p className="mb-3 text-sm text-foreground">
+                 {meaning}
+               </p>
               
               {keywords.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  {keywords.map((keyword, keywordIndex) => (
-                    <Badge 
-                      key={keywordIndex} 
-                      variant="secondary" 
-                      className="border-border bg-muted/50 text-xs text-muted-foreground"
-                    >
-                      {keyword}
-                    </Badge>
-                  ))}
+                   {keywords.map((keyword, keywordIndex) => (
+                     <Badge 
+                       key={keywordIndex} 
+                       variant="secondary" 
+                       className="border-border text-xs"
+                     >
+                       {keyword}
+                     </Badge>
+                   ))}
                 </div>
               )}
             </div>
           )
         })}
         
-        <div className="mt-6 rounded-lg border border-primary/20 bg-muted/20 p-4">
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            <strong>Traditional Wisdom:</strong> These classic interpretations provide the foundation for understanding your reading. 
-            The AI analysis above weaves these individual meanings into a cohesive narrative tailored to your specific question.
-          </p>
-        </div>
+         <div className="mt-6 rounded-lg border border-border bg-card p-4">
+           <p className="text-sm text-foreground">
+             <strong>Traditional Wisdom:</strong> These classic interpretations provide the foundation for understanding your reading. 
+             The AI analysis above weaves these individual meanings into a cohesive narrative tailored to your specific question.
+           </p>
+         </div>
       </CardContent>
     </Card>
   )
