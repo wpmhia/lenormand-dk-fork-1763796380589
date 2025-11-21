@@ -93,6 +93,18 @@
     @apply container max-w-6xl;
   }
 
+  .container-hero {
+    @apply container mx-auto max-w-6xl py-6;
+  }
+
+  .container-section {
+    @apply container mx-auto max-w-6xl py-8;
+  }
+
+  .container-cta {
+    @apply container mx-auto max-w-4xl py-8;
+  }
+
   /* Grid System */
   .grid-auto { @apply grid gap-6 lg:gap-8; }
   .grid-1 { @apply grid-cols-1; }
