@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card as CardType, ReadingCard } from '@/lib/types'
 import { ReadingViewer } from '@/components/ReadingViewer'
@@ -22,6 +22,7 @@ import { COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 
 function NewReadingPageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [allCards, setAllCards] = useState<CardType[]>([])
   const [step, setStep] = useState<'setup' | 'drawing' | 'results'>('setup')
   const [question, setQuestion] = useState('')
@@ -40,6 +41,7 @@ function NewReadingPageContent() {
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
   const [questionCharCount, setQuestionCharCount] = useState(0)
   const [debugLog, setDebugLog] = useState<string[]>([])
+  const [lastResetParam, setLastResetParam] = useState<string | null>(null)
 
    const cardsDrawnRef = useRef(false)
    const mountedRef = useRef(true)
@@ -52,6 +54,30 @@ function NewReadingPageContent() {
   }, [])
 
   const canProceed = true
+
+  // Handle reset parameter from New Reading button
+  useEffect(() => {
+    const resetParam = searchParams.get('reset')
+    if (resetParam && resetParam !== lastResetParam) {
+      setLastResetParam(resetParam)
+      setStep('setup')
+      setDrawnCards([])
+      cardsDrawnRef.current = false
+      setQuestion('')
+      setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+      setError('')
+      setAiReading(null)
+      setAiLoading(false)
+      setAiError(null)
+      setAiAttempted(false)
+      aiStartedRef.current = false
+      setPhysicalCards('')
+      setPhysicalCardsError(null)
+      setParsedCards([])
+      setCardSuggestions([])
+      setPath(null)
+    }
+  }, [searchParams, lastResetParam])
 
   // Load cards on mount
   useEffect(() => {
