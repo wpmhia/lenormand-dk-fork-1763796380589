@@ -66,6 +66,26 @@ ${cardsText}
 Provide a detailed and insightful interpretation based on traditional Lenormand meanings and card combinations. 
 Focus on the narrative flow and how the cards interact with each other.
 If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.
+
+IMPORTANT: Start your response directly with the interpretation content. Do NOT include any introductory phrases like "Of course", "Certainly", "Here's", or similar preambles. Begin immediately with the reading.
+`
+}
+  }
+
+  return `
+You are an expert Lenormand reader. Please interpret the following spread.
+
+Question: ${request.question || "General Reading"}
+${spreadContext}${spreadRules}
+
+Cards:
+${cardsText}
+
+Provide a detailed and insightful interpretation based on traditional Lenormand meanings and card combinations. 
+Focus on the narrative flow and how the cards interact with each other.
+If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.
+
+IMPORTANT: Start your response directly with the interpretation content. Do NOT include any introductory phrases like "Of course", "Certainly", "Here's", or similar preambles. Begin immediately with the reading.
 `
 }
 
@@ -85,7 +105,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
 
     try {
       console.log('Sending request to DeepSeek API...');
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+       const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +114,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are a helpful and mystical Lenormand card reader." },
+            { role: 'system', content: "You are a mystical Lenormand card reader who provides interpretations directly without introductory phrases or preambles. Start your response immediately with the reading content." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
@@ -163,7 +183,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
 
     try {
       console.log('Sending streaming request to DeepSeek API...');
-      const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+       const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +192,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are a helpful and mystical Lenormand card reader." },
+            { role: 'system', content: "You are a mystical Lenormand card reader who provides interpretations directly without introductory phrases or preambles. Start your response immediately with the reading content." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
