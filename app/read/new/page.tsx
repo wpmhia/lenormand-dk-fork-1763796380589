@@ -433,31 +433,31 @@ function NewReadingPageContent() {
                          <div className="mb-4 flex items-center justify-center gap-2">
                            <span className="text-sm text-muted-foreground">Reading method:</span>
                            <div className="flex rounded-lg bg-muted p-1">
-                             <Button
-                               size="sm"
-                               variant={path === 'virtual' ? 'default' : 'ghost'}
-                               onClick={() => {
-                                 setPath('virtual')
-                                 setPhysicalCards('')
-                                 setPhysicalCardsError(null)
-                                 setParsedCards([])
-                                 setCardSuggestions([])
-                               }}
-                               className="text-xs whitespace-nowrap"
-                             >
-                               ✨ Virtual Draw
-                             </Button>
                               <Button
                                 size="sm"
-                                variant={path === 'physical' ? 'default' : 'ghost'}
+                                variant={path === 'virtual' ? 'default' : 'ghost'}
                                 onClick={() => {
-                                  setPath('physical')
-                                  setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                  setPath('virtual')
+                                  setPhysicalCards('')
+                                  setPhysicalCardsError(null)
+                                  setParsedCards([])
+                                  setCardSuggestions([])
                                 }}
-                                className="text-xs whitespace-nowrap"
+                                className="text-xs whitespace-nowrap px-4"
                               >
-                                🎴 Physical Cards
+                                ✨ Virtual Draw
                               </Button>
+                               <Button
+                                 size="sm"
+                                 variant={path === 'physical' ? 'default' : 'ghost'}
+                                 onClick={() => {
+                                   setPath('physical')
+                                   setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                 }}
+                                 className="text-xs whitespace-nowrap px-4"
+                               >
+                                 🎴 Physical Cards
+                               </Button>
                            </div>
                          </div>
 
