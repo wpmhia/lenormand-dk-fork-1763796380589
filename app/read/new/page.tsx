@@ -429,37 +429,37 @@ function NewReadingPageContent() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {/* Path Switcher */}
-                        <div className="mb-4 flex items-center justify-center gap-2">
-                          <span className="text-sm text-muted-foreground">Reading method:</span>
-                          <div className="flex rounded-lg bg-muted p-1">
-                            <Button
-                              size="sm"
-                              variant={path === 'virtual' ? 'default' : 'ghost'}
-                              onClick={() => {
-                                setPath('virtual')
-                                setPhysicalCards('')
-                                setPhysicalCardsError(null)
-                                setParsedCards([])
-                                setCardSuggestions([])
-                              }}
-                              className="text-xs"
-                            >
-                              ✨ Virtual Draw
-                            </Button>
+                         {/* Path Switcher */}
+                         <div className="mb-4 flex items-center justify-center gap-2">
+                           <span className="text-sm text-muted-foreground">Reading method:</span>
+                           <div className="flex rounded-lg bg-muted p-1">
                              <Button
                                size="sm"
-                               variant={path === 'physical' ? 'default' : 'ghost'}
+                               variant={path === 'virtual' ? 'default' : 'ghost'}
                                onClick={() => {
-                                 setPath('physical')
-                                 setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                 setPath('virtual')
+                                 setPhysicalCards('')
+                                 setPhysicalCardsError(null)
+                                 setParsedCards([])
+                                 setCardSuggestions([])
                                }}
-                               className="text-xs"
+                               className="text-xs whitespace-nowrap"
                              >
-                               🎴 Physical Cards
+                               ✨ Virtual Draw
                              </Button>
-                          </div>
-                        </div>
+                              <Button
+                                size="sm"
+                                variant={path === 'physical' ? 'default' : 'ghost'}
+                                onClick={() => {
+                                  setPath('physical')
+                                  setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                }}
+                                className="text-xs whitespace-nowrap"
+                              >
+                                🎴 Physical Cards
+                              </Button>
+                           </div>
+                         </div>
 
                         {/* Manual Spread Selection - Show for both paths */}
                         {(path === 'physical' || path === 'virtual') && (
