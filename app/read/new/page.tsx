@@ -183,6 +183,10 @@ function NewReadingPageContent() {
       if (currentPath === 'physical') {
         // Parse physical cards input
         readingCards = parsePhysicalCards(cards);
+        if (readingCards.length === 0) {
+          setError('No valid cards found. Please check your card input.')
+          return
+        }
       } else {
         // Draw random cards (virtual path)
         readingCards = drawCards(cards, currentSpread.cards);
