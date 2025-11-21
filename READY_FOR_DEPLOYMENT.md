@@ -45,10 +45,17 @@ NEXT_PUBLIC_DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
 ## 🚀 Quick Deploy
 
 ### Vercel (Recommended)
-1. Push to GitHub
-2. Connect repository to Vercel
-3. Set environment variables
-4. Auto-deploy on push
+1. **Remove vercel.json** (if exists) - Let Vercel auto-detect Next.js
+2. Push to GitHub
+3. Connect repository to Vercel
+4. Set environment variables:
+   - `DEEPSEEK_API_KEY`
+   - `DEEPSEEK_BASE_URL` 
+   - `NEXT_PUBLIC_DEEPSEEK_API_KEY`
+   - `NEXT_PUBLIC_DEEPSEEK_BASE_URL`
+5. Auto-deploy on push
+
+**Note**: If you get "routes-manifest.json" error, see `VERCEL_DEPLOYMENT_FIX.md`
 
 ### Manual Deploy
 ```bash
