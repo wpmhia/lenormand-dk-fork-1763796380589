@@ -169,6 +169,15 @@
     @apply h-8 px-3 text-xs;
   }
 
+  /* Hero button group */
+  .btn-group-hero {
+    @apply mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row;
+  }
+
+  .btn-group-hero button {
+    @apply h-16 flex-1 rounded-xl;
+  }
+
   /* Forms */
   input,
   textarea,

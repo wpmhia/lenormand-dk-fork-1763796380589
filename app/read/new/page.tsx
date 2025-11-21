@@ -383,7 +383,7 @@ function NewReadingPageContent() {
                           <Label className="mb-4 block text-lg font-medium text-foreground">
                             Choose your reading path
                           </Label>
-                          <div className="mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row">
+                          <div className="btn-group-hero">
                             <Button
                               onClick={() => {
                                 setPath('virtual')
@@ -393,7 +393,7 @@ function NewReadingPageContent() {
                                   if (questionField) questionField.focus()
                                 }, 100)
                               }}
-                              className="h-16 flex-1 bg-primary text-base font-medium text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90"
+                              className="bg-primary text-base font-medium text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90"
                               size="lg"
                             >
                               ✨ Draw cards for me
@@ -409,7 +409,7 @@ function NewReadingPageContent() {
                                    if (textarea) textarea.focus()
                                  }, 100)
                                }}
-                               className="h-16 flex-1 border-border text-base font-medium text-foreground hover:bg-muted"
+                               className="border-border text-base font-medium text-foreground hover:bg-muted"
                                size="lg"
                              >
                                🎴 I already have cards
@@ -432,7 +432,7 @@ function NewReadingPageContent() {
                          {/* Path Switcher */}
                          <div className="mb-4 flex items-center justify-center gap-2">
                            <span className="text-sm text-muted-foreground">Reading method:</span>
-                           <div className="inline-flex rounded-lg border border-border bg-muted p-0.5">
+                           <div className="btn-group">
                              <Button
                                size="sm"
                                variant={path === 'virtual' ? 'default' : 'ghost'}
@@ -443,7 +443,7 @@ function NewReadingPageContent() {
                                  setParsedCards([])
                                  setCardSuggestions([])
                                }}
-                               className="text-xs h-8 px-3"
+                               className="btn-group-item"
                              >
                                ✨ Virtual Draw
                              </Button>
@@ -454,7 +454,7 @@ function NewReadingPageContent() {
                                   setPath('physical')
                                   setSelectedSpread(COMPREHENSIVE_SPREADS[0])
                                 }}
-                                className="text-xs h-8 px-3"
+                                className="btn-group-item"
                               >
                                 🎴 Physical Cards
                               </Button>
