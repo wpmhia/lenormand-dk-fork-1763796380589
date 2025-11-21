@@ -24,11 +24,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
 
       </head>
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
           <div className="bg-background text-foreground flex flex-col min-h-screen">
             <Header />
@@ -37,10 +37,10 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-           <Toaster />
-           <CookieConsent />
-         </ThemeProvider>
-       </body>
+            <Toaster />
+            <CookieConsent />
+          </ThemeProvider>
+      </body>
     </html>
   );
 }
