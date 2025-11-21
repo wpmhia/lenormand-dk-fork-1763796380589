@@ -432,10 +432,10 @@ function NewReadingPageContent() {
                          {/* Path Switcher */}
                          <div className="mb-4 flex items-center justify-center gap-2">
                            <span className="text-sm text-muted-foreground">Reading method:</span>
-                           <div className="flex gap-0">
+                           <div className="flex gap-0 border border-border rounded-lg overflow-hidden">
                              <Button
                                size="sm"
-                               variant={path === 'virtual' ? 'default' : 'outline'}
+                               variant="outline"
                                onClick={() => {
                                  setPath('virtual')
                                  setPhysicalCards('')
@@ -443,18 +443,26 @@ function NewReadingPageContent() {
                                  setParsedCards([])
                                  setCardSuggestions([])
                                }}
-                               className="text-xs whitespace-nowrap rounded-r-none border-r-0"
+                               className={`text-xs whitespace-nowrap rounded-none border-0 ${
+                                 path === 'virtual'
+                                   ? 'bg-primary text-primary-foreground'
+                                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                               }`}
                              >
                                ✨ Virtual Draw
                              </Button>
                               <Button
                                 size="sm"
-                                variant={path === 'physical' ? 'default' : 'outline'}
+                                variant="outline"
                                 onClick={() => {
                                   setPath('physical')
                                   setSelectedSpread(COMPREHENSIVE_SPREADS[0])
                                 }}
-                                className="text-xs whitespace-nowrap rounded-l-none"
+                                className={`text-xs whitespace-nowrap rounded-none border-0 border-l border-border ${
+                                  path === 'physical'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                                }`}
                               >
                                 🎴 Physical Cards
                               </Button>
