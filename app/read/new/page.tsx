@@ -158,10 +158,22 @@ function NewReadingPageContent() {
     const readingCards: ReadingCard[] = []
 
     cardInputs.forEach((cardInput, i) => {
-      const card = allCards.find(c =>
-        c.name.toLowerCase().includes(cardInput.toLowerCase()) ||
-        c.keywords.some(k => k.toLowerCase().includes(cardInput.toLowerCase()))
-      )
+      let card: CardType | undefined
+      
+      // Try to match by card number first
+      const cardNum = parseInt(cardInput, 10)
+      if (!isNaN(cardNum)) {
+        card = allCards.find(c => c.id === cardNum)
+      }
+      
+      // If not found by number, try by name or keywords
+      if (!card) {
+        card = allCards.find(c =>
+          c.name.toLowerCase().includes(cardInput.toLowerCase()) ||
+          c.keywords.some(k => k.toLowerCase().includes(cardInput.toLowerCase()))
+        )
+      }
+      
       if (card) {
         readingCards.push({
           id: card.id,
