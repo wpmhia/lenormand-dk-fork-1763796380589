@@ -50,15 +50,11 @@ export function Card({
     return (
       <div
         className={cn(
-            'relative card-mystical rounded-xl cursor-pointer flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background will-change-transform',
+            'relative card-mystical rounded-xl cursor-pointer flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background will-change-transform overflow-hidden',
            sizeClasses[size],
            className
          )}
         onClick={handleCardClick}
-        onMouseEnter={() => {
-          // Soft bell at 432 Hz, 80 ms, −18 dB - felt, not heard
-          // Implementation: playGentleBell()
-        }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
@@ -69,17 +65,17 @@ export function Card({
         role="button"
         aria-label="Lenormand card back. Click to draw or select card"
       >
-        {/* Single background layer */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/90 via-primary/80 to-muted/90"></div>
+        {/* Card Back Image */}
+        <Image
+          src="/images/card-back.png"
+          alt="Card back"
+          fill
+          className="object-cover"
+          sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
+        />
 
-        {/* Single opacity overlay for hover/focus - GPU accelerated */}
-        <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent via-primary/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus:opacity-100"></div>
-
-        <div className="relative z-10 text-center text-card-foreground">
-          <div className="mb-2 text-4xl opacity-90">✦</div>
-          <div className="text-sm font-bold tracking-wider text-muted-foreground opacity-90 transition-colors duration-300 group-hover:text-foreground">LENORMAND</div>
-          <div className="mt-1 text-xs text-muted-foreground opacity-70 transition-opacity duration-300 group-hover:opacity-90">MYSTICAL DIVINATION</div>
-        </div>
+        {/* Hover overlay */}
+        <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent via-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus:opacity-100"></div>
       </div>
     )
   }
