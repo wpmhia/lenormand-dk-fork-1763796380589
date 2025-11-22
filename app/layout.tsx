@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   title: 'Lenormand Intelligence',
   description: 'Discover guidance and insight through mystical Lenormand cards. Create personalized readings, explore card meanings, and unlock wisdom of the 36-card deck.',
   icons: {
-    icon: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
 };
 
