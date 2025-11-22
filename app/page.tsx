@@ -32,7 +32,7 @@ export default function Home() {
             </h1>
             <p className="mb-4 max-w-2xl text-lg font-normal leading-relaxed text-foreground sm:text-xl">
               Ancient cards. Modern insight.
-              <span className="mt-2 block text-muted-foreground">AI-powered Lenormand readings at your fingertips.</span>
+              <span className="mt-2 block text-muted-foreground">Ancient Lenormand wisdom meets AI-enhanced personalized guidance.</span>
             </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
                <Link href="/read/new">
