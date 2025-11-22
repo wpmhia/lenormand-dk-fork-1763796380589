@@ -590,15 +590,7 @@ function NewReadingPageContent() {
                     </Button>
                   )}
 
-
                   <div className="text-center">
-                    <Button
-                      onClick={() => setStep('setup')}
-                      variant="outline"
-                      className="mt-4"
-                    >
-                      ← Back
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
