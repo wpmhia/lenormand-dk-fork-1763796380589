@@ -5,10 +5,7 @@ import { Card as CardType } from '@/lib/types'
 import { Card } from '@/components/Card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, Filter, Grid, List } from 'lucide-react'
-import Link from 'next/link'
+import { Search } from 'lucide-react'
 import { getCards } from '@/lib/data'
 
 export default function CardsPage() {
@@ -16,13 +13,11 @@ export default function CardsPage() {
   const [filteredCards, setFilteredCards] = useState<CardType[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState<'number' | 'name'>('number')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [loading, setLoading] = useState(true)
 
   const filterAndSortCards = useCallback(() => {
     let filtered = cards
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(card =>
         card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -33,7 +28,6 @@ export default function CardsPage() {
       )
     }
 
-    // Sort
     filtered = [...filtered].sort((a, b) => {
       if (sortBy === 'number') {
         return a.id - b.id
@@ -64,46 +58,72 @@ export default function CardsPage() {
     }
   }
 
-  const getAllKeywords = () => {
-    const keywords = new Set<string>()
-    cards.forEach(card => {
-      card.keywords.forEach(keyword => keywords.add(keyword))
-    })
-    return Array.from(keywords).sort()
-  }
-
   if (loading) {
     return (
-      <div className="page-layout">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-foreground">Loading cards...</div>
-        </div>
+      <div className="container-section">
+        <div className="text-center text-foreground">Loading cards...</div>
       </div>
     )
   }
 
   return (
-    <div className="page-layout">
-      <div className="container mx-auto max-w-6xl px-4 py-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">The Sacred Deck</h1>
-            <p className="ethereal-glow text-muted-foreground">
-              Journey through the 36 archetypes that hold the keys to understanding
-            </p>
-        </div>
+    <div className="container-section">
+      <div className="mb-8">
+        <h1>The Sacred Deck</h1>
+        <p className="ethereal-glow mt-2">
+          Journey through the 36 archetypes that hold the keys to understanding
+        </p>
+      </div>
 
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {filteredCards.map((card) => (
-             <div key={card.id} className="group cursor-pointer space-y-1">
-              <Card card={card} size="md" className="duration-600 mystical-float mx-auto transition-all group-hover:scale-105" />
-              <div className="text-center">
-                <div className="truncate text-sm font-medium text-foreground sm:text-xs">{card.name}</div>
-                <div className="text-sm text-muted-foreground sm:text-xs">#{card.id}</div>
-              </div>
-            </div>
-          ))}
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search cards by name, keyword, or meaning..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant={sortBy === 'number' ? 'default' : 'outline'}
+            onClick={() => setSortBy('number')}
+            size="sm"
+          >
+            Sort by Number
+          </Button>
+          <Button
+            variant={sortBy === 'name' ? 'default' : 'outline'}
+            onClick={() => setSortBy('name')}
+            size="sm"
+          >
+            Sort by Name
+          </Button>
         </div>
       </div>
+
+      <div className="grid grid-1 gap-6 grid-2 grid-3 grid-4">
+        {filteredCards.map((card) => (
+          <div key={card.id} className="space-component">
+            <Card 
+              card={card} 
+              size="md" 
+              className="mystical-float group mx-auto group-hover:scale-105" 
+            />
+            <div className="text-center">
+              <div className="truncate text-sm font-medium text-foreground">{card.name}</div>
+              <div className="text-xs text-muted-foreground">#{card.id}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredCards.length === 0 && (
+        <div className="text-center text-muted-foreground">
+          No cards found matching your search.
+        </div>
+      )}
     </div>
   )
 }

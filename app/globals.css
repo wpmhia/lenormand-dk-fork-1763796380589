@@ -134,11 +134,20 @@
     transform: translateY(-4px);
   }
 
-  .card-mystical img {
-    @apply w-full h-full object-cover object-center rounded-[6px];
-  }
+   .card-mystical img {
+     @apply w-full h-full object-cover object-center rounded-[6px];
+   }
 
-  /* Loading States */
+   /* Typography Effects */
+   .ethereal-glow {
+     @apply text-muted-foreground;
+   }
+
+   .mystical-float {
+     @apply transition-all duration-300;
+   }
+
+   /* Loading States */
   .loading-skeleton {
     @apply animate-pulse rounded bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200;
   }
