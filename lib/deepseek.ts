@@ -135,7 +135,7 @@ const SPREAD_RULES: Record<string, string> = {
   "structured-reading": "Write 130-180 words. Explore the 5 cards as one story. Core tension opens; each card moves it forward. End with actionable when/where guidance.",
   "week-ahead": "Write 150-200 words. Open with the week's arc. Each card shifts or deepens the momentum. End with 'by [day]' or 'mid-week' timing.",
   "relationship-double-significator": "Write 160-220 words. Two people (Cards 1-2), what flows between them (Card 3), their thoughts (Cards 4-5), their feelings (Cards 6-7). Build one narrative arc. End with where-to-see-it tag.",
-  "comprehensive": "Write 180-260 words. Map the 9-card square from center (Card 5) outward. Use pairs and adjacencies to build meaning. Each layer moves the story forward. End with when/where tag."
+  "comprehensive": "Write 180-260 words. Map the 9-card square from center (Card 5) outward. Use pairs and adjacencies to build meaning. Each layer moves the story forward. End with when/where tag.",
   "grand-tableau": "Write 220-320 words. Navigate from Card 28/29 (querent) outward. Immediate influences, neighbor pairs, patterns. Use knighting and mirroring. Build one sweeping narrative of concerns, relationships, challenges, resources. End with when/where tag."
 }
 
