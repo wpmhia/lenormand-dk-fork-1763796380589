@@ -17,42 +17,42 @@ import {
 import { useState } from 'react'
 
 const cardMeanings = [
-  { number: 1, name: "The Rider", keywords: ["News", "Messages", "Communication", "Speed"], associations: ["Letters", "Visitors", "Quick changes", "News from afar"] },
-  { number: 2, name: "The Clover", keywords: ["Luck", "Opportunity", "Happiness", "Risk"], associations: ["Good fortune", "Short-term luck", "Gambling", "Taking chances"] },
-  { number: 3, name: "The Ship", keywords: ["Travel", "Journey", "Distance", "Progress"], associations: ["Long journeys", "Moving away", "Business trips", "Progress over time"] },
-  { number: 4, name: "The House", keywords: ["Home", "Family", "Security", "Foundation"], associations: ["Family matters", "Property", "Stability", "Long-term planning"] },
-  { number: 5, name: "The Tree", keywords: ["Health", "Growth", "Nature", "Longevity"], associations: ["Physical health", "Healing", "Personal growth", "Family tree"] },
-  { number: 6, name: "The Clouds", keywords: ["Confusion", "Uncertainty", "Secrets", "Thoughts"], associations: ["Mental fog", "Hidden information", "Doubts", "Indecision"] },
-  { number: 7, name: "The Snake", keywords: ["Deception", "Wisdom", "Healing", "Transformation"], associations: ["Betrayal", "Hidden enemies", "Medical issues", "Personal growth"] },
-  { number: 8, name: "The Coffin", keywords: ["Endings", "Transformation", "Grief", "Release"], associations: ["Death of situation", "Major change", "Letting go", "New beginnings"] },
-  { number: 9, name: "The Bouquet", keywords: ["Gifts", "Celebration", "Beauty", "Gratitude"], associations: ["Presents", "Romance", "Social events", "Appreciation"] },
-  { number: 10, name: "The Scythe", keywords: ["Cutting", "Decisions", "Sudden change", "Surgery"], associations: ["Breaking free", "Harvesting", "Sudden events", "Making choices"] },
-  { number: 11, name: "The Whip", keywords: ["Conflict", "Arguments", "Discipline", "Repetition"], associations: ["Quarrels", "Physical punishment", "Mental abuse", "Endless cycles"] },
-  { number: 12, name: "The Birds", keywords: ["Communication", "Conversation", "Worry", "Thoughts"], associations: ["Phone calls", "Gossip", "Anxiety", "Mental chatter"] },
-  { number: 13, name: "The Child", keywords: ["New beginnings", "Innocence", "Youth", "Potential"], associations: ["Children", "New projects", "Fresh starts", "Naivety"] },
-  { number: 14, name: "The Fox", keywords: ["Cunning", "Deception", "Intelligence", "Caution"], associations: ["Trickery", "Business dealings", "Street smarts", "Being careful"] },
-  { number: 15, name: "The Bear", keywords: ["Strength", "Protection", "Authority", "Wealth"], associations: ["Power", "Leadership", "Financial security", "Mother figure"] },
-  { number: 16, name: "The Stars", keywords: ["Hope", "Inspiration", "Spirituality", "Guidance"], associations: ["Dreams", "Intuition", "Divine guidance", "Wishes coming true"] },
-  { number: 17, name: "The Stork", keywords: ["Change", "Movement", "New life", "Progress"], associations: ["Pregnancy", "Moving house", "Life transitions", "Positive change"] },
-  { number: 18, name: "The Dog", keywords: ["Loyalty", "Friendship", "Trust", "Protection"], associations: ["True friends", "Faithful companion", "Dependability", "Guardianship"] },
-  { number: 19, name: "The Tower", keywords: ["Authority", "Government", "Isolation", "Structure"], associations: ["Official matters", "Institutions", "Solitude", "Rigid systems"] },
-  { number: 20, name: "The Garden", keywords: ["Public life", "Community", "Gatherings", "Growth"], associations: ["Social events", "Public recognition", "Networking", "Community involvement"] },
-  { number: 21, name: "The Mountain", keywords: ["Obstacles", "Challenges", "Patience", "Perspective"], associations: ["Difficulties", "Delays", "High goals", "Overcoming barriers"] },
-  { number: 22, name: "The Crossroads", keywords: ["Choices", "Decisions", "Direction", "Opportunity"], associations: ["Multiple paths", "Life choices", "Crossroads in life", "New directions"] },
-  { number: 23, name: "The Mice", keywords: ["Loss", "Theft", "Stress", "Small problems"], associations: ["Financial loss", "Worries", "Pests", "Gradual deterioration"] },
-  { number: 24, name: "The Heart", keywords: ["Love", "Emotions", "Relationships", "Passion"], associations: ["Romantic love", "Emotional matters", "Deep feelings", "Heart chakra"] },
-  { number: 25, name: "The Ring", keywords: ["Commitment", "Contracts", "Cycles", "Partnership"], associations: ["Marriage", "Agreements", "Endless cycles", "Binding agreements"] },
-  { number: 26, name: "The Book", keywords: ["Knowledge", "Secrets", "Learning", "Mystery"], associations: ["Education", "Hidden information", "Research", "Confidential matters"] },
-  { number: 27, name: "The Letter", keywords: ["Communication", "Documents", "News", "Information"], associations: ["Important mail", "Legal documents", "Messages", "Correspondence"] },
-  { number: 28, name: "The Gentleman", keywords: ["Man", "Authority figure", "Partner", "Masculine energy"], associations: ["Husband", "Father", "Boss", "Male friend"] },
-  { number: 29, name: "The Lady", keywords: ["Woman", "Feminine energy", "Partner", "Self"], associations: ["Wife", "Mother", "Female friend", "The querent"] },
-  { number: 30, name: "The Lilies", keywords: ["Peace", "Harmony", "Purity", "Spirituality"], associations: ["Calm", "Sexual matters", "Peace of mind", "Spiritual growth"] },
-  { number: 31, name: "The Sun", keywords: ["Success", "Happiness", "Clarity", "Vitality"], associations: ["Achievement", "Joy", "Good health", "Positive outcomes"] },
-  { number: 32, name: "The Moon", keywords: ["Emotions", "Intuition", "Imagination", "Cycles"], associations: ["Feelings", "Psychic abilities", "Creativity", "Night time"] },
-  { number: 33, name: "The Key", keywords: ["Solutions", "Answers", "Unlocking", "Success"], associations: ["Finding answers", "Opening doors", "Resolutions", "Master key"] },
-  { number: 34, name: "The Fish", keywords: ["Abundance", "Wealth", "Emotions", "Fertility"], associations: ["Money", "Business success", "Emotional depth", "Multiplication"] },
-  { number: 35, name: "The Anchor", keywords: ["Stability", "Security", "Patience", "Grounding"], associations: ["Reliability", "Safe harbor", "Long-term commitment", "Being stuck"] },
-  { number: 36, name: "The Cross", keywords: ["Burden", "Sacrifice", "Faith", "Destiny"], associations: ["Heavy responsibilities", "Religious matters", "Life lessons", "Karma"] }
+  { number: 1, name: "The Rider", keywords: ["News", "Messages", "Communication", "Speed"], timing: "Within days", location: "On the move, via message", associations: ["Letters", "Visitors", "Quick changes", "News from afar"] },
+  { number: 2, name: "The Clover", keywords: ["Luck", "Opportunity", "Happiness", "Risk"], timing: "Within a week", location: "Brief moment, small luck", associations: ["Good fortune", "Short-term luck", "Gambling", "Taking chances"] },
+  { number: 3, name: "The Ship", keywords: ["Travel", "Journey", "Distance", "Progress"], timing: "Within 1-2 weeks", location: "Distance, travel, abroad", associations: ["Long journeys", "Moving away", "Business trips", "Progress over time"] },
+  { number: 4, name: "The House", keywords: ["Home", "Family", "Security", "Foundation"], timing: "Lasting, stable", location: "At home, family gathering", associations: ["Family matters", "Property", "Stability", "Long-term planning"] },
+  { number: 5, name: "The Tree", keywords: ["Health", "Growth", "Nature", "Longevity"], timing: "Slow, long-term growth", location: "Over months, roots deepen", associations: ["Physical health", "Healing", "Personal growth", "Family tree"] },
+  { number: 6, name: "The Clouds", keywords: ["Confusion", "Uncertainty", "Secrets", "Thoughts"], timing: "Unclear timing", location: "Uncertain, pending clarity", associations: ["Mental fog", "Hidden information", "Doubts", "Indecision"] },
+  { number: 7, name: "The Snake", keywords: ["Deception", "Wisdom", "Healing", "Transformation"], timing: "Deceptive delay", location: "Through complication, indirect path", associations: ["Betrayal", "Hidden enemies", "Medical issues", "Personal growth"] },
+  { number: 8, name: "The Coffin", keywords: ["Endings", "Transformation", "Grief", "Release"], timing: "Ending, finalizing", location: "Closure, conclusion imminent", associations: ["Death of situation", "Major change", "Letting go", "New beginnings"] },
+  { number: 9, name: "The Bouquet", keywords: ["Gifts", "Celebration", "Beauty", "Gratitude"], timing: "Soon, joyful", location: "Social gathering, celebration", associations: ["Presents", "Romance", "Social events", "Appreciation"] },
+  { number: 10, name: "The Scythe", keywords: ["Cutting", "Decisions", "Sudden change", "Surgery"], timing: "Sudden, immediate", location: "Sharp, unexpected moment", associations: ["Breaking free", "Harvesting", "Sudden events", "Making choices"] },
+  { number: 11, name: "The Whip", keywords: ["Conflict", "Arguments", "Discipline", "Repetition"], timing: "Repetitive cycle", location: "Argument, tension, conflict zone", associations: ["Quarrels", "Physical punishment", "Mental abuse", "Endless cycles"] },
+  { number: 12, name: "The Birds", keywords: ["Communication", "Conversation", "Worry", "Thoughts"], timing: "Quick conversation", location: "Dialogue, phone call, group chat", associations: ["Phone calls", "Gossip", "Anxiety", "Mental chatter"] },
+  { number: 13, name: "The Child", keywords: ["New beginnings", "Innocence", "Youth", "Potential"], timing: "Small beginnings", location: "Fresh start, new situation", associations: ["Children", "New projects", "Fresh starts", "Naivety"] },
+  { number: 14, name: "The Fox", keywords: ["Cunning", "Deception", "Intelligence", "Caution"], timing: "Strategic delay", location: "Workplace, through self-interest", associations: ["Trickery", "Business dealings", "Street smarts", "Being careful"] },
+  { number: 15, name: "The Bear", keywords: ["Strength", "Protection", "Authority", "Wealth"], timing: "Powerful, controlling", location: "Authority figure, leadership role", associations: ["Power", "Leadership", "Financial security", "Mother figure"] },
+  { number: 16, name: "The Stars", keywords: ["Hope", "Inspiration", "Spirituality", "Guidance"], timing: "Night-time, evening", location: "Internet, digital realm, guidance", associations: ["Dreams", "Intuition", "Divine guidance", "Wishes coming true"] },
+  { number: 17, name: "The Stork", keywords: ["Change", "Movement", "New life", "Progress"], timing: "Change coming", location: "Relocation, transition period", associations: ["Pregnancy", "Moving house", "Life transitions", "Positive change"] },
+  { number: 18, name: "The Dog", keywords: ["Loyalty", "Friendship", "Trust", "Protection"], timing: "Loyal, steadfast", location: "Close relationship, reliable friend", associations: ["True friends", "Faithful companion", "Dependability", "Guardianship"] },
+  { number: 19, name: "The Tower", keywords: ["Authority", "Government", "Isolation", "Structure"], timing: "Institutional pace", location: "Government, company, authority", associations: ["Official matters", "Institutions", "Solitude", "Rigid systems"] },
+  { number: 20, name: "The Garden", keywords: ["Public life", "Community", "Gatherings", "Growth"], timing: "Public, social", location: "Social media, public event, gathering", associations: ["Social events", "Public recognition", "Networking", "Community involvement"] },
+  { number: 21, name: "The Mountain", keywords: ["Obstacles", "Challenges", "Patience", "Perspective"], timing: "Slow, delayed", location: "Obstacle blocking path", associations: ["Difficulties", "Delays", "High goals", "Overcoming barriers"] },
+  { number: 22, name: "The Crossroads", keywords: ["Choices", "Decisions", "Direction", "Opportunity"], timing: "Decision point", location: "Choice moment, fork in path", associations: ["Multiple paths", "Life choices", "Crossroads in life", "New directions"] },
+  { number: 23, name: "The Mice", keywords: ["Loss", "Theft", "Stress", "Small problems"], timing: "Gradual erosion", location: "Stress accumulating, small losses", associations: ["Financial loss", "Worries", "Pests", "Gradual deterioration"] },
+  { number: 24, name: "The Heart", keywords: ["Love", "Emotions", "Relationships", "Passion"], timing: "Emotional reality", location: "Intimate space, close to heart", associations: ["Romantic love", "Emotional matters", "Deep feelings", "Heart chakra"] },
+  { number: 25, name: "The Ring", keywords: ["Commitment", "Contracts", "Cycles", "Partnership"], timing: "Cyclical, contracted", location: "Commitment ceremony, bound agreement", associations: ["Marriage", "Agreements", "Endless cycles", "Binding agreements"] },
+  { number: 26, name: "The Book", keywords: ["Knowledge", "Secrets", "Learning", "Mystery"], timing: "Hidden, secret", location: "Confidential, documents, education", associations: ["Education", "Hidden information", "Research", "Confidential matters"] },
+  { number: 27, name: "The Letter", keywords: ["Communication", "Documents", "News", "Information"], timing: "Written, formal", location: "Inbox, email, official correspondence", associations: ["Important mail", "Legal documents", "Messages", "Correspondence"] },
+  { number: 28, name: "The Gentleman", keywords: ["Man", "Authority figure", "Partner", "Masculine energy"], timing: "Present moment", location: "Masculine energy, specific man", associations: ["Husband", "Father", "Boss", "Male friend"] },
+  { number: 29, name: "The Lady", keywords: ["Woman", "Feminine energy", "Partner", "Self"], timing: "Present moment", location: "Feminine energy, specific woman", associations: ["Wife", "Mother", "Female friend", "The querent"] },
+  { number: 30, name: "The Lilies", keywords: ["Peace", "Harmony", "Purity", "Spirituality"], timing: "Peaceful, elder", location: "Home comfort, winter season", associations: ["Calm", "Sexual matters", "Peace of mind", "Spiritual growth"] },
+  { number: 31, name: "The Sun", keywords: ["Success", "Happiness", "Clarity", "Vitality"], timing: "Daytime, success", location: "Bright, visible, public domain", associations: ["Achievement", "Joy", "Good health", "Positive outcomes"] },
+  { number: 32, name: "The Moon", keywords: ["Emotions", "Intuition", "Imagination", "Cycles"], timing: "Evening, cycles", location: "Night, emotions, recognition", associations: ["Feelings", "Psychic abilities", "Creativity", "Night time"] },
+  { number: 33, name: "The Key", keywords: ["Solutions", "Answers", "Unlocking", "Success"], timing: "Immediate solution", location: "Unlock, answer appears", associations: ["Finding answers", "Opening doors", "Resolutions", "Master key"] },
+  { number: 34, name: "The Fish", keywords: ["Abundance", "Wealth", "Emotions", "Fertility"], timing: "Flowing, business", location: "Money flow, business transaction", associations: ["Money", "Business success", "Emotional depth", "Multiplication"] },
+  { number: 35, name: "The Anchor", keywords: ["Stability", "Security", "Patience", "Grounding"], timing: "Long-term stability", location: "Secure port, lasting foundation", associations: ["Reliability", "Safe harbor", "Long-term commitment", "Being stuck"] },
+  { number: 36, name: "The Cross", keywords: ["Burden", "Sacrifice", "Faith", "Destiny"], timing: "Burden, destiny", location: "Weight upon you, fate's moment", associations: ["Heavy responsibilities", "Religious matters", "Life lessons", "Karma"] }
 ]
 
 export default function CardMeaningsPage() {
@@ -184,24 +184,32 @@ export default function CardMeaningsPage() {
                        height={128}
                        className="mb-3 h-32 w-full rounded-lg object-cover"
                      />
-                   <div className="space-y-3">
-                    <div>
-                      <h4 className="mb-1 text-sm font-semibold text-foreground">Keywords:</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {card.keywords.map((keyword, index) => (
-                          <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="mb-1 text-sm font-semibold text-foreground">Associations:</h4>
-                      <p className="text-xs leading-relaxed text-primary">
-                        {card.associations.join(', ')}
-                      </p>
-                    </div>
-                  </div>
+                    <div className="space-y-3">
+                     <div>
+                       <h4 className="mb-1 text-sm font-semibold text-foreground">Keywords:</h4>
+                       <div className="flex flex-wrap gap-1">
+                         {card.keywords.map((keyword, index) => (
+                           <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
+                             {keyword}
+                           </Badge>
+                         ))}
+                       </div>
+                     </div>
+                     <div>
+                       <h4 className="mb-1 text-sm font-semibold text-foreground">Timing:</h4>
+                       <p className="text-xs text-muted-foreground">{card.timing}</p>
+                     </div>
+                     <div>
+                       <h4 className="mb-1 text-sm font-semibold text-foreground">Where to Watch:</h4>
+                       <p className="text-xs text-muted-foreground">{card.location}</p>
+                     </div>
+                     <div>
+                       <h4 className="mb-1 text-sm font-semibold text-foreground">Associations:</h4>
+                       <p className="text-xs leading-relaxed text-primary">
+                         {card.associations.join(', ')}
+                       </p>
+                     </div>
+                   </div>
                 </CardContent>
               </Card>
             ))}
@@ -223,16 +231,18 @@ export default function CardMeaningsPage() {
                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
                          <span className="text-sm font-bold text-white">{card.number}</span>
                        </div>
-                       <div>
-                        <h3 className="font-semibold text-foreground">{card.name}</h3>
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {card.keywords.map((keyword, index) => (
-                            <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
+                        <div>
+                         <h3 className="font-semibold text-foreground">{card.name}</h3>
+                         <div className="mt-1 flex flex-wrap gap-1">
+                           {card.keywords.map((keyword, index) => (
+                             <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
+                               {keyword}
+                             </Badge>
+                           ))}
+                         </div>
+                         <p className="mt-2 text-xs text-muted-foreground"><strong>Timing:</strong> {card.timing}</p>
+                         <p className="text-xs text-muted-foreground"><strong>Location:</strong> {card.location}</p>
+                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-primary">
@@ -281,28 +291,28 @@ export default function CardMeaningsPage() {
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                    <span className="text-xs font-bold text-white">3</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Practice Daily</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Review 3-5 cards daily. Repetition builds familiarity and intuition.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                    <span className="text-xs font-bold text-white">4</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Trust Your Intuition</h4>
-                    <p className="text-sm text-muted-foreground">
-                      While meanings are concrete, your intuition helps find personal relevance.
-                    </p>
-                  </div>
-                </div>
+                 <div className="flex items-start space-x-3">
+                   <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                     <span className="text-xs font-bold text-white">3</span>
+                   </div>
+                   <div>
+                     <h4 className="font-semibold text-foreground">Learn Timing & Location</h4>
+                     <p className="text-sm text-muted-foreground">
+                       Each card has inherent timing (within days, weeks, months) and locations (home, workplace, digital). These ground readings in reality.
+                     </p>
+                   </div>
+                 </div>
+                 <div className="flex items-start space-x-3">
+                   <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                     <span className="text-xs font-bold text-white">4</span>
+                   </div>
+                   <div>
+                     <h4 className="font-semibold text-foreground">Practice Daily</h4>
+                     <p className="text-sm text-muted-foreground">
+                       Review 3-5 cards daily. Repetition builds familiarity and intuition.
+                     </p>
+                   </div>
+                 </div>
               </div>
             </div>
           </CardContent>
