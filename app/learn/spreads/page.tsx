@@ -403,63 +403,104 @@ export default function SpreadsPage() {
           </CardContent>
         </Card>
 
-        {/* Grand Tableau Introduction */}
+        {/* Grand Tableau - Historical Salon Method */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
               <MapPin className="mr-3 h-6 w-6 text-primary" />
-              The Grand Tableau (36-Card Reading)
+              The Grand Tableau: Historical Salon Method (1809)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-card-foreground">
-              The Grand Tableau is the most comprehensive Lenormand reading, using all 36 cards laid out in a specific pattern. This advanced technique provides deep insights into complex situations and long-term patterns.
+              The Grand Tableau is Marie-Anne Lenormand&apos;s most powerful reading technique, using all 36 cards in a 4×9 layout (four rows of nine cards). This is the exact method documented in 1820s handbooks and by eyewitnesses who watched her read for Joséphine and Napoleon. She stripped away later add-ons (houses, knighting, etc.) to focus on pure card interaction and position timing.
             </p>
 
             <div className="rounded-lg bg-muted p-6">
-              <h4 className="mb-3 font-semibold text-foreground">Traditional Layout:</h4>
+              <h4 className="mb-4 font-semibold text-foreground">The 4×9 Layout (as dealt left-to-right):</h4>
               <div className="text-center">
                 <div className="inline-block rounded-lg bg-card p-4 shadow-sm">
-                  <div className="grid grid-cols-8 gap-1 text-xs">
+                  <div className="grid grid-cols-9 gap-1 text-xs">
                     {Array.from({ length: 36 }, (_, i) => (
                       <div key={i} className="flex h-6 w-6 items-center justify-center rounded bg-muted font-bold text-card-foreground">
                         {i + 1}
                       </div>
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-primary dark:text-primary/80">
-                    8x4 grid formation (3 rows of 8, 1 row of 4 in center)
+                  <p className="mt-3 text-xs text-primary dark:text-primary/80">
+                    4 rows × 9 columns (historical &quot;salon&quot;quot;salon&quot;salon&quot;quot; formation)
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <h4 className="mb-3 font-semibold text-foreground">What it reveals:</h4>
-                <ul className="space-y-2 text-sm text-card-foreground">
-                  <li>• Complete life overview</li>
-                  <li>• Long-term patterns and cycles</li>
-                  <li>• Hidden influences and connections</li>
-                  <li>• Future possibilities and challenges</li>
-                  <li>• Spiritual and karmic lessons</li>
-                </ul>
+            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+              <h4 className="font-semibold text-foreground">Step 1: Prepare & Charge the Cards</h4>
+              <ul className="space-y-2 text-sm text-card-foreground">
+                <li>• Shuffle the 36 cards while stating your question aloud (concentrated intent)</li>
+                <li>• Cut toward yourself with the left hand ((&quot;feminine&quot;quot;feminine(&quot;feminine&quot;quot; cut—Lenormand&apos;s requirement)</li>
+                <li>• Turn face-up and deal left-to-right in four rows of nine, <strong>without further shuffling</strong></li>
+              </ul>
+            </div>
+
+            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+              <h4 className="font-semibold text-foreground">Step 2: Locate the Significator</h4>
+              <ul className="space-y-2 text-sm text-card-foreground">
+                <li>• <strong>Woman</strong> card (29) = female querent</li>
+                <li>• <strong>Man</strong> card (28) = male querent</li>
+                <li>• <strong>Child</strong> (13) or <strong>Dog</strong> (18) if reading for a child or pet</li>
+                <li>• Circle the significator with a token—everything radiates from this point</li>
+              </ul>
+            </div>
+
+            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+              <h4 className="font-semibold text-foreground">Step 3: Read the Five Essential Strips (in order)</h4>
+              <div className="space-y-3">
+                <div className="rounded bg-card p-3">
+                  <p className="font-semibold text-foreground">A. The Row (Story of the Moment)</p>
+                  <p className="text-xs text-card-foreground mt-1">Read all nine cards in the significator&apos;s row left → right. Cards left of significator are past; cards right are future. Speak complete sentences describing the narrative.</p>
+                </div>
+                <div className="rounded bg-card p-3">
+                  <p className="font-semibold text-foreground">B. The Column (What Weighs on the Mind)</p>
+                  <p className="text-xs text-card-foreground mt-1">Read the four cards above → below the significator. Top card = unconscious motive; bottom card = what pre-occupies them most right now.</p>
+                </div>
+                <div className="rounded bg-card p-3">
+                  <p className="font-semibold text-foreground">C. The Cross (Immediate Pivot)</p>
+                  <p className="text-xs text-card-foreground mt-1">The four cards directly adjacent (above, below, left, right). Treat as a four-word telegram answering the question in ten seconds.</p>
+                </div>
+                <div className="rounded bg-card p-3">
+                  <p className="font-semibold text-foreground">D. Corners of the Frame (Fate&apos;s Headline)</p>
+                  <p className="text-xs text-card-foreground mt-1">Cards at positions 1, 9, 28, 36 (four corners). Read clockwise—this gives the overall complexion of the entire reading.</p>
+                </div>
+                <div className="rounded bg-card p-3">
+                  <p className="font-semibold text-foreground">E. Knights (Optional—Unseen Influences)</p>
+                  <p className="text-xs text-card-foreground mt-1">Leap one card in eight directions like a chess knight. Use only if corners are ominous or question is complex.</p>
+                </div>
               </div>
-              <div>
-                <h4 className="mb-3 font-semibold text-foreground">When to use:</h4>
-                <ul className="space-y-2 text-sm text-card-foreground">
-                  <li>• Major life decisions</li>
-                  <li>• Year-ahead readings</li>
-                  <li>• Complex relationship issues</li>
-                  <li>• Career and financial planning</li>
-                  <li>• Spiritual guidance</li>
-                </ul>
-              </div>
+            </div>
+
+            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+              <h4 className="font-semibold text-foreground">Step 4: Timing in the Tableau</h4>
+              <ul className="space-y-2 text-sm text-card-foreground">
+                <li>• <strong>Columns</strong> represent weeks (or months for long-range questions)</li>
+                <li>• <strong>First &quot;past&quot; card</strong> (left of significator): count pip value = how many days ago the story began</li>
+                <li>• <strong>First &quot;future&quot; card</strong> (right of significator): count pip value = days until next concrete event</li>
+                <li>• Court cards = 4, Ace = 1, 10 = 10, numbers = face value</li>
+              </ul>
+            </div>
+
+            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+              <h4 className="font-semibold text-foreground">Step 5: End the Session</h4>
+              <ul className="space-y-2 text-sm text-card-foreground">
+                <li>• Look for repeating motifs (same number, color, symbol)</li>
+                <li>• State the bottom-center card (position 36) as the &quot;last page the cards have turned&quot;—your closing advice</li>
+                <li>• Never re-interpret after the closing card: &quot;The voice falls silent after the final emblem&quot;</li>
+              </ul>
             </div>
 
             <div className="rounded-lg border border-border bg-muted p-4">
               <p className="text-sm text-foreground">
-                <strong>Note:</strong> The Grand Tableau requires significant experience and can take 1-2 hours to read thoroughly. It&apos;s recommended for advanced practitioners.
+                <strong>Historical Note:</strong> This is the fastest &quot;salon method&quot; that matches every eyewitness description of how Lenormand actually worked. No houses, no knighting, no clutter—just the raw 36-card map she spread on the table in Paris in 1809.
               </p>
             </div>
           </CardContent>

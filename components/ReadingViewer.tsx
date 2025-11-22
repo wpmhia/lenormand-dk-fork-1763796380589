@@ -76,13 +76,13 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       6: { label: "Sunday", meaning: "Closure, spiritual matters, and weekly review" }
     },
     "relationship-double-significator": {
-      0: { label: "Partner 1 - Past", meaning: "Left partner's past experiences and history affecting the relationship" },
-      1: { label: "Partner 1 - Present", meaning: "Left partner's current feelings, thoughts, and situation in the relationship" },
-      2: { label: "Partner 1 - Future", meaning: "Left partner's hopes, expectations, and vision for the relationship's future" },
+      0: { label: "Partner 1 - Past", meaning: "Left partner&apos;s past experiences and history affecting the relationship" },
+      1: { label: "Partner 1 - Present", meaning: "Left partner&apos;s current feelings, thoughts, and situation in the relationship" },
+      2: { label: "Partner 1 - Future", meaning: "Left partner&apos;s hopes, expectations, and vision for the relationship&apos;s future" },
       3: { label: "Relationship Core", meaning: "The central dynamic, challenge, or connection that sits between both partners" },
-      4: { label: "Partner 2 - Past", meaning: "Right partner's past experiences and history affecting the relationship" },
-      5: { label: "Partner 2 - Present", meaning: "Right partner's current feelings, thoughts, and situation in the relationship" },
-      6: { label: "Partner 2 - Future", meaning: "Right partner's hopes, expectations, and vision for the relationship's future" }
+      4: { label: "Partner 2 - Past", meaning: "Right partner&apos;s past experiences and history affecting the relationship" },
+      5: { label: "Partner 2 - Present", meaning: "Right partner&apos;s current feelings, thoughts, and situation in the relationship" },
+      6: { label: "Partner 2 - Future", meaning: "Right partner&apos;s hopes, expectations, and vision for the relationship&apos;s future" }
     },
     "comprehensive": {
       0: { label: "Recent Past - Inner World", meaning: "Thoughts, feelings, and personal resources from your recent past that influence your current situation" },
@@ -104,57 +104,51 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
   return { label: `Position ${position + 1}`, meaning: "" }
 }
 
-  const getGrandTableauPosition = (index: number): { x: number; y: number; label: string; houseMeaning: string } => {
-   // Traditional 6x6 Lenormand Grand Tableau layout
-   const row = Math.floor(index / 6)
-   const col = index % 6
+  const getGrandTableauPosition = (index: number): { row: number; col: number; label: string; stripInfo: string } => {
+   // Historical 4x9 Lenormand Grand Tableau layout
+   const row = Math.floor(index / 9)
+   const col = index % 9
 
-   // Complete house system - each card represents a "house" with its own meaning
-   const houseData = [
-     { card: "Rider", meaning: "Messages, news, communication, movement" },
-     { card: "Clover", meaning: "Luck, opportunities, small joys" },
-     { card: "Ship", meaning: "Travel, distance, foreign matters" },
-     { card: "House", meaning: "Home, family, stability, foundation" },
-     { card: "Tree", meaning: "Health, growth, longevity, nature" },
-     { card: "Clouds", meaning: "Confusion, uncertainty, dreams, illusions" },
-     { card: "Snake", meaning: "Betrayal, deception, wisdom, healing" },
-     { card: "Coffin", meaning: "Endings, transformation, closure, rebirth" },
-     { card: "Bouquet", meaning: "Gifts, celebrations, beauty, social success" },
-     { card: "Scythe", meaning: "Cutting change, decisions, surgery, harvest" },
-     { card: "Whip", meaning: "Conflict, repetition, arguments, discipline" },
-     { card: "Birds", meaning: "Communication, anxiety, siblings, short trips" },
-     { card: "Child", meaning: "New beginnings, innocence, children, playfulness" },
-     { card: "Fox", meaning: "Cunning, work, employment, intelligence" },
-     { card: "Bear", meaning: "Strength, money, protection, authority" },
-     { card: "Stars", meaning: "Hope, goals, wishes, spirituality, fame" },
-     { card: "Stork", meaning: "Change, movement, pregnancy, relocation" },
-     { card: "Dog", meaning: "Loyalty, friends, faithfulness, pets" },
-     { card: "Tower", meaning: "Authority, isolation, institutions, solitude" },
-     { card: "Garden", meaning: "Social life, public, gatherings, community" },
-     { card: "Mountain", meaning: "Obstacles, delays, challenges, steadfastness" },
-     { card: "Crossroads", meaning: "Choices, decisions, crossroads, options" },
-     { card: "Mice", meaning: "Loss, worry, theft, details, stress" },
-     { card: "Heart", meaning: "Love, emotions, relationships, passion" },
-     { card: "Ring", meaning: "Commitment, cycles, marriage, contracts" },
-     { card: "Book", meaning: "Secrets, learning, knowledge, education" },
-     { card: "Letter", meaning: "Written communication, documents, news" },
-     { card: "Man", meaning: "Masculine energy, men, father, husband" },
-     { card: "Woman", meaning: "Feminine energy, women, mother, wife" },
-     { card: "Lilies", meaning: "Peace, maturity, sexuality, harmony" },
-     { card: "Sun", meaning: "Success, vitality, happiness, clarity" },
-     { card: "Moon", meaning: "Intuition, emotions, cycles, psychic abilities" },
-     { card: "Key", meaning: "Solutions, importance, answers, unlocking" },
-     { card: "Fish", meaning: "Finance, abundance, business, wealth" },
-     { card: "Anchor", meaning: "Stability, security, patience, grounding" },
-     { card: "Cross", meaning: "Burden, fate, sacrifice, religion, suffering" }
-   ]
+   // No house system - this is Marie-Anne Lenormand&apos;s pure 1809 method
+   // Position meanings are derived from the Five Essential Strips
+   const getStripInfo = (index: number, row: number, col: number, significatorIndex: number): string => {
+     if (significatorIndex === -1) return ""
+     
+     const sigRow = Math.floor(significatorIndex / 9)
+     const sigCol = significatorIndex % 9
+     
+     // Is this card in the same row as significator? (Strip A: The Row)
+     if (row === sigRow) {
+       if (col < sigCol) return "Past influence in narrative"
+       if (col > sigCol) return "Future influence in narrative"
+       return "The Querent"
+     }
+     
+     // Is this card in the same column? (Strip B: The Column)
+     if (col === sigCol) {
+       if (row < sigRow) return "Unconscious motive"
+       if (row > sigRow) return "What pre-occupies the mind"
+       return "The Querent"
+     }
+     
+     // Is this card adjacent (cross)?  (Strip C: The Cross)
+     const isAdjacent = (Math.abs(row - sigRow) === 1 && col === sigCol) || 
+                       (Math.abs(col - sigCol) === 1 && row === sigRow)
+     if (isAdjacent) return "Immediate pivot"
+     
+     // Is this a corner? (Strip D: Corners)
+     if ((index === 0 || index === 8 || index === 27 || index === 35)) {
+       return "Fate&apos;s frame"
+     }
+     
+     return ""
+   }
 
-   const house = houseData[index]
    return {
-     x: col,
-     y: row,
-     label: house?.card || `Position ${index + 1}`,
-     houseMeaning: house?.meaning || ""
+     row,
+     col,
+     label: `R${row + 1}C${col + 1}`,
+     stripInfo: ""
    }
  }
 
@@ -225,46 +219,116 @@ export function ReadingViewer({
          </div>
        )
      } else if (reading.layoutType === 36) {
-      // Grand Tableau - 6x6 grid with house positions
-      // Find significator (Woman #29 or Man #28)
-      const significatorIndex = reading.cards.findIndex(rc => rc.id === 29 || rc.id === 28)
+      // Grand Tableau - Historical 4x9 layout (Marie-Anne Lenormand&apos;s salon method)
+      // Find significator (Woman #29, Man #28, Child #13, or Dog #18)
+      const significatorIndex = reading.cards.findIndex(rc => rc.id === 29 || rc.id === 28 || rc.id === 13 || rc.id === 18)
       const significatorCard = significatorIndex !== -1 ? getCardById(allCards, reading.cards[significatorIndex].id) : null
+      const sigRow = Math.floor(significatorIndex / 9)
+      const sigCol = significatorIndex % 9
+
+      // Helper to determine which strip a card belongs to
+      const getCardStripClass = (index: number): string => {
+        if (significatorIndex === -1) return ""
+        
+        const row = Math.floor(index / 9)
+        const col = index % 9
+        
+        // Strip A: Same row (narrative)
+        if (row === sigRow) {
+          if (col < sigCol) return "bg-blue-100 dark:bg-blue-950 border-blue-400"
+          if (col > sigCol) return "bg-green-100 dark:bg-green-950 border-green-400"
+        }
+        
+        // Strip B: Same column (mind)
+        if (col === sigCol) {
+          if (row < sigRow) return "bg-purple-100 dark:bg-purple-950 border-purple-400"
+          if (row > sigRow) return "bg-indigo-100 dark:bg-indigo-950 border-indigo-400"
+        }
+        
+        // Strip C: Adjacent (cross/pivot)
+        const isAdjacent = (Math.abs(row - sigRow) === 1 && col === sigCol) || 
+                          (Math.abs(col - sigCol) === 1 && row === sigRow)
+        if (isAdjacent) return "border-4 border-primary shadow-lg"
+        
+        // Strip D: Corners
+        if (index === 0 || index === 8 || index === 27 || index === 35) {
+          return "bg-amber-100 dark:bg-amber-950 border-amber-400"
+        }
+        
+        return ""
+      }
+
+      const getStripLabel = (index: number): string => {
+        if (significatorIndex === -1) return ""
+        
+        const row = Math.floor(index / 9)
+        const col = index % 9
+        
+        if (row === sigRow) {
+          if (col < sigCol) return "A: Past"
+          if (col > sigCol) return "A: Future"
+          return "Significator"
+        }
+        
+        if (col === sigCol) {
+          if (row < sigRow) return "B: Above"
+          if (row > sigRow) return "B: Below"
+        }
+        
+        const isAdjacent = (Math.abs(row - sigRow) === 1 && col === sigCol) || 
+                          (Math.abs(col - sigCol) === 1 && row === sigRow)
+        if (isAdjacent) return "C: Cross"
+        
+        if (index === 0) return "D: Corner TL"
+        if (index === 8) return "D: Corner TR"
+        if (index === 27) return "D: Corner BL"
+        if (index === 35) return "D: Corner BR"
+        
+        return ""
+      }
 
       return (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Reading Guide */}
-          <div className="space-y-2 text-center">
-            <h3 className="text-lg font-semibold text-foreground">Grand Tableau Reading Guide</h3>
+          <div className="space-y-2 text-center rounded-lg bg-muted p-4">
+            <h3 className="text-lg font-semibold text-foreground">Grand Tableau: The Five Essential Strips</h3>
             <div className="text-sm text-muted-foreground">
               {significatorCard ? (
-                <span>Significator: <strong>{significatorCard.name}</strong> (Position {significatorIndex + 1})</span>
+                <div className="space-y-1">
+                  <p><strong>Significator: {significatorCard.name}</strong> (Position {significatorIndex + 1})</p>
+                  <p className="text-xs mt-2">Colors show the Five Strips: Blue/Green = Row (narrative), Purple/Indigo = Column (mind), Golden = Cross (pivot), Amber = Corners (fate)</p>
+                </div>
               ) : (
-                <span>No significator (Woman/Man) found in spread</span>
+                <span>No significator (Woman/Man/Child/Dog) found in spread</span>
               )}
             </div>
           </div>
 
-           {/* 6x6 Grid */}
-           <div className="mx-auto grid max-w-4xl grid-cols-6 gap-1 rounded-lg border-2 border-primary/20 bg-card/20 p-2">
+           {/* 4x9 Grid */}
+           <div className="mx-auto grid max-w-6xl gap-1 rounded-lg border-2 border-primary/30 bg-card/10 p-3" style={{ gridTemplateColumns: 'repeat(9, minmax(0, 1fr))' }}>
            {reading.cards.map((readingCard, index) => {
                 const card = getCardById(allCards, readingCard.id)
              if (!card) return null
 
-             const positionInfo = getPositionInfo(index, spreadId)
+             const stripClass = getCardStripClass(index)
+             const stripLabel = getStripLabel(index)
+             const isSignificator = index === significatorIndex
 
              return (
-               <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
+               <AnimatedCard key={index} delay={index * 0.05} className={`flex flex-col items-center space-y-1 rounded-lg border-2 transition-all ${stripClass} ${isSignificator ? 'ring-2 ring-primary' : ''}`}>
                  <TooltipProvider>
-                   <div className="flex flex-col items-center space-y-3">
+                   <div className="flex flex-col items-center space-y-1 w-full p-1">
                      <Tooltip>
                      <TooltipTrigger asChild>
-                       <div className="flex flex-col items-center space-y-2">
-                          <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                            {positionInfo.label}
-                          </div>
+                       <div className="flex flex-col items-center space-y-1 w-full">
+                          {stripLabel && (
+                            <div className="text-xs font-semibold text-primary text-center">
+                              {stripLabel}
+                            </div>
+                          )}
                          <Card
                            card={card}
-                           size="md"
+                           size="sm"
                            onClick={() => setSelectedCard(card)}
                            className="cursor-pointer hover:shadow-lg"
                          />
@@ -272,11 +336,12 @@ export function ReadingViewer({
                     </TooltipTrigger>
                      <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
                        <div className="space-y-2">
-                         <p className="font-semibold text-muted-foreground">{positionInfo.label}</p>
-                         <p className="text-sm text-muted-foreground/80">{positionInfo.meaning}</p>
+                         <p className="font-semibold text-muted-foreground">{card.name} (Pos {index + 1})</p>
+                         {stripLabel && <p className="text-xs text-muted-foreground/70">{stripLabel}</p>}
+                         <p className="text-sm text-muted-foreground/80">{card.uprightMeaning}</p>
                          <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
                            <Info className="h-3 w-3" />
-                           <span>Click card for details</span>
+                           <span>Click card for full reading</span>
                          </div>
                        </div>
                      </TooltipContent>
@@ -286,6 +351,18 @@ export function ReadingViewer({
               </AnimatedCard>
              )
            })}
+         </div>
+
+         {/* Reading Instructions */}
+         <div className="space-y-3 rounded-lg border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+           <p className="font-semibold text-foreground">How to read the Grand Tableau:</p>
+           <ol className="space-y-2 list-decimal list-inside text-xs">
+             <li><strong>Strip A (Row):</strong> Read the nine cards in the significator&apos;s row (left→right) as the narrative of the moment</li>
+             <li><strong>Strip B (Column):</strong> Read the four cards in the significator&apos;s column (top→bottom) to understand what weighs on the mind</li>
+             <li><strong>Strip C (Cross):</strong> The four adjacent cards form the immediate pivot—the crossing point</li>
+             <li><strong>Strip D (Corners):</strong> The four corners show fate&apos;s intention and the overall frame</li>
+             <li><strong>Strip E (Knights):</strong> Optional—leap one card in eight directions for hidden influences</li>
+           </ol>
          </div>
        </div>
      )

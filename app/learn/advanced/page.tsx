@@ -12,6 +12,7 @@ import {
   Heart,
   Diamond,
   Club,
+  MapPin,
   Globe,
   Lightbulb,
   Calendar
@@ -266,6 +267,147 @@ export default function AdvancedPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Grand Tableau: The Five Essential Strips */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <MapPin className="mr-3 h-6 w-6 text-primary" />
+              Mastering the Five Essential Strips
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-card-foreground">
+              Marie-Anne Lenormand read the Grand Tableau in a precise five-step sequence. Each strip answers a different layer of the question. Later strips refine earlier ones—they never contradict. This is the core structure that makes the 4×9 layout so powerful.
+            </p>
+
+            <div className="space-y-4">
+              <div className="rounded-lg border-l-4 border-primary bg-muted p-4">
+                <h4 className="mb-2 font-semibold text-foreground">Strip A: The Row (Story of the Moment)</h4>
+                <p className="mb-3 text-sm text-card-foreground">
+                  Read all nine cards in the significator&apos;s row from left → right. This is the narrative sentence that answers your question directly.
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• Cards <strong>left of significator</strong> = the past and how you got here</li>
+                  <li>• <strong>The significator</strong> = the querent and their current state</li>
+                  <li>• Cards <strong>right of significator</strong> = the immediate and distant future</li>
+                  <li>💡 Speak complete sentences: <em>&quot;The letter arrives after a delay (Mountain + Rider) but brings money (Rider + Fish).&quot;</em></li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-primary bg-muted p-4">
+                <h4 className="mb-2 font-semibold text-foreground">Strip B: The Column (What Weighs on the Mind)</h4>
+                <p className="mb-3 text-sm text-card-foreground">
+                  Read the four cards vertically above → below the significator. This reveals conscious and unconscious motivations.
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• <strong>Top card</strong> = what the person doesn&apos;t consciously recognize yet</li>
+                  <li>• <strong>Significator</strong> = their stated concern</li>
+                  <li>• <strong>Bottom card</strong> = what pre-occupies them most, what keeps them awake</li>
+                  <li>💡 The column often reveals hidden worries the row doesn&apos;t address.</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-primary bg-muted p-4">
+                <h4 className="mb-2 font-semibold text-foreground">Strip C: The Cross (Immediate Pivot)</h4>
+                <p className="mb-3 text-sm text-card-foreground">
+                  The four cards directly adjacent to the significator (above, below, left, right). Distill these into a four-word telegram.
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• Treat as if you had only <strong>ten seconds</strong> to answer the question</li>
+                  <li>• Example: <em>&quot;Stork, Letter, Clouds, Sun&quot;</em> = <em>&quot;Change arrives, clarity follows delay&quot;</em></li>
+                  <li>• The Cross shows the immediate turning point or decision</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-primary bg-muted p-4">
+                <h4 className="mb-2 font-semibold text-foreground">Strip D: Corners of the Frame (Fate&apos;s Headline)</h4>
+                <p className="mb-3 text-sm text-card-foreground">
+                  Cards at positions 1, 9, 28, and 36 (the four corners of the entire 4×9 grid). Read clockwise from top-left.
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• <strong>Position 1 (top-left)</strong> = Opening energy, how the situation began</li>
+                  <li>• <strong>Position 9 (top-right)</strong> = Where past energy flows</li>
+                  <li>• <strong>Position 28 (bottom-left)</strong> = What lies beneath</li>
+                  <li>• <strong>Position 36 (bottom-right)</strong> = The final word, outcome energy</li>
+                  <li>💡 Example: <em>&quot;Rider – Tower – Cross – Sun&quot;</em> = <em>&quot;A public change brings destiny&apos;s victory&quot;</em></li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-l-4 border-primary bg-muted p-4">
+                <h4 className="mb-2 font-semibold text-foreground">Strip E: Knights (Optional—Unseen Influences)</h4>
+                <p className="mb-3 text-sm text-card-foreground">
+                  Leap over one card in each of eight chess knight directions from the significator. These reveal hidden helpers or obstacles.
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• Use only when corners are ominous or the question requires deep investigation</li>
+                  <li>• Each landed-on card represents an influence acting behind the scenes</li>
+                  <li>• Lenormand herself used this sparingly—only when she sensed hidden danger</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="rounded-lg bg-card border border-border p-4">
+              <h4 className="mb-3 font-semibold text-foreground">Reading Order Matters</h4>
+              <p className="text-sm text-card-foreground mb-2">
+                Always read in this exact sequence: <strong>A → B → C → D → (E if needed)</strong>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                This order builds understanding progressively. The Row gives the obvious story. The Column adds hidden depth. The Cross reveals the pivot. The Corners show fate&apos;s intention. Never jump around—the structure is how Lenormand taught it.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Timing and Numbers */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <Clock className="mr-3 h-6 w-6 text-primary" />
+              Historical Timing Rules (1820s Method)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-card-foreground">
+              Every 1820s Lenormand handbook copied her timing trick. It&apos;s the only numerological rule she documented herself. Here&apos;s how she calculated when events would manifest.
+            </p>
+
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-muted p-4">
+                <h4 className="mb-3 font-semibold text-foreground">Rule 1: Columns = Weeks (or Months)</h4>
+                <p className="text-sm text-card-foreground mb-2">
+                  Each vertical column of the 4×9 grid represents one week of time (or one month if the question is long-range).
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• Significator in column 3? Columns 4-9 show the six forthcoming time units</li>
+                  <li>• The card immediately to the right of the significator = the very next event</li>
+                  <li>• If significator is in column 8, the tableau is short-range (days/week)</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border bg-muted p-4">
+                <h4 className="mb-3 font-semibold text-foreground">Rule 2: Pip Values = Days</h4>
+                <p className="text-sm text-card-foreground mb-2">
+                  Count the playing card value of cards near the significator to get precise day counts.
+                </p>
+                <ul className="space-y-1 text-sm text-card-foreground">
+                  <li>• <strong>First &quot;past&quot; card</strong> (immediately left of significator): count its pips = how many days ago the story started</li>
+                  <li>• <strong>First &quot;future&quot; card</strong> (immediately right of significator): count its pips = days until the next concrete development</li>
+                  <li>• <strong>Pip values:</strong> Court cards = 4, Ace = 1, 10 = 10, others = face value</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-border bg-muted p-4">
+                <h4 className="mb-3 font-semibold text-foreground">Timing Examples</h4>
+                <ul className="space-y-2 text-sm text-card-foreground">
+                  <li>• Significator in <strong>column 2, past card is Clover (Ace value)</strong> → story began <strong>1 day ago</strong></li>
+                  <li>• Significator in <strong>column 5, future card is Ship (8 value)</strong> → next event in <strong>8 days</strong></li>
+                  <li>• Significator in <strong>column 4 of 9</strong> → you&apos;re looking at roughly <strong>5 weeks ahead</strong></li>
+                </ul>
+              </div>
             </div>
           </CardContent>
         </Card>
