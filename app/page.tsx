@@ -19,8 +19,8 @@ export default function Home() {
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
       <div className="container-hero">
-        <div className="relative mb-8 grid items-center gap-8 lg:grid-cols-2">
-          <div className="space-component relative z-10 overflow-visible text-center lg:text-left">
+        <div className="relative mb-8 flex flex-col items-center justify-center gap-8 text-center">
+          <div className="space-component relative z-10 overflow-visible">
             <h1 className="relative mb-4 overflow-visible pb-2 text-4xl font-bold leading-normal text-foreground sm:text-5xl lg:text-6xl xl:text-7xl">
               <span className="relative inline-block">
                 Lenormand
@@ -30,10 +30,10 @@ export default function Home() {
                 Intelligence
               </span>
             </h1>
-            <p className="mb-4 max-w-2xl text-lg font-normal leading-relaxed text-muted-foreground sm:text-xl">
+            <p className="mx-auto mb-4 max-w-2xl text-lg font-normal leading-relaxed text-muted-foreground sm:text-xl">
               Ancient Lenormand wisdom meets AI-enhanced personalized guidance.
             </p>
-              <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
                <Link href="/read/new">
                  <Button size="lg">
                    ✨ Begin Your Journey
@@ -47,8 +47,8 @@ export default function Home() {
               </div>
            </div>
 
-          {/* Image column - appears before text on lg and after text on small screens */}
-          <div className="relative z-10 order-last flex justify-center lg:order-last lg:justify-start">
+          {/* Image column */}
+          <div className="relative z-10 flex justify-center">
             {/* Remove any visible background or border: transparent wrapper */}
             <div className="hero-image-cell rounded-none bg-transparent p-0">
                <Image
@@ -56,7 +56,7 @@ export default function Home() {
                  alt="Mystical Lenormand cards arranged in a reading spread"
                  width={1200}
                  height={800}
-                className="block h-auto w-full max-w-xs rounded-md border-0 object-contain shadow-none lg:w-[75%] lg:max-w-none lg:rounded-md"
+                className="block h-auto w-full max-w-xs rounded-md border-0 object-contain shadow-none lg:max-w-md"
               />
             </div>
           </div>
