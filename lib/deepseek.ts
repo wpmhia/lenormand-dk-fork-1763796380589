@@ -30,7 +30,7 @@ export interface AIReadingResponse {
 const SPREAD_RULES: Record<string, string> = {
   "sentence-3": "Interpret these 3 cards as a single sentence. The first card is the subject, the second is the action/description, and the third is the outcome/object.",
   "past-present-future": "Card 1 represents the Past influences. Card 2 represents the Present situation. Card 3 represents the Future outcome.",
-  "yes-no-maybe": "Card 1 is the answer (Positive/Negative). Card 2 supports the answer. Card 3 provides the nuance or condition.",
+  "yes-no-maybe": "Card 1 is the answer (Positive/Negative). Card 2 supports the answer. Card 3 provides the nuance or condition. IMPORTANT: You must conclude with a definitive YES or NO answer based on the cards.",
   "situation-challenge-advice": "Card 1 is the Situation. Card 2 is the Challenge/Obstacle. Card 3 is the Advice.",
   "mind-body-spirit": "Card 1 represents the Mind/Thoughts. Card 2 represents the Body/Physical. Card 3 represents the Spirit/Emotional.",
   "sentence-5": "Interpret these 5 cards as a detailed narrative sentence. Look for the central theme in the middle card (Card 3).",
@@ -46,11 +46,16 @@ function buildPrompt(request: AIReadingRequest): string {
   
   let spreadContext = ""
   let spreadRules = ""
+  let yesNoRequirement = ""
   
   if (request.spreadId) {
     spreadContext = `Spread Type: ${request.spreadId}`
     if (SPREAD_RULES[request.spreadId]) {
       spreadRules = `\nSpread Rules:\n${SPREAD_RULES[request.spreadId]}`
+    }
+    // Add special requirement for yes-no spread
+    if (request.spreadId === "yes-no-maybe") {
+      yesNoRequirement = "\n\nIMPORTANT: End your interpretation with a clear conclusion on a new line: **ANSWER: YES** or **ANSWER: NO**"
     }
   }
 
@@ -65,7 +70,7 @@ ${cardsText}
 
 Provide a detailed and insightful interpretation based on traditional Lenormand meanings and card combinations. 
 Focus on the narrative flow and how the cards interact with each other.
-If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.
+If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.${yesNoRequirement}
 
 IMPORTANT: Start your response directly with the interpretation content. Do NOT include any introductory phrases like "Of course", "Certainly", "Here's", or similar preambles. Begin immediately with the reading.
 `
