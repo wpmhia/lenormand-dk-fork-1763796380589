@@ -580,6 +580,16 @@ function NewReadingPageContent() {
                       </div>
                     </div>
                   )}
+                  {/* Submit Button for Physical Cards */}
+                  {path === 'physical' && selectedSpread && parsedCards.length === selectedSpread.cards && (
+                    <Button
+                      onClick={() => handleDraw(allCards)}
+                      className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90"
+                    >
+                      ✨ Start Reading
+                    </Button>
+                  )}
+
 
                   <div className="text-center">
                     <Button
