@@ -15,8 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Sparkles, ArrowLeft, Shuffle } from 'lucide-react'
-import { getCards, getCardById } from '@/lib/data'
+import { Sparkles, ArrowLeft, Shuffle, Share2, Check } from 'lucide-react'
+import { getCards, getCardById, encodeReadingForUrl } from '@/lib/data'
 import { getAIReading, AIReadingRequest, AIReadingResponse } from '@/lib/deepseek'
 import { CORE_SPREADS, ADVANCED_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 
@@ -46,6 +46,8 @@ function PhysicalReadingPage() {
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamedContent, setStreamedContent] = useState('')
+  const [shareLink, setShareLink] = useState('')
+  const [shareClicked, setShareClicked] = useState(false)
 
   useEffect(() => {
     fetchCards()
@@ -480,14 +482,40 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                      isStreaming={isStreaming}
                    />
 
-                  <div className="pt-4 text-center">
+                   <div className="pt-4 flex gap-3 justify-center flex-wrap">
                     <Button
-                      onClick={handleStartOver}
+                      onClick={() => {
+                        const reading: any = {
+                          id: Math.random().toString(36).substr(2, 9),
+                          title: question || 'Reading',
+                          slug: '',
+                          cards: drawnCards,
+                          layoutType: selectedSpread.cards,
+                          question: question,
+                          isPublic: true,
+                          createdAt: new Date(),
+                          updatedAt: new Date(),
+                        }
+                        const encoded = encodeReadingForUrl(reading)
+                        const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/read/shared/${encoded}`
+                        setShareLink(url)
+                        navigator.clipboard.writeText(url)
+                        setShareClicked(true)
+                        setTimeout(() => setShareClicked(false), 2000)
+                      }}
                       variant="outline"
+                      className="border-border hover:bg-muted"
                     >
-                      Start New Reading
+                      <Share2 className="mr-2 h-4 w-4" />
+                      {shareClicked ? 'Link Copied!' : 'Share Reading'}
                     </Button>
-                  </div>
+                    <Button
+                       onClick={handleStartOver}
+                       variant="outline"
+                     >
+                       Start New Reading
+                     </Button>
+                   </div>
                 </CardContent>
               </Card>
             </motion.div>
