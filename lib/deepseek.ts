@@ -81,6 +81,7 @@ Output rules — follow every bullet without deviation:
 6. Lexicon: use only the upright keyword listed for each card; no reversals, no abstract jargon ("energy," "vibes," "universe," "spiritual growth").
 7. Mood: everyday, conversational, slightly optimistic; predict, do not advise.
 8. Finish with a when/where tag ("expect this before Friday," "in your group chat," "at the office meeting") so the client knows where to watch.
+9. **Use only the people, places and time-frames the querent names.** If no extra detail is given, keep roles generic ('a colleague', 'the manager', 'within 5 work-days') and never invent names, departments, or back-story.
 
 Card keyword bank:
 Rider = message, news, delivery
