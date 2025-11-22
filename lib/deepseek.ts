@@ -26,26 +26,25 @@ export interface AIReadingResponse {
   reading: string
 }
 
-// Spread interpretation rules based on traditional Lenormand divination
-// Spread interpretation rules - Lenormand reads literal card meanings in natural combinations
+// Spread interpretation rules - each spread has its own structure and meaning
 const SPREAD_RULES: Record<string, string> = {
-  "sentence-3": "Read these 3 cards as a connected statement. Card 1 is the subject, Card 2 is the action or quality, Card 3 is the outcome or object. Weave their literal meanings together naturally. Example: Rider (news/movement) + Letter (message) + Fish (abundance/money) = 'News arrives about financial matters.'  State it plainly but as it flows from combining the card meanings.",
-  "past-present-future": "Card 1 shows what happened before—the seed or cause. Card 2 shows the current state and what's unfolding now. Card 3 shows what comes next. Read each card's literal meaning and how one naturally leads to the next. Build a simple cause-and-effect story.",
-  "yes-no-maybe": "Card 1 directly answers the question using its basic meaning. Positive cards (Sun, Heart, Ring, Clover, Ship) lean YES. Negative cards (Coffin, Mice, Tower, Cross, Scythe) lean NO. Neutral cards suggest conditions. Card 2 and 3 add context. Give a clear YES, NO, or conditional answer based on the cards' inherent nature.",
-  "situation-challenge-advice": "Card 1 reveals the current situation—what is. Card 2 shows what's blocking or challenging it. Card 3 gives the way forward or advice. Read each card's literal meaning and weave them into a narrative: 'You have [Card 1]. The challenge is [Card 2]. The path is [Card 3].'",
-  "mind-body-spirit": "Card 1 shows the mental state—thoughts, beliefs, perspective. Card 2 shows the practical reality—physical health, money, tangible conditions. Card 3 shows the emotional truth—feelings, intuition, inner state. Read as three layers of truth about the person or situation.",
-  "sentence-5": "Read these 5 cards as one continuous sentence. Card 1 is the subject, Card 2 the verb/action, Card 3 the object, Card 4 a modifier or context, Card 5 the outcome. Weave them together naturally using their literal meanings. Say it as a single breath.",
-  "structured-reading": "Read these 5 cards as a brief story in 3-4 short paragraphs. Use each card's literal meaning but let them flow together naturally. Describe the situation, what's happening, what it means. Be evocative but grounded—no mystical language, just how the cards' actual meanings paint a picture.",
-  "week-ahead": "These 7 cards show what unfolds over the coming week. Read left to right as a sequence of events or themes. Each card is a literal occurrence or influence. Weave them into a flowing narrative of what the week holds.",
-  "relationship-double-significator": "Card 1 is this person. Card 2 is the other person. Card 3 shows what's between them—the dynamic or connection. Cards 4 & 5 show each person's thoughts. Cards 6 & 7 show their feelings. Read each card's literal meaning and build understanding of the relationship from these clear facts.",
-  "comprehensive": "The center card (Card 5) is the heart of the matter. Cards around it show influences and context. Read pairs of cards touching or near each other—what do those two meanings create together? Example: House + Mice = home being eroded or deteriorating. Build the picture from card pairs and their natural combinations.",
-  "grand-tableau": "In this 6x6 grid, Card 28 (Man) or Card 29 (Woman) represents the person asking. Read the cards near them first. Look at what touches what—cards adjacent to each other show how their meanings combine and influence. Don't look for mystical lines; simply read which objects are neighbors and what that pairing means."
+  "single-card": "One card speaks directly to the question or situation. Read its literal meaning and how it answers. Be straightforward and clear.",
+  "sentence-3": "Read these 3 cards as a sentence that flows naturally. Card 1 is the subject, Card 2 adds action or quality, Card 3 is the outcome or completion. Example: Rider (news/movement) + Letter (message) + Fish (money/abundance) becomes 'News arrives about financial matters.' Weave the literal meanings together seamlessly.",
+  "past-present-future": "Card 1 shows what came before—the root cause or seed. Card 2 shows now—the present moment and current state. Card 3 shows what unfolds next. Read each card's plain meaning and trace how one leads naturally to the next, building a cause-and-effect story.",
+  "yes-no-maybe": "Card 1 answers directly using its fundamental nature. Bright cards (Sun, Heart, Ring, Clover, Rider) point to YES. Dark cards (Coffin, Mice, Tower, Cross, Scythe, Clouds) point to NO. Neutral cards suggest conditions or 'it depends.' Cards 2 and 3 add context or clarification. Give a clear YES, NO, or conditional answer grounded in what the cards reveal.",
+  "situation-challenge-advice": "Card 1 reveals what is—the current situation or reality. Card 2 shows the block, the obstacle, what makes it difficult. Card 3 reveals the path forward, the action or wisdom. Read plainly: 'You are in [Card 1]. The challenge is [Card 2]. The way through is [Card 3].' Let their literal meanings create the guidance.",
+  "mind-body-spirit": "Card 1 shows the mind layer—thoughts, beliefs, mental state. Card 2 shows the body layer—physical health, material reality, practical matters. Card 3 shows the spirit layer—emotions, inner truth, soul state. Read as three distinct truths about the person or situation, then weave them together for complete understanding.",
+  "sentence-5": "Read these 5 cards as one flowing sentence. Card 1 is subject, Card 2 is action/verb, Card 3 is object, Card 4 is modifier or context, Card 5 is outcome or completion. Weave them together in natural language using their literal meanings. Say it as one continuous thought. Example: Woman (subject) seeks Clover (happiness) through Ring (commitment) despite Mountains (obstacles) to reach Heart (love).",
+  "structured-reading": "Read these 5 cards as a short story unfolding in 3-4 brief, grounded paragraphs. Paint the situation with their literal meanings—what is the scene, what is happening, what does it mean? Use evocative but direct language. Let the card combinations create narrative flow. Be poetic in how meanings combine naturally, but anchored in what each card actually represents.",
+  "week-ahead": "These 7 cards show the week unfolding day by day or theme by theme. Read left to right as a sequence. Each card is an energy, event, or influence the person will encounter. Weave them into a flowing narrative of how the week moves and what it brings. Let the progression of cards tell the story of the seven days.",
+  "relationship-double-significator": "Card 1 is Person A. Card 2 is Person B. Card 3 is what flows between them—the connection, dynamic, or shared energy. Card 4 is what Person A thinks. Card 5 is what Person B thinks. Card 6 is what Person A feels. Card 7 is what Person B feels. Read each card's literal meaning and build a complete picture of both people and their bond.",
+  "comprehensive": "This 9-card square has Card 5 (center) as the heart of the matter. The cards around it show influences, context, and how the situation develops. Read pairs of adjacent cards—what does Rider + Letter mean together? House + Mice? Build understanding from how card pairs combine their literal meanings. The closer to center, the more central the issue.",
+  "grand-tableau": "All 36 cards laid in a 6x6 grid create a complete life portrait. Card 28 (Gentleman) or Card 29 (Lady) is the querent—find them and read the cards around them. Cards that touch each other show connections: what two objects are neighbors? What do their combined meanings reveal? Read from the querent outward, seeing patterns in proximity and combination, not mystical lines."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
   const cardsText = request.cards.map(card => `${card.position + 1}. ${card.name}`).join('\n')
   
-  let spreadContext = ""
   let spreadRules = ""
   let yesNoRequirement = ""
   
@@ -58,7 +57,7 @@ function buildPrompt(request: AIReadingRequest): string {
       }
    }
 
-   return `
+  return `
 Question: ${request.question || "General Reading"}
 
 ${spreadRules}
@@ -66,9 +65,9 @@ ${spreadRules}
 Cards:
 ${cardsText}
 
-Read these cards by their literal meanings—each is an ordinary object (Rider, House, Mice, Fish, etc.). Weave their meanings together naturally as they combine. Be evocative and grounded, not mystical. Let the card combinations paint a clear picture. Example: Birds (conversation) with Dog (loyalty) brings Lily (harmony) = A conversation with a trusted friend brings peace.
+Read these cards by their literal meanings—each is an ordinary object (Rider, House, Mice, Fish, etc.). Weave their meanings together naturally as they combine. Be evocative and grounded. Let the card combinations paint a clear picture. Example: Birds (conversation) with Dog (loyalty) brings Lily (harmony) = A conversation with a trusted friend brings peace.
 
-Use natural language, not mechanical. Let card meanings flow into each other. Be direct but allow the poetry of the combinations to emerge naturally.${yesNoRequirement}
+Use natural language. Let card meanings flow into each other. Be direct but allow the poetry of the combinations to emerge naturally.${yesNoRequirement}
 `
 }
 
@@ -97,7 +96,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are a direct Lenormand reader. Read cards literally. Each card is an ordinary object (Rider, House, Mice, Ship, etc.) with a practical meaning. Combine them like you're reading a sentence or describing what happens. Be blunt. No mystical language, no deep themes, no hedging. Just say what the cards mean. Start immediately—no preambles." },
+            { role: 'system', content: "You are a Lenormand reader. Read each card by its literal meaning—it's an ordinary object (Rider, House, Mice, Ship, etc.). Weave card meanings together naturally. Be direct and evocative. Let how the cards combine create poetry, not mystical language. Speak naturally, not mechanically. Start immediately—no preambles or explanations." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
@@ -175,7 +174,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are a direct Lenormand reader. Read cards literally. Each card is an ordinary object (Rider, House, Mice, Ship, etc.) with a practical meaning. Combine them like you're reading a sentence or describing what happens. Be blunt. No mystical language, no deep themes, no hedging. Just say what the cards mean. Start immediately—no preambles." },
+            { role: 'system', content: "You are a Lenormand reader. Read each card by its literal meaning—it's an ordinary object (Rider, House, Mice, Ship, etc.). Weave card meanings together naturally. Be direct and evocative. Let how the cards combine create poetry, not mystical language. Speak naturally, not mechanically. Start immediately—no preambles or explanations." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
