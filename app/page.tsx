@@ -30,7 +30,7 @@ export default function Home() {
                 Intelligence
               </span>
             </h1>
-            <p className="mx-auto mb-4 max-w-3xl text-lg font-light leading-relaxed text-foreground sm:text-xl lg:mx-0 lg:text-2xl">
+            <p className="mb-4 max-w-2xl text-lg font-normal leading-relaxed text-foreground sm:text-xl">
               Discover the ancient wisdom of Lenormand through AI-enhanced intuition.
               <span className="mt-2 block text-muted-foreground">Experience personalized guidance where technology meets mystical insight.</span>
             </p>
