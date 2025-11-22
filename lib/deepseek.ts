@@ -123,18 +123,18 @@ Reply in plain paragraphs, no bullets, no headings, no emojis.`
 
 // SPREAD-SPECIFIC RULES - Varies by spread type
 const SPREAD_RULES: Record<string, string> = {
-  "single-card": "Write 75-100 words. Open with the card's image or scene and what it reveals. End with a when/where tag.",
-  "sentence-3": "Write 70-100 words. Three-card narrative: opener, complication, resolution. End with a when/where tag.",
-  "past-present-future": "Write 90-130 words. Three-card story: past, present, future. End with specific timing.",
-  "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE upfront. Cards 2-3 explain why. End with certainty tag.",
-  "situation-challenge-advice": "Write 90-130 words. Three layers: situation, challenge, path forward. Show how they connect. End with a when/where tag.",
-  "mind-body-spirit": "Write 110-160 words. Three layers: mind, body, spirit. Show how they complete the whole person. End with a where-to-notice tag.",
-  "sentence-5": "Write 100-150 words. Five-card narrative: opener, complications, resolution. End with a when/where tag.",
-  "structured-reading": "Write 130-180 words. Five-card story as one narrative. Each card moves forward. End with actionable when/where guidance.",
+  "single-card": "Write 75-100 words. Describe the card's image or scene vividly. Explain what it reveals about the querent's situation. End with a concrete when/where tag.",
+  "sentence-3": "Write 70-100 words. Three-card linear story: Card 1 opens the situation, Card 2 deepens or complicates it, Card 3 resolves or shifts it. Show cause-and-effect. End with a when/where tag.",
+  "past-present-future": "Write 90-130 words. Three-card story: Card 1 is what led here (past). Card 2 is the present moment and its complexity. Card 3 is what unfolds next (future). Show the arc. End with specific timing.",
+  "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE upfront using Card 1. Cards 2-3 explain why this answer—what proof do they show? Why does the answer hold or shift? End with certainty tag.",
+  "situation-challenge-advice": "Write 90-130 words. Card 1: the situation as it stands. Card 2: the challenge or obstacle blocking progress. Card 3: the path forward or best action. Show how all three connect. End with a when/where tag.",
+  "mind-body-spirit": "Write 110-160 words. Card 1 reveals the mind (thoughts, beliefs, clarity or confusion). Card 2 reveals the body (physical reality, health, practical action). Card 3 reveals the spirit (emotions, intuition, desires). Show how these three complete the whole person. End with a where-to-notice tag.",
+  "sentence-5": "Write 100-150 words. Five-card narrative: Card 1 opens the situation. Cards 2-3 complicate or deepen it. Card 4 is a turning point or new perspective. Card 5 resolves or reveals the outcome. Show each step flowing into the next. End with a when/where tag.",
+  "structured-reading": "Write 130-180 words. Five-card story with depth. Card 1: the situation. Card 2: hidden factors or complication. Card 3: the tension or choice point. Card 4: resources or path forward. Card 5: the likely outcome. Build a complete narrative arc. End with actionable when/where guidance.",
   "week-ahead": "Write 150-200 words. Use present-tense, first-person plural ('Monday we…, Tuesday we…'). Each card is one day with a concrete moment. End with the week's emotional takeaway plus a single when tag if something spills into next week.",
-  "relationship-double-significator": "Write 160-220 words. Six cards showing two people, what flows between them, their thoughts, and their feelings. Build one narrative. End with where-to-see-it tag.",
-  "comprehensive": "Write 180-260 words. Nine-card square: center (Card 5) to edges. Use pairs and adjacencies for meaning. End with when/where tag.",
-  "grand-tableau": "Write 220-320 words. Navigate from querent (Card 28/29) outward. Show influences, patterns, deeper layers. Build one sweeping narrative. End with when/where tag."
+  "relationship-double-significator": "Write 160-220 words. Cards 1-2: two people (explore each distinctly). Card 3: what flows between them (connection, tension, attraction, obstacle). Cards 4-5: their thoughts (Card 4 is one person's mind, Card 5 the other's). Cards 6-7: their feelings (Card 6 is one person's emotions, Card 7 the other's). Build one complete relationship narrative. End with where-to-see-it tag.",
+  "comprehensive": "Write 180-260 words. Read the 9-card square as three 3-card rows. Top row (Cards 1-3): the foundation or past influences. Middle row (Cards 4-6): the present situation and challenges. Bottom row (Cards 7-9): the future or outcome. Use card pairs (adjacent cards together) to deepen meaning. Show how each row builds on the previous. End with when/where tag.",
+  "grand-tableau": "Write 220-320 words. Navigate the 36-card grid by first finding Card 28 (Man) or Card 29 (Woman)—this is the querent. Explore cards immediately surrounding them (these show immediate influences). Then read card pairs next to and diagonal to the querent (these reveal hidden dynamics). Expand outward in rings to show broader life picture. Build one sweeping narrative of personal concerns, relationships, challenges, resources, and trajectory. End with when/where tag."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
