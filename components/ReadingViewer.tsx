@@ -53,11 +53,11 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       2: { label: "Closing Element", meaning: "Final element - can represent future, spirit, or outcome; check mirror relationship with central element" }
     },
     "structured-reading": {
-      0: { label: "Premise", meaning: "The foundational situation or starting point of your inquiry" },
-      1: { label: "Obstacle", meaning: "The challenge or difficulty that stands in your way" },
-      2: { label: "What Helps", meaning: "Resources, support, or helpful factors available to you" },
-      3: { label: "Outcome", meaning: "The likely result or development from your current path" },
-      4: { label: "Final Result", meaning: "The ultimate conclusion or resolution of your situation" }
+      0: { label: "Subject", meaning: "The opening element—who or what the story begins with" },
+      1: { label: "Verb", meaning: "The action or descriptor—what is happening or being done" },
+      2: { label: "Object", meaning: "The direct impact or target—what is being affected" },
+      3: { label: "Modifier", meaning: "The qualifier or condition—how, when, or under what circumstance" },
+      4: { label: "Outcome", meaning: "The result or conclusion—where this leads" }
     },
     "sentence-5": {
       0: { label: "Position 1", meaning: "First card in the flowing narrative" },

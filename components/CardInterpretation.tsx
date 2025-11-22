@@ -58,6 +58,7 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
 
 export function CardInterpretation({ cards, allCards, spreadId, question }: CardInterpretationProps) {
   const [expandedCards, setExpandedCards] = useState<Record<number, boolean>>({})
+  const [showStructuredAnalysis, setShowStructuredAnalysis] = useState(spreadId === 'structured-reading')
 
   const toggleCard = (index: number) => {
     setExpandedCards(prev => ({
@@ -76,6 +77,12 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
     const fullCard = getCardById(allCards, card.id)
     return fullCard?.keywords || []
   }
+
+  const getAdjacentPairMeaning = (card1: CardType, card2: CardType): string => {
+    return `${card1.name} + ${card2.name}: Together these cards suggest a narrative beat where ${card1.name.toLowerCase()} flows into ${card2.name.toLowerCase()}.`
+  }
+
+  const isStructuredFiveCard = spreadId === 'structured-reading' && cards.length === 5
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-8 delay-300 duration-500">
@@ -164,6 +171,139 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
           })}
         </CardContent>
       </Card>
+
+      {isStructuredFiveCard && (
+        <div className="mt-6 animate-in fade-in slide-in-from-bottom-8 delay-500 duration-500">
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <button
+                onClick={() => setShowStructuredAnalysis(!showStructuredAnalysis)}
+                className="w-full flex items-center justify-between hover:text-primary transition-colors"
+              >
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Structured Analysis Layers
+                </CardTitle>
+                <ChevronDown
+                  className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
+                    showStructuredAnalysis ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Deeper insights: interpretive lenses, adjacent pairs, and timing calculations
+              </p>
+            </CardHeader>
+
+            {showStructuredAnalysis && (
+              <CardContent className="space-y-6 border-t border-border pt-6">
+                {/* Adjacent Pairs Section */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-foreground">Adjacent Pairs (Narrative Beats)</h3>
+                  <p className="text-xs text-muted-foreground">Each pair tells a micro-clause of the story:</p>
+                  <div className="space-y-2">
+                    {[0, 1, 2, 3].map((pairIndex) => {
+                      const card1 = getCardById(allCards, cards[pairIndex].id)
+                      const card2 = getCardById(allCards, cards[pairIndex + 1].id)
+                      if (!card1 || !card2) return null
+                      return (
+                        <div key={`pair-${pairIndex}`} className="rounded-lg bg-muted p-3">
+                          <p className="text-sm font-medium text-foreground">
+                            Pair {pairIndex + 1}: {card1.name} + {card2.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {card1.name} flows into {card2.name}—this is a moment of transition or influence between these two forces.
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Interpretive Lenses Section */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-foreground">Interpretive Lenses (Choose One or Layer Them)</h3>
+                  <p className="text-xs text-muted-foreground">
+                    The five cards can be read through different frameworks depending on your question:
+                  </p>
+                  <div className="space-y-3">
+                    <div className="rounded-lg border border-border bg-muted/50 p-3">
+                      <p className="text-sm font-medium text-foreground">Lens A: Past-Present-Future</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Cards 1-2 (past forces) → Card 3 (present moment) → Cards 4-5 (emerging future)
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-muted/50 p-3">
+                      <p className="text-sm font-medium text-foreground">Lens B: Problem-Advice-Outcome</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Cards 1-2 (what holds you back) → Card 3 (the advice or pivot) → Cards 4-5 (the outcome if you follow it)
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-muted/50 p-3">
+                      <p className="text-sm font-medium text-foreground">Lens C: Situation-Action-Result</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Card 1 (your topic/situation) → Cards 2-3 (action or development) → Cards 4-5 (the result or answer)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timing Calculation Section */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-foreground">Timing Calculation (Optional)</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Add the pip count of Card 5 (the outcome card). For Lenormand, use the card number (1-36):
+                  </p>
+                  <div className="rounded-lg bg-muted p-3">
+                    <p className="text-sm text-foreground">
+                      {(() => {
+                        const card5 = getCardById(allCards, cards[4].id)
+                        if (!card5) return "Unable to calculate timing"
+                        const pips = card5.id
+                        let timing = ""
+                        if (pips <= 10) timing = `${pips} days`
+                        else if (pips <= 20) timing = `${pips - 10} weeks`
+                        else timing = `${Math.ceil((pips - 20) / 1.5)} months`
+                        return `Card 5 (${card5.name}): Card #${pips} = approximately ${timing}`
+                      })()}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Formula: 1-10 = days, 11-20 = weeks, 21-36 = months
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick Checklist */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-foreground">Verification Checklist</h3>
+                  <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-foreground">☑</span>
+                      <p className="text-sm text-muted-foreground">Read the five cards as ONE fluent sentence?</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-foreground">☑</span>
+                      <p className="text-sm text-muted-foreground">Chose one interpretive lens that fits your question?</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-foreground">☑</span>
+                      <p className="text-sm text-muted-foreground">Examined the four adjacent pairs as narrative beats?</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-foreground">☑</span>
+                      <p className="text-sm text-muted-foreground">Extracted timing if the question involves timeline?</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm font-medium text-foreground">☑</span>
+                      <p className="text-sm text-muted-foreground">Identified significators (if the question is about a person)?</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

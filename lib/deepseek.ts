@@ -33,8 +33,8 @@ const SPREAD_RULES: Record<string, string> = {
   "yes-no-maybe": "Card 1 is the answer (Positive/Negative). Card 2 supports the answer. Card 3 provides the nuance or condition. IMPORTANT: You must conclude with a definitive YES or NO answer based on the cards.",
   "situation-challenge-advice": "Card 1 is the Situation. Card 2 is the Challenge/Obstacle. Card 3 is the Advice.",
   "mind-body-spirit": "Card 1 represents the Mind/Thoughts. Card 2 represents the Body/Physical. Card 3 represents the Spirit/Emotional.",
-  "sentence-5": "Interpret these 5 cards as a detailed narrative sentence. Look for the central theme in the middle card (Card 3).",
-  "structured-reading": "Card 1: The Issue. Card 2: The Past. Card 3: The Present. Card 4: The Future. Card 5: The Outcome.",
+  "sentence-5": "Read cards 1-2-3-4-5 as ONE complete grammatical sentence only. (1=subject, 2=verb, 3=object, 4=modifier, 5=outcome). Stop after the sentence. Do NOT add extra analysis or interpretive layers. Deliver the headline meaning and nothing more.",
+  "structured-reading": "Read cards 1-2-3-4-5 as ONE grammatical sentence first: (1=subject, 2=verb, 3=object, 4=modifier, 5=outcome). Then layer these optional interpretive lenses where they fit: A) Past-Present-Future: 1-2(past), 3(present), 4-5(future) B) Problem-Advice-Outcome: 1-2(what holds you back), 3(advice/pivot), 4-5(outcome if followed) C) Situation-Action-Result: 1(topic), 2-3(action), 4-5(result). Then identify and explain the four adjacent pairs as micro-clauses: 1+2, 2+3, 3+4, 4+5 (each is a brief narrative beat). If the question involves timing, calculate: add the pips of card 5 (court cards=4, Aces=1). Result: ≤10=days, 11-20=weeks, >20=months. If the question is about a specific person, identify any significator (Man/Woman/Heart/Ring/Bear/Fox/Tower) in the line. Note: the card closest to the LEFT is the opening character; closest to the RIGHT is the closing character.",
   "week-ahead": "Interpret the 7 cards as a forecast for the week ahead, one card for each day or as a general narrative for the week.",
   "relationship-double-significator": "Card 1: You. Card 2: The Other Person. Card 3: The Relationship Dynamic. Card 4: Your Thoughts. Card 5: Their Thoughts. Card 6: Your Feelings. Card 7: Their Feelings.",
   "comprehensive": "A comprehensive 9-card square. The central card (Card 5) is the focus. Read rows, columns, and diagonals for detailed insight.",
@@ -53,10 +53,12 @@ function buildPrompt(request: AIReadingRequest): string {
     if (SPREAD_RULES[request.spreadId]) {
       spreadRules = `\nSpread Rules:\n${SPREAD_RULES[request.spreadId]}`
     }
-    // Add special requirement for yes-no spread
-    if (request.spreadId === "yes-no-maybe") {
-      yesNoRequirement = "\n\nIMPORTANT: End your interpretation with a clear conclusion on a new line: **ANSWER: YES** or **ANSWER: NO**"
-    }
+     if (request.spreadId === "yes-no-maybe") {
+       yesNoRequirement = "\n\nIMPORTANT: End your interpretation with a clear conclusion on a new line: **ANSWER: YES** or **ANSWER: NO**"
+     }
+     if (request.spreadId === "structured-reading") {
+       yesNoRequirement = "\n\nIMPORTANT: When explaining the adjacent pairs and optional lenses, use clear formatting with section headers like 'Sentence', 'Interpretive Lenses', 'Adjacent Pairs', and 'Timing' (if applicable). Make it easy for the user to see each layer of analysis."
+     }
   }
 
   return `

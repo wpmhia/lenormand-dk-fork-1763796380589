@@ -183,10 +183,59 @@ export default function ReadingBasicsPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+         </Card>
 
-        {/* Basic Reading Steps */}
-        <Card className="mb-8 border-border bg-card">
+         {/* 5-Card Methodology: Two Depth Modes */}
+         <Card className="mb-8 border-border bg-card">
+           <CardHeader>
+             <CardTitle className="flex items-center text-2xl text-foreground">
+               <MessageSquare className="mr-3 h-6 w-6 text-primary" />
+               5-Card Reading: Two Depth Modes
+             </CardTitle>
+           </CardHeader>
+           <CardContent className="space-y-6">
+             <p className="leading-relaxed text-muted-foreground">
+               The 5-card spread is the workhorse of modern Lenormand. It&apos;s flexible, fast, and layered. You can use it two ways depending on how much depth you need.
+             </p>
+
+             <div className="grid gap-6 md:grid-cols-2">
+               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                 <h4 className="mb-2 font-semibold text-foreground">MODE 1: SENTENCE ONLY (Quick)</h4>
+                 <div className="space-y-2 text-sm text-muted-foreground">
+                   <p><strong>Time:</strong> 10–15 seconds</p>
+                   <p><strong>Method:</strong> Read cards 1-2-3-4-5 as ONE grammatical sentence and stop.</p>
+                   <p><strong>Structure:</strong> Subject (1) + Verb (2) + Object (3) + Modifier (4) + Outcome (5)</p>
+                   <p><strong>Best for:</strong> Daily draws, quick questions, when you only need the headline</p>
+                   <p><strong>Example:</strong> &quot;The Rider (subject) brings (verb) an invitation (object) to the family (modifier) and leads to money (outcome).&quot;</p>
+                 </div>
+               </div>
+
+               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                 <h4 className="mb-2 font-semibold text-foreground">MODE 2: FULL STRUCTURED (Deep)</h4>
+                 <div className="space-y-2 text-sm text-muted-foreground">
+                   <p><strong>Time:</strong> 60–90 seconds</p>
+                   <p><strong>Method:</strong> Start with the sentence, then layer three optional interpretive lenses, analyze adjacent pairs, and add timing if needed.</p>
+                   <p><strong>Layers:</strong></p>
+                   <ul className="ml-4 space-y-1 text-xs">
+                     <li>• Three lenses: Past-Present-Future OR Problem-Advice-Outcome OR Situation-Action-Result</li>
+                     <li>• Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as micro-story beats</li>
+                     <li>• Optional timing: Add pips of card 5 (≤10=days, 11-20=weeks, &gt;20=months)</li>
+                     <li>• Optional significator: Identify who&apos;s involved (Man/Woman/Heart/etc.)</li>
+                   </ul>
+                   <p className="mt-2"><strong>Best for:</strong> Important questions, relationship issues, decisions where you need to know <em>when, why, and who</em></p>
+                 </div>
+               </div>
+             </div>
+
+             <div className="rounded-lg bg-muted p-4">
+               <p className="text-sm font-medium text-foreground">💡 Think of Sentence mode as the <strong>headline</strong>; Structured mode is the <strong>full article</strong>.</p>
+               <p className="mt-2 text-sm text-muted-foreground">Use the light version when you&apos;re in a hurry. Run the full checklist when the question matters.</p>
+             </div>
+           </CardContent>
+         </Card>
+
+         {/* Basic Reading Steps */}
+         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
               <Shuffle className="mr-3 h-6 w-6 text-primary" />
@@ -288,15 +337,25 @@ export default function ReadingBasicsPage() {
                  </div>
                </div>
 
-               <div className="space-y-3">
-                 <h4 className="font-semibold text-foreground">5-Card Spread</h4>
-                 <p className="text-sm text-muted-foreground">
-                   Situation → Challenge → Advice → Outcome → Timing.
-                 </p>
-                 <div className="text-xs text-primary dark:text-primary/80">
-                   Best for: Detailed problem-solving
-                 </div>
-               </div>
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground">5-Card: Sentence Reading (Quick)</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Read cards 1-2-3-4-5 as ONE grammatical sentence (subject-verb-object-modifier-outcome). Stop. Fast headline reading.
+                  </p>
+                  <div className="text-xs text-primary dark:text-primary/80">
+                    Best for: Daily draws, quick questions, when you only need the headline
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground">5-Card: Structured Reading (Full)</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Start with the same sentence, then layer three optional interpretive lenses, analyze four adjacent pairs, add timing if needed, identify significators. Complete deep analysis.
+                  </p>
+                  <div className="text-xs text-primary dark:text-primary/80">
+                    Best for: Important questions, relationship issues, decisions that need clarity on **when, why, and who**
+                  </div>
+                </div>
 
                <div className="space-y-3">
                  <h4 className="font-semibold text-foreground">9-Card Spread</h4>
