@@ -439,41 +439,41 @@ function NewReadingPageContent() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                         {/* Path Switcher */}
-                         <div className="mb-4 flex items-center justify-center gap-2">
-                           <span className="text-sm text-muted-foreground">Reading method:</span>
-                           <div className="btn-group">
-                             <Button
-                               size="sm"
-                               variant={path === 'virtual' ? 'default' : 'ghost'}
-                               onClick={() => {
-                                 setPath('virtual')
-                                 setPhysicalCards('')
-                                 setPhysicalCardsError(null)
-                                 setParsedCards([])
-                                 setCardSuggestions([])
-                               }}
-                               className="btn-group-item"
-                             >
-                               ✨ Virtual Draw
-                             </Button>
-                              <Button
-                                size="sm"
-                                variant={path === 'physical' ? 'default' : 'ghost'}
-                                onClick={() => {
-                                  setPath('physical')
-                                  setSelectedSpread(COMPREHENSIVE_SPREADS[0])
-                                }}
-                                className="btn-group-item"
-                              >
-                                🎴 Physical Cards
-                              </Button>
-                           </div>
-                         </div>
+                        {/* Path Switcher */}
+                        <div className="mb-4 flex items-center justify-center gap-2">
+                          <span className="text-sm text-muted-foreground">Reading method:</span>
+                          <div className="btn-group">
+                            <Button
+                              size="sm"
+                              variant={path === 'virtual' ? 'default' : 'ghost'}
+                              onClick={() => {
+                                setPath('virtual')
+                                setPhysicalCards('')
+                                setPhysicalCardsError(null)
+                                setParsedCards([])
+                                setCardSuggestions([])
+                              }}
+                              className="btn-group-item"
+                            >
+                              ✨ Virtual Draw
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant={path === 'physical' ? 'default' : 'ghost'}
+                              onClick={() => {
+                                setPath('physical')
+                                setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                              }}
+                              className="btn-group-item"
+                            >
+                              🎴 Physical Cards
+                            </Button>
+                          </div>
+                        </div>
 
                         {/* Manual Spread Selection - Show for both paths */}
                         {(path === 'physical' || path === 'virtual') && (
-                          <div className="space-y-2">
+                          <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
                             <Label htmlFor="manual-spread" className="font-medium text-foreground">
                               Choose Your Spread:
                             </Label>
@@ -563,7 +563,7 @@ function NewReadingPageContent() {
                                     {card.id}
                                   </span>
                                   {card.name}
-                                </div>
+                      </div>
                               ))}
                             </div>
                           )}
