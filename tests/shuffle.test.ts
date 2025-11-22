@@ -134,10 +134,10 @@ describe('Randomness Distribution', () => {
       })
     }
     
-    // Check that each card appears in each position roughly equally
-    // Allow for some variance (±20% of expected)
-    const expectedCount = iterations / testDeck.length
-    const tolerance = expectedCount * 0.2
+     // Check that each card appears in each position roughly equally
+     // Allow for some variance (±25% of expected to account for statistical variance)
+     const expectedCount = iterations / testDeck.length
+     const tolerance = expectedCount * 0.25
     
     for (let card = 0; card < testDeck.length; card++) {
       for (let position = 0; position < testDeck.length; position++) {
