@@ -10,18 +10,18 @@ export function Footer() {
     <footer className="border-t border-border/50 bg-background/50">
       <div className="container mx-auto px-4 py-8">
         {/* Compact Footer Grid */}
-        <div className="mb-6 grid gap-6 sm:grid-cols-4 text-xs text-muted-foreground">
+        <div className="mb-6 grid gap-6 sm:grid-cols-4 text-sm text-muted-foreground">
           {/* About */}
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-foreground/70">About</h4>
-            <p className="text-xs leading-relaxed">
+            <h4 className="!text-sm font-medium text-foreground/60">About</h4>
+            <p className="text-xs leading-relaxed text-muted-foreground/80">
               AI-enhanced Lenormand readings.
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-foreground/70">Navigate</h4>
+            <h4 className="!text-sm font-medium text-foreground/60">Navigate</h4>
             <nav className="space-y-1" aria-label="Quick navigation">
               <Link href="/read/new" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
                 New Reading
@@ -37,7 +37,7 @@ export function Footer() {
 
           {/* Resources */}
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-foreground/70">Resources</h4>
+            <h4 className="!text-sm font-medium text-foreground/60">Resources</h4>
             <nav className="space-y-1" aria-label="Learning resources">
               <Link href="/learn/spreads" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
                 Spreads
@@ -50,7 +50,7 @@ export function Footer() {
 
           {/* Legal */}
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-foreground/70">Legal</h4>
+            <h4 className="!text-sm font-medium text-foreground/60">Legal</h4>
             <nav className="space-y-1" aria-label="Legal and privacy">
               <Link href="/privacy" className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground/80">
                 <Shield className="h-3 w-3 flex-shrink-0" />
