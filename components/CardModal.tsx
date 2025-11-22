@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { Card as CardType } from '@/lib/types'
 import { getCards } from '@/lib/data'
-import { X, ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 
 interface CardModalProps {
   card: CardType
@@ -44,24 +44,15 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
       }
     }}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-border bg-card text-card-foreground">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
-              <span className="text-2xl font-bold">{card.id}.</span>
-              <span className="text-xl">{card.name}</span>
-            </DialogTitle>
-            <button
-              onClick={onClose}
-              className="focus:ring-ring rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
-          </div>
-          <DialogDescription>
-            Lenormand card #{card.id} of 36
-          </DialogDescription>
-        </DialogHeader>
+         <DialogHeader>
+           <DialogTitle className="flex items-center gap-2">
+             <span className="text-2xl font-bold">{card.id}.</span>
+             <span className="text-xl">{card.name}</span>
+           </DialogTitle>
+           <DialogDescription>
+             Lenormand card #{card.id} of 36
+           </DialogDescription>
+         </DialogHeader>
 
         <div className="space-y-4">
           {/* Card Image and Keywords - Always Visible */}
