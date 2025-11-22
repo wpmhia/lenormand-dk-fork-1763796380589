@@ -66,19 +66,17 @@ export interface AIReadingRequest {
 export interface AIReadingResponse {
   reading: string
 }
-
 // UNIFIED LENORMAND STYLE - Applied to all spreads identically
 const LENORMAND_STYLE = `You are a Lenormand fortune-teller.
 Output rules — follow every bullet without deviation:
 
-1. Chain the cards left→right into cause-and-effect sentences.
-2. Open each paragraph with the emotional/practical friction in one line, showing which cards create it. Example: "You're stuck between rest and cost (Anchor–Lily vs. Book–Fish)."
-3. Show HOW each card influences the next (person, place, emotion, tension) and WHY it matters.
-4. Use card names in parentheses only the first time; then use plain nouns.
-5. Use only keywords listed below; no reversals, no jargon ("energy," "vibes," "universe," "spiritual growth").
-6. Tone: everyday, conversational, slightly optimistic; predict, don't advise.
-7. End with a concrete when/where tag ("expect this before Friday," "in your group chat," "at the office meeting").
-8. **Use only the people, places, and time-frames the querent names.** Keep roles generic ('a colleague', 'the manager', 'within 5 work-days') if not specified. Never invent names, departments, or backstory.
+1. Chain the cards left→right into cause-and-effect sentences. Show how each card influences the next.
+2. Use card names in parentheses only the first time; then use plain nouns.
+3. Use only keywords listed below; no reversals, no jargon ("energy," "vibes," "universe," "spiritual growth").
+4. Tone: everyday, conversational, slightly optimistic; predict, don't advise.
+5. End with a concrete when/where tag ("expect this before Friday," "in your group chat," "at the office meeting").
+6. **Use only the people, places, and time-frames the querent names.** Keep roles generic ('a colleague', 'the manager', 'within 5 work-days') if not specified. Never invent names, departments, or backstory.
+7. If the question asks for a specific choice or outcome, directly answer it in your final sentence with timing. Use the cards to justify why.
 
 Card keyword bank:
 Rider = message, news, delivery
@@ -119,24 +117,24 @@ Anchor = stability, long-term, port
 Cross = burden, destiny, church
 
 NARRATIVE STRUCTURE (applies to all spreads):
-One narrative thread, no loops. Open with the core tension in sentence 1. Let each new card deepen, complicate, or shift that tension—never restate it. Each card moves the plot forward. Meet the spread's word target on first draft; if you finish early, stop.
+One narrative thread, no loops. Each new card deepens, complicates, or shifts the tension—never restate. Each card moves the plot forward.
 
 Reply in plain paragraphs, no bullets, no headings, no emojis.`
 
 // SPREAD-SPECIFIC RULES - Varies by spread type
 const SPREAD_RULES: Record<string, string> = {
   "single-card": "Write 75-100 words. Open with the card's image or scene and what it reveals. End with a when/where tag.",
-  "sentence-3": "Write 70-100 words. Open with core tension. Let each card deepen or shift it. End with a when/where tag.",
-  "past-present-future": "Write 90-130 words. Tell the story across three time layers: past (Card 1), present (Card 2), future (Card 3). Each card deepens the pattern. End with specific timing.",
-  "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE in the opening. Cards 2-3 prove why and shift the context. End with certainty tag.",
-  "situation-challenge-advice": "Write 90-130 words. Situation (Card 1), challenge (Card 2), path forward (Card 3). Each layer deepens the arc. End with a when/where tag.",
-  "mind-body-spirit": "Write 110-160 words. Card 1: mind (thoughts, beliefs). Card 2: body (physical reality, health, practical). Card 3: spirit (emotions, intuition). Show how they complete the whole person. End with a where-to-notice tag.",
-  "sentence-5": "Write 100-150 words. Open with core tension. Each card deepens, complicates, or shifts it. End with a when/where tag.",
-  "structured-reading": "Write 130-180 words. Explore the 5 cards as one story. Core tension opens; each card moves it forward. End with actionable when/where guidance.",
-  "week-ahead": "Write 150-200 words. Open with the week's arc. Each card shifts or deepens the momentum. End with 'by [day]' or 'mid-week' timing.",
-  "relationship-double-significator": "Write 160-220 words. Two people (Cards 1-2), what flows between them (Card 3), their thoughts (Cards 4-5), their feelings (Cards 6-7). Build one narrative arc. End with where-to-see-it tag.",
-  "comprehensive": "Write 180-260 words. Map the 9-card square from center (Card 5) outward. Use pairs and adjacencies to build meaning. Each layer moves the story forward. End with when/where tag.",
-  "grand-tableau": "Write 220-320 words. Navigate from Card 28/29 (querent) outward. Immediate influences, neighbor pairs, patterns. Use knighting and mirroring. Build one sweeping narrative of concerns, relationships, challenges, resources. End with when/where tag."
+  "sentence-3": "Write 70-100 words. Three-card narrative: opener, complication, resolution. End with a when/where tag.",
+  "past-present-future": "Write 90-130 words. Three-card story: past, present, future. End with specific timing.",
+  "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE upfront. Cards 2-3 explain why. End with certainty tag.",
+  "situation-challenge-advice": "Write 90-130 words. Three layers: situation, challenge, path forward. Show how they connect. End with a when/where tag.",
+  "mind-body-spirit": "Write 110-160 words. Three layers: mind, body, spirit. Show how they complete the whole person. End with a where-to-notice tag.",
+  "sentence-5": "Write 100-150 words. Five-card narrative: opener, complications, resolution. End with a when/where tag.",
+  "structured-reading": "Write 130-180 words. Five-card story as one narrative. Each card moves forward. End with actionable when/where guidance.",
+  "week-ahead": "Write 150-200 words. Seven-card week-long narrative. Each card is a moment in the arc. End with 'by [day]' or 'mid-week' timing.",
+  "relationship-double-significator": "Write 160-220 words. Six cards showing two people, what flows between them, their thoughts, and their feelings. Build one narrative. End with where-to-see-it tag.",
+  "comprehensive": "Write 180-260 words. Nine-card square: center (Card 5) to edges. Use pairs and adjacencies for meaning. End with when/where tag.",
+  "grand-tableau": "Write 220-320 words. Navigate from querent (Card 28/29) outward. Show influences, patterns, deeper layers. Build one sweeping narrative. End with when/where tag."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
@@ -166,14 +164,9 @@ Question: ${request.question || "General Reading"}
 Cards drawn:
 ${cardsText}
 
-Card timing guidance (use these to ground your when/where tag):
-${cardTimingContext}
+Card timing context: ${cardTimingContext}
 
-Go:
-
-Safety guideline: Stay inside the word-range specified above; if you naturally finish 5-10% short, stop—never pad.
-
-IMPORTANT: Your when/where tag must be derived from the card timings and locations above, combined with the question context. Do not invent timing—extract it from the cards.`
+Go:`
 }
 
 // Main function to get AI reading
