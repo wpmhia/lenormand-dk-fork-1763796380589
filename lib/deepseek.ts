@@ -131,7 +131,7 @@ const SPREAD_RULES: Record<string, string> = {
   "mind-body-spirit": "Write 110-160 words. Three layers: mind, body, spirit. Show how they complete the whole person. End with a where-to-notice tag.",
   "sentence-5": "Write 100-150 words. Five-card narrative: opener, complications, resolution. End with a when/where tag.",
   "structured-reading": "Write 130-180 words. Five-card story as one narrative. Each card moves forward. End with actionable when/where guidance.",
-  "week-ahead": "Write 150-200 words. Use present-tense, first-person plural ('Monday we…, Tuesday we…'). Seven cards color concrete moments with the kids: mess, joke, meltdown, rescue. Each card is one day. End with Sunday's emotional takeaway plus a single when tag if something spills into next week.",
+  "week-ahead": "Write 150-200 words. Use present-tense, first-person plural ('Monday we…, Tuesday we…'). Each card is one day with a concrete moment. End with the week's emotional takeaway plus a single when tag if something spills into next week.",
   "relationship-double-significator": "Write 160-220 words. Six cards showing two people, what flows between them, their thoughts, and their feelings. Build one narrative. End with where-to-see-it tag.",
   "comprehensive": "Write 180-260 words. Nine-card square: center (Card 5) to edges. Use pairs and adjacencies for meaning. End with when/where tag.",
   "grand-tableau": "Write 220-320 words. Navigate from querent (Card 28/29) outward. Show influences, patterns, deeper layers. Build one sweeping narrative. End with when/where tag."
