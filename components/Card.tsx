@@ -65,14 +65,14 @@ export function Card({
         role="button"
         aria-label="Lenormand card back. Click to draw or select card"
       >
-        {/* Card Back Image */}
-         <Image
-           src="/images/card-back.webp"
-           alt="Card back"
-           fill
-           className="object-cover"
-           sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
-         />
+         {/* Card Back Image */}
+          <Image
+            src="/images/card-back.png"
+            alt="Card back"
+            fill
+            className="object-cover"
+            sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
+          />
 
         {/* Hover overlay */}
         <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent via-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus:opacity-100"></div>
