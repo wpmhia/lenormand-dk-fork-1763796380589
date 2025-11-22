@@ -68,14 +68,14 @@ export function Header() {
 
         <div className="ml-auto flex items-center space-x-2 md:ml-0">
           {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="transform p-3 text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
-            aria-label="Toggle mobile menu"
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+           <button
+             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+             className="transform p-2.5 text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
+             aria-label="Toggle mobile menu"
+             aria-expanded={mobileMenuOpen}
+           >
+             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+           </button>
 
           <ThemeToggle />
         </div>
@@ -91,42 +91,42 @@ export function Header() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden border-t border-border bg-card/95 backdrop-blur md:hidden"
           >
-            <nav className="container space-y-2 px-4 py-4" role="navigation">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-            >
-              <Home className="h-4 w-4" />
-              <span>Home</span>
-            </Link>
-            <Link
-              href="/cards"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-            >
-              <BookOpen className="h-4 w-4" />
-              <span>Cards</span>
-            </Link>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  router.push('/read/new?reset=' + Date.now());
-                }}
-                className="flex items-center space-x-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-              >
-                <Plus className="h-4 w-4" />
-                <span>New Reading</span>
-              </button>
-            <Link
-              href="/learn"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>Learn</span>
-            </Link>
-            </nav>
+            <nav className="container space-y-1 px-4 py-3" role="navigation">
+             <Link
+               href="/"
+               onClick={() => setMobileMenuOpen(false)}
+               className="flex items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+             >
+               <Home className="h-4 w-4" />
+               <span>Home</span>
+             </Link>
+             <Link
+               href="/cards"
+               onClick={() => setMobileMenuOpen(false)}
+               className="flex items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+             >
+               <BookOpen className="h-4 w-4" />
+               <span>Cards</span>
+             </Link>
+               <button
+                 onClick={() => {
+                   setMobileMenuOpen(false);
+                   router.push('/read/new?reset=' + Date.now());
+                 }}
+                 className="flex w-full items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+               >
+                 <Plus className="h-4 w-4" />
+                 <span>New Reading</span>
+               </button>
+             <Link
+               href="/learn"
+               onClick={() => setMobileMenuOpen(false)}
+               className="flex items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+             >
+               <Sparkles className="h-4 w-4" />
+               <span>Learn</span>
+             </Link>
+             </nav>
           </motion.div>
         )}
       </AnimatePresence>

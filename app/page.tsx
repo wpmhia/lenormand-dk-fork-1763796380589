@@ -30,7 +30,7 @@ export default function Home() {
                 Intelligence
               </span>
             </h1>
-            <p className="mx-auto mb-4 max-w-2xl text-lg font-normal leading-relaxed text-muted-foreground sm:text-xl lg:mx-0">
+            <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
               Get free AI-powered Lenormand card readings online. Explore card meanings, spreads, and personalized interpretations with our intelligent divination tool.
             </p>
               <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
@@ -74,7 +74,7 @@ export default function Home() {
              </h2>
              <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
           </div>
-             <div className="relative z-10 grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-5">
+              <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 <ReadingTypeCard
                   icon={<Sparkles className="h-5 w-5 text-primary" />}
                   title="3-Card Reading"

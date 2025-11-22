@@ -75,35 +75,37 @@ export default function CardsPage() {
         </p>
       </div>
 
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search cards by name, keyword, or meaning..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant={sortBy === 'number' ? 'default' : 'outline'}
-            onClick={() => setSortBy('number')}
-            size="sm"
-          >
-            Sort by Number
-          </Button>
-          <Button
-            variant={sortBy === 'name' ? 'default' : 'outline'}
-            onClick={() => setSortBy('name')}
-            size="sm"
-          >
-            Sort by Name
-          </Button>
-        </div>
-      </div>
+       <div className="mb-8 flex flex-col gap-4 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
+         <div className="relative flex-1">
+           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+           <Input
+             placeholder="Search cards by name, keyword, or meaning..."
+             value={searchTerm}
+             onChange={(e) => setSearchTerm(e.target.value)}
+             className="pl-10"
+           />
+         </div>
+         <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
+           <Button
+             variant={sortBy === 'number' ? 'default' : 'outline'}
+             onClick={() => setSortBy('number')}
+             size="sm"
+             className="flex-1 sm:flex-none"
+           >
+             Sort by Number
+           </Button>
+           <Button
+             variant={sortBy === 'name' ? 'default' : 'outline'}
+             onClick={() => setSortBy('name')}
+             size="sm"
+             className="flex-1 sm:flex-none"
+           >
+             Sort by Name
+           </Button>
+         </div>
+       </div>
 
-      <div className="grid-1 grid-2 grid-3 grid-4 grid gap-6">
+       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredCards.map((card) => (
           <div key={card.id} className="space-component">
             <Card 

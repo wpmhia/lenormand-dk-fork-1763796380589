@@ -43,7 +43,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
         onClose()
       }
     }}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-border bg-card text-card-foreground">
+       <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
          <DialogHeader>
            <DialogTitle className="flex items-center gap-2">
              <span className="text-2xl font-bold">{card.id}.</span>
