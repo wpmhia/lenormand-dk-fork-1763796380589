@@ -213,6 +213,14 @@ function NewReadingPageContent() {
       setError(error instanceof Error ? error.message : 'An error occurred while processing your cards')
     }
   }, [path, selectedSpread, parsePhysicalCards])
+  // Parse physical cards when input changes
+  useEffect(() => {
+    if (path === 'physical' && physicalCards) {
+      const parsed = parsePhysicalCards(allCards)
+      setParsedCards(parsed)
+    }
+  }, [physicalCards, path, allCards, parsePhysicalCards])
+
 
   // Parse physical cards when input changes
   useEffect(() => {
@@ -589,10 +597,11 @@ function NewReadingPageContent() {
                     </div>
                   )}
                   {/* Submit Button for Physical Cards */}
-                  {path === 'physical' && selectedSpread && parsedCards.length === selectedSpread.cards && (
+                  {path === 'physical' && selectedSpread && (
                     <Button
                       onClick={() => handleDraw(allCards)}
-                      className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90"
+                      disabled={parsedCards.length !== selectedSpread.cards}
+                      className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                     >
                       ✨ Start Reading
                     </Button>
