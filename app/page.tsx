@@ -37,12 +37,12 @@ export default function Home() {
             </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
                <Link href="/read/new">
-                 <Button className="btn-hero">
+                 <Button size="lg">
                    ✨ Begin Your Journey
                  </Button>
                </Link>
                 <Link href="/cards">
-                  <Button className="btn-hero-outline">
+                  <Button variant="outline" size="lg">
                     🔮 Explore Cards
                   </Button>
                 </Link>
@@ -215,7 +215,7 @@ export default function Home() {
               Let the cards reveal what your soul already knows
             </p>
             <Link href="/read/new">
-              <Button className="btn-hero">
+              <Button size="lg">
                 Discover Your Path
                 <ArrowRight className="ml-3 h-5 w-5" />
               </Button>
