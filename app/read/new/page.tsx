@@ -30,7 +30,7 @@ function NewReadingPageContent() {
   const [path, setPath] = useState<'virtual' | 'physical' | null>(null)
   const [physicalCards, setPhysicalCards] = useState('')
   const [physicalCardsError, setPhysicalCardsError] = useState<string | null>(null)
-  const [parsedCards, setParsedCards] = useState<CardType[]>([])
+  const [parsedCards, setParsedCards] = useState<ReadingCard[]>([])
   const [cardSuggestions, setCardSuggestions] = useState<string[]>([])
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([])
   const [error, setError] = useState('')
@@ -182,26 +182,35 @@ function NewReadingPageContent() {
       }
     })
 
-    return readingCards
-  }, [physicalCards])
+     return readingCards
+   }, [physicalCards, allCards])
 
-  const handleDraw = useCallback(async (cards: CardType[]) => {
+  const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
     const currentPath = path
     const currentSpread = selectedSpread
 
     try {
       let readingCards: ReadingCard[];
 
-      if (currentPath === 'physical') {
-        // Parse physical cards input
-        readingCards = parsePhysicalCards(cards);
-        if (readingCards.length === 0) {
-          setError('No valid cards found. Please check your card input.')
-          return
+      // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
+      if (Array.isArray(cards) && cards.length > 0) {
+        if ('position' in cards[0]) {
+          // It's ReadingCard[]
+          readingCards = cards as ReadingCard[];
+        } else {
+          // It's CardType[], convert to ReadingCard[]
+          readingCards = (cards as CardType[]).map((card, index) => ({
+            id: card.id,
+            position: index
+          }));
         }
       } else {
-        // Draw random cards (virtual path)
-        readingCards = drawCards(cards, currentSpread.cards);
+        readingCards = [];
+      }
+
+      if (readingCards.length === 0) {
+        setError('No valid cards found. Please check your card input.')
+        return
       }
 
        setDrawnCards(readingCards)
@@ -212,25 +221,16 @@ function NewReadingPageContent() {
       console.error('Error in handleDraw:', error)
       setError(error instanceof Error ? error.message : 'An error occurred while processing your cards')
     }
-  }, [path, selectedSpread, parsePhysicalCards])
+  }, [path, selectedSpread])
   // Parse physical cards when input changes
   useEffect(() => {
     if (path === 'physical' && physicalCards) {
       const parsed = parsePhysicalCards(allCards)
       setParsedCards(parsed)
     }
-  }, [physicalCards, path, allCards, parsePhysicalCards])
+   }, [physicalCards, path, allCards, parsePhysicalCards])
 
-
-  // Parse physical cards when input changes
-  useEffect(() => {
-    if (path === 'physical' && physicalCards) {
-      const parsed = parsePhysicalCards(allCards)
-      setParsedCards(parsed)
-    }
-  }, [physicalCards, path, allCards, parsePhysicalCards])
-
-  // Handle key down for physical cards input
+   // Handle key down for physical cards input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -245,7 +245,7 @@ function NewReadingPageContent() {
       document.addEventListener('keydown', handleKeyDown)
       return () => document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [path, parsedCards, selectedSpread.cards, allCards, canProceed, handleDraw])
+  }, [path, parsedCards, selectedSpread.cards, canProceed, handleDraw])
 
   // Clear AI error when loading starts
   useEffect(() => {
@@ -559,7 +559,9 @@ function NewReadingPageContent() {
                         {/* Live Card Chips */}
                         {parsedCards.length > 0 && (
                           <div className="flex flex-wrap gap-2" aria-live="polite" aria-label="Recognized cards">
-                            {parsedCards.map((card, index) => (
+                            {parsedCards.map((card, index) => {
+                              const fullCard = getCardById(allCards, card.id)
+                              return (
                               <div
                                 key={`${card.id}-${index}`}
                                 className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
@@ -567,9 +569,10 @@ function NewReadingPageContent() {
                                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">
                                   {card.id}
                                 </span>
-                                {card.name}
+                                {fullCard?.name || 'Unknown'}
                               </div>
-                            ))}
+                            )
+                            })}
                           </div>
                         )}
 
@@ -599,7 +602,7 @@ function NewReadingPageContent() {
                   {/* Submit Button for Physical Cards */}
                   {path === 'physical' && selectedSpread && (
                     <Button
-                      onClick={() => handleDraw(allCards)}
+                      onClick={() => handleDraw(parsedCards)}
                       disabled={parsedCards.length !== selectedSpread.cards}
                       className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                     >

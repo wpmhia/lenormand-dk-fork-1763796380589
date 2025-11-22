@@ -26,98 +26,31 @@ interface PositionInfo {
 }
 
 const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
-  // Handle different spread types based on spreadId
-  if (spreadId) {
-    const spreadPositions: Record<string, Record<number, PositionInfo>> = {
-      "week-ahead": {
-        0: { label: "Monday", meaning: "New beginnings, fresh starts, and initial energy for the week" },
-        1: { label: "Tuesday", meaning: "Challenges, obstacles, and work-related matters" },
-        2: { label: "Wednesday", meaning: "Communication, connections, and mid-week transitions" },
-        3: { label: "Thursday", meaning: "Progress, building momentum, and preparation" },
-        4: { label: "Friday", meaning: "Social aspects, completion, and winding down" },
-        5: { label: "Saturday", meaning: "Rest, reflection, and personal matters" },
-        6: { label: "Sunday", meaning: "Closure, spiritual matters, and weekly review" }
-      },
-      "relationship-double-significator": {
-        0: { label: "Partner 1 - Past", meaning: "Left partner's past experiences and history affecting the relationship" },
-        1: { label: "Partner 1 - Present", meaning: "Left partner's current feelings, thoughts, and situation in the relationship" },
-        2: { label: "Partner 1 - Future", meaning: "Left partner's hopes, expectations, and vision for the relationship's future" },
-        3: { label: "Relationship Core", meaning: "The central dynamic, challenge, or connection that sits between both partners" },
-        4: { label: "Partner 2 - Past", meaning: "Right partner's past experiences and history affecting the relationship" },
-        5: { label: "Partner 2 - Present", meaning: "Right partner's current feelings, thoughts, and situation in the relationship" },
-        6: { label: "Partner 2 - Future", meaning: "Right partner's hopes, expectations, and vision for the relationship's future" }
-      }
-    }
-
-    if (spreadPositions[spreadId]) {
-      return spreadPositions[spreadId][position] || { label: `Position ${position + 1}`, meaning: "" }
-    }
-  }
-
-  // Handle different spread types based on spreadId
-  if (spreadId) {
-    const spreadPositions: Record<string, Record<number, PositionInfo>> = {
-      "past-present-future": {
-        0: { label: "Past", meaning: "Influences from your past that shaped your current situation" },
-        1: { label: "Present", meaning: "Your current circumstances and immediate challenges" },
-        2: { label: "Future", meaning: "Potential outcome based on your current path" }
-      },
-      "situation-challenge-advice": {
-        0: { label: "Situation", meaning: "The current situation or question you face" },
-        1: { label: "Challenge", meaning: "Obstacles or difficulties you may encounter" },
-        2: { label: "Advice", meaning: "Guidance for how to proceed" }
-      },
-      "mind-body-spirit": {
-        0: { label: "Mind", meaning: "Thoughts, mental state, and intellectual matters" },
-        1: { label: "Body", meaning: "Physical health, actions, and material concerns" },
-        2: { label: "Spirit", meaning: "Emotional well-being, spiritual growth, and inner wisdom" }
-      },
-      "yes-no-maybe": {
-        0: { label: "First Card", meaning: "Contributes to the Yes/No count based on its positive or negative meaning" },
-        1: { label: "Center Card", meaning: "Tie-breaker card if the count is equal between positive and negative cards" },
-        2: { label: "Third Card", meaning: "Contributes to the Yes/No count based on its positive or negative meaning" }
-      },
-      "sentence-3": {
-        0: { label: "Opening Element", meaning: "Primary element - can represent past, mind, or situation depending on context" },
-        1: { label: "Central Element", meaning: "Core element - can represent present, body, or action depending on context" },
-        2: { label: "Closing Element", meaning: "Final element - can represent future, spirit, or outcome; check mirror relationship with central element" }
-      },
-      "structured-reading": {
-        0: { label: "Premise", meaning: "The foundation or current situation you're building upon" },
-        1: { label: "Obstacle", meaning: "Challenges or difficulties you may face" },
-        2: { label: "What Helps", meaning: "Resources, support, or tools available to you" },
-        3: { label: "Outcome", meaning: "The likely result of your current path" },
-        4: { label: "Final Result", meaning: "The ultimate conclusion or long-term outcome" }
-      },
-      "sentence-5": {
-        0: { label: "Position 1", meaning: "First card in the flowing narrative" },
-        1: { label: "Position 2", meaning: "Second card in the flowing narrative" },
-        2: { label: "Position 3", meaning: "Third card in the flowing narrative" },
-        3: { label: "Position 4", meaning: "Fourth card in the flowing narrative" },
-        4: { label: "Position 5", meaning: "Fifth card in the flowing narrative" }
-      },
-      "relationship-double-significator": {
-        0: { label: "Partner 1 - Past", meaning: "Left partner's past experiences and history affecting the relationship" },
-        1: { label: "Partner 1 - Present", meaning: "Left partner's current feelings, thoughts, and situation in the relationship" },
-        2: { label: "Partner 1 - Future", meaning: "Left partner's hopes, expectations, and vision for the relationship's future" },
-        3: { label: "Relationship Core", meaning: "The central dynamic, challenge, or connection that sits between both partners" },
-        4: { label: "Partner 2 - Past", meaning: "Right partner's past experiences and history affecting the relationship" },
-        5: { label: "Partner 2 - Present", meaning: "Right partner's current feelings, thoughts, and situation in the relationship" },
-        6: { label: "Partner 2 - Future", meaning: "Right partner's hopes, expectations, and vision for the relationship's future" }
-      }
-    }
-
-    if (spreadPositions[spreadId]) {
-      return spreadPositions[spreadId][position] || { label: `Position ${position + 1}`, meaning: "" }
-    }
-  }
-
-  // Default positions based on spread type
-  const defaultPositions: Record<string, Record<number, PositionInfo>> = {
+  const spreadPositions: Record<string, Record<number, PositionInfo>> = {
     "past-present-future": {
       0: { label: "Past", meaning: "Influences from your past that shaped your current situation" },
       1: { label: "Present", meaning: "Your current circumstances and immediate challenges" },
       2: { label: "Future", meaning: "Potential outcome based on your current path" }
+    },
+    "situation-challenge-advice": {
+      0: { label: "Situation", meaning: "The current situation or question you face" },
+      1: { label: "Challenge", meaning: "Obstacles or difficulties you may encounter" },
+      2: { label: "Advice", meaning: "Guidance for how to proceed" }
+    },
+    "mind-body-spirit": {
+      0: { label: "Mind", meaning: "Thoughts, mental state, and intellectual matters" },
+      1: { label: "Body", meaning: "Physical health, actions, and material concerns" },
+      2: { label: "Spirit", meaning: "Emotional well-being, spiritual growth, and inner wisdom" }
+    },
+    "yes-no-maybe": {
+      0: { label: "First Card", meaning: "Contributes to the Yes/No count based on its positive or negative meaning" },
+      1: { label: "Center Card", meaning: "Tie-breaker card if the count is equal between positive and negative cards" },
+      2: { label: "Third Card", meaning: "Contributes to the Yes/No count based on its positive or negative meaning" }
+    },
+    "sentence-3": {
+      0: { label: "Opening Element", meaning: "Primary element - can represent past, mind, or situation depending on context" },
+      1: { label: "Central Element", meaning: "Core element - can represent present, body, or action depending on context" },
+      2: { label: "Closing Element", meaning: "Final element - can represent future, spirit, or outcome; check mirror relationship with central element" }
     },
     "structured-reading": {
       0: { label: "Premise", meaning: "The foundational situation or starting point of your inquiry" },
@@ -125,6 +58,13 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       2: { label: "What Helps", meaning: "Resources, support, or helpful factors available to you" },
       3: { label: "Outcome", meaning: "The likely result or development from your current path" },
       4: { label: "Final Result", meaning: "The ultimate conclusion or resolution of your situation" }
+    },
+    "sentence-5": {
+      0: { label: "Position 1", meaning: "First card in the flowing narrative" },
+      1: { label: "Position 2", meaning: "Second card in the flowing narrative" },
+      2: { label: "Position 3", meaning: "Third card in the flowing narrative" },
+      3: { label: "Position 4", meaning: "Fourth card in the flowing narrative" },
+      4: { label: "Position 5", meaning: "Fifth card in the flowing narrative" }
     },
     "week-ahead": {
       0: { label: "Monday", meaning: "New beginnings, fresh starts, and initial energy for the week" },
@@ -134,6 +74,15 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       4: { label: "Friday", meaning: "Social aspects, completion, and winding down" },
       5: { label: "Saturday", meaning: "Rest, reflection, and personal matters" },
       6: { label: "Sunday", meaning: "Closure, spiritual matters, and weekly review" }
+    },
+    "relationship-double-significator": {
+      0: { label: "Partner 1 - Past", meaning: "Left partner's past experiences and history affecting the relationship" },
+      1: { label: "Partner 1 - Present", meaning: "Left partner's current feelings, thoughts, and situation in the relationship" },
+      2: { label: "Partner 1 - Future", meaning: "Left partner's hopes, expectations, and vision for the relationship's future" },
+      3: { label: "Relationship Core", meaning: "The central dynamic, challenge, or connection that sits between both partners" },
+      4: { label: "Partner 2 - Past", meaning: "Right partner's past experiences and history affecting the relationship" },
+      5: { label: "Partner 2 - Present", meaning: "Right partner's current feelings, thoughts, and situation in the relationship" },
+      6: { label: "Partner 2 - Future", meaning: "Right partner's hopes, expectations, and vision for the relationship's future" }
     },
     "comprehensive": {
       0: { label: "Recent Past - Inner World", meaning: "Thoughts, feelings, and personal resources from your recent past that influence your current situation" },
@@ -148,9 +97,8 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
     }
   }
 
-  // Return default positions based on spreadId if available
-  if (spreadId && defaultPositions[spreadId]) {
-    return defaultPositions[spreadId][position] || { label: `Position ${position + 1}`, meaning: "" }
+  if (spreadId && spreadPositions[spreadId]) {
+    return spreadPositions[spreadId][position] || { label: `Position ${position + 1}`, meaning: "" }
   }
 
   return { label: `Position ${position + 1}`, meaning: "" }

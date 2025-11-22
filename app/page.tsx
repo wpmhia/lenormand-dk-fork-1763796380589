@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useScrollAnimation } from '@/hooks/use-scroll-animation'
+import { Card } from '@/components/ui/card'
+import { ReadingTypeCard } from '@/components/ReadingTypeCard'
 import {
   Sparkles,
   ArrowRight,
@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 
 export default function Home() {
-   const { ref: readingTypesRef, isVisible: readingTypesVisible } = useScrollAnimation(0.1);
 
   return (
     <main className="bg-background text-foreground" role="main">
@@ -65,13 +64,8 @@ export default function Home() {
          </div>
        </div>
 
-       {/* Reading Types */}
-        <div
-          ref={readingTypesRef}
-          /* Removed translate-y-* so the section doesn't shift the page flow on mount.
-             Keep opacity transition only to avoid a layout shift that makes the page start lower. */
-          className={`container-section transition-opacity duration-700 ${readingTypesVisible ? 'opacity-100' : 'opacity-0'}`}
-        >
+        {/* Reading Types */}
+         <div className="container-section">
          <div className="relative mb-8">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
            <div className="relative z-10 mb-6 text-center">
@@ -81,122 +75,38 @@ export default function Home() {
              </h2>
              <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
           </div>
-            <div className="relative z-10 grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-5">
-            <Link href="/read/new">
-               <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                <CardHeader className="relative z-10 pb-4">
-                  <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    Quick Analysis
-                  </CardTitle>
-                </CardHeader>
-                 <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col">
-                    <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                      Past, present, and future revealed in focused guidance
-                    </p>
-                  <div className="flex items-center text-sm font-medium">
-                    <span className="bg-primary/12 inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/10 dark:bg-primary dark:text-primary-foreground dark:ring-primary/30">
-                      3 Cards
-                    </span>
-                    <ArrowRight className="ml-2 h-4 w-4 text-primary/60 dark:text-primary/60" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/read/new">
-               <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                <CardHeader className="relative z-10 pb-4">
-                  <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground group-hover:text-primary">
-                    <Heart className="h-5 w-5 text-primary" />
-                    Deep Analysis
-                  </CardTitle>
-                </CardHeader>
-                 <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col">
-                    <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                      Uncover challenges, resources, and outcomes for your situation
-                    </p>
-                  <div className="flex items-center text-sm font-medium">
-                    <span className="bg-primary/12 inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/10 dark:bg-primary dark:text-primary-foreground dark:ring-primary/30">
-                      5 Cards
-                    </span>
-                    <ArrowRight className="ml-2 h-4 w-4 text-primary/60 dark:text-primary/60" />
-                  </div>
-                </CardContent>
-              </Card>
-             </Link>
-
-             <Link href="/read/new">
-                <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
-                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                 <CardHeader className="relative z-10 pb-4">
-                   <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground group-hover:text-primary">
-                     <Calendar className="h-5 w-5 text-primary" />
-                     Weekly Insights
-                   </CardTitle>
-                 </CardHeader>
-                  <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col">
-                    <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                      Navigate your week ahead or explore relationship dynamics
-                    </p>
-                   <div className="flex items-center text-sm font-medium">
-                     <span className="bg-primary/12 inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/10 dark:bg-primary dark:text-primary-foreground dark:ring-primary/30">
-                       7 Cards
-                     </span>
-                     <ArrowRight className="ml-2 h-4 w-4 text-primary/60 dark:text-primary/60" />
-                   </div>
-                 </CardContent>
-               </Card>
-             </Link>
-
-             <Link href="/read/new">
-                <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
-                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                 <CardHeader className="relative z-10 pb-4">
-                   <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground group-hover:text-primary">
-                     <Shield className="h-5 w-5 text-primary" />
-                     Comprehensive
-                   </CardTitle>
-                 </CardHeader>
-                 <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col">
-                    <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                      Explore inner world, direct actions, and external influences
-                    </p>
-                  <div className="flex items-center text-sm font-medium">
-                    <span className="bg-primary/12 inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/10 dark:bg-primary dark:text-primary-foreground dark:ring-primary/30">
-                      9 Cards
-                    </span>
-                    <ArrowRight className="ml-2 h-4 w-4 text-primary/60 dark:text-primary/60" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/read/new">
-               <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-                <CardHeader className="relative z-10 pb-4">
-                  <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground group-hover:text-primary">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    Grand Tableau
-                  </CardTitle>
-                </CardHeader>
-                 <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col">
-                    <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-                      Full deck reading revealing life&apos;s complete mystical pattern
-                    </p>
-                  <div className="flex items-center text-sm font-medium">
-                    <span className="bg-primary/12 inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/10 dark:bg-primary dark:text-primary-foreground dark:ring-primary/30">
-                      36 Cards
-                    </span>
-                    <ArrowRight className="ml-2 h-4 w-4 text-primary/60 dark:text-primary/60" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          </div>
+             <div className="relative z-10 grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-5">
+               <ReadingTypeCard
+                 icon={<Sparkles className="h-5 w-5 text-primary" />}
+                 title="Quick Analysis"
+                 description="Past, present, and future revealed in focused guidance"
+                 cardCount={3}
+               />
+               <ReadingTypeCard
+                 icon={<Heart className="h-5 w-5 text-primary" />}
+                 title="Deep Analysis"
+                 description="Uncover challenges, resources, and outcomes for your situation"
+                 cardCount={5}
+               />
+               <ReadingTypeCard
+                 icon={<Calendar className="h-5 w-5 text-primary" />}
+                 title="Weekly Insights"
+                 description="Navigate your week ahead or explore relationship dynamics"
+                 cardCount={7}
+               />
+               <ReadingTypeCard
+                 icon={<Shield className="h-5 w-5 text-primary" />}
+                 title="Comprehensive"
+                 description="Explore inner world, direct actions, and external influences"
+                 cardCount={9}
+               />
+               <ReadingTypeCard
+                 icon={<Sparkles className="h-5 w-5 text-primary" />}
+                 title="Grand Tableau"
+                 description="Full deck reading revealing life's complete mystical pattern"
+                 cardCount={36}
+               />
+             </div>
         </div>
       </div>
 
