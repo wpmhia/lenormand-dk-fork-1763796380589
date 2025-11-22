@@ -1,0 +1,21 @@
+# Allow all crawlers to access the site
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /.next/
+
+# Specific rules for Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+# Specific rules for Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://lenormand-intelligence.com/sitemap.xml
