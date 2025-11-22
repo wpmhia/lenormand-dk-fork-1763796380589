@@ -392,41 +392,39 @@ function NewReadingPageContent() {
                     {!path ? (
                       <div className="space-y-6">
                         <div className="space-y-4 text-center">
-                          <Label className="mb-4 block text-lg font-medium text-foreground">
-                            Choose your reading path
-                          </Label>
-                           <div className="btn-group-hero">
-                             <Button
-                               onClick={() => {
-                                 setPath('virtual')
-                                 // Auto-focus question field for editing
-                                 setTimeout(() => {
-                                   const questionField = document.getElementById('question') as HTMLTextAreaElement
-                                   if (questionField) questionField.focus()
-                                 }, 100)
-                               }}
-                               className="btn-group-hero-item bg-primary text-base font-medium text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90"
-                               size="lg"
-                             >
-                               ✨ Draw cards for me
-                             </Button>
+                           <Label className="mb-4 block text-lg font-medium text-foreground">
+                             Choose your reading path
+                           </Label>
+                            <div className="btn-group-hero">
                               <Button
-                                variant="outline"
                                 onClick={() => {
-                                  setPath('physical')
-                                  // Set default spread and focus textarea
-                                  setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                  setPath('virtual')
                                   setTimeout(() => {
-                                    const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
-                                    if (textarea) textarea.focus()
+                                    const questionField = document.getElementById('question') as HTMLTextAreaElement
+                                    if (questionField) questionField.focus()
                                   }, 100)
                                 }}
-                                className="btn-group-hero-item border-border text-base font-medium text-foreground hover:bg-muted"
+                                className="btn-group-hero-item"
                                 size="lg"
                               >
-                                🎴 I already have cards
+                                ✨ Draw cards for me
                               </Button>
-                           </div>
+                               <Button
+                                 variant="outline"
+                                 onClick={() => {
+                                   setPath('physical')
+                                   setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                                   setTimeout(() => {
+                                     const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
+                                     if (textarea) textarea.focus()
+                                   }, 100)
+                                 }}
+                                 className="btn-group-hero-item"
+                                 size="lg"
+                               >
+                                 🎴 I already have cards
+                               </Button>
+                            </div>
                           <div className="mt-4 space-y-2 text-sm text-muted-foreground">
                             <p className="flex items-center justify-center gap-2">
                               <span className="h-2 w-2 rounded-full bg-primary/60"></span>
