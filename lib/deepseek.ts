@@ -26,19 +26,19 @@ export interface AIReadingResponse {
   reading: string
 }
 
-// Spread interpretation rules
+// Spread interpretation rules based on traditional Lenormand divination
 const SPREAD_RULES: Record<string, string> = {
-  "sentence-3": "Interpret these 3 cards as a single sentence. The first card is the subject, the second is the action/description, and the third is the outcome/object.",
-  "past-present-future": "Card 1 represents the Past influences. Card 2 represents the Present situation. Card 3 represents the Future outcome.",
-  "yes-no-maybe": "Card 1 is the answer (Positive/Negative). Card 2 supports the answer. Card 3 provides the nuance or condition. IMPORTANT: You must conclude with a definitive YES or NO answer based on the cards.",
-  "situation-challenge-advice": "Card 1 is the Situation. Card 2 is the Challenge/Obstacle. Card 3 is the Advice.",
-  "mind-body-spirit": "Card 1 represents the Mind/Thoughts. Card 2 represents the Body/Physical. Card 3 represents the Spirit/Emotional.",
-   "sentence-5": "Interpret these 5 cards and answer in ONE flowing sentence that captures the complete meaning. Do not break into multiple sentences or add extra commentary.",
-   "structured-reading": "Interpret these 5 cards in 3-4 short paragraphs. Write as continuous flowing text without any section headers, titles, bullet points, or line breaks between paragraphs. Include the overall narrative, how the cards interact with each other, and any key insights about timing or meaning. Keep it readable and direct.",
-  "week-ahead": "Interpret the 7 cards as a forecast for the week ahead, one card for each day or as a general narrative for the week.",
-  "relationship-double-significator": "Card 1: You. Card 2: The Other Person. Card 3: The Relationship Dynamic. Card 4: Your Thoughts. Card 5: Their Thoughts. Card 6: Your Feelings. Card 7: Their Feelings.",
-  "comprehensive": "A comprehensive 9-card square. The central card (Card 5) is the focus. Read rows, columns, and diagonals for detailed insight.",
-  "grand-tableau": "A full 36-card Grand Tableau. Focus on the position of the Gentleman (28) and Lady (29). Look for proximity to key cards like the Ring, Heart, Mice, etc. Use knighting and mirroring techniques if possible."
+  "sentence-3": "Interpret these 3 cards as a complete thought or message. Card 1 is the subject/situation, Card 2 is the action/influence, and Card 3 is the outcome/result. Read them as a flowing narrative that answers the question.",
+  "past-present-future": "Card 1 represents Past influences and foundations. Card 2 represents the Present situation and current energies. Card 3 represents the Future outcome or what is approaching. Consider how past shapes present and how present leads to future.",
+  "yes-no-maybe": "Card 1 indicates the direct answer based on its traditional meaning. Card 2 shows supporting energies or conditions. Card 3 reveals nuance or additional context. Use card meanings to determine YES, NO, or a conditional answer.",
+  "situation-challenge-advice": "Card 1 reveals the Situation and context. Card 2 shows the Challenge, obstacle, or difficulty at hand. Card 3 provides the Advice or best course of action. Consider how they relate to reveal wisdom for the querent.",
+  "mind-body-spirit": "Card 1 represents Mental/Intellectual aspects - thoughts, beliefs, perspectives. Card 2 represents Physical/Practical aspects - health, material reality, action. Card 3 represents Spiritual/Emotional aspects - feelings, intuition, soul. Show the whole person.",
+  "sentence-5": "Read these 5 cards as ONE flowing sentence. Let them tell a complete story or message where each card's meaning builds naturally on the previous one. Express the complete answer in a single, coherent narrative.",
+  "structured-reading": "Interpret these 5 cards in 3-4 flowing paragraphs. Weave together the card meanings into a cohesive narrative that explores different dimensions: the immediate message, underlying influences, and the trajectory ahead. Keep natural paragraph breaks but no section headers.",
+  "week-ahead": "Interpret these 7 cards as a narrative forecast for the coming week. Each card can represent a day or theme, or read them as a continuous story arc showing the week's unfolding energies and opportunities.",
+  "relationship-double-significator": "Cards 1 & 2 are the two people in the relationship. Card 3 shows the relationship dynamics and connection. Cards 4 & 5 reveal each person's thoughts and perspectives. Cards 6 & 7 show their feelings and emotional states. Consider both individual viewpoints and the shared dynamic.",
+  "comprehensive": "This 9-card square (3x3 grid) has Card 5 at the center as the core focus. Read it as: Cross formation (Cards 2,4,5,6,8) for main themes, corners (1,3,7,9) for supporting influences, and outer ring for surrounding energies. Look for patterns across rows, columns, and diagonals.",
+  "grand-tableau": "The full 36-card Grand Tableau is laid in a 6x6 grid and read as a complete life situation. The Gentleman (Card 28) and Lady (Card 29) are significators. Interpret using proximity, mirroring (cards equidistant from center), and lines of influence. Each card's position and neighbors create the narrative."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
@@ -49,30 +49,23 @@ function buildPrompt(request: AIReadingRequest): string {
   let yesNoRequirement = ""
   
   if (request.spreadId) {
-    spreadContext = `Spread Type: ${request.spreadId}`
-    if (SPREAD_RULES[request.spreadId]) {
-      spreadRules = `\nSpread Rules:\n${SPREAD_RULES[request.spreadId]}`
-    }
-     if (request.spreadId === "yes-no-maybe") {
-       yesNoRequirement = "\n\nIMPORTANT: End your interpretation with a clear conclusion on a new line: **ANSWER: YES** or **ANSWER: NO**"
+     if (SPREAD_RULES[request.spreadId]) {
+       spreadRules = `Spread: ${request.spreadId}\nInterpretation Guidelines:\n${SPREAD_RULES[request.spreadId]}`
      }
-
-  }
+      if (request.spreadId === "yes-no-maybe") {
+        yesNoRequirement = "\n\nEnd with a clear YES or NO conclusion based on the card meanings and positions."
+      }
+   }
 
   return `
-You are an expert Lenormand reader. Please interpret the following spread.
-
 Question: ${request.question || "General Reading"}
-${spreadContext}${spreadRules}
+
+${spreadRules}
 
 Cards:
 ${cardsText}
 
-Provide a detailed and insightful interpretation based on traditional Lenormand meanings and card combinations. 
-Focus on the narrative flow and how the cards interact with each other.
-If a specific spread type is mentioned, adhere to the positions and their meanings for that spread.${yesNoRequirement}
-
-IMPORTANT: Start your response directly with the interpretation content. Do NOT include any introductory phrases like "Of course", "Certainly", "Here's", or similar preambles. Begin immediately with the reading.
+Provide a reading based on traditional Lenormand meanings, the spread structure, and how the cards interact. Focus on the narrative and message the cards reveal. Begin immediately with your interpretation - no introductions or preambles.${yesNoRequirement}
 `
 }
 
@@ -101,7 +94,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are a mystical Lenormand card reader who provides interpretations directly without introductory phrases or preambles. Start your response immediately with the reading content." },
+            { role: 'system', content: "You are an expert Lenormand card reader in the tradition of Marie Anne Lenormand. Provide clear, direct interpretations based on traditional Lenormand card meanings and combinations. Speak with confidence and authority about what the cards reveal. Never include introductions, hedging language, or disclaimers. Begin your response immediately with the reading." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
@@ -179,7 +172,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are a mystical Lenormand card reader who provides interpretations directly without introductory phrases or preambles. Start your response immediately with the reading content." },
+            { role: 'system', content: "You are an expert Lenormand card reader in the tradition of Marie Anne Lenormand. Provide clear, direct interpretations based on traditional Lenormand card meanings and combinations. Speak with confidence and authority about what the cards reveal. Never include introductions, hedging language, or disclaimers. Begin your response immediately with the reading." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
