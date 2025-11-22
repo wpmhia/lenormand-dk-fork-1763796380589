@@ -205,7 +205,6 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
               <ChevronDown className={`h-4 w-4 transition-transform ${openSections.info ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-1 border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
-              <div>Card Number: {card.number}</div>
               <div>Lenormand Card #{card.id} of 36</div>
             </CollapsibleContent>
           </Collapsible>
