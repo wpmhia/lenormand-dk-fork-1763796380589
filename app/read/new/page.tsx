@@ -422,34 +422,33 @@ function NewReadingPageContent() {
                              Choose your reading path
                            </Label>
                             <div className="btn-group-hero">
-                              <Button
-                                onClick={() => {
-                                  setPath('virtual')
-                                  setTimeout(() => {
-                                    const questionField = document.getElementById('question') as HTMLTextAreaElement
-                                    if (questionField) questionField.focus()
-                                  }, 100)
-                                }}
-                                className="btn-group-hero-item"
-                                size="lg"
-                              >
-                                ✨ Draw cards for me
-                              </Button>
-                               <Button
-                                 variant="outline"
-                                 onClick={() => {
-                                   setPath('physical')
-                                   setSelectedSpread(COMPREHENSIVE_SPREADS[0])
-                                   setTimeout(() => {
-                                     const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
-                                     if (textarea) textarea.focus()
-                                   }, 100)
-                                 }}
-                                 className="btn-group-hero-item"
-                                 size="lg"
-                               >
-                                 🎴 I already have cards
-                               </Button>
+                        <Button
+                          onClick={() => {
+                            setPath('virtual')
+                            setTimeout(() => {
+                              const questionField = document.getElementById('question') as HTMLTextAreaElement
+                              if (questionField) questionField.focus()
+                            }, 100)
+                          }}
+                          className="btn-group-hero-item"
+                          size="lg"
+                        >
+                          ✨ Draw cards for me
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setPath('physical')
+                            setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+                            setTimeout(() => {
+                              const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
+                              if (textarea) textarea.focus()
+                            }, 100)
+                          }}
+                          className="btn-group-hero-item"
+                          size="lg"
+                        >
+                          🎴 I already have cards
+                        </Button>
                             </div>
                           <div className="mt-4 space-y-2 text-sm text-muted-foreground">
                             <p className="flex items-center justify-center gap-2">
@@ -463,166 +462,10 @@ function NewReadingPageContent() {
                           </div>
                         </div>
                       </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {/* Path Switcher */}
-                        <div className="flex items-center justify-center gap-2">
-                          <span className="text-sm text-muted-foreground">Reading method:</span>
-                          <div className="btn-group">
-                            <Button
-                              size="sm"
-                              variant={path === 'virtual' ? 'default' : 'ghost'}
-                              onClick={() => {
-                                setPath('virtual')
-                                setPhysicalCards('')
-                                setPhysicalCardsError(null)
-                                setParsedCards([])
-                                setCardSuggestions([])
-                              }}
-                              className="btn-group-item"
-                            >
-                              ✨ Virtual Draw
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant={path === 'physical' ? 'default' : 'ghost'}
-                              onClick={() => {
-                                setPath('physical')
-                              }}
-                              className="btn-group-item"
-                            >
-                              🎴 Physical Cards
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Virtual Draw Input - Deck Component */}
-                    {path === 'virtual' && selectedSpread && (
-                      <div className="space-y-4">
-                        <Deck
-                          cards={allCards}
-                          drawCount={selectedSpread.cards}
-                          onDraw={handleDraw}
-                        />
-                      </div>
-                    )}
-
-                    {/* Physical Cards Input */}
-                    {path === 'physical' && selectedSpread && (
-                      <div className="space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label htmlFor="physical-cards" className="font-medium text-foreground">
-                              Enter Your Cards:
-                            </Label>
-                            <div className="flex items-center gap-2">
-                              <span className={`text-sm font-medium ${
-                                parsedCards.length === selectedSpread.cards
-                                  ? 'text-green-600 dark:text-green-400'
-                                  : 'text-muted-foreground'
-                              }`}>
-                                {parsedCards.length} / {selectedSpread.cards} cards
-                              </span>
-                              {parsedCards.length === selectedSpread.cards && (
-                                <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></span>
-                              )}
-                            </div>
-                          </div>
-                          <Textarea
-                            id="physical-cards"
-                            value={physicalCards}
-                            onChange={(e) => {
-                              const newValue = e.target.value
-                              // Auto-truncate if too many cards
-                              const cardInputs = newValue.split(/[,;\s\n]+/).map(s => s.trim()).filter(s => s.length > 0)
-                              if (cardInputs.length > selectedSpread.cards) {
-                                // Keep only first N cards
-                                const truncatedInputs = cardInputs.slice(0, selectedSpread.cards)
-                                const truncatedValue = truncatedInputs.join(', ')
-                                setPhysicalCards(truncatedValue)
-                                // Show toast notification
-                                if (typeof window !== 'undefined' && window.alert) {
-                                  window.alert('Card input truncated to maximum allowed characters')
-                                }
-                              } else {
-                                setPhysicalCards(newValue)
-                              }
-                            }}
-                            placeholder={`Enter ${selectedSpread.cards} card numbers (1-36) or names\n\nExamples: 1 5 12 • Rider, Clover, Ship • Birds, 20, 36`}
-                            className={`min-h-[120px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 ${
-                              physicalCardsError ? 'border-destructive focus:border-destructive' : ''
-                            }`}
-                            rows={4}
-                            aria-describedby="physical-cards-help physical-cards-count physical-cards-error"
-                            aria-invalid={!!physicalCardsError}
-                          />
-
-                          {/* Live Card Chips */}
-                          {parsedCards.length > 0 && (
-                            <div className="flex flex-wrap gap-2" aria-live="polite" aria-label="Recognized cards">
-                              {parsedCards.map((card, index) => (
-                                <div
-                                  key={`${card.id}-${index}`}
-                                  className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
-                                >
-                                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">
-                                    {card.id}
-                                  </span>
-                                  {card.name}
-                      </div>
-                              ))}
-                            </div>
-                          )}
-
-                          {/* Suggestions for unrecognized cards */}
-                          {cardSuggestions.length > 0 && (
-                            <div className="space-y-1">
-                              <p className="text-xs text-amber-600 dark:text-amber-400">
-                                Did you mean: {cardSuggestions.slice(0, 3).join(', ')}?
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Error and Help Text */}
-                          <div className="space-y-1">
-                            {physicalCardsError && (
-                              <p id="physical-cards-error" className="text-destructive text-xs" role="alert">
-                                {physicalCardsError}
-                              </p>
-                            )}
-                            <p id="physical-cards-help" className="text-xs text-muted-foreground">
-                              💡 Use numbers (1-36) or names. Try &quot;rider&quot;, &quot;clover&quot;, &quot;ship&quot;. Typo-tolerant!
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
+                     ) : null}
                   </CardContent>
                 </Card>
 
-                {/* Primary Button - For Physical Cards */}
-                {step === 'setup' && path === 'physical' && selectedSpread && (
-                  <div className="sticky bottom-4 z-10 mt-6">
-                    <Card className="overflow-hidden rounded-2xl border-border bg-card/95 shadow-lg backdrop-blur-sm">
-                      <CardContent className="p-4">
-                        <Button
-                          data-draw-button
-                          onClick={() => {
-                            handleDraw(allCards)
-                          }}
-                          className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-                          disabled={!canProceed || parsedCards.length !== selectedSpread.cards}
-                          aria-busy={aiLoading}
-                        >
-                          ✨ Start Reading
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -640,19 +483,110 @@ function NewReadingPageContent() {
                 <CardContent className="relative z-10 space-y-8 p-8">
                   <div className="text-center">
                     <h2 className="relative mb-4 text-3xl font-semibold text-foreground">
-                      Draw Your Cards
+                      {path === 'virtual' ? 'Draw Your Cards' : 'Enter Your Cards'}
                       <div className="absolute -bottom-2 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
                     </h2>
                     <p className="text-lg italic text-muted-foreground">
-                      Drawing {selectedSpread.cards} cards from the sacred deck
+                      {path === 'virtual' ? `Drawing ${selectedSpread.cards} cards from the sacred deck` : `Enter ${selectedSpread.cards} cards from your physical deck`}
                     </p>
                   </div>
 
-                  <Deck
-                    cards={allCards}
-                    drawCount={selectedSpread.cards}
-                    onDraw={handleDraw}
-                  />
+                  {/* Virtual Draw */}
+                  {path === 'virtual' && (
+                    <Deck
+                      cards={allCards}
+                      drawCount={selectedSpread.cards}
+                      onDraw={handleDraw}
+                    />
+                  )}
+
+                  {/* Physical Cards Input */}
+                  {path === 'physical' && selectedSpread && (
+                    <div className="space-y-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="physical-cards" className="font-medium text-foreground">
+                            Enter Your Cards:
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-sm font-medium ${
+                              parsedCards.length === selectedSpread.cards
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-muted-foreground'
+                            }`}>
+                              {parsedCards.length} / {selectedSpread.cards} cards
+                            </span>
+                            {parsedCards.length === selectedSpread.cards && (
+                              <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></span>
+                            )}
+                          </div>
+                        </div>
+                        <Textarea
+                          id="physical-cards"
+                          value={physicalCards}
+                          onChange={(e) => {
+                            const newValue = e.target.value
+                            const cardInputs = newValue.split(/[,;\s\n]+/).map(s => s.trim()).filter(s => s.length > 0)
+                            if (cardInputs.length > selectedSpread.cards) {
+                              const truncatedInputs = cardInputs.slice(0, selectedSpread.cards)
+                              const truncatedValue = truncatedInputs.join(', ')
+                              setPhysicalCards(truncatedValue)
+                              if (typeof window !== 'undefined' && window.alert) {
+                                window.alert('Card input truncated to maximum allowed characters')
+                              }
+                            } else {
+                              setPhysicalCards(newValue)
+                            }
+                          }}
+                          placeholder={`Enter ${selectedSpread.cards} card numbers (1-36) or names\n\nExamples: 1 5 12 • Rider, Clover, Ship • Birds, 20, 36`}
+                          className={`min-h-[120px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 ${
+                            physicalCardsError ? 'border-destructive focus:border-destructive' : ''
+                          }`}
+                          rows={4}
+                          aria-describedby="physical-cards-help physical-cards-count physical-cards-error"
+                          aria-invalid={!!physicalCardsError}
+                        />
+
+                        {/* Live Card Chips */}
+                        {parsedCards.length > 0 && (
+                          <div className="flex flex-wrap gap-2" aria-live="polite" aria-label="Recognized cards">
+                            {parsedCards.map((card, index) => (
+                              <div
+                                key={`${card.id}-${index}`}
+                                className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+                              >
+                                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-xs font-bold">
+                                  {card.id}
+                                </span>
+                                {card.name}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Suggestions */}
+                        {cardSuggestions.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs text-amber-600 dark:text-amber-400">
+                              Did you mean: {cardSuggestions.slice(0, 3).join(', ')}?
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Error and Help Text */}
+                        <div className="space-y-1">
+                          {physicalCardsError && (
+                            <p id="physical-cards-error" className="text-destructive text-xs" role="alert">
+                              {physicalCardsError}
+                            </p>
+                          )}
+                          <p id="physical-cards-help" className="text-xs text-muted-foreground">
+                            💡 Use numbers (1-36) or names. Try &quot;rider&quot;, &quot;clover&quot;, &quot;ship&quot;. Typo-tolerant!
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="text-center">
                     <Button
@@ -660,7 +594,7 @@ function NewReadingPageContent() {
                       variant="outline"
                       className="mt-4"
                     >
-                      ← Back to Manual Selection
+                      ← Back
                     </Button>
                   </div>
                 </CardContent>
