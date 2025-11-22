@@ -73,11 +73,11 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© {currentYear} Lenormand Intelligence. All rights reserved.</p>
-          <div className="flex items-center gap-1">
-            <span>Made with</span>
-            <Heart className="h-4 w-4 text-primary" aria-hidden="true" />
-            <span>for divination enthusiasts</span>
-          </div>
+           <div className="flex items-center gap-1">
+             <span>Made with</span>
+             <Heart className="h-4 w-4 text-primary" aria-hidden="true" />
+             <span>in Denmark</span>
+           </div>
           <p className="text-xs">For entertainment and spiritual guidance only</p>
         </div>
       </div>
