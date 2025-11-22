@@ -138,15 +138,9 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
               )}
             </div>
           )
-        })}
-        
-         <div className="mt-6 rounded-lg border border-border bg-card p-4">
-           <p className="text-sm text-foreground">
-             <strong>Traditional Wisdom:</strong> These classic interpretations provide the foundation for understanding your reading. 
-             The AI analysis above weaves these individual meanings into a cohesive narrative tailored to your specific question.
-           </p>
-         </div>
-         </CardContent>
+         })}
+         
+          </CardContent>
        </Card>
      </div>
    )
