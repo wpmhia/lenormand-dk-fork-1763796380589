@@ -27,18 +27,19 @@ export interface AIReadingResponse {
 }
 
 // Spread interpretation rules based on traditional Lenormand divination
+// Spread interpretation rules - Lenormand is literal and direct, not mystical
 const SPREAD_RULES: Record<string, string> = {
-  "sentence-3": "Interpret these 3 cards as a complete thought or message. Card 1 is the subject/situation, Card 2 is the action/influence, and Card 3 is the outcome/result. Read them as a flowing narrative that answers the question.",
-  "past-present-future": "Card 1 represents Past influences and foundations. Card 2 represents the Present situation and current energies. Card 3 represents the Future outcome or what is approaching. Consider how past shapes present and how present leads to future.",
-  "yes-no-maybe": "Card 1 indicates the direct answer based on its traditional meaning. Card 2 shows supporting energies or conditions. Card 3 reveals nuance or additional context. Use card meanings to determine YES, NO, or a conditional answer.",
-  "situation-challenge-advice": "Card 1 reveals the Situation and context. Card 2 shows the Challenge, obstacle, or difficulty at hand. Card 3 provides the Advice or best course of action. Consider how they relate to reveal wisdom for the querent.",
-  "mind-body-spirit": "Card 1 represents Mental/Intellectual aspects - thoughts, beliefs, perspectives. Card 2 represents Physical/Practical aspects - health, material reality, action. Card 3 represents Spiritual/Emotional aspects - feelings, intuition, soul. Show the whole person.",
-  "sentence-5": "Read these 5 cards as ONE flowing sentence. Let them tell a complete story or message where each card's meaning builds naturally on the previous one. Express the complete answer in a single, coherent narrative.",
-  "structured-reading": "Interpret these 5 cards in 3-4 flowing paragraphs. Weave together the card meanings into a cohesive narrative that explores different dimensions: the immediate message, underlying influences, and the trajectory ahead. Keep natural paragraph breaks but no section headers.",
-  "week-ahead": "Interpret these 7 cards as a narrative forecast for the coming week. Each card can represent a day or theme, or read them as a continuous story arc showing the week's unfolding energies and opportunities.",
-  "relationship-double-significator": "Cards 1 & 2 are the two people in the relationship. Card 3 shows the relationship dynamics and connection. Cards 4 & 5 reveal each person's thoughts and perspectives. Cards 6 & 7 show their feelings and emotional states. Consider both individual viewpoints and the shared dynamic.",
-  "comprehensive": "This 9-card square (3x3 grid) has Card 5 at the center as the core focus. Read it as: Cross formation (Cards 2,4,5,6,8) for main themes, corners (1,3,7,9) for supporting influences, and outer ring for surrounding energies. Look for patterns across rows, columns, and diagonals.",
-  "grand-tableau": "The full 36-card Grand Tableau is laid in a 6x6 grid and read as a complete life situation. The Gentleman (Card 28) and Lady (Card 29) are significators. Interpret using proximity, mirroring (cards equidistant from center), and lines of influence. Each card's position and neighbors create the narrative."
+  "sentence-3": "Read these 3 cards as a plain sentence. Card 1 = subject. Card 2 = action/verb. Card 3 = result/object. Read left to right as: [Card1] [Card2] [Card3]. Example: Rider brings Letter about Fish means news arrives about money.",
+  "past-present-future": "Card 1 = what happened. Card 2 = what is happening now. Card 3 = what comes next. Read them as three separate facts connected by cause and effect, not as mystical themes.",
+  "yes-no-maybe": "Card 1 answers the question directly. Good cards (Sun, Ring, Heart, Clover) = YES. Bad cards (Coffin, Mice, Tower, Cross) = NO. Card 2 and 3 add detail. Answer simply: YES, NO, or DEPENDS ON [Card 3].",
+  "situation-challenge-advice": "Card 1 = the current situation. Card 2 = what's blocking it. Card 3 = what to do. Read bluntly: 'There is [Card 1], the problem is [Card 2], do [Card 3]'.",
+  "mind-body-spirit": "Card 1 = thoughts in your head. Card 2 = physical reality/health/money. Card 3 = feelings. Three separate facts about the person.",
+  "sentence-5": "Read these 5 cards as one complete sentence. Card 1 = subject. Card 2 = verb. Card 3 = object. Card 4 = modifier. Card 5 = outcome. Say it plainly in one breath.",
+  "structured-reading": "Read these 5 cards as a short story in 3-4 plain paragraphs. No flowery language. Just: what is the situation, what happens next, what does it mean. Make each card count as a literal object with a practical meaning.",
+  "week-ahead": "These 7 cards show what happens over the week. Each card is a fact or event. Read left to right as a sequence of ordinary things that occur. No deep themes—just what happens.",
+  "relationship-double-significator": "Card 1 = this person. Card 2 = the other person. Card 3 = what is between them. Card 4 = what this person thinks. Card 5 = what the other person thinks. Card 6 = what this person feels. Card 7 = what the other feels. Simple facts, not projections.",
+  "comprehensive": "9-card square: Card 5 (center) = the core issue. Cards around it show influences. Read the cards closest to the center first. Then look at pairs: do they make sense together? Example: House + Mice = home falling apart.",
+  "grand-tableau": "36 cards laid out in a 6x6 grid. Card 28 (Man) or Card 29 (Woman) is the person asking. Read cards near them. Cards touching each other show what connects them. Ignore mystical 'lines'—just read: what objects are next to each other? What do they mean when combined?"
 }
 
 function buildPrompt(request: AIReadingRequest): string {
@@ -57,7 +58,7 @@ function buildPrompt(request: AIReadingRequest): string {
       }
    }
 
-  return `
+   return `
 Question: ${request.question || "General Reading"}
 
 ${spreadRules}
@@ -65,7 +66,7 @@ ${spreadRules}
 Cards:
 ${cardsText}
 
-Provide a reading based on traditional Lenormand meanings, the spread structure, and how the cards interact. Focus on the narrative and message the cards reveal. Begin immediately with your interpretation - no introductions or preambles.${yesNoRequirement}
+Read these cards bluntly and literally. Each card is an ordinary object with a practical meaning. Combine them as if you're reading a sentence or describing what happens. No flowery language, no mystical symbols, no deep layers. Just say what the cards mean together.${yesNoRequirement}
 `
 }
 
@@ -94,7 +95,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are an expert Lenormand card reader in the tradition of Marie Anne Lenormand. Provide clear, direct interpretations based on traditional Lenormand card meanings and combinations. Speak with confidence and authority about what the cards reveal. Never include introductions, hedging language, or disclaimers. Begin your response immediately with the reading." },
+            { role: 'system', content: "You are a direct Lenormand reader. Read cards literally. Each card is an ordinary object (Rider, House, Mice, Ship, etc.) with a practical meaning. Combine them like you're reading a sentence or describing what happens. Be blunt. No mystical language, no deep themes, no hedging. Just say what the cards mean. Start immediately—no preambles." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
@@ -172,7 +173,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
         body: JSON.stringify({
           model: 'deepseek-chat',
           messages: [
-            { role: 'system', content: "You are an expert Lenormand card reader in the tradition of Marie Anne Lenormand. Provide clear, direct interpretations based on traditional Lenormand card meanings and combinations. Speak with confidence and authority about what the cards reveal. Never include introductions, hedging language, or disclaimers. Begin your response immediately with the reading." },
+            { role: 'system', content: "You are a direct Lenormand reader. Read cards literally. Each card is an ordinary object (Rider, House, Mice, Ship, etc.) with a practical meaning. Combine them like you're reading a sentence or describing what happens. Be blunt. No mystical language, no deep themes, no hedging. Just say what the cards mean. Start immediately—no preambles." },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
