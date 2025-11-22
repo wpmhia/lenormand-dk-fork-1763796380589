@@ -118,22 +118,25 @@ Fish = money, business, flow
 Anchor = stability, long-term, port
 Cross = burden, destiny, church
 
+NARRATIVE STRUCTURE (applies to all spreads):
+One narrative thread, no loops. Open with the core tension in sentence 1. Let each new card deepen, complicate, or shift that tension—never restate it. Each card moves the plot forward. Meet the spread's word target on first draft; if you finish early, stop.
+
 Reply in plain paragraphs, no bullets, no headings, no emojis.`
 
 // SPREAD-SPECIFIC RULES - Varies by spread type
 const SPREAD_RULES: Record<string, string> = {
-  "single-card": "Write 75-110 words. Open with the card's image or scene. Explain what it reveals about the situation and why it matters now. End with a when/where tag.",
-  "sentence-3": "Write 90-130 words. Weave the 3 cards into a scene. Show how each influences the next. Explain why this combination matters. End with a when/where tag.",
-  "past-present-future": "Write 120-180 words. Tell the story across three time layers: what led here (Card 1), present moment and complexity (Card 2), what unfolds next (Card 3). Explain the deeper pattern. End with specific timing.",
-  "yes-no-maybe": "Write 120-180 words. Answer YES, NO, or MAYBE in the opening. Weave Cards 2-3 to explain proof and context. Why this answer? What does each reveal? End with 'Count on this...' or 'Watch for...' certainty tag.",
-  "situation-challenge-advice": "Write 120-180 words. The situation (Card 1), the challenge (Card 2), the path forward (Card 3). Show how they connect and why all three matter. End with a when/where tag.",
-  "mind-body-spirit": "Write 150-220 words. Card 1 reveals the mind (thoughts, beliefs). Card 2 reveals the body (physical reality, health, practical). Card 3 reveals the spirit (emotions, intuition). Show how they complete the whole person and interact. End with a where-to-notice tag.",
-  "sentence-5": "Write 150-220 words. Weave the 5 cards into one narrative. Show how each influences the others. Explain the deeper pattern this combination reveals and why all 5 matter together. End with a when/where tag.",
-  "structured-reading": "Write 180-280 words. Explore the 5 cards as a complete story. Show how they interact, what they reveal about the situation's layers, and where it's heading. What patterns emerge? End with actionable when/where guidance.",
-  "week-ahead": "Write 180-280 words. Weave the 7 cards into a week-long narrative. Open with the week's overview. Guide through each card's influence as it flows into the next, showing the sequence and overall arc. End with 'by [day]' or 'mid-week' timing.",
-  "relationship-double-significator": "Write 200-320 words. Explore two viewpoints and their connection. Cards 1-2: the two people and their essence. Card 3: what flows between them. Cards 4-5: their thoughts (both perspectives). Cards 6-7: their feelings (emotional landscape from each side). Build a complete relationship narrative. End with where-to-see-it tag.",
-  "comprehensive": "Write 250-380 words. Map the 9-card square. Card 5 (center) is the heart. Use card pairs and adjacencies to build meaning (e.g., House + Mice, Rider + Letter). Explore diagonals and the cross. Show how the cards create a coherent picture. End with when/where tag.",
-  "grand-tableau": "Write 300-450 words. Navigate from Card 28/29 (querent) outward. Explore immediate influences around them. Read neighbor pairs and patterns. Use knighting and mirroring to reveal deeper layers. Expand outward to show the larger life picture and overall trajectory. Build a sweeping narrative of personal concerns, relationships, challenges, resources. End with when/where tag."
+  "single-card": "Write 75-100 words. Open with the card's image or scene and what it reveals. End with a when/where tag.",
+  "sentence-3": "Write 70-100 words. Open with core tension. Let each card deepen or shift it. End with a when/where tag.",
+  "past-present-future": "Write 90-130 words. Tell the story across three time layers: past (Card 1), present (Card 2), future (Card 3). Each card deepens the pattern. End with specific timing.",
+  "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE in the opening. Cards 2-3 prove why and shift the context. End with certainty tag.",
+  "situation-challenge-advice": "Write 90-130 words. Situation (Card 1), challenge (Card 2), path forward (Card 3). Each layer deepens the arc. End with a when/where tag.",
+  "mind-body-spirit": "Write 110-160 words. Card 1: mind (thoughts, beliefs). Card 2: body (physical reality, health, practical). Card 3: spirit (emotions, intuition). Show how they complete the whole person. End with a where-to-notice tag.",
+  "sentence-5": "Write 100-150 words. Open with core tension. Each card deepens, complicates, or shifts it. End with a when/where tag.",
+  "structured-reading": "Write 130-180 words. Explore the 5 cards as one story. Core tension opens; each card moves it forward. End with actionable when/where guidance.",
+  "week-ahead": "Write 150-200 words. Open with the week's arc. Each card shifts or deepens the momentum. End with 'by [day]' or 'mid-week' timing.",
+  "relationship-double-significator": "Write 160-220 words. Two people (Cards 1-2), what flows between them (Card 3), their thoughts (Cards 4-5), their feelings (Cards 6-7). Build one narrative arc. End with where-to-see-it tag.",
+  "comprehensive": "Write 180-260 words. Map the 9-card square from center (Card 5) outward. Use pairs and adjacencies to build meaning. Each layer moves the story forward. End with when/where tag."
+  "grand-tableau": "Write 220-320 words. Navigate from Card 28/29 (querent) outward. Immediate influences, neighbor pairs, patterns. Use knighting and mirroring. Build one sweeping narrative of concerns, relationships, challenges, resources. End with when/where tag."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
