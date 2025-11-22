@@ -7,9 +7,9 @@ export interface Spread {
 
 // Comprehensive spread selection - direct manual control
 export const COMPREHENSIVE_SPREADS: Spread[] = [
-  // 3-Card Spreads (Default: Past, Present, Future)
-  { id: "past-present-future", cards: 3, label: "Past, Present, Future", description: "Classic timeline reading" },
+  // 3-Card Spreads (Default: Sentence Reading)
   { id: "sentence-3", cards: 3, label: "Sentence Reading", description: "Flowing 3-card sentence interpretation" },
+  { id: "past-present-future", cards: 3, label: "Past, Present, Future", description: "Classic timeline reading" },
   { id: "yes-no-maybe", cards: 3, label: "Yes or No", description: "Binary decision guidance" },
   { id: "situation-challenge-advice", cards: 3, label: "Situation, Challenge, Advice", description: "Problem-solving spread" },
   { id: "mind-body-spirit", cards: 3, label: "Mind, Body, Spirit", description: "Holistic balance reading" },
