@@ -31,7 +31,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-lg font-normal leading-relaxed text-muted-foreground sm:text-xl lg:mx-0">
-              Ancient Lenormand wisdom meets AI-enhanced personalized guidance.
+              Get free AI-powered Lenormand card readings online. Explore card meanings, spreads, and personalized interpretations with our intelligent divination tool.
             </p>
               <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
                <Link href="/read/new">
