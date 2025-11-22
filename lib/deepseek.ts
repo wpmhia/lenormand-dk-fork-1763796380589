@@ -81,8 +81,8 @@ Reply in plain paragraphs, no bullets, no headings, no emojis.`
 
 // SPREAD-SPECIFIC RULES - Varies by spread type
 const SPREAD_RULES: Record<string, string> = {
-  "single-card": "Write 90-120 words. Explore this card deeply as a complete narrative. Open with the image or scene it suggests, weaving the card's visual into your description. Explain what it reveals about the situation and why it matters now. Use the card name in parentheses the first time only, then use plain nouns. End with a concrete when/where tag so the client knows where to watch for this energy.",
-  "sentence-3": "Write 100-150 words. Weave these 3 cards into a vivid scene. Integrate each card's image and meaning naturally—paint what you see. Show HOW each card influences the next through real-world connection. Explain WHY this combination matters. Use card names in parentheses only once. End with a tangible when/where tag.",
+  "single-card": "Write 75-110 words. Explore this card deeply as a complete narrative. Open with the image or scene it suggests, weaving the card's visual into your description. Explain what it reveals about the situation and why it matters now. Use the card name in parentheses the first time only, then use plain nouns. End with a concrete when/where tag so the client knows where to watch for this energy.",
+  "sentence-3": "Write 90-130 words. Weave these 3 cards into a vivid scene. Integrate each card's image and meaning naturally—paint what you see. Show HOW each card influences the next through real-world connection. Explain WHY this combination matters. Use card names in parentheses only once. End with a tangible when/where tag.",
   "past-present-future": "Write 120-180 words. Tell the story across three time layers. Open with what led here (Card 1's image). Deepen into the present moment and its complexity (Card 2's visual scene). Show what unfolds next (Card 3's landscape). Weave card images into the narrative naturally. Explain the deeper pattern and cause-and-effect. Use each card name once in parentheses. End with specific timing guidance.",
   "yes-no-maybe": "Write 120-180 words. Answer YES, NO, or MAYBE directly in the opening using Card 1's keyword and image. Weave Cards 2-3 to explain the proof and context, integrating their visual scenes. Why this answer? What does each card reveal about the situation? Use card names once in parentheses. End with 'Count on this...' or 'Watch for...' certainty tag.",
   "situation-challenge-advice": "Write 120-180 words. Paint the three-part dynamic as a narrative scene. Open with the situation (Card 1—integrate its image). Deepen into the challenge (Card 2—weave its visual). Reveal the path forward (Card 3—show its landscape). Use card names once in parentheses. Show how each layer connects and why all three matter together. End with a when/where tag.",
@@ -100,7 +100,7 @@ function buildPrompt(request: AIReadingRequest): string {
   
   const spreadRuleText = SPREAD_RULES[request.spreadId || 'single-card'] || SPREAD_RULES['single-card']
 
-  return `${LENORMAND_STYLE}
+   return `${LENORMAND_STYLE}
 
 Spread type: ${request.spreadId || 'Single Card'}
 Spread rules: ${spreadRuleText}
@@ -110,7 +110,9 @@ Question: ${request.question || "General Reading"}
 Cards:
 ${cardsText}
 
-Go:`
+Go:
+
+Safety guideline: Stay inside the word-range specified above; if you naturally finish 5-10% short, stop—never pad.`
 }
 
 // Main function to get AI reading
