@@ -267,47 +267,57 @@ export default function ReadingBasicsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">3-Card Spread</h4>
-                <p className="text-sm text-muted-foreground">
-                  Past → Present → Future. Simple and effective for quick insights.
-                </p>
-                <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Daily guidance, quick answers
-                </div>
-              </div>
+             <div className="grid gap-6 md:grid-cols-2">
+               <div className="space-y-3">
+                 <h4 className="font-semibold text-foreground">3-Card Sentence Reading (Primary)</h4>
+                 <p className="text-sm text-muted-foreground">
+                   Card 1 → Card 2 → Card 3 flowing as a narrative sentence. The core Lenormand method.
+                 </p>
+                 <div className="text-xs text-primary dark:text-primary/80">
+                   Best for: Universal reading, foundational technique
+                 </div>
+               </div>
 
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">5-Card Spread</h4>
-                <p className="text-sm text-muted-foreground">
-                  Situation → Challenge → Advice → Outcome → Timing.
-                </p>
-                <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Detailed problem-solving
-                </div>
-              </div>
+               <div className="space-y-3">
+                 <h4 className="font-semibold text-foreground">3-Card Past-Present-Future</h4>
+                 <p className="text-sm text-muted-foreground">
+                   Past → Present → Future. Timeline-based guidance.
+                 </p>
+                 <div className="text-xs text-primary dark:text-primary/80">
+                   Best for: Understanding progression over time
+                 </div>
+               </div>
 
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">9-Card Spread</h4>
-                <p className="text-sm text-muted-foreground">
-                  Comprehensive life overview with detailed insights.
-                </p>
-                <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Major life decisions
-                </div>
-              </div>
+               <div className="space-y-3">
+                 <h4 className="font-semibold text-foreground">5-Card Spread</h4>
+                 <p className="text-sm text-muted-foreground">
+                   Situation → Challenge → Advice → Outcome → Timing.
+                 </p>
+                 <div className="text-xs text-primary dark:text-primary/80">
+                   Best for: Detailed problem-solving
+                 </div>
+               </div>
 
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">36-Card Grand Tableau</h4>
-                <p className="text-sm text-muted-foreground">
-                  Complete reading using all cards for maximum detail.
-                </p>
-                <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Advanced practitioners
-                </div>
-              </div>
-            </div>
+               <div className="space-y-3">
+                 <h4 className="font-semibold text-foreground">9-Card Spread</h4>
+                 <p className="text-sm text-muted-foreground">
+                   Comprehensive life overview with detailed insights.
+                 </p>
+                 <div className="text-xs text-primary dark:text-primary/80">
+                   Best for: Major life decisions
+                 </div>
+               </div>
+
+               <div className="space-y-3">
+                 <h4 className="font-semibold text-foreground">36-Card Grand Tableau</h4>
+                 <p className="text-sm text-muted-foreground">
+                   Complete reading using all cards for maximum detail.
+                 </p>
+                 <div className="text-xs text-primary dark:text-primary/80">
+                   Best for: Advanced practitioners
+                 </div>
+               </div>
+             </div>
           </CardContent>
         </Card>
 

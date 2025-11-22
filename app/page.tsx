@@ -79,7 +79,7 @@ export default function Home() {
                 <ReadingTypeCard
                   icon={<Sparkles className="h-5 w-5 text-primary" />}
                   title="3-Card Reading"
-                  description="Past, present, and future revealed in focused guidance"
+                  description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
                   cardCount={3}
                 />
                 <ReadingTypeCard

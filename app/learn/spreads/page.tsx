@@ -21,30 +21,30 @@ const spreads = [
     description: "Perfect for quick insights and daily guidance",
     spreads: [
       {
+        name: "3-Card Sentence Reading",
+        description: "Three cards flowing as a narrative sentence - the core Lenormand method",
+        layout: "Card 1 → Card 2 → Card 3 (as flowing narrative)",
+        useCase: "Universal reading, foundational technique",
+        difficulty: "Beginner",
+        isPrimary: true,
+        positions: [
+          { name: "Card 1", description: "First element in the narrative sentence (subject/context)" },
+          { name: "Card 2", description: "Central element in the narrative (action/development)" },
+          { name: "Card 3", description: "Final element in the narrative (object/outcome)" }
+        ]
+      },
+      {
         name: "3-Card Past-Present-Future",
         description: "Classic timeline spread for understanding progression",
         layout: "Past → Present → Future",
         useCase: "General guidance, life overview",
         difficulty: "Beginner",
-        isPrimary: true,
-        positions: [
-          { name: "Past", description: "What has led to the current situation" },
-          { name: "Present", description: "Current circumstances and energies" },
-          { name: "Future", description: "Likely outcome or direction" }
-        ]
-      },
-      {
-        name: "Yes or No",
-        description: "Binary decision guidance with supporting context",
-        layout: "Answer → Support → Nuance",
-        useCase: "Quick yes/no questions with clarity",
-        difficulty: "Beginner",
         isPrimary: false,
-        positions: [
-          { name: "Answer", description: "The primary answer to your question" },
-          { name: "Support", description: "What supports this answer" },
-          { name: "Nuance", description: "Additional context or conditions" }
-        ]
+         positions: [
+           { name: "Past", description: "What has led to the current situation" },
+           { name: "Present", description: "Current circumstances and energies" },
+           { name: "Future", description: "Likely outcome or direction" }
+         ]
       },
       {
         name: "Mind-Body-Spirit",
