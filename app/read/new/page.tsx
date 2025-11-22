@@ -425,10 +425,7 @@ function NewReadingPageContent() {
                         <Button
                           onClick={() => {
                             setPath('virtual')
-                            setTimeout(() => {
-                              const questionField = document.getElementById('question') as HTMLTextAreaElement
-                              if (questionField) questionField.focus()
-                            }, 100)
+                            setStep('drawing')
                           }}
                           className="btn-group-hero-item"
                           size="lg"
@@ -438,11 +435,7 @@ function NewReadingPageContent() {
                         <Button
                           onClick={() => {
                             setPath('physical')
-                            setSelectedSpread(COMPREHENSIVE_SPREADS[0])
-                            setTimeout(() => {
-                              const textarea = document.querySelector('textarea[id="physical-cards"]') as HTMLTextAreaElement
-                              if (textarea) textarea.focus()
-                            }, 100)
+                            setStep('drawing')
                           }}
                           className="btn-group-hero-item"
                           size="lg"
