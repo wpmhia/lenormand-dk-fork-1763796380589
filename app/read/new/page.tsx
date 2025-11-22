@@ -214,6 +214,14 @@ function NewReadingPageContent() {
     }
   }, [path, selectedSpread, parsePhysicalCards])
 
+  // Parse physical cards when input changes
+  useEffect(() => {
+    if (path === 'physical' && physicalCards) {
+      const parsed = parsePhysicalCards(allCards)
+      setParsedCards(parsed)
+    }
+  }, [physicalCards, path, allCards, parsePhysicalCards])
+
   // Handle key down for physical cards input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
