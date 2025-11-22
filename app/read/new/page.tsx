@@ -388,6 +388,32 @@ function NewReadingPageContent() {
                       </div>
                     </div>
 
+                    {/* Spread Selection - Always Visible */}
+                    <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
+                      <Label htmlFor="manual-spread" className="font-medium text-foreground">
+                        Choose Your Spread:
+                      </Label>
+                      <Select value={selectedSpread.id} onValueChange={(value) => {
+                        const spread = COMPREHENSIVE_SPREADS.find(s => s.id === value)
+                        if (spread) setSelectedSpread(spread)
+                      }}>
+                        <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="border-border bg-card">
+                          {COMPREHENSIVE_SPREADS.map((spread) => (
+                            <SelectItem
+                              key={spread.id}
+                              value={spread.id}
+                              className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
+                            >
+                              {`${spread.label} (${spread.cards} cards)`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     {/* Hero Path Selection */}
                     {!path ? (
                       <div className="space-y-6">
@@ -440,7 +466,7 @@ function NewReadingPageContent() {
                     ) : (
                       <div className="space-y-4">
                         {/* Path Switcher */}
-                        <div className="mb-4 flex items-center justify-center gap-2">
+                        <div className="flex items-center justify-center gap-2">
                           <span className="text-sm text-muted-foreground">Reading method:</span>
                           <div className="btn-group">
                             <Button
@@ -462,7 +488,6 @@ function NewReadingPageContent() {
                               variant={path === 'physical' ? 'default' : 'ghost'}
                               onClick={() => {
                                 setPath('physical')
-                                setSelectedSpread(COMPREHENSIVE_SPREADS[0])
                               }}
                               className="btn-group-item"
                             >
@@ -470,34 +495,17 @@ function NewReadingPageContent() {
                             </Button>
                           </div>
                         </div>
+                      </div>
+                    )}
 
-                        {/* Manual Spread Selection - Show for both paths */}
-                        {(path === 'physical' || path === 'virtual') && (
-                          <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
-                            <Label htmlFor="manual-spread" className="font-medium text-foreground">
-                              Choose Your Spread:
-                            </Label>
-                            <Select value={selectedSpread.id} onValueChange={(value) => {
-                              const spread = COMPREHENSIVE_SPREADS.find(s => s.id === value)
-                              if (spread) setSelectedSpread(spread)
-                            }}>
-                              <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="border-border bg-card">
-                                {COMPREHENSIVE_SPREADS.map((spread) => (
-                                  <SelectItem
-                                    key={spread.id}
-                                    value={spread.id}
-                                    className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
-                                  >
-                                    {`${spread.label} (${spread.cards} cards)`}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        )}
+                    {/* Virtual Draw Input - Deck Component */}
+                    {path === 'virtual' && selectedSpread && (
+                      <div className="space-y-4">
+                        <Deck
+                          cards={allCards}
+                          drawCount={selectedSpread.cards}
+                          onDraw={handleDraw}
+                        />
                       </div>
                     )}
 
@@ -595,29 +603,26 @@ function NewReadingPageContent() {
                   </CardContent>
                 </Card>
 
-                {/* Unified Primary Button - Always Visible */}
-                <div className="sticky bottom-4 z-10 mt-6">
-                  <Card className="overflow-hidden rounded-2xl border-border bg-card/95 shadow-lg backdrop-blur-sm">
-                    <CardContent className="p-4">
-                      <Button
-                        data-draw-button
-                        onClick={() => {
-                          if (path === 'physical') {
+                {/* Primary Button - For Physical Cards */}
+                {step === 'setup' && path === 'physical' && selectedSpread && (
+                  <div className="sticky bottom-4 z-10 mt-6">
+                    <Card className="overflow-hidden rounded-2xl border-border bg-card/95 shadow-lg backdrop-blur-sm">
+                      <CardContent className="p-4">
+                        <Button
+                          data-draw-button
+                          onClick={() => {
                             handleDraw(allCards)
-                          } else {
-                            // For virtual cards, go to shuffle screen first
-                            setStep('drawing')
-                          }
-                        }}
-                        className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-                        disabled={!canProceed}
-                        aria-busy={aiLoading}
-                      >
-                        {getButtonLabel()}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
+                          }}
+                          className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+                          disabled={!canProceed || parsedCards.length !== selectedSpread.cards}
+                          aria-busy={aiLoading}
+                        >
+                          ✨ Start Reading
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
