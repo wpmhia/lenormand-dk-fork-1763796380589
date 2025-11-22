@@ -18,7 +18,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Eye } from 'lucide-react'
 import { getCards, getCardById, drawCards } from '@/lib/data'
-import { COMPREHENSIVE_SPREADS } from '@/lib/spreads'
+import { CORE_SPREADS, ADVANCED_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 
 function NewReadingPageContent() {
   const router = useRouter()
@@ -417,13 +417,29 @@ function NewReadingPageContent() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="border-border bg-card">
-                          {COMPREHENSIVE_SPREADS.map((spread) => (
+                          {/* Core spreads */}
+                          {CORE_SPREADS.map((spread) => (
                             <SelectItem
                               key={spread.id}
                               value={spread.id}
                               className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
                             >
-                              {`${spread.label} (${spread.cards} cards)`}
+                              {spread.label}
+                            </SelectItem>
+                          ))}
+                          
+                          {/* Divider */}
+                          <div className="border-t border-border my-2" />
+                          
+                          {/* Advanced spreads */}
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">More Spreads</div>
+                          {ADVANCED_SPREADS.map((spread) => (
+                            <SelectItem
+                              key={spread.id}
+                              value={spread.id}
+                              className="py-3 text-card-foreground hover:bg-accent focus:bg-accent text-sm"
+                            >
+                              {spread.label}
                             </SelectItem>
                           ))}
                         </SelectContent>

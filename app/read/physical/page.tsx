@@ -18,7 +18,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Sparkles, ArrowLeft, Shuffle } from 'lucide-react'
 import { getCards, getCardById } from '@/lib/data'
 import { getAIReading, AIReadingRequest, AIReadingResponse } from '@/lib/deepseek'
-import { COMPREHENSIVE_SPREADS } from '@/lib/spreads'
+import { CORE_SPREADS, ADVANCED_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 
 function PhysicalReadingPage() {
   const router = useRouter()
@@ -349,16 +349,31 @@ function PhysicalReadingPage() {
                       <SelectTrigger className="h-12 rounded-xl border-border bg-background text-card-foreground focus:border-primary">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="border-border bg-card">
-                        {COMPREHENSIVE_SPREADS.map((spread) => (
-                          <SelectItem key={spread.id} value={spread.id} className="text-card-foreground hover:bg-accent focus:bg-accent">
-                            <div className="flex flex-col">
-                              <span className="font-medium">{spread.label}</span>
-                              <span className="text-xs text-muted-foreground">{spread.description} ({spread.cards} cards)</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
+                       <SelectContent className="border-border bg-card">
+                         {/* Core spreads */}
+                         {CORE_SPREADS.map((spread) => (
+                           <SelectItem key={spread.id} value={spread.id} className="text-card-foreground hover:bg-accent focus:bg-accent">
+                             <div className="flex flex-col">
+                               <span className="font-medium">{spread.label}</span>
+                               <span className="text-xs text-muted-foreground">{spread.description}</span>
+                             </div>
+                           </SelectItem>
+                         ))}
+                         
+                         {/* Divider */}
+                         <div className="border-t border-border my-2" />
+                         
+                         {/* Advanced spreads */}
+                         <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">More Spreads</div>
+                         {ADVANCED_SPREADS.map((spread) => (
+                           <SelectItem key={spread.id} value={spread.id} className="text-card-foreground hover:bg-accent focus:bg-accent">
+                             <div className="flex flex-col">
+                               <span className="font-medium text-sm">{spread.label}</span>
+                               <span className="text-xs text-muted-foreground">{spread.description}</span>
+                             </div>
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
                     </Select>
                   </div>
 

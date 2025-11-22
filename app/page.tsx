@@ -76,36 +76,36 @@ export default function Home() {
              <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
           </div>
              <div className="relative z-10 grid items-stretch gap-6 md:grid-cols-2 lg:grid-cols-5">
-               <ReadingTypeCard
-                 icon={<Sparkles className="h-5 w-5 text-primary" />}
-                 title="Quick Analysis"
-                 description="Past, present, and future revealed in focused guidance"
-                 cardCount={3}
-               />
-               <ReadingTypeCard
-                 icon={<Heart className="h-5 w-5 text-primary" />}
-                 title="Deep Analysis"
-                 description="Uncover challenges, resources, and outcomes for your situation"
-                 cardCount={5}
-               />
-               <ReadingTypeCard
-                 icon={<Calendar className="h-5 w-5 text-primary" />}
-                 title="Weekly Insights"
-                 description="Navigate your week ahead or explore relationship dynamics"
-                 cardCount={7}
-               />
-               <ReadingTypeCard
-                 icon={<Shield className="h-5 w-5 text-primary" />}
-                 title="Comprehensive"
-                 description="Explore inner world, direct actions, and external influences"
-                 cardCount={9}
-               />
-               <ReadingTypeCard
-                 icon={<Sparkles className="h-5 w-5 text-primary" />}
-                 title="Grand Tableau"
-                 description="Full deck reading revealing life's complete mystical pattern"
-                 cardCount={36}
-               />
+                <ReadingTypeCard
+                  icon={<Sparkles className="h-5 w-5 text-primary" />}
+                  title="3-Card Reading"
+                  description="Past, present, and future revealed in focused guidance"
+                  cardCount={3}
+                />
+                <ReadingTypeCard
+                  icon={<Heart className="h-5 w-5 text-primary" />}
+                  title="5-Card Reading"
+                  description="Uncover challenges, resources, and outcomes for your situation"
+                  cardCount={5}
+                />
+                <ReadingTypeCard
+                  icon={<Calendar className="h-5 w-5 text-primary" />}
+                  title="7-Card Reading"
+                  description="Week ahead, relationships, or any 7-card spread guidance"
+                  cardCount={7}
+                />
+                <ReadingTypeCard
+                  icon={<Shield className="h-5 w-5 text-primary" />}
+                  title="9-Card Reading"
+                  description="Explore inner world, direct actions, and external influences"
+                  cardCount={9}
+                />
+                <ReadingTypeCard
+                  icon={<Sparkles className="h-5 w-5 text-primary" />}
+                  title="Master Reading"
+                  description="Full deck reading revealing life's complete mystical pattern"
+                  cardCount={36}
+                />
              </div>
         </div>
       </div>

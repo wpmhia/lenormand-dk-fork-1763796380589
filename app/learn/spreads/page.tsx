@@ -17,111 +17,158 @@ import {
 
 const spreads = [
   {
-    name: "3-Card Past-Present-Future",
-    description: "Classic timeline spread for understanding progression",
-    layout: "Past → Present → Future",
-    useCase: "General guidance, life overview",
-    difficulty: "Beginner",
-    positions: [
-      { name: "Past", description: "What has led to the current situation" },
-      { name: "Present", description: "Current circumstances and energies" },
-      { name: "Future", description: "Likely outcome or direction" }
+    category: "3-Card Spreads",
+    description: "Perfect for quick insights and daily guidance",
+    spreads: [
+      {
+        name: "3-Card Past-Present-Future",
+        description: "Classic timeline spread for understanding progression",
+        layout: "Past → Present → Future",
+        useCase: "General guidance, life overview",
+        difficulty: "Beginner",
+        isPrimary: true,
+        positions: [
+          { name: "Past", description: "What has led to the current situation" },
+          { name: "Present", description: "Current circumstances and energies" },
+          { name: "Future", description: "Likely outcome or direction" }
+        ]
+      },
+      {
+        name: "Yes or No",
+        description: "Binary decision guidance with supporting context",
+        layout: "Answer → Support → Nuance",
+        useCase: "Quick yes/no questions with clarity",
+        difficulty: "Beginner",
+        isPrimary: false,
+        positions: [
+          { name: "Answer", description: "The primary answer to your question" },
+          { name: "Support", description: "What supports this answer" },
+          { name: "Nuance", description: "Additional context or conditions" }
+        ]
+      },
+      {
+        name: "Mind-Body-Spirit",
+        description: "Holistic view of your situation across three dimensions",
+        layout: "Mind → Body → Spirit",
+        useCase: "Wellness, balance, personal growth",
+        difficulty: "Beginner",
+        isPrimary: false,
+        positions: [
+          { name: "Mind", description: "Thoughts, mental state, and intellectual matters" },
+          { name: "Body", description: "Physical health, actions, and material concerns" },
+          { name: "Spirit", description: "Emotional well-being, spiritual growth, and inner wisdom" }
+        ]
+      }
     ]
   },
   {
-    name: "5-Card Situation Spread",
-    description: "Detailed analysis of a specific situation",
-    layout: "Situation → Challenge → Advice → Outcome → Timing",
-    useCase: "Problem-solving, decision making",
-    difficulty: "Intermediate",
-    positions: [
-      { name: "Situation", description: "Current state of affairs" },
-      { name: "Challenge", description: "Obstacles or difficulties" },
-      { name: "Advice", description: "Guidance for moving forward" },
-      { name: "Outcome", description: "Likely result of current path" },
-      { name: "Timing", description: "When to expect developments" }
+    category: "5-Card Spreads",
+    description: "Detailed analysis for specific situations and decisions",
+    spreads: [
+      {
+        name: "5-Card Situation Spread",
+        description: "Detailed analysis of a specific situation",
+        layout: "Situation → Challenge → Advice → Outcome → Timing",
+        useCase: "Problem-solving, decision making",
+        difficulty: "Intermediate",
+        isPrimary: true,
+        positions: [
+          { name: "Situation", description: "Current state of affairs" },
+          { name: "Challenge", description: "Obstacles or difficulties" },
+          { name: "Advice", description: "Guidance for moving forward" },
+          { name: "Outcome", description: "Likely result of current path" },
+          { name: "Timing", description: "When to expect developments" }
+        ]
+      }
     ]
   },
   {
-    name: "7-Card Week Ahead",
-    description: "Navigate your week with daily guidance and insights",
-    layout: "Monday → Tuesday → Wednesday → Thursday → Friday → Saturday → Sunday",
-    useCase: "Weekly planning, timing insights",
-    difficulty: "Intermediate",
-    positions: [
-      { name: "Monday", description: "New beginnings and fresh energy" },
-      { name: "Tuesday", description: "Challenges and work matters" },
-      { name: "Wednesday", description: "Communication and connections" },
-      { name: "Thursday", description: "Progress and momentum building" },
-      { name: "Friday", description: "Social activities and completion" },
-      { name: "Saturday", description: "Rest and reflection" },
-      { name: "Sunday", description: "Closure and spiritual renewal" }
+    category: "7-Card Spreads",
+    description: "Deep insights for weekly guidance or relationship dynamics",
+    spreads: [
+      {
+        name: "7-Card Week Ahead",
+        description: "Navigate your week with daily guidance and insights",
+        layout: "Monday → Tuesday → Wednesday → Thursday → Friday → Saturday → Sunday",
+        useCase: "Weekly planning, timing insights",
+        difficulty: "Intermediate",
+        isPrimary: true,
+        positions: [
+          { name: "Monday", description: "New beginnings and fresh energy" },
+          { name: "Tuesday", description: "Challenges and work matters" },
+          { name: "Wednesday", description: "Communication and connections" },
+          { name: "Thursday", description: "Progress and momentum building" },
+          { name: "Friday", description: "Social activities and completion" },
+          { name: "Saturday", description: "Rest and reflection" },
+          { name: "Sunday", description: "Closure and spiritual renewal" }
+        ]
+      },
+      {
+        name: "7-Card Relationship Spread",
+        description: "Deep insights into romantic or interpersonal dynamics",
+        layout: "Your Past → Your Present → Your Future → Connection → Their Past → Their Present → Their Future",
+        useCase: "Love, partnerships, relationships",
+        difficulty: "Intermediate",
+        isPrimary: false,
+        positions: [
+          { name: "Your Past", description: "Your past experiences in relationships" },
+          { name: "Your Present", description: "Your current relationship energy" },
+          { name: "Your Future", description: "Your relationship outlook" },
+          { name: "Connection", description: "The bond between you both" },
+          { name: "Their Past", description: "Their past relationship experiences" },
+          { name: "Their Present", description: "Their current relationship energy" },
+          { name: "Their Future", description: "Their relationship outlook" }
+        ]
+      }
     ]
   },
   {
-    name: "7-Card Relationship Spread",
-    description: "Deep insights into romantic or interpersonal dynamics",
-    layout: "Your Past → Your Present → Your Future → Connection → Their Past → Their Present → Their Future",
-    useCase: "Love, partnerships, relationships",
-    difficulty: "Intermediate",
-    positions: [
-      { name: "Your Past", description: "Your past experiences in relationships" },
-      { name: "Your Present", description: "Your current relationship energy" },
-      { name: "Your Future", description: "Your relationship outlook" },
-      { name: "Connection", description: "The bond between you both" },
-      { name: "Their Past", description: "Their past relationship experiences" },
-      { name: "Their Present", description: "Their current relationship energy" },
-      { name: "Their Future", description: "Their relationship outlook" }
+    category: "9-Card Spreads",
+    description: "Master spread for comprehensive life insights",
+    spreads: [
+      {
+        name: "9-Card Comprehensive Spread",
+        description: "Complete life reading using traditional 3x3 grid layout",
+        layout: "3x3 Grid: Recent Past → Present → Near Future (across rows) × Inner World → Direct Actions → External Influences (down columns)",
+        useCase: "Major life decisions, deep insight",
+        difficulty: "Advanced",
+        isPrimary: true,
+        positions: [
+          { name: "Recent Past - Inner World", description: "Thoughts, feelings, and personal resources from your recent past that influence your current situation" },
+          { name: "Recent Past - Direct Actions", description: "Actions you took recently that shaped your current circumstances" },
+          { name: "Recent Past - Outside World", description: "External influences and events from your recent past" },
+          { name: "Present - Inner World", description: "Your current thoughts, feelings, and internal state" },
+          { name: "Present - Direct Actions", description: "Your current actions and the central issue you're facing" },
+          { name: "Present - Outside World", description: "Current external influences, other people, and environmental factors" },
+          { name: "Near Future - Inner World", description: "How your thoughts and feelings will evolve in the near future" },
+          { name: "Near Future - Direct Actions", description: "Actions you'll need to take in the near future" },
+          { name: "Near Future - Outside World", description: "External events and influences approaching in the near future" }
+        ]
+      }
     ]
   },
   {
-    name: "9-Card Comprehensive Spread",
-    description: "Complete life reading using traditional 3x3 grid layout",
-    layout: "3x3 Grid: Recent Past → Present → Near Future (across rows) × Inner World → Direct Actions → External Influences (down columns)",
-    useCase: "Major life decisions, deep insight",
-    difficulty: "Advanced",
-    positions: [
-      { name: "Recent Past - Inner World", description: "Thoughts, feelings, and personal resources from your recent past that influence your current situation" },
-      { name: "Recent Past - Direct Actions", description: "Actions you took recently that shaped your current circumstances" },
-      { name: "Recent Past - Outside World", description: "External influences and events from your recent past" },
-      { name: "Present - Inner World", description: "Your current thoughts, feelings, and internal state" },
-      { name: "Present - Direct Actions", description: "Your current actions and the central issue you're facing" },
-      { name: "Present - Outside World", description: "Current external influences, other people, and environmental factors" },
-      { name: "Near Future - Inner World", description: "How your thoughts and feelings will evolve in the near future" },
-      { name: "Near Future - Direct Actions", description: "Actions you'll need to take in the near future" },
-      { name: "Near Future - Outside World", description: "External events and influences approaching in the near future" }
-    ]
-  },
-  {
-    name: "Grand Tableau (36-Card Reading)",
-    description: "The most comprehensive Lenormand reading using all 36 cards",
-    layout: "6x6 grid with traditional house positions and significator placement",
-    useCase: "Major life decisions, year-ahead readings, complex relationship issues",
-    difficulty: "Expert",
-    positions: [
-      { name: "Significator", description: "The card representing you (usually Woman #29 or Man #28) - the center of the reading" },
-      { name: "Cross of the Moment", description: "The 5-card cross formed by significator's row and column - reveals immediate situation" },
-      { name: "Four Corners", description: "Cards 1, 6, 31, 36 - represent the fixed frame and foundation of the situation" },
-      { name: "Four Center Cards", description: "Cards 13, 16, 12, 11 - reveal what's secretly driving the matter" },
-      { name: "Nine-Card Square", description: "3x3 area around significator - shows immediate influences and personal sphere" },
-      { name: "Knight Moves", description: "L-shaped patterns from significator - reveal underlying patterns and connections" },
-      { name: "Mirror Positions", description: "Cards directly opposite significator - show balancing energies and lessons" },
-      { name: "House Meanings", description: "Each position has traditional house associations that add symbolic meaning" }
-    ]
-  },
-  {
-    name: "Relationship Spread",
-    description: "Understanding romantic or interpersonal dynamics",
-    layout: "You → Partner → Relationship → Challenge → Advice → Outcome",
-    useCase: "Love, friendships, partnerships",
-    difficulty: "Intermediate",
-    positions: [
-      { name: "You", description: "Your energy in the relationship" },
-      { name: "Partner", description: "Their energy and perspective" },
-      { name: "Relationship", description: "The connection between you" },
-      { name: "Challenge", description: "Issues to address" },
-      { name: "Advice", description: "How to improve the situation" },
-      { name: "Outcome", description: "Future of the relationship" }
+    category: "36-Card Master Reading",
+    description: "Complete deck reading for ultimate comprehensive guidance",
+    spreads: [
+      {
+        name: "Grand Tableau (36-Card Reading)",
+        description: "The most comprehensive Lenormand reading using all 36 cards",
+        layout: "6x6 grid with traditional house positions and significator placement",
+        useCase: "Major life decisions, year-ahead readings, complex relationship issues",
+        difficulty: "Expert",
+        isPrimary: true,
+        positions: [
+          { name: "Significator", description: "The card representing you (usually Woman #29 or Man #28) - the center of the reading" },
+          { name: "Cross of the Moment", description: "The 5-card cross formed by significator's row and column - reveals immediate situation" },
+          { name: "Four Corners", description: "Cards 1, 6, 31, 36 - represent the fixed frame and foundation of the situation" },
+          { name: "Four Center Cards", description: "Cards 13, 16, 12, 11 - reveal what's secretly driving the matter" },
+          { name: "Nine-Card Square", description: "3x3 area around significator - shows immediate influences and personal sphere" },
+          { name: "Knight Moves", description: "L-shaped patterns from significator - reveal underlying patterns and connections" },
+          { name: "Mirror Positions", description: "Cards directly opposite significator - show balancing energies and lessons" },
+          { name: "House Meanings", description: "Each position has traditional house associations that add symbolic meaning" }
+        ]
+      }
     ]
   }
 ]
@@ -236,64 +283,81 @@ export default function SpreadsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              {spreads.map((spread, index) => (
-                <Card key={index} className="border border-border bg-muted">
-                  <CardContent className="p-6">
-                    <div className="mb-4 flex items-start justify-between">
-                      <div>
-                        <h3 className="mb-2 text-lg font-semibold text-foreground">
-                          {spread.name}
-                        </h3>
-                        <p className="mb-2 text-sm text-muted-foreground">
-                          {spread.description}
-                        </p>
-                        <div className="flex items-center space-x-4 text-xs text-primary">
-                          <span>Best for: {spread.useCase}</span>
-                          <Badge className={
-                            spread.difficulty === 'Beginner' ? 'border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary' :
-                            spread.difficulty === 'Intermediate' ? 'border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground' :
-                            'border-border bg-muted text-foreground dark:border-border dark:bg-muted dark:text-foreground'
-                          }>
-                            {spread.difficulty}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
+             <div className="space-y-8">
+               {spreads.map((group, groupIndex) => (
+                 <div key={groupIndex}>
+                   <div className="mb-4">
+                     <h2 className="text-2xl font-bold text-foreground">{group.category}</h2>
+                     <p className="mt-1 text-sm text-muted-foreground">{group.description}</p>
+                   </div>
+                   <div className="space-y-6">
+                     {group.spreads.map((spread, spreadIndex) => (
+                       <Card key={spreadIndex} className={`border ${spread.isPrimary ? 'border-primary/30 bg-primary/5' : 'border-border bg-muted'}`}>
+                         <CardContent className="p-6">
+                           <div className="mb-4 flex items-start justify-between">
+                             <div>
+                               <div className="flex items-center gap-2">
+                                 <h3 className="mb-2 text-lg font-semibold text-foreground">
+                                   {spread.name}
+                                 </h3>
+                                 {spread.isPrimary && (
+                                   <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+                                     Primary
+                                   </Badge>
+                                 )}
+                               </div>
+                               <p className="mb-2 text-sm text-muted-foreground">
+                                 {spread.description}
+                               </p>
+                               <div className="flex items-center space-x-4 text-xs text-primary">
+                                 <span>Best for: {spread.useCase}</span>
+                                 <Badge className={
+                                   spread.difficulty === 'Beginner' ? 'border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary' :
+                                   spread.difficulty === 'Intermediate' ? 'border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground' :
+                                   'border-border bg-muted text-foreground dark:border-border dark:bg-muted dark:text-foreground'
+                                 }>
+                                   {spread.difficulty}
+                                 </Badge>
+                               </div>
+                             </div>
+                           </div>
 
-                    <div className="mb-4 rounded-lg bg-muted p-4">
-                      <h4 className="mb-2 font-semibold text-foreground">Layout:</h4>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        {spread.layout}
-                      </p>
-                    </div>
+                           <div className="mb-4 rounded-lg bg-muted p-4">
+                             <h4 className="mb-2 font-semibold text-foreground">Layout:</h4>
+                             <p className="text-sm font-medium text-muted-foreground">
+                               {spread.layout}
+                             </p>
+                           </div>
 
-                    <div>
-                      <h4 className="mb-3 font-semibold text-foreground">Positions:</h4>
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {spread.positions.map((position, posIndex) => (
-                          <div key={posIndex} className="flex items-start space-x-3">
-                            <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                              <span className="text-xs font-bold text-white">{posIndex + 1}</span>
+                           <div>
+                             <h4 className="mb-3 font-semibold text-foreground">Positions:</h4>
+                             <div className="grid gap-3 md:grid-cols-2">
+                               {spread.positions.map((position, posIndex) => (
+                                  <div key={posIndex} className="flex items-start space-x-3">
+                                    <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                                      <span className="text-xs font-bold text-white">{posIndex + 1}</span>
+                                    </div>
+                                    <div>
+                                      <h5 className="text-sm font-medium text-foreground">
+                                        {position.name}
+                                      </h5>
+                                      <p className="text-xs text-primary">
+                                        {position.description}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                            <div>
-                              <h5 className="text-sm font-medium text-foreground">
-                                {position.name}
-                              </h5>
-                              <p className="text-xs text-primary">
-                                {position.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                  </div>
+                ))}
+             </div>
+           </CardContent>
+         </Card>
 
         {/* Advanced Techniques */}
         <Card className="mb-8 border-border bg-card">
