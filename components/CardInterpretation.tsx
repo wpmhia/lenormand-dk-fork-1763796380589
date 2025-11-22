@@ -104,7 +104,7 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
               >
                 <button
                   onClick={() => toggleCard(index)}
-                  className="w-full p-4 flex items-start justify-between hover:bg-muted/50 transition-colors"
+                  className="w-full p-4 flex items-start justify-between hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 focus:ring-offset-background transition-colors"
                   aria-expanded={isExpanded}
                 >
                   <div className="flex items-center gap-3 flex-1 text-left">

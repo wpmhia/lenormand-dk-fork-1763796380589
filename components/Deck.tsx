@@ -49,14 +49,12 @@ export function Deck({
     }, 500)
   }
 
-  const drawCards = () => {
-    if (!Array.isArray(deck)) return
+   const drawCards = () => {
+     if (!Array.isArray(deck)) return
 
-    console.log('drawCards called, deck.length:', deck.length, 'drawCount:', drawCount)
-    if (deck.length < drawCount) {
-      console.log('Not enough cards')
-      return
-    }
+     if (deck.length < drawCount) {
+       return
+     }
 
     setIsDrawing(true)
 
@@ -126,20 +124,19 @@ export function Deck({
       {/* Deck Display */}
       <div className="fade-in-scale flex justify-center">
         {/* Make this container a clickable, keyboard-accessible control */}
-        <div
-          className={cn(
-            'relative',
-            // show disabled visual when drawing or insufficient cards
-            (isDrawing || !Array.isArray(deck) || deck.length < drawCount) ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
-          )}
-          role="button"
-          tabIndex={isDrawing || !Array.isArray(deck) || deck.length < drawCount ? -1 : 0}
-          aria-label={isDrawing ? 'Drawing cards...' : `Deck: ${Array.isArray(deck) ? deck.length : 0} cards. Click to draw ${drawCount} cards`}
-          aria-disabled={isDrawing || !Array.isArray(deck) || deck.length < drawCount}
-          onClick={() => {
-            if (!isDrawing && Array.isArray(deck) && deck.length >= drawCount) drawCards()
-          }}
-          onKeyDown={(e) => {
+         <div
+           className={cn(
+             'relative rounded-lg transition-all',
+             (isDrawing || !Array.isArray(deck) || deck.length < drawCount) ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background'
+           )}
+           role="button"
+           tabIndex={isDrawing || !Array.isArray(deck) || deck.length < drawCount ? -1 : 0}
+           aria-label={isDrawing ? 'Drawing cards...' : `Deck: ${Array.isArray(deck) ? deck.length : 0} cards. Click to draw ${drawCount} cards`}
+           aria-disabled={isDrawing || !Array.isArray(deck) || deck.length < drawCount}
+           onClick={() => {
+             if (!isDrawing && Array.isArray(deck) && deck.length >= drawCount) drawCards()
+           }}
+           onKeyDown={(e) => {
             if (isDrawing || !Array.isArray(deck) || deck.length < drawCount) return
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()

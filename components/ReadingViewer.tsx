@@ -161,6 +161,7 @@ export function ReadingViewer({
   spreadId
 }: ReadingViewerProps) {
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
+  const [shareClicked, setShareClicked] = useState(false)
 
   const getAdjacentCards = (currentCard: ReadingCard): ReadingCard[] => {
     if (reading.layoutType === 36) {
@@ -441,12 +442,21 @@ export function ReadingViewer({
                  <Badge variant="secondary">
                    {reading.layoutType} Cards
                  </Badge>
-                 {showShareButton && onShare && (
-                   <Button onClick={onShare} variant="outline" size="sm" className="border-border hover:bg-muted">
-                     <Share2 className="mr-2 h-4 w-4" />
-                     Share
-                   </Button>
-                 )}
+                  {showShareButton && onShare && (
+                    <Button 
+                      onClick={async () => {
+                        setShareClicked(true)
+                        await onShare()
+                        setTimeout(() => setShareClicked(false), 2000)
+                      }} 
+                      variant="outline" 
+                      size="sm" 
+                      className="border-border hover:bg-muted"
+                    >
+                      <Share2 className="mr-2 h-4 w-4" />
+                      {shareClicked ? 'Copied!' : 'Share'}
+                    </Button>
+                  )}
               </div>
             </div>
          </div>

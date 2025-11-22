@@ -192,10 +192,13 @@ export default function SharedReadingPage({ params }: PageProps) {
     }
   }, [])
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (typeof window !== 'undefined') {
-      navigator.clipboard.writeText(window.location.href)
-      alert('Reading link copied to clipboard!')
+      try {
+        await navigator.clipboard.writeText(window.location.href)
+      } catch (err) {
+        console.error('Failed to copy:', err)
+      }
     }
   }
 

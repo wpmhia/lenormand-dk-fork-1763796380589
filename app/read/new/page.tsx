@@ -49,7 +49,6 @@ function NewReadingPageContent() {
    const drawnCardsRef = useRef<ReadingCard[]>([])
 
   const addLog = useCallback((msg: string) => {
-    console.log(msg)
     setDebugLog(prev => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]} ${msg}`])
   }, [])
 
