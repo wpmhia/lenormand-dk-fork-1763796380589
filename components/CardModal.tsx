@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { Card as CardType } from '@/lib/types'
 import { getCards } from '@/lib/data'
-import { X } from 'lucide-react'
+import { X, ChevronDown } from 'lucide-react'
 
 interface CardModalProps {
   card: CardType
@@ -19,10 +19,23 @@ interface CardModalProps {
 export function CardModal({ card, onClose, layoutType, position }: CardModalProps) {
   const combos = Array.isArray(card.combos) ? card.combos : []
   const [allCards, setAllCards] = useState<any[]>([])
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    meaning: true,
+    combinations: combos.length > 0,
+    house: false,
+    info: false,
+  })
 
   useEffect(() => {
     setAllCards(getCards())
   }, [])
+
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }))
+  }
 
   return (
     <Dialog open={true} onOpenChange={(isOpen) => {
@@ -30,7 +43,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
         onClose()
       }
     }}>
-      <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto border-border bg-card text-card-foreground">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-border bg-card text-card-foreground">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
@@ -46,155 +59,156 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             </button>
           </div>
           <DialogDescription>
-            Detailed information about the {card.name} Lenormand card
+            Lenormand card #{card.id} of 36
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-8 md:grid-cols-2">
-          {/* Card Image */}
-          <div className="flex justify-center md:justify-start">
-            <div className="card-mystical relative h-72 w-56 overflow-hidden rounded-xl border border-purple-500/30 shadow-2xl">
+        <div className="space-y-4">
+          {/* Card Image and Keywords - Always Visible */}
+          <div className="flex gap-4 items-start">
+            <div className="card-mystical relative h-64 w-48 flex-shrink-0 overflow-hidden rounded-xl border border-purple-500/30 shadow-lg">
               <Image
                 src={card.imageUrl || ''}
                 alt={card.name}
-                width={224}
-                height={288}
+                width={192}
+                height={256}
                 className="h-full w-full bg-card object-contain"
-                sizes="(max-width: 768px) 100vw, 224px"
+                sizes="192px"
               />
             </div>
-          </div>
-
-          {/* Content */}
-          <div className="space-y-6">
-            {/* Keywords */}
-            <div>
-              <h3 className="mb-2 font-semibold text-foreground">Keywords</h3>
-              <div className="flex flex-wrap gap-2">
-                {card.keywords.map((keyword, index) => (
-                  <Badge key={index} variant="secondary" className="bg-muted text-muted-foreground">
-                    {keyword}
-                  </Badge>
-                ))}
+            <div className="flex-1 space-y-3">
+              <div>
+                <h3 className="mb-2 text-sm font-semibold text-foreground">Keywords</h3>
+                <div className="flex flex-wrap gap-2">
+                  {card.keywords.map((keyword, index) => (
+                    <Badge key={index} variant="secondary" className="bg-muted text-muted-foreground text-xs">
+                      {keyword}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
+          </div>
 
-            <Separator className="bg-muted" />
+          {/* Collapsible Sections */}
+          
+          {/* Meaning Section */}
+          <Collapsible open={openSections.meaning} onOpenChange={() => toggleSection('meaning')}>
+            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+              <h3 className="font-semibold text-foreground">Meaning</h3>
+              <ChevronDown className={`h-4 w-4 transition-transform ${openSections.meaning ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 py-3 border-l-2 border-primary/30 text-sm text-muted-foreground">
+              {card.uprightMeaning}
+            </CollapsibleContent>
+          </Collapsible>
 
-             {/* Meaning */}
-             <div>
-               <h3 className="mb-2 font-semibold text-foreground">
-                 Meaning
-               </h3>
-               <p className="text-muted-foreground">
-                 {card.uprightMeaning}
-               </p>
-             </div>
+          {/* House Meaning - Grand Tableau Only */}
+          {layoutType === 36 && position !== undefined && (
+            <Collapsible open={openSections.house} onOpenChange={() => toggleSection('house')}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+                <h3 className="font-semibold text-foreground">House Meaning</h3>
+                <ChevronDown className={`h-4 w-4 transition-transform ${openSections.house ? 'rotate-180' : ''}`} />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="px-4 py-3 border-l-2 border-primary/30 text-sm text-muted-foreground">
+                <p className="mb-2">Position {position + 1} in Grand Tableau represents:</p>
+                <p className="font-medium text-foreground">
+                  {(() => {
+                    const houseMeanings = [
+                      "Messages, news, communication, movement",
+                      "Luck, opportunities, small joys",
+                      "Travel, distance, foreign matters",
+                      "Home, family, stability, foundation",
+                      "Health, growth, longevity, nature",
+                      "Confusion, uncertainty, dreams, illusions",
+                      "Betrayal, deception, wisdom, healing",
+                      "Endings, transformation, closure, rebirth",
+                      "Gifts, celebrations, beauty, social success",
+                      "Cutting change, decisions, surgery, harvest",
+                      "Conflict, repetition, arguments, discipline",
+                      "Communication, anxiety, siblings, short trips",
+                      "New beginnings, innocence, children, playfulness",
+                      "Cunning, work, employment, intelligence",
+                      "Strength, money, protection, authority",
+                      "Hope, goals, wishes, spirituality, fame",
+                      "Change, movement, pregnancy, relocation",
+                      "Loyalty, friends, faithfulness, pets",
+                      "Authority, isolation, institutions, solitude",
+                      "Social life, public, gatherings, community",
+                      "Obstacles, delays, challenges, steadfastness",
+                      "Choices, decisions, crossroads, options",
+                      "Loss, worry, theft, details, stress",
+                      "Love, emotions, relationships, passion",
+                      "Commitment, cycles, marriage, contracts",
+                      "Secrets, learning, knowledge, education",
+                      "Written communication, documents, news",
+                      "Masculine energy, men, father, husband",
+                      "Feminine energy, women, mother, wife",
+                      "Peace, maturity, sexuality, harmony",
+                      "Success, vitality, happiness, clarity",
+                      "Intuition, emotions, cycles, psychic abilities",
+                      "Solutions, importance, answers, unlocking",
+                      "Finance, abundance, business, wealth",
+                      "Stability, security, patience, grounding",
+                      "Burden, fate, sacrifice, religion, suffering"
+                    ]
+                    return houseMeanings[position] || "Unknown house meaning"
+                  })()}
+                </p>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
 
-             {/* House Meaning (Grand Tableau) */}
-             {layoutType === 36 && position !== undefined && (
-               <>
-                 <Separator className="bg-muted" />
-                 <div>
-                   <h3 className="mb-2 font-semibold text-foreground">
-                     House Meaning
-                   </h3>
-                   <p className="text-sm text-muted-foreground">
-                     When this card appears in position {position + 1} of the Grand Tableau,
-                     it represents matters of: <strong>
-                     {(() => {
-                       const houseMeanings = [
-                         "Messages, news, communication, movement",
-                         "Luck, opportunities, small joys",
-                         "Travel, distance, foreign matters",
-                         "Home, family, stability, foundation",
-                         "Health, growth, longevity, nature",
-                         "Confusion, uncertainty, dreams, illusions",
-                         "Betrayal, deception, wisdom, healing",
-                         "Endings, transformation, closure, rebirth",
-                         "Gifts, celebrations, beauty, social success",
-                         "Cutting change, decisions, surgery, harvest",
-                         "Conflict, repetition, arguments, discipline",
-                         "Communication, anxiety, siblings, short trips",
-                         "New beginnings, innocence, children, playfulness",
-                         "Cunning, work, employment, intelligence",
-                         "Strength, money, protection, authority",
-                         "Hope, goals, wishes, spirituality, fame",
-                         "Change, movement, pregnancy, relocation",
-                         "Loyalty, friends, faithfulness, pets",
-                         "Authority, isolation, institutions, solitude",
-                         "Social life, public, gatherings, community",
-                         "Obstacles, delays, challenges, steadfastness",
-                         "Choices, decisions, crossroads, options",
-                         "Loss, worry, theft, details, stress",
-                         "Love, emotions, relationships, passion",
-                         "Commitment, cycles, marriage, contracts",
-                         "Secrets, learning, knowledge, education",
-                         "Written communication, documents, news",
-                         "Masculine energy, men, father, husband",
-                         "Feminine energy, women, mother, wife",
-                         "Peace, maturity, sexuality, harmony",
-                         "Success, vitality, happiness, clarity",
-                         "Intuition, emotions, cycles, psychic abilities",
-                         "Solutions, importance, answers, unlocking",
-                         "Finance, abundance, business, wealth",
-                         "Stability, security, patience, grounding",
-                         "Burden, fate, sacrifice, religion, suffering"
-                       ]
-                       return houseMeanings[position] || "Unknown house meaning"
-                     })()}
-                     </strong>
-                   </p>
-                 </div>
-               </>
-             )}
-
-            {/* Combinations */}
-            {combos.length > 0 && (
-              <>
-                <Separator className="bg-muted" />
-                <div>
-                  <h3 className="mb-3 font-semibold text-foreground">Card Combinations</h3>
-                  <div className="space-y-2">
-                    {combos.map((combo: any, index: number) => {
-                      const comboCard = allCards.find(c => c.id === combo.withCardId)
-                      return (
-                        <div key={index} className="flex items-start gap-3 rounded-lg bg-muted p-3">
-                          <div className="h-16 w-12 flex-shrink-0 overflow-hidden rounded border border-border bg-card">
-                            {comboCard && (
-                              <Image
-                                src={comboCard.imageUrl || ''}
-                                alt={comboCard.name}
-                                width={48}
-                                height={64}
-                                className="h-full w-full object-cover"
-                                sizes="48px"
-                              />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-sm font-medium text-foreground">
-                              {comboCard ? comboCard.name : `Card ${combo.withCardId}`}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {combo.meaning}
-                            </div>
-                          </div>
+          {/* Combinations Section */}
+          {combos.length > 0 && (
+            <Collapsible open={openSections.combinations} onOpenChange={() => toggleSection('combinations')}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+                <h3 className="font-semibold text-foreground">Card Combinations ({combos.length})</h3>
+                <ChevronDown className={`h-4 w-4 transition-transform ${openSections.combinations ? 'rotate-180' : ''}`} />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 px-4 py-3 border-l-2 border-primary/30">
+                {combos.map((combo: any, index: number) => {
+                  const comboCard = allCards.find(c => c.id === combo.withCardId)
+                  return (
+                    <div key={index} className="flex items-start gap-2 rounded-lg bg-muted p-2">
+                      <div className="h-12 w-9 flex-shrink-0 overflow-hidden rounded border border-border bg-card">
+                        {comboCard && (
+                          <Image
+                            src={comboCard.imageUrl || ''}
+                            alt={comboCard.name}
+                            width={36}
+                            height={48}
+                            className="h-full w-full object-cover"
+                            sizes="36px"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium text-foreground">
+                          {comboCard ? comboCard.name : `Card ${combo.withCardId}`}
                         </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </>
-            )}
+                        <div className="text-xs text-muted-foreground line-clamp-2">
+                          {combo.meaning}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </CollapsibleContent>
+            </Collapsible>
+          )}
 
-            {/* Card Info */}
-            <Separator className="bg-muted" />
-            <div className="text-sm text-muted-foreground">
+          {/* Card Info Section */}
+          <Collapsible open={openSections.info} onOpenChange={() => toggleSection('info')}>
+            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+              <h3 className="font-semibold text-foreground">Card Info</h3>
+              <ChevronDown className={`h-4 w-4 transition-transform ${openSections.info ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 py-3 border-l-2 border-primary/30 space-y-1 text-sm text-muted-foreground">
               <div>Card Number: {card.number}</div>
               <div>Lenormand Card #{card.id} of 36</div>
-            </div>
-          </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </DialogContent>
     </Dialog>
