@@ -103,7 +103,7 @@ export default function CardsPage() {
         </div>
       </div>
 
-      <div className="grid grid-1 gap-6 grid-2 grid-3 grid-4">
+      <div className="grid-1 grid-2 grid-3 grid-4 grid gap-6">
         {filteredCards.map((card) => (
           <div key={card.id} className="space-component">
             <Card 

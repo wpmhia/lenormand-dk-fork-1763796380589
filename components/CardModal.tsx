@@ -65,7 +65,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
 
         <div className="space-y-4">
           {/* Card Image and Keywords - Always Visible */}
-          <div className="flex gap-4 items-start">
+          <div className="flex items-start gap-4">
             <div className="card-mystical relative h-64 w-48 flex-shrink-0 overflow-hidden rounded-xl border border-purple-500/30 shadow-lg">
               <Image
                 src={card.imageUrl || ''}
@@ -81,7 +81,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                 <h3 className="mb-2 text-sm font-semibold text-foreground">Keywords</h3>
                 <div className="flex flex-wrap gap-2">
                   {card.keywords.map((keyword, index) => (
-                    <Badge key={index} variant="secondary" className="bg-muted text-muted-foreground text-xs">
+                    <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
                       {keyword}
                     </Badge>
                   ))}
@@ -94,11 +94,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           
           {/* Meaning Section */}
           <Collapsible open={openSections.meaning} onOpenChange={() => toggleSection('meaning')}>
-            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
               <h3 className="font-semibold text-foreground">Meaning</h3>
               <ChevronDown className={`h-4 w-4 transition-transform ${openSections.meaning ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 py-3 border-l-2 border-primary/30 text-sm text-muted-foreground">
+            <CollapsibleContent className="border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
               {card.uprightMeaning}
             </CollapsibleContent>
           </Collapsible>
@@ -106,11 +106,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           {/* House Meaning - Grand Tableau Only */}
           {layoutType === 36 && position !== undefined && (
             <Collapsible open={openSections.house} onOpenChange={() => toggleSection('house')}>
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
                 <h3 className="font-semibold text-foreground">House Meaning</h3>
                 <ChevronDown className={`h-4 w-4 transition-transform ${openSections.house ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
-              <CollapsibleContent className="px-4 py-3 border-l-2 border-primary/30 text-sm text-muted-foreground">
+              <CollapsibleContent className="border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
                 <p className="mb-2">Position {position + 1} in Grand Tableau represents:</p>
                 <p className="font-medium text-foreground">
                   {(() => {
@@ -162,11 +162,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           {/* Combinations Section */}
           {combos.length > 0 && (
             <Collapsible open={openSections.combinations} onOpenChange={() => toggleSection('combinations')}>
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
                 <h3 className="font-semibold text-foreground">Card Combinations ({combos.length})</h3>
                 <ChevronDown className={`h-4 w-4 transition-transform ${openSections.combinations ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 px-4 py-3 border-l-2 border-primary/30">
+              <CollapsibleContent className="space-y-2 border-l-2 border-primary/30 px-4 py-3">
                 {combos.map((combo: any, index: number) => {
                   const comboCard = allCards.find(c => c.id === combo.withCardId)
                   return (
@@ -183,11 +183,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                           />
                         )}
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="text-xs font-medium text-foreground">
                           {comboCard ? comboCard.name : `Card ${combo.withCardId}`}
                         </div>
-                        <div className="text-xs text-muted-foreground line-clamp-2">
+                        <div className="line-clamp-2 text-xs text-muted-foreground">
                           {combo.meaning}
                         </div>
                       </div>
@@ -200,11 +200,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
 
           {/* Card Info Section */}
           <Collapsible open={openSections.info} onOpenChange={() => toggleSection('info')}>
-            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 hover:bg-muted transition-colors">
+            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
               <h3 className="font-semibold text-foreground">Card Info</h3>
               <ChevronDown className={`h-4 w-4 transition-transform ${openSections.info ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
-            <CollapsibleContent className="px-4 py-3 border-l-2 border-primary/30 space-y-1 text-sm text-muted-foreground">
+            <CollapsibleContent className="space-y-1 border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
               <div>Card Number: {card.number}</div>
               <div>Lenormand Card #{card.id} of 36</div>
             </CollapsibleContent>

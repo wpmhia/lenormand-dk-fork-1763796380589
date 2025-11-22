@@ -350,9 +350,9 @@ export default function AdvancedPage() {
               </div>
             </div>
 
-            <div className="rounded-lg bg-card border border-border p-4">
+            <div className="rounded-lg border border-border bg-card p-4">
               <h4 className="mb-3 font-semibold text-foreground">Reading Order Matters</h4>
-              <p className="text-sm text-card-foreground mb-2">
+              <p className="mb-2 text-sm text-card-foreground">
                 Always read in this exact sequence: <strong>A → B → C → D → (E if needed)</strong>
               </p>
               <p className="text-sm text-muted-foreground">
@@ -378,7 +378,7 @@ export default function AdvancedPage() {
             <div className="space-y-4">
               <div className="rounded-lg border border-border bg-muted p-4">
                 <h4 className="mb-3 font-semibold text-foreground">Rule 1: Columns = Weeks (or Months)</h4>
-                <p className="text-sm text-card-foreground mb-2">
+                <p className="mb-2 text-sm text-card-foreground">
                   Each vertical column of the 4×9 grid represents one week of time (or one month if the question is long-range).
                 </p>
                 <ul className="space-y-1 text-sm text-card-foreground">
@@ -390,7 +390,7 @@ export default function AdvancedPage() {
 
               <div className="rounded-lg border border-border bg-muted p-4">
                 <h4 className="mb-3 font-semibold text-foreground">Rule 2: Pip Values = Days</h4>
-                <p className="text-sm text-card-foreground mb-2">
+                <p className="mb-2 text-sm text-card-foreground">
                   Count the playing card value of cards near the significator to get precise day counts.
                 </p>
                 <ul className="space-y-1 text-sm text-card-foreground">

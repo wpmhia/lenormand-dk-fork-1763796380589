@@ -48,7 +48,7 @@ export function AIReadingDisplay({
 
    if (isLoading && !displayContent) {
      return (
-       <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 delay-200">
+       <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500">
          <Card className="border-border bg-card">
            <CardContent className="space-y-4 p-8 text-center">
              <div className="relative mx-auto h-16 w-16">
@@ -109,7 +109,7 @@ export function AIReadingDisplay({
   }
 
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 delay-200">
+      <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500">
         <Card className="border-border bg-card">
           <CardHeader className="border-b border-border">
             <CardTitle className="flex items-center gap-2">

@@ -71,7 +71,7 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
   }
 
    return (
-     <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 delay-300">
+     <div className="animate-in fade-in slide-in-from-bottom-8 delay-300 duration-500">
        <Card className="border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

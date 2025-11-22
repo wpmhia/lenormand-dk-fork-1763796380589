@@ -183,7 +183,7 @@ function NewReadingPageContent() {
     })
 
      return readingCards
-   }, [physicalCards, allCards])
+   }, [physicalCards])
 
   const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
     const currentPath = path
@@ -429,7 +429,7 @@ function NewReadingPageContent() {
                           ))}
                           
                           {/* Divider */}
-                          <div className="border-t border-border my-2" />
+                          <div className="my-2 border-t border-border" />
                           
                           {/* Advanced spreads */}
                           <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">More Spreads</div>
@@ -437,7 +437,7 @@ function NewReadingPageContent() {
                             <SelectItem
                               key={spread.id}
                               value={spread.id}
-                              className="py-3 text-card-foreground hover:bg-accent focus:bg-accent text-sm"
+                              className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
                             >
                               {spread.label}
                             </SelectItem>

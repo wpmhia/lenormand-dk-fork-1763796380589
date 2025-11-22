@@ -458,23 +458,23 @@ export default function SpreadsPage() {
               <div className="space-y-3">
                 <div className="rounded bg-card p-3">
                   <p className="font-semibold text-foreground">A. The Row (Story of the Moment)</p>
-                  <p className="text-xs text-card-foreground mt-1">Read all nine cards in the significator&apos;s row left → right. Cards left of significator are past; cards right are future. Speak complete sentences describing the narrative.</p>
+                  <p className="mt-1 text-xs text-card-foreground">Read all nine cards in the significator&apos;s row left → right. Cards left of significator are past; cards right are future. Speak complete sentences describing the narrative.</p>
                 </div>
                 <div className="rounded bg-card p-3">
                   <p className="font-semibold text-foreground">B. The Column (What Weighs on the Mind)</p>
-                  <p className="text-xs text-card-foreground mt-1">Read the four cards above → below the significator. Top card = unconscious motive; bottom card = what pre-occupies them most right now.</p>
+                  <p className="mt-1 text-xs text-card-foreground">Read the four cards above → below the significator. Top card = unconscious motive; bottom card = what pre-occupies them most right now.</p>
                 </div>
                 <div className="rounded bg-card p-3">
                   <p className="font-semibold text-foreground">C. The Cross (Immediate Pivot)</p>
-                  <p className="text-xs text-card-foreground mt-1">The four cards directly adjacent (above, below, left, right). Treat as a four-word telegram answering the question in ten seconds.</p>
+                  <p className="mt-1 text-xs text-card-foreground">The four cards directly adjacent (above, below, left, right). Treat as a four-word telegram answering the question in ten seconds.</p>
                 </div>
                 <div className="rounded bg-card p-3">
                   <p className="font-semibold text-foreground">D. Corners of the Frame (Fate&apos;s Headline)</p>
-                  <p className="text-xs text-card-foreground mt-1">Cards at positions 1, 9, 28, 36 (four corners). Read clockwise—this gives the overall complexion of the entire reading.</p>
+                  <p className="mt-1 text-xs text-card-foreground">Cards at positions 1, 9, 28, 36 (four corners). Read clockwise—this gives the overall complexion of the entire reading.</p>
                 </div>
                 <div className="rounded bg-card p-3">
                   <p className="font-semibold text-foreground">E. Knights (Optional—Unseen Influences)</p>
-                  <p className="text-xs text-card-foreground mt-1">Leap one card in eight directions like a chess knight. Use only if corners are ominous or question is complex.</p>
+                  <p className="mt-1 text-xs text-card-foreground">Leap one card in eight directions like a chess knight. Use only if corners are ominous or question is complex.</p>
                 </div>
               </div>
             </div>

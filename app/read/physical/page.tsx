@@ -361,14 +361,14 @@ function PhysicalReadingPage() {
                          ))}
                          
                          {/* Divider */}
-                         <div className="border-t border-border my-2" />
+                         <div className="my-2 border-t border-border" />
                          
                          {/* Advanced spreads */}
                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">More Spreads</div>
                          {ADVANCED_SPREADS.map((spread) => (
                            <SelectItem key={spread.id} value={spread.id} className="text-card-foreground hover:bg-accent focus:bg-accent">
                              <div className="flex flex-col">
-                               <span className="font-medium text-sm">{spread.label}</span>
+                               <span className="text-sm font-medium">{spread.label}</span>
                                <span className="text-xs text-muted-foreground">{spread.description}</span>
                              </div>
                            </SelectItem>

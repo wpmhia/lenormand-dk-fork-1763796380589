@@ -290,13 +290,13 @@ export function ReadingViewer({
       return (
         <div className="space-y-6">
           {/* Reading Guide */}
-          <div className="space-y-2 text-center rounded-lg bg-muted p-4">
+          <div className="space-y-2 rounded-lg bg-muted p-4 text-center">
             <h3 className="text-lg font-semibold text-foreground">Grand Tableau: The Five Essential Strips</h3>
             <div className="text-sm text-muted-foreground">
               {significatorCard ? (
                 <div className="space-y-1">
                   <p><strong>Significator: {significatorCard.name}</strong> (Position {significatorIndex + 1})</p>
-                  <p className="text-xs mt-2">Colors show the Five Strips: Blue/Green = Row (narrative), Purple/Indigo = Column (mind), Golden = Cross (pivot), Amber = Corners (fate)</p>
+                  <p className="mt-2 text-xs">Colors show the Five Strips: Blue/Green = Row (narrative), Purple/Indigo = Column (mind), Golden = Cross (pivot), Amber = Corners (fate)</p>
                 </div>
               ) : (
                 <span>No significator (Woman/Man/Child/Dog) found in spread</span>
@@ -317,12 +317,12 @@ export function ReadingViewer({
              return (
                <AnimatedCard key={index} delay={index * 0.05} className={`flex flex-col items-center space-y-1 rounded-lg border-2 transition-all ${stripClass} ${isSignificator ? 'ring-2 ring-primary' : ''}`}>
                  <TooltipProvider>
-                   <div className="flex flex-col items-center space-y-1 w-full p-1">
+                   <div className="flex w-full flex-col items-center space-y-1 p-1">
                      <Tooltip>
                      <TooltipTrigger asChild>
-                       <div className="flex flex-col items-center space-y-1 w-full">
+                       <div className="flex w-full flex-col items-center space-y-1">
                           {stripLabel && (
-                            <div className="text-xs font-semibold text-primary text-center">
+                            <div className="text-center text-xs font-semibold text-primary">
                               {stripLabel}
                             </div>
                           )}
@@ -356,7 +356,7 @@ export function ReadingViewer({
          {/* Reading Instructions */}
          <div className="space-y-3 rounded-lg border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
            <p className="font-semibold text-foreground">How to read the Grand Tableau:</p>
-           <ol className="space-y-2 list-decimal list-inside text-xs">
+           <ol className="list-inside list-decimal space-y-2 text-xs">
              <li><strong>Strip A (Row):</strong> Read the nine cards in the significator&apos;s row (left→right) as the narrative of the moment</li>
              <li><strong>Strip B (Column):</strong> Read the four cards in the significator&apos;s column (top→bottom) to understand what weighs on the mind</li>
              <li><strong>Strip C (Cross):</strong> The four adjacent cards form the immediate pivot—the crossing point</li>
@@ -454,7 +454,7 @@ export function ReadingViewer({
 
 
        {/* Cards Layout Section */}
-       <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 delay-150">
+       <div className="animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500">
          <div className="rounded-xl border border-border bg-card p-8">
            <h3 className="mb-6 text-xl font-semibold text-foreground">Your Cards</h3>
            {renderLayout()}
@@ -473,7 +473,7 @@ export function ReadingViewer({
 
        {/* Combinations Panel */}
        {selectedCard && (
-           <div className="animate-in fade-in slide-in-from-bottom-8 duration-500 rounded-xl border border-border bg-card p-8">
+           <div className="animate-in fade-in slide-in-from-bottom-8 rounded-xl border border-border bg-card p-8 duration-500">
             <h3 className="mb-6 text-xl font-semibold text-foreground">Card Combinations</h3>
           <div className="space-y-3">
             {(() => {
