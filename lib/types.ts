@@ -7,6 +7,7 @@ export interface Card {
   combos: CardCombo[]
   imageUrl: string | null
   emoji?: string
+  timing?: string
 }
 
 export interface CardCombo {
