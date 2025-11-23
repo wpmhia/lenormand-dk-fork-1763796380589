@@ -2,6 +2,7 @@ import { MarieAnneAgent } from './agent'
 import { SPREAD_RULES } from './spreadRules'
 import { getCachedSpreadRule } from './spreadRulesCache'
 import { getCachedReading, cacheReading, isReadingCached } from './readingCache'
+import { readingHistory } from './readingHistory'
 import { LenormandCard, SpreadId } from '@/types/agent.types'
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
@@ -30,6 +31,7 @@ export function isDeepSeekAvailable(): boolean {
 }
 
 export async function getAIReading(request: AIReadingRequest): Promise<AIReadingResponse | null> {
+  const startTime = Date.now()
   console.log('getAIReading: Checking cache...')
   
   try {
@@ -38,6 +40,8 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       const cachedReading = getCachedReading(request)
       if (cachedReading) {
         console.log('Cache hit! Returning cached reading')
+        const duration = Date.now() - startTime
+        readingHistory.addReading(request, cachedReading, duration)
         return cachedReading
       }
     }
@@ -84,6 +88,8 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         timingDays: agentResponse.timingDays
       }
       cacheReading(request, response)
+      const duration = Date.now() - startTime
+      readingHistory.addReading(request, response, duration)
       return response
     }
 
@@ -160,6 +166,8 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
            timingDays: agentResponse.timingDays
          }
          cacheReading(request, templateResponse)
+         const duration = Date.now() - startTime
+         readingHistory.addReading(request, templateResponse, duration)
          return templateResponse
        }
      }
@@ -171,6 +179,8 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
        timingDays: agentResponse.timingDays
      }
      cacheReading(request, aiResponse)
+     const duration = Date.now() - startTime
+     readingHistory.addReading(request, aiResponse, duration)
      return aiResponse
   } catch (error) {
     console.error('AI reading error:', error)

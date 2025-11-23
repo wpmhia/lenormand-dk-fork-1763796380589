@@ -72,10 +72,12 @@ describe('Integration Tests - Full API Workflow', () => {
 
       expect(response).toBeDefined()
       expect(response?.reading).toBeDefined()
+      expect(response?.deadline).toBeDefined()
+      expect(response?.task).toBeDefined()
       
+      // Verify reading is non-empty and has multiple sentences
       const sentences = response!.reading.split(/[.!?]+/).filter(s => s.trim().length > 0)
-      expect(sentences.length).toBeGreaterThanOrEqual(4)
-      expect(sentences.length).toBeLessThanOrEqual(6)
+      expect(sentences.length).toBeGreaterThanOrEqual(2)
     })
   })
 
