@@ -64,25 +64,20 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Ko-Fi Support Button */}
-        <div className="border-t border-border/50 py-6">
-          <div className="flex flex-col items-center gap-2 mb-4">
-            <p className="text-xs font-medium text-muted-foreground">Love this tool?</p>
+        {/* Bottom Bar with Ko-Fi */}
+        <div className="border-t border-border/50 pt-4">
+          <div className="flex flex-col items-center justify-center gap-3 text-xs text-muted-foreground/70">
             <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-block transition-transform hover:scale-105 active:scale-95">
               <img height='36' style={{border: '0px', height: '36px'}} src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
             </a>
+            <p>© {currentYear} Lenormand Intelligence</p>
+            <div className="flex items-center gap-1">
+              <span>Made with</span>
+              <Heart className="h-3 w-3 text-primary/60" aria-hidden="true" />
+              <span>in Denmark</span>
+            </div>
+            <p className="text-xs text-muted-foreground/60">Entertainment & spiritual guidance</p>
           </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="flex flex-col items-center justify-center gap-2 pt-4 text-xs text-muted-foreground/70">
-          <p>© {currentYear} Lenormand Intelligence</p>
-          <div className="flex items-center gap-1">
-            <span>Made with</span>
-            <Heart className="h-3 w-3 text-primary/60" aria-hidden="true" />
-            <span>in Denmark</span>
-          </div>
-          <p className="text-xs text-muted-foreground/60">Entertainment & spiritual guidance</p>
         </div>
       </div>
     </footer>
