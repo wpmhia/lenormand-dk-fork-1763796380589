@@ -71,28 +71,13 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     // Generate reading structure with agent (provides template and instructions)
     const agentResponse = MarieAnneAgent.tellStory(agentRequest)
     
-    console.log('Agent response generated:', {
-      storyLength: agentResponse.story.length,
-      deadline: agentResponse.deadline,
-      task: agentResponse.task,
-      timingDays: agentResponse.timingDays
-    })
+     console.log('Agent response generated:', {
+       storyLength: agentResponse.story.length,
+       deadline: agentResponse.deadline,
+       task: agentResponse.task,
+       timingDays: agentResponse.timingDays
+     })
 
-     // Use the agent template directly - it captures Marie-Anne's soul perfectly
-    // DeepSeek adds flowery language that obscures her direct, practical voice
-    console.log('Using agent template directly for Marie-Anne\'s authentic voice.')
-    const response = {
-      reading: agentResponse.story,
-      deadline: agentResponse.deadline,
-      task: agentResponse.task,
-      timingDays: agentResponse.timingDays
-    }
-     cacheReading(request, response)
-     const duration = Date.now() - startTime
-     readingHistory.addReading(request, response, duration)
-     return response
-     
-     /* DeepSeek integration removed - using agent templates preserves Marie-Anne's authentic voice
      // Send agent's prompt to DeepSeek for generation
      const deepseekPrompt = buildPromptForDeepSeek(agentRequest, spread)
     
@@ -178,12 +163,11 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         task: agentResponse.task,
         timingDays: agentResponse.timingDays
       }
-      cacheReading(request, aiResponse)
-      const duration = Date.now() - startTime
-      readingHistory.addReading(request, aiResponse, duration)
-      return aiResponse
-     */
-   } catch (error) {
+       cacheReading(request, aiResponse)
+       const duration = Date.now() - startTime
+       readingHistory.addReading(request, aiResponse, duration)
+       return aiResponse
+    } catch (error) {
      console.error('AI reading error:', error)
      return createFallbackReading('Error generating reading')
    }
