@@ -416,47 +416,48 @@ function NewReadingPageContent() {
                       </div>
                     </div>
 
-                    {/* Spread Selection - Always Visible */}
-                    <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
-                      <Label htmlFor="manual-spread" className="font-medium text-foreground">
-                        Choose Your Spread:
-                      </Label>
-                      <Select value={selectedSpread.id} onValueChange={(value) => {
-                        const spread = COMPREHENSIVE_SPREADS.find(s => s.id === value)
-                        if (spread) setSelectedSpread(spread)
-                      }}>
-                        <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="border-border bg-card">
-                          {/* Core spreads */}
-                          {CORE_SPREADS.map((spread) => (
-                            <SelectItem
-                              key={spread.id}
-                              value={spread.id}
-                              className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
-                            >
-                              {spread.label}
-                            </SelectItem>
-                          ))}
-                          
-                          {/* Divider */}
-                          <div className="my-2 border-t border-border" />
-                          
-                          {/* Advanced spreads */}
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">More Spreads</div>
-                          {ADVANCED_SPREADS.map((spread) => (
-                            <SelectItem
-                              key={spread.id}
-                              value={spread.id}
-                              className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
-                            >
-                              {spread.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                     {/* Spread Selection - Always Visible */}
+                     <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
+                       <Label htmlFor="manual-spread" className="font-medium text-foreground">
+                         Choose Your Spread:
+                       </Label>
+                       <Select value={selectedSpread.id} onValueChange={(value) => {
+                         const spread = COMPREHENSIVE_SPREADS.find(s => s.id === value)
+                         if (spread) setSelectedSpread(spread)
+                       }}>
+                         <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
+                           <SelectValue />
+                         </SelectTrigger>
+                         <SelectContent className="border-border bg-card">
+                           {/* Authentic Spreads Header */}
+                           <div className="px-2 py-1.5 text-xs font-bold text-primary">✨ AUTHENTIC SPREADS</div>
+                           {AUTHENTIC_SPREADS.map((spread) => (
+                             <SelectItem
+                               key={spread.id}
+                               value={spread.id}
+                               className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
+                             >
+                               {spread.label}
+                             </SelectItem>
+                           ))}
+                           
+                           {/* Divider */}
+                           <div className="my-2 border-t border-border" />
+                           
+                           {/* Modern Spreads Header */}
+                           <div className="px-2 py-1.5 text-xs font-bold text-primary">🔮 MODERN SPREADS</div>
+                           {MODERN_SPREADS.map((spread) => (
+                             <SelectItem
+                               key={spread.id}
+                               value={spread.id}
+                               className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
+                             >
+                               {spread.label}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                     </div>
 
                     {/* Hero Path Selection */}
                     {!path ? (
