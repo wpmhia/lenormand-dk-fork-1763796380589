@@ -64,6 +64,13 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Ko-Fi Support Button */}
+        <div className="flex justify-center py-4 border-t border-border/50">
+          <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer'>
+            <img height='36' style={{border: '0px', height: '36px'}} src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
+          </a>
+        </div>
+
         {/* Bottom Bar */}
         <div className="flex flex-col items-center justify-center gap-2 pt-4 text-xs text-muted-foreground/70">
           <p>© {currentYear} Lenormand Intelligence</p>

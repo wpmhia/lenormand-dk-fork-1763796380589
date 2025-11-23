@@ -144,17 +144,6 @@ export default function RootLayout({
         </ThemeProvider>
         <StructuredData />
         <FAQSchema />
-        <Script
-          src="https://storage.ko-fi.com/cdn/widget/Widget_2.js"
-          strategy="lazyOnload"
-        />
-        <Script
-          id="kofi-init"
-          strategy="lazyOnload"
-          dangerouslySetInnerHTML={{
-            __html: `if (typeof kofiwidget2 !== 'undefined') { kofiwidget2.init('Support a free future', '#a17a45', 'Y8Y81NVDEK'); kofiwidget2.draw(); }`,
-          }}
-        />
       </body>
     </html>
   );
