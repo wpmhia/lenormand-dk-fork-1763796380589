@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/components/providers';
 import { Header } from '@/components/header';
 import { CookieConsent } from '@/components/CookieConsent';
 import { StructuredData, FAQSchema } from '@/lib/structured-data';
-import { KoFiButton } from '@/components/KoFiButton';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -129,10 +129,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <Script
-          src="https://storage.ko-fi.com/cdn/widget/Widget_2.js"
-          strategy="afterInteractive"
-        />
       </head>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
@@ -149,14 +145,14 @@ export default function RootLayout({
         <StructuredData />
         <FAQSchema />
         <Script
+          src="https://storage.ko-fi.com/cdn/widget/Widget_2.js"
+          strategy="lazyOnload"
+        />
+        <Script
           id="kofi-init"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof kofiwidget2 !== 'undefined') {
-                kofiwidget2.init('Support a free future', '#a17a45', 'Y8Y81NVDEK');
-              }
-            `,
+            __html: `if (typeof kofiwidget2 !== 'undefined') { kofiwidget2.init('Support a free future', '#a17a45', 'Y8Y81NVDEK'); kofiwidget2.draw(); }`,
           }}
         />
       </body>
