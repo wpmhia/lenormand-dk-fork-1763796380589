@@ -16,61 +16,19 @@ const TEMPLATE_9_CARD = `A fog of confusion (Clouds) has settled over your hospi
 const TEMPLATE_36_CARD = `P1: The tableau opens with tension—(Clouds) of confusion, (Rider) messages, a loyal (Dog), a sudden (Scythe). The weight of the (Cross) builds slowly through (Mice) erosion and cycles of (Moon) doubt. Hearts (Heart) ache and (Ring) binds what cannot move. P2: The breakthrough comes through institutional (Tower) change, (Fish) financial flow, and bright (Sun) clarity. A (Bouquet) gift arrives unexpectedly; the (Key) unlocks what was stuck. (Paths) diverge and (Garden) calls. P3: Hidden beneath it all sits the (Tree) with deep roots, the (Anchor) weight pressing down, the (Whip) cracks and (Birds) communicate urgently. (Stars) guide the way forward. A (Letter) arrives with answers. (Lily) peace settles. P4: By Friday you choose your path: sign the new agreement (Ring) or return (Stork) to solid ground (House). (Child) begins again or (Fox) finds strategy. (Lily) offers peace. Send your written position before Friday evening.`
 
 export class MarieAnneAgent {
-    static tellStory(request: AgentRequest): AgentResponse {
-       const { cards, spread, question } = request
+   static tellStory(request: AgentRequest): AgentResponse {
+     const { cards, spread, question } = request
 
-       // Generate story directly from cards
-       const story = this.generateStory(cards, spread, question)
-       const practicalTranslation = this.generatePracticalTranslation(cards, spread, question)
-       
-       const outcomeCard = cards[cards.length - 1]
-       const outcomeCardPip = this.getPipCount(outcomeCard.id)
-       // Deadline is now optional - DeepSeek will decide if cards warrant timing
-       const task = makeTask(spread.beats[spread.beats.length - 1], cards)
+     const story = this.getTemplate(spread.template)
+     const task = makeTask(spread.beats[spread.beats.length - 1], cards)
 
-       return {
-         story,
-         practicalTranslation,
-         deadline: undefined,
-         task: task,
-         timingDays: undefined
-       }
+     return {
+       story,
+       deadline: undefined,
+       task: task,
+       timingDays: undefined
      }
-   
-     private static generateStory(cards: any[], spread: any, question: string): string {
-       // For 3-card (the default spread), create a direct narrative
-       if (cards.length === 3) {
-         const [card1, card2, card3] = cards
-         return `${card1.name} opens the matter, but ${card2.name} complicates it. ${card3.name} shows the outcome. The path forward is clear—act decisively. Do what must be done.`
-       }
-       
-       // For other spreads, return the template as exemplar
-       const template = this.getTemplate(spread.template)
-       return template
-     }
-
-     private static generatePracticalTranslation(cards: any[], spread: any, question: string): string {
-       // Generate a plain-language explanation of what the reading means for the user's specific question
-       const cardList = cards.map(c => c.name).join(', ')
-       
-       // Create a practical translation that answers the question directly
-       // This translates the symbolic Lenormand reading into actionable guidance
-       if (cards.length === 1) {
-         return `The ${cards[0].name} indicates clarity on your question. This is your answer: proceed with confidence in what you already sense to be true. Your next action is to trust this guidance.`
-       }
-       
-       if (cards.length === 3) {
-         const [card1, card2, card3] = cards
-         return `To your question "${question}": The reading shows initial conditions through ${card1.name}, complications via ${card2.name}, and resolution through ${card3.name}. What you must do: acknowledge the complication, then move toward the outcome. The path is clear once you accept the current tension.`
-       }
-
-       // For larger spreads, provide a more comprehensive practical answer
-       if (cards.length >= 5) {
-         return `Your question "${question}" is answered by these cards: ${cardList}. The reading shows a progression from current situation through challenges to resolution. What this means: You are not blocked, but you must understand what must change. Your responsibility is to make that change deliberately. The cards point to action—take it.`
-       }
-
-       return `The cards address your question with practical clarity: ${cardList}. You already know what must be done. Do it.`
-     }
+   }
 
   private static getTemplate(templateType: string): string {
     const templates: Record<string, string> = {
@@ -84,91 +42,9 @@ export class MarieAnneAgent {
     return templates[templateType] || TEMPLATE_3_CARD
   }
 
-   private static buildPrompt(
-     cards: LenormandCard[],
-     spread: any,
-     question: string,
-     template: string
-   ): string {
-     const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
 
-      return `
-You are Marie-Anne Lenormand, the legendary Paris fortune-teller (1772-1843).
-Your readings are direct, practical, and deadline-driven. You command, never suggest.
-You see what is, state consequences, and prescribe action. No mysticism. No ambiguity.
 
-QUESTION: "${question}"
-CARDS: ${cardsText}
-SPREAD: ${spread.template.toUpperCase()} (${cards.length} cards)
 
-YOUR METHODOLOGY:
-- Card meanings are your 1839 deck interpretations (authentic, not modern soft readings).
-- Card strength matters: Strong cards carry weight. Weak cards modify.
-- Every reading answers the question directly and immediately.
-- Every reading ends with a DEADLINE and a specific ACTION.
-- No reversals. Only upright meanings. Simple and clear.
-
-STRUCTURE FOR THIS READING:
-- Write EXACTLY ${spread.sentences} sentences.
-- Each sentence chains cards into ONE story—not separate interpretations, one narrative.
-- Introduce each card with parentheses on first mention: (CardName).
-- Subsequent mentions can drop the parentheses for natural flow.
-- Your final sentence MUST contain:
-  1. The outcome or direction (YES/NO/STAY/WATCH)
-  2. A specific deadline: "by [Day] [time]" or "next [Day] morning/evening"
-  3. An imperative action the querent must take: "Do this..." or "Send word..." or "Prepare for..."
-
-YOUR VOICE:
-- Direct and commanding. You are reading for working women in Paris salons who need real guidance.
-- Use visceral language: weight, cracks, walls, doors, light, shadow, stone, water, fire.
-- Brisk. No flowery language. No spiritual bypassing. What is blocking? How do they move through it?
-- Deadline-first always. People need to know: when, and what to do.
-
-TONE EXAMPLE FROM YOUR READINGS:
-"${template}"
-
-NOW WRITE THIS READING.
-Exactly ${spread.sentences} sentences. Cards tell one story. End with deadline + action.
-NO explanations. NO backtracking. Command the situation forward:
-`
-   }
-
-   private static generateStoryFromTemplate(template: string, cards: LenormandCard[], spread: any): string {
-     // For now, use the template as-is since it's written as a concrete example
-     // In a full implementation, this would intelligently map cards to narrative positions
-     // The templates are exemplars that capture Marie-Anne's voice perfectly
-     
-     // For 3-card spreads, we can do simple substitution
-     if (cards.length === 3 && template.includes('(Dog)')) {
-       // This is using a generic template - for MVP, just return it as-is
-       // A full implementation would map actual cards to story positions
-       return this.adaptTemplateForCards(template, cards, 3)
-     }
-     
-     // For other spreads, return template as example of her voice
-     return template
-   }
-
-   private static adaptTemplateForCards(template: string, cards: LenormandCard[], cardCount: number): string {
-     // Simple card substitution for 3-card readings
-     // This preserves the structure while using actual drawn cards
-     if (cardCount !== 3) return template
-     
-     // Generic pattern for 3-card sentence structure
-     const card1 = cards[0].name
-     const card2 = cards[1].name  
-     const card3 = cards[2].name
-     
-     // Create a narrative using the cards
-     // Structure: Card1 (position/role) → Card2 (action/tension) → Card3 (outcome)
-     const story = `${card1} leads the way, but ${card2} complicates matters. By Friday evening, ${card3} shows the resolution. ACT: Make your choice clear before Friday—do not delay.`
-     
-     return story
-   }
-
-   private static formatStory(prompt: string, sentenceCount: number): string {
-     return prompt.trim()
-   }
 
   private static getPipCount(cardId: number): number {
     if (cardId > 30) return 4

@@ -74,7 +74,6 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     
       console.log('Agent response generated:', {
         storyLength: agentResponse.story.length,
-        hasPracticalTranslation: !!agentResponse.practicalTranslation,
         deadline: agentResponse.deadline,
         task: agentResponse.task,
         timingDays: agentResponse.timingDays
@@ -113,14 +112,13 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         console.error('Authentication/Authorization error - check API key')
       }
 
-       // Return agent reading as fallback
-       return {
-         reading: agentResponse.story,
-         practicalTranslation: agentResponse.practicalTranslation,
-         deadline: agentResponse.deadline,
-         task: agentResponse.task,
-         timingDays: agentResponse.timingDays
-       }
+        // Return agent template as fallback when DeepSeek API fails
+        return {
+          reading: agentResponse.story,
+          deadline: agentResponse.deadline,
+          task: agentResponse.task,
+          timingDays: agentResponse.timingDays
+        }
     }
 
     const data = await response.json()
@@ -128,14 +126,13 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     const content = data.choices?.[0]?.message?.content
 
     if (!content) {
-       console.log('No content in DeepSeek response, using agent reading')
-       return {
-         reading: agentResponse.story,
-         practicalTranslation: agentResponse.practicalTranslation,
-         deadline: agentResponse.deadline,
-         task: agentResponse.task,
-         timingDays: agentResponse.timingDays
-       }
+        console.log('No content in DeepSeek response, using agent template')
+        return {
+          reading: agentResponse.story,
+          deadline: agentResponse.deadline,
+          task: agentResponse.task,
+          timingDays: agentResponse.timingDays
+        }
     }
 
       const trimmedContent = content.trim()
@@ -175,20 +172,19 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
          console.warn('Reading validation issues:', validation.issues)
          // If validation fails, still try to use the split response
          // Only fall back to agent template if we have no practical translation AND no prophecy
-          if (!practicalTranslation) {
-            console.warn('No practical translation from DeepSeek, using agent reading')
-            const agentOnlyResponse = {
-              reading: agentResponse.story,
-              practicalTranslation: agentResponse.practicalTranslation,
-              deadline: agentResponse.deadline,
-              task: agentResponse.task,
-              timingDays: agentResponse.timingDays
-            }
-            cacheReading(request, agentOnlyResponse)
-            const duration = Date.now() - startTime
-            readingHistory.addReading(request, agentOnlyResponse, duration)
-            return agentOnlyResponse
-          }
+           if (!practicalTranslation) {
+             console.warn('No practical translation from DeepSeek, using agent template')
+             const agentFallback = {
+               reading: agentResponse.story,
+               deadline: agentResponse.deadline,
+               task: agentResponse.task,
+               timingDays: agentResponse.timingDays
+             }
+             cacheReading(request, agentFallback)
+             const duration = Date.now() - startTime
+             readingHistory.addReading(request, agentFallback, duration)
+             return agentFallback
+           }
        }
 
        const aiResponse = {
