@@ -1,5 +1,6 @@
 import { MarieAnneAgent } from './agent'
 import { SPREAD_RULES } from './spreadRules'
+import { getCachedSpreadRule } from './spreadRulesCache'
 import { LenormandCard, SpreadId } from '@/types/agent.types'
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
@@ -33,7 +34,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
   try {
     // Convert request to agent format
     const spreadId = (request.spreadId || 'sentence-3') as SpreadId
-    const spread = SPREAD_RULES[spreadId]
+    const spread = getCachedSpreadRule(spreadId)
     
     if (!spread) {
       console.error('Invalid spread ID:', spreadId)
@@ -211,7 +212,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
 
   try {
     const spreadId = (request.spreadId || 'sentence-3') as SpreadId
-    const spread = SPREAD_RULES[spreadId]
+    const spread = getCachedSpreadRule(spreadId)
     
     if (!spread) {
       throw new Error('Invalid spread ID: ' + spreadId)
