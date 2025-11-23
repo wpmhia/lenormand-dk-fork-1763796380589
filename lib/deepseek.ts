@@ -1,6 +1,7 @@
 import { MarieAnneAgent } from './agent'
 import { SPREAD_RULES } from './spreadRules'
 import { getCachedSpreadRule } from './spreadRulesCache'
+import { getCachedReading, cacheReading, isReadingCached } from './readingCache'
 import { LenormandCard, SpreadId } from '@/types/agent.types'
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
@@ -29,9 +30,20 @@ export function isDeepSeekAvailable(): boolean {
 }
 
 export async function getAIReading(request: AIReadingRequest): Promise<AIReadingResponse | null> {
-  console.log('getAIReading: Generating reading with MarieAnneAgent...')
+  console.log('getAIReading: Checking cache...')
   
   try {
+    // Check if reading is already cached
+    if (isReadingCached(request)) {
+      const cachedReading = getCachedReading(request)
+      if (cachedReading) {
+        console.log('Cache hit! Returning cached reading')
+        return cachedReading
+      }
+    }
+
+    console.log('Cache miss, generating reading with MarieAnneAgent...')
+    
     // Convert request to agent format
     const spreadId = (request.spreadId || 'sentence-3') as SpreadId
     const spread = getCachedSpreadRule(spreadId)
@@ -65,12 +77,14 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     // If DeepSeek is not available, use the template directly
     if (!isDeepSeekAvailable()) {
       console.log('DeepSeek not available, using template directly.')
-      return {
+      const response = {
         reading: agentResponse.story,
         deadline: agentResponse.deadline,
         task: agentResponse.task,
         timingDays: agentResponse.timingDays
       }
+      cacheReading(request, response)
+      return response
     }
 
     // Send agent's prompt to DeepSeek for generation
@@ -134,26 +148,30 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     // Validate that all cards are referenced with parentheses format
     const validation = MarieAnneAgent.validateCardReferences(trimmedContent, cards, cards.length)
     
-    if (!validation.isValid) {
-      console.warn('Reading validation issues:', validation.issues)
-      // If validation fails for spreads >= 9 cards, use agent template
-      if (cards.length >= 9) {
-        console.warn('Using agent template due to validation failure')
-        return {
-          reading: agentResponse.story,
-          deadline: agentResponse.deadline,
-          task: agentResponse.task,
-          timingDays: agentResponse.timingDays
-        }
-      }
-    }
+     if (!validation.isValid) {
+       console.warn('Reading validation issues:', validation.issues)
+       // If validation fails for spreads >= 9 cards, use agent template
+       if (cards.length >= 9) {
+         console.warn('Using agent template due to validation failure')
+         const templateResponse = {
+           reading: agentResponse.story,
+           deadline: agentResponse.deadline,
+           task: agentResponse.task,
+           timingDays: agentResponse.timingDays
+         }
+         cacheReading(request, templateResponse)
+         return templateResponse
+       }
+     }
 
-    return {
-      reading: trimmedContent,
-      deadline: agentResponse.deadline,
-      task: agentResponse.task,
-      timingDays: agentResponse.timingDays
-    }
+     const aiResponse = {
+       reading: trimmedContent,
+       deadline: agentResponse.deadline,
+       task: agentResponse.task,
+       timingDays: agentResponse.timingDays
+     }
+     cacheReading(request, aiResponse)
+     return aiResponse
   } catch (error) {
     console.error('AI reading error:', error)
     return createFallbackReading('Error generating reading')
