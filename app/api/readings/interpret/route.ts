@@ -27,18 +27,11 @@ export async function POST(request: Request) {
       )
     }
 
-    const createdAt = new Date()
-    let deadlineDate: Date | undefined
-
-    if (result.timingDays && result.timingType) {
-      deadlineDate = calculateDeadline(createdAt, result.timingDays, result.timingType)
-    }
-
     return NextResponse.json({
       reading: result.reading,
-      timingDays: result.timingDays,
-      timingType: result.timingType,
-      deadlineDate: deadlineDate?.toISOString()
+      deadline: result.deadline,
+      task: result.task,
+      timingDays: result.timingDays
     })
   } catch (error) {
     console.error('Error in interpret route:', error)
