@@ -1,0 +1,11 @@
+{
+  "name": "Lenormand Intelligence",
+  "description": "AI-powered Lenormand card readings and divination guidance platform",
+  "url": "https://lenormand.dk",
+  "logo": "https://lenormand.dk/favicon.png",
+  "contact_email": "support@lenormand.dk",
+  "privacy_policy": "https://lenormand.dk/privacy",
+  "terms": "https://lenormand.dk/terms",
+  "access_policy": "public",
+  "gpt_instructions": "You are an assistant helping users understand Lenormand card readings. Provide accurate, respectful interpretations of the 36 Lenormand cards. Always remind users that readings are for entertainment and spiritual guidance purposes."
+}
