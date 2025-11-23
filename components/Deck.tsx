@@ -110,17 +110,7 @@ export function Deck({
            <Play className="mr-2 h-4 w-4" aria-hidden="true" />
            Draw {drawCount} Cards
          </Button>
-        
-        {drawnCards.length > 0 && (
-          <Button
-            onClick={reset}
-            variant="outline"
-            size="sm"
-            aria-label="Reset deck and clear drawn cards"
-          >
-            Reset
-          </Button>
-        )}
+
       </div>
 
       {/* Deck Display */}
