@@ -12,13 +12,15 @@ interface DeckProps {
   onDraw?: (cards: CardType[]) => void
   drawCount?: number
   showAnimation?: boolean
+  isProcessing?: boolean
 }
 
 export function Deck({
   cards,
   onDraw,
   drawCount = 3,
-  showAnimation = true
+  showAnimation = true,
+  isProcessing = false
 }: DeckProps) {
   const [deck, setDeck] = useState<CardType[]>(cards || [])
   const [isShuffling, setIsShuffling] = useState(false)
@@ -73,12 +75,8 @@ export function Deck({
 
      setTimeout(() => {
        setIsDrawing(false)
-       console.log('Deck: About to call onDraw with', newDrawnCards.length, 'cards')
        if (onDraw) {
-         console.log('Deck: Calling onDraw callback')
          onDraw(newDrawnCards)
-       } else {
-         console.log('Deck: onDraw is not defined!')
        }
      }, 1000)
   }
@@ -103,15 +101,15 @@ export function Deck({
           Shuffle
         </Button>
         
-        <Button
-          onClick={drawCards}
-          disabled={isDrawing || !Array.isArray(deck) || deck.length < drawCount}
-          size="sm"
-          aria-label={isDrawing ? `Drawing ${drawCount} cards...` : `Draw ${drawCount} cards from the deck`}
-        >
-          <Play className="mr-2 h-4 w-4" aria-hidden="true" />
-          Draw {drawCount} Cards
-        </Button>
+         <Button
+           onClick={drawCards}
+           disabled={isDrawing || isProcessing || !Array.isArray(deck) || deck.length < drawCount}
+           size="sm"
+           aria-label={isDrawing ? `Drawing ${drawCount} cards...` : isProcessing ? 'Processing your reading...' : `Draw ${drawCount} cards from the deck`}
+         >
+           <Play className="mr-2 h-4 w-4" aria-hidden="true" />
+           Draw {drawCount} Cards
+         </Button>
         
         {drawnCards.length > 0 && (
           <Button

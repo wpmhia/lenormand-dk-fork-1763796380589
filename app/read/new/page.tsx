@@ -541,13 +541,14 @@ function NewReadingPageContent() {
                   </div>
 
                   {/* Virtual Draw */}
-                  {path === 'virtual' && (
-                    <Deck
-                      cards={allCards}
-                      drawCount={selectedSpread.cards}
-                      onDraw={handleDraw}
-                    />
-                  )}
+                   {path === 'virtual' && (
+                     <Deck
+                       cards={allCards}
+                       drawCount={selectedSpread.cards}
+                       onDraw={handleDraw}
+                       isProcessing={step === 'results'}
+                     />
+                   )}
 
                   {/* Physical Cards Input */}
                   {path === 'physical' && selectedSpread && (
@@ -666,9 +667,6 @@ function NewReadingPageContent() {
                transition={{ duration: 0.3, ease: "easeOut" }}
                className="space-y-6"
              >
-               <div className="text-center text-sm text-muted-foreground mb-4">
-                 ✓ Results section rendering (step={step}, cards={drawnCards.length}, allCards={allCards.length})
-               </div>
                
                {/* Show the drawn cards */}
                <ReadingViewer
