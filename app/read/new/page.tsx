@@ -244,14 +244,10 @@ function NewReadingPageContent() {
           return
         }
 
-         if (mountedRef.current) {
-          console.log('Setting state: drawnCards =', readingCards.length, ', step = results')
-          setDrawnCards(readingCards)
-          setStep('results')
-          console.log('State update complete')
-        } else {
-          console.log('Component not mounted, skipping state update')
-        }
+        console.log('Setting state: drawnCards =', readingCards.length, ', step = results')
+        setDrawnCards(readingCards)
+        setStep('results')
+        console.log('State update complete')
       } catch (error) {
         console.error('Error in handleDraw:', error)
         if (mountedRef.current) {
