@@ -302,3 +302,92 @@ describe('SPREAD_RULES', () => {
     expect(SPREAD_RULES['grand-tableau'].requiresMinimumMentions).toBe(25)
   })
 })
+
+describe('Card Reference Format', () => {
+  it('should reference cards with parentheses on first mention in 9-card spread', () => {
+    const nineCardNames = ['Clouds', 'Birds', 'Anchor', 'Garden', 'Coffin', 'Fox', 'Tower', 'Stork', 'Paths']
+    
+    nineCardNames.forEach(cardName => {
+      const cards: LenormandCard[] = nineCardNames.map((name, i) => ({
+        id: i + 1,
+        name
+      }))
+
+      const request = {
+        cards,
+        spread: SPREAD_RULES['comprehensive'],
+        question: 'Test card references'
+      }
+
+      const response = MarieAnneAgent.tellStory(request)
+      
+      const parenthesesMatches = response.story.match(new RegExp(`\\(${cardName}\\)`, 'g'))
+      expect(parenthesesMatches).toBeDefined()
+      expect(parenthesesMatches?.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  it('should validate card references for 9-card spread', () => {
+    const cards: LenormandCard[] = [
+      { id: 6, name: 'Clouds' },
+      { id: 12, name: 'Birds' },
+      { id: 35, name: 'Anchor' },
+      { id: 20, name: 'Garden' },
+      { id: 8, name: 'Coffin' },
+      { id: 14, name: 'Fox' },
+      { id: 19, name: 'Tower' },
+      { id: 17, name: 'Stork' },
+      { id: 22, name: 'Paths' }
+    ]
+
+    const mockStory = `A fog of confusion (Clouds) has settled over your chats (Birds), anchoring you to drama (Anchor). 
+    The garden (Garden) is now a coffin (Coffin) where the fox (Fox) digs under the tower (Tower). 
+    A change (Stork) opens conflict; you're at crossroads (Paths) by Friday.`
+
+    const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 9)
+    
+    expect(validation.isValid).toBe(true)
+    expect(validation.issues.length).toBe(0)
+  })
+
+  it('should catch missing card references', () => {
+    const cards: LenormandCard[] = [
+      { id: 6, name: 'Clouds' },
+      { id: 12, name: 'Birds' },
+      { id: 35, name: 'Anchor' }
+    ]
+
+    const mockStory = `A fog of confusion (Clouds) has settled. No mention of the birds here. Anchoring to drama (Anchor).`
+
+    const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 9)
+    
+    expect(validation.missingCards).toContain('Birds')
+  })
+
+  it('should catch duplicate card references', () => {
+    const cards: LenormandCard[] = [
+      { id: 6, name: 'Clouds' },
+      { id: 12, name: 'Birds' }
+    ]
+
+    const mockStory = `A fog (Clouds) and confusion (Clouds) everywhere. Birds (Birds) sing and (Birds) fly.`
+
+    const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 9)
+    
+    expect(validation.issues.length).toBeGreaterThan(0)
+  })
+
+  it('should ignore card references for spreads with fewer than 9 cards', () => {
+    const cards: LenormandCard[] = [
+      { id: 18, name: 'Dog' },
+      { id: 8, name: 'Coffin' },
+      { id: 21, name: 'Mountain' }
+    ]
+
+    const mockStory = `A dog and a coffin and a mountain. No parentheses needed.`
+
+    const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 3)
+    
+    expect(validation.isValid).toBe(true)
+  })
+})

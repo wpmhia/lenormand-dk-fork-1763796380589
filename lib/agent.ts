@@ -11,9 +11,9 @@ const TEMPLATE_5_CARD = `Your job search stalls (Mountain + Fox). Wednesday flip
 
 const TEMPLATE_7_CARD = `Monday brings tension (Whip). By Wednesday, a conversation breaks the ice (Birds + Key). Thursday through Friday, the path clears (Sun + Rider). You're moving forward by the weekend. Text them Thursday morning—don't wait. Confirm the next step by Friday evening.`
 
-const TEMPLATE_9_CARD = `Paragraph 1: The weight in your situation (cards 1-3) bears down—a friction pair stands unmoved. Paragraph 2: By midweek (cards 4-6), a release unfolds—someone speaks, a door cracks open, momentum shifts. Paragraph 3: By Friday evening (cards 7-9), you know the verdict and the next move. Take the action before the weekend passes.`
+const TEMPLATE_9_CARD = `A fog of confusion (Clouds) has settled over your hospital chats (Birds), anchoring you to the drama (Anchor). The gossip garden (Garden) is now a dead-end coffin (Coffin) where the cunning fox (Fox) digs traps under the tower's watchful eye (Tower). A sudden change (Stork) opens the conflict with Tina; you're at a crossroads (Paths) by Friday. Choose your path: stay and weather the storm or fly to calmer skies. Write your decision in the staff log before Friday evening.`
 
-const TEMPLATE_36_CARD = `P1: The tableau opens with deep friction—cards 1-9 reveal the core tension, the weight that's been sitting beneath everything. P2: Cards 10-20 show the turning point—a release, a person, a moment where the deadlock cracks and momentum shifts. P3: Cards 21-30 expose what you haven't seen—the hidden dynamics, the unspoken truth, the under-the-surface reality that changes everything. P4: Cards 31-36 land the verdict—the outcome, the timeline (by Friday), and your one concrete action before the weekend. Make that call, send that message, or sign that paper before Friday evening.`
+const TEMPLATE_36_CARD = `P1: The tableau opens with tension—cards reveal confusion (Clouds), rapid messages (Rider), loyalty tested (Dog), and a sudden cutting (Scythe). The weight of it all (Cross) builds slowly through erosion (Mice) and cycles of doubt (Moon). P2: The breakthrough comes through institutional change (Tower), financial flow (Fish), and bright clarity (Sun). A gift arrives (Bouquet) unexpectedly; the key (Key) unlocks what was stuck. P3: Hidden beneath it all sits the weight pressing down, the cycles repeating, and the guide (Stars) showing the way forward. An anchor (Anchor) offers stability; a letter (Letter) arrives with answers. P4: By Friday, you choose the path (Paths): sign the new agreement (Ring) or return (Stork) to solid ground (House). Act before Friday evening.`
 
 export class MarieAnneAgent {
   static tellStory(request: AgentRequest): AgentResponse {
@@ -66,8 +66,9 @@ SPREAD: ${spread.template.toUpperCase()} (${cards.length} cards)
 INSTRUCTIONS:
 - Write EXACTLY ${spread.sentences} sentences.
 - Each sentence chains cards into ONE story, no explanations.
+- Include card name in parentheses exactly once when first introduced: (CardName).
+- Allow cards to be mentioned again without parentheses in natural narrative flow.
 - Final sentence = YES/NO/STAY + "by [Day] evening" + imperative task.
-- Never name cards in parentheses. Cards dissolve into consequences.
 - Use vivid metaphor (wall, weight, crack, icy, door, light, shadow).
 - Brisk, deadline-first, action-last tone.
 
@@ -86,5 +87,37 @@ NOW WRITE THE READING (exactly ${spread.sentences} sentences):
     if (cardId > 30) return 4
     if (cardId === 10 || cardId === 20 || cardId === 30) return 10
     return cardId % 10 || 10
+  }
+
+  static validateCardReferences(
+    story: string,
+    cards: LenormandCard[],
+    spreadSize: number
+  ): { isValid: boolean; missingCards: string[]; issues: string[] } {
+    const issues: string[] = []
+    const missingCards: string[] = []
+
+    if (spreadSize < 9) {
+      return { isValid: true, missingCards: [], issues: [] }
+    }
+
+    cards.forEach(card => {
+      const parenthesesPattern = new RegExp(`\\(${card.name}\\)`, 'g')
+      const matches = story.match(parenthesesPattern)
+      const count = matches?.length || 0
+
+      if (count === 0) {
+        missingCards.push(card.name)
+        issues.push(`Card "${card.name}" not referenced with parentheses`)
+      } else if (count > 1) {
+        issues.push(`Card "${card.name}" referenced ${count} times (should be exactly 1)`)
+      }
+    })
+
+    return {
+      isValid: issues.length === 0,
+      missingCards,
+      issues
+    }
   }
 }
