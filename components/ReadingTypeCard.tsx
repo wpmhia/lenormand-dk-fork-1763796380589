@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { ArrowRight } from 'lucide-react'
 import { ReactNode } from 'react'
 
@@ -10,23 +11,34 @@ interface ReadingTypeCardProps {
   title: string
   description: string
   cardCount: number
+  badge?: string
+  badgeVariant?: 'default' | 'secondary' | 'destructive' | 'outline'
 }
 
 export function ReadingTypeCard({
   icon,
   title,
   description,
-  cardCount
+  cardCount,
+  badge,
+  badgeVariant = 'secondary'
 }: ReadingTypeCardProps) {
   return (
     <Link href="/read/new">
       <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
         <CardHeader className="relative z-10 pb-4">
-          <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground group-hover:text-primary">
-            {icon}
-            {title}
-          </CardTitle>
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-3 text-lg font-semibold text-card-foreground group-hover:text-primary flex-1">
+              {icon}
+              {title}
+            </CardTitle>
+            {badge && (
+              <Badge variant={badgeVariant} className="whitespace-nowrap text-xs">
+                {badge}
+              </Badge>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col">
           <p className="mb-4 text-sm leading-relaxed text-muted-foreground">

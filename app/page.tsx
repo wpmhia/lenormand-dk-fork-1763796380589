@@ -75,36 +75,46 @@ export default function Home() {
              <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
           </div>
               <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                <ReadingTypeCard
-                  icon={<Sparkles className="h-5 w-5 text-primary" />}
-                  title="3-Card Reading"
-                  description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
-                  cardCount={3}
-                />
-                <ReadingTypeCard
-                  icon={<Heart className="h-5 w-5 text-primary" />}
-                  title="5-Card Reading"
-                  description="Uncover challenges, resources, and outcomes for your situation"
-                  cardCount={5}
-                />
-                <ReadingTypeCard
-                  icon={<Calendar className="h-5 w-5 text-primary" />}
-                  title="7-Card Reading"
-                  description="Week ahead, relationships, or any 7-card spread guidance"
-                  cardCount={7}
-                />
-                <ReadingTypeCard
-                  icon={<Shield className="h-5 w-5 text-primary" />}
-                  title="9-Card Reading"
-                  description="Explore inner world, direct actions, and external influences"
-                  cardCount={9}
-                />
-                <ReadingTypeCard
-                  icon={<Sparkles className="h-5 w-5 text-primary" />}
-                  title="Master Reading"
-                  description="Full deck reading revealing life's complete mystical pattern"
-                  cardCount={36}
-                />
+                 <ReadingTypeCard
+                   icon={<Sparkles className="h-5 w-5 text-primary" />}
+                   title="3-Card Reading"
+                   description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
+                   cardCount={3}
+                   badge="Core"
+                   badgeVariant="default"
+                 />
+                 <ReadingTypeCard
+                   icon={<Heart className="h-5 w-5 text-primary" />}
+                   title="5-Card Reading"
+                   description="Uncover challenges, resources, and outcomes for your situation"
+                   cardCount={5}
+                   badge="Popular"
+                   badgeVariant="secondary"
+                 />
+                 <ReadingTypeCard
+                   icon={<Calendar className="h-5 w-5 text-primary" />}
+                   title="7-Card Reading"
+                   description="Week ahead, relationships, or any 7-card spread guidance"
+                   cardCount={7}
+                   badge="Popular"
+                   badgeVariant="secondary"
+                 />
+                 <ReadingTypeCard
+                   icon={<Shield className="h-5 w-5 text-primary" />}
+                   title="9-Card Reading"
+                   description="Explore inner world, direct actions, and external influences"
+                   cardCount={9}
+                   badge="Advanced"
+                   badgeVariant="outline"
+                 />
+                 <ReadingTypeCard
+                   icon={<Sparkles className="h-5 w-5 text-primary" />}
+                   title="Master Reading"
+                   description="Full deck reading revealing life's complete mystical pattern"
+                   cardCount={36}
+                   badge="Complete"
+                   badgeVariant="outline"
+                 />
              </div>
         </div>
       </div>

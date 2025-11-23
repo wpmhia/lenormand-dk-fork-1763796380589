@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { Eye } from 'lucide-react'
+import { Eye, AlertTriangle } from 'lucide-react'
 import { getCards, getCardById, drawCards } from '@/lib/data'
 import { CORE_SPREADS, ADVANCED_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 
@@ -28,55 +28,61 @@ function NewReadingPageContent() {
   const [question, setQuestion] = useState('')
   const [selectedSpread, setSelectedSpread] = useState(COMPREHENSIVE_SPREADS[0])
   const [path, setPath] = useState<'virtual' | 'physical' | null>(null)
-  const [physicalCards, setPhysicalCards] = useState('')
-  const [physicalCardsError, setPhysicalCardsError] = useState<string | null>(null)
-  const [parsedCards, setParsedCards] = useState<ReadingCard[]>([])
-  const [cardSuggestions, setCardSuggestions] = useState<string[]>([])
-  const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([])
-  const [error, setError] = useState('')
-  const [aiReading, setAiReading] = useState(null)
-  const [aiLoading, setAiLoading] = useState(false)
-  const [aiError, setAiError] = useState<string | null>(null)
-  const [aiAttempted, setAiAttempted] = useState(false)
-  const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
-  const [questionCharCount, setQuestionCharCount] = useState(0)
-  const [debugLog, setDebugLog] = useState<string[]>([])
-  const [lastResetParam, setLastResetParam] = useState<string | null>(null)
+   const [physicalCards, setPhysicalCards] = useState('')
+   const [physicalCardsError, setPhysicalCardsError] = useState<string | null>(null)
+   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([])
+   const [cardSuggestions, setCardSuggestions] = useState<string[]>([])
+   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([])
+   const [error, setError] = useState('')
+   const [aiReading, setAiReading] = useState(null)
+   const [aiLoading, setAiLoading] = useState(false)
+   const [aiError, setAiError] = useState<string | null>(null)
+   const [aiAttempted, setAiAttempted] = useState(false)
+   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
+   const [questionCharCount, setQuestionCharCount] = useState(0)
+   const [debugLog, setDebugLog] = useState<string[]>([])
+   const [lastResetParam, setLastResetParam] = useState<string | null>(null)
 
-   const cardsDrawnRef = useRef(false)
-   const mountedRef = useRef(true)
-   const aiStartedRef = useRef(false)
-   const drawnCardsRef = useRef<ReadingCard[]>([])
+    const mountedRef = useRef(true)
+    const aiProcessingRef = useRef(false)
 
-  const addLog = useCallback((msg: string) => {
-    setDebugLog(prev => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]} ${msg}`])
-  }, [])
+   const addLog = useCallback((msg: string) => {
+     setDebugLog(prev => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]} ${msg}`])
+   }, [])
 
-  const canProceed = true
+   const canProceed = true
 
-  // Handle reset parameter from New Reading button
-  useEffect(() => {
-    const resetParam = searchParams.get('reset')
-    if (resetParam && resetParam !== lastResetParam) {
-      setLastResetParam(resetParam)
-      setStep('setup')
-      setDrawnCards([])
-      cardsDrawnRef.current = false
-      setQuestion('')
-      setSelectedSpread(COMPREHENSIVE_SPREADS[0])
-      setError('')
-      setAiReading(null)
-      setAiLoading(false)
-      setAiError(null)
-      setAiAttempted(false)
-      aiStartedRef.current = false
-      setPhysicalCards('')
-      setPhysicalCardsError(null)
-      setParsedCards([])
-      setCardSuggestions([])
-      setPath(null)
-    }
-  }, [searchParams, lastResetParam])
+   const performReset = useCallback((keepUrlParams = false) => {
+     setStep('setup')
+     setDrawnCards([])
+     setQuestion('')
+     setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+     setError('')
+     setAiReading(null)
+     setAiLoading(false)
+     setAiError(null)
+     setAiAttempted(false)
+     setPhysicalCards('')
+     setPhysicalCardsError(null)
+     setParsedCards([])
+     setCardSuggestions([])
+     setPath(null)
+
+     if (!keepUrlParams) {
+       const newUrl = new URL(window.location.href)
+       newUrl.search = ''
+       router.replace(newUrl.toString(), { scroll: false })
+     }
+   }, [router])
+
+   // Handle reset parameter from New Reading button
+   useEffect(() => {
+     const resetParam = searchParams.get('reset')
+     if (resetParam && resetParam !== lastResetParam) {
+       setLastResetParam(resetParam)
+       performReset(false)
+     }
+   }, [searchParams, lastResetParam, performReset])
 
   // Load cards on mount
   useEffect(() => {
@@ -88,65 +94,87 @@ function NewReadingPageContent() {
   // ...
 
    const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
-      addLog(`performAIAnalysis started with ${readingCards.length} cards`)
-      setAiLoading(true)
-      setAiError(null)
+       if (!mountedRef.current || aiProcessingRef.current) return
 
-     try {
-       const aiRequest = {
-         question: question.trim() || 'What guidance do these cards have for me?',
-         cards: readingCards.map(card => ({
-           id: card.id,
-           name: getCardById(allCards, card.id)?.name || 'Unknown',
-           position: card.position
-         })),
-         spreadId: selectedSpread.id,
-         userLocale: navigator.language
-       }
+       aiProcessingRef.current = true
+       addLog(`performAIAnalysis started with ${readingCards.length} cards`)
+       setAiLoading(true)
+       setAiError(null)
 
-       addLog('Sending AI request...')
-       const response = await fetch('/api/readings/interpret', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json',
-         },
-         body: JSON.stringify(aiRequest)
-       })
-
-       addLog(`Response status: ${response.status}`)
-
-       if (!response.ok) {
-         const errorData = await response.json().catch(() => ({ error: 'Server error' }))
-         throw new Error(errorData.error || 'Server error')
-       }
-
-       const aiResult = await response.json()
-       addLog('AI Response received: ' + JSON.stringify(Object.keys(aiResult)))
-
-       // Force update regardless of mountedRef to test if component is actually alive
-       addLog('Attempting to set AI reading state...')
-       setAiReading(aiResult)
-       setAiAttempted(true)
-       addLog('State update requested')
-
-     } catch (error) {
-       addLog(`AI Analysis error: ${error}`)
-       const errorMessage = error instanceof Error ? error.message : 'AI analysis failed'
-       setAiError(errorMessage)
-     } finally {
-       addLog('AI Analysis finally block')
-       setAiLoading(false)
-     }
-   }, [question, allCards, addLog, selectedSpread.id])
-
-      // Auto-start AI analysis when entering results step
-      useEffect(() => {
-        if (step === 'results' && !aiStartedRef.current) {
-          addLog('Auto-starting AI analysis')
-          aiStartedRef.current = true
-          performAIAnalysis(drawnCardsRef.current)
+      try {
+        const aiRequest = {
+          question: question.trim() || 'What guidance do these cards have for me?',
+          cards: readingCards.map(card => ({
+            id: card.id,
+            name: getCardById(allCards, card.id)?.name || 'Unknown',
+            position: card.position
+          })),
+          spreadId: selectedSpread.id,
+          userLocale: navigator.language
         }
-      }, [step, performAIAnalysis, addLog])
+
+        addLog('Sending AI request...')
+        const response = await fetch('/api/readings/interpret', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(aiRequest)
+        })
+
+        addLog(`Response status: ${response.status}`)
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Server error' }))
+          throw new Error(errorData.error || 'Server error')
+        }
+
+        const aiResult = await response.json()
+        addLog('AI Response received: ' + JSON.stringify(Object.keys(aiResult)))
+
+        if (mountedRef.current) {
+          addLog('Attempting to set AI reading state...')
+          setAiReading(aiResult)
+          setAiAttempted(true)
+          addLog('State update requested')
+        }
+
+      } catch (error) {
+        addLog(`AI Analysis error: ${error}`)
+        let errorMessage = 'AI analysis failed'
+        
+        if (error instanceof Error) {
+          // Provide more helpful error messages
+          if (error.message.includes('timeout')) {
+            errorMessage = 'The interpretation took too long. Please try again.'
+          } else if (error.message.includes('rate')) {
+            errorMessage = 'Too many requests. Please wait a moment and try again.'
+          } else if (error.message.includes('Server error')) {
+            errorMessage = 'Server error. Your reading could not be interpreted. Try again in a moment.'
+          } else {
+            errorMessage = `Unable to generate interpretation: ${error.message}`
+          }
+        }
+        
+        if (mountedRef.current) {
+          setAiError(errorMessage)
+        }
+      } finally {
+        addLog('AI Analysis finally block')
+        if (mountedRef.current) {
+          setAiLoading(false)
+        }
+        aiProcessingRef.current = false
+      }
+    }, [question, allCards, addLog, selectedSpread.id])
+
+       // Auto-start AI analysis when entering results step
+       useEffect(() => {
+         if (step === 'results' && drawnCards.length > 0) {
+           addLog('Auto-starting AI analysis')
+           performAIAnalysis(drawnCards)
+         }
+       }, [step, drawnCards, performAIAnalysis, addLog])
 
 
   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
@@ -184,43 +212,43 @@ function NewReadingPageContent() {
      return readingCards
    }, [physicalCards])
 
-  const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
-    const currentPath = path
-    const currentSpread = selectedSpread
+   const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
+     try {
+       let readingCards: ReadingCard[];
 
-    try {
-      let readingCards: ReadingCard[];
+       // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
+       if (Array.isArray(cards) && cards.length > 0) {
+         if ('position' in cards[0]) {
+           // It's ReadingCard[]
+           readingCards = cards as ReadingCard[];
+         } else {
+           // It's CardType[], convert to ReadingCard[]
+           readingCards = (cards as CardType[]).map((card, index) => ({
+             id: card.id,
+             position: index
+           }));
+         }
+       } else {
+         readingCards = [];
+       }
 
-      // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
-      if (Array.isArray(cards) && cards.length > 0) {
-        if ('position' in cards[0]) {
-          // It's ReadingCard[]
-          readingCards = cards as ReadingCard[];
-        } else {
-          // It's CardType[], convert to ReadingCard[]
-          readingCards = (cards as CardType[]).map((card, index) => ({
-            id: card.id,
-            position: index
-          }));
-        }
-      } else {
-        readingCards = [];
-      }
+       if (readingCards.length === 0) {
+         setError(`No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`)
+         return
+       }
 
-      if (readingCards.length === 0) {
-        setError('No valid cards found. Please check your card input.')
-        return
-      }
-
-       setDrawnCards(readingCards)
-       drawnCardsRef.current = readingCards
-       cardsDrawnRef.current = true
-       setStep('results')
-    } catch (error) {
-      console.error('Error in handleDraw:', error)
-      setError(error instanceof Error ? error.message : 'An error occurred while processing your cards')
-    }
-  }, [path, selectedSpread])
+       if (mountedRef.current) {
+         setDrawnCards(readingCards)
+         setStep('results')
+       }
+     } catch (error) {
+       console.error('Error in handleDraw:', error)
+       if (mountedRef.current) {
+         const errorMsg = error instanceof Error ? error.message : 'An error occurred while processing your cards'
+         setError(`Unable to process cards: ${errorMsg}. Try refreshing the page.`)
+       }
+     }
+   }, [])
   // Parse physical cards when input changes
   useEffect(() => {
     if (path === 'physical' && physicalCards) {
@@ -263,33 +291,13 @@ function NewReadingPageContent() {
     return 'Continue'
   }, [step, path])
 
-  const resetReading = useCallback((options = { keepUrlParams: false, closeConfirmDialog: false }) => {
-    setStep('setup')
-    setDrawnCards([])
-    cardsDrawnRef.current = false
-    setQuestion('')
-    setSelectedSpread(COMPREHENSIVE_SPREADS[0])
-    setError('')
-    setAiReading(null)
-    setAiLoading(false)
-    setAiError(null)
-    setAiAttempted(false)
-    aiStartedRef.current = false
-    setPhysicalCards('')
-    setPhysicalCardsError(null)
-    setParsedCards([])
-    setCardSuggestions([])
-
-    if (!options.keepUrlParams) {
-      const newUrl = new URL(window.location.href)
-      newUrl.search = ''
-      router.replace(newUrl.toString(), { scroll: false })
-    }
-
-    if (options.closeConfirmDialog) {
-      setShowStartOverConfirm(false)
-    }
-  }, [router])
+   const resetReading = useCallback((options = { closeConfirmDialog: false }) => {
+     performReset(true)
+     
+     if (options.closeConfirmDialog) {
+       setShowStartOverConfirm(false)
+     }
+   }, [performReset])
 
   const confirmStartOver = useCallback(() => {
     resetReading({ keepUrlParams: false, closeConfirmDialog: true })
@@ -348,21 +356,26 @@ function NewReadingPageContent() {
             </div>
           </div>
 
-          {error && (
-            <Alert className="border-destructive/20 bg-destructive/5 mb-6">
-              <AlertDescription className="text-destructive-foreground">
-                {error}
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => setError('')}
-                  className="text-destructive ml-2 h-auto p-0"
-                >
-                  Dismiss
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
+           {error && (
+             <Alert className="border-destructive/30 bg-destructive/8 mb-6">
+               <div className="flex items-start justify-between gap-3">
+                 <div className="flex items-start gap-3">
+                   <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                   <AlertDescription className="text-destructive-foreground mt-0.5">
+                     {error}
+                   </AlertDescription>
+                 </div>
+                 <Button
+                   variant="ghost"
+                   size="sm"
+                   onClick={() => setError('')}
+                   className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 h-auto p-1"
+                 >
+                   ✕
+                 </Button>
+               </div>
+             </Alert>
+           )}
 
           <AnimatePresence mode="wait">
             {step === 'setup' && (
