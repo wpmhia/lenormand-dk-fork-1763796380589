@@ -28,9 +28,10 @@ export interface AgentRequest {
 
 export interface AgentResponse {
   story: string
-  deadline: string
-  task: string
-  timingDays: number
+  practicalTranslation?: string
+  deadline?: string
+  task?: string
+  timingDays?: number
 }
 
 export type SpreadId = 

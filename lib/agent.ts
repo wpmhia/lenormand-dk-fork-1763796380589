@@ -16,24 +16,26 @@ const TEMPLATE_9_CARD = `A fog of confusion (Clouds) has settled over your hospi
 const TEMPLATE_36_CARD = `P1: The tableau opens with tension—(Clouds) of confusion, (Rider) messages, a loyal (Dog), a sudden (Scythe). The weight of the (Cross) builds slowly through (Mice) erosion and cycles of (Moon) doubt. Hearts (Heart) ache and (Ring) binds what cannot move. P2: The breakthrough comes through institutional (Tower) change, (Fish) financial flow, and bright (Sun) clarity. A (Bouquet) gift arrives unexpectedly; the (Key) unlocks what was stuck. (Paths) diverge and (Garden) calls. P3: Hidden beneath it all sits the (Tree) with deep roots, the (Anchor) weight pressing down, the (Whip) cracks and (Birds) communicate urgently. (Stars) guide the way forward. A (Letter) arrives with answers. (Lily) peace settles. P4: By Friday you choose your path: sign the new agreement (Ring) or return (Stork) to solid ground (House). (Child) begins again or (Fox) finds strategy. (Lily) offers peace. Send your written position before Friday evening.`
 
 export class MarieAnneAgent {
-   static tellStory(request: AgentRequest): AgentResponse {
-      const { cards, spread, question } = request
+    static tellStory(request: AgentRequest): AgentResponse {
+       const { cards, spread, question } = request
 
-      // Generate story directly from cards
-      const story = this.generateStory(cards, spread, question)
-      
-      const outcomeCard = cards[cards.length - 1]
-      const outcomeCardPip = this.getPipCount(outcomeCard.id)
-      // Deadline is now optional - DeepSeek will decide if cards warrant timing
-      const task = makeTask(spread.beats[spread.beats.length - 1], cards)
+       // Generate story directly from cards
+       const story = this.generateStory(cards, spread, question)
+       const practicalTranslation = this.generatePracticalTranslation(cards, spread, question)
+       
+       const outcomeCard = cards[cards.length - 1]
+       const outcomeCardPip = this.getPipCount(outcomeCard.id)
+       // Deadline is now optional - DeepSeek will decide if cards warrant timing
+       const task = makeTask(spread.beats[spread.beats.length - 1], cards)
 
-      return {
-        story,
-        deadline: undefined,
-        task: task,
-        timingDays: undefined
-      }
-    }
+       return {
+         story,
+         practicalTranslation,
+         deadline: undefined,
+         task: task,
+         timingDays: undefined
+       }
+     }
    
     private static generateStory(cards: any[], spread: any, question: string): string {
       // For 3-card (the default spread), create a direct narrative
