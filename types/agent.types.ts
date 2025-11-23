@@ -9,6 +9,8 @@ export interface SpreadRule {
   layout?: string
   requiresParagraphs?: number
   requiresMinimumMentions?: number
+  isAuthentic?: boolean
+  marieAnneSoul?: string
 }
 
 export interface LenormandCard {

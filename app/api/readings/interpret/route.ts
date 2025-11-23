@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAIReading, AIReadingRequest } from '@/lib/deepseek'
+import { SPREAD_RULES } from '@/lib/spreadRules'
 
 const logger = {
   info: (msg: string, data?: any) => console.log(`[INFO] ${msg}`, data ? JSON.stringify(data, null, 2) : ''),
@@ -43,6 +44,16 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 
   if (body.question.trim().length === 0) {
     return { valid: false, error: 'Question cannot be empty' }
+  }
+
+  const spreadId = body.spreadId || 'sentence-3'
+  const spread = SPREAD_RULES[spreadId as keyof typeof SPREAD_RULES]
+  
+  if (spread?.isAuthentic && !body.significator) {
+    return {
+      valid: false,
+      error: `Marie-Anne's authentic spreads require a significator (Man or Woman card). The significator represents the querent and is the center of the reading.`
+    }
   }
 
   return { valid: true }

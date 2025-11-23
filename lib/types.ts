@@ -8,6 +8,8 @@ export interface Card {
   imageUrl: string | null
   emoji?: string
   timing?: string
+  strength?: 'STRONG' | 'NEUTRAL' | 'WEAK'
+  historicalMeaning?: string
 }
 
 export interface CardCombo {

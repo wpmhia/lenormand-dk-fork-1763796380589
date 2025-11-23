@@ -51,28 +51,31 @@ const BEAT_TASK_FALLBACK: Record<string, string> = {
   'resolution': 'Complete the cycle and move forward'
 }
 
-export function makeTask(beat: string, cards: LenormandCard[]): string {
+export function makeTask(beat: string, cards: LenormandCard[], cardStrengths?: Record<number, 'STRONG' | 'NEUTRAL' | 'WEAK'>): string {
   if (cards.length === 0) {
     return 'Take the next concrete step before Friday'
   }
 
   const lastCard = cards[cards.length - 1]
   const cardName = lastCard.name
+  const cardStrength = cardStrengths ? cardStrengths[lastCard.id] : undefined
 
-  // Get card-specific tasks
-  const cardTask = CARD_TASK_ACTION[cardName]
-  if (cardTask) {
-    return cardTask
+  let baseTask = CARD_TASK_ACTION[cardName]
+  
+  if (!baseTask) {
+    const beatTask = BEAT_TASK_FALLBACK[beat]
+    baseTask = beatTask ? beatTask + ' before Friday' : 'Take the next concrete step before Friday'
   }
 
-  // Use beat-specific task if available
-  const beatTask = BEAT_TASK_FALLBACK[beat]
-  if (beatTask) {
-    return beatTask + ' before Friday'
+  if (cardStrength === 'STRONG') {
+    return baseTask.replace('before Friday', 'immediately')
+  }
+  
+  if (cardStrength === 'WEAK') {
+    return baseTask.replace('before Friday', 'carefully')
   }
 
-  // Default fallback
-  return 'Take the next concrete step before Friday'
+  return baseTask
 }
 
 export function makeTaskWithDeadline(beat: string, cards: LenormandCard[], deadline: string): string {
