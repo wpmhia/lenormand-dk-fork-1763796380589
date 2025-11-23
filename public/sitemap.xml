@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Main pages -->
   <url>
-    <loc>https://lenormand-intelligence.com/</loc>
+    <loc>https://lenormand.dk/</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,43 +10,43 @@
   
   <!-- Learning section -->
   <url>
-    <loc>https://lenormand-intelligence.com/learn</loc>
+    <loc>https://lenormand.dk/learn</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/learn/introduction</loc>
+    <loc>https://lenormand.dk/learn/introduction</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/learn/reading-basics</loc>
+    <loc>https://lenormand.dk/learn/reading-basics</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/learn/spreads</loc>
+    <loc>https://lenormand.dk/learn/spreads</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/learn/advanced</loc>
+    <loc>https://lenormand.dk/learn/advanced</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/learn/history</loc>
+    <loc>https://lenormand.dk/learn/history</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/learn/card-meanings</loc>
+    <loc>https://lenormand.dk/learn/card-meanings</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -54,19 +54,19 @@
   
   <!-- Reading section -->
   <url>
-    <loc>https://lenormand-intelligence.com/read</loc>
+    <loc>https://lenormand.dk/read</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/read/new</loc>
+    <loc>https://lenormand.dk/read/new</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/read/physical</loc>
+    <loc>https://lenormand.dk/read/physical</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -74,7 +74,7 @@
   
   <!-- Card explorer -->
   <url>
-    <loc>https://lenormand-intelligence.com/cards</loc>
+    <loc>https://lenormand.dk/cards</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -82,13 +82,13 @@
   
   <!-- Legal pages -->
   <url>
-    <loc>https://lenormand-intelligence.com/privacy</loc>
+    <loc>https://lenormand.dk/privacy</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://lenormand-intelligence.com/terms</loc>
+    <loc>https://lenormand.dk/terms</loc>
     <lastmod>2025-11-22</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>

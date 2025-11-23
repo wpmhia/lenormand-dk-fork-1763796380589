@@ -37,8 +37,5 @@ Disallow: /env-check
 Crawl-delay: 1
 Request-rate: 1/1s
 
-# Sitemap locations (all domains)
+# Sitemap location
 Sitemap: https://lenormand.dk/sitemap.xml
-Sitemap: https://lenormand.dk/sitemap-dk.xml
-Sitemap: https://lenormand-intelligence.com/sitemap.xml
-Sitemap: https://lenormand-intelligence.vercel.app/sitemap.xml
