@@ -10,8 +10,7 @@ export const CARDS: Card[] = [
     "uprightMeaning": "News arriving soon, messages, movement, a young man",
 
     "combos": [
-      { "withCardId": 2, "meaning": "News about clover - lucky message" },
-      { "withCardId": 28, "meaning": "News from man - male messenger" }
+      { "withCardId": 2, "meaning": "News about clover - lucky message" }
     ],
     "imageUrl": null
   },
@@ -49,8 +48,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Home, family, security, stability, comfort",
 
     "combos": [
-      { "withCardId": 29, "meaning": "Woman at home - homemaker" },
-      { "withCardId": 28, "meaning": "Man at home - homeowner" }
     ],
     "imageUrl": null
   },
@@ -88,8 +85,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Betrayal, deception, temptation, hidden enemy",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Man's betrayal - male deception" },
-      { "withCardId": 29, "meaning": "Woman's betrayal - female deception" }
     ],
     "imageUrl": null
   },
@@ -114,8 +109,7 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Gift, appreciation, beauty, gratitude, social invitation",
 
     "combos": [
-      { "withCardId": 1, "meaning": "Gift news - welcome message" },
-      { "withCardId": 29, "meaning": "Woman's gift - female appreciation" }
+      { "withCardId": 1, "meaning": "Gift news - welcome message" }
     ],
     "imageUrl": null
   },
@@ -140,8 +134,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Conflict, argument, discipline, action, passion",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Man's conflict - male argument" },
-      { "withCardId": 29, "meaning": "Woman's conflict - female argument" }
     ],
     "imageUrl": null
   },
@@ -179,8 +171,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Cunning, intelligence, work, strategy, caution needed",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Cunning man - strategic male" },
-      { "withCardId": 29, "meaning": "Cunning woman - strategic female" }
     ],
     "imageUrl": null
   },
@@ -188,11 +178,10 @@ export const CARDS: Card[] = [
     "id": 15,
     "name": "Bear",
     "number": 15,
-    "keywords": ["power", "strength", "protection", "authority", "mother"],
-    "uprightMeaning": "Power, strength, protection, authority, mother figure",
+    "keywords": ["power", "strength", "protection", "authority", "leadership"],
+    "uprightMeaning": "Power, strength, protection, authority, leadership",
 
     "combos": [
-      { "withCardId": 29, "meaning": "Powerful woman - matriarch" },
       { "withCardId": 4, "meaning": "Strong home - protected family" }
     ],
     "imageUrl": null
@@ -231,8 +220,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Loyalty, friendship, protection, companionship, trust",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Loyal man - trustworthy male" },
-      { "withCardId": 29, "meaning": "Loyal woman - trustworthy female" }
     ],
     "imageUrl": null
   },
@@ -244,8 +231,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Authority, institution, isolation, protection, structure",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Man in authority - male institution" },
-      { "withCardId": 29, "meaning": "Woman in authority - female institution" }
     ],
     "imageUrl": null
   },
@@ -309,8 +294,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Love, emotions, relationships, joy, compassion",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Man's love - male romance" },
-      { "withCardId": 29, "meaning": "Woman's love - female romance" }
     ],
     "imageUrl": null
   },
@@ -322,8 +305,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Commitment, marriage, contracts, cycles, completion",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Man's commitment - male marriage" },
-      { "withCardId": 29, "meaning": "Woman's commitment - female marriage" }
     ],
     "imageUrl": null
   },
@@ -357,12 +338,11 @@ export const CARDS: Card[] = [
     "id": 28,
     "name": "Man",
     "number": 28,
-    "keywords": ["masculine", "husband", "father", "authority", "logic"],
-    "uprightMeaning": "Man, husband, father, masculine energy, authority",
+    "keywords": ["masculine energy", "leadership", "authority", "action", "logic"],
+    "uprightMeaning": "Masculine energy, leadership, authority, action, determination",
 
     "combos": [
-      { "withCardId": 1, "meaning": "Male news - man's message" },
-      { "withCardId": 29, "meaning": "Man and woman - couple" }
+      { "withCardId": 29, "meaning": "Partnership - complementary energies" }
     ],
     "imageUrl": null
   },
@@ -370,12 +350,11 @@ export const CARDS: Card[] = [
     "id": 29,
     "name": "Woman",
     "number": 29,
-    "keywords": ["feminine", "wife", "mother", "intuition", "emotion"],
-    "uprightMeaning": "Woman, wife, mother, feminine energy, intuition",
+    "keywords": ["feminine energy", "intuition", "nurturing", "empathy", "emotion"],
+    "uprightMeaning": "Feminine energy, intuition, nurturing, empathy, compassion",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Woman and man - couple" },
-      { "withCardId": 24, "meaning": "Woman in love - romantic female" }
+      { "withCardId": 28, "meaning": "Partnership - complementary energies" }
     ],
     "imageUrl": null
   },
@@ -387,8 +366,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Purity, peace, wisdom, maturity, ethics",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Wise man - mature male" },
-      { "withCardId": 29, "meaning": "Wise woman - mature female" }
     ],
     "imageUrl": null
   },
@@ -409,11 +386,10 @@ export const CARDS: Card[] = [
     "id": 32,
     "name": "Moon",
     "number": 32,
-    "keywords": ["intuition", "emotions", "dreams", "creativity", "illusion"],
+    "keywords": ["intuition", "emotions", "dreams", "creativity", "subconscious"],
     "uprightMeaning": "Intuition, emotions, dreams, creativity, illusion",
 
     "combos": [
-      { "withCardId": 29, "meaning": "Woman's intuition - female emotions" },
       { "withCardId": 24, "meaning": "Emotional love - romantic feelings" }
     ],
     "imageUrl": null
@@ -452,8 +428,7 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Stability, security, hope, grounding, patience",
 
     "combos": [
-      { "withCardId": 4, "meaning": "Home stability - secure family" },
-      { "withCardId": 28, "meaning": "Man's stability - secure male" }
+      { "withCardId": 4, "meaning": "Home stability - secure family" }
     ],
     "imageUrl": null
   },
@@ -465,8 +440,6 @@ export const CARDS: Card[] = [
     "uprightMeaning": "Burden, sacrifice, destiny, faith, suffering",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Man's burden - male sacrifice" },
-      { "withCardId": 29, "meaning": "Woman's burden - female sacrifice" }
     ],
     "imageUrl": null
   }

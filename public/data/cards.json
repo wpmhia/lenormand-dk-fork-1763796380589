@@ -13,10 +13,6 @@
     "uprightMeaning": "News arriving soon, messages, movement, a young man",
     "combos": [
       {
-        "withCardId": 2,
-        "meaning": "Winning $5 in the lottery"
-      },
-      {
         "withCardId": 3,
         "meaning": "A friend from overseas is coming to visit"
       },
@@ -45,20 +41,8 @@
         "meaning": "An admirer has ordered flowers for you"
       },
       {
-        "withCardId": 10,
-        "meaning": "Yes, you'll need that surgical procedure"
-      },
-      {
-        "withCardId": 11,
-        "meaning": "You are athletic and work out constantly"
-      },
-      {
         "withCardId": 12,
         "meaning": "Your casual romantic interest will blossom into a relationship (being a couple)"
-      },
-      {
-        "withCardId": 13,
-        "meaning": "She's pregnant"
       },
       {
         "withCardId": 14,
@@ -83,10 +67,6 @@
       {
         "withCardId": 19,
         "meaning": "A period of isolation"
-      },
-      {
-        "withCardId": 20,
-        "meaning": "A lover who is a 'player'"
       },
       {
         "withCardId": 21,
@@ -117,18 +97,6 @@
         "meaning": "That emergency room visit bill is on the way"
       },
       {
-        "withCardId": 28,
-        "meaning": "A masculine lover"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "A feminine lover"
-      },
-      {
-        "withCardId": 30,
-        "meaning": "A new elder care center"
-      },
-      {
         "withCardId": 31,
         "meaning": "A news story exposing corruption"
       },
@@ -141,16 +109,8 @@
         "meaning": "Finding lost keys"
       },
       {
-        "withCardId": 34,
-        "meaning": "The gnome collection your friend gives you is enormous"
-      },
-      {
         "withCardId": 35,
         "meaning": "You read a news story that changes you forever"
-      },
-      {
-        "withCardId": 36,
-        "meaning": "The in-law you can't stand is coming to live with you"
       }
     ],
     "imageUrl": "/images/cards/01-rider.png"
@@ -273,14 +233,6 @@
         "meaning": "Lucky message, fortunate communication, blessed information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Lucky man, fortunate masculine energy, blessed male figure"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Lucky woman, fortunate feminine energy, blessed female figure"
-      },
-      {
         "withCardId": 30,
         "meaning": "Lucky wisdom, fortunate maturity, blessed peace"
       },
@@ -369,10 +321,6 @@
         "meaning": "Social journey, group travel, communication during trips, travel gossip"
       },
       {
-        "withCardId": 13,
-        "meaning": "New journey beginning, travel with children, family vacation, birth during travel"
-      },
-      {
         "withCardId": 14,
         "meaning": "Business travel, work journey, strategic trip, professional voyage"
       },
@@ -427,14 +375,6 @@
       {
         "withCardId": 27,
         "meaning": "Communication journey, message during travel, postal voyage, information trip"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Man's journey, masculine travel, husband's trip, male voyage"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Woman's journey, feminine travel, wife's trip, female voyage"
       },
       {
         "withCardId": 30,
@@ -585,14 +525,6 @@
         "meaning": "Family message, home communication, domestic information, household letter"
       },
       {
-        "withCardId": 28,
-        "meaning": "Man at home, family father, domestic male, household husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Woman at home, family mother, domestic female, household wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Peaceful home, family wisdom, domestic maturity, household ethics"
       },
@@ -739,14 +671,6 @@
       {
         "withCardId": 27,
         "meaning": "Health message, medical communication, wellness information, recovery news"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Man's health, male wellness, husband's recovery, masculine healing"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Woman's health, female wellness, wife's recovery, feminine healing"
       },
       {
         "withCardId": 30,
@@ -897,14 +821,6 @@
         "meaning": "Confusing messages or communication, unclear letters or foggy information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Confusing masculinity or authority, unclear man or hidden leadership"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Uncertain femininity or intuition, confusing woman or hidden emotions"
-      },
-      {
         "withCardId": 30,
         "meaning": "Confusing peace or harmony, unclear tranquility or foggy balance"
       },
@@ -1051,14 +967,6 @@
       {
         "withCardId": 27,
         "meaning": "False message, deceptive communication, betrayed information, hidden letter"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Man's betrayal, male deception, husband's treachery, masculine lies"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Woman's betrayal, female deception, wife's treachery, feminine lies"
       },
       {
         "withCardId": 30,
@@ -1209,14 +1117,6 @@
         "meaning": "End of messages, communication closure, information ending, final letter"
       },
       {
-        "withCardId": 28,
-        "meaning": "End of masculine energy, male closure, husband ending, final man"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "End of feminine energy, female closure, wife ending, final woman"
-      },
-      {
         "withCardId": 30,
         "meaning": "End of wisdom, maturity closure, ethics ending, final peace"
       },
@@ -1363,14 +1263,6 @@
       {
         "withCardId": 27,
         "meaning": "Message gift, information appreciation, letter surprise, blessed communication"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Masculine gift, male appreciation, husband surprise, blessed man"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Feminine gift, female appreciation, wife surprise, blessed woman"
       },
       {
         "withCardId": 30,
@@ -1521,14 +1413,6 @@
         "meaning": "Sudden message, cutting silence, decisive communication, harvest of information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Sudden masculine change, cutting male energy, decisive man, harvest of masculinity"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Sudden feminine change, cutting female energy, decisive woman, harvest of femininity"
-      },
-      {
         "withCardId": 30,
         "meaning": "Sudden wisdom, cutting immaturity, decisive maturity, harvest of peace"
       },
@@ -1675,14 +1559,6 @@
       {
         "withCardId": 27,
         "meaning": "Message conflict, information argument, passionate communication, disciplined letter"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Masculine conflict, male argument, passionate man, disciplined masculinity"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Feminine conflict, female argument, passionate woman, disciplined femininity"
       },
       {
         "withCardId": 30,
@@ -1833,14 +1709,6 @@
         "meaning": "Message communication, information gossip, anxious letter, social communication"
       },
       {
-        "withCardId": 28,
-        "meaning": "Masculine communication, male gossip, anxious man, social masculinity"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Feminine communication, female gossip, anxious woman, social femininity"
-      },
-      {
         "withCardId": 30,
         "meaning": "Peace communication, maturity gossip, anxious wisdom, social ethics"
       },
@@ -1987,14 +1855,6 @@
       {
         "withCardId": 27,
         "meaning": "New message, innocent communication, creative letter, youthful information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "New man, innocent masculinity, creative male energy, youthful husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "New woman, innocent femininity, creative female energy, youthful wife"
       },
       {
         "withCardId": 30,
@@ -2145,14 +2005,6 @@
         "meaning": "Cunning message, strategic communication, intelligent letter, cautious information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Cunning man, strategic masculinity, intelligent male energy, cautious husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Cunning woman, strategic femininity, intelligent female energy, cautious wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Cunning wisdom, strategic maturity, intelligent ethics, cautious peace"
       },
@@ -2299,14 +2151,6 @@
       {
         "withCardId": 27,
         "meaning": "Powerful message, strong communication, protected letter, authoritative information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Powerful man, strong masculinity, protected male energy, authoritative husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Powerful woman, strong femininity, protected female energy, authoritative wife"
       },
       {
         "withCardId": 30,
@@ -2457,14 +2301,6 @@
         "meaning": "Hopeful message, guided communication, wished-for letter, destined information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Hopeful man, guided masculinity, wished-for male energy, destined husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Hopeful woman, guided femininity, wished-for female energy, destined wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Hopeful wisdom, guided maturity, wished-for ethics, destined peace"
       },
@@ -2611,14 +2447,6 @@
       {
         "withCardId": 27,
         "meaning": "Changing message, moving communication, returning letter, delivered information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Changing man, moving masculinity, returning male energy, delivered husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Changing woman, moving femininity, returning female energy, delivered wife"
       },
       {
         "withCardId": 30,
@@ -2769,14 +2597,6 @@
         "meaning": "Loyal message, trustworthy communication, protected letter, companionable information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Loyal man, trustworthy masculinity, protected male energy, companionable husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Loyal woman, trustworthy femininity, protected female energy, companionable wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Loyal wisdom, trustworthy maturity, protected ethics, companionable peace"
       },
@@ -2923,14 +2743,6 @@
       {
         "withCardId": 27,
         "meaning": "Authoritative message, institutional communication, isolated letter, structured information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Authoritative man, institutional masculinity, isolated male energy, structured husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Authoritative woman, institutional femininity, isolated female energy, structured wife"
       },
       {
         "withCardId": 30,
@@ -3081,14 +2893,6 @@
         "meaning": "Public message, social communication, community letter, natural information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Public man, social masculinity, community male energy, natural husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Public woman, social femininity, community female energy, natural wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Public wisdom, social maturity, community ethics, natural peace"
       },
@@ -3237,14 +3041,6 @@
         "meaning": "Obstacle message, challenging communication, delayed letter, enduring information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Obstacle man, challenging masculinity, delayed male energy, enduring husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Obstacle woman, challenging femininity, delayed female energy, enduring wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Obstacle wisdom, challenging maturity, delayed ethics, enduring peace"
       },
@@ -3389,14 +3185,6 @@
         "meaning": "Choice message, decision communication, directional letter, optional information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Choice man, decision masculinity, directional male energy, optional husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Choice woman, decision femininity, directional female energy, optional wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Choice wisdom, decision maturity, directional ethics, optional peace"
       },
@@ -3539,14 +3327,6 @@
       {
         "withCardId": 27,
         "meaning": "Choice message, decision communication, directional letter, optional information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Choice man, decision masculinity, directional male energy, optional husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Choice woman, decision femininity, directional female energy, optional wife"
       },
       {
         "withCardId": 30,
@@ -3697,14 +3477,6 @@
         "meaning": "Love message, emotional communication, romantic letter, compassionate information"
       },
       {
-        "withCardId": 28,
-        "meaning": "Love man, emotional masculinity, romantic male energy, compassionate husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Love woman, emotional femininity, romantic female energy, compassionate wife"
-      },
-      {
         "withCardId": 30,
         "meaning": "Love wisdom, emotional maturity, romantic ethics, compassionate peace"
       },
@@ -3851,14 +3623,6 @@
       {
         "withCardId": 27,
         "meaning": "Committed message, contractual communication, married letter, cyclical information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Committed man, contractual masculinity, married male energy, cyclical husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Committed woman, contractual femininity, married female energy, cyclical wife"
       },
       {
         "withCardId": 30,
@@ -4009,14 +3773,6 @@
         "meaning": "Knowledge message, secret communication, learning letter, mysterious information, educational message"
       },
       {
-        "withCardId": 28,
-        "meaning": "Knowledge man, secret masculinity, learning male energy, mysterious husband, educational man"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Knowledge woman, secret femininity, learning female energy, mysterious wife, educational woman"
-      },
-      {
         "withCardId": 30,
         "meaning": "Knowledge wisdom, secret purity, learning peace, mysterious maturity, educational wisdom"
       },
@@ -4165,14 +3921,6 @@
         "meaning": "Message knowledge, communication secret, document learning, news mystery, information education"
       },
       {
-        "withCardId": 28,
-        "meaning": "Message man, communication masculine, document husband, news authority, information logic"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Message woman, communication feminine, document wife, news intuition, information emotion"
-      },
-      {
         "withCardId": 30,
         "meaning": "Message wisdom, communication purity, document peace, news maturity, information ethics"
       },
@@ -4215,148 +3963,7 @@
       "logic"
     ],
     "uprightMeaning": "Man, husband, father, masculine energy, authority",
-    "combos": [
-      {
-        "withCardId": 1,
-        "meaning": "Man's news, masculine message, husband's announcement, father's information, authoritative communication"
-      },
-      {
-        "withCardId": 2,
-        "meaning": "Lucky man, fortunate husband, blessed father, successful masculine energy, authoritative opportunity"
-      },
-      {
-        "withCardId": 3,
-        "meaning": "Man's journey, husband's travel, father's voyage, masculine movement, authoritative exploration"
-      },
-      {
-        "withCardId": 4,
-        "meaning": "Man at home, husband's residence, father's household, masculine domestic life, authoritative family"
-      },
-      {
-        "withCardId": 5,
-        "meaning": "Man's health, husband's wellness, father's recovery, masculine healing, authoritative medical care"
-      },
-      {
-        "withCardId": 6,
-        "meaning": "Man's confusion, husband's uncertainty, father's doubt, masculine clarity issues, authoritative uncertainty"
-      },
-      {
-        "withCardId": 7,
-        "meaning": "Man's betrayal, husband's deception, father's treachery, masculine lies, authoritative betrayal"
-      },
-      {
-        "withCardId": 8,
-        "meaning": "Man's ending, husband's closure, father's transformation, masculine rebirth, authoritative conclusion"
-      },
-      {
-        "withCardId": 9,
-        "meaning": "Man's gift, husband's appreciation, father's surprise, masculine gratitude, authoritative blessing"
-      },
-      {
-        "withCardId": 10,
-        "meaning": "Man's change, husband's transformation, father's decision, masculine harvest, authoritative shift"
-      },
-      {
-        "withCardId": 11,
-        "meaning": "Man's conflict, husband's argument, father's passion, masculine discipline, authoritative dispute"
-      },
-      {
-        "withCardId": 12,
-        "meaning": "Man's communication, husband's gossip, father's social activity, masculine talk, authoritative information"
-      },
-      {
-        "withCardId": 13,
-        "meaning": "Man's new beginning, husband's creativity, father's innocence, masculine youth, authoritative start"
-      },
-      {
-        "withCardId": 14,
-        "meaning": "Man's cunning, husband's strategy, father's intelligence, masculine work, authoritative tactics"
-      },
-      {
-        "withCardId": 15,
-        "meaning": "Man's strength, husband's protection, father's authority, masculine power, authoritative force"
-      },
-      {
-        "withCardId": 16,
-        "meaning": "Man's wishes, husband's hopes, father's guidance, masculine dreams, authoritative aspirations"
-      },
-      {
-        "withCardId": 17,
-        "meaning": "Man's change, husband's transition, father's movement, masculine return, authoritative shift"
-      },
-      {
-        "withCardId": 18,
-        "meaning": "Man's friendship, husband's loyalty, father's companionship, masculine trust, authoritative alliance"
-      },
-      {
-        "withCardId": 19,
-        "meaning": "Man's authority, husband's institution, father's structure, masculine rules, authoritative power"
-      },
-      {
-        "withCardId": 20,
-        "meaning": "Man's gathering, husband's community, father's social event, masculine group, authoritative assembly"
-      },
-      {
-        "withCardId": 21,
-        "meaning": "Man's obstacles, husband's challenges, father's endurance, masculine difficulties, authoritative barriers"
-      },
-      {
-        "withCardId": 22,
-        "meaning": "Man's choice, husband's decision, father's direction, masculine path, authoritative selection"
-      },
-      {
-        "withCardId": 23,
-        "meaning": "Man's loss, husband's stress, father's recovery, masculine healing, authoritative support"
-      },
-      {
-        "withCardId": 24,
-        "meaning": "Man's love, husband's romance, father's emotions, masculine relationship, authoritative love"
-      },
-      {
-        "withCardId": 25,
-        "meaning": "Man's commitment, husband's marriage, father's union, masculine contract, authoritative partnership"
-      },
-      {
-        "withCardId": 26,
-        "meaning": "Man's knowledge, husband's learning, father's wisdom, masculine education, authoritative understanding"
-      },
-      {
-        "withCardId": 27,
-        "meaning": "Man's message, husband's communication, father's letter, masculine information, authoritative document"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Man and woman, husband and wife, father and mother, masculine and feminine energies, authoritative partnership"
-      },
-      {
-        "withCardId": 30,
-        "meaning": "Wise man, mature husband, ethical father, masculine wisdom, authoritative maturity"
-      },
-      {
-        "withCardId": 31,
-        "meaning": "Successful man, happy husband, joyful father, masculine achievement, authoritative success"
-      },
-      {
-        "withCardId": 32,
-        "meaning": "Intuitive man, emotional husband, creative father, masculine dreams, authoritative intuition"
-      },
-      {
-        "withCardId": 33,
-        "meaning": "Man's solution, husband's opportunity, father's discovery, masculine access, authoritative breakthrough"
-      },
-      {
-        "withCardId": 34,
-        "meaning": "Prosperous man, wealthy husband, abundant father, masculine business, authoritative wealth"
-      },
-      {
-        "withCardId": 35,
-        "meaning": "Stable man, secure husband, grounded father, masculine patience, authoritative stability"
-      },
-      {
-        "withCardId": 36,
-        "meaning": "Faithful man, sacrificing husband, burdened father, masculine destiny, authoritative burden"
-      }
-    ],
+    "combos": [],
     "imageUrl": "/images/cards/28-gentleman.png"
   },
   {
@@ -4371,148 +3978,7 @@
       "emotion"
     ],
     "uprightMeaning": "Woman, wife, mother, feminine energy, intuition",
-    "combos": [
-      {
-        "withCardId": 1,
-        "meaning": "Woman's news, feminine message, wife's announcement, mother's communication, intuitive information"
-      },
-      {
-        "withCardId": 2,
-        "meaning": "Lucky woman, fortunate wife, blessed mother, successful feminine energy, intuitive opportunity"
-      },
-      {
-        "withCardId": 3,
-        "meaning": "Woman's journey, wife's travel, mother's voyage, feminine movement, intuitive exploration"
-      },
-      {
-        "withCardId": 4,
-        "meaning": "Woman at home, wife's residence, mother's household, feminine domestic life, intuitive family"
-      },
-      {
-        "withCardId": 5,
-        "meaning": "Woman's health, wife's wellness, mother's recovery, feminine healing, intuitive medical care"
-      },
-      {
-        "withCardId": 6,
-        "meaning": "Woman's confusion, wife's uncertainty, mother's doubt, feminine clarity issues, intuitive uncertainty"
-      },
-      {
-        "withCardId": 7,
-        "meaning": "Woman's betrayal, wife's deception, mother's treachery, feminine lies, intuitive betrayal"
-      },
-      {
-        "withCardId": 8,
-        "meaning": "Woman's ending, wife's closure, mother's transformation, feminine rebirth, intuitive conclusion"
-      },
-      {
-        "withCardId": 9,
-        "meaning": "Woman's gift, wife's appreciation, mother's surprise, feminine gratitude, intuitive blessing"
-      },
-      {
-        "withCardId": 10,
-        "meaning": "Woman's change, wife's transformation, mother's decision, feminine harvest, intuitive shift"
-      },
-      {
-        "withCardId": 11,
-        "meaning": "Woman's conflict, wife's argument, mother's passion, feminine discipline, intuitive dispute"
-      },
-      {
-        "withCardId": 12,
-        "meaning": "Woman's communication, wife's gossip, mother's social activity, feminine talk, intuitive information"
-      },
-      {
-        "withCardId": 13,
-        "meaning": "Woman's new beginning, wife's creativity, mother's innocence, feminine youth, intuitive start"
-      },
-      {
-        "withCardId": 14,
-        "meaning": "Woman's cunning, wife's strategy, mother's intelligence, feminine work, intuitive tactics"
-      },
-      {
-        "withCardId": 15,
-        "meaning": "Woman's strength, wife's protection, mother's authority, feminine power, intuitive force"
-      },
-      {
-        "withCardId": 16,
-        "meaning": "Woman's wishes, wife's hopes, mother's guidance, feminine dreams, intuitive aspirations"
-      },
-      {
-        "withCardId": 17,
-        "meaning": "Woman's change, wife's transition, mother's movement, feminine return, intuitive shift"
-      },
-      {
-        "withCardId": 18,
-        "meaning": "Woman's friendship, wife's loyalty, mother's companionship, feminine trust, intuitive alliance"
-      },
-      {
-        "withCardId": 19,
-        "meaning": "Woman's authority, wife's institution, mother's structure, feminine rules, intuitive power"
-      },
-      {
-        "withCardId": 20,
-        "meaning": "Woman's gathering, wife's community, mother's social event, feminine group, intuitive assembly"
-      },
-      {
-        "withCardId": 21,
-        "meaning": "Woman's obstacles, wife's challenges, mother's endurance, feminine difficulties, intuitive barriers"
-      },
-      {
-        "withCardId": 22,
-        "meaning": "Woman's choice, wife's decision, mother's direction, feminine path, intuitive selection"
-      },
-      {
-        "withCardId": 23,
-        "meaning": "Woman's loss, wife's stress, mother's recovery, feminine healing, intuitive support"
-      },
-      {
-        "withCardId": 24,
-        "meaning": "Woman's love, wife's romance, mother's emotions, feminine relationship, intuitive love"
-      },
-      {
-        "withCardId": 25,
-        "meaning": "Woman's commitment, wife's marriage, mother's union, feminine contract, intuitive partnership"
-      },
-      {
-        "withCardId": 26,
-        "meaning": "Woman's knowledge, wife's learning, mother's wisdom, feminine education, intuitive understanding"
-      },
-      {
-        "withCardId": 27,
-        "meaning": "Woman's message, wife's communication, mother's letter, feminine information, intuitive document"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Woman and man, wife and husband, mother and father, feminine and masculine energies, intuitive partnership"
-      },
-      {
-        "withCardId": 30,
-        "meaning": "Wise woman, mature wife, ethical mother, feminine wisdom, intuitive maturity"
-      },
-      {
-        "withCardId": 31,
-        "meaning": "Successful woman, happy wife, joyful mother, feminine achievement, intuitive success"
-      },
-      {
-        "withCardId": 32,
-        "meaning": "Intuitive woman, emotional wife, creative mother, feminine dreams, intuitive imagination"
-      },
-      {
-        "withCardId": 33,
-        "meaning": "Woman's solution, wife's opportunity, mother's discovery, feminine access, intuitive breakthrough"
-      },
-      {
-        "withCardId": 34,
-        "meaning": "Prosperous woman, wealthy wife, abundant mother, feminine business, intuitive wealth"
-      },
-      {
-        "withCardId": 35,
-        "meaning": "Stable woman, secure wife, grounded mother, feminine patience, intuitive stability"
-      },
-      {
-        "withCardId": 36,
-        "meaning": "Faithful woman, sacrificing wife, burdened mother, feminine destiny, intuitive burden"
-      }
-    ],
+    "combos": [],
     "imageUrl": "/images/cards/29-lady.png"
   },
   {
@@ -4635,14 +4101,6 @@
       {
         "withCardId": 27,
         "meaning": "Pure message, peaceful communication, wise letter, mature information, ethical document"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Pure man, peaceful husband, wise father, mature masculine energy, ethical authority"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Pure woman, peaceful wife, wise mother, mature feminine energy, ethical intuition"
       },
       {
         "withCardId": 31,
@@ -4907,14 +4365,6 @@
       {
         "withCardId": 27,
         "meaning": "Authoritative message, institutional communication, isolated letter, structured information"
-      },
-      {
-        "withCardId": 28,
-        "meaning": "Authoritative man, institutional masculinity, isolated male energy, structured husband"
-      },
-      {
-        "withCardId": 29,
-        "meaning": "Authoritative woman, institutional femininity, isolated female energy, structured wife"
       },
       {
         "withCardId": 30,
