@@ -135,40 +135,57 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       }
     }
 
-     const trimmedContent = content.trim()
+      const trimmedContent = content.trim()
 
-     // DeepSeek returns prophecy followed by practical translation separated by natural break
-     // Look for common dividers or assume first 2-3 paragraphs are prophecy, rest is translation
-     const parts = trimmedContent.split('\n\n')
-     let prophecy = trimmedContent
-     let practicalTranslation: string | undefined
-     
-     // If response is long enough, split it
-     if (parts.length > 2) {
-       prophecy = parts.slice(0, Math.ceil(parts.length / 2)).join('\n\n')
-       practicalTranslation = parts.slice(Math.ceil(parts.length / 2)).join('\n\n')
-     }
-
-     // Validate that all cards are referenced with parentheses format (only in prophecy)
-     const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
-     
-      if (!validation.isValid) {
-        console.warn('Reading validation issues:', validation.issues)
-        // If validation fails for spreads >= 9 cards, use agent template
-        if (cards.length >= 9) {
-          console.warn('Using agent template due to validation failure')
-          const templateResponse = {
-            reading: agentResponse.story,
-            deadline: agentResponse.deadline,
-            task: agentResponse.task,
-            timingDays: agentResponse.timingDays
+      // DeepSeek returns prophecy followed by practical translation separated by natural break
+      // For larger spreads, the prophecy is longer, so be more careful with splitting
+      const parts = trimmedContent.split('\n\n').filter(p => p.trim().length > 0)
+      let prophecy = trimmedContent
+      let practicalTranslation: string | undefined
+      
+      // Strategy: practical translation typically starts with answering the original question
+      // Look for markers like "The answer is", "You will", "They will", etc. or look for a natural break
+      if (parts.length > 2) {
+        // For small spreads (3-5 cards), split roughly in half
+        if (cards.length <= 5) {
+          prophecy = parts.slice(0, Math.ceil(parts.length / 2)).join('\n\n')
+          practicalTranslation = parts.slice(Math.ceil(parts.length / 2)).join('\n\n')
+        } else {
+          // For larger spreads (7-36 cards), prophecy is longer
+          // Take first 70% as prophecy, rest as translation
+          const splitIndex = Math.ceil(parts.length * 0.7)
+          prophecy = parts.slice(0, splitIndex).join('\n\n')
+          if (splitIndex < parts.length) {
+            practicalTranslation = parts.slice(splitIndex).join('\n\n')
           }
-          cacheReading(request, templateResponse)
-          const duration = Date.now() - startTime
-          readingHistory.addReading(request, templateResponse, duration)
-          return templateResponse
         }
+      } else if (parts.length === 2) {
+        // Two paragraphs: first is prophecy, second is translation
+        prophecy = parts[0]
+        practicalTranslation = parts[1]
       }
+
+      // Validate that all cards are referenced with parentheses format (only in prophecy)
+      const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
+      
+       if (!validation.isValid) {
+         console.warn('Reading validation issues:', validation.issues)
+         // If validation fails, still try to use the split response
+         // Only fall back to agent template if we have no practical translation AND no prophecy
+         if (!practicalTranslation) {
+           console.warn('No practical translation found, falling back to agent template')
+           const templateResponse = {
+             reading: agentResponse.story,
+             deadline: agentResponse.deadline,
+             task: agentResponse.task,
+             timingDays: agentResponse.timingDays
+           }
+           cacheReading(request, templateResponse)
+           const duration = Date.now() - startTime
+           readingHistory.addReading(request, templateResponse, duration)
+           return templateResponse
+         }
+       }
 
        const aiResponse = {
          reading: prophecy,
@@ -232,7 +249,7 @@ STRUCTURE:
 PROPHECY EXAMPLE (Your Standard):
 "A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain's icy shadow cracks under the bear's relentless strength, revealing a door where there was only wall. YES—shoulder the weight and push the door open. If you hesitate, the bear moves on and the door seals shut."
 
-THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:\n- Direct. Symbolic. Brutal. Action-commanded.\n- No explanations. No backtracking. Pure prophecy.\n- The prophecy ANSWERS THE QUESTION using symbolic cards.\n\nNOW WRITE THIS PROPHECY (exactly ${spread.sentences} sentences, then add a practical translation):\n\nFOR THE PRACTICAL TRANSLATION:\nAnswer the original question: \"${agentRequest.question}\" - answer it directly and plainly.\nExample: If question is \"How will he react?\", say \"He will respond eagerly but misunderstand because...\"\nThen explain the practical action they should take based on this answer.\nDo NOT repeat the deadline—focus on answering their question clearly and explaining what they should DO about it.
+THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:\n- Direct. Symbolic. Brutal. Action-commanded.\n- No explanations. No backtracking. Pure prophecy.\n- The prophecy ANSWERS THE QUESTION using symbolic cards.\n\n=== CRITICAL: TWO SECTIONS ===\nYou MUST provide exactly 2 sections:\n\n1. PROPHECY: Exactly ${spread.sentences} sentences. Symbolic oracle reading.\n2. PRACTICAL TRANSLATION: Plain-language answer to their question + what they should do.\n\nSeparate these sections with a blank line.\n\nNOW WRITE:\n\n[PROPHECY]\n\n[PRACTICAL TRANSLATION - Answer: \"${agentRequest.question}\"]\nAnswer directly and plainly. Then explain the practical action to take.\nExample: If question is \"How will he react?\", say \"He will respond eagerly but misunderstand because...\"\nDo NOT repeat the deadline—focus on answering their question and their next action.
 `
 }
 
