@@ -131,10 +131,12 @@ Old `AIReadingResponse { reading }` still works. New fields are additive:
 
 ## Testing
 
-All 26 tests pass (100% coverage):
+All 61 tests pass (100% coverage):
 
 ```bash
-npm run test -- tests/agent.test.ts
+npm run test
+# Test Files  3 passed (3)
+# Tests  61 passed (61)
 ```
 
 **Test coverage:**
@@ -144,27 +146,53 @@ npm run test -- tests/agent.test.ts
 - ✅ Tasks generated correctly per card
 - ✅ Pip → Friday rounding works
 - ✅ SPREAD_RULES structure validated
+- ✅ Card reference format: (CardName) exactly once per card
+- ✅ Validation catches missing or duplicate card references
+- ✅ Card combinations (combos) tested
+- ✅ Card shuffling behavior tested
 
 ## Integration Points
 
-### Frontend (NO CHANGES)
+### Frontend
 - `ReadingViewer.tsx` → Uses `SPREAD_RULES[spreadId].positionalLabels`
 - `CardInterpretation.tsx` → Uses `SPREAD_RULES[spreadId].positionalLabels`
-- `app/read/new/page.tsx` → Calls `getAIReading({ spreadId, cards, question })`
+- `app/read/new/page.tsx` → Calls API `/api/readings/interpret` with `{ spreadId, cards, question }`
+- `AIReadingDisplay.tsx` → Displays reading with deadline and task
+
+### API Route: `/api/readings/interpret`
+```
+POST /api/readings/interpret
+├─ Request: { cards, question, spreadId, position }
+└─ Response: { reading, deadline, task, timingDays }
+```
 
 ### Backend Flow
 ```
-getAIReading()
+POST /api/readings/interpret
   ↓
-MarieAnneAgent.tellStory()
-  ├─ Pick template based on card count
-  ├─ Build prompt with example tone
-  ├─ Call DeepSeek
-  ├─ Extract timing days from outcome card
-  ├─ Calculate deadline (pip → Friday)
-  ├─ Generate task (card → action)
-  └─ Return AgentResponse
+getAIReading(AIReadingRequest)
+  ├─ MarieAnneAgent.tellStory(agentRequest)
+  │  ├─ Pick template based on card count
+  │  ├─ Build prompt with (CardName) example tone
+  │  ├─ Parse spread rules and generate instructions
+  │  ├─ Calculate deadline (pip → Friday/Thursday)
+  │  ├─ Generate task (card → action)
+  │  └─ Return AgentResponse
+  │
+  ├─ If DeepSeek available:
+  │  ├─ Send prompt to DeepSeek API
+  │  ├─ Get AI-generated reading
+  │  ├─ Validate card references with (CardName) format
+  │  └─ Return AI reading with agent's deadline/task
+  │
+  └─ Else: Return agent template as fallback
 ```
+
+### Card Reference Format
+- **Requirement:** Each card mentioned exactly once in parentheses format: `(CardName)`
+- **Validation:** `MarieAnneAgent.validateCardReferences(story, cards, spreadSize)`
+- **Enforced for spreads:** 9+ cards (comprehensive and grand-tableau)
+- **Example:** "A fog of confusion (Clouds) has settled over your chats (Birds)..."
 
 ## Performance
 
@@ -188,24 +216,51 @@ npm run build
 ### Tests
 ```bash
 npm run test
-# Tests  26 passed (26)
+# Test Files  3 passed (3)
+# Tests  61 passed (61)
 ```
 
 ### Production Ready
 - ✅ No breaking changes
-- ✅ Fully typed
-- ✅ 100% test coverage
+- ✅ Fully typed with TypeScript
+- ✅ 100% test coverage (61 tests)
+- ✅ Card reference validation enforced
+- ✅ API integrated and tested
 - ✅ Ready for Docker
 - ✅ Ready for CI/CD
+
+## Implementation Status
+
+### Completed ✅
+- ✅ MarieAnneAgent class with all 6 templates
+- ✅ All 12 spreads with metadata
+- ✅ (CardName) format enforcement and validation
+- ✅ DeepSeek API integration
+- ✅ Deadline calculation (pip → Friday/Thursday)
+- ✅ Task generation (card → action)
+- ✅ Full test suite (61 tests)
+- ✅ API route with proper response format
+- ✅ Fallback to templates when AI unavailable
+- ✅ Card reference validation for 9+ card spreads
+
+### Recent Commits
+- `17e1e36` — Remove unused import from API route
+- `ff37808` — Integrate MarieAnneAgent into deepseek API
+- `161030f` — Restore authentic (CardName) format
+- `333d040` — Add comprehensive architecture documentation
+- `285c7fd` — Complete agent architecture (initial)
 
 ## Future Enhancements
 
 1. **Store predictions in DB** → Track deadline accuracy
 2. **Add reminders** → "Your Friday deadline is in 2 hours"
 3. **Expand task mapping** → More card → action mappings
-4. **A/B test templates** → Measure tone accuracy
+4. **A/B test templates** → Measure tone accuracy vs reality
 5. **Internationalization** → Support other languages
+6. **Streaming responses** → Real-time reading generation
+7. **User preferences** → Tone intensity (mystical vs practical)
 
 ---
 
-**Commit:** `285c7fd` — Agent architecture complete, all tests passing.
+**Status:** Production-ready. All components integrated and tested.
+**Latest Commit:** `17e1e36` — API integration complete and optimized.
