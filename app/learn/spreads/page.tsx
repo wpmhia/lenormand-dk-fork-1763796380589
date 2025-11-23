@@ -416,6 +416,12 @@ export default function SpreadsPage() {
               The Grand Tableau is Marie-Anne Lenormand&apos;s most powerful reading technique, using all 36 cards in a 4×9 layout (four rows of nine cards). This is the exact method documented in 1820s handbooks and by eyewitnesses who watched her read for Joséphine and Napoleon. She stripped away later add-ons (houses, knighting, etc.) to focus on pure card interaction and position timing.
             </p>
 
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <p className="text-sm text-card-foreground">
+                <strong>Historical Note:</strong> In Marie-Anne Lenormand&apos;s French tradition, the <strong>Man card represents the central focus</strong> (the questioner or primary subject), while the <strong>Woman card represents another key person or secondary influence</strong>. When gender is unknown or when reading for mixed-gender groups, the French linguistic convention uses the masculine form by default—a method that remains valid today. Always ask: <em>&quot;Who is central here?&quot;</em> rather than <em>&quot;What is their gender?&quot;</em>
+              </p>
+            </div>
+
             <div className="rounded-lg bg-muted p-6">
               <h4 className="mb-4 font-semibold text-foreground">The 4×9 Layout (as dealt left-to-right):</h4>
               <div className="text-center">
@@ -443,15 +449,16 @@ export default function SpreadsPage() {
               </ul>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
-              <h4 className="font-semibold text-foreground">Step 2: Locate the Significator</h4>
-              <ul className="space-y-2 text-sm text-card-foreground">
-                <li>• <strong>Woman</strong> card (29) = female querent</li>
-                <li>• <strong>Man</strong> card (28) = male querent</li>
-                <li>• <strong>Child</strong> (13) or <strong>Dog</strong> (18) if reading for a child or pet</li>
-                <li>• Circle the significator with a token—everything radiates from this point</li>
-              </ul>
-            </div>
+             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+               <h4 className="font-semibold text-foreground">Step 2: Locate the Significator</h4>
+               <ul className="space-y-2 text-sm text-card-foreground">
+                 <li>• <strong>Man</strong> card (28) = the central person (the questioner or focus of the reading; use they/them if gender unknown)</li>
+                 <li>• <strong>Woman</strong> card (29) = another key person or influence (secondary figure; use they/them if gender unknown)</li>
+                 <li>• <strong>Child</strong> (13) or <strong>Dog</strong> (18) if reading for a child or pet</li>
+                 <li>• <strong>Heart</strong> (24) if the reading is about a situation or emotion rather than a specific person</li>
+                 <li>• Circle the significator with a token—everything radiates from this point</li>
+               </ul>
+             </div>
 
             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
               <h4 className="font-semibold text-foreground">Step 3: Read the Five Essential Strips (in order)</h4>

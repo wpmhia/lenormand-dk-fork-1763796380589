@@ -220,7 +220,7 @@ export default function ReadingBasicsPage() {
                      <li>• Three lenses: Past-Present-Future OR Problem-Advice-Outcome OR Situation-Action-Result</li>
                      <li>• Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as micro-story beats</li>
                      <li>• Optional timing: Add pips of card 5 (≤10=days, 11-20=weeks, &gt;20=months)</li>
-                     <li>• Optional significator: Identify who&apos;s involved (Man/Woman/Heart/etc.)</li>
+                      <li>• Optional significator: Identify the central focus (Man = you/focus person, Woman = another key person, Heart = a situation or emotion)</li>
                    </ul>
                    <p className="mt-2"><strong>Best for:</strong> Important questions, relationship issues, decisions where you need to know <em>when, why, and who</em></p>
                  </div>
