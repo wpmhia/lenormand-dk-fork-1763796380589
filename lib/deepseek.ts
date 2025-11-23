@@ -129,7 +129,7 @@ STEP 7: Use ONLY people, places, and timeframes the querent named; keep roles ge
 STEP 8: End with a concrete when/where tag (example: "expect this before Friday," "in your group chat," "at the office meeting")
 STEP 9: If the question asks for a specific choice or outcome, answer directly in the final sentence with timing
 STEP 10: GENDER-NEUTRAL: Man card = "you/the focus person"; Woman card = "a person/the other key person"; use they/them pronouns
-STEP 11: KEYWORD BUFFET - Each card offers multiple valid keyword options (e.g., Stars can mean night, guidance, illumination, or digital help). When a card has options, pick ONE that flows naturally with the neighbouring cards' meanings. Use plain, modern language—no device lists or technical jargon lists. Let the story context guide your choice.
+STEP 11: KEYWORD BUFFET - Each card offers multiple valid keyword options (e.g., Stars can mean night, guidance, illumination, or digital help). When a card has options, pick ONE that completes the two-card sentence formed by (previous → this → next); ignore the rest of the line. The local triplet is the only context that matters. Use plain, modern language—no device lists or technical jargon lists.
 
 CRITICAL VALIDATION: You MUST mention ALL drawn cards in your reading. Do NOT omit any. Do NOT invent cards not drawn.
 
