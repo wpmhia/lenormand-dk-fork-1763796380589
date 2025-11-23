@@ -139,6 +139,7 @@ const LENORMAND_STYLE = `You are a Lenormand fortune-teller. Follow these rules 
 
 STRUCTURE & FLOW:
 - Chain cards left→right as cause-and-effect. Each card deepens or shifts the story.
+- CLUSTER related cards into pairs/triplets (e.g., "secret (Book) and its witness (Tower)" or "decision (Crossroad) forcing a cut (Scythe)"). Don't list cards individually—weave them into units.
 - Name each card in parentheses on first mention: "joy (Bouquet) leads to..." After that, use plain nouns.
 - Write one continuous narrative—no loops, no restatement.
 
@@ -173,7 +174,7 @@ const SPREAD_RULES: Record<string, string> = {
   "week-ahead": "Write 150-200 words. Use present-tense, first-person plural ('Monday we…, Tuesday we…'). Each card is one day with a concrete moment. End with the week's emotional takeaway plus a single when tag if something spills into next week.",
   "relationship-double-significator": "Write 160-220 words. Cards 1-2: two people (explore each distinctly). Card 3: what flows between them (connection, tension, attraction, obstacle). Cards 4-5: their thoughts (Card 4 is one person's mind, Card 5 the other's). Cards 6-7: their feelings (Card 6 is one person's emotions, Card 7 the other's). Build one complete relationship narrative. End with where-to-see-it tag.",
   "comprehensive": "Write 180-260 words. Read the 9-card square as three 3-card rows. Top row (Cards 1-3): the foundation or past influences. Middle row (Cards 4-6): the present situation and challenges. Bottom row (Cards 7-9): the future or outcome. Use card pairs (adjacent cards together) to deepen meaning. Show how each row builds on the previous. End with when/where tag.",
-  "grand-tableau": "Write 220-320 words. Navigate the 36-card grid by first finding Card 28 (Man) or Card 29 (Woman)—this is the querent. Explore cards immediately surrounding them (these show immediate influences). Then read card pairs next to and diagonal to the querent (these reveal hidden dynamics). Expand outward in rings to show broader life picture. Build one sweeping narrative of personal concerns, relationships, challenges, resources, and trajectory. End with when/where tag."
+   "grand-tableau": "Write 220-320 words in 3–4 short paragraphs. Start by finding Card 28 (Man) or Card 29 (Woman)—this is the querent. CLUSTER cards into story units (pairs/triplets), not a card-by-card list. Paragraph 1: Core tension (cards around the querent + their immediate conflict). Paragraph 2: Turning point (cards that shift the situation—decision, obstacle, revelation). Paragraph 3: Resolution & trajectory (outcome cards + resources + timing). Mention all 36 cards but weave them into narrative clusters, not individual items. Lead with the core question or stakes. End with a concrete when/where tag and the exit strategy."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
