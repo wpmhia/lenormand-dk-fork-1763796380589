@@ -220,8 +220,7 @@ function NewReadingPageContent() {
    }, [physicalCards])
 
     const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
-      try {
-        console.log('handleDraw called with:', cards.length, 'cards')
+       try {
         let readingCards: ReadingCard[];
 
         // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
@@ -240,15 +239,12 @@ function NewReadingPageContent() {
           readingCards = [];
         }
 
-        console.log('Converted to readingCards:', readingCards.length)
-
-        if (readingCards.length === 0) {
+         if (readingCards.length === 0) {
           setError(`No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`)
           return
         }
 
-        console.log('Setting drawnCards and step to results')
-        if (mountedRef.current) {
+         if (mountedRef.current) {
           setDrawnCards(readingCards)
           setStep('results')
         }
@@ -668,30 +664,36 @@ function NewReadingPageContent() {
                className="space-y-6"
              >
                
-               {/* Show the drawn cards */}
-               <ReadingViewer
-                reading={{
-                  id: 'temp',
-                  title: 'Your Reading',
-                  question,
-                  layoutType: selectedSpread.cards,
-                  cards: drawnCards,
-                  slug: 'temp',
-                  isPublic: false,
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                }}
-                allCards={allCards}
-                spreadId={selectedSpread.id}
-              />
+                {/* Show the drawn cards */}
+                {allCards.length > 0 ? (
+                  <ReadingViewer
+                    reading={{
+                      id: 'temp',
+                      title: 'Your Reading',
+                      question,
+                      layoutType: selectedSpread.cards,
+                      cards: drawnCards,
+                      slug: 'temp',
+                      isPublic: false,
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                    }}
+                    allCards={allCards}
+                    spreadId={selectedSpread.id}
+                  />
+                ) : (
+                  <div className="text-center p-4 text-muted-foreground">Loading cards...</div>
+                )}
 
-              {/* Individual card explanations */}
-              <CardInterpretation
-                cards={drawnCards}
-                allCards={allCards}
-                spreadId={selectedSpread.id}
-                question={question}
-              />
+               {/* Individual card explanations */}
+               {allCards.length > 0 ? (
+                 <CardInterpretation
+                   cards={drawnCards}
+                   allCards={allCards}
+                   spreadId={selectedSpread.id}
+                   question={question}
+                 />
+               ) : null}
 
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">
