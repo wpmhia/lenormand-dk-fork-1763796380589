@@ -93,13 +93,13 @@ function NewReadingPageContent() {
 
   // ...
 
-   const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
-       if (!mountedRef.current || aiProcessingRef.current) return
+    const performAIAnalysis = useCallback(async (readingCards: ReadingCard[]) => {
+        if (aiProcessingRef.current) return
 
-       aiProcessingRef.current = true
-       addLog(`performAIAnalysis started with ${readingCards.length} cards`)
-       setAiLoading(true)
-       setAiError(null)
+        aiProcessingRef.current = true
+        console.log('AI analysis started with', readingCards.length, 'cards')
+        setAiLoading(true)
+        setAiError(null)
 
       try {
         const aiRequest = {
@@ -113,12 +113,12 @@ function NewReadingPageContent() {
           userLocale: navigator.language
         }
 
-         addLog('Sending AI request...')
-         
-         const controller = new AbortController()
-         const timeout = setTimeout(() => controller.abort(), 60000)
-         
-         const response = await fetch('/api/readings/interpret', {
+         console.log('Sending AI request...')
+          
+          const controller = new AbortController()
+          const timeout = setTimeout(() => controller.abort(), 60000)
+          
+          const response = await fetch('/api/readings/interpret', {
            method: 'POST',
            headers: {
              'Content-Type': 'application/json',
@@ -129,50 +129,44 @@ function NewReadingPageContent() {
          
          clearTimeout(timeout)
 
-        addLog(`Response status: ${response.status}`)
+         console.log('Response status:', response.status)
 
-        if (!response.ok) {
+         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ error: 'Server error' }))
           throw new Error(errorData.error || 'Server error')
         }
 
-        const aiResult = await response.json()
-        addLog('AI Response received: ' + JSON.stringify(Object.keys(aiResult)))
+         const aiResult = await response.json()
+         console.log('AI Response received:', Object.keys(aiResult))
 
-        if (mountedRef.current) {
-          addLog('Attempting to set AI reading state...')
-          setAiReading(aiResult)
-          setAiAttempted(true)
-          addLog('State update requested')
-        }
+         console.log('Setting AI reading state...')
+         setAiReading(aiResult)
+         setAiAttempted(true)
+         console.log('AI state update complete')
 
-       } catch (error) {
-         addLog(`AI Analysis error: ${error}`)
-         let errorMessage = 'AI analysis failed'
+        } catch (error) {
+          console.error('AI Analysis error:', error)
+          let errorMessage = 'AI analysis failed'
+          
+          if (error instanceof Error) {
+            // Provide more helpful error messages
+            if (error.name === 'AbortError' || error.message.includes('timeout')) {
+              errorMessage = 'The interpretation took too long (>60 seconds). Please try again.'
+            } else if (error.message.includes('rate')) {
+              errorMessage = 'Too many requests. Please wait a moment and try again.'
+            } else if (error.message.includes('Server error')) {
+              errorMessage = 'Server error. Your reading could not be interpreted. Try again in a moment.'
+            } else {
+              errorMessage = `Unable to generate interpretation: ${error.message}`
+            }
+          }
          
-         if (error instanceof Error) {
-           // Provide more helpful error messages
-           if (error.name === 'AbortError' || error.message.includes('timeout')) {
-             errorMessage = 'The interpretation took too long (>60 seconds). Please try again.'
-           } else if (error.message.includes('rate')) {
-             errorMessage = 'Too many requests. Please wait a moment and try again.'
-           } else if (error.message.includes('Server error')) {
-             errorMessage = 'Server error. Your reading could not be interpreted. Try again in a moment.'
-           } else {
-             errorMessage = `Unable to generate interpretation: ${error.message}`
-           }
-         }
-        
-        if (mountedRef.current) {
           setAiError(errorMessage)
-        }
-      } finally {
-        addLog('AI Analysis finally block')
-        if (mountedRef.current) {
-          setAiLoading(false)
-        }
-        aiProcessingRef.current = false
-      }
+       } finally {
+         console.log('AI Analysis complete')
+         setAiLoading(false)
+         aiProcessingRef.current = false
+       }
     }, [question, allCards, addLog, selectedSpread.id])
 
        // Auto-start AI analysis when entering results step
