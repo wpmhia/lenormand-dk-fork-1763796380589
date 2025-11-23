@@ -78,23 +78,23 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       timingDays: agentResponse.timingDays
     })
 
-    // If DeepSeek is not available, use the template directly
-    if (!isDeepSeekAvailable()) {
-      console.log('DeepSeek not available, using template directly.')
-      const response = {
-        reading: agentResponse.story,
-        deadline: agentResponse.deadline,
-        task: agentResponse.task,
-        timingDays: agentResponse.timingDays
-      }
-      cacheReading(request, response)
-      const duration = Date.now() - startTime
-      readingHistory.addReading(request, response, duration)
-      return response
+     // Use the agent template directly - it captures Marie-Anne's soul perfectly
+    // DeepSeek adds flowery language that obscures her direct, practical voice
+    console.log('Using agent template directly for Marie-Anne\'s authentic voice.')
+    const response = {
+      reading: agentResponse.story,
+      deadline: agentResponse.deadline,
+      task: agentResponse.task,
+      timingDays: agentResponse.timingDays
     }
-
-    // Send agent's prompt to DeepSeek for generation
-    const deepseekPrompt = buildPromptForDeepSeek(agentRequest, spread)
+     cacheReading(request, response)
+     const duration = Date.now() - startTime
+     readingHistory.addReading(request, response, duration)
+     return response
+     
+     /* DeepSeek integration removed - using agent templates preserves Marie-Anne's authentic voice
+     // Send agent's prompt to DeepSeek for generation
+     const deepseekPrompt = buildPromptForDeepSeek(agentRequest, spread)
     
     console.log('Sending request to DeepSeek API...')
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
@@ -172,21 +172,22 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
        }
      }
 
-     const aiResponse = {
-       reading: trimmedContent,
-       deadline: agentResponse.deadline,
-       task: agentResponse.task,
-       timingDays: agentResponse.timingDays
-     }
-     cacheReading(request, aiResponse)
-     const duration = Date.now() - startTime
-     readingHistory.addReading(request, aiResponse, duration)
-     return aiResponse
-  } catch (error) {
-    console.error('AI reading error:', error)
-    return createFallbackReading('Error generating reading')
-  }
-}
+      const aiResponse = {
+        reading: trimmedContent,
+        deadline: agentResponse.deadline,
+        task: agentResponse.task,
+        timingDays: agentResponse.timingDays
+      }
+      cacheReading(request, aiResponse)
+      const duration = Date.now() - startTime
+      readingHistory.addReading(request, aiResponse, duration)
+      return aiResponse
+     */
+   } catch (error) {
+     console.error('AI reading error:', error)
+     return createFallbackReading('Error generating reading')
+   }
+ }
 
 function createFallbackReading(reason: string): AIReadingResponse {
   return {
