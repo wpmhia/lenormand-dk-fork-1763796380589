@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAIReading, AIReadingRequest } from '@/lib/deepseek'
+import { calculateDeadline } from '@/lib/timing'
 
 export async function POST(request: Request) {
   console.log('API /api/readings/interpret called');
@@ -26,7 +27,19 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json(result)
+    const createdAt = new Date()
+    let deadlineDate: Date | undefined
+
+    if (result.timingDays && result.timingType) {
+      deadlineDate = calculateDeadline(createdAt, result.timingDays, result.timingType)
+    }
+
+    return NextResponse.json({
+      reading: result.reading,
+      timingDays: result.timingDays,
+      timingType: result.timingType,
+      deadlineDate: deadlineDate?.toISOString()
+    })
   } catch (error) {
     console.error('Error in interpret route:', error)
     return NextResponse.json(

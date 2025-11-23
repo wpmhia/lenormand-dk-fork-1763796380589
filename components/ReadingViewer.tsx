@@ -1,15 +1,16 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Reading, ReadingCard, Card as CardType } from '@/lib/types'
 import { getCardById, getCombinationMeaning, getLinearAdjacentCards, getGrandTableauAdjacentCards } from '@/lib/data'
+import { getCountdown } from '@/lib/timing'
 import { Card } from './Card'
 import { AnimatedCard } from './AnimatedCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardModal } from './CardModal'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Share2, Calendar, Info } from 'lucide-react'
+import { Share2, Calendar, Info, Clock } from 'lucide-react'
 
 interface ReadingViewerProps {
   reading: Reading
@@ -153,15 +154,24 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
  }
 
 export function ReadingViewer({
-  reading,
-  allCards,
-  showShareButton = true,
-  onShare,
-  showReadingHeader = true,
-  spreadId
+   reading,
+   allCards,
+   showShareButton = true,
+   onShare,
+   showReadingHeader = true,
+   spreadId
 }: ReadingViewerProps) {
-  const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
-  const [shareClicked, setShareClicked] = useState(false)
+   const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
+   const [shareClicked, setShareClicked] = useState(false)
+
+   const countdown = useMemo(() => {
+     if (!reading.deadlineDate || !reading.timingDays) return null
+     return getCountdown(
+       new Date(reading.createdAt),
+       reading.timingDays,
+       reading.timingType || 'days'
+     )
+   }, [reading])
 
   const getAdjacentCards = (currentCard: ReadingCard): ReadingCard[] => {
     if (reading.layoutType === 36) {
@@ -434,36 +444,47 @@ export function ReadingViewer({
               {reading.question && reading.question !== reading.title && (
                  <p className="mt-4 text-lg italic text-muted-foreground">&ldquo;{reading.question}&rdquo;</p>
               )}
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  {new Date(reading.createdAt).toLocaleDateString()}
-                </div>
-                 <Badge variant="secondary">
-                   {reading.layoutType} Cards
-                 </Badge>
-                  {showShareButton && onShare && (
-                    <Button 
-                      onClick={async () => {
-                        setShareClicked(true)
-                        await onShare()
-                        setTimeout(() => setShareClicked(false), 2000)
-                      }} 
-                      variant="outline" 
-                      size="sm" 
-                      className="border-border hover:bg-muted"
-                    >
-                      <Share2 className="mr-2 h-4 w-4" />
-                      {shareClicked ? 'Copied!' : 'Share'}
-                    </Button>
-                  )}
-              </div>
-            </div>
-         </div>
-       )}
+               <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+                 <div className="flex items-center gap-2">
+                   <Calendar className="h-4 w-4 text-primary" />
+                   {new Date(reading.createdAt).toLocaleDateString()}
+                 </div>
+                  <Badge variant="secondary">
+                    {reading.layoutType} Cards
+                  </Badge>
+                   {countdown && (
+                     <div className={`flex items-center gap-2 ${countdown.isExpired ? 'text-muted-foreground/50 line-through' : 'text-primary'}`}>
+                       <Clock className="h-4 w-4" />
+                       <span className={countdown.isExpired ? 'italic' : 'font-medium'}>
+                         {countdown.text}
+                       </span>
+                     </div>
+                   )}
+                   {showShareButton && onShare && (
+                     <Button 
+                       onClick={async () => {
+                         setShareClicked(true)
+                         await onShare()
+                         setTimeout(() => setShareClicked(false), 2000)
+                       }} 
+                       variant="outline" 
+                       size="sm" 
+                       className="border-border hover:bg-muted"
+                     >
+                       <Share2 className="mr-2 h-4 w-4" />
+                       {shareClicked ? 'Copied!' : 'Share'}
+                     </Button>
+                   )}
+               </div>
+             </div>
+             {countdown?.isExpired && (
+               <div className="absolute inset-0 bg-muted/20 pointer-events-none rounded-xl opacity-40" />
+             )}
+          </div>
+        )}
 
 
-       {/* Cards Layout Section */}
+        {/* Cards Layout Section */}
        <div className="animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500">
          <div className="rounded-xl border border-border bg-card p-8">
            <h3 className="mb-6 text-xl font-semibold text-foreground">Your Cards</h3>

@@ -32,6 +32,9 @@ export interface Reading {
   isPublic: boolean
   createdAt: Date
   updatedAt: Date
+  timingDays?: number
+  timingType?: 'days' | 'weeks'
+  deadlineDate?: Date
 }
 
 export interface LayoutConfig {

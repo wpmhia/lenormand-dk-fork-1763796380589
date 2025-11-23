@@ -65,6 +65,8 @@ export interface AIReadingRequest {
 // Simple AI Reading response interface
 export interface AIReadingResponse {
   reading: string
+  timingDays?: number
+  timingType?: 'days' | 'weeks'
 }
 // UNIFIED LENORMAND STYLE - Applied to all spreads identically
 const LENORMAND_STYLE = `You are a Lenormand fortune-teller.
@@ -123,6 +125,16 @@ Cross = burden, destiny, church
 
 NARRATIVE STRUCTURE (applies to all spreads):
 One narrative thread, no loops. Each new card deepens, complicates, or shifts the tension—never restate. Each card moves the plot forward.
+
+TIMING COMPUTATION (applies to all spreads):
+Extract ONE calendar cue using this method:
+- Daily draw → use rightmost card's pip value (1-36) as days
+- 3/5-card line → use outcome card's column position (1-5) as weeks; or add pips of last two cards (cap at 14) for days
+- Grand-Tableau → measure column distance from significator to outcome card = weeks; knight-leap count = days
+- Round computed value to nearest real-world milestone (weekend, month-start, payday)
+- Preface with 'likely' or 'watch for' to preserve free will
+- Edge cases: if pip sum > 14, convert to "within three weeks"; if Coffin is outcome, add "after a necessary pause"
+- DO NOT state timing as a range (e.g., "3-5 days"); always give a single number for calculation
 
 Reply in plain paragraphs, no bullets, no headings, no emojis.`
 
