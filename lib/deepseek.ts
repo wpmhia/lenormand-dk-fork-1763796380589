@@ -68,22 +68,69 @@ export interface AIReadingResponse {
   timingDays?: number
   timingType?: 'days' | 'weeks'
 }
+
+// Validation helper functions
+function extractCardNamesFromReading(reading: string): string[] {
+  const cardNames = Object.values(CARD_TIMING).map(c => c.name)
+  const foundCards: string[] = []
+  
+  for (const cardName of cardNames) {
+    if (reading.includes(`(${cardName})`) || reading.includes(cardName)) {
+      foundCards.push(cardName)
+    }
+  }
+  
+  return foundCards
+}
+
+function validateReading(reading: string, drawnCards: Array<{name: string}>): { isValid: boolean; issues: string[] } {
+  const issues: string[] = []
+  const drawnCardNames = drawnCards.map(c => c.name)
+  const mentionedCards = extractCardNamesFromReading(reading)
+  
+  if (reading.length < 50) {
+    issues.push('Reading is too short - likely incomplete generation')
+  }
+  
+  const hallucinations = mentionedCards.filter(card => !drawnCardNames.includes(card))
+  if (hallucinations.length > 0) {
+    issues.push(`Hallucinated cards detected: ${hallucinations.join(', ')}`)
+  }
+  
+  const unmentionedCards = drawnCardNames.filter(
+    card => !reading.includes(`(${card})`) && !reading.includes(card)
+  )
+  if (unmentionedCards.length > drawnCardNames.length * 0.5) {
+    issues.push(`Too many drawn cards not mentioned in reading`)
+  }
+  
+  const forbiddenTerms = ['energy', 'vibes', 'universe', 'spiritual growth', 'ascending', 'descending', 'reversed']
+  const foundForbidden = forbiddenTerms.filter(term => reading.toLowerCase().includes(term))
+  if (foundForbidden.length > 0) {
+    issues.push(`Found forbidden terms: ${foundForbidden.join(', ')}`)
+  }
+  
+  return {
+    isValid: issues.length === 0,
+    issues
+  }
+}
 // UNIFIED LENORMAND STYLE - Applied to all spreads identically
 const LENORMAND_STYLE = `You are a Lenormand fortune-teller.
-Output rules — follow every bullet without deviation:
+CRITICAL OUTPUT RULES — follow every rule without exception:
 
-1. Chain the cards left→right into cause-and-effect sentences. Show how each card influences the next. **Name each card explicitly in parentheses the first time you mention it—use the exact card name from the list below** (example: "seeking recognition and emotional fulfillment (Moon) is being blocked by repetitive arguments (Whip)"). If you mention a card's meaning, immediately follow with the card name in parentheses.
-2. After first mention, refer to cards by plain nouns—don't repeat the card name.
-3. Use only keywords listed below; no reversals, no jargon ("energy," "vibes," "universe," "spiritual growth").
-4. Tone: everyday, conversational, slightly optimistic; predict, don't advise.
-5. End with a concrete when/where tag ("expect this before Friday," "in your group chat," "at the office meeting").
-6. **Use only the people, places, and time-frames the querent names.** Keep roles generic ('a colleague', 'the manager', 'within 5 work-days') if not specified. Never invent names, departments, or backstory.
-7. If the question asks for a specific choice or outcome, directly answer it in your final sentence with timing. Use the cards to justify why.
-8. **GENDER-NEUTRAL READING CONVENTION**: If gender is unknown or not specified:
-   - Man card = "you / the focus person" (use they/them pronouns and neutral language)
-   - Woman card = "a person / the other key person" (use they/them pronouns and neutral language)
-   - Never assume or assign binary gender; adapt to the querent's actual situation as stated.
-   - When Man or Woman appear in readings without a named person, use contextual roles: "the person involved," "the key figure," "a central player."
+STEP 1: Identify and name each card exactly (use exact names from keyword bank below)
+STEP 2: Chain the cards left→right into cause-and-effect sentences showing how each card influences the next
+STEP 3: Name each card explicitly in parentheses the first time you mention it (example: "seeking recognition (Moon) is blocked by arguments (Whip)")
+STEP 4: After first mention, use plain nouns to refer to cards—don't repeat the card name
+STEP 5: Use ONLY keywords listed below; NEVER use "energy," "vibes," "universe," "spiritual growth," "reversed," "ascending," or "descending"
+STEP 6: Write in everyday, conversational tone—slightly optimistic; predict the future, don't advise
+STEP 7: Use ONLY people, places, and timeframes the querent named; keep roles generic if unspecified
+STEP 8: End with a concrete when/where tag (example: "expect this before Friday," "in your group chat," "at the office meeting")
+STEP 9: If the question asks for a specific choice or outcome, answer directly in the final sentence with timing
+STEP 10: GENDER-NEUTRAL: Man card = "you/the focus person"; Woman card = "a person/the other key person"; use they/them pronouns
+
+CRITICAL VALIDATION: You MUST mention ALL drawn cards in your reading. Do NOT omit any. Do NOT invent cards not drawn.
 
 Card keyword bank:
 Rider = message, news, delivery
@@ -209,41 +256,61 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
           'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [
-            { role: 'system', content: 'You are a Lenormand fortune-teller. Follow all output rules provided. Reply in plain paragraphs with no preamble.' },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 1000
-        })
+           model: 'deepseek-chat',
+           messages: [
+             { role: 'system', content: 'You are a Lenormand fortune-teller. Follow all output rules provided. Reply in plain paragraphs with no preamble.' },
+             { role: 'user', content: prompt }
+           ],
+           temperature: 0.4,
+           max_tokens: 800,
+           top_p: 0.9
+         })
       })
 
       console.log('DeepSeek API response status:', response.status);
 
-      if (!response.ok) {
-        console.error('DeepSeek API error:', response.status, response.statusText)
-        const errorText = await response.text()
-        console.error('Error details:', errorText)
-        return {
-          reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (AI service temporarily unavailable)"
-        }
-      }
+       if (!response.ok) {
+         const errorText = await response.text()
+         const errorDetails = `Status: ${response.status}, Message: ${response.statusText}, Body: ${errorText}`
+         console.error('DeepSeek API error:', errorDetails)
+         
+         if (response.status === 401 || response.status === 403) {
+           console.error('Authentication/Authorization error - check API key')
+           return {
+             reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (API authentication issue)"
+           }
+         } else if (response.status >= 500) {
+           console.error('Server error - DeepSeek service issue')
+         } else {
+           console.error('Client error - request issue')
+         }
+         
+         return {
+           reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (AI service temporarily unavailable)"
+         }
+       }
 
       const data = await response.json()
-      console.log('DeepSeek API response data received');
-      const content = data.choices?.[0]?.message?.content
+       console.log('DeepSeek API response data received');
+       const content = data.choices?.[0]?.message?.content
 
-      if (!content) {
-        console.log('No content in DeepSeek response');
-        return {
-          reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Unable to generate AI interpretation)"
-        }
-      }
+       if (!content) {
+         console.log('No content in DeepSeek response');
+         return {
+           reading: "The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Unable to generate AI interpretation)"
+         }
+       }
 
-      return {
-        reading: content.trim()
-      }
+       const trimmedContent = content.trim()
+       const validation = validateReading(trimmedContent, request.cards)
+       
+       if (!validation.isValid) {
+         console.warn('Reading validation issues:', validation.issues)
+       }
+
+       return {
+         reading: trimmedContent
+       }
     } catch (error) {
       console.error('AI reading error:', error)
 
@@ -287,25 +354,33 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
           'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [
-            { role: 'system', content: 'You are a Lenormand fortune-teller. Follow all output rules provided. Reply in plain paragraphs with no preamble.' },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 1000,
-          stream: true
-        })
+           model: 'deepseek-chat',
+           messages: [
+             { role: 'system', content: 'You are a Lenormand fortune-teller. Follow all output rules provided. Reply in plain paragraphs with no preamble.' },
+             { role: 'user', content: prompt }
+           ],
+           temperature: 0.4,
+           max_tokens: 800,
+           top_p: 0.9,
+           stream: true
+         })
       })
 
       console.log('DeepSeek streaming API response status:', response.status);
 
-      if (!response.ok) {
-        console.error('DeepSeek API error:', response.status, response.statusText)
-        const errorText = await response.text()
-        console.error('Error details:', errorText)
-        throw new Error('DeepSeek API error: ' + response.statusText)
-      }
+       if (!response.ok) {
+         const errorText = await response.text()
+         const errorDetails = `Status: ${response.status}, Message: ${response.statusText}, Body: ${errorText}`
+         console.error('DeepSeek streaming API error:', errorDetails)
+         
+         if (response.status === 401 || response.status === 403) {
+           console.error('Authentication/Authorization error - check API key')
+         } else if (response.status >= 500) {
+           console.error('Server error - DeepSeek service issue')
+         }
+         
+         throw new Error('DeepSeek API error: ' + response.statusText)
+       }
 
       if (!response.body) {
         throw new Error('No response body')
