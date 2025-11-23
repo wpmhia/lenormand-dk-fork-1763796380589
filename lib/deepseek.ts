@@ -155,11 +155,33 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>, spr
     issues.push('Missing actionable exit—final sentence should be imperative (sign, update, contact, etc.)')
   }
 
-  // Check for 5-sentence cap (Marie-Anne rule #3)
-  const sentenceCount = reading.split(/[.!?]+/).filter(s => s.trim().length > 0).length
-  if (sentenceCount > 5) {
-    issues.push(`Reading exceeds 5-sentence cap (${sentenceCount} found)—condense to 5 or fewer.`)
-  }
+   // Check for spread-specific sentence cap (Marie-Anne rule #3)
+   const sentenceCount = reading.split(/[.!?]+/).filter(s => s.trim().length > 0).length
+   const spreadRuleObj = SPREAD_RULES[spreadId || 'single-card'] || SPREAD_RULES['single-card']
+   const maxSentences = spreadRuleObj.sentenceCap
+   if (sentenceCount > maxSentences) {
+     issues.push(`Reading exceeds ${maxSentences}-sentence cap for ${spreadId} (${sentenceCount} found)—condense.`)
+   }
+   
+   // Check for metaphor presence (require 3+ metaphor keywords)
+   const metaphorKeywords = ['wall', 'weight', 'crack', 'icy', 'door', 'light', 'shadow', 'anchor', 'break', 'suffocate', 'buried', 'erosion', 'cycle', 'deadlock', 'stalemate', 'whip', 'chip', 'thread', 'needle', 'seed', 'bloom', 'closure', 'cutting', 'crack']
+   const metaphorCount = metaphorKeywords.filter(keyword => reading.toLowerCase().includes(keyword)).length
+   if (metaphorCount < 3) {
+     issues.push(`Reading lacks metaphor depth (${metaphorCount} metaphor keywords found, need 3+)—add visceral scenes.`)
+   }
+   
+   // Grand Tableau specific checks
+   if (spreadId === 'grand-tableau') {
+     const paragraphCount = reading.split('\n\n').length
+     if (paragraphCount < 4) {
+       issues.push(`Grand Tableau should have 4 paragraphs (found ${paragraphCount})—P1: friction, P2: release, P3: hidden, P4: verdict.`)
+     }
+     
+     const cardsNeeded = Math.ceil(drawnCards.length * 0.7)
+     if (mentionedCards.length < cardsNeeded) {
+       issues.push(`Grand Tableau should mention >= ${cardsNeeded} of ${drawnCards.length} cards (${mentionedCards.length} found).`)
+     }
+   }
 
   if (spreadId === 'yes-no-maybe' && drawnCards.length >= 3) {
     const lastCard = drawnCards[drawnCards.length - 1].name
@@ -199,10 +221,11 @@ MARIE ANN LENORMAND PRINCIPLES (non-negotiable):
 MARIE_ANNE_MICRO_MANUAL (apply to every spread):
 1. BUILD SCENES WITH METAPHOR & STAKES: Create visceral images, not explanations. NOT: "A loyal partnership hits a stubborn obstacle that refuses to move—a formal message cuts through the standstill." YES: "A quiet wall has grown between you and your partner—loyal on the surface, but something heavy and immovable is sitting in the middle of the room. A letter, email, or official document will land by Friday, forcing both of you to name the blockage out loud." Use metaphor (wall, weight, crack, icy), specifics (letter/email/document, Friday), and stakes (decide together, chip away or walk around). Cards are invisible; only the scene and its weight show.
 2. PIP-TIMING IN CLOSING SENTENCE: End with timing woven into action, not as a data point. NOT: "Card 8 (Coffin) = 8 days → wrap by Friday." YES: "File the paperwork and confirm payment this week so nothing slips through the crack." Timing is implicit in the deadline, not explicit.
-3. THREE-BEAT STORY WITH METAPHOR: Beat 1 (opening scene with weight/stakes). Beat 2 (what breaks the deadlock—letter, decision, cut). Beat 3 (what the querent must do + when). Use metaphor throughout (wall, weight, crack, icy, door, light, shadow). No explaining what cards mean; only showing their impact through vivid language. Cap 5 sentences total.
-4. MULTIPLE IMPERATIVE EXITS WITH CHOICE: End with 2-3 specific, high-stakes tasks. NOT: "Make a decision together once the message arrives." YES: "Read it together, speak plainly, and decide before the weekend whether to chip away at the wall or walk around it." Give the querent real options, real deadlines, real consequences. Stacked imperatives, not soft prediction.
-5. NO CARD NAMES, NO JARGON: Cards dissolve into consequences. Money, friendship, closure, obstacles—the real impacts. Never "reversed," "energy," or "call/email/text/contact" lists.
-6. RECORD PREDICTION (optional): Store verdict + deadline in DB; flag prompt if it misses twice.
+3. SPREAD-SPECIFIC SENTENCE LIMITS: Variable caps based on card count. Small spreads (1-5 cards) = 5 sentences max. Medium spreads (9 cards) = 7-8 sentences. Grand Tableau (36 cards) = 9-12 sentences across 4 paragraphs. Longer = more metaphor depth, not more explanation.
+4. METAPHOR TOOLKIT (use throughout): Wall, weight, crack, icy, door, light, shadow, anchor, break, suffocate, buried, erosion, cycle, deadlock, stalemate, whip, chip away, walk around, thread, needle, seed, bloom, closure, cutting. One metaphor per 3 sentences max—don't overload.
+5. MULTIPLE IMPERATIVE EXITS WITH CHOICE: End with 2-3 specific, high-stakes tasks. NOT: "Make a decision together once the message arrives." YES: "Read it together, speak plainly, and decide before the weekend whether to chip away at the wall or walk around it." Give the querent real options, real deadlines, real consequences. Stacked imperatives, not soft prediction.
+6. NO CARD NAMES, NO JARGON: Cards dissolve into consequences. Money, friendship, closure, obstacles—the real impacts. Never "reversed," "energy," or "call/email/text/contact" lists.
+7. RECORD PREDICTION (optional): Store verdict + deadline in DB; flag prompt if it misses twice.
 
 UNIVERSAL 5-STEP STRUCTURE (applies to all spreads):
 1. SPOT THE BLOCK: Find the friction pair (two touching cards that clash or stall). Friction cards: Mountain, Snake, Fox, Clouds, Cross, Coffin, Whip, Mice. Example: Mountain–Book = blocked. This = core tension opening.
@@ -239,48 +262,99 @@ OUTPUT:
 KEYWORDS (pick the option that fits the local triplet):
 Rider = message, news, delivery, announcement, messenger | Clover = luck, chance, blessing | Ship = travel, distance, journey, relocation | House = home, family, domestic, household | Tree = health, roots, long-term, growth | Clouds = confusion, uncertainty, delay | Snake = betrayal, complication, cunning, deceit | Coffin = ending, pause, closure, halt | Bouquet = gift, joy, celebration, kindness | Scythe = sudden cut, accident, sharp decision, severance | Whip = repetition, argument, conflict, friction | Birds = conversation, dialogue, exchange, communication | Child = child, beginner, start, innocence, young | Fox = coworker, stealth, self-interest, strategy | Bear = boss, authority, power, provider | Stars = night, guidance, illumination, remote help, digital help | Stork = change, relocation, pregnancy, transition | Dog = friend, partner, helper, fidelity, support | Tower = authority, company, institution, bureaucracy | Garden = public, event, gathering, visibility | Mountain = obstacle, delay, barrier, weight | Crossroad = choice, decision, fork | Mice = erosion, stress, loss, anxiety | Heart = love, romance, affection, passion | Ring = contract, commitment, binding, agreement | Book = secret, education, documents, knowledge | Letter = text, message, correspondence, mail | Man = you/the focus person | Woman = the other key person | Lily = peace, elder, winter, calm, wisdom | Sun = success, brightness, achievement, clarity | Moon = recognition, emotions, cycles, intuition | Key = solution, answer, unlock, breakthrough | Fish = money, business, flow, commerce | Anchor = stability, security, foundation | Cross = burden, fate, weight, suffering`
 
-// SPREAD-SPECIFIC RULES - Varies by spread type
-const SPREAD_RULES: Record<string, string> = {
-  "single-card": "Write 75-100 words. Describe the card's image or scene vividly. Explain what it reveals about the querent's situation. End with a concrete when/where tag.",
-   "sentence-3": "Apply micro-manual rules 1-5. Three beats: friction pair → release pair → verdict (with pip-timing + action). 5 sentences max.",
-   "past-present-future": "Apply micro-manual 1-5. Beat 1: past (friction source). Beat 2: present (release point). Beat 3: future (verdict + timing + action). 5 sentences.",
-    "yes-no-maybe": "Apply micro-manual 1-5. Open with YES/NO/MAYBE based on card 3. Friction → release → verdict with pip-timing + deadline. 5 sentences.",
-   "situation-challenge-advice": "Apply micro-manual 1-5. Situation (friction). Challenge (block). Advice (release/unlock). Show connection. End with imperative action.",
-  "mind-body-spirit": "Apply micro-manual 1-5. Two-card pairs only: (Card 1–2): mind-body connection. (Card 2–3): body-spirit flow. Verdict + timing + action.",
-   "sentence-5": "Apply micro-manual 1-5. Friction pair → release pair → verdict (card 5). Three story beats. Pip-timing + action. 5 sentences max.",
-   "structured-reading": "Apply micro-manual 1-5. Friction (cards 1-2). Release (cards 3-4). Verdict (card 5: outcome + timing + action). 5 sentences, three beats.",
-  "week-ahead": "Apply micro-manual 1-5. Build ONE narrative scene (not day-by-day recap). Friction pair = opening tension. Release pair(s) = turning points. Last card = verdict + timing. End with specific task (text/call/send/book by DATE). 5 sentences max.",
-  "relationship-double-significator": "Apply micro-manual 1-5. Cards 1-2: Two people as friction pair. Card 3: what flows between (release). Cards 4-7: thoughts/feelings detail. Verdict + action.",
-   "comprehensive": "Apply micro-manual 1-5. Top row (friction). Middle row (release). Bottom row (verdict + timing + action). Three beats, 5 sentences max.",
-    "grand-tableau": "Apply micro-manual 1-5. 3 paragraphs: P1 (friction pair around querent). P2 (release pair that breaks deadlock). P3 (verdict + pip-timing + next action). 5 sentences total."
+// SPREAD-SPECIFIC RULES - Varies by spread type with VARIABLE SENTENCE CAPS
+const SPREAD_RULES: Record<string, { ruleset: string; sentenceCap: number; guidance: string }> = {
+  "single-card": {
+    ruleset: "Apply micro-manual rules 1-5. Describe one visceral scene grounded in the card's core meaning. Friction → release → verdict in a single arc.",
+    sentenceCap: 3,
+    guidance: "SINGLE CARD: 2-3 sentences. Open with friction/block. Close with action."
+  },
+  "sentence-3": {
+    ruleset: "Apply micro-manual rules 1-5. Three beats: friction pair → release pair → verdict (with pip-timing + action).",
+    sentenceCap: 5,
+    guidance: "3-CARD SPREAD: 5 sentences max. Friction (cards 1-2) → Release (card 3) → Action."
+  },
+  "past-present-future": {
+    ruleset: "Apply micro-manual 1-5. Beat 1: past (friction source). Beat 2: present (release point). Beat 3: future (verdict + timing + action).",
+    sentenceCap: 5,
+    guidance: "PAST-PRESENT-FUTURE: 5 sentences. Past = block/origin. Present = shift/unlock. Future = outcome + deadline + do."
+  },
+  "yes-no-maybe": {
+    ruleset: "Apply micro-manual 1-5. Open with YES/NO/MAYBE based on card 3. Friction → release → verdict with pip-timing + deadline.",
+    sentenceCap: 5,
+    guidance: "YES/NO/MAYBE: 5 sentences. Start sentence 1 with YES/NO/MAYBE. Explain why. Close with action & deadline."
+  },
+  "situation-challenge-advice": {
+    ruleset: "Apply micro-manual 1-5. Situation (friction). Challenge (block). Advice (release/unlock). Show connection between all three. End with imperative action.",
+    sentenceCap: 5,
+    guidance: "SITUATION-CHALLENGE-ADVICE: 5 sentences. Weave cards 1-3 into one narrative. Open with situation tension. Close with 2-3 stacked imperatives."
+  },
+  "mind-body-spirit": {
+    ruleset: "Apply micro-manual 1-5. Two-card pairs only: (Card 1–2): mind-body connection. (Card 2–3): body-spirit flow. Link all three into one arc. Verdict + timing + action.",
+    sentenceCap: 5,
+    guidance: "MIND-BODY-SPIRIT: 5 sentences. Three 2-card pairs weave one story. Close with verdict + deadline + do."
+  },
+  "sentence-5": {
+    ruleset: "Apply micro-manual 1-5. Friction pair → release pair → verdict (card 5). Three story beats. Pip-timing + action.",
+    sentenceCap: 5,
+    guidance: "5-CARD SPREAD: 5 sentences. Friction (1-2) → Release (3-4) → Verdict (5) + action."
+  },
+  "structured-reading": {
+    ruleset: "Apply micro-manual 1-5. Friction (cards 1-2). Release (cards 3-4). Verdict (card 5: outcome + timing + action). Three clear beats.",
+    sentenceCap: 5,
+    guidance: "STRUCTURED READING: 5 sentences, three beats. Link friction → release → verdict in one fluid narrative."
+  },
+  "week-ahead": {
+    ruleset: "Apply micro-manual 1-5. Build ONE narrative scene (not day-by-day recap). Friction pair = opening tension. Release pair(s) = turning points. Last card = verdict + timing. End with specific task (text/call/send/book by DATE).",
+    sentenceCap: 6,
+    guidance: "WEEK-AHEAD: 6 sentences. One continuous story arc, not a timeline. Friction → release(s) → outcome + deadline + action."
+  },
+  "relationship-double-significator": {
+    ruleset: "Apply micro-manual 1-5. Cards 1-2: Two people as friction pair. Card 3: what flows between (release). Cards 4-7: add depth/detail to the narrative. Verdict + action.",
+    sentenceCap: 7,
+    guidance: "RELATIONSHIP (7 cards): 7 sentences. Open with both people (friction). Reveal what flows between (release). Layer in detail. Close with 2-3 imperatives."
+  },
+  "comprehensive": {
+    ruleset: "Apply micro-manual 1-5. Top row (cards 1-3): friction. Middle row (cards 4-6): release. Bottom row (cards 7-9): verdict + timing + action. Three paragraphs, three beats.",
+    sentenceCap: 8,
+    guidance: "COMPREHENSIVE (9 cards): 7-8 sentences, three paragraphs. Friction → Release → Verdict, woven through all 9 cards. Emphasis on metaphor depth."
+  },
+  "grand-tableau": {
+    ruleset: "Apply micro-manual 1-5. FOUR PARAGRAPHS: P1 (friction pair around querent + 3-4 related cards). P2 (release pair + flow cards + breakthrough). P3 (hidden dynamics + under-the-surface truth). P4 (verdict + all 36 cards woven in + final action + deadline). Emphasize metaphor, not card count.",
+    sentenceCap: 12,
+    guidance: "GRAND TABLEAU (36 cards): 9-12 sentences, four paragraphs. P1: friction zone. P2: release/breakthrough. P3: hidden truths (cards 25-30). P4: outcome + weave all 36 + deadline + stack imperatives. Mention >= 25 cards."
+  }
 }
 
 function buildPrompt(request: AIReadingRequest): string {
-  const cardsText = request.cards.map(card => `${card.position + 1}. ${card.name}`).join('\n')
-  
-  // Build card timing context from drawn cards
-  const cardTimingContext = request.cards
-    .map(card => {
-      const timing = CARD_TIMING[card.id]
-      if (timing) {
-        return `${card.name} (${card.id}): timing=${timing.timing}, location=${timing.location}`
-      }
-      return null
-    })
-    .filter(Boolean)
-    .join('\n')
-  
-  const spreadRuleText = SPREAD_RULES[request.spreadId || 'single-card'] || SPREAD_RULES['single-card']
+   const cardsText = request.cards.map(card => `${card.position + 1}. ${card.name}`).join('\n')
+   
+   // Build card timing context from drawn cards
+   const cardTimingContext = request.cards
+     .map(card => {
+       const timing = CARD_TIMING[card.id]
+       if (timing) {
+         return `${card.name} (${card.id}): timing=${timing.timing}, location=${timing.location}`
+       }
+       return null
+     })
+     .filter(Boolean)
+     .join('\n')
+   
+   const spreadRuleObj = SPREAD_RULES[request.spreadId || 'single-card'] || SPREAD_RULES['single-card']
 
-  // Calculate pip-timing for outcome card (Marie-Anne Lenormand rule)
-  const outcomePipCount = request.cards.length > 0 ? getPipCount(request.cards[request.cards.length - 1].id) : 0
-  const outcomeCard = request.cards.length > 0 ? request.cards[request.cards.length - 1].name : 'N/A'
-  const pipTimingHint = `PIP-TIMING INSTRUCTION: Outcome card is ${outcomeCard} (pip count = ${outcomePipCount} days). Round to nearest Friday or month-start. Include in final sentence: "Card ${request.cards.length > 0 ? request.cards[request.cards.length - 1].id : 'N/A'} (${outcomeCard}) = ${outcomePipCount} days → watch for [Friday/date]."`
+   // Calculate pip-timing for outcome card (Marie-Anne Lenormand rule)
+   const outcomePipCount = request.cards.length > 0 ? getPipCount(request.cards[request.cards.length - 1].id) : 0
+   const outcomeCard = request.cards.length > 0 ? request.cards[request.cards.length - 1].name : 'N/A'
+   const pipTimingHint = `PIP-TIMING INSTRUCTION: Outcome card is ${outcomeCard} (pip count = ${outcomePipCount} days). Round to nearest Friday or month-start. Include in final sentence: "Card ${request.cards.length > 0 ? request.cards[request.cards.length - 1].id : 'N/A'} (${outcomeCard}) = ${outcomePipCount} days → watch for [Friday/date]."`
+   
+   const sentenceCapHint = `SENTENCE CAP: ${spreadRuleObj.sentenceCap} sentences maximum. ${spreadRuleObj.guidance}`
 
     return `${LENORMAND_STYLE}
 
 Spread type: ${request.spreadId || 'Single Card'}
-Spread rules: ${spreadRuleText}
+Spread rules: ${spreadRuleObj.ruleset}
+${sentenceCapHint}
 
 Question: ${request.question || "General Reading"}
 
