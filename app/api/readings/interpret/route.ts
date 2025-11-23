@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { getAIReading, AIReadingRequest } from '@/lib/deepseek'
-import { calculateDeadline } from '@/lib/timing'
 
 export async function POST(request: Request) {
   console.log('API /api/readings/interpret called');
