@@ -197,11 +197,11 @@ MARIE ANN LENORMAND PRINCIPLES (non-negotiable):
 - Final sentence MUST be actionable: "Sign before the next full moon" not "The future is bright."
 
 MARIE_ANNE_MICRO_MANUAL (apply to every spread):
-1. TWO-CARD SENTENCES ONLY: Every clause = pair. "Book + Tower = sealed document inside authority." Never single-card meanings.
-2. PIP-TIMING IN PLAIN SIGHT: End with "Card 15 (Bear) = 5 days → watch for Friday." (Court=4, Ace=1, 10=10, cap 14 → Friday/month-start).
-3. THREE-BEAT STORY: Beat 1 (friction pair). Beat 2 (release pair). Beat 3 (verdict pair + pip-timing + action). Cap 5 sentences total.
-4. ACTIONABLE EXIT SENTENCE: Last clause = imperative. "Sign before Friday 5pm," "Update CV this weekend," etc. Not vague.
-5. NO REVERSALS, JARGON, DEVICE LISTS: Use upright keywords only. Say "email" once, not "phone/computer/Wi-Fi."
+1. TWO-CARD NARRATIVE SENTENCES: Build scenes with pairs, not explain them. "A close friend (Dog) ghosts you after an abrupt cut (Coffin)" NOT "Dog + Coffin = friendship ending." Action-driven, not analytical.
+2. PIP-TIMING IN PLAIN SIGHT: End with "Card 21 (Mountain) = 7 days → watch for Thursday evening." (Court=4, Ace=1, 10=10, cap 14 → round to nearest Friday/month-start/real-world milestone).
+3. THREE-BEAT STORY: Beat 1 (opening scene = friction pair). Beat 2 (turning point = release pair). Beat 3 (outcome = verdict pair + pip-timing + action). Cap 5 sentences total.
+4. ACTIONABLE EXIT SENTENCE: Last clause = imperative task. "Send one check-in text before Thursday," "Update your CV by Sunday," etc. Not vague prediction.
+5. NO REVERSALS, JARGON, DEVICE LISTS: Use upright keywords only. Say "text" once, not "call/email/message/contact." Be specific.
 6. RECORD PREDICTION (optional): Store verdict + deadline in DB; flag prompt if it misses twice.
 
 UNIVERSAL 5-STEP STRUCTURE (applies to all spreads):
@@ -246,7 +246,7 @@ const SPREAD_RULES: Record<string, string> = {
   "mind-body-spirit": "Apply micro-manual 1-5. Two-card pairs only: (Card 1–2): mind-body connection. (Card 2–3): body-spirit flow. Verdict + timing + action.",
    "sentence-5": "Apply micro-manual 1-5. Friction pair → release pair → verdict (card 5). Three story beats. Pip-timing + action. 5 sentences max.",
    "structured-reading": "Apply micro-manual 1-5. Friction (cards 1-2). Release (cards 3-4). Verdict (card 5: outcome + timing + action). 5 sentences, three beats.",
-  "week-ahead": "Apply micro-manual 1-5. Each day = 2-card pair. Monday (pair), Tuesday (pair), etc. Weekly verdict + timing + action.",
+  "week-ahead": "Apply micro-manual 1-5. Build ONE narrative scene (not day-by-day recap). Friction pair = opening tension. Release pair(s) = turning points. Last card = verdict + timing. End with specific task (text/call/send/book by DATE). 5 sentences max.",
   "relationship-double-significator": "Apply micro-manual 1-5. Cards 1-2: Two people as friction pair. Card 3: what flows between (release). Cards 4-7: thoughts/feelings detail. Verdict + action.",
    "comprehensive": "Apply micro-manual 1-5. Top row (friction). Middle row (release). Bottom row (verdict + timing + action). Three beats, 5 sentences max.",
     "grand-tableau": "Apply micro-manual 1-5. 3 paragraphs: P1 (friction pair around querent). P2 (release pair that breaks deadlock). P3 (verdict + pip-timing + next action). 5 sentences total."
