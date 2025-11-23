@@ -113,14 +113,21 @@ function NewReadingPageContent() {
           userLocale: navigator.language
         }
 
-        addLog('Sending AI request...')
-        const response = await fetch('/api/readings/interpret', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(aiRequest)
-        })
+         addLog('Sending AI request...')
+         
+         const controller = new AbortController()
+         const timeout = setTimeout(() => controller.abort(), 60000)
+         
+         const response = await fetch('/api/readings/interpret', {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify(aiRequest),
+           signal: controller.signal
+         })
+         
+         clearTimeout(timeout)
 
         addLog(`Response status: ${response.status}`)
 
@@ -139,22 +146,22 @@ function NewReadingPageContent() {
           addLog('State update requested')
         }
 
-      } catch (error) {
-        addLog(`AI Analysis error: ${error}`)
-        let errorMessage = 'AI analysis failed'
-        
-        if (error instanceof Error) {
-          // Provide more helpful error messages
-          if (error.message.includes('timeout')) {
-            errorMessage = 'The interpretation took too long. Please try again.'
-          } else if (error.message.includes('rate')) {
-            errorMessage = 'Too many requests. Please wait a moment and try again.'
-          } else if (error.message.includes('Server error')) {
-            errorMessage = 'Server error. Your reading could not be interpreted. Try again in a moment.'
-          } else {
-            errorMessage = `Unable to generate interpretation: ${error.message}`
-          }
-        }
+       } catch (error) {
+         addLog(`AI Analysis error: ${error}`)
+         let errorMessage = 'AI analysis failed'
+         
+         if (error instanceof Error) {
+           // Provide more helpful error messages
+           if (error.name === 'AbortError' || error.message.includes('timeout')) {
+             errorMessage = 'The interpretation took too long (>60 seconds). Please try again.'
+           } else if (error.message.includes('rate')) {
+             errorMessage = 'Too many requests. Please wait a moment and try again.'
+           } else if (error.message.includes('Server error')) {
+             errorMessage = 'Server error. Your reading could not be interpreted. Try again in a moment.'
+           } else {
+             errorMessage = `Unable to generate interpretation: ${error.message}`
+           }
+         }
         
         if (mountedRef.current) {
           setAiError(errorMessage)
