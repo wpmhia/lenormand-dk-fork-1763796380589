@@ -4,8 +4,8 @@ export const SPREAD_RULES: Record<SpreadId, SpreadRule> = {
   'single-card': {
     template: '1-card',
     sentences: 3,
-    positions: ['opening'],
-    beats: ['tension', 'resolution', 'action'],
+    positions: ['card'],
+    beats: ['card'],
     positionalLabels: ['The Card']
   },
 
