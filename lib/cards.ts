@@ -338,11 +338,11 @@ export const CARDS: Card[] = [
     "id": 28,
     "name": "Man",
     "number": 28,
-    "keywords": ["masculine energy", "leadership", "authority", "action", "logic"],
-    "uprightMeaning": "Masculine energy, leadership, authority, action, determination",
+    "keywords": ["focus person", "you", "querent", "key figure", "central player"],
+    "uprightMeaning": "You, the focus person, or a key male figure in the querent's situation—the center of attention. Gender-neutral: use they/them when identity is unclear.",
 
     "combos": [
-      { "withCardId": 29, "meaning": "Partnership - complementary energies" }
+      { "withCardId": 29, "meaning": "Two people together - a dynamic or partnership" }
     ],
     "imageUrl": null
   },
@@ -350,11 +350,11 @@ export const CARDS: Card[] = [
     "id": 29,
     "name": "Woman",
     "number": 29,
-    "keywords": ["feminine energy", "intuition", "nurturing", "empathy", "emotion"],
-    "uprightMeaning": "Feminine energy, intuition, nurturing, empathy, compassion",
+    "keywords": ["other person", "a key figure", "another player", "the other", "central influence"],
+    "uprightMeaning": "A person or the other key figure in the querent's situation—a central player or influence. Gender-neutral: use they/them when identity is unclear.",
 
     "combos": [
-      { "withCardId": 28, "meaning": "Partnership - complementary energies" }
+      { "withCardId": 28, "meaning": "Two people together - a dynamic or partnership" }
     ],
     "imageUrl": null
   },

@@ -34,8 +34,8 @@ const CARD_TIMING: Record<number, { name: string; timing: string; location?: str
   25: { name: 'Ring', timing: 'cyclical, contracted', location: 'commitment ceremony, bound agreement' },
   26: { name: 'Book', timing: 'hidden, secret', location: 'confidential, documents, education' },
   27: { name: 'Letter', timing: 'written, formal', location: 'inbox, email, official correspondence' },
-  28: { name: 'Gentleman', timing: 'present moment', location: 'masculine energy, specific man' },
-  29: { name: 'Lady', timing: 'present moment', location: 'feminine energy, specific woman' },
+   28: { name: 'Man', timing: 'present moment', location: 'the focus person, center of attention' },
+   29: { name: 'Woman', timing: 'present moment', location: 'the other key person, another player' },
   30: { name: 'Lily', timing: 'peaceful, elder', location: 'home comfort, winter season' },
   31: { name: 'Sun', timing: 'daytime, success', location: 'bright, visible, public domain' },
   32: { name: 'Moon', timing: 'evening, cycles', location: 'night, emotions, recognition' },
@@ -77,6 +77,11 @@ Output rules — follow every bullet without deviation:
 5. End with a concrete when/where tag ("expect this before Friday," "in your group chat," "at the office meeting").
 6. **Use only the people, places, and time-frames the querent names.** Keep roles generic ('a colleague', 'the manager', 'within 5 work-days') if not specified. Never invent names, departments, or backstory.
 7. If the question asks for a specific choice or outcome, directly answer it in your final sentence with timing. Use the cards to justify why.
+8. **GENDER-NEUTRAL READING CONVENTION**: If gender is unknown or not specified:
+   - Man card = "you / the focus person" (use they/them pronouns and neutral language)
+   - Woman card = "a person / the other key person" (use they/them pronouns and neutral language)
+   - Never assume or assign binary gender; adapt to the querent's actual situation as stated.
+   - When Man or Woman appear in readings without a named person, use contextual roles: "the person involved," "the key figure," "a central player."
 
 Card keyword bank:
 Rider = message, news, delivery
@@ -85,7 +90,7 @@ Ship = travel, distance, foreign
 House = home, family, real-estate
 Tree = health, roots, long duration
 Clouds = confusion, uncertainty
-Snake = betrayal, complication, woman with dark hair
+Snake = betrayal, complication, deceptive influence
 Coffin = ending, pause, literal box
 Bouquet = invitation, gift, social joy
 Scythe = sudden cut, accident, surgery
@@ -93,7 +98,7 @@ Whip = repetition, argument, sports
 Birds = conversation, couple, nervous talk
 Child = child, beginner, small start
 Fox = coworker, stealth, self-interest
-Bear = boss, mother, money provider
+Bear = boss, authority figure, money provider
 Stars = night, internet, guidance
 Stork = change, relocation, pregnancy
 Dog = loyal friend, partner, reliable helper
@@ -106,8 +111,8 @@ Heart = love, romance, heart-shaped object
 Ring = contract, cycle, engagement
 Book = secret, education, documents
 Letter = written text, email, paperwork
-Man = male querent or significant man
-Woman = female querent or significant woman
+Man = you/the focus person (center of attention or the querent themselves)
+Woman = a person/the other key person (another central player or influence)
 Lily = peace, elder, winter
 Sun = success, daytime, heat
 Moon = recognition, evening, emotions
