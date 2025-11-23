@@ -18,7 +18,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Eye, AlertTriangle } from 'lucide-react'
 import { getCards, getCardById, drawCards } from '@/lib/data'
-import { CORE_SPREADS, ADVANCED_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
+import { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 
 function NewReadingPageContent() {
   const router = useRouter()
