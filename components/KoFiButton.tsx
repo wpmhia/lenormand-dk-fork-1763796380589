@@ -13,14 +13,17 @@ declare global {
 
 export function KoFiButton() {
   useEffect(() => {
-    if (window.kofiwidget2) {
-      window.kofiwidget2.init('Support a free future', '#a17a45', 'Y8Y81NVDEK')
-      window.kofiwidget2.draw()
+    const drawWidget = () => {
+      if (window.kofiwidget2) {
+        window.kofiwidget2.draw()
+      }
     }
+
+    setTimeout(drawWidget, 100)
   }, [])
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center py-4">
       {/* Ko-fi widget renders here */}
     </div>
   )

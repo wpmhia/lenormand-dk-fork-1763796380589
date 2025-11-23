@@ -148,6 +148,17 @@ export default function RootLayout({
         </ThemeProvider>
         <StructuredData />
         <FAQSchema />
+        <Script
+          id="kofi-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof kofiwidget2 !== 'undefined') {
+                kofiwidget2.init('Support a free future', '#a17a45', 'Y8Y81NVDEK');
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
