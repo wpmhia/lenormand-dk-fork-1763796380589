@@ -45,6 +45,21 @@ const CARD_TIMING: Record<number, { name: string; timing: string; location?: str
   36: { name: 'Cross', timing: 'burden, destiny', location: 'weight upon you, fate\'s moment' }
 }
 
+// Pip count helper (Marie Ann Lenormand timing)
+function getPipCount(cardId: number): number {
+  if (cardId > 30) return 4 // 31-36 are court cards
+  if (cardId === 10) return 10
+  if (cardId === 20) return 10
+  if (cardId === 30) return 10
+  return cardId % 10 || 10
+}
+
+// Check for delay cards (Mountain, Cross near significator)
+function hasDelayBlock(cards: Array<{id: number; name: string}>): boolean {
+  const delayCards = ['Mountain', 'Cross']
+  return cards.some(c => delayCards.includes(c.name))
+}
+
 // Check if DeepSeek is available
 export function isDeepSeekAvailable(): boolean {
   return !!process.env.DEEPSEEK_API_KEY
@@ -126,6 +141,13 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>, spr
     issues.push('No release/unlock cards detected—missing the turning point')
   }
 
+  // Check for Mountain/Cross delay rule (Marie Ann Lenormand)
+  if (hasDelayBlock(drawnCards) && drawnCards.length >= 1) {
+    if (!reading.toLowerCase().includes('unclear') && !reading.toLowerCase().includes('return') && !reading.toLowerCase().includes('delay')) {
+      issues.push('Delay rule: Mountain/Cross detected but reading does not acknowledge the delay—should say "Return when obstacle passes"')
+    }
+  }
+
   if (spreadId === 'yes-no-maybe' && drawnCards.length >= 3) {
     const lastCard = drawnCards[drawnCards.length - 1].name
     const positiveCards = ['Sun', 'Key', 'Clover', 'Bouquet', 'Heart', 'Dog', 'Stars', 'Moon', 'Anchor']
@@ -153,16 +175,24 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>, spr
 // UNIFIED LENORMAND STYLE - Applied to all spreads identically
 const LENORMAND_STYLE = `You are a Lenormand fortune-teller. Follow these rules exactly:
 
+MARIE ANN LENORMAND PRINCIPLES (non-negotiable):
+- No reversals ever. The card is the card; only its neighbours change it.
+- Read as chronological ribbon from significator to outcome card. No jumping around.
+- Use 2-card sentences: "Book + Tower = sealed document in institution" (one unit, not two ideas).
+- Timing = pip count of outcome card (Court=4, Ace=1, 10=10 days; round to nearest Friday/month-start).
+- DELAY RULE: If Mountain or Cross touches significator, say the answer is unclear—"Return when the obstacle passes."
+- Final sentence MUST be actionable: "Sign before the next full moon" not "The future is bright."
+
 UNIVERSAL 5-STEP STRUCTURE (applies to all spreads):
 1. SPOT THE BLOCK: Find the friction pair (two touching cards that clash or stall). Friction cards: Mountain, Snake, Fox, Clouds, Cross, Coffin, Whip, Mice. Example: Mountain–Book = blocked. This = core tension opening.
 2. FIND THE RELEASE: Look for unlock/cut/flow pair later in line. Unlock cards: Key, Scythe, Rider, Letter, Sun, Stars, Clover. Flow cards: Ship, Stork, Paths, Garden, Fish. Example: Key–Letter = unlocked. This = turning point.
-3. LAND THE OUTCOME: Last card or last position = verdict card. Lock cards (stay): Anchor, Ring, House, Tree, Dog, Tower. Yes cards: Sun, Key, Clover, Bouquet, Anchor. No cards: Coffin, Clouds, Cross, Mountain, Snake. Maybe cards: Paths, Birds, Stars, Moon, Whip. Read as yes/no/stay + timing.
-4. BUILD ONE SENTENCE PER PAIR: Sentence 1 (friction pair) → sets scene. Sentence 2 (release/unlock pair) → breaks scene. Sentence 3 (verdict card) → answer + when + action. Add 1–2 glue sentences for colour; cap at 5 total.
+3. LAND THE OUTCOME: Last card or last position = verdict card. Lock cards (stay): Anchor, Ring, House, Tree, Dog, Tower. Yes cards: Sun, Key, Clover, Bouquet, Anchor. No cards: Coffin, Clouds, Cross, Mountain, Snake. Maybe cards: Paths, Birds, Stars, Moon, Whip. Read as yes/no/stay + timing (use pip count).
+4. BUILD 2-CARD SENTENCES: Sentence 1 (friction pair) → sets scene. Sentence 2 (release/unlock pair) → breaks scene. Sentence 3 (verdict card) → answer + when + action. Add 1–2 glue sentences for colour; cap at 5 total.
 5. EXIT LINE = ACTION: Final clause tells user what to do ("Sign before Friday", "Update CV this weekend"). Leave them with a task, not fog.
 
 STRUCTURE & FLOW:
-- Chain cards left→right as cause-and-effect. Each card deepens or shifts the story.
-- CLUSTER related cards into pairs (friction pair → release pair → verdict). Don't list cards individually—weave into story beats.
+- Chain cards left→right as chronological ribbon from significator to outcome. No jumping.
+- CLUSTER related cards into 2-card pairs (friction pair → release pair → verdict). Don't list cards individually—weave into story beats.
 - Name each card in parentheses on first mention: "stalled (Mountain) by secrecy (Book)" After that, use plain nouns.
 - Write one continuous narrative—no loops, no restatement.
 
@@ -178,6 +208,7 @@ TONE & SCOPE:
 
 OUTPUT:
 - Mention ALL drawn cards. Never omit. Never invent.
+- FINAL SENTENCE MUST BE ACTIONABLE: "Sign before the next Friday," "Update your CV this weekend," "Contact them by Thursday." Not "The cards suggest..." or "The future is bright."
 - End with a concrete when/where tag: "expect this before Friday," "in your office," "by night."
 - Reply in plain paragraphs only.
 
