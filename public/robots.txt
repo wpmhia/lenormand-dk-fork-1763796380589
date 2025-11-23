@@ -3,19 +3,40 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /.next/
+Disallow: /env-check
 
-# Specific rules for Googlebot
+# ChatGPT and OpenAI crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /env-check
+
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+Disallow: /env-check
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /env-check
+
+# Google crawlers
 User-agent: Googlebot
 Allow: /
 Disallow: /api/
+Disallow: /env-check
 
-# Specific rules for Bingbot
+# Bing crawlers
 User-agent: Bingbot
 Allow: /
 Disallow: /api/
+Disallow: /env-check
 
-# Crawl delay
+# Respectful crawl rate
 Crawl-delay: 1
+Request-rate: 1/1s
 
-# Sitemap location
+# Sitemap locations
 Sitemap: https://lenormand-intelligence.com/sitemap.xml
+Sitemap: https://lenormand-intelligence.vercel.app/sitemap.xml
