@@ -21,6 +21,7 @@ export interface AIReadingRequest {
 
 export interface AIReadingResponse {
   reading: string
+  practicalTranslation?: string
   deadline?: string
   task?: string
   timingDays?: number
@@ -134,39 +135,47 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       }
     }
 
-    const trimmedContent = content.trim()
+     const trimmedContent = content.trim()
 
-    // Validate that all cards are referenced with parentheses format
-    const validation = MarieAnneAgent.validateCardReferences(trimmedContent, cards, cards.length)
-    
-     if (!validation.isValid) {
-       console.warn('Reading validation issues:', validation.issues)
-       // If validation fails for spreads >= 9 cards, use agent template
-       if (cards.length >= 9) {
-         console.warn('Using agent template due to validation failure')
-         const templateResponse = {
-           reading: agentResponse.story,
-           deadline: agentResponse.deadline,
-           task: agentResponse.task,
-           timingDays: agentResponse.timingDays
-         }
-         cacheReading(request, templateResponse)
-         const duration = Date.now() - startTime
-         readingHistory.addReading(request, templateResponse, duration)
-         return templateResponse
-       }
-     }
+     // Split prophecy and practical translation
+     const prophecyMatch = trimmedContent.match(/\[PROPHECY\]\s*([\s\S]*?)(?=\[PRACTICAL TRANSLATION\]|$)/i)
+     const translationMatch = trimmedContent.match(/\[PRACTICAL TRANSLATION\]\s*([\s\S]*?)$/i)
+     
+     const prophecy = prophecyMatch ? prophecyMatch[1].trim() : trimmedContent
+     const practicalTranslation = translationMatch ? translationMatch[1].trim() : undefined
 
-      const aiResponse = {
-        reading: trimmedContent,
-        deadline: agentResponse.deadline,
-        task: agentResponse.task,
-        timingDays: agentResponse.timingDays
+     // Validate that all cards are referenced with parentheses format (only in prophecy)
+     const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
+     
+      if (!validation.isValid) {
+        console.warn('Reading validation issues:', validation.issues)
+        // If validation fails for spreads >= 9 cards, use agent template
+        if (cards.length >= 9) {
+          console.warn('Using agent template due to validation failure')
+          const templateResponse = {
+            reading: agentResponse.story,
+            deadline: agentResponse.deadline,
+            task: agentResponse.task,
+            timingDays: agentResponse.timingDays
+          }
+          cacheReading(request, templateResponse)
+          const duration = Date.now() - startTime
+          readingHistory.addReading(request, templateResponse, duration)
+          return templateResponse
+        }
       }
-       cacheReading(request, aiResponse)
-       const duration = Date.now() - startTime
-       readingHistory.addReading(request, aiResponse, duration)
-       return aiResponse
+
+       const aiResponse = {
+         reading: prophecy,
+         practicalTranslation: practicalTranslation,
+         deadline: agentResponse.deadline,
+         task: agentResponse.task,
+         timingDays: agentResponse.timingDays
+       }
+        cacheReading(request, aiResponse)
+        const duration = Date.now() - startTime
+        readingHistory.addReading(request, aiResponse, duration)
+        return aiResponse
     } catch (error) {
      console.error('AI reading error:', error)
      return createFallbackReading('Error generating reading')
@@ -222,7 +231,20 @@ THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 - Direct. Symbolic. Brutal. Deadline-driven. Action-commanded.
 - No explanations. No backtracking. Pure prophecy.
 
-NOW WRITE THIS PROPHECY (exactly ${spread.sentences} sentences, pure Marie-Anne, no preamble, no explanations):
+AFTER THE PROPHECY, GENERATE A PRACTICAL TRANSLATION:
+- Break down each card's meaning
+- Explain the card combination's significance
+- Translate the prophecy into plain language advice
+- End with a "Bottom line" that summarizes the action
+
+FORMAT YOUR RESPONSE AS:
+[PROPHECY]
+[Your prophecy here - exactly ${spread.sentences} sentences]
+
+[PRACTICAL TRANSLATION]
+[Your plain language explanation here]
+
+NOW WRITE THIS READING (prophecy + practical translation, no preamble):
 `
 }
 
