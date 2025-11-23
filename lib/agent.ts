@@ -11,9 +11,9 @@ const TEMPLATE_5_CARD = `Your job search stalls (Mountain + Fox). Wednesday flip
 
 const TEMPLATE_7_CARD = `Monday brings tension (Whip). By Wednesday, a conversation breaks the ice (Birds + Key). Thursday through Friday, the path clears (Sun + Rider). You're moving forward by the weekend. Text them Thursday morning—don't wait. Confirm the next step by Friday evening.`
 
-const TEMPLATE_9_CARD = `The hospital's rigid walls watch this conflict grow in shadows, while a man's position guides the tension beneath the surface and stars illuminate hidden truths. His role feels trapped between duty and the weight of the mountain—this dispute feels sealed in a coffin. But a letter is coming that shifts everything with small relief, like clover breaking through concrete, slowly eating away the tension through erosion. By Friday, the document lands with unexpected blessings and clarity arrives unexpectedly. Read it carefully and speak plainly about your path. Then send your own written position before Friday evening to settle this matter. Choose whether to chip away at the wall or walk around it. Write your decision in the staff log. Confirm your next step before Friday evening.`
+const TEMPLATE_9_CARD = `A fog of confusion (Clouds) has settled over your hospital chats (Birds), anchoring you to the drama (Anchor). The gossip garden (Garden) is now a dead-end coffin (Coffin) where the cunning fox (Fox) digs traps under the tower's watchful eye (Tower). A sudden change (Stork) opens the conflict with Tina; you're at a crossroads (Paths) by Friday. Choose your path: stay and weather the storm or fly to calmer skies. Write your decision in the staff log before Friday evening.`
 
-const TEMPLATE_36_CARD = `P1: The tableau opens with tension—confusion and clouds settle while rapid messages from the rider travel to a loyal dog bearing a sudden scythe cut. The weight of the cross builds slowly through erosion and cycles of doubt like the moon rising and falling. Hearts ache and rings bind what cannot move. P2: The breakthrough comes through institutional change at the tower, financial flow from fish, and bright clarity from the sun. A gift arrives from the bouquet unexpectedly; the key unlocks what was stuck. Paths diverge and the garden calls. P3: Hidden beneath it all sits the tree with deep roots, the weight of the anchor pressing down, the cycles repeating, and guides like stars showing the way forward. An anchor offers stability; a letter arrives with answers. The whip cracks and birds communicate urgently. P4: By Friday you choose your path: sign the new agreement with the ring or return via the stork to solid ground like a house or lilies of peace. The child begins again or the fox finds strategy. Send your written position before Friday evening.`
+const TEMPLATE_36_CARD = `P1: The tableau opens with tension—(Clouds) of confusion, (Rider) messages, a loyal (Dog), a sudden (Scythe). The weight of the (Cross) builds slowly through (Mice) erosion and cycles of (Moon) doubt. Hearts (Heart) ache and (Ring) binds what cannot move. P2: The breakthrough comes through institutional (Tower) change, (Fish) financial flow, and bright (Sun) clarity. A (Bouquet) gift arrives unexpectedly; the (Key) unlocks what was stuck. (Paths) diverge and (Garden) calls. P3: Hidden beneath it all sits the (Tree) with deep roots, the (Anchor) weight pressing down, the (Whip) cracks and (Birds) communicate urgently. (Stars) guide the way forward. A (Letter) arrives with answers. (Lily) peace settles. P4: By Friday you choose your path: sign the new agreement (Ring) or return (Stork) to solid ground (House). (Child) begins again or (Fox) finds strategy. (Lily) offers peace. Send your written position before Friday evening.`
 
 export class MarieAnneAgent {
   static tellStory(request: AgentRequest): AgentResponse {
@@ -66,7 +66,8 @@ SPREAD: ${spread.template.toUpperCase()} (${cards.length} cards)
 INSTRUCTIONS:
 - Write EXACTLY ${spread.sentences} sentences.
 - Each sentence chains cards into ONE story, no explanations.
-- Weave all card names naturally into narrative—each card mentioned exactly once.
+- Include card name in parentheses exactly once when first introduced: (CardName).
+- Allow cards to be mentioned again without parentheses in natural narrative flow.
 - Final sentence = YES/NO/STAY + "by [Day] evening" + imperative task.
 - Use vivid metaphor (wall, weight, crack, icy, door, light, shadow).
 - Brisk, deadline-first, action-last tone.
@@ -101,15 +102,15 @@ NOW WRITE THE READING (exactly ${spread.sentences} sentences):
     }
 
     cards.forEach(card => {
-      const wordBoundaryPattern = new RegExp(`\\b${card.name}\\b`, 'gi')
-      const matches = story.match(wordBoundaryPattern)
+      const parenthesesPattern = new RegExp(`\\(${card.name}\\)`, 'g')
+      const matches = story.match(parenthesesPattern)
       const count = matches?.length || 0
 
       if (count === 0) {
         missingCards.push(card.name)
-        issues.push(`Card "${card.name}" not mentioned in narrative`)
+        issues.push(`Card "${card.name}" not referenced with parentheses`)
       } else if (count > 1) {
-        issues.push(`Card "${card.name}" mentioned ${count} times (should be exactly 1)`)
+        issues.push(`Card "${card.name}" referenced ${count} times (should be exactly 1)`)
       }
     })
 

@@ -304,29 +304,30 @@ describe('SPREAD_RULES', () => {
 })
 
 describe('Card Reference Format', () => {
-  it('should mention all cards naturally in 9-card spread', () => {
+  it('should reference cards with parentheses on first mention in 9-card spread', () => {
     const nineCardNames = ['Clouds', 'Birds', 'Anchor', 'Garden', 'Coffin', 'Fox', 'Tower', 'Stork', 'Paths']
     
-    const cards: LenormandCard[] = nineCardNames.map((name, i) => ({
-      id: i + 1,
-      name
-    }))
-
-    const request = {
-      cards,
-      spread: SPREAD_RULES['comprehensive'],
-      question: 'Test card references'
-    }
-
-    const response = MarieAnneAgent.tellStory(request)
-    
     nineCardNames.forEach(cardName => {
-      const wordBoundaryPattern = new RegExp(`\\b${cardName}\\b`, 'i')
-      expect(response.story).toMatch(wordBoundaryPattern)
+      const cards: LenormandCard[] = nineCardNames.map((name, i) => ({
+        id: i + 1,
+        name
+      }))
+
+      const request = {
+        cards,
+        spread: SPREAD_RULES['comprehensive'],
+        question: 'Test card references'
+      }
+
+      const response = MarieAnneAgent.tellStory(request)
+      
+      const parenthesesMatches = response.story.match(new RegExp(`\\(${cardName}\\)`, 'g'))
+      expect(parenthesesMatches).toBeDefined()
+      expect(parenthesesMatches?.length).toBeGreaterThanOrEqual(1)
     })
   })
 
-  it('should validate card references for 9-card spread with natural mentions', () => {
+  it('should validate card references for 9-card spread', () => {
     const cards: LenormandCard[] = [
       { id: 6, name: 'Clouds' },
       { id: 12, name: 'Birds' },
@@ -339,9 +340,9 @@ describe('Card Reference Format', () => {
       { id: 22, name: 'Paths' }
     ]
 
-    const mockStory = `A fog of confusion clouds has settled over your chats with birds, anchoring you to drama in the anchor. 
-    The garden is now a coffin where the fox digs under the tower. 
-    A change by the stork opens conflict; you're at crossroads paths by Friday.`
+    const mockStory = `A fog of confusion (Clouds) has settled over your chats (Birds), anchoring you to drama (Anchor). 
+    The garden (Garden) is now a coffin (Coffin) where the fox (Fox) digs under the tower (Tower). 
+    A change (Stork) opens conflict; you're at crossroads (Paths) by Friday.`
 
     const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 9)
     
@@ -349,27 +350,27 @@ describe('Card Reference Format', () => {
     expect(validation.issues.length).toBe(0)
   })
 
-  it('should catch missing card references in 9-card spread', () => {
+  it('should catch missing card references', () => {
     const cards: LenormandCard[] = [
       { id: 6, name: 'Clouds' },
       { id: 12, name: 'Birds' },
       { id: 35, name: 'Anchor' }
     ]
 
-    const mockStory = `A fog of confusion has settled with clouds. No chirping sounds here. The anchor holds firm.`
+    const mockStory = `A fog of confusion (Clouds) has settled. No mention of the birds here. Anchoring to drama (Anchor).`
 
     const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 9)
     
     expect(validation.missingCards).toContain('Birds')
   })
 
-  it('should catch duplicate card mentions in 9-card spread', () => {
+  it('should catch duplicate card references', () => {
     const cards: LenormandCard[] = [
       { id: 6, name: 'Clouds' },
       { id: 12, name: 'Birds' }
     ]
 
-    const mockStory = `A fog clouds and confusion clouds everywhere. Birds sing and birds fly.`
+    const mockStory = `A fog (Clouds) and confusion (Clouds) everywhere. Birds (Birds) sing and (Birds) fly.`
 
     const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 9)
     
@@ -383,7 +384,7 @@ describe('Card Reference Format', () => {
       { id: 21, name: 'Mountain' }
     ]
 
-    const mockStory = `A dog and a coffin and a mountain. No references needed.`
+    const mockStory = `A dog and a coffin and a mountain. No parentheses needed.`
 
     const validation = MarieAnneAgent.validateCardReferences(mockStory, cards, 3)
     
