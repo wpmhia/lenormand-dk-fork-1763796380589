@@ -71,12 +71,16 @@ export function Deck({
     setDeck(remainingDeck)
     setDrawnCards(newDrawnCards)
 
-    setTimeout(() => {
-      setIsDrawing(false)
-      if (onDraw) {
-        onDraw(newDrawnCards)
-      }
-    }, 1000)
+     setTimeout(() => {
+       setIsDrawing(false)
+       console.log('Deck: About to call onDraw with', newDrawnCards.length, 'cards')
+       if (onDraw) {
+         console.log('Deck: Calling onDraw callback')
+         onDraw(newDrawnCards)
+       } else {
+         console.log('Deck: onDraw is not defined!')
+       }
+     }, 1000)
   }
 
   const reset = () => {

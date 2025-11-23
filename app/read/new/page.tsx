@@ -219,43 +219,47 @@ function NewReadingPageContent() {
      return readingCards
    }, [physicalCards])
 
-   const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
-     try {
-       let readingCards: ReadingCard[];
+    const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
+      try {
+        console.log('handleDraw called with:', cards.length, 'cards')
+        let readingCards: ReadingCard[];
 
-       // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
-       if (Array.isArray(cards) && cards.length > 0) {
-         if ('position' in cards[0]) {
-           // It's ReadingCard[]
-           readingCards = cards as ReadingCard[];
-         } else {
-           // It's CardType[], convert to ReadingCard[]
-           readingCards = (cards as CardType[]).map((card, index) => ({
-             id: card.id,
-             position: index
-           }));
-         }
-       } else {
-         readingCards = [];
-       }
+        // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
+        if (Array.isArray(cards) && cards.length > 0) {
+          if ('position' in cards[0]) {
+            // It's ReadingCard[]
+            readingCards = cards as ReadingCard[];
+          } else {
+            // It's CardType[], convert to ReadingCard[]
+            readingCards = (cards as CardType[]).map((card, index) => ({
+              id: card.id,
+              position: index
+            }));
+          }
+        } else {
+          readingCards = [];
+        }
 
-       if (readingCards.length === 0) {
-         setError(`No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`)
-         return
-       }
+        console.log('Converted to readingCards:', readingCards.length)
 
-       if (mountedRef.current) {
-         setDrawnCards(readingCards)
-         setStep('results')
-       }
-     } catch (error) {
-       console.error('Error in handleDraw:', error)
-       if (mountedRef.current) {
-         const errorMsg = error instanceof Error ? error.message : 'An error occurred while processing your cards'
-         setError(`Unable to process cards: ${errorMsg}. Try refreshing the page.`)
-       }
-     }
-   }, [])
+        if (readingCards.length === 0) {
+          setError(`No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`)
+          return
+        }
+
+        console.log('Setting drawnCards and step to results')
+        if (mountedRef.current) {
+          setDrawnCards(readingCards)
+          setStep('results')
+        }
+      } catch (error) {
+        console.error('Error in handleDraw:', error)
+        if (mountedRef.current) {
+          const errorMsg = error instanceof Error ? error.message : 'An error occurred while processing your cards'
+          setError(`Unable to process cards: ${errorMsg}. Try refreshing the page.`)
+        }
+      }
+    }, [])
   // Parse physical cards when input changes
   useEffect(() => {
     if (path === 'physical' && physicalCards) {
@@ -653,17 +657,21 @@ function NewReadingPageContent() {
             </motion.div>
           )}
 
-          {step === 'results' && drawnCards.length > 0 && (
-            <motion.div
-              key="results"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="space-y-6"
-            >
-              {/* Show the drawn cards */}
-              <ReadingViewer
+           {step === 'results' && drawnCards.length > 0 && (
+             <motion.div
+               key="results"
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -20 }}
+               transition={{ duration: 0.3, ease: "easeOut" }}
+               className="space-y-6"
+             >
+               <div className="text-center text-sm text-muted-foreground mb-4">
+                 ✓ Results section rendering (step={step}, cards={drawnCards.length}, allCards={allCards.length})
+               </div>
+               
+               {/* Show the drawn cards */}
+               <ReadingViewer
                 reading={{
                   id: 'temp',
                   title: 'Your Reading',
