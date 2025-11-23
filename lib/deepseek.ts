@@ -232,19 +232,7 @@ STRUCTURE:
 PROPHECY EXAMPLE (Your Standard):
 "A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain's icy shadow cracks under the bear's relentless strength, revealing a door where there was only wall. YES by Thursday evening—shoulder the weight and push the door open. If you hesitate, the bear moves on and the door seals shut forever."
 
-THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
-- Direct. Symbolic. Brutal. Deadline-driven. Action-commanded.
-- No explanations. No backtracking. Pure prophecy.
-
-NOW WRITE THIS PROPHECY (exactly ${spread.sentences} sentences, then add a practical translation):
-
-IMPORTANT: In the Practical Translation section, do NOT mention the deadline (Friday/Thursday/etc).
-The deadline is part of the prophecy's command above. The translation focuses only on:
-- What each card means
-- What the card combination reveals
-- What action or shift is happening (without repeating the deadline)
-
-This keeps the translation serious and grounded in meaning, not urgent timing.
+THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:\n- Direct. Symbolic. Brutal. Deadline-driven (only when cards show it). Action-commanded.\n- No explanations. No backtracking. Pure prophecy.\n- IMPORTANT: Only include a deadline (\"by Friday evening\", etc.) if the cards genuinely show timing.\n- If the cards don't indicate timing, END with YES/NO/STAY and the action—no artificial deadline.\n\nNOW WRITE THIS PROPHECY (exactly ${spread.sentences} sentences, then add a practical translation):\n\nREMINDER: In the Practical Translation section, do NOT mention any deadline.\nThe translation focuses only on:\n- What each card means\n- What the card combination reveals  \n- What action or shift is happening\n\nThis keeps the translation serious and grounded in meaning, not forced timing.
 `
 }
 

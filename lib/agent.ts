@@ -17,35 +17,35 @@ const TEMPLATE_36_CARD = `P1: The tableau opens with tension—(Clouds) of confu
 
 export class MarieAnneAgent {
    static tellStory(request: AgentRequest): AgentResponse {
-     const { cards, spread, question } = request
+      const { cards, spread, question } = request
 
-     // Generate story directly from cards
-     const story = this.generateStory(cards, spread, question)
-     
-     const outcomeCard = cards[cards.length - 1]
-     const outcomeCardPip = this.getPipCount(outcomeCard.id)
-     const deadline = pipToDeadline(outcomeCardPip)
-     const task = makeTask(spread.beats[spread.beats.length - 1], cards)
+      // Generate story directly from cards
+      const story = this.generateStory(cards, spread, question)
+      
+      const outcomeCard = cards[cards.length - 1]
+      const outcomeCardPip = this.getPipCount(outcomeCard.id)
+      // Deadline is now optional - DeepSeek will decide if cards warrant timing
+      const task = makeTask(spread.beats[spread.beats.length - 1], cards)
 
-     return {
-       story,
-       deadline: deadline.text,
-       task: task,
-       timingDays: outcomeCardPip
-     }
-   }
+      return {
+        story,
+        deadline: undefined,
+        task: task,
+        timingDays: undefined
+      }
+    }
    
-   private static generateStory(cards: any[], spread: any, question: string): string {
-     // For 3-card (the default spread), create a direct narrative
-     if (cards.length === 3) {
-       const [card1, card2, card3] = cards
-       return `${card1.name} opens the matter, but ${card2.name} complicates it. ${card3.name} shows the outcome. The path forward is clear—act decisively by Friday evening. Do what must be done.`
-     }
-     
-     // For other spreads, return the template as exemplar
-     const template = this.getTemplate(spread.template)
-     return template
-   }
+    private static generateStory(cards: any[], spread: any, question: string): string {
+      // For 3-card (the default spread), create a direct narrative
+      if (cards.length === 3) {
+        const [card1, card2, card3] = cards
+        return `${card1.name} opens the matter, but ${card2.name} complicates it. ${card3.name} shows the outcome. The path forward is clear—act decisively. Do what must be done.`
+      }
+      
+      // For other spreads, return the template as exemplar
+      const template = this.getTemplate(spread.template)
+      return template
+    }
 
   private static getTemplate(templateType: string): string {
     const templates: Record<string, string> = {
