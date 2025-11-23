@@ -15,7 +15,7 @@ export function Footer() {
           <div className="space-y-2">
             <h4 className="!text-sm font-medium text-foreground/60">About</h4>
             <p className="text-xs leading-relaxed text-muted-foreground/80">
-              AI-enhanced Lenormand readings.
+              Explore the wisdom of Lenormand cards with AI-enhanced interpretations. Discover timeless divination traditions combined with modern technology.
             </p>
           </div>
 
