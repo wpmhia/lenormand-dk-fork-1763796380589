@@ -237,6 +237,14 @@ THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 - No explanations. No backtracking. Pure prophecy.
 
 NOW WRITE THIS PROPHECY (exactly ${spread.sentences} sentences, then add a practical translation):
+
+IMPORTANT: In the Practical Translation section, do NOT mention the deadline (Friday/Thursday/etc).
+The deadline is part of the prophecy's command above. The translation focuses only on:
+- What each card means
+- What the card combination reveals
+- What action or shift is happening (without repeating the deadline)
+
+This keeps the translation serious and grounded in meaning, not urgent timing.
 `
 }
 
