@@ -114,54 +114,82 @@ export function AIReadingDisplay({
      )
    }
 
-  if (!displayContent) {
-    return null
-  }
+   if (!displayContent) {
+     return null
+   }
 
-     return (
-       <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500">
-         <Card className="border-border bg-card">
-           <CardHeader className="border-b border-border">
-             <div className="flex items-center justify-between gap-2">
-               <CardTitle className="flex items-center gap-2">
-                 <Sparkles className="h-5 w-5 text-primary" />
-                 AI Interpretation
-               </CardTitle>
-               <Badge variant="secondary" className="flex items-center gap-1">
-                 <CheckCircle2 className="h-3 w-3" />
-                 Complete
-               </Badge>
-             </div>
-           </CardHeader>
-          <CardContent className="space-y-6 p-8">
-            <div className="text-foreground">
-              <ReactMarkdown
-                components={{
-                  h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
-                  h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
-                  h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
-                  p: ({node, ...props}) => <p className="mb-4" {...props} />,
-                  ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                  ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                  li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                  blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
-                  strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                  em: ({node, ...props}) => <em className="italic" {...props} />,
-                  hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
-                }}
-              >
-                {displayContent}
-              </ReactMarkdown>
-              {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
-            </div>
-            
-            {spreadId && (
-              <div className="border-t border-border pt-4 text-sm text-muted-foreground">
-                <span>Spread: {spreadId}</span>
+      return (
+        <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
+          {/* Classic Lenormand Oracle Reading */}
+          <Card className="border-border bg-card">
+            <CardHeader className="border-b border-border">
+              <div className="flex items-center justify-between gap-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Classic Lenormand Oracle Reading
+                </CardTitle>
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Complete
+                </Badge>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    )
+            </CardHeader>
+           <CardContent className="space-y-6 p-8">
+             <div className="text-foreground">
+               <ReactMarkdown
+                 components={{
+                   h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                   h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                   h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                   p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                   ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                   ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                   li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                   blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                   strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                   em: ({node, ...props}) => <em className="italic" {...props} />,
+                   hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                 }}
+               >
+                 {displayContent}
+               </ReactMarkdown>
+               {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
+             </div>
+           </CardContent>
+         </Card>
+
+         {/* Practical Translation */}
+         {aiReading?.practicalTranslation && (
+           <Card className="border-border bg-card/50">
+             <CardHeader className="border-b border-border">
+               <CardTitle className="flex items-center gap-2">
+                 <CheckCircle2 className="h-5 w-5 text-primary" />
+                 Practical Translation
+               </CardTitle>
+             </CardHeader>
+             <CardContent className="space-y-6 p-8">
+               <div className="text-foreground">
+                 <ReactMarkdown
+                   components={{
+                     h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                     h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                     h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                     p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                     ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                     ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                     li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                     blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                     strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                     em: ({node, ...props}) => <em className="italic" {...props} />,
+                     hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                   }}
+                 >
+                   {aiReading.practicalTranslation}
+                 </ReactMarkdown>
+               </div>
+             </CardContent>
+           </Card>
+         )}
+       </div>
+     )
 }
