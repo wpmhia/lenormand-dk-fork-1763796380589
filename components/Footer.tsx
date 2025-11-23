@@ -65,10 +65,13 @@ export function Footer() {
         </div>
 
         {/* Ko-Fi Support Button */}
-        <div className="flex justify-center py-4 border-t border-border/50">
-          <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer'>
-            <img height='36' style={{border: '0px', height: '36px'}} src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
-          </a>
+        <div className="border-t border-border/50 py-6">
+          <div className="flex flex-col items-center gap-2 mb-4">
+            <p className="text-xs font-medium text-muted-foreground">Love this tool?</p>
+            <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-block transition-transform hover:scale-105 active:scale-95">
+              <img height='36' style={{border: '0px', height: '36px'}} src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
+            </a>
+          </div>
         </div>
 
         {/* Bottom Bar */}
