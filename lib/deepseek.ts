@@ -137,12 +137,17 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
 
      const trimmedContent = content.trim()
 
-     // Split prophecy and practical translation
-     const prophecyMatch = trimmedContent.match(/\[PROPHECY\]\s*([\s\S]*?)(?=\[PRACTICAL TRANSLATION\]|$)/i)
-     const translationMatch = trimmedContent.match(/\[PRACTICAL TRANSLATION\]\s*([\s\S]*?)$/i)
+     // DeepSeek returns prophecy followed by practical translation separated by natural break
+     // Look for common dividers or assume first 2-3 paragraphs are prophecy, rest is translation
+     const parts = trimmedContent.split('\n\n')
+     let prophecy = trimmedContent
+     let practicalTranslation: string | undefined
      
-     const prophecy = prophecyMatch ? prophecyMatch[1].trim() : trimmedContent
-     const practicalTranslation = translationMatch ? translationMatch[1].trim() : undefined
+     // If response is long enough, split it
+     if (parts.length > 2) {
+       prophecy = parts.slice(0, Math.ceil(parts.length / 2)).join('\n\n')
+       practicalTranslation = parts.slice(Math.ceil(parts.length / 2)).join('\n\n')
+     }
 
      // Validate that all cards are referenced with parentheses format (only in prophecy)
      const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
@@ -231,20 +236,7 @@ THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 - Direct. Symbolic. Brutal. Deadline-driven. Action-commanded.
 - No explanations. No backtracking. Pure prophecy.
 
-AFTER THE PROPHECY, GENERATE A PRACTICAL TRANSLATION:
-- Break down each card's meaning
-- Explain the card combination's significance
-- Translate the prophecy into plain language advice
-- End with a "Bottom line" that summarizes the action
-
-FORMAT YOUR RESPONSE AS:
-[PROPHECY]
-[Your prophecy here - exactly ${spread.sentences} sentences]
-
-[PRACTICAL TRANSLATION]
-[Your plain language explanation here]
-
-NOW WRITE THIS READING (prophecy + practical translation, no preamble):
+NOW WRITE THIS PROPHECY (exactly ${spread.sentences} sentences, then add a practical translation):
 `
 }
 
