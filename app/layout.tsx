@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/components/providers';
 import { Header } from '@/components/header';
 import { CookieConsent } from '@/components/CookieConsent';
 import { StructuredData, FAQSchema } from '@/lib/structured-data';
+import { KoFiButton } from '@/components/KoFiButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -127,6 +128,10 @@ export default function RootLayout({
               })(window,document,'script','dataLayer','GT-KTTDM7CZ');
             `,
           }}
+        />
+        <Script
+          src="https://storage.ko-fi.com/cdn/widget/Widget_2.js"
+          strategy="afterInteractive"
         />
       </head>
       <body className={`${inter.className} antialiased`}>

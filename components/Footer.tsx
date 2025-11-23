@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Heart, Shield, Eye } from 'lucide-react'
+import { KoFiButton } from './KoFiButton'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -62,6 +63,11 @@ export function Footer() {
               </Link>
             </nav>
           </div>
+        </div>
+
+        {/* Ko-Fi Widget */}
+        <div className="border-t border-border/50 pt-4 mb-6">
+          <KoFiButton />
         </div>
 
         {/* Bottom Bar */}
