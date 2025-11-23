@@ -83,7 +83,7 @@ function extractCardNamesFromReading(reading: string): string[] {
   return foundCards
 }
 
-function validateReading(reading: string, drawnCards: Array<{name: string}>): { isValid: boolean; issues: string[] } {
+function validateReading(reading: string, drawnCards: Array<{name: string}>, spreadId?: string): { isValid: boolean; issues: string[] } {
   const issues: string[] = []
   const drawnCardNames = drawnCards.map(c => c.name)
   const mentionedCards = extractCardNamesFromReading(reading)
@@ -108,6 +108,25 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>): { 
   const foundForbidden = forbiddenTerms.filter(term => reading.toLowerCase().includes(term))
   if (foundForbidden.length > 0) {
     issues.push(`Found forbidden terms: ${foundForbidden.join(', ')}`)
+  }
+
+  if (spreadId === 'yes-no-maybe' && drawnCards.length >= 3) {
+    const lastCard = drawnCards[drawnCards.length - 1].name
+    const positiveCards = ['Sun', 'Key', 'Clover', 'Bouquet', 'Heart', 'Dog', 'Stars', 'Moon', 'Anchor']
+    const negativeCards = ['Coffin', 'Whip', 'Mice', 'Snake', 'Mountain', 'Cross', 'Scythe', 'Clouds']
+    
+    const readingStart = reading.toLowerCase().trim()
+    const startsWithYes = readingStart.startsWith('yes')
+    const startsWithNo = readingStart.startsWith('no')
+    const startsWithMaybe = readingStart.startsWith('maybe')
+    
+    if (positiveCards.includes(lastCard) && !startsWithYes) {
+      issues.push(`Yes/No: Last card is ${lastCard} (positive), but reading doesn't start with "YES"`)
+    } else if (negativeCards.includes(lastCard) && !startsWithNo) {
+      issues.push(`Yes/No: Last card is ${lastCard} (negative), but reading doesn't start with "NO"`)
+    } else if (!positiveCards.includes(lastCard) && !negativeCards.includes(lastCard) && !startsWithMaybe) {
+      issues.push(`Yes/No: Last card is ${lastCard} (neutral), but reading doesn't start with "MAYBE"`)
+    }
   }
   
   return {
@@ -136,8 +155,14 @@ TONE & SCOPE:
 OUTPUT:
 - Mention ALL drawn cards. Never omit. Never invent.
 - End with a concrete when/where tag: "expect this before Friday," "in your office," "by night."
-- If question asks for a choice/outcome, answer directly in the final sentence.
 - Reply in plain paragraphs only.
+
+YES/NO SPREADS:
+- The outcome card (final card) determines the answer.
+- Positive cards (Sun, Key, Clover, Bouquet, Heart, Dog, Stars, Moon, Anchor) = YES.
+- Negative/friction cards (Coffin, Whip, Mice, Snake, Mountain, Cross, Scythe, Clouds) = NO.
+- Neutral/mixed cards (Woman, Man, Tower, Book, Ring, House, Tree, Fish, etc.) = MAYBE.
+- State the answer in the opening sentence. Then explain why the chain supports, complicates, or muddies it.
 
 KEYWORDS (pick the option that fits the local triplet):
 Rider = message, news, delivery, announcement, messenger | Clover = luck, chance, blessing | Ship = travel, distance, journey, relocation | House = home, family, domestic, household | Tree = health, roots, long-term, growth | Clouds = confusion, uncertainty, delay | Snake = betrayal, complication, cunning, deceit | Coffin = ending, pause, closure, halt | Bouquet = gift, joy, celebration, kindness | Scythe = sudden cut, accident, sharp decision, severance | Whip = repetition, argument, conflict, friction | Birds = conversation, dialogue, exchange, communication | Child = child, beginner, start, innocence, young | Fox = coworker, stealth, self-interest, strategy | Bear = boss, authority, power, provider | Stars = night, guidance, illumination, remote help, digital help | Stork = change, relocation, pregnancy, transition | Dog = friend, partner, helper, fidelity, support | Tower = authority, company, institution, bureaucracy | Garden = public, event, gathering, visibility | Mountain = obstacle, delay, barrier, weight | Crossroad = choice, decision, fork | Mice = erosion, stress, loss, anxiety | Heart = love, romance, affection, passion | Ring = contract, commitment, binding, agreement | Book = secret, education, documents, knowledge | Letter = text, message, correspondence, mail | Man = you/the focus person | Woman = the other key person | Lily = peace, elder, winter, calm, wisdom | Sun = success, brightness, achievement, clarity | Moon = recognition, emotions, cycles, intuition | Key = solution, answer, unlock, breakthrough | Fish = money, business, flow, commerce | Anchor = stability, security, foundation | Cross = burden, fate, weight, suffering`
@@ -258,12 +283,12 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
          }
        }
 
-       const trimmedContent = content.trim()
-       const validation = validateReading(trimmedContent, request.cards)
-       
-       if (!validation.isValid) {
-         console.warn('Reading validation issues:', validation.issues)
-       }
+        const trimmedContent = content.trim()
+        const validation = validateReading(trimmedContent, request.cards, request.spreadId)
+        
+        if (!validation.isValid) {
+          console.warn('Reading validation issues:', validation.issues)
+        }
 
        return {
          reading: trimmedContent
