@@ -37,17 +37,40 @@ export class MarieAnneAgent {
        }
      }
    
-    private static generateStory(cards: any[], spread: any, question: string): string {
-      // For 3-card (the default spread), create a direct narrative
-      if (cards.length === 3) {
-        const [card1, card2, card3] = cards
-        return `${card1.name} opens the matter, but ${card2.name} complicates it. ${card3.name} shows the outcome. The path forward is clear—act decisively. Do what must be done.`
-      }
-      
-      // For other spreads, return the template as exemplar
-      const template = this.getTemplate(spread.template)
-      return template
-    }
+     private static generateStory(cards: any[], spread: any, question: string): string {
+       // For 3-card (the default spread), create a direct narrative
+       if (cards.length === 3) {
+         const [card1, card2, card3] = cards
+         return `${card1.name} opens the matter, but ${card2.name} complicates it. ${card3.name} shows the outcome. The path forward is clear—act decisively. Do what must be done.`
+       }
+       
+       // For other spreads, return the template as exemplar
+       const template = this.getTemplate(spread.template)
+       return template
+     }
+
+     private static generatePracticalTranslation(cards: any[], spread: any, question: string): string {
+       // Generate a plain-language explanation of what the reading means for the user's specific question
+       const cardList = cards.map(c => c.name).join(', ')
+       
+       // Create a practical translation that answers the question directly
+       // This translates the symbolic Lenormand reading into actionable guidance
+       if (cards.length === 1) {
+         return `The ${cards[0].name} indicates clarity on your question. This is your answer: proceed with confidence in what you already sense to be true. Your next action is to trust this guidance.`
+       }
+       
+       if (cards.length === 3) {
+         const [card1, card2, card3] = cards
+         return `To your question "${question}": The reading shows initial conditions through ${card1.name}, complications via ${card2.name}, and resolution through ${card3.name}. What you must do: acknowledge the complication, then move toward the outcome. The path is clear once you accept the current tension.`
+       }
+
+       // For larger spreads, provide a more comprehensive practical answer
+       if (cards.length >= 5) {
+         return `Your question "${question}" is answered by these cards: ${cardList}. The reading shows a progression from current situation through challenges to resolution. What this means: You are not blocked, but you must understand what must change. Your responsibility is to make that change deliberately. The cards point to action—take it.`
+       }
+
+       return `The cards address your question with practical clarity: ${cardList}. You already know what must be done. Do it.`
+     }
 
   private static getTemplate(templateType: string): string {
     const templates: Record<string, string> = {

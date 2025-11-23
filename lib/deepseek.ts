@@ -72,12 +72,13 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     // Generate reading structure with agent (provides template and instructions)
     const agentResponse = MarieAnneAgent.tellStory(agentRequest)
     
-     console.log('Agent response generated:', {
-       storyLength: agentResponse.story.length,
-       deadline: agentResponse.deadline,
-       task: agentResponse.task,
-       timingDays: agentResponse.timingDays
-     })
+      console.log('Agent response generated:', {
+        storyLength: agentResponse.story.length,
+        hasPracticalTranslation: !!agentResponse.practicalTranslation,
+        deadline: agentResponse.deadline,
+        task: agentResponse.task,
+        timingDays: agentResponse.timingDays
+      })
 
      // Send agent's prompt to DeepSeek for generation
      const deepseekPrompt = buildPromptForDeepSeek(agentRequest, spread)
@@ -112,13 +113,14 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         console.error('Authentication/Authorization error - check API key')
       }
 
-      // Return agent template as fallback
-      return {
-        reading: agentResponse.story,
-        deadline: agentResponse.deadline,
-        task: agentResponse.task,
-        timingDays: agentResponse.timingDays
-      }
+       // Return agent reading as fallback
+       return {
+         reading: agentResponse.story,
+         practicalTranslation: agentResponse.practicalTranslation,
+         deadline: agentResponse.deadline,
+         task: agentResponse.task,
+         timingDays: agentResponse.timingDays
+       }
     }
 
     const data = await response.json()
@@ -126,13 +128,14 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     const content = data.choices?.[0]?.message?.content
 
     if (!content) {
-      console.log('No content in DeepSeek response, using agent template')
-      return {
-        reading: agentResponse.story,
-        deadline: agentResponse.deadline,
-        task: agentResponse.task,
-        timingDays: agentResponse.timingDays
-      }
+       console.log('No content in DeepSeek response, using agent reading')
+       return {
+         reading: agentResponse.story,
+         practicalTranslation: agentResponse.practicalTranslation,
+         deadline: agentResponse.deadline,
+         task: agentResponse.task,
+         timingDays: agentResponse.timingDays
+       }
     }
 
       const trimmedContent = content.trim()
@@ -172,19 +175,20 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
          console.warn('Reading validation issues:', validation.issues)
          // If validation fails, still try to use the split response
          // Only fall back to agent template if we have no practical translation AND no prophecy
-         if (!practicalTranslation) {
-           console.warn('No practical translation found, falling back to agent template')
-           const templateResponse = {
-             reading: agentResponse.story,
-             deadline: agentResponse.deadline,
-             task: agentResponse.task,
-             timingDays: agentResponse.timingDays
-           }
-           cacheReading(request, templateResponse)
-           const duration = Date.now() - startTime
-           readingHistory.addReading(request, templateResponse, duration)
-           return templateResponse
-         }
+          if (!practicalTranslation) {
+            console.warn('No practical translation from DeepSeek, using agent reading')
+            const agentOnlyResponse = {
+              reading: agentResponse.story,
+              practicalTranslation: agentResponse.practicalTranslation,
+              deadline: agentResponse.deadline,
+              task: agentResponse.task,
+              timingDays: agentResponse.timingDays
+            }
+            cacheReading(request, agentOnlyResponse)
+            const duration = Date.now() - startTime
+            readingHistory.addReading(request, agentOnlyResponse, duration)
+            return agentOnlyResponse
+          }
        }
 
        const aiResponse = {
