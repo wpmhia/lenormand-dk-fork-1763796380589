@@ -16,25 +16,26 @@ const TEMPLATE_9_CARD = `A fog of confusion (Clouds) has settled over your hospi
 const TEMPLATE_36_CARD = `P1: The tableau opens with tension—(Clouds) of confusion, (Rider) messages, a loyal (Dog), a sudden (Scythe). The weight of the (Cross) builds slowly through (Mice) erosion and cycles of (Moon) doubt. Hearts (Heart) ache and (Ring) binds what cannot move. P2: The breakthrough comes through institutional (Tower) change, (Fish) financial flow, and bright (Sun) clarity. A (Bouquet) gift arrives unexpectedly; the (Key) unlocks what was stuck. (Paths) diverge and (Garden) calls. P3: Hidden beneath it all sits the (Tree) with deep roots, the (Anchor) weight pressing down, the (Whip) cracks and (Birds) communicate urgently. (Stars) guide the way forward. A (Letter) arrives with answers. (Lily) peace settles. P4: By Friday you choose your path: sign the new agreement (Ring) or return (Stork) to solid ground (House). (Child) begins again or (Fox) finds strategy. (Lily) offers peace. Send your written position before Friday evening.`
 
 export class MarieAnneAgent {
-  static tellStory(request: AgentRequest): AgentResponse {
-    const { cards, spread, question } = request
+   static tellStory(request: AgentRequest): AgentResponse {
+     const { cards, spread, question } = request
 
-    const template = this.getTemplate(spread.template)
-    const prompt = this.buildPrompt(cards, spread, question, template)
+     const template = this.getTemplate(spread.template)
+     
+     // Generate story using template directly
+     const story = this.generateStoryFromTemplate(template, cards, spread)
+     
+     const outcomeCard = cards[cards.length - 1]
+     const outcomeCardPip = this.getPipCount(outcomeCard.id)
+     const deadline = pipToDeadline(outcomeCardPip)
+     const task = makeTask(spread.beats[spread.beats.length - 1], cards)
 
-    const story = this.formatStory(prompt, spread.sentences)
-    const outcomeCard = cards[cards.length - 1]
-    const outcomeCardPip = this.getPipCount(outcomeCard.id)
-    const deadline = pipToDeadline(outcomeCardPip)
-    const task = makeTask(spread.beats[spread.beats.length - 1], cards)
-
-    return {
-      story,
-      deadline: deadline.text,
-      task: task,
-      timingDays: outcomeCardPip
-    }
-  }
+     return {
+       story,
+       deadline: deadline.text,
+       task: task,
+       timingDays: outcomeCardPip
+     }
+   }
 
   private static getTemplate(templateType: string): string {
     const templates: Record<string, string> = {
@@ -97,9 +98,42 @@ NO explanations. NO backtracking. Command the situation forward:
 `
    }
 
-  private static formatStory(prompt: string, sentenceCount: number): string {
-    return prompt.trim()
-  }
+   private static generateStoryFromTemplate(template: string, cards: LenormandCard[], spread: any): string {
+     // For now, use the template as-is since it's written as a concrete example
+     // In a full implementation, this would intelligently map cards to narrative positions
+     // The templates are exemplars that capture Marie-Anne's voice perfectly
+     
+     // For 3-card spreads, we can do simple substitution
+     if (cards.length === 3 && template.includes('(Dog)')) {
+       // This is using a generic template - for MVP, just return it as-is
+       // A full implementation would map actual cards to story positions
+       return this.adaptTemplateForCards(template, cards, 3)
+     }
+     
+     // For other spreads, return template as example of her voice
+     return template
+   }
+
+   private static adaptTemplateForCards(template: string, cards: LenormandCard[], cardCount: number): string {
+     // Simple card substitution for 3-card readings
+     // This preserves the structure while using actual drawn cards
+     if (cardCount !== 3) return template
+     
+     // Generic pattern for 3-card sentence structure
+     const card1 = cards[0].name
+     const card2 = cards[1].name  
+     const card3 = cards[2].name
+     
+     // Create a narrative using the cards
+     // Structure: Card1 (position/role) → Card2 (action/tension) → Card3 (outcome)
+     const story = `${card1} leads the way, but ${card2} complicates matters. By Friday evening, ${card3} shows the resolution. ACT: Make your choice clear before Friday—do not delay.`
+     
+     return story
+   }
+
+   private static formatStory(prompt: string, sentenceCount: number): string {
+     return prompt.trim()
+   }
 
   private static getPipCount(cardId: number): number {
     if (cardId > 30) return 4
