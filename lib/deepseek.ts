@@ -148,6 +148,19 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>, spr
     }
   }
 
+  // Check for imperative exit sentence (Marie-Anne rule #4)
+  const imperatives = ['sign', 'update', 'contact', 'call', 'send', 'book', 'submit', 'confirm', 'wait', 'schedule', 'reach']
+  const hasImperative = imperatives.some(verb => reading.toLowerCase().includes(verb))
+  if (!hasImperative) {
+    issues.push('Missing actionable exit—final sentence should be imperative (sign, update, contact, etc.)')
+  }
+
+  // Check for 5-sentence cap (Marie-Anne rule #3)
+  const sentenceCount = reading.split(/[.!?]+/).filter(s => s.trim().length > 0).length
+  if (sentenceCount > 5) {
+    issues.push(`Reading exceeds 5-sentence cap (${sentenceCount} found)—condense to 5 or fewer.`)
+  }
+
   if (spreadId === 'yes-no-maybe' && drawnCards.length >= 3) {
     const lastCard = drawnCards[drawnCards.length - 1].name
     const positiveCards = ['Sun', 'Key', 'Clover', 'Bouquet', 'Heart', 'Dog', 'Stars', 'Moon', 'Anchor']
@@ -182,6 +195,14 @@ MARIE ANN LENORMAND PRINCIPLES (non-negotiable):
 - Timing = pip count of outcome card (Court=4, Ace=1, 10=10 days; round to nearest Friday/month-start).
 - DELAY RULE: If Mountain or Cross touches significator, say the answer is unclear—"Return when the obstacle passes."
 - Final sentence MUST be actionable: "Sign before the next full moon" not "The future is bright."
+
+MARIE_ANNE_MICRO_MANUAL (apply to every spread):
+1. TWO-CARD SENTENCES ONLY: Every clause = pair. "Book + Tower = sealed document inside authority." Never single-card meanings.
+2. PIP-TIMING IN PLAIN SIGHT: End with "Card 15 (Bear) = 5 days → watch for Friday." (Court=4, Ace=1, 10=10, cap 14 → Friday/month-start).
+3. THREE-BEAT STORY: Beat 1 (friction pair). Beat 2 (release pair). Beat 3 (verdict pair + pip-timing + action). Cap 5 sentences total.
+4. ACTIONABLE EXIT SENTENCE: Last clause = imperative. "Sign before Friday 5pm," "Update CV this weekend," etc. Not vague.
+5. NO REVERSALS, JARGON, DEVICE LISTS: Use upright keywords only. Say "email" once, not "phone/computer/Wi-Fi."
+6. RECORD PREDICTION (optional): Store verdict + deadline in DB; flag prompt if it misses twice.
 
 UNIVERSAL 5-STEP STRUCTURE (applies to all spreads):
 1. SPOT THE BLOCK: Find the friction pair (two touching cards that clash or stall). Friction cards: Mountain, Snake, Fox, Clouds, Cross, Coffin, Whip, Mice. Example: Mountain–Book = blocked. This = core tension opening.
@@ -218,17 +239,17 @@ Rider = message, news, delivery, announcement, messenger | Clover = luck, chance
 // SPREAD-SPECIFIC RULES - Varies by spread type
 const SPREAD_RULES: Record<string, string> = {
   "single-card": "Write 75-100 words. Describe the card's image or scene vividly. Explain what it reveals about the querent's situation. End with a concrete when/where tag.",
-   "sentence-3": "Write 70-100 words. Apply the 5-step method: Friction pair (1–2) sets tension. Release pair (2–3) breaks it. Verdict (card 3) answers with when/action. Chain into one smooth sentence flow with cause-and-effect. End exit line with user task.",
-   "past-present-future": "Write 90-130 words. Apply 5-step: Friction (past holds you back—card 1). Release (present shifts—card 2). Verdict (future outcome—card 3: yes/no + timing). Show the arc. End with action.",
-    "yes-no-maybe": "Write 90-130 words. Apply 5-step. Answer YES, NO, or MAYBE in opening based on card 3 polarity. Positive cards (Sun, Key, Clover, Bouquet, Heart, Dog, Stars, Moon, Anchor) = YES. Negative (Coffin, Whip, Mice, Snake, Mountain, Cross, Scythe, Clouds) = NO. Neutral = MAYBE. Friction pair (1–2) → Release pair (2–3) → Verdict with deadline.",
-   "situation-challenge-advice": "Write 90-130 words. Apply 5-step: Situation (card 1 = friction source). Challenge (card 2 = block). Advice (card 3 = release/unlock). Show connection. End with action.",
-  "mind-body-spirit": "Write 110-160 words. Card 1 reveals the mind (thoughts, beliefs, clarity or confusion). Card 2 reveals the body (physical reality, health, practical action). Card 3 reveals the spirit (emotions, intuition, desires). Show how these three complete the whole person. End with a where-to-notice tag.",
-   "sentence-5": "Write 100-150 words. Apply 5-step: Friction pair (1–2 or 2–3) sets block. Release pair (3–4 or 4–5) unlocks it. Verdict (card 5). Three story beats: tension → shift → outcome + action.",
-   "structured-reading": "Write 130-180 words. Apply 5-step: Friction pair (situation + complication = cards 1–3). Release pair (resources unlock path = cards 3–4). Verdict (card 5: outcome + timing + action). Three paragraphs. All five cards woven into story beats, not listed.",
-  "week-ahead": "Write 150-200 words. Use present-tense, first-person plural ('Monday we…, Tuesday we…'). Each card is one day with a concrete moment. End with the week's emotional takeaway plus a single when tag if something spills into next week.",
-  "relationship-double-significator": "Write 160-220 words. Cards 1-2: two people (explore each distinctly). Card 3: what flows between them (connection, tension, attraction, obstacle). Cards 4-5: their thoughts (Card 4 is one person's mind, Card 5 the other's). Cards 6-7: their feelings (Card 6 is one person's emotions, Card 7 the other's). Build one complete relationship narrative. End with where-to-see-it tag.",
-   "comprehensive": "Write 180-260 words. Apply 5-step: Top row (1–3) = friction pair (tension) + setup. Middle row (4–6) = release pair (what shifts). Bottom row (7–9) = verdict + outcome + resources. Three paragraphs mirroring the rows. Weave pairs, not individual cards.",
-    "grand-tableau": "Write 160-180 words in exactly 3 paragraphs (55-60 words each). Find Card 28 (Man) or Card 29 (Woman)—this is the querent. PARAGRAPH 1 (Core Tension): Name the core block/conflict using 2-3 card pairs (e.g., 'hidden file (Book) + authority (Tower) = stalemate'). Who is stuck? What's holding them? PARAGRAPH 2 (Turning Point): Show the ONE shift that breaks the deadlock—a decision, a revelation, a cut, a key card that unlocks movement. Use 2-3 card pairs. When does it happen? PARAGRAPH 3 (Verdict & Exit): State YES/NO/STAY clearly in the first sentence with a deadline (e.g., 'Expect signed offer by Thursday'). Name 2-3 resource cards that support the outcome. One sentence about the actual path forward. Weave all 36 cards into these three beats—no serial listing."
+   "sentence-3": "Apply micro-manual rules 1-5. Three beats: friction pair → release pair → verdict (with pip-timing + action). 5 sentences max.",
+   "past-present-future": "Apply micro-manual 1-5. Beat 1: past (friction source). Beat 2: present (release point). Beat 3: future (verdict + timing + action). 5 sentences.",
+    "yes-no-maybe": "Apply micro-manual 1-5. Open with YES/NO/MAYBE based on card 3. Friction → release → verdict with pip-timing + deadline. 5 sentences.",
+   "situation-challenge-advice": "Apply micro-manual 1-5. Situation (friction). Challenge (block). Advice (release/unlock). Show connection. End with imperative action.",
+  "mind-body-spirit": "Apply micro-manual 1-5. Two-card pairs only: (Card 1–2): mind-body connection. (Card 2–3): body-spirit flow. Verdict + timing + action.",
+   "sentence-5": "Apply micro-manual 1-5. Friction pair → release pair → verdict (card 5). Three story beats. Pip-timing + action. 5 sentences max.",
+   "structured-reading": "Apply micro-manual 1-5. Friction (cards 1-2). Release (cards 3-4). Verdict (card 5: outcome + timing + action). 5 sentences, three beats.",
+  "week-ahead": "Apply micro-manual 1-5. Each day = 2-card pair. Monday (pair), Tuesday (pair), etc. Weekly verdict + timing + action.",
+  "relationship-double-significator": "Apply micro-manual 1-5. Cards 1-2: Two people as friction pair. Card 3: what flows between (release). Cards 4-7: thoughts/feelings detail. Verdict + action.",
+   "comprehensive": "Apply micro-manual 1-5. Top row (friction). Middle row (release). Bottom row (verdict + timing + action). Three beats, 5 sentences max.",
+    "grand-tableau": "Apply micro-manual 1-5. 3 paragraphs: P1 (friction pair around querent). P2 (release pair that breaks deadlock). P3 (verdict + pip-timing + next action). 5 sentences total."
 }
 
 function buildPrompt(request: AIReadingRequest): string {
@@ -248,7 +269,12 @@ function buildPrompt(request: AIReadingRequest): string {
   
   const spreadRuleText = SPREAD_RULES[request.spreadId || 'single-card'] || SPREAD_RULES['single-card']
 
-   return `${LENORMAND_STYLE}
+  // Calculate pip-timing for outcome card (Marie-Anne Lenormand rule)
+  const outcomePipCount = request.cards.length > 0 ? getPipCount(request.cards[request.cards.length - 1].id) : 0
+  const outcomeCard = request.cards.length > 0 ? request.cards[request.cards.length - 1].name : 'N/A'
+  const pipTimingHint = `PIP-TIMING INSTRUCTION: Outcome card is ${outcomeCard} (pip count = ${outcomePipCount} days). Round to nearest Friday or month-start. Include in final sentence: "Card ${request.cards.length > 0 ? request.cards[request.cards.length - 1].id : 'N/A'} (${outcomeCard}) = ${outcomePipCount} days → watch for [Friday/date]."`
+
+    return `${LENORMAND_STYLE}
 
 Spread type: ${request.spreadId || 'Single Card'}
 Spread rules: ${spreadRuleText}
@@ -259,6 +285,8 @@ Cards drawn:
 ${cardsText}
 
 Card timing context: ${cardTimingContext}
+
+${pipTimingHint}
 
 Go:`
 }
