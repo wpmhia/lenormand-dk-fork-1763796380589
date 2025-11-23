@@ -157,13 +157,6 @@ OUTPUT:
 - End with a concrete when/where tag: "expect this before Friday," "in your office," "by night."
 - Reply in plain paragraphs only.
 
-YES/NO SPREADS:
-- The outcome card (final card) determines the answer.
-- Positive cards (Sun, Key, Clover, Bouquet, Heart, Dog, Stars, Moon, Anchor) = YES.
-- Negative/friction cards (Coffin, Whip, Mice, Snake, Mountain, Cross, Scythe, Clouds) = NO.
-- Neutral/mixed cards (Woman, Man, Tower, Book, Ring, House, Tree, Fish, etc.) = MAYBE.
-- State the answer in the opening sentence. Then explain why the chain supports, complicates, or muddies it.
-
 KEYWORDS (pick the option that fits the local triplet):
 Rider = message, news, delivery, announcement, messenger | Clover = luck, chance, blessing | Ship = travel, distance, journey, relocation | House = home, family, domestic, household | Tree = health, roots, long-term, growth | Clouds = confusion, uncertainty, delay | Snake = betrayal, complication, cunning, deceit | Coffin = ending, pause, closure, halt | Bouquet = gift, joy, celebration, kindness | Scythe = sudden cut, accident, sharp decision, severance | Whip = repetition, argument, conflict, friction | Birds = conversation, dialogue, exchange, communication | Child = child, beginner, start, innocence, young | Fox = coworker, stealth, self-interest, strategy | Bear = boss, authority, power, provider | Stars = night, guidance, illumination, remote help, digital help | Stork = change, relocation, pregnancy, transition | Dog = friend, partner, helper, fidelity, support | Tower = authority, company, institution, bureaucracy | Garden = public, event, gathering, visibility | Mountain = obstacle, delay, barrier, weight | Crossroad = choice, decision, fork | Mice = erosion, stress, loss, anxiety | Heart = love, romance, affection, passion | Ring = contract, commitment, binding, agreement | Book = secret, education, documents, knowledge | Letter = text, message, correspondence, mail | Man = you/the focus person | Woman = the other key person | Lily = peace, elder, winter, calm, wisdom | Sun = success, brightness, achievement, clarity | Moon = recognition, emotions, cycles, intuition | Key = solution, answer, unlock, breakthrough | Fish = money, business, flow, commerce | Anchor = stability, security, foundation | Cross = burden, fate, weight, suffering`
 
@@ -172,7 +165,7 @@ const SPREAD_RULES: Record<string, string> = {
   "single-card": "Write 75-100 words. Describe the card's image or scene vividly. Explain what it reveals about the querent's situation. End with a concrete when/where tag.",
   "sentence-3": "Write 70-100 words. Three-card linear story: Card 1 opens the situation, Card 2 deepens or complicates it, Card 3 resolves or shifts it. Show cause-and-effect. End with a when/where tag.",
   "past-present-future": "Write 90-130 words. Three-card story: Card 1 is what led here (past). Card 2 is the present moment and its complexity. Card 3 is what unfolds next (future). Show the arc. End with specific timing.",
-  "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE upfront using Card 1. Cards 2-3 explain why this answer—what proof do they show? Why does the answer hold or shift? End with certainty tag.",
+   "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE in the opening sentence based on the outcome card (Card 3). Positive cards (Sun, Key, Clover, Bouquet, Heart, Dog, Stars, Moon, Anchor) = YES. Negative/friction cards (Coffin, Whip, Mice, Snake, Mountain, Cross, Scythe, Clouds) = NO. Neutral/mixed cards = MAYBE. Then explain why the chain of all three cards supports, complicates, or muddies this answer. End with a when/where tag.",
   "situation-challenge-advice": "Write 90-130 words. Card 1: the situation as it stands. Card 2: the challenge or obstacle blocking progress. Card 3: the path forward or best action. Show how all three connect. End with a when/where tag.",
   "mind-body-spirit": "Write 110-160 words. Card 1 reveals the mind (thoughts, beliefs, clarity or confusion). Card 2 reveals the body (physical reality, health, practical action). Card 3 reveals the spirit (emotions, intuition, desires). Show how these three complete the whole person. End with a where-to-notice tag.",
   "sentence-5": "Write 100-150 words. Five-card narrative: Card 1 opens the situation. Cards 2-3 complicate or deepen it. Card 4 is a turning point or new perspective. Card 5 resolves or reveals the outcome. Show each step flowing into the next. End with a when/where tag.",
