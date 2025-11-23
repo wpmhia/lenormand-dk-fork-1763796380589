@@ -46,17 +46,7 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
     return { valid: false, error: 'Question cannot be empty' }
   }
 
-  const spreadId = body.spreadId || 'sentence-3'
-  const spread = SPREAD_RULES[spreadId as keyof typeof SPREAD_RULES]
-  
-  if (spread?.isAuthentic && !body.significator) {
-    return {
-      valid: false,
-      error: `Marie-Anne's authentic spreads require a significator (Man or Woman card). The significator represents the querent and is the center of the reading.`
-    }
-  }
-
-  return { valid: true }
+   return { valid: true }
 }
 
 export async function POST(request: Request) {
