@@ -28,7 +28,7 @@ export default function PrivacyPage() {
                 We collect only the minimum information necessary to provide our services:
                </p>
                <ul className="ml-4 list-inside list-disc space-y-2">
-                  <li><strong>Reading Data:</strong> Your questions and card selections are stored exclusively on your device using your browser's local storage. We never access or see this data.</li>
+                   <li><strong>Reading Data:</strong> Your questions and card selections are stored exclusively on your device using your browser&rsquo;s local storage. We never access or see this data.</li>
                   <li><strong>AI Interpretations:</strong> When you request AI analysis, your reading is sent securely to our processing service. This data is not stored permanently and is deleted after the interpretation is generated.</li>
                   <li><strong>Analytics:</strong> We collect anonymous usage statistics (with your consent) to understand how users interact with our platform and improve the experience.</li>
                   <li><strong>Preferences:</strong> Your cookie consent choices and theme preferences are saved locally on your device.</li>
@@ -50,7 +50,7 @@ export default function PrivacyPage() {
                <ul className="ml-4 list-inside list-disc space-y-2">
                  <li><strong>Generate Readings:</strong> To deliver accurate and meaningful Lenormand interpretations tailored to your questions.</li>
                  <li><strong>AI Interpretations:</strong> To provide advanced, contextual analysis of card combinations when you request it.</li>
-                 <li><strong>Service Improvement:</strong> To analyze usage patterns and enhance our platform's features, performance, and user experience.</li>
+                  <li><strong>Service Improvement:</strong> To analyze usage patterns and enhance our platform&rsquo;s features, performance, and user experience.</li>
                  <li><strong>Security:</strong> To maintain platform integrity, prevent abuse, and protect our service and users.</li>
                  <li><strong>Communication:</strong> To respond to inquiries and provide support if needed.</li>
                </ul>
@@ -70,7 +70,7 @@ export default function PrivacyPage() {
                </p>
                <ul className="ml-4 list-inside list-disc space-y-2">
                  <li><strong>Local-First Architecture:</strong> Your readings exist on your device only. No reading data is transmitted to our servers unless you explicitly request AI analysis.</li>
-                 <li><strong>No User Accounts:</strong> We don&apos;t require accounts or collect personal identifiers like names, emails, or ages. You can use our platform completely anonymously.</li>
+                  <li><strong>No User Accounts:</strong> We don&rsquo;t require accounts or collect personal identifiers like names, emails, or ages. You can use our platform completely anonymously.</li>
                  <li><strong>Encrypted Transmission:</strong> All communication between your device and our servers uses HTTPS encryption (TLS 1.3).</li>
                  <li><strong>Minimal Data Retention:</strong> AI analysis requests are processed immediately and not stored in our database. Temporary processing logs are automatically deleted.</li>
                  <li><strong>No Third-Party Sharing:</strong> We never sell, trade, or share your personal or reading data with advertisers, marketers, or any third parties.</li>
@@ -118,7 +118,7 @@ export default function PrivacyPage() {
                       <li>Traffic sources (how you found us)</li>
                     </ul>
                     <p className="text-sm text-muted-foreground mt-2">
-                      Google Analytics data is collected through cookies and is subject to Google&apos;s privacy policy. We have configured GA4 with privacy controls including data retention deletion and IP anonymization.
+                       Google Analytics data is collected through cookies and is subject to Google&rsquo;s privacy policy. We have configured GA4 with privacy controls including data retention deletion and IP anonymization.
                     </p>
                   </div>
                 </div>
@@ -134,7 +134,7 @@ export default function PrivacyPage() {
              </CardHeader>
             <CardContent className="space-y-4 text-foreground">
               <ul className="ml-4 list-inside list-disc space-y-2">
-                  <li><strong>Access:</strong> You can view and inspect all data stored on your device by using your browser&apos;s developer tools to access Local Storage.</li>
+                   <li><strong>Access:</strong> You can view and inspect all data stored on your device by using your browser&rsquo;s developer tools to access Local Storage.</li>
                   <li><strong>Deletion:</strong> Clear your browser&apos;s local storage or use your browser&apos;s &quot;Clear browsing data&quot; feature to remove all stored readings.</li>
                   <li><strong>Portability:</strong> You can export readings by using the sharing feature to create shareable URLs or by copying data from your browser&apos;s storage.</li>
                   <li><strong>Opt-out:</strong> You can decline AI analysis requests and disable analytics tracking without losing any core functionality.</li>
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
                <p>
-                If you have questions about this privacy policy, how we handle your data, or if you have concerns about your privacy, please don&apos;t hesitate to contact us. We&apos;re committed to transparency and will respond to inquiries promptly.
+                 If you have questions about this privacy policy, how we handle your data, or if you have concerns about your privacy, please don&rsquo;t hesitate to contact us. We&rsquo;re committed to transparency and will respond to inquiries promptly.
                </p>
                <p className="text-sm text-muted-foreground">
                  Email: support [at] lenormand-intelligence.com
