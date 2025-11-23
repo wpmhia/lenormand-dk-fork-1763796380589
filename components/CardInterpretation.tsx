@@ -20,35 +20,103 @@ interface PositionInfo {
 }
 
 const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
+  // Spread-specific labels
+  const spreadPositions: Record<string, PositionInfo[]> = {
+    "single-card": [
+      { title: "Insight", description: "Key guidance for your situation" }
+    ],
+    "sentence-3": [
+      { title: "Opening Element", description: "Primary element - sets the narrative" },
+      { title: "Central Element", description: "Core element - where the tension lies" },
+      { title: "Closing Element", description: "Final element - the outcome or resolution" }
+    ],
+    "past-present-future": [
+      { title: "Past", description: "What has led to your current situation" },
+      { title: "Present", description: "Your current circumstances and energies" },
+      { title: "Future", description: "What is likely to develop" }
+    ],
+    "yes-no-maybe": [
+      { title: "Card 1", description: "First indicator - yes/no influence" },
+      { title: "Card 2", description: "Center card - tie-breaker or balance" },
+      { title: "Card 3", description: "Card 3 - final influence on the answer" }
+    ],
+    "situation-challenge-advice": [
+      { title: "Situation", description: "The current situation or question you face" },
+      { title: "Challenge", description: "Obstacles or difficulties you may encounter" },
+      { title: "Advice", description: "Guidance for how to proceed" }
+    ],
+    "mind-body-spirit": [
+      { title: "Mind", description: "Thoughts, mental state, and intellectual matters" },
+      { title: "Body", description: "Physical health, actions, and material concerns" },
+      { title: "Spirit", description: "Emotional well-being, spiritual growth, and inner wisdom" }
+    ],
+    "sentence-5": [
+      { title: "Position 1", description: "Opening of the narrative" },
+      { title: "Position 2", description: "Second element - deepens the story" },
+      { title: "Position 3", description: "Middle element - turning point" },
+      { title: "Position 4", description: "Fourth element - complications or resources" },
+      { title: "Position 5", description: "Closing element - outcome or resolution" }
+    ],
+    "structured-reading": [
+      { title: "Subject", description: "The opening element—who or what the story begins with" },
+      { title: "Verb", description: "The action or descriptor—what is happening or being done" },
+      { title: "Object", description: "The direct impact or target—what is being affected" },
+      { title: "Modifier", description: "The qualifier or condition—how, when, or under what circumstance" },
+      { title: "Outcome", description: "The result or conclusion—where this leads" }
+    ],
+    "week-ahead": [
+      { title: "Monday", description: "New beginnings, fresh starts, and initial energy for the week" },
+      { title: "Tuesday", description: "Challenges, obstacles, and work-related matters" },
+      { title: "Wednesday", description: "Communication, connections, and mid-week transitions" },
+      { title: "Thursday", description: "Progress, building momentum, and preparation" },
+      { title: "Friday", description: "Social aspects, completion, and winding down" },
+      { title: "Saturday", description: "Rest, reflection, and personal matters" },
+      { title: "Sunday", description: "Closure, spiritual matters, and weekly review" }
+    ],
+    "relationship-double-significator": [
+      { title: "Partner 1 - Essence", description: "First person's core presence and nature" },
+      { title: "Partner 1 - Present", description: "First person's current thoughts and feelings" },
+      { title: "What Flows Between", description: "The dynamic, challenge, or connection that unites them" },
+      { title: "Partner 2 - Essence", description: "Second person's core presence and nature" },
+      { title: "Partner 2 - Present", description: "Second person's current thoughts and feelings" },
+      { title: "Their Hopes", description: "What each person wishes for in this connection" },
+      { title: "The Outcome", description: "Where this relationship is heading" }
+    ],
+    "comprehensive": [
+      { title: "Past - Inner World", description: "Thoughts, feelings, and personal resources from your recent past" },
+      { title: "Past - Direct Actions", description: "Actions you took recently that shaped your current circumstances" },
+      { title: "Past - Outside World", description: "External influences and events from your recent past" },
+      { title: "Present - Inner World", description: "Your current thoughts, feelings, and internal state" },
+      { title: "Present - Direct Actions", description: "Your current actions and the central issue you're facing" },
+      { title: "Present - Outside World", description: "Current external influences, other people, and environmental factors" },
+      { title: "Future - Inner World", description: "How your thoughts and feelings will evolve in the near future" },
+      { title: "Future - Direct Actions", description: "Actions you'll need to take in the near future" },
+      { title: "Future - Outside World", description: "External events and influences approaching in the near future" }
+    ]
+  }
+
+  // Return spread-specific label if available
+  if (spreadId && spreadPositions[spreadId]) {
+    return spreadPositions[spreadId][position] || { title: `Position ${position + 1}`, description: "" }
+  }
+
+  // Fallback: default by card count
   const cardCount = spreadId ? (spreadId === 'grand-tableau' ? 36 : spreadId.includes('3') ? 3 : spreadId.includes('5') ? 5 : spreadId.includes('7') ? 7 : spreadId.includes('9') ? 9 : 3) : 3
 
   if (cardCount === 3) {
     const positions = [
-      { title: "Past", description: "What has led to your current situation" },
-      { title: "Present", description: "Your current circumstances and energies" },
-      { title: "Future", description: "What is likely to develop" }
+      { title: "Card 1", description: "First card" },
+      { title: "Card 2", description: "Second card" },
+      { title: "Card 3", description: "Third card" }
     ]
     return positions[position] || { title: `Position ${position + 1}`, description: "" }
   } else if (cardCount === 5) {
     const positions = [
-      { title: "Past", description: "Events that have shaped your situation" },
-      { title: "Present", description: "Your current state of being" },
-      { title: "Challenge", description: "Obstacles or lessons to overcome" },
-      { title: "Action", description: "Steps you can take to move forward" },
-      { title: "Outcome", description: "Potential result if current path continues" }
-    ]
-    return positions[position] || { title: `Position ${position + 1}`, description: "" }
-  } else if (cardCount === 9) {
-    const positions = [
-      { title: "Past Influences", description: "Distant past affecting the situation" },
-      { title: "Recent Past", description: "Immediate past events" },
-      { title: "Present Situation", description: "Current circumstances" },
-      { title: "Near Future", description: "Immediate developments" },
-      { title: "Distant Future", description: "Long-term outcome" },
-      { title: "Your Role", description: "How you are contributing" },
-      { title: "External Influences", description: "Others' impact on the situation" },
-      { title: "Hopes & Fears", description: "Your emotional investment" },
-      { title: "Final Outcome", description: "Ultimate resolution" }
+      { title: "Card 1", description: "First card" },
+      { title: "Card 2", description: "Second card" },
+      { title: "Card 3", description: "Third card" },
+      { title: "Card 4", description: "Fourth card" },
+      { title: "Card 5", description: "Fifth card" }
     ]
     return positions[position] || { title: `Position ${position + 1}`, description: "" }
   } else {
