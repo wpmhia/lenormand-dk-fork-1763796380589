@@ -19,10 +19,8 @@ export class MarieAnneAgent {
    static tellStory(request: AgentRequest): AgentResponse {
      const { cards, spread, question } = request
 
-     const template = this.getTemplate(spread.template)
-     
-     // Generate story using template directly
-     const story = this.generateStoryFromTemplate(template, cards, spread)
+     // Generate story directly from cards
+     const story = this.generateStory(cards, spread, question)
      
      const outcomeCard = cards[cards.length - 1]
      const outcomeCardPip = this.getPipCount(outcomeCard.id)
@@ -35,6 +33,18 @@ export class MarieAnneAgent {
        task: task,
        timingDays: outcomeCardPip
      }
+   }
+   
+   private static generateStory(cards: any[], spread: any, question: string): string {
+     // For 3-card (the default spread), create a direct narrative
+     if (cards.length === 3) {
+       const [card1, card2, card3] = cards
+       return `${card1.name} opens the matter, but ${card2.name} complicates it. ${card3.name} shows the outcome. The path forward is clear—act decisively by Friday evening. Do what must be done.`
+     }
+     
+     // For other spreads, return the template as exemplar
+     const template = this.getTemplate(spread.template)
+     return template
    }
 
   private static getTemplate(templateType: string): string {
