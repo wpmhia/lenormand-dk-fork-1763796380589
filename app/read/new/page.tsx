@@ -301,7 +301,7 @@ function NewReadingPageContent() {
    }, [performReset])
 
   const confirmStartOver = useCallback(() => {
-    resetReading({ keepUrlParams: false, closeConfirmDialog: true })
+    resetReading({ closeConfirmDialog: true })
   }, [resetReading])
 
 
