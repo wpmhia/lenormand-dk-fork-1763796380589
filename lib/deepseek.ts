@@ -110,6 +110,22 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>, spr
     issues.push(`Found forbidden terms: ${foundForbidden.join(', ')}`)
   }
 
+  // Check for 5-step narrative structure: friction → release → verdict
+  const frictionCards = ['Mountain', 'Whip', 'Mice', 'Snake', 'Clouds', 'Coffin', 'Cross', 'Tower', 'Book']
+  const releaseCards = ['Key', 'Sun', 'Rider', 'Scythe', 'Bouquet', 'Heart', 'Dog', 'Stars', 'Letter']
+  const verdictCards = ['Sun', 'Key', 'Clover', 'Bouquet', 'Heart', 'Dog', 'Stars', 'Moon', 'Anchor', 'Coffin', 'Whip', 'Mice', 'Snake', 'Mountain', 'Cross']
+  
+  const hasFriction = mentionedCards.some(card => frictionCards.includes(card))
+  const hasRelease = mentionedCards.some(card => releaseCards.includes(card))
+  const hasVerdict = drawnCards.length > 0 && verdictCards.includes(drawnCards[drawnCards.length - 1].name)
+  
+  if (drawnCards.length >= 3 && !hasFriction) {
+    issues.push('No friction/block cards detected—unclear what the core tension is')
+  }
+  if (drawnCards.length >= 3 && !hasRelease) {
+    issues.push('No release/unlock cards detected—missing the turning point')
+  }
+
   if (spreadId === 'yes-no-maybe' && drawnCards.length >= 3) {
     const lastCard = drawnCards[drawnCards.length - 1].name
     const positiveCards = ['Sun', 'Key', 'Clover', 'Bouquet', 'Heart', 'Dog', 'Stars', 'Moon', 'Anchor']
@@ -137,10 +153,17 @@ function validateReading(reading: string, drawnCards: Array<{name: string}>, spr
 // UNIFIED LENORMAND STYLE - Applied to all spreads identically
 const LENORMAND_STYLE = `You are a Lenormand fortune-teller. Follow these rules exactly:
 
+UNIVERSAL 5-STEP STRUCTURE (applies to all spreads):
+1. SPOT THE BLOCK: Find the friction pair (two touching cards that clash or stall). Example: Mountain–Book, Snake–Tower. This = core tension opening.
+2. FIND THE RELEASE: Look for unlock/cut/flow pair later in line. Example: Key–Letter, Scythe–Rider, Sun–Key. This = turning point.
+3. LAND THE OUTCOME: Last card or last position = verdict card. Read as yes/no/stay + timing (use pip/column → Friday/month-start/payday).
+4. BUILD ONE SENTENCE PER PAIR: Sentence 1 (friction) → sets scene. Sentence 2 (release) → breaks scene. Sentence 3 (verdict) → answer + when + action. Add 1–2 glue sentences for colour; cap at 5 total.
+5. EXIT LINE = ACTION: Final clause tells user what to do ("Sign before Friday", "Update CV this weekend"). Leave them with a task, not fog.
+
 STRUCTURE & FLOW:
 - Chain cards left→right as cause-and-effect. Each card deepens or shifts the story.
-- CLUSTER related cards into pairs/triplets (e.g., "secret (Book) and its witness (Tower)" or "decision (Crossroad) forcing a cut (Scythe)"). Don't list cards individually—weave them into units.
-- Name each card in parentheses on first mention: "joy (Bouquet) leads to..." After that, use plain nouns.
+- CLUSTER related cards into pairs (friction pair → release pair → verdict). Don't list cards individually—weave into story beats.
+- Name each card in parentheses on first mention: "stalled (Mountain) by secrecy (Book)" After that, use plain nouns.
 - Write one continuous narrative—no loops, no restatement.
 
 KEYWORDS:
@@ -164,16 +187,16 @@ Rider = message, news, delivery, announcement, messenger | Clover = luck, chance
 // SPREAD-SPECIFIC RULES - Varies by spread type
 const SPREAD_RULES: Record<string, string> = {
   "single-card": "Write 75-100 words. Describe the card's image or scene vividly. Explain what it reveals about the querent's situation. End with a concrete when/where tag.",
-  "sentence-3": "Write 70-100 words. Three-card linear story: Card 1 opens the situation, Card 2 deepens or complicates it, Card 3 resolves or shifts it. Show cause-and-effect. End with a when/where tag.",
-  "past-present-future": "Write 90-130 words. Three-card story: Card 1 is what led here (past). Card 2 is the present moment and its complexity. Card 3 is what unfolds next (future). Show the arc. End with specific timing.",
-   "yes-no-maybe": "Write 90-130 words. Answer YES, NO, or MAYBE in the opening sentence based on the outcome card (Card 3). Positive cards (Sun, Key, Clover, Bouquet, Heart, Dog, Stars, Moon, Anchor) = YES. Negative/friction cards (Coffin, Whip, Mice, Snake, Mountain, Cross, Scythe, Clouds) = NO. Neutral/mixed cards = MAYBE. Then explain why the chain of all three cards supports, complicates, or muddies this answer. End with a when/where tag.",
-  "situation-challenge-advice": "Write 90-130 words. Card 1: the situation as it stands. Card 2: the challenge or obstacle blocking progress. Card 3: the path forward or best action. Show how all three connect. End with a when/where tag.",
+   "sentence-3": "Write 70-100 words. Apply the 5-step method: Friction pair (1–2) sets tension. Release pair (2–3) breaks it. Verdict (card 3) answers with when/action. Chain into one smooth sentence flow with cause-and-effect. End exit line with user task.",
+   "past-present-future": "Write 90-130 words. Apply 5-step: Friction (past holds you back—card 1). Release (present shifts—card 2). Verdict (future outcome—card 3: yes/no + timing). Show the arc. End with action.",
+    "yes-no-maybe": "Write 90-130 words. Apply 5-step. Answer YES, NO, or MAYBE in opening based on card 3 polarity. Positive cards (Sun, Key, Clover, Bouquet, Heart, Dog, Stars, Moon, Anchor) = YES. Negative (Coffin, Whip, Mice, Snake, Mountain, Cross, Scythe, Clouds) = NO. Neutral = MAYBE. Friction pair (1–2) → Release pair (2–3) → Verdict with deadline.",
+   "situation-challenge-advice": "Write 90-130 words. Apply 5-step: Situation (card 1 = friction source). Challenge (card 2 = block). Advice (card 3 = release/unlock). Show connection. End with action.",
   "mind-body-spirit": "Write 110-160 words. Card 1 reveals the mind (thoughts, beliefs, clarity or confusion). Card 2 reveals the body (physical reality, health, practical action). Card 3 reveals the spirit (emotions, intuition, desires). Show how these three complete the whole person. End with a where-to-notice tag.",
-  "sentence-5": "Write 100-150 words. Five-card narrative: Card 1 opens the situation. Cards 2-3 complicate or deepen it. Card 4 is a turning point or new perspective. Card 5 resolves or reveals the outcome. Show each step flowing into the next. End with a when/where tag.",
-  "structured-reading": "Write 130-180 words. Five-card story with depth. Card 1: the situation. Card 2: hidden factors or complication. Card 3: the tension or choice point. Card 4: resources or path forward. Card 5: the likely outcome. Build a complete narrative arc. End with actionable when/where guidance.",
+   "sentence-5": "Write 100-150 words. Apply 5-step: Friction pair (1–2 or 2–3) sets block. Release pair (3–4 or 4–5) unlocks it. Verdict (card 5). Three story beats: tension → shift → outcome + action.",
+   "structured-reading": "Write 130-180 words. Apply 5-step: Friction pair (situation + complication = cards 1–3). Release pair (resources unlock path = cards 3–4). Verdict (card 5: outcome + timing + action). Three paragraphs. All five cards woven into story beats, not listed.",
   "week-ahead": "Write 150-200 words. Use present-tense, first-person plural ('Monday we…, Tuesday we…'). Each card is one day with a concrete moment. End with the week's emotional takeaway plus a single when tag if something spills into next week.",
   "relationship-double-significator": "Write 160-220 words. Cards 1-2: two people (explore each distinctly). Card 3: what flows between them (connection, tension, attraction, obstacle). Cards 4-5: their thoughts (Card 4 is one person's mind, Card 5 the other's). Cards 6-7: their feelings (Card 6 is one person's emotions, Card 7 the other's). Build one complete relationship narrative. End with where-to-see-it tag.",
-  "comprehensive": "Write 180-260 words. Read the 9-card square as three 3-card rows. Top row (Cards 1-3): the foundation or past influences. Middle row (Cards 4-6): the present situation and challenges. Bottom row (Cards 7-9): the future or outcome. Use card pairs (adjacent cards together) to deepen meaning. Show how each row builds on the previous. End with when/where tag.",
+   "comprehensive": "Write 180-260 words. Apply 5-step: Top row (1–3) = friction pair (tension) + setup. Middle row (4–6) = release pair (what shifts). Bottom row (7–9) = verdict + outcome + resources. Three paragraphs mirroring the rows. Weave pairs, not individual cards.",
     "grand-tableau": "Write 160-180 words in exactly 3 paragraphs (55-60 words each). Find Card 28 (Man) or Card 29 (Woman)—this is the querent. PARAGRAPH 1 (Core Tension): Name the core block/conflict using 2-3 card pairs (e.g., 'hidden file (Book) + authority (Tower) = stalemate'). Who is stuck? What's holding them? PARAGRAPH 2 (Turning Point): Show the ONE shift that breaks the deadlock—a decision, a revelation, a cut, a key card that unlocks movement. Use 2-3 card pairs. When does it happen? PARAGRAPH 3 (Verdict & Exit): State YES/NO/STAY clearly in the first sentence with a deadline (e.g., 'Expect signed offer by Thursday'). Name 2-3 resource cards that support the outcome. One sentence about the actual path forward. Weave all 36 cards into these three beats—no serial listing."
 }
 
