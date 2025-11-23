@@ -55,7 +55,7 @@ function getPipCount(cardId: number): number {
 }
 
 // Check for delay cards (Mountain, Cross near significator)
-function hasDelayBlock(cards: Array<{id: number; name: string}>): boolean {
+function hasDelayBlock(cards: Array<{name: string} | {id: number; name: string}>): boolean {
   const delayCards = ['Mountain', 'Cross']
   return cards.some(c => delayCards.includes(c.name))
 }
