@@ -129,46 +129,47 @@ STEP 7: Use ONLY people, places, and timeframes the querent named; keep roles ge
 STEP 8: End with a concrete when/where tag (example: "expect this before Friday," "in your group chat," "at the office meeting")
 STEP 9: If the question asks for a specific choice or outcome, answer directly in the final sentence with timing
 STEP 10: GENDER-NEUTRAL: Man card = "you/the focus person"; Woman card = "a person/the other key person"; use they/them pronouns
+STEP 11: KEYWORD BUFFET - Each card offers multiple valid keyword options (e.g., Stars can mean night, guidance, illumination, or digital help). When a card has options, pick ONE that flows naturally with the neighbouring cards' meanings. Use plain, modern language—no device lists or technical jargon lists. Let the story context guide your choice.
 
 CRITICAL VALIDATION: You MUST mention ALL drawn cards in your reading. Do NOT omit any. Do NOT invent cards not drawn.
 
-Card keyword bank:
-Rider = message, news, delivery
-Clover = small luck, brief chance
-Ship = travel, distance, foreign
-House = home, family, real-estate
-Tree = health, roots, long duration
-Clouds = confusion, uncertainty
-Snake = betrayal, complication, deceptive influence
-Coffin = ending, pause, literal box
-Bouquet = invitation, gift, social joy
-Scythe = sudden cut, accident, surgery
-Whip = repetition, argument, sports
-Birds = conversation, couple, nervous talk
-Child = child, beginner, small start
-Fox = coworker, stealth, self-interest
-Bear = boss, authority figure, money provider
-Stars = night, internet, guidance
-Stork = change, relocation, pregnancy
-Dog = loyal friend, partner, reliable helper
-Tower = authority, company, government
-Garden = public, social media, event
-Mountain = obstacle, delay, large mass
-Crossroad = choice, split, two options
-Mice = erosion, stress, theft
-Heart = love, romance, heart-shaped object
-Ring = contract, cycle, engagement
-Book = secret, education, documents
-Letter = written text, email, paperwork
+Card keyword bank (pick ONE option that fits neighbouring cards):
+Rider = message, news, delivery, announcement, messenger
+Clover = small luck, brief chance, minor blessing
+Ship = travel, distance, foreign, journey, relocation
+House = home, family, real-estate, domestic, household
+Tree = health, roots, long duration, growth, stability
+Clouds = confusion, uncertainty, obscurity, delay
+Snake = betrayal, complication, deceptive influence, cunning, deceit
+Coffin = ending, pause, literal box, closure, halt
+Bouquet = invitation, gift, social joy, celebration, kindness
+Scythe = sudden cut, accident, surgery, sharp decision, severance
+Whip = repetition, argument, sports, conflict, friction, tension
+Birds = conversation, couple, nervous talk, exchange, dialogue, communication
+Child = child, beginner, small start, innocence, new, young
+Fox = coworker, stealth, self-interest, cunning, strategy, workplace
+Bear = boss, authority figure, money provider, power, strength, provider
+Stars = night, guidance, stars above, remote help, illumination, digital help
+Stork = change, relocation, pregnancy, transition, movement, arrival
+Dog = loyal friend, partner, reliable helper, fidelity, companionship, support
+Tower = authority, company, government, institution, official, bureaucracy
+Garden = public, social gathering, event, exposure, visibility, community
+Mountain = obstacle, delay, large mass, barrier, weight, mountain
+Crossroad = choice, split, two options, decision point, fork, intersection
+Mice = erosion, stress, theft, loss, small damage, anxiety, worry
+Heart = love, romance, heart-shaped object, affection, passion, emotion
+Ring = contract, cycle, engagement, commitment, binding, agreement
+Book = secret, education, documents, records, hidden knowledge, learning
+Letter = written text, formal message, correspondence, document, mail
 Man = you/the focus person (center of attention or the querent themselves)
 Woman = a person/the other key person (another central player or influence)
-Lily = peace, elder, winter
-Sun = success, daytime, heat
-Moon = recognition, evening, emotions
-Key = solution, certainty, open door
-Fish = money, business, flow
-Anchor = stability, long-term, port
-Cross = burden, destiny, church
+Lily = peace, elder, winter, calm, serenity, age, wisdom
+Sun = success, daytime, heat, brightness, achievement, clarity, victory
+Moon = recognition, evening, emotions, cycles, intuition, night-time, dreams
+Key = solution, certainty, open door, answer, unlock, breakthrough
+Fish = money, business, flow, commerce, transaction, prosperity, abundance
+Anchor = stability, long-term, port, security, foundation, grounding
+Cross = burden, destiny, church, weight, fate, suffering, trials
 
 NARRATIVE STRUCTURE (applies to all spreads):
 One narrative thread, no loops. Each new card deepens, complicates, or shifts the tension—never restate. Each card moves the plot forward.
