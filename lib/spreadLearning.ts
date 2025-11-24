@@ -10,11 +10,10 @@ export const SPREAD_LEARNING_MAP: Record<string, SpreadLearningLinks> = {
     methodologyPage: '/learn/spreads#single-card',
     description: 'Single Card Reading Method - Quick daily guidance and immediate answers'
   },
-  'sentence-3': {
-    methodologyPage: '/learn/marie-annes-system',
-    learnMoreUrl: '/learn/spreads#3-card-spreads',
-    description: 'Marie-Anne\'s 3-Card Sentence - Her primary daily reading method with flowing narrative'
-  },
+   'sentence-3': {
+     methodologyPage: '/learn/spreads#3-card-spreads',
+     description: 'Marie-Anne\'s 3-Card Sentence - Her primary daily reading method with flowing narrative'
+   },
   'comprehensive': {
     methodologyPage: '/learn/spreads#9-card-spreads',
     learnMoreUrl: '/learn/marie-annes-system',
