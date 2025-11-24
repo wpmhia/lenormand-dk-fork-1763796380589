@@ -123,11 +123,11 @@ export default function Home() {
           <div className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-primary/20 blur-lg"></div>
            <div className="relative z-10">
               <h2 className="relative mb-4 text-4xl font-bold text-foreground">
-                Let Marie Ann Lenormand's cards speak
+                The spirit of Marie Ann Lenormand, awakened by AI
                 <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
               </h2>
               <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-               This is how she listens to what your heart already knows
+               Experience her timeless wisdom through modern intelligence
              </p>
             <Link href="/read/new">
               <Button size="lg">
