@@ -5,12 +5,12 @@ import { Reading, ReadingCard, Card as CardType } from '@/lib/types'
 import { getCardById, getCombinationMeaning, getLinearAdjacentCards, getGrandTableauAdjacentCards } from '@/lib/data'
 import { getCountdown } from '@/lib/timing'
 import { Card } from './Card'
+import { CardWithTooltip } from './CardWithTooltip'
 import { AnimatedCard } from './AnimatedCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardModal } from './CardModal'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Share2, Calendar, Info, Clock } from 'lucide-react'
+import { Share2, Calendar, Clock } from 'lucide-react'
 
 interface ReadingViewerProps {
   reading: Reading
@@ -195,35 +195,19 @@ export function ReadingViewer({
 
              return (
                <AnimatedCard key={index} delay={0} className="flex flex-col items-center space-y-3">
-                 <TooltipProvider>
-                   <div className="flex flex-col items-center space-y-3">
-                     <Tooltip>
-                     <TooltipTrigger asChild>
-                       <div className="flex flex-col items-center space-y-2">
-                          <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                            {positionInfo.label}
-                          </div>
-                          <Card
-                            card={card}
-                            size="lg"
-                            onClick={() => setSelectedCard(card)}
-                            className="cursor-pointer hover:shadow-lg"
-                          />
-                       </div>
-                     </TooltipTrigger>
-                      <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
-                        <div className="space-y-2">
-                          <p className="font-semibold text-muted-foreground">{positionInfo.label}</p>
-                          <p className="text-sm text-muted-foreground/80">{positionInfo.meaning}</p>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                            <Info className="h-3 w-3" />
-                            <span>Click card for details</span>
-                          </div>
-                        </div>
-                      </TooltipContent>
-                     </Tooltip>
-                   </div>
-                 </TooltipProvider>
+                 <div className="flex flex-col items-center space-y-2">
+                    <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                      {positionInfo.label}
+                    </div>
+                    <CardWithTooltip
+                      card={card}
+                      size="lg"
+                      onClick={() => setSelectedCard(card)}
+                      className="cursor-pointer hover:shadow-lg"
+                      positionLabel={positionInfo.label}
+                      positionDescription={positionInfo.meaning}
+                    />
+                  </div>
                </AnimatedCard>
              )
            })}
@@ -327,38 +311,21 @@ export function ReadingViewer({
 
              return (
                <AnimatedCard key={index} delay={index * 0.05} className={`flex flex-col items-center space-y-1 rounded-lg border-2 transition-all ${stripClass} ${isSignificator ? 'ring-2 ring-primary' : ''}`}>
-                 <TooltipProvider>
-                   <div className="flex w-full flex-col items-center space-y-1 p-1">
-                     <Tooltip>
-                     <TooltipTrigger asChild>
-                       <div className="flex w-full flex-col items-center space-y-1">
-                          {stripLabel && (
-                            <div className="text-center text-xs font-semibold text-primary">
-                              {stripLabel}
-                            </div>
-                          )}
-                         <Card
-                           card={card}
-                           size="sm"
-                           onClick={() => setSelectedCard(card)}
-                           className="cursor-pointer hover:shadow-lg"
-                         />
+                 <div className="flex w-full flex-col items-center space-y-1 p-1">
+                    {stripLabel && (
+                      <div className="text-center text-xs font-semibold text-primary">
+                        {stripLabel}
                       </div>
-                    </TooltipTrigger>
-                     <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
-                       <div className="space-y-2">
-                         <p className="font-semibold text-muted-foreground">{card.name} (Pos {index + 1})</p>
-                         {stripLabel && <p className="text-xs text-muted-foreground/70">{stripLabel}</p>}
-                         <p className="text-sm text-muted-foreground/80">{card.uprightMeaning}</p>
-                         <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                           <Info className="h-3 w-3" />
-                           <span>Click card for full reading</span>
-                         </div>
-                       </div>
-                     </TooltipContent>
-                    </Tooltip>
+                    )}
+                    <CardWithTooltip
+                      card={card}
+                      size="sm"
+                      onClick={() => setSelectedCard(card)}
+                      className="cursor-pointer hover:shadow-lg"
+                      positionLabel={stripLabel}
+                      positionDescription={`Position ${index + 1}`}
+                    />
                   </div>
-                </TooltipProvider>
               </AnimatedCard>
              )
            })}
@@ -395,35 +362,19 @@ export function ReadingViewer({
 
              return (
                <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
-                 <TooltipProvider>
-                   <div className="flex flex-col items-center space-y-3">
-                     <Tooltip>
-                     <TooltipTrigger asChild>
-                       <div className="flex flex-col items-center space-y-2">
-                          <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                            {positionInfo.label}
-                          </div>
-                         <Card
-                           card={card}
-                           size="md"
-                           onClick={() => setSelectedCard(card)}
-                           className="cursor-pointer hover:shadow-lg"
-                         />
-                      </div>
-                    </TooltipTrigger>
-                     <TooltipContent className="max-w-xs border-primary/30 bg-card/95 text-muted-foreground backdrop-blur-sm">
-                       <div className="space-y-2">
-                         <p className="font-semibold text-muted-foreground">{positionInfo.label}</p>
-                         <p className="text-sm text-muted-foreground/80">{positionInfo.meaning}</p>
-                         <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                           <Info className="h-3 w-3" />
-                           <span>Click card for details</span>
-                         </div>
-                       </div>
-                     </TooltipContent>
-                    </Tooltip>
+                 <div className="flex flex-col items-center space-y-2">
+                    <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                      {positionInfo.label}
+                    </div>
+                    <CardWithTooltip
+                      card={card}
+                      size="md"
+                      onClick={() => setSelectedCard(card)}
+                      className="cursor-pointer hover:shadow-lg"
+                      positionLabel={positionInfo.label}
+                      positionDescription={positionInfo.meaning}
+                    />
                   </div>
-                </TooltipProvider>
               </AnimatedCard>
             )
           })}
