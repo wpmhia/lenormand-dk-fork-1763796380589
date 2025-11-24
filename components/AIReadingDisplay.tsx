@@ -9,8 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
-import { linkifyCardNames } from '@/lib/cardLinkifier'
-import { linkifyConcepts } from '@/lib/conceptLinkifier'
+
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null
@@ -53,18 +52,8 @@ export function AIReadingDisplay({
   const [showReadingMethod, setShowReadingMethod] = useState(false)
   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
-  // Apply both card and concept linkifiers to the practical translation
-  const getLinkifiedContent = (content: string): string => {
-    if (!content) return content
-    
-    // First linkify cards, then linkify concepts
-    let result = content
-    if (allCards && allCards.length > 0) {
-      result = linkifyCardNames(result, allCards)
-    }
-    result = linkifyConcepts(result)
-    return result
-  }
+   // Return content as-is without adding links
+   const getContent = (content: string): string => content
 
      if (isLoading && !aiReading?.practicalTranslation) {
        return (
@@ -181,7 +170,7 @@ export function AIReadingDisplay({
                         ),
                       }}
                     >
-                     {getLinkifiedContent(aiReading.practicalTranslation)}
+                     {getContent(aiReading.practicalTranslation)}
                    </ReactMarkdown>
                  </div>
 
