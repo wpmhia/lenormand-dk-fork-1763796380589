@@ -224,22 +224,14 @@ export function AIReadingDisplay({
                                </div>
                              </div>
                            )}
-                          <div className="flex flex-wrap gap-2">
-                            <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
-                              <Button variant="secondary" size="sm" className="gap-2">
-                                Learn the Method
-                                <ExternalLink className="h-3 w-3" />
-                              </Button>
-                            </a>
-                            {spreadLearningLinks.learnMoreUrl && (
-                              <a href={spreadLearningLinks.learnMoreUrl} target="_blank" rel="noopener noreferrer">
-                                <Button variant="outline" size="sm" className="gap-2">
-                                  Deep Dive
-                                  <ExternalLink className="h-3 w-3" />
-                                </Button>
-                              </a>
-                            )}
-                          </div>
+                           <div className="flex flex-wrap gap-2">
+                             <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
+                               <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
+                                 Learn the Method
+                                 <ExternalLink className="h-3 w-3" />
+                               </Button>
+                             </a>
+                           </div>
                         </div>
                       )}
                     </div>
