@@ -1,4 +1,3 @@
-import { MarieAnneAgent } from './agent'
 import { SPREAD_RULES } from './spreadRules'
 import { getCachedSpreadRule } from './spreadRulesCache'
 import { getCachedReading, cacheReading, isReadingCached } from './readingCache'
@@ -36,7 +35,6 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
   console.log('getAIReading: Checking cache...')
   
   try {
-    // Check if reading is already cached
     if (isReadingCached(request)) {
       const cachedReading = getCachedReading(request)
       if (cachedReading) {
@@ -47,15 +45,13 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       }
     }
 
-    console.log('Cache miss, generating reading with MarieAnneAgent...')
+    console.log('Cache miss, generating reading with DeepSeek...')
     
-    // Convert request to agent format
     const spreadId = (request.spreadId || 'sentence-3') as SpreadId
     const spread = getCachedSpreadRule(spreadId)
     
     if (!spread) {
-      console.error('Invalid spread ID:', spreadId)
-      return createFallbackReading('Invalid spread configuration')
+      throw new Error('Invalid spread ID: ' + spreadId)
     }
 
     const cards: LenormandCard[] = request.cards.map(c => ({
@@ -63,63 +59,33 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       name: c.name
     }))
 
-    const agentRequest = {
-      cards,
-      spread,
-      question: request.question || 'What guidance do these cards have for me?'
-    }
-
-    // Generate reading structure with agent (provides template and instructions)
-    const agentResponse = MarieAnneAgent.tellStory(agentRequest)
-    
-      console.log('Agent response generated:', {
-        storyLength: agentResponse.story.length,
-        deadline: agentResponse.deadline,
-        task: agentResponse.task,
-        timingDays: agentResponse.timingDays
+    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?')
+     
+    console.log('Sending request to DeepSeek API...')
+    const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
+          { role: 'user', content: deepseekPrompt }
+        ],
+        temperature: 0.4,
+        max_tokens: maxTokens,
+        top_p: 0.9
       })
-
-     // Send agent's prompt to DeepSeek for generation
-     const deepseekPrompt = buildPromptForDeepSeek(agentRequest, spread)
-    
-     console.log('Sending request to DeepSeek API...')
-     const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
-     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-         'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-       },
-       body: JSON.stringify({
-         model: 'deepseek-chat',
-         messages: [
-           { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
-           { role: 'user', content: deepseekPrompt }
-         ],
-         temperature: 0.4,
-         max_tokens: maxTokens,
-         top_p: 0.9
-       })
-     })
+    })
 
     console.log('DeepSeek API response status:', response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
-      const errorDetails = `Status: ${response.status}, Message: ${response.statusText}, Body: ${errorText}`
-      console.error('DeepSeek API error:', errorDetails)
-
-      if (response.status === 401 || response.status === 403) {
-        console.error('Authentication/Authorization error - check API key')
-      }
-
-        // Return agent template as fallback when DeepSeek API fails
-        return {
-          reading: agentResponse.story,
-          deadline: agentResponse.deadline,
-          task: agentResponse.task,
-          timingDays: agentResponse.timingDays
-        }
+      throw new Error(`DeepSeek API error: ${response.status} ${response.statusText} - ${errorText}`)
     }
 
     const data = await response.json()
@@ -127,117 +93,63 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     const content = data.choices?.[0]?.message?.content
 
     if (!content) {
-        console.log('No content in DeepSeek response, using agent template')
-        return {
-          reading: agentResponse.story,
-          deadline: agentResponse.deadline,
-          task: agentResponse.task,
-          timingDays: agentResponse.timingDays
-        }
+      throw new Error('DeepSeek returned empty content')
     }
 
-      const trimmedContent = content.trim()
+    const trimmedContent = content.trim()
 
-      // DeepSeek returns prophecy followed by practical translation separated by natural break
-      // For larger spreads, the prophecy is longer, so be more careful with splitting
-      const parts = trimmedContent.split('\n\n').filter(p => p.trim().length > 0)
-      let prophecy = trimmedContent
-      let practicalTranslation: string | undefined
-      
-      // Strategy: practical translation typically starts with answering the original question
-      // Look for markers like "The answer is", "You will", "They will", etc. or look for a natural break
-      if (parts.length > 2) {
-        // For small spreads (3-5 cards), split roughly in half
-        if (cards.length <= 5) {
-          prophecy = parts.slice(0, Math.ceil(parts.length / 2)).join('\n\n')
-          practicalTranslation = parts.slice(Math.ceil(parts.length / 2)).join('\n\n')
-        } else {
-          // For larger spreads (7-36 cards), prophecy is longer
-          // Take first 70% as prophecy, rest as translation
-          const splitIndex = Math.ceil(parts.length * 0.7)
-          prophecy = parts.slice(0, splitIndex).join('\n\n')
-          if (splitIndex < parts.length) {
-            practicalTranslation = parts.slice(splitIndex).join('\n\n')
-          }
+    const parts = trimmedContent.split('\n\n').filter(p => p.trim().length > 0)
+    let prophecy = trimmedContent
+    let practicalTranslation: string | undefined
+    
+    if (parts.length > 2) {
+      if (cards.length <= 5) {
+        prophecy = parts.slice(0, Math.ceil(parts.length / 2)).join('\n\n')
+        practicalTranslation = parts.slice(Math.ceil(parts.length / 2)).join('\n\n')
+      } else {
+        const splitIndex = Math.ceil(parts.length * 0.7)
+        prophecy = parts.slice(0, splitIndex).join('\n\n')
+        if (splitIndex < parts.length) {
+          practicalTranslation = parts.slice(splitIndex).join('\n\n')
         }
-      } else if (parts.length === 2) {
-        // Two paragraphs: first is prophecy, second is translation
-        prophecy = parts[0]
-        practicalTranslation = parts[1]
       }
+    } else if (parts.length === 2) {
+      prophecy = parts[0]
+      practicalTranslation = parts[1]
+    }
 
-      console.log('DeepSeek response parts:', {
-        totalParts: parts.length,
-        prophecyLength: prophecy.length,
-        translationLength: practicalTranslation?.length || 0
-      })
+    console.log('DeepSeek response parsed:', {
+      totalParts: parts.length,
+      prophecyLength: prophecy.length,
+      translationLength: practicalTranslation?.length || 0
+    })
 
-       // Validate card references only for smaller spreads (3-5 cards)
-       // For larger spreads (7+), validation is too strict due to token/length constraints
-       if (cards.length <= 5) {
-         const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
-         
-         if (!validation.isValid) {
-           console.warn('Reading validation issues:', validation.issues, {
-             missingCards: validation.missingCards,
-             prophecyPreview: prophecy.substring(0, 200)
-           })
-           // If validation fails for small spreads AND no translation, fall back to agent
-           if (!practicalTranslation) {
-             console.warn('No practical translation from DeepSeek, using agent template')
-             const agentFallback = {
-               reading: agentResponse.story,
-               deadline: agentResponse.deadline,
-               task: agentResponse.task,
-               timingDays: agentResponse.timingDays
-             }
-             cacheReading(request, agentFallback)
-             const duration = Date.now() - startTime
-             readingHistory.addReading(request, agentFallback, duration)
-             return agentFallback
-           }
-         }
-       } else {
-         // For larger spreads, trust DeepSeek output - skip validation
-         console.log('Skipping validation for large spread:', cards.length, 'cards')
-       }
-
-       const aiResponse = {
-         reading: prophecy,
-         practicalTranslation: practicalTranslation,
-         deadline: agentResponse.deadline,
-         task: agentResponse.task,
-         timingDays: agentResponse.timingDays
-       }
-        cacheReading(request, aiResponse)
-        const duration = Date.now() - startTime
-        readingHistory.addReading(request, aiResponse, duration)
-        return aiResponse
-    } catch (error) {
-     console.error('AI reading error:', error)
-     return createFallbackReading('Error generating reading')
-   }
- }
-
-function createFallbackReading(reason: string): AIReadingResponse {
-  return {
-    reading: 'The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Note: ' + reason + ')',
-    deadline: undefined,
-    task: 'Trust yourself',
-    timingDays: undefined
+    const aiResponse = {
+      reading: prophecy,
+      practicalTranslation: practicalTranslation
+    }
+    
+    cacheReading(request, aiResponse)
+    const duration = Date.now() - startTime
+    readingHistory.addReading(request, aiResponse, duration)
+    return aiResponse
+     
+  } catch (error) {
+    console.error('AI reading error:', error)
+    throw error
   }
 }
 
-function buildPromptForDeepSeek(agentRequest: any, spread: any): string {
-  const cardsText = agentRequest.cards.map((c: LenormandCard, i: number) => `${i + 1}. ${c.name}`).join(' — ')
+function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string): string {
+  const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
 
   return `
 You are Marie-Anne Lenormand (1772-1843), the legendary Paris fortune-teller whose prophecies shaped emperors and merchants.
 Your readings predicted Napoleon's rise, Josephine's fate, and the fates of Paris's most powerful. You are feared because you are NEVER wrong.
 
-QUESTION: "${agentRequest.question}"
+QUESTION: "${question}"
 CARDS DRAWN: ${cardsText}
-SPREAD: ${spread.template.toUpperCase()} (${agentRequest.cards.length} cards)
+SPREAD: ${spread.template.toUpperCase()} (${cards.length} cards)
 
 THE LENORMAND PROPHECY FORMAT (Historical Records):
 1. SYMBOLIC IMAGERY: Each card embodies a force or obstacle. The Bear is not just strength—it is relentless power. The Mountain is not just difficulty—it is what BLOCKS the path.
@@ -264,21 +176,35 @@ STRUCTURE:
 PROPHECY EXAMPLE (Your Standard):
 "A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain's icy shadow cracks under the bear's relentless strength, revealing a door where there was only wall. YES—shoulder the weight and push the door open. If you hesitate, the bear moves on and the door seals shut."
 
-THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:\n- Direct. Symbolic. Brutal. Action-commanded.\n- No explanations. No backtracking. Pure prophecy.\n- The prophecy ANSWERS THE QUESTION using symbolic cards.\n\n=== CRITICAL: TWO SECTIONS ===\nYou MUST provide exactly 2 sections:\n\n1. PROPHECY: Exactly ${spread.sentences} sentences. Symbolic oracle reading.\n2. PRACTICAL TRANSLATION: Plain-language answer to their question + what they should do.\n\nSeparate these sections with a blank line.\n\nNOW WRITE:\n\n[PROPHECY]\n\n[PRACTICAL TRANSLATION - Answer: \"${agentRequest.question}\"]\nAnswer directly and plainly. Then explain the practical action to take.\nExample: If question is \"How will he react?\", say \"He will respond eagerly but misunderstand because...\"\nDo NOT repeat the deadline—focus on answering their question and their next action.
+THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
+- Direct. Symbolic. Brutal. Action-commanded.
+- No explanations. No backtracking. Pure prophecy.
+- The prophecy ANSWERS THE QUESTION using symbolic cards.
+
+=== CRITICAL: TWO SECTIONS ===
+You MUST provide exactly 2 sections:
+
+1. PROPHECY: Exactly ${spread.sentences} sentences. Symbolic oracle reading.
+2. PRACTICAL TRANSLATION: Plain-language answer to their question + what they should do.
+
+Separate these sections with a blank line.
+
+NOW WRITE:
+
+[PROPHECY]
+
+[PRACTICAL TRANSLATION - Answer: "${question}"]
+Answer directly and plainly. Then explain the practical action to take.
+Example: If question is "How will he react?", say "He will respond eagerly but misunderstand because..."
+Do NOT repeat the deadline—focus on answering their question and their next action.
 `
 }
 
 export async function streamAIReading(request: AIReadingRequest): Promise<ReadableStream<Uint8Array> | null> {
   console.log('streamAIReading: Checking availability...')
   if (!isDeepSeekAvailable()) {
-    console.log('DeepSeek not available, returning fallback stream.')
-    const fallbackText = 'The cards suggest a period of reflection and new opportunities. Trust your intuition as you navigate this path. (Note: AI analysis requires API key configuration)'
-    return new ReadableStream({
-      start(controller) {
-        controller.enqueue(new TextEncoder().encode(fallbackText))
-        controller.close()
-      }
-    })
+    console.log('DeepSeek not available')
+    throw new Error('DeepSeek API key not configured')
   }
 
   console.log('DeepSeek is available. Preparing streaming request...')
@@ -296,47 +222,34 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
       name: c.name
     }))
 
-    const agentRequest = {
-      cards,
-      spread,
-      question: request.question || 'What guidance do these cards have for me?'
-    }
+    const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?')
 
-    const prompt = buildPromptForDeepSeek(agentRequest, spread)
-
-     console.log('Sending streaming request to DeepSeek API...')
-     const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
-     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
-       method: 'POST',
-       headers: {
-         'Content-Type': 'application/json',
-         'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-       },
-       body: JSON.stringify({
-         model: 'deepseek-chat',
-         messages: [
-           { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
-           { role: 'user', content: prompt }
-         ],
-         temperature: 0.4,
-         max_tokens: maxTokens,
-         top_p: 0.9,
-         stream: true
-       })
-     })
+    console.log('Sending streaming request to DeepSeek API...')
+    const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.4,
+        max_tokens: maxTokens,
+        top_p: 0.9,
+        stream: true
+      })
+    })
 
     console.log('DeepSeek streaming API response status:', response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
-      const errorDetails = `Status: ${response.status}, Message: ${response.statusText}, Body: ${errorText}`
-      console.error('DeepSeek streaming API error:', errorDetails)
-
-      if (response.status === 401 || response.status === 403) {
-        console.error('Authentication/Authorization error - check API key')
-      }
-
-      throw new Error('DeepSeek API error: ' + response.statusText)
+      throw new Error(`DeepSeek API error: ${response.status} ${response.statusText} - ${errorText}`)
     }
 
     if (!response.body) {
