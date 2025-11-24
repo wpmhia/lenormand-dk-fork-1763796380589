@@ -44,6 +44,7 @@ function NewReadingPageContent() {
 
     const mountedRef = useRef(true)
     const aiProcessingRef = useRef(false)
+    const aiAnalysisStartedRef = useRef(false)
 
    const addLog = useCallback((msg: string) => {
      setDebugLog(prev => [...prev, `${new Date().toISOString().split('T')[1].split('.')[0]} ${msg}`])
@@ -168,13 +169,16 @@ function NewReadingPageContent() {
        }
     }, [question, allCards, addLog, selectedSpread.id])
 
-       // Auto-start AI analysis when entering results step
-       useEffect(() => {
-         if (step === 'results' && drawnCards.length > 0) {
-           addLog('Auto-starting AI analysis')
-           performAIAnalysis(drawnCards)
-         }
-        }, [step, drawnCards, performAIAnalysis, addLog])
+        // Auto-start AI analysis when entering results step
+        useEffect(() => {
+          if (step === 'results' && drawnCards.length > 0 && !aiAnalysisStartedRef.current) {
+            aiAnalysisStartedRef.current = true
+            addLog('Auto-starting AI analysis')
+            performAIAnalysis(drawnCards)
+          } else if (step !== 'results') {
+            aiAnalysisStartedRef.current = false
+          }
+         }, [step, drawnCards, performAIAnalysis, addLog])
 
    const fetchProphecy = useCallback(async () => {
      if (!drawnCards.length) return
