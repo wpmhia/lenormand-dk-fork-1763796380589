@@ -50,6 +50,7 @@ export function AIReadingDisplay({
   isStreaming = false
 }: AIReadingDisplayProps) {
   const [showReadingMethod, setShowReadingMethod] = useState(false)
+  const [activeTab, setActiveTab] = useState<'results' | 'explain'>('results')
   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
    // Return content as-is without adding links
@@ -126,53 +127,101 @@ export function AIReadingDisplay({
       return null
     }
 
-       return (
-         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
-           {/* What it Means - Primary Reading */}
-           {aiReading?.practicalTranslation && (
-             <Card className="border-border bg-card">
-               <CardHeader className="border-b border-border">
-                 <div className="space-y-4">
-                   <div className="flex items-center justify-between gap-2">
-                     <CardTitle className="flex items-center gap-2">
-                       <CheckCircle2 className="h-5 w-5 text-primary" />
-                       What it Means
-                     </CardTitle>
-                     <Badge variant="secondary" className="flex items-center gap-1">
-                       <CheckCircle2 className="h-3 w-3" />
-                       Complete
-                     </Badge>
-                   </div>
-                 </div>
-               </CardHeader>
-               <CardContent className="space-y-6 p-8">
-                 <div className="text-foreground">
-                    <ReactMarkdown
-                      components={{
-                        h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
-                        h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
-                        h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
-                        p: ({node, ...props}) => <p className="mb-4" {...props} />,
-                        ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                        ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                        li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                        blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
-                        strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                        em: ({node, ...props}) => <em className="italic" {...props} />,
-                        hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
-                        a: ({node, ...props}: any) => (
-                          <a 
-                            {...props} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-primary hover:text-primary/80 underline"
-                          />
-                        ),
-                      }}
-                    >
-                     {getContent(aiReading.practicalTranslation)}
-                   </ReactMarkdown>
-                 </div>
+        return (
+          <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
+            {/* Reading with Tabs */}
+            {aiReading && (
+              <Card className="border-border bg-card">
+                <CardHeader className="border-b border-border">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex gap-2">
+                        <Button
+                          variant={activeTab === 'results' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setActiveTab('results')}
+                          className={activeTab === 'results' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}
+                        >
+                          Results
+                        </Button>
+                        <Button
+                          variant={activeTab === 'explain' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setActiveTab('explain')}
+                          className={activeTab === 'explain' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}
+                        >
+                          Explain
+                        </Button>
+                      </div>
+                      <Badge variant="secondary" className="flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Complete
+                      </Badge>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6 p-8">
+                  {/* Results Tab - Shows Prophecy */}
+                  {activeTab === 'results' && aiReading?.reading && (
+                    <div className="text-foreground">
+                      <ReactMarkdown
+                        components={{
+                          h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                          h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                          h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                          ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                          ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                          li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                          blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                          strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                          em: ({node, ...props}) => <em className="italic" {...props} />,
+                          hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                          a: ({node, ...props}: any) => (
+                            <a 
+                              {...props} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-primary hover:text-primary/80 underline"
+                            />
+                          ),
+                        }}
+                      >
+                        {getContent(aiReading.reading)}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+
+                  {/* Explain Tab - Shows Plain English Explanation */}
+                  {activeTab === 'explain' && aiReading?.practicalTranslation && (
+                    <div className="text-foreground">
+                      <ReactMarkdown
+                        components={{
+                          h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                          h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                          h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                          ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                          ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                          li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                          blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                          strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                          em: ({node, ...props}) => <em className="italic" {...props} />,
+                          hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                          a: ({node, ...props}: any) => (
+                            <a 
+                              {...props} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-primary hover:text-primary/80 underline"
+                            />
+                          ),
+                        }}
+                      >
+                        {getContent(aiReading.practicalTranslation)}
+                      </ReactMarkdown>
+                    </div>
+                  )}
 
                    {/* Show Reading Method Button */}
                    {spreadLearningLinks && (
