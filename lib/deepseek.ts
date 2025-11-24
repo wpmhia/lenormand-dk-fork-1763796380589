@@ -62,7 +62,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?')
      
     console.log('Sending request to DeepSeek API...')
-    const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
+    const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -181,22 +181,27 @@ THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 - No explanations. No backtracking. Pure prophecy.
 - The prophecy ANSWERS THE QUESTION using symbolic cards.
 
-=== CRITICAL: TWO SECTIONS ===
-You MUST provide exactly 2 sections:
+=== CRITICAL: TWO COMPLETE SECTIONS REQUIRED ===
+Your response MUST include exactly 2 sections. DO NOT OMIT EITHER SECTION.
 
-1. PROPHECY: Exactly ${spread.sentences} sentences. Symbolic oracle reading.
-2. PRACTICAL TRANSLATION: Plain-language answer to their question + what they should do.
+SECTION 1 - PROPHECY (${spread.sentences} sentences):
+- Weave all ${cards.length} cards into ONE symbolic narrative
+- Each card mentioned EXACTLY ONCE in parentheses on first mention
+- Direct, commanding, brutal language
+- End with YES/NO and a specific imperative action command
 
-Separate these sections with a blank line.
+SECTION 2 - PRACTICAL TRANSLATION (ALWAYS REQUIRED):
+- Answer the question directly: "${question}"
+- State clearly what WILL happen or what they MUST do
+- Explain the practical action from the card reading
+- 2-4 sentences only
+- Do NOT repeat the deadline from prophecy
 
-NOW WRITE:
+BOTH SECTIONS ALWAYS. NEVER OMIT THE PRACTICAL TRANSLATION.
 
-[PROPHECY]
+Separate the two sections with one blank line.
 
-[PRACTICAL TRANSLATION - Answer: "${question}"]
-Answer directly and plainly. Then explain the practical action to take.
-Example: If question is "How will he react?", say "He will respond eagerly but misunderstand because..."
-Do NOT repeat the deadline—focus on answering their question and their next action.
+NOW WRITE YOUR COMPLETE RESPONSE WITH BOTH SECTIONS:
 `
 }
 
@@ -225,7 +230,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
     const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?')
 
     console.log('Sending streaming request to DeepSeek API...')
-    const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
+    const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
