@@ -53,11 +53,11 @@ export function AIReadingDisplay({
 }: AIReadingDisplayProps) {
   const [showReadingMethod, setShowReadingMethod] = useState(false)
   const [fetchingProphecy, setFetchingProphecy] = useState(false)
-  const displayContent = aiReading?.reading || ''
+  const hasProphecy = !!aiReading?.reading
   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
   const handleShowReadingMethod = async () => {
-    if (!showReadingMethod && !displayContent && onFetchProphecy) {
+    if (!showReadingMethod && !hasProphecy && onFetchProphecy) {
       setFetchingProphecy(true)
       try {
         await onFetchProphecy()
@@ -81,8 +81,8 @@ export function AIReadingDisplay({
     return result
   }
 
-    if (isLoading && !displayContent) {
-      return (
+     if (isLoading && !aiReading?.practicalTranslation) {
+       return (
         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none">
           <Card className="border-border bg-card">
             <CardContent className="space-y-4 p-8 text-center">
@@ -148,9 +148,9 @@ export function AIReadingDisplay({
      )
    }
 
-   if (!displayContent) {
-     return null
-   }
+    if (!aiReading?.practicalTranslation) {
+      return null
+    }
 
        return (
          <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
@@ -222,16 +222,16 @@ export function AIReadingDisplay({
                             <h4 className="font-semibold text-muted-foreground">About This Method</h4>
                             <p className="text-sm text-muted-foreground/80">{spreadLearningLinks.description}</p>
                           </div>
-                          {displayContent && (
-                            <div className="space-y-3">
-                              <div>
-                                <h5 className="font-semibold text-sm text-muted-foreground mb-2">Reading Prophecy</h5>
-                                <div className="p-4 bg-muted/30 rounded border border-border/30">
-                                  <p className="text-sm text-foreground/80">{displayContent}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                           {aiReading?.reading && (
+                             <div className="space-y-3">
+                               <div>
+                                 <h5 className="font-semibold text-sm text-muted-foreground mb-2">Reading Prophecy</h5>
+                                 <div className="p-4 bg-muted/30 rounded border border-border/30">
+                                   <p className="text-sm text-foreground/80">{aiReading.reading}</p>
+                                 </div>
+                               </div>
+                             </div>
+                           )}
                           <div className="flex flex-wrap gap-2">
                             <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
                               <Button variant="secondary" size="sm" className="gap-2">
