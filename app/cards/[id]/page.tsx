@@ -91,8 +91,7 @@ export default function CardDetailPage({ params }: PageProps) {
                <ArrowLeft className="h-4 w-4" />
                Back to Cards
              </Link>
-             <h1 className="mb-2 text-4xl font-bold text-foreground">{card.name}</h1>
-             <p className="text-muted-foreground">Card #{card.id}</p>
+              <h1 className="mb-2 text-4xl font-bold text-foreground">{card.name}</h1>
            </div>
            <div className="text-6xl flex-shrink-0 ml-4">
              {card.emoji || '🃏'}
