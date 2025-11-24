@@ -344,16 +344,16 @@ export function ReadingViewer({
          </div>
        </div>
      )
-     } else {
-      // Linear layouts (3, 5 cards)
-       return (
-         <div className={`mx-auto grid gap-4 ${
-           reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
-           reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
-           reading.layoutType === 7 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-7' :
-           reading.layoutType === 9 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-3' :
-           'max-w-6xl grid-cols-1 sm:grid-cols-3'
-         }`}>
+      } else {
+       // Linear layouts (3, 5, 7, 9 cards)
+        return (
+          <div className={`mx-auto grid gap-4 overflow-visible ${
+            reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
+            reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
+            reading.layoutType === 7 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-7' :
+            reading.layoutType === 9 ? 'max-w-7xl grid-cols-1 sm:grid-cols-3 md:grid-cols-3' :
+            'max-w-6xl grid-cols-1 sm:grid-cols-3'
+          }`}>
            {reading.cards.map((readingCard, index) => {
              const card = getCardById(allCards, readingCard.id)
              if (!card) return null
@@ -436,12 +436,12 @@ export function ReadingViewer({
 
 
         {/* Cards Layout Section */}
-       <div className="animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500">
-         <div className="rounded-xl border border-border bg-card p-8">
-           <h3 className="mb-6 text-xl font-semibold text-foreground">Your Cards</h3>
-           {renderLayout()}
-         </div>
-       </div>
+        <div className="animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500 overflow-visible">
+          <div className="rounded-xl border border-border bg-card p-8 overflow-visible">
+            <h3 className="mb-6 text-xl font-semibold text-foreground">Your Cards</h3>
+            {renderLayout()}
+          </div>
+        </div>
 
        {/* Card Modal with Combinations */}
        {selectedCard && (

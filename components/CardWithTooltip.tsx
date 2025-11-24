@@ -30,7 +30,7 @@ export function CardWithTooltip({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div>
+        <div className="overflow-visible">
           <Card
             card={card}
             onClick={onClick}
@@ -40,7 +40,7 @@ export function CardWithTooltip({
           />
         </div>
       </TooltipTrigger>
-      <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg z-50">
+      <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg z-50 overflow-visible">
         <div className="space-y-3">
           {/* Card Name and Position */}
           <div>
