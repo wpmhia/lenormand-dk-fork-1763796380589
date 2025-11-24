@@ -5,7 +5,6 @@ import { Card } from './Card'
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
@@ -29,61 +28,59 @@ export function CardWithTooltip({
   positionDescription
 }: CardWithTooltipProps) {
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <Card
+            card={card}
+            onClick={onClick}
+            showBack={showBack}
+            size={size}
+            className={className}
+          />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg z-50">
+        <div className="space-y-3">
+          {/* Card Name and Position */}
           <div>
-            <Card
-              card={card}
-              onClick={onClick}
-              showBack={showBack}
-              size={size}
-              className={className}
-            />
-          </div>
-        </TooltipTrigger>
-         <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg">
-          <div className="space-y-3">
-            {/* Card Name and Position */}
-            <div>
-              <h4 className="font-semibold text-foreground">
-                {card.name}
-              </h4>
-              {positionLabel && (
-                <p className="text-xs text-primary font-medium">
-                  {positionLabel}
-                </p>
-              )}
-              {positionDescription && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  {positionDescription}
-                </p>
-              )}
-            </div>
-
-            {/* Card Meaning */}
-            <div>
-              <p className="text-sm leading-relaxed text-foreground">
-                {card.uprightMeaning}
+            <h4 className="font-semibold text-foreground">
+              {card.name}
+            </h4>
+            {positionLabel && (
+              <p className="text-xs text-primary font-medium">
+                {positionLabel}
               </p>
-            </div>
-
-            {/* Keywords */}
-            {card.keywords && card.keywords.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {card.keywords.slice(0, 4).map((keyword, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded border border-primary/20"
-                  >
-                    {keyword}
-                  </span>
-                ))}
-              </div>
+            )}
+            {positionDescription && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {positionDescription}
+              </p>
             )}
           </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+
+          {/* Card Meaning */}
+          <div>
+            <p className="text-sm leading-relaxed text-foreground">
+              {card.uprightMeaning}
+            </p>
+          </div>
+
+          {/* Keywords */}
+          {card.keywords && card.keywords.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {card.keywords.slice(0, 4).map((keyword, idx) => (
+                <span
+                  key={idx}
+                  className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded border border-primary/20"
+                >
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </TooltipContent>
+    </Tooltip>
   )
 }

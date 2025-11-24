@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 import { Footer } from '@/components/Footer';
 import { ThemeProvider } from '@/components/providers';
@@ -130,18 +131,20 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>
-          <div className="flex min-h-screen flex-col bg-background text-foreground">
-            <Header />
-            <main className="flex-grow pt-14">
-              {children}
-            </main>
-            <Footer />
-          </div>
-          <Toaster />
-          <CookieConsent />
-        </ThemeProvider>
+       <body className={`${inter.className} antialiased`}>
+         <TooltipProvider>
+           <ThemeProvider>
+             <div className="flex min-h-screen flex-col bg-background text-foreground">
+               <Header />
+               <main className="flex-grow pt-14">
+                 {children}
+               </main>
+               <Footer />
+             </div>
+             <Toaster />
+             <CookieConsent />
+           </ThemeProvider>
+         </TooltipProvider>
         <StructuredData />
         <FAQSchema />
       </body>
