@@ -17,17 +17,24 @@ interface CardModalProps {
 }
 
 export function CardModal({ card, onClose, layoutType, position }: CardModalProps) {
-  const combos = Array.isArray(card.combos) ? card.combos : []
+  const [fullCard, setFullCard] = useState<CardType>(card)
   const [allCards, setAllCards] = useState<any[]>([])
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     combinations: false,
     house: false,
   })
 
+  // Always fetch the full card data to ensure we have meaning
   useEffect(() => {
     const cards = getCards()
     setAllCards(cards)
-  }, [])
+    const completeCard = cards.find(c => c.id === card.id)
+    if (completeCard) {
+      setFullCard(completeCard)
+    }
+  }, [card.id])
+
+  const combos = Array.isArray(fullCard.combos) ? fullCard.combos : []
 
   const toggleSection = (section: string) => {
     setOpenSections(prev => ({
@@ -44,13 +51,13 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
     }}>
        <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
          <DialogHeader>
-           <DialogTitle className="flex items-center gap-2">
-             <span className="text-2xl font-bold">{card.id}.</span>
-             <span className="text-xl">{card.name}</span>
-           </DialogTitle>
-           <DialogDescription>
-             Lenormand card #{card.id} of 36
-           </DialogDescription>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="text-2xl font-bold">{fullCard.id}.</span>
+              <span className="text-xl">{fullCard.name}</span>
+            </DialogTitle>
+            <DialogDescription>
+              Lenormand card #{fullCard.id} of 36
+            </DialogDescription>
          </DialogHeader>
 
         <div className="space-y-4">
@@ -58,8 +65,8 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           <div className="flex items-start gap-4">
             <div className="card-mystical relative h-64 w-48 flex-shrink-0 overflow-hidden rounded-xl border border-purple-500/30 shadow-lg">
               <Image
-                src={card.imageUrl || ''}
-                alt={card.name}
+                src={fullCard.imageUrl || ''}
+                alt={fullCard.name}
                 width={192}
                 height={256}
                 className="h-full w-full bg-card object-contain"
@@ -70,7 +77,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-foreground">Keywords</h3>
                 <div className="flex flex-wrap gap-2">
-                  {card.keywords.map((keyword, index) => (
+                  {fullCard.keywords.map((keyword, index) => (
                     <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
                       {keyword}
                     </Badge>
@@ -84,7 +91,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             <div className="rounded-lg bg-muted/50 p-4 space-y-4">
               <h3 className="font-semibold text-foreground">Meaning</h3>
               {(() => {
-                const meaning = card.meaning
+                const meaning = fullCard.meaning
+                if (!meaning) {
+                  return <p className="text-muted-foreground">{fullCard.uprightMeaning}</p>
+                }
                 return (
                <div className="space-y-4 text-sm">
                   <div>

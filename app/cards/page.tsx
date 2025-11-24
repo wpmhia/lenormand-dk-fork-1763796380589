@@ -51,6 +51,11 @@ export default function CardsPage() {
   const fetchCards = async () => {
     try {
       const cardsData = await getCards()
+      console.log('CardsPage - loaded cards:', cardsData.length)
+      console.log('CardsPage - first card has meaning:', !!cardsData[0]?.meaning)
+      if (cardsData[0]?.meaning) {
+        console.log('CardsPage - first card meaning keys:', Object.keys(cardsData[0].meaning))
+      }
       setCards(cardsData)
       setLoading(false)
     } catch (error) {
