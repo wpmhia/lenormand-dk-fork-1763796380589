@@ -232,8 +232,8 @@ export function AIReadingDisplay({
                          </Button>
                        </a>
                      </div>
-                   )
-               </CardContent>
+                    )}
+                </CardContent>
              </Card>
            )}
         </div>
