@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Card as CardType, ReadingCard } from '@/lib/types'
 import { ReadingViewer } from '@/components/ReadingViewer'
 import { AIReadingDisplay } from '@/components/AIReadingDisplay'
-import { CardInterpretation } from '@/components/CardInterpretation'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -454,15 +453,7 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                     spreadId={selectedSpread.id}
                   />
 
-                  {/* Show traditional meanings while AI loads or if AI fails */}
-                  {(aiLoading || (!aiReading && !aiLoading)) && (
-                    <CardInterpretation
-                      cards={drawnCards}
-                      allCards={allCards}
-                      spreadId={selectedSpread.id}
-                      question={question}
-                    />
-                  )}
+                  {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
                    <AIReadingDisplay
                      aiReading={aiReading}

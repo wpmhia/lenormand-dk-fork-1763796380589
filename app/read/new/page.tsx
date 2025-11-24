@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Card as CardType, ReadingCard } from '@/lib/types'
 import { ReadingViewer } from '@/components/ReadingViewer'
 import { AIReadingDisplay } from '@/components/AIReadingDisplay'
-import { CardInterpretation } from '@/components/CardInterpretation'
 import { Deck } from '@/components/Deck'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -679,15 +678,7 @@ function NewReadingPageContent() {
                   <div className="text-center p-4 text-muted-foreground">Loading cards...</div>
                 )}
 
-               {/* Individual card explanations */}
-               {allCards.length > 0 ? (
-                 <CardInterpretation
-                   cards={drawnCards}
-                   allCards={allCards}
-                   spreadId={selectedSpread.id}
-                   question={question}
-                 />
-               ) : null}
+                {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">

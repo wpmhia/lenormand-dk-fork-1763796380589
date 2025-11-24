@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { ReadingViewer } from '@/components/ReadingViewer'
 import { AIReadingDisplay } from '@/components/AIReadingDisplay'
-import { CardInterpretation } from '@/components/CardInterpretation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -251,13 +250,7 @@ export default function SharedReadingPage({ params }: PageProps) {
           showReadingHeader={false}
         />
 
-        {/* Individual card explanations */}
-        <CardInterpretation
-          cards={reading.cards}
-          allCards={allCards}
-          spreadId="past-present-future"
-          question={reading.question || ''}
-        />
+        {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
         {/* AI Analysis Section */}
         <div className="mt-6">
