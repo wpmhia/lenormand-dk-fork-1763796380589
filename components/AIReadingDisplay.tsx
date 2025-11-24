@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
+import { linkifyCardNames } from '@/lib/cardLinkifier'
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null
@@ -219,27 +220,29 @@ export function AIReadingDisplay({
                   What it Means
                 </CardTitle>
              </CardHeader>
-             <CardContent className="space-y-6 p-8">
-               <div className="text-foreground">
-                 <ReactMarkdown
-                   components={{
-                     h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
-                     h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
-                     h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
-                     p: ({node, ...props}) => <p className="mb-4" {...props} />,
-                     ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                     ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                     li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                     blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
-                     strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                     em: ({node, ...props}) => <em className="italic" {...props} />,
-                     hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
-                   }}
-                 >
-                   {aiReading.practicalTranslation}
-                 </ReactMarkdown>
-               </div>
-             </CardContent>
+              <CardContent className="space-y-6 p-8">
+                <div className="text-foreground">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                      p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                      ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                      ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                      li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                      blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                      strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                      em: ({node, ...props}) => <em className="italic" {...props} />,
+                      hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                    }}
+                  >
+                    {allCards && allCards.length > 0 
+                      ? linkifyCardNames(aiReading.practicalTranslation, allCards)
+                      : aiReading.practicalTranslation}
+                  </ReactMarkdown>
+                </div>
+              </CardContent>
            </Card>
          )}
        </div>
