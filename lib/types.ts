@@ -13,7 +13,7 @@ export interface Card {
   number: number
   keywords: string[]
   uprightMeaning: string
-  meaning?: CardMeaning
+  meaning: CardMeaning
   combos: CardCombo[]
   imageUrl: string | null
   emoji?: string

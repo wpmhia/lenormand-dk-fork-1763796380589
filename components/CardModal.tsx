@@ -19,23 +19,15 @@ interface CardModalProps {
 export function CardModal({ card, onClose, layoutType, position }: CardModalProps) {
   const combos = Array.isArray(card.combos) ? card.combos : []
   const [allCards, setAllCards] = useState<any[]>([])
-  const [cardWithMeaning, setCardWithMeaning] = useState(card)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    meaning: false,
     combinations: false,
     house: false,
-    info: false,
   })
 
   useEffect(() => {
     const cards = getCards()
     setAllCards(cards)
-    // Make sure we have the full card data with meaning
-    const fullCard = cards.find(c => c.id === card.id)
-    if (fullCard) {
-      setCardWithMeaning(fullCard)
-    }
-  }, [card.id])
+  }, [])
 
   const toggleSection = (section: string) => {
     setOpenSections(prev => ({
@@ -88,12 +80,12 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             </div>
           </div>
 
-           {/* Meaning Section - Always Visible */}
-           <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-             <h3 className="font-semibold text-foreground">Meaning</h3>
-             {(() => {
-               const meaning = card.meaning || allCards.find(c => c.id === card.id)?.meaning
-               return meaning ? (
+            {/* Meaning Section - Always Visible */}
+            <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+              <h3 className="font-semibold text-foreground">Meaning</h3>
+              {(() => {
+                const meaning = card.meaning
+                return (
                <div className="space-y-4 text-sm">
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
@@ -143,12 +135,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                      <h4 className="font-semibold text-foreground mb-1">Timing</h4>
                       <p className="text-muted-foreground">{meaning.timing}</p>
                    </div>
-                 )}
-                </div>
-              ) : (
-                <p className="text-muted-foreground">{card.uprightMeaning}</p>
-              )
-              })()}
+                  )}
+                  </div>
+                )}
+                )()}
            </div>
 
           {/* House Meaning - Grand Tableau Only */}
