@@ -59,7 +59,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       name: c.name
     }))
 
-    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?')
+    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId)
      
     console.log('Sending request to DeepSeek API...')
     const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
@@ -140,8 +140,9 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
   }
 }
 
-function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string): string {
+function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string): string {
   const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
+  const isYesNoSpread = spreadId === 'yes-no-maybe'
 
   return `
 You are Marie-Anne Lenormand (1772-1843), the legendary Paris fortune-teller whose prophecies shaped emperors and merchants.
@@ -168,13 +169,13 @@ STRUCTURE:
 - Write EXACTLY ${spread.sentences} sentences. Each is a narrative beat.
 - Sentence 1-2: SYMBOLIC DIAGNOSIS (what blocks? what is the situation?)
 - Sentence 2-3: MECHANISM (how does this resolve? what is the hidden force at work?)
-- Sentence 3: OUTCOME + COMMAND (YES/NO/STAY + imperative action) - only add deadline if cards warrant it
+- Sentence 3: OUTCOME + COMMAND${isYesNoSpread ? ' (YES/NO/MAYBE + imperative action)' : ' (imperative action) - only add deadline if cards warrant it'}
 - Introduce each card EXACTLY ONCE in parentheses: (CardName)
 - Subsequent card mentions drop parentheses for narrative flow
 - Use vivid, physical language: weight, wall, crack, shadow, light, door, stone, water, fire, ice, seal, push, move
 
 PROPHECY EXAMPLE (Your Standard):
-"A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain's icy shadow cracks under the bear's relentless strength, revealing a door where there was only wall. YES—shoulder the weight and push the door open. If you hesitate, the bear moves on and the door seals shut."
+${isYesNoSpread ? '"YES—the path opens before you. (Letter) carries the answer sealed within. (Sun) breaks through (Clouds), revealing your choice is already made. Move forward without hesitation."' : '"A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain\'s icy shadow cracks under the bear\'s relentless strength, revealing a door where there was only wall. Shoulder the weight and push the door open."'}
 
 THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 - Direct. Symbolic. Brutal. Action-commanded.
@@ -188,7 +189,7 @@ SECTION 1 - PROPHECY (${spread.sentences} sentences):
 - Weave all ${cards.length} cards into ONE symbolic narrative
 - Each card mentioned EXACTLY ONCE in parentheses on first mention
 - Direct, commanding, brutal language
-- End with YES/NO and a specific imperative action command
+${isYesNoSpread ? '- End with YES or NO or MAYBE, then give a specific imperative action command' : '- End with a specific imperative action command'}
 
 SECTION 2 - PRACTICAL TRANSLATION (ALWAYS REQUIRED):
 - Answer the question directly: "${question}"
@@ -227,7 +228,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
       name: c.name
     }))
 
-    const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?')
+    const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId)
 
     console.log('Sending streaming request to DeepSeek API...')
     const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
