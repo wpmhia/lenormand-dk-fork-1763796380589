@@ -63,7 +63,12 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy)
      
     console.log('Sending request to DeepSeek API...')
-    const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
+    let maxTokens: number
+    if (cards.length >= 36) maxTokens = 3500
+    else if (cards.length >= 9) maxTokens = 2200
+    else if (cards.length >= 7) maxTokens = 1800
+    else if (cards.length >= 5) maxTokens = 1500
+    else maxTokens = 1200
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -73,7 +78,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages: [
-          { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
+          { role: 'system', content: 'You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.' },
           { role: 'user', content: deepseekPrompt }
         ],
         temperature: 0.4,
@@ -231,9 +236,14 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
 
      const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy)
 
-    console.log('Sending streaming request to DeepSeek API...')
-    const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
-    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+     console.log('Sending streaming request to DeepSeek API...')
+     let maxTokens: number
+     if (cards.length >= 36) maxTokens = 3500
+     else if (cards.length >= 9) maxTokens = 2200
+     else if (cards.length >= 7) maxTokens = 1800
+     else if (cards.length >= 5) maxTokens = 1500
+     else maxTokens = 1200
+     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -242,7 +252,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages: [
-          { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
+          { role: 'system', content: 'You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.4,
