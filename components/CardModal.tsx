@@ -20,10 +20,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
   const combos = Array.isArray(card.combos) ? card.combos : []
   const [allCards, setAllCards] = useState<any[]>([])
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    meaning: false,
-    combinations: false,
+    meaning: true,
+    combinations: true,
     house: false,
-    info: false,
+    info: true,
   })
 
   useEffect(() => {
