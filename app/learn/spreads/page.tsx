@@ -78,27 +78,42 @@ const spreads = [
       }
     ]
   },
-  {
-    category: "5-Card Spreads",
-    description: "Detailed analysis for specific situations and decisions",
-    spreads: [
-      {
-        name: "5-Card Situation Spread",
-        description: "Detailed analysis of a specific situation",
-        layout: "Situation → Challenge → Advice → Outcome → Timing",
-        useCase: "Problem-solving, decision making",
-        difficulty: "Intermediate",
-        isPrimary: true,
-        positions: [
-          { name: "Situation", description: "Current state of affairs" },
-          { name: "Challenge", description: "Obstacles or difficulties" },
-          { name: "Advice", description: "Guidance for moving forward" },
-          { name: "Outcome", description: "Likely result of current path" },
-          { name: "Timing", description: "When to expect developments" }
-        ]
-      }
-    ]
-  },
+   {
+     category: "5-Card Spreads",
+     description: "Detailed analysis for specific situations and decisions",
+     spreads: [
+       {
+         name: "5-Card Situation Spread",
+         description: "Detailed analysis of a specific situation",
+         layout: "Situation → Challenge → Advice → Outcome → Timing",
+         useCase: "Problem-solving, decision making",
+         difficulty: "Intermediate",
+         isPrimary: true,
+         positions: [
+           { name: "Situation", description: "Current state of affairs" },
+           { name: "Challenge", description: "Obstacles or difficulties" },
+           { name: "Advice", description: "Guidance for moving forward" },
+           { name: "Outcome", description: "Likely result of current path" },
+           { name: "Timing", description: "When to expect developments" }
+         ]
+       },
+       {
+         name: "5-Card Structured Reading",
+         description: "Grammar-based analysis where each card represents a part of speech",
+         layout: "Subject → Verb → Object → Modifier → Outcome",
+         useCase: "Analytical insights, understanding dynamics",
+         difficulty: "Intermediate",
+         isPrimary: false,
+         positions: [
+           { name: "Subject", description: "The opening element—who or what the story begins with" },
+           { name: "Verb", description: "The action or descriptor—what is happening or being done" },
+           { name: "Object", description: "The direct impact or target—what is being affected" },
+           { name: "Modifier", description: "The qualifier or condition—how, when, or under what circumstance" },
+           { name: "Outcome", description: "The result or conclusion—where this leads" }
+         ]
+       }
+     ]
+   },
   {
     category: "7-Card Spreads",
     description: "Deep insights for weekly guidance or relationship dynamics",
