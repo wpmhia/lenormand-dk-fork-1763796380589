@@ -49,8 +49,7 @@ export function AIReadingDisplay({
   question,
   isStreaming = false
 }: AIReadingDisplayProps) {
-  const [showReadingMethod, setShowReadingMethod] = useState(false)
-  const [activeTab, setActiveTab] = useState<'results' | 'explain'>('results')
+  const [activeTab, setActiveTab] = useState('results')
   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
    // Return content as-is without adding links
@@ -223,57 +222,17 @@ export function AIReadingDisplay({
                     </div>
                   )}
 
-                   {/* Show Reading Method Button */}
+                   {/* Learn the Method Button - Always Visible */}
                    {spreadLearningLinks && (
-                     <div className="border-t border-border pt-6 mt-6">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowReadingMethod(!showReadingMethod)}
-                          className="gap-2"
-                        >
-                          {showReadingMethod ? (
-                            <>
-                              <ChevronUp className="h-4 w-4" />
-                              Hide Reading Method
-                            </>
-                          ) : (
-                            <>
-                              <ChevronDown className="h-4 w-4" />
-                              Show Reading Method
-                            </>
-                          )}
-                        </Button>
-
-                      {/* Reading Method Details - Only when expanded */}
-                      {showReadingMethod && (
-                        <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-3 mt-4">
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-muted-foreground">About This Method</h4>
-                            <p className="text-sm text-muted-foreground/80">{spreadLearningLinks.description}</p>
-                          </div>
-                           {aiReading?.reading && (
-                             <div className="space-y-3">
-                               <div>
-                                 <h5 className="font-semibold text-sm text-muted-foreground mb-2">Reading Prophecy</h5>
-                                 <div className="p-4 bg-muted/30 rounded border border-border/30">
-                                   <p className="text-sm text-foreground/80">{aiReading.reading}</p>
-                                 </div>
-                               </div>
-                             </div>
-                           )}
-                           <div className="flex flex-wrap gap-2">
-                             <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
-                               <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
-                                 Learn the Method
-                                 <ExternalLink className="h-3 w-3" />
-                               </Button>
-                             </a>
-                           </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                     <div className="border-t border-border pt-6 mt-6 flex flex-wrap gap-2">
+                       <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
+                         <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
+                           Learn the Method
+                           <ExternalLink className="h-3 w-3" />
+                         </Button>
+                       </a>
+                     </div>
+                   )
                </CardContent>
              </Card>
            )}
