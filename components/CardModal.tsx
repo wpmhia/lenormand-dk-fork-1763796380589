@@ -19,6 +19,7 @@ interface CardModalProps {
 export function CardModal({ card, onClose, layoutType, position }: CardModalProps) {
   const combos = Array.isArray(card.combos) ? card.combos : []
   const [allCards, setAllCards] = useState<any[]>([])
+  const [cardWithMeaning, setCardWithMeaning] = useState(card)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     meaning: false,
     combinations: false,
@@ -27,8 +28,14 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
   })
 
   useEffect(() => {
-    setAllCards(getCards())
-  }, [])
+    const cards = getCards()
+    setAllCards(cards)
+    // Make sure we have the full card data with meaning
+    const fullCard = cards.find(c => c.id === card.id)
+    if (fullCard) {
+      setCardWithMeaning(fullCard)
+    }
+  }, [card.id])
 
   const toggleSection = (section: string) => {
     setOpenSections(prev => ({
@@ -84,17 +91,19 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
            {/* Meaning Section - Always Visible */}
            <div className="rounded-lg bg-muted/50 p-4 space-y-4">
              <h3 className="font-semibold text-foreground">Meaning</h3>
-             {card.meaning ? (
+             {(() => {
+               const meaning = card.meaning || allCards.find(c => c.id === card.id)?.meaning
+               return meaning ? (
                <div className="space-y-4 text-sm">
-                 <div>
-                   <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
-                   <p className="text-muted-foreground">{card.meaning.general}</p>
-                 </div>
-                 
-                 <div>
-                   <h4 className="font-semibold text-foreground mb-2">Positive aspects</h4>
-                   <ul className="space-y-1">
-                     {card.meaning.positive.map((aspect, idx) => (
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
+                    <p className="text-muted-foreground">{meaning.general}</p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2">Positive aspects</h4>
+                    <ul className="space-y-1">
+                      {meaning.positive.map((aspect, idx) => (
                        <li key={idx} className="flex items-start gap-2">
                          <span className="text-primary mt-1 flex-shrink-0">•</span>
                          <span className="text-muted-foreground">{aspect}</span>
@@ -103,10 +112,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                    </ul>
                  </div>
                  
-                 <div>
-                   <h4 className="font-semibold text-foreground mb-2">Challenging aspects</h4>
-                   <ul className="space-y-1">
-                     {card.meaning.negative.map((aspect, idx) => (
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2">Challenging aspects</h4>
+                    <ul className="space-y-1">
+                      {meaning.negative.map((aspect, idx) => (
                        <li key={idx} className="flex items-start gap-2">
                          <span className="text-destructive mt-1 flex-shrink-0">•</span>
                          <span className="text-muted-foreground">{aspect}</span>
@@ -115,30 +124,31 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                    </ul>
                  </div>
                  
-                 {card.meaning.relationships && (
-                   <div>
-                     <h4 className="font-semibold text-foreground mb-1">In relationships</h4>
-                     <p className="text-muted-foreground">{card.meaning.relationships}</p>
-                   </div>
-                 )}
-                 
-                 {card.meaning.careerFinance && (
-                   <div>
-                     <h4 className="font-semibold text-foreground mb-1">Career & finance</h4>
-                     <p className="text-muted-foreground">{card.meaning.careerFinance}</p>
-                   </div>
-                 )}
-                 
-                 {card.meaning.timing && (
+                  {meaning.relationships && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">In relationships</h4>
+                      <p className="text-muted-foreground">{meaning.relationships}</p>
+                    </div>
+                  )}
+                  
+                  {meaning.careerFinance && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">Career & finance</h4>
+                      <p className="text-muted-foreground">{meaning.careerFinance}</p>
+                    </div>
+                  )}
+                  
+                  {meaning.timing && (
                    <div>
                      <h4 className="font-semibold text-foreground mb-1">Timing</h4>
-                     <p className="text-muted-foreground">{card.meaning.timing}</p>
+                      <p className="text-muted-foreground">{meaning.timing}</p>
                    </div>
                  )}
-               </div>
-             ) : (
-               <p className="text-muted-foreground">{card.uprightMeaning}</p>
-             )}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">{card.uprightMeaning}</p>
+              )
+              })()}
            </div>
 
           {/* House Meaning - Grand Tableau Only */}
@@ -233,13 +243,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
              </div>
            )}
 
-           {/* Card Info Section - Always Visible */}
-           <div className="rounded-lg bg-muted/50 p-4 space-y-2">
-             <h3 className="font-semibold text-foreground">Card Info</h3>
-             <div className="text-sm text-muted-foreground">
-               <div>Lenormand Card #{card.id} of 36</div>
-             </div>
-           </div>
+
         </div>
       </DialogContent>
     </Dialog>
