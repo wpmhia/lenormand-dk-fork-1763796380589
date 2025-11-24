@@ -216,10 +216,14 @@ DO THIS:
 
 ${cards.length >= 36 ? '- 12-18 sentences: Break down: Current situation → Main obstacles → What must change → Specific actions → Likelihood of success' : cards.length >= 9 ? '- 6-10 sentences: Situation → Obstacles → What needs to change → Actions needed' : cards.length >= 7 ? '- 5-8 sentences: Current state → Key challenges → Required changes → Actions' : cards.length >= 5 ? '- 4-6 sentences: Situation → Challenge → Resources → Next steps' : '- 2-3 sentences: Direct answer'}
 
-EXAMPLE (for "Will he ever talk?"):
-"YES, but only if specific action is taken. The main barrier is a neurological/medical condition that hasn't been properly diagnosed. What needs to happen: Get a second medical opinion and try a different therapeutic approach. Specific actions: Demand a full medical review, find a new specialist, and consider a completely different therapy method. The current approach isn't working; a major change is needed. Likelihood: High if these actions are taken, low if nothing changes."
+EXAMPLE (what GOOD plain English looks like):
+"YES, Kristoffer will be able to talk, but it will not happen easily or quickly. The primary obstacle is a complex combination of a deep-seated medical or neurological condition and his current environment. There is also a risk of receiving incorrect advice from certain specialists. The situation requires a complete transformation in approach, moving to a fundamentally different method, likely involving a new specialist. You must secure a stable daily routine, seek multiple medical opinions, demand a full review of all diagnoses, involve a supportive community, and implement a specific practice regimen. Be prepared for setbacks. Success is highly likely only if you commit fully to these major changes. If you continue on the current path, nothing will change. The key is to stop what you are doing now and pursue a completely new strategy with determination."
 
-NOW: Translate the prophecy above into plain, simple English. No symbols. No mysticism. Just the facts.
+EXAMPLE OF WRONG (what NOT to do):
+"The (Child) carries the weight of a sealed (Book). The (Cloud) obscures the (Path). The (Mountain) is an immovable wall, and the (Fox) whispers deception. The (Key) gleams in the (Garden). The (Ship) brings opportunity..."
+^ This is WRONG - it's just the prophecy in slightly different words with card names in parentheses.
+
+NOW: Translate the prophecy above into plain, simple English. Assume the reader knows nothing about Lenormand cards. No card names in parentheses. No symbolic language. Just facts and what needs to happen.
 
 BOTH SECTIONS ALWAYS. NEVER OMIT THE PRACTICAL TRANSLATION.
 
