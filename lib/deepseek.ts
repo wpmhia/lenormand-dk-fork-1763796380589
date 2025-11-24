@@ -197,17 +197,29 @@ SECTION 1 - PROPHECY (${spread.sentences} sentences):
 - Direct, commanding, brutal language
 ${isYesNoSpread ? '- End with YES or NO or MAYBE, then give a specific imperative action command' : '- End with a specific imperative action command'}
 
-SECTION 2 - PRACTICAL TRANSLATION (ALWAYS REQUIRED):
-Do NOT use mystical language, lunar cycles, or fortune-teller speak.
-Instead: Extract the ACTUAL ANSWER to the question from the cards. Be direct, practical, specific.
-- Answer the question: "${question}"
-- What the cards actually say will happen (YES/NO/MAYBE or clear outcome)
-- What concrete actions are needed based on the card reading
-- Specific obstacles mentioned in the cards
-- Clear next steps the querent should take
-${cards.length >= 36 ? '- 12-18 sentences MINIMUM: Comprehensive breakdown of all themes, key figures, timeline, and specific actions' : cards.length >= 9 ? '- 6-10 sentences: Detailed situation analysis and necessary steps' : cards.length >= 7 ? '- 5-8 sentences: Comprehensive answer with timeline and action' : cards.length >= 5 ? '- 4-6 sentences: Complete analysis with resources and outcomes' : '- 2-3 sentences: Direct, concise answer'}
-- NO mystical language like "lunar cycles", "the Key", "cosmic timing" - be practical
-- Ground everything in what the specific cards actually mean
+SECTION 2 - PLAIN ENGLISH EXPLANATION (NOT another reading):
+Your job: Take the prophecy above and TRANSLATE it into plain, everyday English.
+A person who has never heard of Lenormand should understand the full answer by reading ONLY this section.
+
+DO NOT:
+- Retell the prophecy in different words
+- Use card names
+- Use symbolic language
+- Use ANY mystical language ("lunar cycles", "cosmic timing", "the universe", "the key", etc.)
+- Mention deadlines or timelines
+
+DO THIS:
+- State the direct answer to: "${question}"
+- Explain the main OBSTACLES blocking the outcome (in plain words)
+- Explain what NEEDS TO HAPPEN for change
+- List SPECIFIC ACTIONS the querent must take
+
+${cards.length >= 36 ? '- 12-18 sentences: Break down: Current situation → Main obstacles → What must change → Specific actions → Likelihood of success' : cards.length >= 9 ? '- 6-10 sentences: Situation → Obstacles → What needs to change → Actions needed' : cards.length >= 7 ? '- 5-8 sentences: Current state → Key challenges → Required changes → Actions' : cards.length >= 5 ? '- 4-6 sentences: Situation → Challenge → Resources → Next steps' : '- 2-3 sentences: Direct answer'}
+
+EXAMPLE (for "Will he ever talk?"):
+"YES, but only if specific action is taken. The main barrier is a neurological/medical condition that hasn't been properly diagnosed. What needs to happen: Get a second medical opinion and try a different therapeutic approach. Specific actions: Demand a full medical review, find a new specialist, and consider a completely different therapy method. The current approach isn't working; a major change is needed. Likelihood: High if these actions are taken, low if nothing changes."
+
+NOW: Translate the prophecy above into plain, simple English. No symbols. No mysticism. Just the facts.
 
 BOTH SECTIONS ALWAYS. NEVER OMIT THE PRACTICAL TRANSLATION.
 
