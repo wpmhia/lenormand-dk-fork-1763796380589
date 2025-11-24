@@ -172,16 +172,17 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         translationLength: practicalTranslation?.length || 0
       })
 
-      // Validate that all cards are referenced with parentheses format (only in prophecy)
-      const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
-      
-       if (!validation.isValid) {
-         console.warn('Reading validation issues:', validation.issues, {
-           missingCards: validation.missingCards,
-           prophecyPreview: prophecy.substring(0, 200)
-         })
-         // If validation fails, still try to use the split response
-         // Only fall back to agent template if we have no practical translation AND no prophecy
+       // Validate card references only for smaller spreads (3-5 cards)
+       // For larger spreads (7+), validation is too strict due to token/length constraints
+       if (cards.length <= 5) {
+         const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
+         
+         if (!validation.isValid) {
+           console.warn('Reading validation issues:', validation.issues, {
+             missingCards: validation.missingCards,
+             prophecyPreview: prophecy.substring(0, 200)
+           })
+           // If validation fails for small spreads AND no translation, fall back to agent
            if (!practicalTranslation) {
              console.warn('No practical translation from DeepSeek, using agent template')
              const agentFallback = {
@@ -195,6 +196,10 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
              readingHistory.addReading(request, agentFallback, duration)
              return agentFallback
            }
+         }
+       } else {
+         // For larger spreads, trust DeepSeek output - skip validation
+         console.log('Skipping validation for large spread:', cards.length, 'cards')
        }
 
        const aiResponse = {
