@@ -238,7 +238,7 @@ export default function SpreadsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <div className="sticky top-14 z-40 border-b border-border bg-card/80 backdrop-blur">
+      <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/learn">
