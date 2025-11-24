@@ -105,12 +105,13 @@ export async function POST(request: Request) {
       deadline: result.deadline
     })
 
-    return NextResponse.json({
-      reading: result.reading,
-      deadline: result.deadline,
-      task: result.task,
-      timingDays: result.timingDays
-    })
+     return NextResponse.json({
+       reading: result.reading,
+       practicalTranslation: result.practicalTranslation,
+       deadline: result.deadline,
+       task: result.task,
+       timingDays: result.timingDays
+     })
   } catch (error) {
     const duration = Date.now() - startTime
     const errorMsg = error instanceof Error ? error.message : String(error)
