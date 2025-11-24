@@ -73,13 +73,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
     }}>
        <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
           <DialogHeader>
-             <DialogTitle className="flex items-center gap-2">
-               <span className="text-2xl font-bold">{fullCard.id}.</span>
-               <span className="text-xl">{fullCard.name}</span>
-             </DialogTitle>
-             <DialogDescription>
-               Lenormand card #{fullCard.id} of 36
-             </DialogDescription>
+              <DialogTitle className="flex items-center gap-2">
+                <span className="text-2xl font-bold">{fullCard.id}.</span>
+                <span className="text-xl">{fullCard.name}</span>
+              </DialogTitle>
           </DialogHeader>
 
         <div className="space-y-4">
