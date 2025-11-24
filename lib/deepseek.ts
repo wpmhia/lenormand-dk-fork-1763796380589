@@ -219,9 +219,9 @@ ${cards.length >= 36 ? '- 12-18 sentences: Break down: Current situation → Mai
 EXAMPLE (what GOOD plain English looks like):
 "YES, Kristoffer will be able to talk, but it will not happen easily or quickly. The primary obstacle is a complex combination of a deep-seated medical or neurological condition and his current environment. There is also a risk of receiving incorrect advice from certain specialists. The situation requires a complete transformation in approach, moving to a fundamentally different method, likely involving a new specialist. You must secure a stable daily routine, seek multiple medical opinions, demand a full review of all diagnoses, involve a supportive community, and implement a specific practice regimen. Be prepared for setbacks. Success is highly likely only if you commit fully to these major changes. If you continue on the current path, nothing will change. The key is to stop what you are doing now and pursue a completely new strategy with determination."
 
-EXAMPLE OF WRONG (what NOT to do):
-"The (Child) carries the weight of a sealed (Book). The (Cloud) obscures the (Path). The (Mountain) is an immovable wall, and the (Fox) whispers deception. The (Key) gleams in the (Garden). The (Ship) brings opportunity..."
-^ This is WRONG - it's just the prophecy in slightly different words with card names in parentheses.
+EXAMPLE OF WRONG (what NOT to do in Section 2):
+"A silent child carries the weight of a sealed book. Dark clouds obscure the path forward. The mountain is an immovable wall, and a fox whispers deception in the shadows. Yet a key gleams within the garden of community."
+^ This is WRONG - it's the prophecy restated in different words. Still symbolic, still retelling the cards.
 
 NOW: Translate the prophecy above into plain, simple English. Assume the reader knows nothing about Lenormand cards. No card names in parentheses. No symbolic language. Just facts and what needs to happen.
 
