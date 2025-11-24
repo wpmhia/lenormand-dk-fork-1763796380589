@@ -84,6 +84,17 @@ function NewReadingPageContent() {
      }
    }, [searchParams, lastResetParam, performReset])
 
+   // Handle spread parameter from homepage
+   useEffect(() => {
+     const spreadParam = searchParams.get('spread')
+     if (spreadParam) {
+       const spread = COMPREHENSIVE_SPREADS.find(s => s.id === spreadParam)
+       if (spread) {
+         setSelectedSpread(spread)
+       }
+     }
+   }, [searchParams])
+
   // Load cards on mount
   useEffect(() => {
     const cards = getCards()

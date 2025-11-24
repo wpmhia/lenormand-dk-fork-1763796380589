@@ -75,38 +75,42 @@ export default function Home() {
               <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
            </div>
                <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  <ReadingTypeCard
-                    icon={<Sparkles className="h-5 w-5 text-primary" />}
-                    title="3-Card Sentence"
-                    description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
-                    cardCount={3}
-                    badge="Authentic"
-                    badgeVariant="default"
-                  />
-                  <ReadingTypeCard
-                    icon={<Heart className="h-5 w-5 text-primary" />}
-                    title="9-Card Reading"
-                    description="Deeper exploration of complex situations without overwhelming detail"
-                    cardCount={9}
-                    badge="Authentic"
-                    badgeVariant="default"
-                  />
-                  <ReadingTypeCard
-                    icon={<Calendar className="h-5 w-5 text-primary" />}
-                    title="Grand Tableau"
-                    description="Complete life situation through full 4x9 grid - the most comprehensive reading"
-                    cardCount={36}
-                    badge="Authentic"
-                    badgeVariant="default"
-                  />
-                  <ReadingTypeCard
-                    icon={<Shield className="h-5 w-5 text-primary" />}
-                    title="Single Card"
-                    description="Quick daily guidance for direct answers and immediate action"
-                    cardCount={1}
-                    badge="Authentic"
-                    badgeVariant="default"
-                  />
+                   <ReadingTypeCard
+                     icon={<Sparkles className="h-5 w-5 text-primary" />}
+                     title="3-Card Sentence"
+                     description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
+                     cardCount={3}
+                     badge="Authentic"
+                     badgeVariant="default"
+                     spreadId="sentence-3"
+                   />
+                   <ReadingTypeCard
+                     icon={<Heart className="h-5 w-5 text-primary" />}
+                     title="9-Card Reading"
+                     description="Deeper exploration of complex situations without overwhelming detail"
+                     cardCount={9}
+                     badge="Authentic"
+                     badgeVariant="default"
+                     spreadId="comprehensive"
+                   />
+                   <ReadingTypeCard
+                     icon={<Calendar className="h-5 w-5 text-primary" />}
+                     title="Grand Tableau"
+                     description="Complete life situation through full 4x9 grid - the most comprehensive reading"
+                     cardCount={36}
+                     badge="Authentic"
+                     badgeVariant="default"
+                     spreadId="grand-tableau"
+                   />
+                   <ReadingTypeCard
+                     icon={<Shield className="h-5 w-5 text-primary" />}
+                     title="Single Card"
+                     description="Quick daily guidance for direct answers and immediate action"
+                     cardCount={1}
+                     badge="Authentic"
+                     badgeVariant="default"
+                     spreadId="single-card"
+                   />
               </div>
          </div>
        </div>

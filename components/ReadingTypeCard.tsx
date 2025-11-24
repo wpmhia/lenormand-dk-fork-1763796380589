@@ -13,6 +13,7 @@ interface ReadingTypeCardProps {
   cardCount: number
   badge?: string
   badgeVariant?: 'default' | 'secondary' | 'destructive' | 'outline'
+  spreadId?: string
 }
 
 export function ReadingTypeCard({
@@ -21,10 +22,12 @@ export function ReadingTypeCard({
   description,
   cardCount,
   badge,
-  badgeVariant = 'secondary'
+  badgeVariant = 'secondary',
+  spreadId
 }: ReadingTypeCardProps) {
+  const href = spreadId ? `/read/new?spread=${spreadId}` : '/read/new'
   return (
-    <Link href="/read/new">
+    <Link href={href}>
       <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20 flex flex-col">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
          <CardHeader className="relative z-10 pb-3">
