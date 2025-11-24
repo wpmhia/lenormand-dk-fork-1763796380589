@@ -198,11 +198,16 @@ SECTION 1 - PROPHECY (${spread.sentences} sentences):
 ${isYesNoSpread ? '- End with YES or NO or MAYBE, then give a specific imperative action command' : '- End with a specific imperative action command'}
 
 SECTION 2 - PRACTICAL TRANSLATION (ALWAYS REQUIRED):
-- Answer the question directly: "${question}"
-- State clearly what WILL happen or what they MUST do
-- Explain the practical action from the card reading
-- 2-4 sentences only
-- Do NOT repeat the deadline from prophecy
+Do NOT use mystical language, lunar cycles, or fortune-teller speak.
+Instead: Extract the ACTUAL ANSWER to the question from the cards. Be direct, practical, specific.
+- Answer the question: "${question}"
+- What the cards actually say will happen (YES/NO/MAYBE or clear outcome)
+- What concrete actions are needed based on the card reading
+- Specific obstacles mentioned in the cards
+- Clear next steps the querent should take
+${cards.length >= 36 ? '- 12-18 sentences MINIMUM: Comprehensive breakdown of all themes, key figures, timeline, and specific actions' : cards.length >= 9 ? '- 6-10 sentences: Detailed situation analysis and necessary steps' : cards.length >= 7 ? '- 5-8 sentences: Comprehensive answer with timeline and action' : cards.length >= 5 ? '- 4-6 sentences: Complete analysis with resources and outcomes' : '- 2-3 sentences: Direct, concise answer'}
+- NO mystical language like "lunar cycles", "the Key", "cosmic timing" - be practical
+- Ground everything in what the specific cards actually mean
 
 BOTH SECTIONS ALWAYS. NEVER OMIT THE PRACTICAL TRANSLATION.
 
