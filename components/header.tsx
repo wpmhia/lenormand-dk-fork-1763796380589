@@ -26,50 +26,50 @@ export function Header() {
              </span>
            </Link>
          </div>
-         <nav className="ml-auto hidden items-center space-x-6 md:flex" role="navigation">
-           <Link
-             href="/"
-             className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-           >
-             <Home className="h-4 w-4" />
-             <span>Home</span>
-           </Link>
+          <nav className="ml-auto hidden items-center gap-2 md:flex" role="navigation">
             <Link
-              href="/cards"
-              className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+              href="/"
+              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
             >
-              <BookOpen className="h-4 w-4" />
-              <span>Cards</span>
+              <Home className="h-5 w-5" />
+              <span>Home</span>
             </Link>
-             <button
-               onClick={() => router.push('/read/new?reset=' + Date.now())}
-               className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+             <Link
+               href="/cards"
+               className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
              >
-               <Plus className="h-4 w-4" />
-               <span>New Reading</span>
-             </button>
-           <Link
-             href="/learn"
-             className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-           >
-             <Sparkles className="h-4 w-4" />
-             <span>Learn</span>
-           </Link>
-            <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-block transition-transform hover:scale-105 active:scale-95">
-              <img height='36' style={{border: '0px', height: '36px'}} loading='lazy' src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
-            </a>
-         </nav>
+               <BookOpen className="h-5 w-5" />
+               <span>Cards</span>
+             </Link>
+              <button
+                onClick={() => router.push('/read/new?reset=' + Date.now())}
+                className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+              >
+                <Plus className="h-5 w-5" />
+                <span>New Reading</span>
+              </button>
+            <Link
+              href="/learn"
+              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+            >
+              <Sparkles className="h-5 w-5" />
+              <span>Learn</span>
+            </Link>
+             <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-flex min-h-11 min-w-11 items-center justify-center rounded transition-transform hover:scale-105 active:scale-95">
+               <img height='36' style={{border: '0px', height: '36px'}} loading='lazy' src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
+             </a>
+          </nav>
 
           <div className="md:hidden">
            {/* Mobile menu button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="transform p-2.5 text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
-              aria-label="Toggle mobile menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+             <button
+               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+               className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
+               aria-label="Toggle mobile menu"
+               aria-expanded={mobileMenuOpen}
+             >
+               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+             </button>
          </div>
       </div>
 
@@ -83,42 +83,42 @@ export function Header() {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden border-t border-border bg-card/95 backdrop-blur md:hidden"
           >
-            <nav className="container space-y-1 px-4 py-3" role="navigation">
-             <Link
-               href="/"
-               onClick={() => setMobileMenuOpen(false)}
-               className="flex items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-             >
-               <Home className="h-4 w-4" />
-               <span>Home</span>
-             </Link>
-             <Link
-               href="/cards"
-               onClick={() => setMobileMenuOpen(false)}
-               className="flex items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-             >
-               <BookOpen className="h-4 w-4" />
-               <span>Cards</span>
-             </Link>
-               <button
-                 onClick={() => {
-                   setMobileMenuOpen(false);
-                   router.push('/read/new?reset=' + Date.now());
-                 }}
-                 className="flex w-full items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-               >
-                 <Plus className="h-4 w-4" />
-                 <span>New Reading</span>
-               </button>
-             <Link
-               href="/learn"
-               onClick={() => setMobileMenuOpen(false)}
-               className="flex items-center space-x-2 rounded px-2 py-3 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-             >
-               <Sparkles className="h-4 w-4" />
-               <span>Learn</span>
-             </Link>
-             </nav>
+             <nav className="container space-y-2 px-4 py-3" role="navigation">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+              >
+                <Home className="h-5 w-5" />
+                <span>Home</span>
+              </Link>
+              <Link
+                href="/cards"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+              >
+                <BookOpen className="h-5 w-5" />
+                <span>Cards</span>
+              </Link>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push('/read/new?reset=' + Date.now());
+                  }}
+                  className="flex w-full min-h-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>New Reading</span>
+                </button>
+              <Link
+                href="/learn"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+              >
+                <Sparkles className="h-5 w-5" />
+                <span>Learn</span>
+              </Link>
+              </nav>
           </motion.div>
         )}
       </AnimatePresence>

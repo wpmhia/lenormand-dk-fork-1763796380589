@@ -173,23 +173,28 @@
     @apply text-sm font-medium text-card-foreground transition-colors duration-200 hover:text-primary;
   }
 
-  /* Buttons - Use Tailwind variants via shadcn/ui Button component */
-  .btn-group {
-    @apply inline-flex rounded-lg border border-border bg-muted p-0.5;
-  }
+   /* Buttons - Use Tailwind variants via shadcn/ui Button component */
+   .btn-group {
+     @apply inline-flex gap-2 rounded-lg border border-border bg-muted p-1;
+   }
 
-  .btn-group-item {
-    @apply h-8 px-3 text-xs;
-  }
+   .btn-group-item {
+     @apply min-h-10 min-w-10 px-3 py-2 text-xs;
+   }
 
-  /* Hero button group */
-  .btn-group-hero {
-    @apply mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row;
-  }
+   /* Hero button group */
+   .btn-group-hero {
+     @apply mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row;
+   }
 
-  .btn-group-hero-item {
-    @apply h-16 flex-1 rounded-xl;
-  }
+   .btn-group-hero-item {
+     @apply h-16 flex-1 rounded-xl;
+   }
+
+   /* Touch target spacing */
+   button, [role="button"], a[href] {
+     @apply min-h-11 min-w-11;
+   }
 
   /* Forms */
   input,
