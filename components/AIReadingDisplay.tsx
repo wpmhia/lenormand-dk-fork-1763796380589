@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from 'react'
-import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { AIReadingResponse } from '@/lib/deepseek'
 import { Button } from '@/components/ui/button'
@@ -191,19 +190,19 @@ export function AIReadingDisplay({
                     <p className="text-sm text-muted-foreground/80">{spreadLearningLinks.description}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Link href={spreadLearningLinks.methodologyPage}>
+                    <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
                       <Button variant="secondary" size="sm" className="gap-2">
                         Learn the Method
                         <ExternalLink className="h-3 w-3" />
                       </Button>
-                    </Link>
+                    </a>
                     {spreadLearningLinks.learnMoreUrl && (
-                      <Link href={spreadLearningLinks.learnMoreUrl}>
+                      <a href={spreadLearningLinks.learnMoreUrl} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" size="sm" className="gap-2">
                           Deep Dive
                           <ExternalLink className="h-3 w-3" />
                         </Button>
-                      </Link>
+                      </a>
                     )}
                   </div>
                 </div>
