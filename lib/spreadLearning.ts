@@ -16,13 +16,13 @@ export const SPREAD_LEARNING_MAP: Record<string, SpreadLearningLinks> = {
     description: 'Marie-Anne\'s 3-Card Sentence - Her primary daily reading method with flowing narrative'
   },
   'comprehensive': {
-    methodologyPage: '/learn/spreads#larger-spreads',
+    methodologyPage: '/learn/spreads#9-card-spreads',
     learnMoreUrl: '/learn/marie-annes-system',
     description: '9-Card Petit Grand Tableau - Deeper exploration without overwhelming complexity'
   },
   'grand-tableau': {
     methodologyPage: '/learn/marie-annes-system',
-    learnMoreUrl: '/learn/spreads#larger-spreads',
+    learnMoreUrl: '/learn/spreads#36-card-master-reading',
     description: 'Grand Tableau (36-Card) - Marie-Anne\'s most comprehensive reading method'
   },
   'past-present-future': {
