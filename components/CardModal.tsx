@@ -17,30 +17,52 @@ interface CardModalProps {
 }
 
 export function CardModal({ card, onClose, layoutType, position }: CardModalProps) {
-  const [fullCard, setFullCard] = useState<CardType>(card)
+  const [fullCard, setFullCard] = useState<CardType | null>(null)
   const [allCards, setAllCards] = useState<any[]>([])
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     combinations: false,
     house: false,
   })
 
-  // Always fetch the full card data to ensure we have meaning
+  // Always fetch the full card data by ID to ensure we have meaning
   useEffect(() => {
     const cards = getCards()
     setAllCards(cards)
     const completeCard = cards.find(c => c.id === card.id)
-    if (completeCard) {
-      setFullCard(completeCard)
+    console.log('=== CardModal useEffect ===')
+    console.log('Looking for card ID:', card.id)
+    console.log('CompleteCard found:', !!completeCard)
+    console.log('CompleteCard has meaning:', !!completeCard?.meaning)
+    if (completeCard?.meaning) {
+      console.log('CompleteCard meaning keys:', Object.keys(completeCard.meaning))
+      console.log('CompleteCard meaning general:', completeCard.meaning.general)
     }
+    setFullCard(completeCard || null)
   }, [card.id])
 
-  const combos = Array.isArray(fullCard.combos) ? fullCard.combos : []
+  const combos = fullCard && Array.isArray(fullCard.combos) ? fullCard.combos : []
 
   const toggleSection = (section: string) => {
     setOpenSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }))
+  }
+
+  if (!fullCard) {
+    return (
+      <Dialog open={true} onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          onClose()
+        }
+      }}>
+        <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
+          <div className="flex items-center justify-center h-32">
+            <div className="text-muted-foreground">Loading card data...</div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   return (
@@ -50,15 +72,15 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
       }
     }}>
        <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
-         <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <span className="text-2xl font-bold">{fullCard.id}.</span>
-              <span className="text-xl">{fullCard.name}</span>
-            </DialogTitle>
-            <DialogDescription>
-              Lenormand card #{fullCard.id} of 36
-            </DialogDescription>
-         </DialogHeader>
+          <DialogHeader>
+             <DialogTitle className="flex items-center gap-2">
+               <span className="text-2xl font-bold">{fullCard.id}.</span>
+               <span className="text-xl">{fullCard.name}</span>
+             </DialogTitle>
+             <DialogDescription>
+               Lenormand card #{fullCard.id} of 36
+             </DialogDescription>
+          </DialogHeader>
 
         <div className="space-y-4">
           {/* Card Image and Keywords - Always Visible */}
