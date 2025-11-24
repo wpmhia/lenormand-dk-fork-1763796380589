@@ -177,7 +177,7 @@ function NewReadingPageContent() {
         }, [step, drawnCards, performAIAnalysis, addLog])
 
    const fetchProphecy = useCallback(async () => {
-     if (!aiReading || !drawnCards.length) return
+     if (!drawnCards.length) return
 
      setAiLoading(true)
      try {
@@ -220,7 +220,7 @@ function NewReadingPageContent() {
      } finally {
        setAiLoading(false)
      }
-   }, [aiReading, drawnCards, question, allCards, selectedSpread.id])
+   }, [drawnCards, question, allCards, selectedSpread.id])
 
    const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()

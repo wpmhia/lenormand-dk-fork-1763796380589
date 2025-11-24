@@ -240,7 +240,7 @@ function PhysicalReadingPage() {
   }
 
   const fetchProphecy = async () => {
-    if (!aiReading || !drawnCards.length) return
+    if (!drawnCards.length) return
 
     setAiLoading(true)
     try {
