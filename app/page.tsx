@@ -117,14 +117,14 @@ export default function Home() {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10"></div>
           <div className="absolute left-4 top-4 h-16 w-16 rounded-full bg-primary/20 blur-xl"></div>
           <div className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-primary/20 blur-lg"></div>
-          <div className="relative z-10">
-             <h2 className="relative mb-4 text-4xl font-bold text-foreground">
-               Begin Your Mystical Journey
-               <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
-             </h2>
-             <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-              Let the cards reveal what your soul already knows
-            </p>
+           <div className="relative z-10">
+              <h2 className="relative mb-4 text-4xl font-bold text-foreground">
+                Let Marie Ann Lenormand's cards speak
+                <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
+              </h2>
+              <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+               This is how she listens to what your heart already knows
+             </p>
             <Link href="/read/new">
               <Button size="lg">
                 Discover Your Path
