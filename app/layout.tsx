@@ -98,11 +98,11 @@ export default function RootLayout({
          <Script
            async
            src="https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8"
-           strategy="afterInteractive"
+           strategy="lazyOnload"
          />
          <Script
            id="google-analytics"
-           strategy="afterInteractive"
+           strategy="lazyOnload"
            dangerouslySetInnerHTML={{
              __html: `
                window.dataLayer = window.dataLayer || [];
@@ -112,24 +112,24 @@ export default function RootLayout({
              `,
            }}
          />
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtm.js?id=GT-KTTDM7CZ"
-          strategy="afterInteractive"
-        />
-        <Script
-          id="gtm-noscript"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-              })(window,document,'script','dataLayer','GT-KTTDM7CZ');
-            `,
-          }}
-        />
+         <Script
+           async
+           src="https://www.googletagmanager.com/gtm.js?id=GT-KTTDM7CZ"
+           strategy="lazyOnload"
+         />
+         <Script
+           id="gtm-noscript"
+           strategy="lazyOnload"
+           dangerouslySetInnerHTML={{
+             __html: `
+               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+               new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+               'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+               })(window,document,'script','dataLayer','GT-KTTDM7CZ');
+             `,
+           }}
+         />
       </head>
        <body className={`${inter.className} antialiased`}>
          <TooltipProvider>

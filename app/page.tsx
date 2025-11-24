@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { ReadingTypeCard } from '@/components/ReadingTypeCard'
+import { Suspense } from 'react'
 import {
   Sparkles,
   ArrowRight,
@@ -12,6 +12,10 @@ import {
   Shield,
   Calendar
 } from 'lucide-react'
+
+const ReadingTypeCard = dynamic(() => import('@/components/ReadingTypeCard').then(mod => mod.ReadingTypeCard), {
+  loading: () => <div className="h-48 rounded-lg bg-muted animate-pulse" />
+})
 
 export default function Home() {
 
@@ -47,19 +51,20 @@ export default function Home() {
               </div>
            </div>
 
-           {/* Image column */}
-           <div className="relative z-10 flex justify-center lg:flex-1 lg:justify-end">
-             <div className="hero-image-cell rounded-none bg-transparent p-0">
-                <Image
-                  src="/images/hero-image.jpg"
-                  alt="Mystical Lenormand cards arranged in a reading spread"
-                  width={800}
-                  height={600}
-                  priority
-                  className="block h-auto w-full max-w-xs rounded-md border-0 object-contain shadow-none lg:max-w-lg"
-                />
-             </div>
-           </div>
+            {/* Image column */}
+            <div className="relative z-10 flex justify-center lg:flex-1 lg:justify-end">
+              <div className="hero-image-cell rounded-none bg-transparent p-0">
+                 <Image
+                   src="/images/hero-image.jpg"
+                   alt="Mystical Lenormand cards arranged in a reading spread"
+                   width={800}
+                   height={600}
+                   priority
+                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                   className="block h-auto w-full max-w-xs rounded-md border-0 object-contain shadow-none lg:max-w-lg"
+                 />
+              </div>
+            </div>
          </div>
        </div>
 
