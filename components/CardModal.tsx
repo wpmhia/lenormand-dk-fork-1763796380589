@@ -20,10 +20,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
   const combos = Array.isArray(card.combos) ? card.combos : []
   const [allCards, setAllCards] = useState<any[]>([])
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    meaning: true,
-    combinations: true,
+    meaning: false,
+    combinations: false,
     house: false,
-    info: true,
+    info: false,
   })
 
   useEffect(() => {
@@ -81,72 +81,65 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             </div>
           </div>
 
-          {/* Collapsible Sections */}
-          
-           {/* Meaning Section */}
-           <Collapsible open={openSections.meaning} onOpenChange={() => toggleSection('meaning')}>
-             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
-               <h3 className="font-semibold text-foreground">Meaning</h3>
-               <ChevronDown className={`h-4 w-4 transition-transform ${openSections.meaning ? 'rotate-180' : ''}`} />
-             </CollapsibleTrigger>
-             <CollapsibleContent className="border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground space-y-4">
-               {card.meaning ? (
-                 <>
+           {/* Meaning Section - Always Visible */}
+           <div className="rounded-lg bg-muted/50 p-4 space-y-4">
+             <h3 className="font-semibold text-foreground">Meaning</h3>
+             {card.meaning ? (
+               <div className="space-y-4 text-sm">
+                 <div>
+                   <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
+                   <p className="text-muted-foreground">{card.meaning.general}</p>
+                 </div>
+                 
+                 <div>
+                   <h4 className="font-semibold text-foreground mb-2">Positive aspects</h4>
+                   <ul className="space-y-1">
+                     {card.meaning.positive.map((aspect, idx) => (
+                       <li key={idx} className="flex items-start gap-2">
+                         <span className="text-primary mt-1 flex-shrink-0">•</span>
+                         <span className="text-muted-foreground">{aspect}</span>
+                       </li>
+                     ))}
+                   </ul>
+                 </div>
+                 
+                 <div>
+                   <h4 className="font-semibold text-foreground mb-2">Challenging aspects</h4>
+                   <ul className="space-y-1">
+                     {card.meaning.negative.map((aspect, idx) => (
+                       <li key={idx} className="flex items-start gap-2">
+                         <span className="text-destructive mt-1 flex-shrink-0">•</span>
+                         <span className="text-muted-foreground">{aspect}</span>
+                       </li>
+                     ))}
+                   </ul>
+                 </div>
+                 
+                 {card.meaning.relationships && (
                    <div>
-                     <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
-                     <p className="text-muted-foreground">{card.meaning.general}</p>
+                     <h4 className="font-semibold text-foreground mb-1">In relationships</h4>
+                     <p className="text-muted-foreground">{card.meaning.relationships}</p>
                    </div>
-                   
+                 )}
+                 
+                 {card.meaning.careerFinance && (
                    <div>
-                     <h4 className="font-semibold text-foreground mb-2">Positive aspects</h4>
-                     <ul className="space-y-1">
-                       {card.meaning.positive.map((aspect, idx) => (
-                         <li key={idx} className="flex items-start gap-2">
-                           <span className="text-primary mt-1 flex-shrink-0">•</span>
-                           <span>{aspect}</span>
-                         </li>
-                       ))}
-                     </ul>
+                     <h4 className="font-semibold text-foreground mb-1">Career & finance</h4>
+                     <p className="text-muted-foreground">{card.meaning.careerFinance}</p>
                    </div>
-                   
+                 )}
+                 
+                 {card.meaning.timing && (
                    <div>
-                     <h4 className="font-semibold text-foreground mb-2">Negative aspects</h4>
-                     <ul className="space-y-1">
-                       {card.meaning.negative.map((aspect, idx) => (
-                         <li key={idx} className="flex items-start gap-2">
-                           <span className="text-destructive mt-1 flex-shrink-0">•</span>
-                           <span>{aspect}</span>
-                         </li>
-                       ))}
-                     </ul>
+                     <h4 className="font-semibold text-foreground mb-1">Timing</h4>
+                     <p className="text-muted-foreground">{card.meaning.timing}</p>
                    </div>
-                   
-                   {card.meaning.relationships && (
-                     <div>
-                       <h4 className="font-semibold text-foreground mb-1">In relationships</h4>
-                       <p className="text-muted-foreground">{card.meaning.relationships}</p>
-                     </div>
-                   )}
-                   
-                   {card.meaning.careerFinance && (
-                     <div>
-                       <h4 className="font-semibold text-foreground mb-1">In career/finance</h4>
-                       <p className="text-muted-foreground">{card.meaning.careerFinance}</p>
-                     </div>
-                   )}
-                   
-                   {card.meaning.timing && (
-                     <div>
-                       <h4 className="font-semibold text-foreground mb-1">Timing</h4>
-                       <p className="text-muted-foreground">{card.meaning.timing}</p>
-                     </div>
-                   )}
-                 </>
-               ) : (
-                 <p>{card.uprightMeaning}</p>
-               )}
-             </CollapsibleContent>
-           </Collapsible>
+                 )}
+               </div>
+             ) : (
+               <p className="text-muted-foreground">{card.uprightMeaning}</p>
+             )}
+           </div>
 
           {/* House Meaning - Grand Tableau Only */}
           {layoutType === 36 && position !== undefined && (
@@ -204,14 +197,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             </Collapsible>
           )}
 
-          {/* Combinations Section */}
-          {combos.length > 0 && (
-            <Collapsible open={openSections.combinations} onOpenChange={() => toggleSection('combinations')}>
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
-                <h3 className="font-semibold text-foreground">Card Combinations ({combos.length})</h3>
-                <ChevronDown className={`h-4 w-4 transition-transform ${openSections.combinations ? 'rotate-180' : ''}`} />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 border-l-2 border-primary/30 px-4 py-3">
+           {/* Combinations Section - Always Visible */}
+           {combos.length > 0 && (
+             <div className="rounded-lg bg-muted/50 p-4 space-y-3">
+               <h3 className="font-semibold text-foreground">Card Combinations ({combos.length})</h3>
+               <div className="space-y-2">
                 {combos.map((combo: any, index: number) => {
                   const comboCard = allCards.find(c => c.id === combo.withCardId)
                   return (
@@ -238,21 +228,18 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                       </div>
                     </div>
                   )
-                })}
-              </CollapsibleContent>
-            </Collapsible>
-          )}
+                })}  
+               </div>
+             </div>
+           )}
 
-          {/* Card Info Section */}
-          <Collapsible open={openSections.info} onOpenChange={() => toggleSection('info')}>
-            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
-              <h3 className="font-semibold text-foreground">Card Info</h3>
-              <ChevronDown className={`h-4 w-4 transition-transform ${openSections.info ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-1 border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
-              <div>Lenormand Card #{card.id} of 36</div>
-            </CollapsibleContent>
-          </Collapsible>
+           {/* Card Info Section - Always Visible */}
+           <div className="rounded-lg bg-muted/50 p-4 space-y-2">
+             <h3 className="font-semibold text-foreground">Card Info</h3>
+             <div className="text-sm text-muted-foreground">
+               <div>Lenormand Card #{card.id} of 36</div>
+             </div>
+           </div>
         </div>
       </DialogContent>
     </Dialog>
