@@ -5,7 +5,7 @@ import { Sparkles, Home, BookOpen, Plus, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { ThemeToggle } from '@/components/theme-toggle';
+
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -66,19 +66,17 @@ export function Header() {
           </Link>
         </nav>
 
-        <div className="ml-auto flex items-center space-x-2 md:ml-0">
-          {/* Mobile menu button */}
-           <button
-             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-             className="transform p-2.5 text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
-             aria-label="Toggle mobile menu"
-             aria-expanded={mobileMenuOpen}
-           >
-             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-           </button>
-
-          <ThemeToggle />
-        </div>
+         <div className="ml-auto md:ml-0">
+           {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="transform p-2.5 text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+         </div>
       </div>
 
       {/* Mobile Navigation Menu */}
