@@ -133,21 +133,17 @@ export default function CardsPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-         {filteredCards.map((card) => (
-           <div key={card.id} className="space-component">
-             <Card 
-               card={card} 
-               size="md" 
-               className="mystical-float group mx-auto group-hover:scale-105" 
-             />
-             <div className="text-center">
-               <div className="truncate text-sm font-medium text-foreground">{card.name}</div>
-               <div className="text-xs text-muted-foreground">#{card.id}</div>
-             </div>
-           </div>
-         ))}
-       </div>
+         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {filteredCards.map((card) => (
+            <div key={card.id} className="space-component">
+              <Card 
+                card={card} 
+                size="md" 
+                className="mystical-float group mx-auto group-hover:scale-105" 
+              />
+            </div>
+          ))}
+        </div>
 
        {filteredCards.length === 0 && (
          <div className="text-center text-muted-foreground">
