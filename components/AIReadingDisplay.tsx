@@ -68,20 +68,20 @@ export function AIReadingDisplay({
 
      if (isLoading && !aiReading?.practicalTranslation) {
        return (
-        <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none">
-          <Card className="border-border bg-card">
-            <CardContent className="space-y-4 p-8 text-center">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Badge variant="default" className="animate-pulse">
-                  <Zap className="h-3 w-3 mr-1" />
-                  Processing
-                </Badge>
-              </div>
-              <div className="relative mx-auto h-16 w-16">
-                <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-                <div className="absolute inset-0 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                <Sparkles className="absolute inset-0 m-auto h-6 w-6 animate-pulse text-primary" />
-              </div>
+        <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none loading-skeleton">
+           <Card className="border-border bg-card">
+             <CardContent className="space-y-4 p-8 text-center">
+               <div className="flex items-center justify-center gap-2 mb-4">
+                 <Badge variant="default" className="loading-skeleton-pulse">
+                   <Zap className="h-3 w-3 mr-1" />
+                   Processing
+                 </Badge>
+               </div>
+               <div className="relative mx-auto h-16 w-16">
+                 <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+                 <div className="absolute inset-0 loading-spinner rounded-full border-4 border-primary border-t-transparent"></div>
+                 <Sparkles className="absolute inset-0 m-auto h-6 w-6 loading-skeleton-pulse text-primary" />
+               </div>
               <div>
                 <h3 className="text-lg font-semibold text-foreground">Generating your reading...</h3>
                 <p className="mt-1 text-sm text-muted-foreground">

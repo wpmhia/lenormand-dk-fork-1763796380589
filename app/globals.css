@@ -127,11 +127,39 @@
 
    /* Loading States */
   .loading-skeleton {
-    @apply animate-pulse rounded bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200;
+    @apply rounded bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200;
+    pointer-events: none;
+    will-change: opacity;
+    transform: translate3d(0, 0, 0);
   }
 
   .loading-spinner {
-    @apply animate-spin rounded-full border-4 border-amber-200 border-t-amber-600;
+    @apply rounded-full border-4 border-amber-200 border-t-amber-600;
+    pointer-events: none;
+    will-change: transform;
+    animation: spin-smooth 2s linear infinite;
+  }
+
+  @keyframes pulse-smooth {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin-smooth {
+    from {
+      transform: translateZ(0) rotate(0deg);
+    }
+    to {
+      transform: translateZ(0) rotate(360deg);
+    }
+  }
+
+  .loading-skeleton-pulse {
+    animation: pulse-smooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* Navigation */
