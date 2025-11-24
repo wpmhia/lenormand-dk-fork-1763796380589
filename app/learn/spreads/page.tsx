@@ -17,6 +17,23 @@ import {
 
 const spreads = [
   {
+    category: "Single Card",
+    description: "The simplest and fastest reading method for daily guidance",
+    spreads: [
+      {
+        name: "Single Card Draw",
+        description: "One card for direct, immediate answers and daily guidance",
+        layout: "One Card",
+        useCase: "Daily oracle, quick questions, immediate answers",
+        difficulty: "Beginner",
+        isPrimary: true,
+        positions: [
+          { name: "The Answer", description: "Direct response to your question or situation" }
+        ]
+      }
+    ]
+  },
+  {
     category: "3-Card Spreads",
     description: "Perfect for quick insights and daily guidance",
     spreads: [
