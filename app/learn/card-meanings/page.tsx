@@ -162,20 +162,20 @@ export default function CardMeaningsPage() {
         {viewMode === 'grid' ? (
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredCards.map((card) => (
-               <Card key={card.number} className="group cursor-pointer border border-border bg-card hover:shadow-lg hover:shadow-primary/20">
-                 <CardHeader className="pb-3">
-                   <div className="flex items-center justify-between">
-                     <Badge className="bg-muted text-xs text-muted-foreground">
-                       #{card.number}
-                     </Badge>
-                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                       <span className="text-xs font-bold text-white">{card.number}</span>
-                     </div>
-                   </div>
-                   <CardTitle className="text-lg text-foreground transition-colors group-hover:text-primary">
-                     {card.name}
-                   </CardTitle>
-                 </CardHeader>
+                <Card key={card.number} className="cursor-pointer border border-border bg-card">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <Badge className="bg-muted text-xs text-muted-foreground">
+                        #{card.number}
+                      </Badge>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                        <span className="text-xs font-bold text-white">{card.number}</span>
+                      </div>
+                    </div>
+                    <CardTitle className="text-lg text-foreground">
+                      {card.name}
+                    </CardTitle>
+                  </CardHeader>
                  <CardContent className="pt-0">
                      <Image
                        src={`/images/cards/${card.number.toString().padStart(2, '0')}-${card.number === 22 ? 'paths' : card.name.toLowerCase().replace('the ', '').replace(/ /g, '-')}.png`}

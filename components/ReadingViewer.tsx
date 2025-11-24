@@ -199,14 +199,14 @@ export function ReadingViewer({
                     <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
                       {positionInfo.label}
                     </div>
-                    <CardWithTooltip
-                      card={card}
-                      size="lg"
-                      onClick={() => setSelectedCard(card)}
-                      className="cursor-pointer hover:shadow-lg"
-                      positionLabel={positionInfo.label}
-                      positionDescription={positionInfo.meaning}
-                    />
+                     <CardWithTooltip
+                       card={card}
+                       size="lg"
+                       onClick={() => setSelectedCard(card)}
+                       className="cursor-pointer"
+                       positionLabel={positionInfo.label}
+                       positionDescription={positionInfo.meaning}
+                     />
                   </div>
                </AnimatedCard>
              )
@@ -318,13 +318,13 @@ export function ReadingViewer({
                       </div>
                     )}
                     <CardWithTooltip
-                      card={card}
-                      size="sm"
-                      onClick={() => setSelectedCard(card)}
-                      className="cursor-pointer hover:shadow-lg"
-                      positionLabel={stripLabel}
-                      positionDescription={`Position ${index + 1}`}
-                    />
+                       card={card}
+                       size="sm"
+                       onClick={() => setSelectedCard(card)}
+                       className="cursor-pointer"
+                       positionLabel={stripLabel}
+                       positionDescription={`Position ${index + 1}`}
+                     />
                   </div>
               </AnimatedCard>
              )
@@ -366,14 +366,14 @@ export function ReadingViewer({
                     <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
                       {positionInfo.label}
                     </div>
-                    <CardWithTooltip
-                      card={card}
-                      size="md"
-                      onClick={() => setSelectedCard(card)}
-                      className="cursor-pointer hover:shadow-lg"
-                      positionLabel={positionInfo.label}
-                      positionDescription={positionInfo.meaning}
-                    />
+                     <CardWithTooltip
+                       card={card}
+                       size="md"
+                       onClick={() => setSelectedCard(card)}
+                       className="cursor-pointer"
+                       positionLabel={positionInfo.label}
+                       positionDescription={positionInfo.meaning}
+                     />
                   </div>
               </AnimatedCard>
             )
@@ -480,7 +480,7 @@ export function ReadingViewer({
                  const combination = getCombinationMeaning(selectedCard, card, readingCard.position, adjCard.position)
 
                  return (
-                    <div key={index} className="flex items-center gap-4 rounded-lg border border-border bg-card/50 p-4 transition-colors duration-300 hover:bg-card/70">
+                    <div key={index} className="flex items-center gap-4 rounded-lg border border-border bg-card/50 p-4">
                      <div className="flex items-center gap-3">
                         <Card card={selectedCard} size="sm" />
                        <span className="text-lg font-medium text-primary">+</span>

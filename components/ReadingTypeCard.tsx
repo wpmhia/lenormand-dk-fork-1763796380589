@@ -28,12 +28,11 @@ export function ReadingTypeCard({
   const href = spreadId ? `/read/new?spread=${spreadId}` : '/read/new'
   return (
     <Link href={href}>
-      <Card className="group relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-500 hover:scale-105 hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20 flex flex-col">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-         <CardHeader className="relative z-10 pb-3">
-           <div className="flex flex-col gap-2">
-             <div className="flex items-center justify-between gap-2">
-               <CardTitle className="flex items-center gap-2 text-base font-semibold text-card-foreground group-hover:text-primary line-clamp-2">
+      <Card className="relative h-full cursor-pointer overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm flex flex-col">
+          <CardHeader className="relative z-10 pb-3">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold text-card-foreground line-clamp-2">
                  {icon}
                  <span>{title}</span>
                </CardTitle>

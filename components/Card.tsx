@@ -49,34 +49,31 @@ export function Card({
   if (showBack) {
     return (
       <div
-        className={cn(
-            'relative card-mystical rounded-xl cursor-pointer flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background will-change-transform overflow-hidden',
-           sizeClasses[size],
-           className
-         )}
-        onClick={handleCardClick}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleCardClick()
-          }
-        }}
-        tabIndex={0}
-        role="button"
-        aria-label="Lenormand card back. Click to draw or select card"
-      >
-         {/* Card Back Image */}
-          <Image
-            src="/images/card-back.png"
-            alt="Card back"
-            fill
-            className="object-cover"
-            sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
-          />
-
-        {/* Hover overlay */}
-        <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent via-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus:opacity-100"></div>
-      </div>
+         className={cn(
+             'relative card-mystical rounded-xl cursor-pointer flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background will-change-transform overflow-hidden',
+            sizeClasses[size],
+            className
+          )}
+         onClick={handleCardClick}
+         onKeyDown={(e) => {
+           if (e.key === 'Enter' || e.key === ' ') {
+             e.preventDefault()
+             handleCardClick()
+           }
+         }}
+         tabIndex={0}
+         role="button"
+         aria-label="Lenormand card back. Click to draw or select card"
+       >
+          {/* Card Back Image */}
+           <Image
+             src="/images/card-back.png"
+             alt="Card back"
+             fill
+             className="object-cover"
+             sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
+           />
+       </div>
     )
   }
 
