@@ -35,38 +35,41 @@ export function Header() {
              </span>
            </Link>
          </div>
-        <nav className="ml-auto hidden items-center space-x-6 md:flex" role="navigation">
-          <Link
-            href="/"
-            className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-          >
-            <Home className="h-4 w-4" />
-            <span>Home</span>
-          </Link>
+         <nav className="ml-auto hidden items-center space-x-6 md:flex" role="navigation">
            <Link
-             href="/cards"
+             href="/"
              className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
            >
-             <BookOpen className="h-4 w-4" />
-             <span>Cards</span>
+             <Home className="h-4 w-4" />
+             <span>Home</span>
            </Link>
-            <button
-              onClick={() => router.push('/read/new?reset=' + Date.now())}
+            <Link
+              href="/cards"
               className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
             >
-              <Plus className="h-4 w-4" />
-              <span>New Reading</span>
-            </button>
-          <Link
-            href="/learn"
-            className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
-          >
-            <Sparkles className="h-4 w-4" />
-            <span>Learn</span>
-          </Link>
-        </nav>
+              <BookOpen className="h-4 w-4" />
+              <span>Cards</span>
+            </Link>
+             <button
+               onClick={() => router.push('/read/new?reset=' + Date.now())}
+               className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+             >
+               <Plus className="h-4 w-4" />
+               <span>New Reading</span>
+             </button>
+           <Link
+             href="/learn"
+             className="flex items-center space-x-1 text-sm font-medium text-card-foreground transition-colors hover:text-primary"
+           >
+             <Sparkles className="h-4 w-4" />
+             <span>Learn</span>
+           </Link>
+           <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-block transition-transform hover:scale-105 active:scale-95">
+             <img height='36' style={{border: '0px', height: '36px'}} src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
+           </a>
+         </nav>
 
-         <div className="ml-auto md:ml-0">
+          <div className="md:hidden">
            {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
