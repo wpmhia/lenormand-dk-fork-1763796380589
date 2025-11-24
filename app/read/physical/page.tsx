@@ -239,6 +239,52 @@ function PhysicalReadingPage() {
     }
   }
 
+  const fetchProphecy = async () => {
+    if (!aiReading || !drawnCards.length) return
+
+    setAiLoading(true)
+    try {
+      const aiRequest = {
+        question: question.trim() || 'What guidance do these cards have for me?',
+        cards: drawnCards.map(card => ({
+          id: card.id,
+          name: getCardById(allCards, card.id)?.name || 'Unknown',
+          position: card.position
+        })),
+        spreadId: selectedSpread.id,
+        userLocale: navigator.language,
+        includeProphecy: true
+      }
+
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 60000)
+
+      const response = await fetch('/api/readings/interpret', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aiRequest),
+        signal: controller.signal
+      })
+
+      clearTimeout(timeout)
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Server error' }))
+        throw new Error(errorData.error || 'Server error')
+      }
+
+      const aiResult = await response.json()
+      setAiReading(aiResult)
+
+    } catch (error) {
+      console.error('Prophecy fetch error:', error)
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
   const handleStartOver = () => {
     setShowStartOverConfirm(true)
   }
@@ -455,23 +501,24 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
 
                   {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
-                   <AIReadingDisplay
-                     aiReading={aiReading}
-                     isLoading={aiLoading}
-                     error={aiError}
-                     errorDetails={aiErrorDetails}
-                     onRetry={retryAIAnalysis}
-                     retryCount={aiRetryCount}
-                     cards={drawnCards.map(card => ({
-                       id: card.id,
-                       name: getCardById(allCards, card.id)?.name || 'Unknown',
-                       position: card.position
-                     }))}
-                     allCards={allCards}
-                     spreadId={selectedSpread.id}
-                     question={question}
-                     isStreaming={isStreaming}
-                   />
+                    <AIReadingDisplay
+                      aiReading={aiReading}
+                      isLoading={aiLoading}
+                      error={aiError}
+                      errorDetails={aiErrorDetails}
+                      onRetry={retryAIAnalysis}
+                      retryCount={aiRetryCount}
+                      cards={drawnCards.map(card => ({
+                        id: card.id,
+                        name: getCardById(allCards, card.id)?.name || 'Unknown',
+                        position: card.position
+                      }))}
+                      allCards={allCards}
+                      spreadId={selectedSpread.id}
+                      question={question}
+                      isStreaming={isStreaming}
+                      onFetchProphecy={fetchProphecy}
+                    />
 
                    <div className="pt-4 flex gap-3 justify-center flex-wrap">
                     <Button

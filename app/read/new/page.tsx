@@ -174,10 +174,55 @@ function NewReadingPageContent() {
            addLog('Auto-starting AI analysis')
            performAIAnalysis(drawnCards)
          }
-       }, [step, drawnCards, performAIAnalysis, addLog])
+        }, [step, drawnCards, performAIAnalysis, addLog])
 
+   const fetchProphecy = useCallback(async () => {
+     if (!aiReading || !drawnCards.length) return
 
-  const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
+     setAiLoading(true)
+     try {
+       const aiRequest = {
+         question: question.trim() || 'What guidance do these cards have for me?',
+         cards: drawnCards.map(card => ({
+           id: card.id,
+           name: getCardById(allCards, card.id)?.name || 'Unknown',
+           position: card.position
+         })),
+         spreadId: selectedSpread.id,
+         userLocale: navigator.language,
+         includeProphecy: true
+       }
+
+       const controller = new AbortController()
+       const timeout = setTimeout(() => controller.abort(), 60000)
+
+       const response = await fetch('/api/readings/interpret', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(aiRequest),
+         signal: controller.signal
+       })
+
+       clearTimeout(timeout)
+
+       if (!response.ok) {
+         const errorData = await response.json().catch(() => ({ error: 'Server error' }))
+         throw new Error(errorData.error || 'Server error')
+       }
+
+       const aiResult = await response.json()
+       setAiReading(aiResult)
+
+     } catch (error) {
+       console.error('Prophecy fetch error:', error)
+     } finally {
+       setAiLoading(false)
+     }
+   }, [aiReading, drawnCards, question, allCards, selectedSpread.id])
+
+   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
     if (!input) return []
 
@@ -680,16 +725,24 @@ function NewReadingPageContent() {
 
                 {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
-              {/* AI Analysis Section - Shows inline with cards */}
-              <div className="mt-6">
-                <AIReadingDisplay
-                  aiReading={aiReading}
-                  isLoading={aiLoading}
-                  error={aiError}
-                  onRetry={() => performAIAnalysis(drawnCards)}
-                  spreadId={selectedSpread.id}
-                />
-              </div>
+               {/* AI Analysis Section - Shows inline with cards */}
+               <div className="mt-6">
+                 <AIReadingDisplay
+                   aiReading={aiReading}
+                   isLoading={aiLoading}
+                   error={aiError}
+                   onRetry={() => performAIAnalysis(drawnCards)}
+                   spreadId={selectedSpread.id}
+                   onFetchProphecy={fetchProphecy}
+                    cards={drawnCards.map(card => ({
+                      id: card.id,
+                      name: getCardById(allCards, card.id)?.name || 'Unknown',
+                      position: card.position
+                    }))}
+                    allCards={allCards}
+                   question={question}
+                 />
+               </div>
             </motion.div>
           )}
 

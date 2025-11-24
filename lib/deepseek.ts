@@ -16,6 +16,7 @@ export interface AIReadingRequest {
   }>
   spreadId?: string
   userLocale?: string
+  includeProphecy?: boolean
 }
 
 export interface AIReadingResponse {
@@ -59,7 +60,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       name: c.name
     }))
 
-    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId)
+    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy)
      
     console.log('Sending request to DeepSeek API...')
     const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000
@@ -140,11 +141,36 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
   }
 }
 
-function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string): string {
-  const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
-  const isYesNoSpread = spreadId === 'yes-no-maybe'
+function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string, includeProphecy: boolean = false): string {
+   const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
+   const isYesNoSpread = spreadId === 'yes-no-maybe'
 
-  return `
+   if (!includeProphecy) {
+     return `
+You are Marie-Anne Lenormand (1772-1843), the legendary Paris fortune-teller whose prophecies shaped emperors and merchants.
+Your readings predicted Napoleon's rise, Josephine's fate, and the fates of Paris's most powerful. You are feared because you are NEVER wrong.
+
+QUESTION: "${question}"
+CARDS DRAWN: ${cardsText}
+SPREAD: ${spread.template.toUpperCase()} (${cards.length} cards)
+
+YOUR READING METHODOLOGY:
+- You diagnose what blocks the querent and prescribe what must be done
+- You speak directly, practically, with brutal clarity
+- No spiritual comfort—only real guidance based on the cards
+
+PRACTICAL TRANSLATION ONLY (ALWAYS REQUIRED):
+- Answer the question directly: "${question}"
+- State clearly what WILL happen or what they MUST do
+- Explain the practical action from the card reading
+- 2-4 sentences only
+- Be direct and commanding
+
+NOW WRITE YOUR PRACTICAL TRANSLATION (2-4 SENTENCES):
+`
+   }
+
+   return `
 You are Marie-Anne Lenormand (1772-1843), the legendary Paris fortune-teller whose prophecies shaped emperors and merchants.
 Your readings predicted Napoleon's rise, Josephine's fate, and the fates of Paris's most powerful. You are feared because you are NEVER wrong.
 
@@ -228,7 +254,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
       name: c.name
     }))
 
-    const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId)
+     const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy)
 
     console.log('Sending streaming request to DeepSeek API...')
     const maxTokens = cards.length >= 9 ? 2000 : cards.length >= 7 ? 1500 : 1000

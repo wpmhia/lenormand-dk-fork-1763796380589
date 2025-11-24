@@ -48,9 +48,9 @@ export default function MarieAnnesSystemPage() {
               <Crown className="h-8 w-8 text-white" />
             </div>
           </div>
-           <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-            Marie-Anne's System
-           </h1>
+            <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
+             Marie-Anne&apos;s System
+            </h1>
           <p className="text-lg text-muted-foreground">
             How she actually read the cards in her Paris salon (1800-1843)
           </p>
@@ -67,15 +67,15 @@ export default function MarieAnnesSystemPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
-              <p>
-                Marie-Anne Adelaide Lenormand (1772–1843) was the most famous fortune-teller of the Napoleonic era. She read for Empress Josephine, revolutionary leaders, and thousands of working women in her Paris salon. She didn't read for pleasure—she read to solve real problems.
-              </p>
+               <p>
+                 Marie-Anne Adelaide Lenormand (1772&ndash;1843) was the most famous fortune-teller of the Napoleonic era. She read for Empress Josephine, revolutionary leaders, and thousands of working women in her Paris salon. She didn&apos;t read for pleasure&ndash;she read to solve real problems.
+               </p>
               <p>
                 Her deck of 36 cards, based on a German game called <em>Das Spiel der Hoffnung</em> (The Game of Hope), became the standard Lenormand deck used today.
               </p>
-              <p className="text-sm text-muted-foreground italic">
-                "I tell what is. Not what you wish to hear."
-              </p>
+               <p className="text-sm text-muted-foreground italic">
+                 &quot;I tell what is. Not what you wish to hear.&quot;
+               </p>
             </CardContent>
           </Card>
 
@@ -92,21 +92,21 @@ export default function MarieAnnesSystemPage() {
                 <div className="border-l-2 border-amber-500 pl-4">
                   <h3 className="font-semibold">1. The Significator is Sacred</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Every reading begins with a significator—(Man) for male querents, (Woman) for females. This card represents the person asking the question. It is the center, the anchor, the heart of the reading. Without it, the reading has no focus.
+                     Every reading begins with a significator&ndash;(Man) for male querents, (Woman) for females. This card represents the person asking the question. It is the center, the anchor, the heart of the reading. Without it, the reading has no focus.
                   </p>
                 </div>
 
                 <div className="border-l-2 border-amber-500 pl-4">
                   <h3 className="font-semibold">2. Deadline-First Always</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Every reading ends with a specific deadline: "by Thursday evening," "next Monday morning," "within three days." Her querents were working women who needed to know: <strong>when</strong>. No vague "when the time is right."
+                     Every reading ends with a specific deadline: &quot;by Thursday evening,&quot; &quot;next Monday morning,&quot; &quot;within three days.&quot; Her querents were working women who needed to know: <strong>when</strong>. No vague &quot;when the time is right.&quot;
                   </p>
                 </div>
 
                 <div className="border-l-2 border-amber-500 pl-4">
                   <h3 className="font-semibold">3. Action Required</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    A reading without action is worthless. Marie-Anne always ended with an imperative: "Send word to him before Friday," "Make the decision by Wednesday," "Prepare for this by tomorrow." The cards show what is, action reveals what's possible.
+                     A reading without action is worthless. Marie-Anne always ended with an imperative: &quot;Send word to him before Friday,&quot; &quot;Make the decision by Wednesday,&quot; &quot;Prepare for this by tomorrow.&quot; The cards show what is, action reveals what&apos;s possible.
                   </p>
                 </div>
 
@@ -119,9 +119,9 @@ export default function MarieAnnesSystemPage() {
 
                 <div className="border-l-2 border-amber-500 pl-4">
                   <h3 className="font-semibold">5. Card Strength Matters</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Some cards carry weight (Strong): (Sun), (Key), (Ring). Others modify (Weak): (Clouds), (Mice), (Child). Her readings reflected this hierarchy—strong cards as the foundation, weak cards as context.
-                  </p>
+                   <p className="text-sm text-muted-foreground mt-1">
+                     Some cards carry weight (Strong): (Sun), (Key), (Ring). Others modify (Weak): (Clouds), (Mice), (Child). Her readings reflected this hierarchy&ndash;strong cards as the foundation, weak cards as context.
+                   </p>
                 </div>
               </div>
             </CardContent>
@@ -132,7 +132,7 @@ export default function MarieAnnesSystemPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CheckCircle className="h-5 w-5 text-amber-500" />
-                Marie-Anne's Original Spreads
+                 Marie-Anne&apos;s Original Spreads
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
@@ -156,7 +156,7 @@ export default function MarieAnnesSystemPage() {
 
                 <div className="rounded-lg bg-muted p-4">
                   <h4 className="font-semibold">36-Card Grand Tableau</h4>
-                  <p className="text-sm text-muted-foreground mt-1">The complete 4x9 grid. Her ultimate reading. The entire situation visible at once. She read by rows, diagonals, and the significator's position.</p>
+                   <p className="text-sm text-muted-foreground mt-1">The complete 4x9 grid. Her ultimate reading. The entire situation visible at once. She read by rows, diagonals, and the significator&apos;s position.</p>
                 </div>
               </div>
             </CardContent>
@@ -171,9 +171,9 @@ export default function MarieAnnesSystemPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
-              <p>
-                Spreads like Past-Present-Future, Week-Ahead, and Relationship readings were developed after Marie-Anne's time. But we apply <strong>her methodology</strong> to all of them:
-              </p>
+               <p>
+                 Spreads like Past-Present-Future, Week-Ahead, and Relationship readings were developed after Marie-Anne&apos;s time. But we apply <strong>her methodology</strong> to all of them:
+               </p>
               
               <ul className="space-y-2 text-sm">
                 <li className="flex gap-2">
@@ -215,9 +215,9 @@ export default function MarieAnnesSystemPage() {
 
                 <div>
                   <h4 className="font-semibold mb-2">Step 2: Ask a Direct Question</h4>
-                  <p className="text-sm text-muted-foreground">
-                    No vague questions. "What should I do about my job?" not "What does the universe think?" Marie-Anne read for practical people with real problems.
-                  </p>
+                   <p className="text-sm text-muted-foreground">
+                     No vague questions. &quot;What should I do about my job?&quot; not &quot;What does the universe think?&quot; Marie-Anne read for practical people with real problems.
+                   </p>
                 </div>
 
                 <div>
@@ -228,17 +228,17 @@ export default function MarieAnnesSystemPage() {
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Step 4: Read the Cards' Story</h4>
-                  <p className="text-sm text-muted-foreground">
-                    What is the sequence of events? Where is the friction? What breaks it? What's the outcome? Don't interpret each card separately—see how they flow together.
-                  </p>
+                   <h4 className="font-semibold mb-2">Step 4: Read the Cards&apos; Story</h4>
+                   <p className="text-sm text-muted-foreground">
+                     What is the sequence of events? Where is the friction? What breaks it? What&apos;s the outcome? Don&apos;t interpret each card separately&ndash;see how they flow together.
+                   </p>
                 </div>
 
                 <div>
                   <h4 className="font-semibold mb-2">Step 5: State the Outcome & Action</h4>
-                  <p className="text-sm text-muted-foreground">
-                    "This is what will happen. Here's what you do about it. Do this by [specific day/time]." Clear. Commanding. Actionable.
-                  </p>
+                   <p className="text-sm text-muted-foreground">
+                     &quot;This is what will happen. Here&apos;s what you do about it. Do this by [specific day/time].&quot; Clear. Commanding. Actionable.
+                   </p>
                 </div>
               </div>
             </CardContent>
@@ -254,14 +254,14 @@ export default function MarieAnnesSystemPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
               <p>
-                Marie-Anne wasn't a mystic or a spiritual guide. She was a problem-solver. Her querents came with real questions: Should I marry this man? Should I leave my job? When will my son return? How do I survive this winter?
+                 Marie-Anne wasn&apos;t a mystic or a spiritual guide. She was a problem-solver. Her querents came with real questions: Should I marry this man? Should I leave my job? When will my son return? How do I survive this winter?
               </p>
-              <p>
-                She gave them answers. Direct, practical, deadline-driven, action-oriented answers. That's the soul of her system.
-              </p>
-              <p className="text-sm text-muted-foreground italic">
-                This app brings that methodology back—not as history, but as a living, practical tool for real guidance in the modern world.
-              </p>
+               <p>
+                 She gave them answers. Direct, practical, deadline-driven, action-oriented answers. That&apos;s the soul of her system.
+               </p>
+               <p className="text-sm text-muted-foreground italic">
+                 This app brings that methodology back&ndash;not as history, but as a living, practical tool for real guidance in the modern world.
+               </p>
             </CardContent>
           </Card>
         </div>
