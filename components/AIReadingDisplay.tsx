@@ -120,14 +120,14 @@ export function AIReadingDisplay({
 
       return (
         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
-          {/* Classic Lenormand Oracle Reading */}
-          <Card className="border-border bg-card">
-            <CardHeader className="border-b border-border">
-              <div className="flex items-center justify-between gap-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Classic Lenormand Oracle Reading
-                </CardTitle>
+           {/* Lenormand Reading */}
+           <Card className="border-border bg-card">
+             <CardHeader className="border-b border-border">
+               <div className="flex items-center justify-between gap-2">
+                 <CardTitle className="flex items-center gap-2">
+                   <Sparkles className="h-5 w-5 text-primary" />
+                   Lenormand Reading
+                 </CardTitle>
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3" />
                   Complete
@@ -158,14 +158,14 @@ export function AIReadingDisplay({
            </CardContent>
          </Card>
 
-         {/* Practical Translation */}
-         {aiReading?.practicalTranslation && (
-           <Card className="border-border bg-card/50">
-             <CardHeader className="border-b border-border">
-               <CardTitle className="flex items-center gap-2">
-                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                 Practical Translation
-               </CardTitle>
+          {/* What it Means */}
+          {aiReading?.practicalTranslation && (
+            <Card className="border-border bg-card/50">
+              <CardHeader className="border-b border-border">
+                <CardTitle className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  What it Means
+                </CardTitle>
              </CardHeader>
              <CardContent className="space-y-6 p-8">
                <div className="text-foreground">
