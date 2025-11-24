@@ -1,9 +1,19 @@
+export interface CardMeaning {
+  general: string
+  positive: string[]
+  negative: string[]
+  relationships?: string
+  careerFinance?: string
+  timing?: string
+}
+
 export interface Card {
   id: number
   name: string
   number: number
   keywords: string[]
   uprightMeaning: string
+  meaning?: CardMeaning
   combos: CardCombo[]
   imageUrl: string | null
   emoji?: string

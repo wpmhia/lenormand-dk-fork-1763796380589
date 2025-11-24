@@ -83,16 +83,70 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
 
           {/* Collapsible Sections */}
           
-          {/* Meaning Section */}
-          <Collapsible open={openSections.meaning} onOpenChange={() => toggleSection('meaning')}>
-            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
-              <h3 className="font-semibold text-foreground">Meaning</h3>
-              <ChevronDown className={`h-4 w-4 transition-transform ${openSections.meaning ? 'rotate-180' : ''}`} />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
-              {card.uprightMeaning}
-            </CollapsibleContent>
-          </Collapsible>
+           {/* Meaning Section */}
+           <Collapsible open={openSections.meaning} onOpenChange={() => toggleSection('meaning')}>
+             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
+               <h3 className="font-semibold text-foreground">Meaning</h3>
+               <ChevronDown className={`h-4 w-4 transition-transform ${openSections.meaning ? 'rotate-180' : ''}`} />
+             </CollapsibleTrigger>
+             <CollapsibleContent className="border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground space-y-4">
+               {card.meaning ? (
+                 <>
+                   <div>
+                     <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
+                     <p className="text-muted-foreground">{card.meaning.general}</p>
+                   </div>
+                   
+                   <div>
+                     <h4 className="font-semibold text-foreground mb-2">Positive aspects</h4>
+                     <ul className="space-y-1">
+                       {card.meaning.positive.map((aspect, idx) => (
+                         <li key={idx} className="flex items-start gap-2">
+                           <span className="text-primary mt-1 flex-shrink-0">•</span>
+                           <span>{aspect}</span>
+                         </li>
+                       ))}
+                     </ul>
+                   </div>
+                   
+                   <div>
+                     <h4 className="font-semibold text-foreground mb-2">Negative aspects</h4>
+                     <ul className="space-y-1">
+                       {card.meaning.negative.map((aspect, idx) => (
+                         <li key={idx} className="flex items-start gap-2">
+                           <span className="text-destructive mt-1 flex-shrink-0">•</span>
+                           <span>{aspect}</span>
+                         </li>
+                       ))}
+                     </ul>
+                   </div>
+                   
+                   {card.meaning.relationships && (
+                     <div>
+                       <h4 className="font-semibold text-foreground mb-1">In relationships</h4>
+                       <p className="text-muted-foreground">{card.meaning.relationships}</p>
+                     </div>
+                   )}
+                   
+                   {card.meaning.careerFinance && (
+                     <div>
+                       <h4 className="font-semibold text-foreground mb-1">In career/finance</h4>
+                       <p className="text-muted-foreground">{card.meaning.careerFinance}</p>
+                     </div>
+                   )}
+                   
+                   {card.meaning.timing && (
+                     <div>
+                       <h4 className="font-semibold text-foreground mb-1">Timing</h4>
+                       <p className="text-muted-foreground">{card.meaning.timing}</p>
+                     </div>
+                   )}
+                 </>
+               ) : (
+                 <p>{card.uprightMeaning}</p>
+               )}
+             </CollapsibleContent>
+           </Collapsible>
 
           {/* House Meaning - Grand Tableau Only */}
           {layoutType === 36 && position !== undefined && (
