@@ -1,12 +1,15 @@
 "use client"
 
+import { useState } from 'react'
+import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { AIReadingResponse } from '@/lib/deepseek'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2 } from 'lucide-react'
+import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
+import { getSpreadLearningLinks } from '@/lib/spreadLearning'
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null
@@ -45,7 +48,9 @@ export function AIReadingDisplay({
   question,
   isStreaming = false
 }: AIReadingDisplayProps) {
+  const [showReadingMethod, setShowReadingMethod] = useState(false)
   const displayContent = aiReading?.reading || ''
+  const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
     if (isLoading && !displayContent) {
       return (
@@ -120,43 +125,91 @@ export function AIReadingDisplay({
 
       return (
         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
-           {/* Lenormand Reading */}
-           <Card className="border-border bg-card">
-             <CardHeader className="border-b border-border">
-               <div className="flex items-center justify-between gap-2">
-                 <CardTitle className="flex items-center gap-2">
-                   <Sparkles className="h-5 w-5 text-primary" />
-                   Lenormand Reading
-                 </CardTitle>
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Complete
-                </Badge>
+            {/* Lenormand Reading */}
+            <Card className="border-border bg-card">
+              <CardHeader className="border-b border-border">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      Lenormand Reading
+                    </CardTitle>
+                   <Badge variant="secondary" className="flex items-center gap-1">
+                     <CheckCircle2 className="h-3 w-3" />
+                     Complete
+                   </Badge>
+                  </div>
+                  {spreadLearningLinks && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowReadingMethod(!showReadingMethod)}
+                      className="gap-2 w-full sm:w-auto"
+                    >
+                      {showReadingMethod ? (
+                        <>
+                          <ChevronUp className="h-4 w-4" />
+                          Hide Reading Method
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-4 w-4" />
+                          Show Reading Method
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+             </CardHeader>
+            <CardContent className="space-y-6 p-8">
+              <div className="text-foreground">
+                <ReactMarkdown
+                  components={{
+                    h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
+                    h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
+                    h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
+                    p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                    ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
+                    ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
+                    li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                    blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
+                    strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                    em: ({node, ...props}) => <em className="italic" {...props} />,
+                    hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                  }}
+                >
+                  {displayContent}
+                </ReactMarkdown>
+                {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
               </div>
-            </CardHeader>
-           <CardContent className="space-y-6 p-8">
-             <div className="text-foreground">
-               <ReactMarkdown
-                 components={{
-                   h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
-                   h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
-                   h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
-                   p: ({node, ...props}) => <p className="mb-4" {...props} />,
-                   ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                   ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                   li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                   blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
-                   strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                   em: ({node, ...props}) => <em className="italic" {...props} />,
-                   hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
-                 }}
-               >
-                 {displayContent}
-               </ReactMarkdown>
-               {isStreaming && <span className="inline animate-pulse text-primary">▌</span>}
-             </div>
-           </CardContent>
-         </Card>
+              
+              {/* Reading Method Section */}
+              {showReadingMethod && spreadLearningLinks && (
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-3 border-t border-border pt-6 mt-6">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-muted-foreground">About This Reading Method</h4>
+                    <p className="text-sm text-muted-foreground/80">{spreadLearningLinks.description}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Link href={spreadLearningLinks.methodologyPage}>
+                      <Button variant="secondary" size="sm" className="gap-2">
+                        Learn the Method
+                        <ExternalLink className="h-3 w-3" />
+                      </Button>
+                    </Link>
+                    {spreadLearningLinks.learnMoreUrl && (
+                      <Link href={spreadLearningLinks.learnMoreUrl}>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          Deep Dive
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* What it Means */}
           {aiReading?.practicalTranslation && (
