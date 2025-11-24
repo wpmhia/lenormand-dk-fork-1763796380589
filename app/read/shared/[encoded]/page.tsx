@@ -19,6 +19,26 @@ interface PageProps {
   }
 }
 
+// Map layoutType (number of cards) to primary spread ID
+function getSpreadIdFromLayoutType(layoutType: number): string {
+  switch (layoutType) {
+    case 1:
+      return 'single-card'
+    case 3:
+      return 'sentence-3'
+    case 5:
+      return 'sentence-5'
+    case 7:
+      return 'week-ahead'
+    case 9:
+      return 'comprehensive'
+    case 36:
+      return 'grand-tableau'
+    default:
+      return 'sentence-3' // default
+  }
+}
+
 export default function SharedReadingPage({ params }: PageProps) {
   const [reading, setReading] = useState<Reading | null>(null)
   const [allCards, setAllCards] = useState<any[]>([])
@@ -267,7 +287,7 @@ export default function SharedReadingPage({ params }: PageProps) {
                 position: card.position
               }))}
               allCards={allCards}
-              spreadId="past-present-future"
+              spreadId={getSpreadIdFromLayoutType(reading.layoutType)}
               question={reading.question}
             />
           )}

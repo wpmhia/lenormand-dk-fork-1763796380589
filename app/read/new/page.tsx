@@ -696,6 +696,7 @@ function NewReadingPageContent() {
                   isLoading={aiLoading}
                   error={aiError}
                   onRetry={() => performAIAnalysis(drawnCards)}
+                  spreadId={selectedSpread.id}
                 />
               </div>
             </motion.div>
