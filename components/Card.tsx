@@ -1,10 +1,9 @@
 "use client"
 
-import { useState } from 'react'
 import Image from 'next/image'
-import { Card as CardType, CardCombo } from '@/lib/types'
+import Link from 'next/link'
+import { Card as CardType } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { CardModal } from './CardModal'
 
 interface CardProps {
   card: CardType
@@ -21,22 +20,9 @@ export function Card({
   size = 'md',
   className
 }: CardProps) {
-  const [showModal, setShowModal] = useState(false)
-
-  const getCardColor = (cardId: number): string => {
-    const colors = [
-      'from-primary/60 to-primary/80', 'from-primary/50 to-primary/70', 'from-primary/40 to-primary/60',
-      'from-primary/70 to-primary/90', 'from-primary/55 to-primary/75', 'from-primary/45 to-primary/65',
-      'from-primary/65 to-primary/85', 'from-primary/35 to-primary/55', 'from-primary/75 to-primary/95'
-    ]
-    return colors[cardId % colors.length]
-  }
-
   const handleCardClick = () => {
     if (onClick) {
       onClick()
-    } else {
-      setShowModal(true)
     }
   }
 
@@ -65,19 +51,18 @@ export function Card({
          role="button"
          aria-label="Lenormand card back. Click to draw or select card"
        >
-          {/* Card Back Image */}
-           <Image
-             src="/images/card-back.png"
-             alt="Card back"
-             fill
-             className="object-cover"
-             sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
-           />
+          <Image
+            src="/images/card-back.png"
+            alt="Card back"
+            fill
+            className="object-cover"
+            sizes={`${size === 'sm' ? '80px' : size === 'md' ? '112px' : '144px'}`}
+          />
        </div>
     )
   }
 
-  return (
+  const cardContent = (
     <>
       <div
         className={cn(
@@ -96,7 +81,6 @@ export function Card({
         role="button"
         aria-label={`${card.name} card. Click to ${onClick ? 'select' : 'view details'}`}
       >
-        {/* Card Image */}
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
           <Image
             src={card.imageUrl || ''}
@@ -109,7 +93,6 @@ export function Card({
         </div>
       </div>
       
-      {/* Card Name and Number - Below Card */}
       <div className="mt-2 text-center">
         <div className="text-sm font-bold text-foreground">
           {card.name}
@@ -118,13 +101,16 @@ export function Card({
           #{card.id}
         </div>
       </div>
-
-      {showModal && (
-        <CardModal
-          card={card}
-          onClose={() => setShowModal(false)}
-        />
-      )}
     </>
+  )
+
+  if (onClick) {
+    return cardContent
+  }
+
+  return (
+    <Link href={`/cards/${card.id}`}>
+      {cardContent}
+    </Link>
   )
 }
