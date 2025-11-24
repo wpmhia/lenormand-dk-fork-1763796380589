@@ -63,61 +63,53 @@ export default function Home() {
          </div>
        </div>
 
-        {/* Reading Types */}
-         <div className="container-section">
-         <div className="relative mb-8">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
-           <div className="relative z-10 mb-6 text-center">
-              <h2 className="relative mb-2 text-center text-4xl font-bold text-foreground">
-               Discover Your Reading
-               <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
-             </h2>
-             <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
-          </div>
-              <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                 <ReadingTypeCard
-                   icon={<Sparkles className="h-5 w-5 text-primary" />}
-                   title="3-Card Reading"
-                   description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
-                   cardCount={3}
-                   badge="Core"
-                   badgeVariant="default"
-                 />
-                 <ReadingTypeCard
-                   icon={<Heart className="h-5 w-5 text-primary" />}
-                   title="5-Card Reading"
-                   description="Uncover challenges, resources, and outcomes for your situation"
-                   cardCount={5}
-                   badge="Popular"
-                   badgeVariant="secondary"
-                 />
-                 <ReadingTypeCard
-                   icon={<Calendar className="h-5 w-5 text-primary" />}
-                   title="7-Card Reading"
-                   description="Week ahead, relationships, or any 7-card spread guidance"
-                   cardCount={7}
-                   badge="Popular"
-                   badgeVariant="secondary"
-                 />
-                 <ReadingTypeCard
-                   icon={<Shield className="h-5 w-5 text-primary" />}
-                   title="9-Card Reading"
-                   description="Explore inner world, direct actions, and external influences"
-                   cardCount={9}
-                   badge="Advanced"
-                   badgeVariant="outline"
-                 />
-                 <ReadingTypeCard
-                   icon={<Sparkles className="h-5 w-5 text-primary" />}
-                   title="Master Reading"
-                   description="Full deck reading revealing life's complete mystical pattern"
-                   cardCount={36}
-                   badge="Complete"
-                   badgeVariant="outline"
-                 />
-             </div>
-        </div>
-      </div>
+         {/* Reading Types */}
+          <div className="container-section">
+          <div className="relative mb-12">
+           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
+            <div className="relative z-10 mb-8 text-center">
+               <h2 className="relative mb-2 text-center text-4xl font-bold text-foreground">
+                Discover Your Reading
+                <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
+              </h2>
+              <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
+           </div>
+               <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  <ReadingTypeCard
+                    icon={<Sparkles className="h-5 w-5 text-primary" />}
+                    title="3-Card Sentence"
+                    description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
+                    cardCount={3}
+                    badge="Authentic"
+                    badgeVariant="default"
+                  />
+                  <ReadingTypeCard
+                    icon={<Heart className="h-5 w-5 text-primary" />}
+                    title="9-Card Reading"
+                    description="Deeper exploration of complex situations without overwhelming detail"
+                    cardCount={9}
+                    badge="Authentic"
+                    badgeVariant="default"
+                  />
+                  <ReadingTypeCard
+                    icon={<Calendar className="h-5 w-5 text-primary" />}
+                    title="Grand Tableau"
+                    description="Complete life situation through full 4x9 grid - the most comprehensive reading"
+                    cardCount={36}
+                    badge="Authentic"
+                    badgeVariant="default"
+                  />
+                  <ReadingTypeCard
+                    icon={<Shield className="h-5 w-5 text-primary" />}
+                    title="Single Card"
+                    description="Quick daily guidance for direct answers and immediate action"
+                    cardCount={1}
+                    badge="Authentic"
+                    badgeVariant="default"
+                  />
+              </div>
+         </div>
+       </div>
 
       {/* CTA Section */}
        <div className="container-cta">
