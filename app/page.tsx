@@ -76,6 +76,15 @@ export default function Home() {
            </div>
                <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
                    <ReadingTypeCard
+                     icon={<Shield className="h-5 w-5 text-primary" />}
+                     title="Single Card"
+                     description="Quick daily guidance for direct answers and immediate action"
+                     cardCount={1}
+                     badge="Authentic"
+                     badgeVariant="default"
+                     spreadId="single-card"
+                   />
+                   <ReadingTypeCard
                      icon={<Sparkles className="h-5 w-5 text-primary" />}
                      title="3-Card Sentence"
                      description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
@@ -101,15 +110,6 @@ export default function Home() {
                      badge="Authentic"
                      badgeVariant="default"
                      spreadId="grand-tableau"
-                   />
-                   <ReadingTypeCard
-                     icon={<Shield className="h-5 w-5 text-primary" />}
-                     title="Single Card"
-                     description="Quick daily guidance for direct answers and immediate action"
-                     cardCount={1}
-                     badge="Authentic"
-                     badgeVariant="default"
-                     spreadId="single-card"
                    />
               </div>
          </div>
