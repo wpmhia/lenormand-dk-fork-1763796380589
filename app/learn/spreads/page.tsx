@@ -284,9 +284,11 @@ export default function SpreadsPage() {
           </CardHeader>
           <CardContent>
              <div className="space-y-8">
-               {spreads.map((group, groupIndex) => (
-                 <div key={groupIndex}>
-                   <div className="mb-4">
+                {spreads.map((group, groupIndex) => {
+                  const categoryId = group.category.toLowerCase().replace(/\s+/g, '-')
+                  return (
+                  <div key={groupIndex} id={categoryId}>
+                    <div className="mb-4">
                      <h2 className="text-2xl font-bold text-foreground">{group.category}</h2>
                      <p className="mt-1 text-sm text-muted-foreground">{group.description}</p>
                    </div>
@@ -354,8 +356,9 @@ export default function SpreadsPage() {
                       ))}
                     </div>
                   </div>
-                ))}
-             </div>
+                )
+                })}
+              </div>
            </CardContent>
          </Card>
 
