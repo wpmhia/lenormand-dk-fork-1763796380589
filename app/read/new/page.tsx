@@ -180,53 +180,7 @@ function NewReadingPageContent() {
           }
          }, [step, drawnCards, performAIAnalysis, addLog])
 
-   const fetchProphecy = useCallback(async () => {
-     if (!drawnCards.length) return
-
-     setAiLoading(true)
-     try {
-       const aiRequest = {
-         question: question.trim() || 'What guidance do these cards have for me?',
-         cards: drawnCards.map(card => ({
-           id: card.id,
-           name: getCardById(allCards, card.id)?.name || 'Unknown',
-           position: card.position
-         })),
-         spreadId: selectedSpread.id,
-         userLocale: navigator.language,
-         includeProphecy: true
-       }
-
-       const controller = new AbortController()
-       const timeout = setTimeout(() => controller.abort(), 60000)
-
-       const response = await fetch('/api/readings/interpret', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json',
-         },
-         body: JSON.stringify(aiRequest),
-         signal: controller.signal
-       })
-
-       clearTimeout(timeout)
-
-       if (!response.ok) {
-         const errorData = await response.json().catch(() => ({ error: 'Server error' }))
-         throw new Error(errorData.error || 'Server error')
-       }
-
-       const aiResult = await response.json()
-       setAiReading(aiResult)
-
-     } catch (error) {
-       console.error('Prophecy fetch error:', error)
-     } finally {
-       setAiLoading(false)
-     }
-   }, [drawnCards, question, allCards, selectedSpread.id])
-
-   const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
+    const parsePhysicalCards = useCallback((allCards: CardType[]): ReadingCard[] => {
     const input = physicalCards.trim()
     if (!input) return []
 
@@ -735,9 +689,8 @@ function NewReadingPageContent() {
                    aiReading={aiReading}
                    isLoading={aiLoading}
                    error={aiError}
-                   onRetry={() => performAIAnalysis(drawnCards)}
-                   spreadId={selectedSpread.id}
-                   onFetchProphecy={fetchProphecy}
+                    onRetry={() => performAIAnalysis(drawnCards)}
+                    spreadId={selectedSpread.id}
                     cards={drawnCards.map(card => ({
                       id: card.id,
                       name: getCardById(allCards, card.id)?.name || 'Unknown',

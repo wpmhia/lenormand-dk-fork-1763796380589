@@ -34,8 +34,8 @@ interface AIReadingDisplayProps {
   spreadId?: string
   question?: string
   isStreaming?: boolean
-  onFetchProphecy?: () => void
 }
+
 
 export function AIReadingDisplay({
   aiReading,
@@ -48,25 +48,10 @@ export function AIReadingDisplay({
   allCards,
   spreadId,
   question,
-  isStreaming = false,
-  onFetchProphecy
+  isStreaming = false
 }: AIReadingDisplayProps) {
   const [showReadingMethod, setShowReadingMethod] = useState(false)
-  const [fetchingProphecy, setFetchingProphecy] = useState(false)
-  const hasProphecy = !!aiReading?.reading
   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
-
-  const handleShowReadingMethod = async () => {
-    if (!showReadingMethod && !hasProphecy && onFetchProphecy) {
-      setFetchingProphecy(true)
-      try {
-        await onFetchProphecy()
-      } finally {
-        setFetchingProphecy(false)
-      }
-    }
-    setShowReadingMethod(!showReadingMethod)
-  }
 
   // Apply both card and concept linkifiers to the practical translation
   const getLinkifiedContent = (content: string): string => {
@@ -195,25 +180,24 @@ export function AIReadingDisplay({
                    {/* Show Reading Method Button */}
                    {spreadLearningLinks && (
                      <div className="border-t border-border pt-6 mt-6">
-                       <Button
-                         variant="outline"
-                         size="sm"
-                         onClick={handleShowReadingMethod}
-                         disabled={fetchingProphecy}
-                         className="gap-2"
-                       >
-                         {showReadingMethod ? (
-                           <>
-                             <ChevronUp className="h-4 w-4" />
-                             Hide Reading Method
-                           </>
-                         ) : (
-                           <>
-                             <ChevronDown className="h-4 w-4" />
-                             {fetchingProphecy ? 'Fetching...' : 'Show Reading Method'}
-                           </>
-                         )}
-                       </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowReadingMethod(!showReadingMethod)}
+                          className="gap-2"
+                        >
+                          {showReadingMethod ? (
+                            <>
+                              <ChevronUp className="h-4 w-4" />
+                              Hide Reading Method
+                            </>
+                          ) : (
+                            <>
+                              <ChevronDown className="h-4 w-4" />
+                              Show Reading Method
+                            </>
+                          )}
+                        </Button>
 
                       {/* Reading Method Details - Only when expanded */}
                       {showReadingMethod && (
