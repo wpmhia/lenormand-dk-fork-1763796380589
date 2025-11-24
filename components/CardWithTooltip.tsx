@@ -1,6 +1,5 @@
 "use client"
 
-import Link from 'next/link'
 import { Card as CardType } from '@/lib/types'
 import { Card } from './Card'
 import {
@@ -9,7 +8,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { ArrowUpRight } from 'lucide-react'
 
 interface CardWithTooltipProps {
   card: CardType
@@ -83,15 +81,6 @@ export function CardWithTooltip({
                 ))}
               </div>
             )}
-
-            {/* Learn More Link */}
-            <Link
-              href={`/cards/${card.id}`}
-              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors pt-2 border-t border-border/30"
-            >
-              Learn more about this card
-              <ArrowUpRight className="h-3 w-3" />
-            </Link>
           </div>
         </TooltipContent>
       </Tooltip>
