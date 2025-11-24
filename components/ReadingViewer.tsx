@@ -61,11 +61,11 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       4: { label: "Outcome", meaning: "The result or conclusion—where this leads" }
     },
     "sentence-5": {
-      0: { label: "Position 1", meaning: "First card in the flowing narrative" },
-      1: { label: "Position 2", meaning: "Second card in the flowing narrative" },
-      2: { label: "Position 3", meaning: "Third card in the flowing narrative" },
-      3: { label: "Position 4", meaning: "Fourth card in the flowing narrative" },
-      4: { label: "Position 5", meaning: "Fifth card in the flowing narrative" }
+      0: { label: "Situation", meaning: "Current state of affairs" },
+      1: { label: "Challenge", meaning: "Obstacles or difficulties" },
+      2: { label: "Advice", meaning: "Guidance for moving forward" },
+      3: { label: "Outcome", meaning: "Likely result of current path" },
+      4: { label: "Timing", meaning: "When to expect developments" }
     },
     "week-ahead": {
       0: { label: "Monday", meaning: "New beginnings, fresh starts, and initial energy for the week" },
