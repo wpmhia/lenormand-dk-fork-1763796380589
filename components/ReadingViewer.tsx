@@ -60,13 +60,13 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       3: { label: "Modifier", meaning: "The qualifier or condition—how, when, or under what circumstance" },
       4: { label: "Outcome", meaning: "The result or conclusion—where this leads" }
     },
-    "sentence-5": {
-      0: { label: "Situation", meaning: "Current state of affairs" },
-      1: { label: "Challenge", meaning: "Obstacles or difficulties" },
-      2: { label: "Advice", meaning: "Guidance for moving forward" },
-      3: { label: "Outcome", meaning: "Likely result of current path" },
-      4: { label: "Timing", meaning: "When to expect developments" }
-    },
+     "sentence-5": {
+       0: { label: "Situation", meaning: "" },
+       1: { label: "Challenge", meaning: "" },
+       2: { label: "Advice", meaning: "" },
+       3: { label: "Outcome", meaning: "" },
+       4: { label: "Timing", meaning: "" }
+     },
     "week-ahead": {
       0: { label: "Monday", meaning: "New beginnings, fresh starts, and initial energy for the week" },
       1: { label: "Tuesday", meaning: "Challenges, obstacles, and work-related matters" },
