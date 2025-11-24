@@ -34,11 +34,11 @@ export default function Home() {
               Get free AI-powered Lenormand card readings online. Explore card meanings, spreads, and personalized interpretations with our intelligent divination tool.
             </p>
               <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
-               <Link href="/read/new">
-                 <Button size="lg">
-                   ✨ Begin Your Journey
-                 </Button>
-               </Link>
+                <Link href="/read/new">
+                  <Button size="lg">
+                    ✨ Get Your Reading
+                  </Button>
+                </Link>
                 <Link href="/cards">
                   <Button variant="outline" size="lg">
                     🔮 Explore Cards
