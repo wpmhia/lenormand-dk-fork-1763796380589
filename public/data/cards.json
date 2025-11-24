@@ -114,26 +114,7 @@
       }
     ],
     "imageUrl": "/images/cards/01-rider.png",
-    "meaning": {
-      "general": "News, messages, and important communication. This card signifies the arrival of information, letters, or news that requires attention.",
-      "positive": [
-        "Quick communication",
-        "Positive news arriving",
-        "Important messages",
-        "Movement towards resolution",
-        "Dynamic energy"
-      ],
-      "negative": [
-        "Delayed news",
-        "Miscommunication",
-        "Restlessness",
-        "Unreliable information",
-        "False reports"
-      ],
-      "relationships": "A message or communication from a loved one, or a young man entering your life. Can indicate news about relationships.",
-      "careerFinance": "News about a job, promotion, or business deal. Communication that impacts your career.",
-      "timing": "Soon, within days or weeks"
-    }
+     "meaning": "News, messages, and important communication. This card signifies the arrival of information, letters, or news that requires attention."
   },
   {
     "id": 2,
@@ -282,27 +263,7 @@
       }
     ],
     "imageUrl": "/images/cards/02-clover.png",
-    "meaning": {
-      "general": "Luck, opportunity, and small blessings. This card signifies a stroke of good fortune or a moment of unexpected luck.",
-      "positive": [
-        "Happiness",
-        "Optimism",
-        "Success",
-        "Good chances",
-        "Brief but beneficial events",
-        "Luck and fortune"
-      ],
-      "negative": [
-        "Luck may be fleeting",
-        "Superficial gains",
-        "Don't rely solely on chance",
-        "Short-lived benefits",
-        "Temporary relief"
-      ],
-      "relationships": "A lucky encounter, lighthearted flirtation, or a positive but short-lived connection.",
-      "careerFinance": "A sudden opportunity, a lucky break, or a small gain. Unexpected financial benefit.",
-      "timing": "Quickly, within a short timeframe"
-    }
+     "meaning": "Luck, opportunity, and small blessings. This card signifies a stroke of good fortune or a moment of unexpected luck."
   },
   {
     "id": 3,
@@ -447,26 +408,7 @@
       }
     ],
     "imageUrl": "/images/cards/03-ship.png",
-    "meaning": {
-      "general": "Travel, distance, and exploration. This card represents journeys, whether physical travel or movement away from the current situation.",
-      "positive": [
-        "Travel opportunities",
-        "Distance brings clarity",
-        "New horizons",
-        "Adventure",
-        "Freedom from constraints"
-      ],
-      "negative": [
-        "Separation",
-        "Long-distance challenges",
-        "Travel delays",
-        "Distancing from problems",
-        "Displacement"
-      ],
-      "relationships": "A loved one traveling away, long-distance relationships, or separation. Can also indicate a journey with someone.",
-      "careerFinance": "Business travel, relocation for work, or working remotely. Geographic changes affecting career.",
-      "timing": "Within weeks or months"
-    }
+     "meaning": "Travel, distance, and exploration. This card represents journeys, whether physical travel or movement away from the current situation."
   },
   {
     "id": 4,
@@ -615,29 +557,7 @@
       }
     ],
     "imageUrl": "/images/cards/04-house.png",
-    "meaning": {
-      "general": "Home, family, and stability. This card represents the foundation of security, whether physical property or emotional grounding.",
-      "positive": [
-        "Stability",
-        "Family connections",
-        "Property matters",
-        "Security",
-        "Foundation",
-        "Comfort",
-        "Roots"
-      ],
-      "negative": [
-        "Instability at home",
-        "Family conflicts",
-        "Property issues",
-        "Lack of foundation",
-        "Being trapped",
-        "Rigidity"
-      ],
-      "relationships": "Family members, home-based relationships, or building a home together. Domestic situations.",
-      "careerFinance": "Real estate matters, property deals, or working from home. Home-based business.",
-      "timing": "Long-term, grounded in present"
-    }
+     "meaning": "Home, family, and stability. This card represents the foundation of security, whether physical property or emotional grounding."
   },
   {
     "id": 5,
@@ -786,29 +706,7 @@
       }
     ],
     "imageUrl": "/images/cards/05-tree.png",
-    "meaning": {
-      "general": "Nature, growth, and renewal. This card represents natural processes, healing, and organic development.",
-      "positive": [
-        "Growth",
-        "Healing",
-        "Renewal",
-        "Natural development",
-        "Health",
-        "Abundance",
-        "Flourishing"
-      ],
-      "negative": [
-        "Decay",
-        "Stagnation",
-        "Blocked growth",
-        "Illness",
-        "Weakness",
-        "Withering"
-      ],
-      "relationships": "A relationship with someone close to nature, or a relationship that's growing naturally. Can indicate family or nurturing.",
-      "careerFinance": "Organic business growth, natural advancement, or work in fields related to nature or health.",
-      "timing": "Gradual, over time"
-    }
+     "meaning": "Nature, growth, and renewal. This card represents natural processes, healing, and organic development."
   },
   {
     "id": 6,
@@ -957,25 +855,7 @@
       }
     ],
     "imageUrl": "/images/cards/06-clouds.png",
-    "meaning": {
-      "general": "Confusion, uncertainty, and illusion. This card warns of unclear situations, miscommunication, or being misled.",
-      "positive": [
-        "Clarity coming",
-        "Solving the mystery",
-        "Unveiling truth",
-        "Overcoming confusion"
-      ],
-      "negative": [
-        "Confusion and doubt",
-        "Illusions and deception",
-        "Unclear situations",
-        "Misunderstandings",
-        "Hidden information"
-      ],
-      "relationships": "Confusion in relationships, misunderstandings with loved ones, or unclear feelings. Deception in matters of the heart.",
-      "careerFinance": "Unclear job situations, confusing business deals, or fog around financial matters.",
-      "timing": "When clarity emerges"
-    }
+     "meaning": "Confusion, uncertainty, and illusion. This card warns of unclear situations, miscommunication, or being misled."
   },
   {
     "id": 7,
@@ -1124,27 +1004,7 @@
       }
     ],
     "imageUrl": "/images/cards/07-snake.png",
-    "meaning": {
-      "general": "Betrayal, deceit, and hidden wisdom. This card warns of deception but also represents deep knowledge and healing through understanding.",
-      "positive": [
-        "Revealing truth",
-        "Healing through understanding",
-        "Wise counsel",
-        "Deep knowledge",
-        "Protection"
-      ],
-      "negative": [
-        "Betrayal and treachery",
-        "Deception and lies",
-        "Hidden enemies",
-        "Infidelity",
-        "Broken trust",
-        "Sabotage"
-      ],
-      "relationships": "Potential betrayal, infidelity, or deceit in relationships. Can also indicate a wise person offering counsel.",
-      "careerFinance": "Business betrayal, dishonest dealings, or hidden workplace issues. Workplace enemies.",
-      "timing": "Truth emerging gradually"
-    }
+     "meaning": "Betrayal, deceit, and hidden wisdom. This card warns of deception but also represents deep knowledge and healing through understanding."
   },
   {
     "id": 8,
@@ -1293,26 +1153,7 @@
       }
     ],
     "imageUrl": "/images/cards/08-coffin.png",
-    "meaning": {
-      "general": "Endings, closure, and transformation. This card represents the natural conclusion of cycles and the death that precedes rebirth.",
-      "positive": [
-        "Necessary endings",
-        "Closure and peace",
-        "Transformation",
-        "Release",
-        "Moving forward"
-      ],
-      "negative": [
-        "Unfortunate endings",
-        "Loss and grief",
-        "Failure",
-        "Unfinished business",
-        "Delay in closure"
-      ],
-      "relationships": "Relationship ending, breakup, or necessary separation. Can indicate closure in romantic matters.",
-      "careerFinance": "Job loss, business closure, or project ending. However, this opens doors for new opportunities.",
-      "timing": "Soon, as a phase is ending"
-    }
+     "meaning": "Endings, closure, and transformation. This card represents the natural conclusion of cycles and the death that precedes rebirth."
   },
   {
     "id": 9,
@@ -1461,27 +1302,7 @@
       }
     ],
     "imageUrl": "/images/cards/09-bouquet.png",
-    "meaning": {
-      "general": "Celebration, gifts, and good news. This card represents joy, rewards, and positive recognition.",
-      "positive": [
-        "Celebration",
-        "Gifts and rewards",
-        "Good news",
-        "Success",
-        "Joy and happiness",
-        "Recognition"
-      ],
-      "negative": [
-        "Delayed celebration",
-        "Gifts not received",
-        "Superficial joy",
-        "Empty celebrations",
-        "Unappreciated efforts"
-      ],
-      "relationships": "Celebrations with loved ones, romantic gestures, or relationship milestones. Receiving affection.",
-      "careerFinance": "Bonuses, promotions, or recognition at work. Rewards for your efforts.",
-      "timing": "Soon to celebrate"
-    }
+     "meaning": "Celebration, gifts, and good news. This card represents joy, rewards, and positive recognition."
   },
   {
     "id": 10,
@@ -1630,26 +1451,7 @@
       }
     ],
     "imageUrl": "/images/cards/10-scythe.png",
-    "meaning": {
-      "general": "Sharp change, decisions, and cutting through confusion. This card represents clear action and important decisions.",
-      "positive": [
-        "Clear decisions",
-        "Cutting away the unnecessary",
-        "Change and renewal",
-        "Clarity",
-        "Harvest"
-      ],
-      "negative": [
-        "Harsh changes",
-        "Painful decisions",
-        "Cutting losses",
-        "Difficult transitions",
-        "Surgery or loss"
-      ],
-      "relationships": "Clear decisions in relationships, breaking up decisively, or cutting toxic ties.",
-      "careerFinance": "Major career decisions, cutting business costs, or clearing obstacles to success.",
-      "timing": "Immediately, a sharp moment"
-    }
+     "meaning": "Sharp change, decisions, and cutting through confusion. This card represents clear action and important decisions."
   },
   {
     "id": 11,
@@ -1798,25 +1600,7 @@
       }
     ],
     "imageUrl": "/images/cards/11-whip.png",
-    "meaning": {
-      "general": "Conflict, repetition, and discipline. This card represents challenges, arguments, and the need for strength.",
-      "positive": [
-        "Overcoming conflict",
-        "Discipline leading to success",
-        "Strength through challenges",
-        "Resolution"
-      ],
-      "negative": [
-        "Arguments and conflict",
-        "Repetitive problems",
-        "Aggression",
-        "Physical conflict",
-        "Persistence of obstacles"
-      ],
-      "relationships": "Arguments, conflicts, or tension in relationships. Disciplinary matters.",
-      "careerFinance": "Workplace conflicts, competitive challenges, or obstacles requiring determination.",
-      "timing": "During conflict, as tension rises"
-    }
+     "meaning": "Conflict, repetition, and discipline. This card represents challenges, arguments, and the need for strength."
   },
   {
     "id": 12,
@@ -1965,25 +1749,7 @@
       }
     ],
     "imageUrl": "/images/cards/12-birds.png",
-    "meaning": {
-      "general": "Communication, anxiety, and nervous energy. This card represents worry, discussions, and mental activity.",
-      "positive": [
-        "Important conversations",
-        "Mental clarity",
-        "Resolving through communication",
-        "Active thinking"
-      ],
-      "negative": [
-        "Anxiety and worry",
-        "Nervous tension",
-        "Difficult conversations",
-        "Overthinking",
-        "Anxious news"
-      ],
-      "relationships": "Important conversations with loved ones, anxious communication, or discussions about concerns.",
-      "careerFinance": "Work-related communication, negotiations, or anxious news about career matters.",
-      "timing": "As thoughts develop, mentally immediate"
-    }
+     "meaning": "Communication, anxiety, and nervous energy. This card represents worry, discussions, and mental activity."
   },
   {
     "id": 13,
@@ -2300,26 +2066,7 @@
       }
     ],
     "imageUrl": "/images/cards/14-fox.png",
-    "meaning": {
-      "general": "Intelligence, cunning, and work. This card represents mental agility, wit, and active employment.",
-      "positive": [
-        "Intelligence and wit",
-        "Clever solutions",
-        "Skilled work",
-        "Ingenuity",
-        "Mental agility"
-      ],
-      "negative": [
-        "Cunning and deception",
-        "Trickery",
-        "Exploitation",
-        "Hard work without reward",
-        "Unreliable"
-      ],
-      "relationships": "A clever or witty person, intellectual connections, or witty banter. Can indicate playful deception.",
-      "careerFinance": "Skilled work, intellectual employment, or jobs requiring cleverness. Can warn of workplace deception.",
-      "timing": "Through mental effort and work"
-    }
+     "meaning": "Intelligence, cunning, and work. This card represents mental agility, wit, and active employment."
   },
   {
     "id": 15,
@@ -2468,26 +2215,7 @@
       }
     ],
     "imageUrl": "/images/cards/15-bear.png",
-    "meaning": {
-      "general": "Strength, authority, and protection. This card represents power, confidence, and stable authority.",
-      "positive": [
-        "Strength and confidence",
-        "Authority and leadership",
-        "Protection",
-        "Power and control",
-        "Stability"
-      ],
-      "negative": [
-        "Tyranny and abuse",
-        "Excessive control",
-        "Weakness masked by authority",
-        "Domination",
-        "Loss of power"
-      ],
-      "relationships": "A strong or dominant partner, protective relationships, or power dynamics. Leadership in love.",
-      "careerFinance": "Position of authority, leadership opportunities, or professional strength. Success through assertiveness.",
-      "timing": "Now, with established power"
-    }
+     "meaning": "Strength, authority, and protection. This card represents power, confidence, and stable authority."
   },
   {
     "id": 16,
@@ -2636,26 +2364,7 @@
       }
     ],
     "imageUrl": "/images/cards/16-stars.png",
-    "meaning": {
-      "general": "Hope, wishes, and spiritual goals. This card represents idealism, inspiration, and optimistic vision.",
-      "positive": [
-        "Hope and optimism",
-        "Wishes coming true",
-        "Spiritual insight",
-        "Inspiration",
-        "Goals becoming real"
-      ],
-      "negative": [
-        "False hope",
-        "Unrealistic wishes",
-        "Spiritual confusion",
-        "Disappointed expectations",
-        "Disillusionment"
-      ],
-      "relationships": "Hoping for relationship commitment, spiritual connections, or romantic ideals.",
-      "careerFinance": "Career aspirations, ambitious goals, or spiritual fulfillment through work.",
-      "timing": "Aspirational, looking toward future"
-    }
+     "meaning": "Hope, wishes, and spiritual goals. This card represents idealism, inspiration, and optimistic vision."
   },
   {
     "id": 17,
@@ -2804,26 +2513,7 @@
       }
     ],
     "imageUrl": "/images/cards/17-stork.png",
-    "meaning": {
-      "general": "Change, movement, and new directions. This card represents transformation, pregnancy, and major shifts.",
-      "positive": [
-        "Positive change",
-        "Movement and progress",
-        "Pregnancy and new life",
-        "Transformation",
-        "Fresh direction"
-      ],
-      "negative": [
-        "Unwanted change",
-        "Disruption",
-        "Instability",
-        "Unexpected pregnancy",
-        "Loss of direction"
-      ],
-      "relationships": "Relationship changes, pregnancy, moving in together, or significant life changes with partner.",
-      "careerFinance": "Career change, relocating for work, or major professional transformation.",
-      "timing": "Transition period, months ahead"
-    }
+     "meaning": "Change, movement, and new directions. This card represents transformation, pregnancy, and major shifts."
   },
   {
     "id": 18,
@@ -2972,26 +2662,7 @@
       }
     ],
     "imageUrl": "/images/cards/18-dog.png",
-    "meaning": {
-      "general": "Loyalty, friendship, and companionship. This card represents true friends, pets, and faithful connections.",
-      "positive": [
-        "True friendship",
-        "Loyalty and devotion",
-        "Companionship",
-        "Faithful love",
-        "Support"
-      ],
-      "negative": [
-        "False friendship",
-        "Disloyalty",
-        "Abandonment",
-        "Unfaithful friends",
-        "Isolation"
-      ],
-      "relationships": "True friendship, loyal love, or dependable relationships. Can also indicate pets.",
-      "careerFinance": "Loyal colleagues, trustworthy business partners, or support from friends in career.",
-      "timing": "Steadily, with consistent loyalty"
-    }
+     "meaning": "Loyalty, friendship, and companionship. This card represents true friends, pets, and faithful connections."
   },
   {
     "id": 19,
@@ -3140,26 +2811,7 @@
       }
     ],
     "imageUrl": "/images/cards/19-tower.png",
-    "meaning": {
-      "general": "Authority, isolation, and solitude. This card represents leadership, institutions, and being set apart.",
-      "positive": [
-        "Leadership position",
-        "Necessary solitude",
-        "Self-reliance",
-        "Institutional support",
-        "Independence"
-      ],
-      "negative": [
-        "Isolation and loneliness",
-        "Authoritarian control",
-        "Feeling trapped",
-        "Institutional constraints",
-        "Rejection"
-      ],
-      "relationships": "A leader in the relationship, isolation, or difficulty in connecting with others. Can indicate estrangement.",
-      "careerFinance": "Position of authority, institutional employment, or solo business ventures.",
-      "timing": "Sustained period of solitude"
-    }
+     "meaning": "Authority, isolation, and solitude. This card represents leadership, institutions, and being set apart."
   },
   {
     "id": 20,
@@ -3308,26 +2960,7 @@
       }
     ],
     "imageUrl": "/images/cards/20-garden.png",
-    "meaning": {
-      "general": "Social life, gatherings, and community. This card represents public engagement and shared experiences.",
-      "positive": [
-        "Social success",
-        "Gatherings and celebrations",
-        "Community involvement",
-        "Public recognition",
-        "Togetherness"
-      ],
-      "negative": [
-        "Social difficulties",
-        "Public embarrassment",
-        "Unwanted attention",
-        "Crowded situations",
-        "Social pressure"
-      ],
-      "relationships": "Social events with loved ones, public relationships, or engagement with community.",
-      "careerFinance": "Public-facing work, social business ventures, or networking opportunities.",
-      "timing": "In social contexts, among people"
-    }
+     "meaning": "Social gathering, community, and public space. This card represents connections with others and shared experiences."
   },
   {
     "id": 21,
@@ -3476,25 +3109,7 @@
       }
     ],
     "imageUrl": "/images/cards/21-mountain.png",
-    "meaning": {
-      "general": "Obstacles, delays, and challenges. This card represents what stands in the way and requires patience.",
-      "positive": [
-        "Overcoming obstacles",
-        "Developing patience",
-        "Testing your strength",
-        "Ultimate success"
-      ],
-      "negative": [
-        "Obstacles and blockages",
-        "Delays and frustration",
-        "Challenges and difficulties",
-        "Patience required",
-        "Setbacks"
-      ],
-      "relationships": "Obstacles in relationships, outside interference, or challenges to overcome together.",
-      "careerFinance": "Career obstacles, business challenges, or delays in achieving goals.",
-      "timing": "Delayed, requiring patience"
-    }
+     "meaning": "Obstacles, delays, and challenges. This card represents what stands in the way and requires patience."
   },
   {
     "id": 22,
@@ -3639,25 +3254,7 @@
       }
     ],
     "imageUrl": "/images/cards/22-paths.png",
-    "meaning": {
-      "general": "Choices, decisions, and crossroads. This card represents important decision points and multiple paths.",
-      "positive": [
-        "Clear choices",
-        "Important decisions made",
-        "Moving forward on chosen path",
-        "Clarity in options"
-      ],
-      "negative": [
-        "Indecision",
-        "Difficult choices",
-        "Confusion about direction",
-        "Wrong choices",
-        "Uncertainty"
-      ],
-      "relationships": "Important relationship decisions, choosing between options, or life-changing relationship choices.",
-      "careerFinance": "Career decisions at a crossroads, choosing business direction, or major professional choices.",
-      "timing": "At the moment of decision"
-    }
+     "meaning": "Choices, decisions, and crossroads. This card represents important decision points and multiple paths."
   },
   {
     "id": 23,
@@ -3802,25 +3399,7 @@
       }
     ],
     "imageUrl": "/images/cards/23-mice.png",
-    "meaning": {
-      "general": "Loss, worry, and details. This card represents what you fear losing and attention to small matters.",
-      "positive": [
-        "Attention to details",
-        "Worry resolved",
-        "Learning from loss",
-        "Careful attention pays off"
-      ],
-      "negative": [
-        "Loss and theft",
-        "Worry and stress",
-        "Attention to petty details",
-        "Small problems accumulate",
-        "Anxiety"
-      ],
-      "relationships": "Worry in relationships, loss of connection, or attention to relationship details.",
-      "careerFinance": "Financial loss, theft, or attention required to prevent problems. Worry about career security.",
-      "timing": "Approaching loss, imminent concern"
-    }
+     "meaning": "Loss, worry, and details. This card represents what you fear losing and attention to small matters."
   },
   {
     "id": 24,
@@ -3969,26 +3548,7 @@
       }
     ],
     "imageUrl": "/images/cards/24-heart.png",
-    "meaning": {
-      "general": "Love, emotions, and passion. This card represents matters of the heart and deep emotional connections.",
-      "positive": [
-        "Love and affection",
-        "Passion and desire",
-        "Emotional connection",
-        "Romance",
-        "Deep feelings"
-      ],
-      "negative": [
-        "Emotional turmoil",
-        "Lost love",
-        "Heartbreak",
-        "Obsessive feelings",
-        "Emotional pain"
-      ],
-      "relationships": "Romance, love, passionate connections, or deep emotional matters.",
-      "careerFinance": "Passion for work, loving what you do, or emotional investment in career.",
-      "timing": "Emotionally immediate, heart-centered"
-    }
+     "meaning": "Love, emotions, and passion. This card represents matters of the heart and deep emotional connections."
   },
   {
     "id": 25,
@@ -4137,26 +3697,7 @@
       }
     ],
     "imageUrl": "/images/cards/25-ring.png",
-    "meaning": {
-      "general": "Commitment, marriage, and binding contracts. This card represents lasting unions and serious agreements.",
-      "positive": [
-        "Commitment and devotion",
-        "Marriage or engagement",
-        "Binding agreements",
-        "Long-term partnerships",
-        "Stability"
-      ],
-      "negative": [
-        "Broken commitments",
-        "Divorce or separation",
-        "Binding obligations become burdensome",
-        "Trapped by contract",
-        "Loss"
-      ],
-      "relationships": "Marriage, engagement, committed relationships, or serious binding unions.",
-      "careerFinance": "Long-term business partnerships, binding contracts, or career commitments.",
-      "timing": "Long-term, established bond"
-    }
+     "meaning": "Commitment, marriage, and binding contracts. This card represents lasting unions and serious agreements."
   },
   {
     "id": 26,
@@ -4305,26 +3846,7 @@
       }
     ],
     "imageUrl": "/images/cards/26-book.png",
-    "meaning": {
-      "general": "Knowledge, learning, and education. This card represents study, wisdom, and intellectual pursuits.",
-      "positive": [
-        "Learning and education",
-        "Gaining knowledge",
-        "Wisdom and insight",
-        "Study leading to success",
-        "Understanding"
-      ],
-      "negative": [
-        "Difficult learning",
-        "Lack of understanding",
-        "Educational setbacks",
-        "Hidden knowledge",
-        "Misunderstanding"
-      ],
-      "relationships": "Learning about relationships, educational pursuits with partner, or intellectual connection.",
-      "careerFinance": "Educational advancement, learning new skills, or professional development.",
-      "timing": "Through study and understanding"
-    }
+     "meaning": "Knowledge, learning, and education. This card represents study, wisdom, and intellectual pursuits."
   },
   {
     "id": 27,
@@ -4473,25 +3995,7 @@
       }
     ],
     "imageUrl": "/images/cards/27-letter.png",
-    "meaning": {
-      "general": "Written communication, documents, and important papers. This card represents contracts, letters, and written records.",
-      "positive": [
-        "Important documents",
-        "Good news in writing",
-        "Clear communication",
-        "Contracts working in your favor"
-      ],
-      "negative": [
-        "Problematic documents",
-        "Bad news in writing",
-        "Contractual problems",
-        "Miscommunication",
-        "Important papers"
-      ],
-      "relationships": "Love letters, important relationship documents, or written communication with loved ones.",
-      "careerFinance": "Contracts, official documents, or written career-related communications.",
-      "timing": "When documents arrive"
-    }
+     "meaning": "Written communication, documents, and important papers. This card represents contracts, letters, and written records."
   },
   {
     "id": 28,
@@ -4507,26 +4011,7 @@
     "uprightMeaning": "Man, husband, father, masculine energy, authority",
     "combos": [],
     "imageUrl": "/images/cards/28-gentleman.png",
-    "meaning": {
-      "general": "Masculine energy, men, and paternal figures. This card represents men, fathers, authority figures, and masculine qualities.",
-      "positive": [
-        "Positive masculine energy",
-        "Father figures",
-        "Male mentors",
-        "Support from men",
-        "Leadership"
-      ],
-      "negative": [
-        "Toxic masculinity",
-        "Absent father",
-        "Male aggression",
-        "Unhelpful men",
-        "Authority abuse"
-      ],
-      "relationships": "A man in your life, paternal figures, or masculine energy in relationships.",
-      "careerFinance": "Male colleagues, male authority figures, or masculine aspects of career.",
-      "timing": "Through male energy or influence"
-    }
+     "meaning": "Masculine energy, men, and paternal figures. This card represents men, fathers, authority figures, and masculine qualities."
   },
   {
     "id": 29,
@@ -4542,26 +4027,7 @@
     "uprightMeaning": "Woman, wife, mother, feminine energy, intuition",
     "combos": [],
     "imageUrl": "/images/cards/29-lady.png",
-    "meaning": {
-      "general": "Feminine energy, women, and maternal figures. This card represents women, mothers, feminine qualities, and nurturing.",
-      "positive": [
-        "Positive feminine energy",
-        "Mother figures",
-        "Female mentors",
-        "Support from women",
-        "Nurturing"
-      ],
-      "negative": [
-        "Toxic femininity",
-        "Absent mother",
-        "Female manipulation",
-        "Unhelpful women",
-        "Manipulative energy"
-      ],
-      "relationships": "A woman in your life, maternal figures, or feminine energy in relationships.",
-      "careerFinance": "Female colleagues, female authority figures, or feminine aspects of career.",
-      "timing": "Through female energy or influence"
-    }
+     "meaning": "Feminine energy, women, and maternal figures. This card represents women, mothers, feminine qualities, and nurturing."
   },
   {
     "id": 30,
@@ -4710,27 +4176,7 @@
       }
     ],
     "imageUrl": "/images/cards/30-lilies.png",
-    "meaning": {
-      "general": "Peace, maturity, and harmony. This card represents contentment, sexual fulfillment, and balanced maturity.",
-      "positive": [
-        "Peace and harmony",
-        "Maturity and wisdom",
-        "Sexual satisfaction",
-        "Contentment",
-        "Balance",
-        "Fulfillment"
-      ],
-      "negative": [
-        "Restlessness",
-        "Immaturity",
-        "Sexual difficulties",
-        "Disharmony",
-        "Unresolved tensions"
-      ],
-      "relationships": "Peaceful relationships, mature love, sexual satisfaction, or harmonious partnerships.",
-      "careerFinance": "Career contentment, peaceful work environment, or mature professional relationships.",
-      "timing": "Sustained harmony"
-    }
+     "meaning": "Purity, peace, wisdom, maturity, ethics. This card represents spiritual growth, moral integrity, and inner peace."
   },
   {
     "id": 31,
@@ -4755,27 +4201,7 @@
       }
     ],
     "imageUrl": "/images/cards/31-sun.png",
-    "meaning": {
-      "general": "Success, vitality, and clarity. This card represents achievement, brightness, and the fulfillment of positive outcomes.",
-      "positive": [
-        "Success and victory",
-        "Vitality and energy",
-        "Clarity and brightness",
-        "Achievement",
-        "Happiness",
-        "Fulfillment"
-      ],
-      "negative": [
-        "Failure and setback",
-        "Loss of energy",
-        "Obscured clarity",
-        "Delays in success",
-        "Disappointment"
-      ],
-      "relationships": "Successful and happy relationships, bright romantic prospects, or victorious love.",
-      "careerFinance": "Career success, business victory, or achieving important professional goals.",
-      "timing": "Success is near"
-    }
+     "meaning": "Success, vitality, and clarity. This card represents achievement, brightness, and the fulfillment of positive outcomes."
   },
   {
     "id": 32,
@@ -4800,26 +4226,7 @@
       }
     ],
     "imageUrl": "/images/cards/32-moon.png",
-    "meaning": {
-      "general": "Intuition, emotions, and cycles. This card represents inner knowing, emotional intelligence, and psychic abilities.",
-      "positive": [
-        "Intuition and insight",
-        "Emotional intelligence",
-        "Psychic abilities",
-        "Trust your instincts",
-        "Deep feeling"
-      ],
-      "negative": [
-        "Ignored intuition",
-        "Emotional overwhelm",
-        "Psychic confusion",
-        "Unreliable instincts",
-        "Emotional turbulence"
-      ],
-      "relationships": "Intuitive understanding of relationships, emotional depth, or psychic connection with loved ones.",
-      "careerFinance": "Intuitive business decisions, emotional intelligence in career, or psychic knowing.",
-      "timing": "Trust your instincts now"
-    }
+     "meaning": "Intuition, emotions, and cycles. This card represents inner knowing, emotional intelligence, and psychic abilities."
   },
   {
     "id": 33,
@@ -4844,26 +4251,7 @@
       }
     ],
     "imageUrl": "/images/cards/33-key.png",
-    "meaning": {
-      "general": "Solutions, importance, and answers. This card represents the key to problems and ultimate importance.",
-      "positive": [
-        "Solutions and answers",
-        "Key insights",
-        "Solving problems",
-        "Importance recognized",
-        "Success"
-      ],
-      "negative": [
-        "Unsolved problems",
-        "Missing answers",
-        "Overlooked solutions",
-        "Unresolved issues",
-        "Lack of clarity"
-      ],
-      "relationships": "Solving relationship problems, finding the key to connection, or important realizations.",
-      "careerFinance": "Finding business solutions, key career breakthroughs, or important professional insights.",
-      "timing": "When solutions emerge"
-    }
+     "meaning": "Solutions, importance, and answers. This card represents the key to problems and ultimate importance."
   },
   {
     "id": 34,
@@ -4888,26 +4276,7 @@
       }
     ],
     "imageUrl": "/images/cards/34-fish.png",
-    "meaning": {
-      "general": "Finance, abundance, and business. This card represents money, wealth, and material resources.",
-      "positive": [
-        "Financial abundance",
-        "Business success",
-        "Wealth and prosperity",
-        "Material security",
-        "Good investments"
-      ],
-      "negative": [
-        "Financial loss",
-        "Business failure",
-        "Poverty and lack",
-        "Poor investments",
-        "Material insecurity"
-      ],
-      "relationships": "Financial aspects of relationships, shared resources, or material stability in love.",
-      "careerFinance": "Financial success, profitable business ventures, or material career rewards.",
-      "timing": "Financial matters unfolding"
-    }
+     "meaning": "Finance, abundance, and business. This card represents money, wealth, and material resources."
   },
   {
     "id": 35,
@@ -4932,27 +4301,7 @@
       }
     ],
     "imageUrl": "/images/cards/35-anchor.png",
-    "meaning": {
-      "general": "Stability, security, and grounding. This card represents solid foundations, patience, and earthly prosperity.",
-      "positive": [
-        "Stability and security",
-        "Solid foundation",
-        "Patience and endurance",
-        "Prosperity",
-        "Grounding",
-        "Reliability"
-      ],
-      "negative": [
-        "Instability and insecurity",
-        "Shaky foundation",
-        "Impatience creating problems",
-        "Lack of prosperity",
-        "Unreliability"
-      ],
-      "relationships": "Stable relationships, secure partnerships, or grounded love.",
-      "careerFinance": "Career stability, secure employment, or grounded business practices.",
-      "timing": "Long-term stability"
-    }
+     "meaning": "Stability, security, and grounding. This card represents solid foundations, patience, and earthly prosperity."
   },
   {
     "id": 36,
@@ -5101,24 +4450,6 @@
       }
     ],
     "imageUrl": "/images/cards/36-cross.png",
-    "meaning": {
-      "general": "Burden, fate, and sacrifice. This card represents heavy burdens, destiny, and what must be accepted.",
-      "positive": [
-        "Learning through burden",
-        "Accepting fate",
-        "Spiritual growth through sacrifice",
-        "Karmic lessons"
-      ],
-      "negative": [
-        "Heavy burdens",
-        "Feeling trapped by fate",
-        "Unwanted sacrifice",
-        "Suffering and hardship",
-        "Religious conflict"
-      ],
-      "relationships": "Relationship burdens, karmic connections, or sacrifices in love.",
-      "careerFinance": "Career burdens, difficult work situations, or financial burdens affecting career.",
-      "timing": "Sustained difficulty, long-term burden"
-    }
+     "meaning": "Burden, fate, and sacrifice. This card represents heavy burdens, destiny, and what must be accepted."
   }
 ]
