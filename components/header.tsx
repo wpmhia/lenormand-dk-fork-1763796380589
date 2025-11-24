@@ -13,15 +13,6 @@ export function Header() {
 
   return (
     <>
-      {/* Beta Banner */}
-      <div className="w-full border-b border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 py-1">
-        <div className="container flex items-center justify-center px-4">
-          <p className="text-center text-xs font-medium text-primary">
-            ✨ Free during Beta - Your feedback shapes the future
-          </p>
-        </div>
-      </div>
-
       <header className="z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container flex h-14 items-center px-4">
         <div className="flex items-center space-x-2">
