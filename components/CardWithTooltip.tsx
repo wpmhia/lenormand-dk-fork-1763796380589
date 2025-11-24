@@ -42,7 +42,7 @@ export function CardWithTooltip({
             />
           </div>
         </TooltipTrigger>
-        <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg">
+         <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg z-50">
           <div className="space-y-3">
             {/* Card Name and Position */}
             <div>
