@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
 import { linkifyCardNames } from '@/lib/cardLinkifier'
+import { linkifyConcepts } from '@/lib/conceptLinkifier'
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null
@@ -51,6 +52,19 @@ export function AIReadingDisplay({
   const [showReadingMethod, setShowReadingMethod] = useState(false)
   const displayContent = aiReading?.reading || ''
   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
+
+  // Apply both card and concept linkifiers to the practical translation
+  const getLinkifiedContent = (content: string): string => {
+    if (!content) return content
+    
+    // First linkify cards, then linkify concepts
+    let result = content
+    if (allCards && allCards.length > 0) {
+      result = linkifyCardNames(result, allCards)
+    }
+    result = linkifyConcepts(result)
+    return result
+  }
 
     if (isLoading && !displayContent) {
       return (
@@ -237,9 +251,7 @@ export function AIReadingDisplay({
                       hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
                     }}
                   >
-                    {allCards && allCards.length > 0 
-                      ? linkifyCardNames(aiReading.practicalTranslation, allCards)
-                      : aiReading.practicalTranslation}
+                    {getLinkifiedContent(aiReading.practicalTranslation)}
                   </ReactMarkdown>
                 </div>
               </CardContent>
