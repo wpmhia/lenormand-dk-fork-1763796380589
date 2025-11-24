@@ -82,24 +82,25 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
      // Send agent's prompt to DeepSeek for generation
      const deepseekPrompt = buildPromptForDeepSeek(agentRequest, spread)
     
-    console.log('Sending request to DeepSeek API...')
-    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
-          { role: 'user', content: deepseekPrompt }
-        ],
-        temperature: 0.4,
-        max_tokens: 800,
-        top_p: 0.9
-      })
-    })
+     console.log('Sending request to DeepSeek API...')
+     const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
+     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+         'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+       },
+       body: JSON.stringify({
+         model: 'deepseek-chat',
+         messages: [
+           { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
+           { role: 'user', content: deepseekPrompt }
+         ],
+         temperature: 0.4,
+         max_tokens: maxTokens,
+         top_p: 0.9
+       })
+     })
 
     console.log('DeepSeek API response status:', response.status)
 
@@ -165,11 +166,20 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         practicalTranslation = parts[1]
       }
 
+      console.log('DeepSeek response parts:', {
+        totalParts: parts.length,
+        prophecyLength: prophecy.length,
+        translationLength: practicalTranslation?.length || 0
+      })
+
       // Validate that all cards are referenced with parentheses format (only in prophecy)
       const validation = MarieAnneAgent.validateCardReferences(prophecy, cards, cards.length)
       
        if (!validation.isValid) {
-         console.warn('Reading validation issues:', validation.issues)
+         console.warn('Reading validation issues:', validation.issues, {
+           missingCards: validation.missingCards,
+           prophecyPreview: prophecy.substring(0, 200)
+         })
          // If validation fails, still try to use the split response
          // Only fall back to agent template if we have no practical translation AND no prophecy
            if (!practicalTranslation) {
@@ -289,25 +299,26 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
 
     const prompt = buildPromptForDeepSeek(agentRequest, spread)
 
-    console.log('Sending streaming request to DeepSeek API...')
-    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.4,
-        max_tokens: 800,
-        top_p: 0.9,
-        stream: true
-      })
-    })
+     console.log('Sending streaming request to DeepSeek API...')
+     const maxTokens = cards.length >= 9 ? 1500 : cards.length >= 7 ? 1200 : 900
+     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+         'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+       },
+       body: JSON.stringify({
+         model: 'deepseek-chat',
+         messages: [
+           { role: 'system', content: 'You are Marie-Anne Lenormand, a Paris salon fortune-teller. Follow all instructions precisely. Reply in plain text with no preamble or explanations.' },
+           { role: 'user', content: prompt }
+         ],
+         temperature: 0.4,
+         max_tokens: maxTokens,
+         top_p: 0.9,
+         stream: true
+       })
+     })
 
     console.log('DeepSeek streaming API response status:', response.status)
 
