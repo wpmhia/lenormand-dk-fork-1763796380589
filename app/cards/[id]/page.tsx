@@ -113,13 +113,13 @@ export default function CardDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-5">
             {/* Card Image */}
             <div className="lg:col-span-1">
               {card.imageUrl && (
-                <div className="group relative">
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-purple-600 blur opacity-25 transition duration-1000 group-hover:opacity-40"></div>
-                  <div className="relative overflow-hidden rounded-xl shadow-2xl">
+                <div className="group relative mx-auto w-40">
+                  <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-primary to-purple-600 blur opacity-25 transition duration-1000 group-hover:opacity-40"></div>
+                  <div className="relative overflow-hidden rounded-lg shadow-xl">
                     <div className="relative aspect-[2.5/3.5]">
                       <Image
                         src={card.imageUrl}
@@ -135,7 +135,7 @@ export default function CardDetailPage({ params }: PageProps) {
             </div>
 
             {/* Quick Info Cards */}
-            <div className="space-y-4 lg:col-span-2">
+            <div className="space-y-4 lg:col-span-4">
               {/* Keywords Card */}
               <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                 <CardHeader>
