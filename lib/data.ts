@@ -4,7 +4,7 @@ import cardsData from '../public/data/cards.json'
 // Load cards from JSON file
 export function getCards(): Card[] {
   // Use imported JSON data for both server and client
-  const data = cardsData as Card[]
+  const data = cardsData as unknown as Card[]
   console.log('✅ Cards loaded:', data.length, 'cards')
   return data
 }

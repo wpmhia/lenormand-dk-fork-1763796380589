@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { ReadingCard, Card as CardType } from '@/lib/types'
 import { getCardById } from '@/lib/data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -183,18 +184,25 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
                   aria-expanded={isExpanded}
                 >
                   <div className="flex items-center gap-3 flex-1 text-left">
-                    <div className="text-2xl flex-shrink-0" aria-hidden="true">
-                      {fullCard?.emoji || '🃏'}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-foreground font-medium">
-                        {fullCard?.name || 'Unknown Card'}
-                      </h3>
-                      <p className="text-sm text-primary">
-                        {positionInfo.title}
-                      </p>
-                    </div>
-                  </div>
+                     {fullCard?.imageUrl && (
+                       <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden border border-border">
+                         <Image
+                           src={fullCard.imageUrl}
+                           alt={fullCard.name}
+                           fill
+                           className="object-cover"
+                         />
+                       </div>
+                     )}
+                     <div className="min-w-0 flex-1">
+                       <h3 className="text-foreground font-medium">
+                         {fullCard?.name || 'Unknown Card'}
+                       </h3>
+                       <p className="text-sm text-primary">
+                         {positionInfo.title}
+                       </p>
+                     </div>
+                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                     <Badge variant="outline" className="border-border text-muted-foreground text-xs">
                       #{card.id}

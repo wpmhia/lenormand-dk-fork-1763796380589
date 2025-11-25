@@ -117,12 +117,21 @@ export default function CardDetailPage({ params }: PageProps) {
 
           {/* Card Info */}
           <div className="md:col-span-2 space-y-6">
-            {/* Number and Name */}
-            <div>
-              <div className="text-sm font-semibold text-primary mb-2">Card #{card.id}</div>
-              <h1 className="text-5xl font-bold text-foreground mb-4">{card.name}</h1>
-              <div className="text-6xl">{card.emoji || '🃏'}</div>
-            </div>
+             {/* Number and Name */}
+             <div>
+               <div className="text-sm font-semibold text-primary mb-2">Card #{card.id}</div>
+               <h1 className="text-5xl font-bold text-foreground mb-4">{card.name}</h1>
+               {card.imageUrl && (
+                 <div className="relative w-32 h-48 rounded-lg overflow-hidden shadow-md border border-border">
+                   <Image
+                     src={card.imageUrl}
+                     alt={card.name}
+                     fill
+                     className="object-cover"
+                   />
+                 </div>
+               )}
+             </div>
 
             {/* Core Meaning */}
             <div className="rounded-lg bg-primary/10 border border-primary/20 p-6">
@@ -160,12 +169,13 @@ export default function CardDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Tabs Section */}
-        <Tabs defaultValue="meanings" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="meanings">Meanings</TabsTrigger>
-            <TabsTrigger value="combos">Combinations ({combos.length})</TabsTrigger>
-          </TabsList>
+         {/* Tabs Section */}
+         <div className="mt-12">
+         <Tabs defaultValue="meanings" className="w-full">
+           <TabsList className="grid w-full grid-cols-2 mb-8">
+             <TabsTrigger value="meanings">Meanings</TabsTrigger>
+             <TabsTrigger value="combos">Combinations ({combos.length})</TabsTrigger>
+           </TabsList>
 
           {/* Meanings Tab */}
           <TabsContent value="meanings" className="space-y-8">
@@ -229,8 +239,9 @@ export default function CardDetailPage({ params }: PageProps) {
               combos={combos}
               getCardName={getCardName}
             />
-          </TabsContent>
-        </Tabs>
+           </TabsContent>
+         </Tabs>
+         </div>
 
         {/* Navigation Buttons */}
         <div className="mt-12 flex items-center justify-between border-t border-border pt-8">
