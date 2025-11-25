@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card as CardType } from '@/lib/types'
 import { getCards, getCardById } from '@/lib/data'
 import {
@@ -82,22 +83,35 @@ export default function CardDetailPage({ params }: PageProps) {
   return (
     <div className="page-layout">
       <div className="container mx-auto max-w-4xl px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex-1">
-            <Link href="/cards" className="inline-flex items-center gap-2 mb-4 text-sm text-primary hover:underline">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Cards
-            </Link>
-            <h1 className="mb-2 text-4xl font-bold text-foreground">{card.name}</h1>
+        <Link href="/cards" className="inline-flex items-center gap-2 mb-4 text-sm text-primary hover:underline">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Cards
+        </Link>
+        <h1 className="mb-8 text-4xl font-bold text-foreground">{card.name}</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="md:col-span-1">
+            {card.imageUrl && (
+              <div className="relative aspect-[2.5/3.5] rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src={card.imageUrl}
+                  alt={card.name}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            )}
           </div>
-          <div className="text-6xl flex-shrink-0 ml-4">
-            {card.emoji || '🃏'}
+          <div className="md:col-span-2 space-y-4">
+            <div className="text-6xl">
+              {card.emoji || '🃏'}
+            </div>
+            <KeywordBadges keywords={card.keywords} />
           </div>
         </div>
 
         <div className="mx-auto max-w-2xl space-y-6">
-          <KeywordBadges keywords={card.keywords} />
-
           <MeaningSection
             title="Meaning at a Glance"
             content={card.uprightMeaning}
