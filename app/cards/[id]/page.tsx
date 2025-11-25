@@ -2,7 +2,7 @@
 
 import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Sparkles, Clock, Users, Heart, Target, BookOpen, Star } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card as CardType } from '@/lib/types'
@@ -10,6 +10,7 @@ import { getCards, getCardById } from '@/lib/data'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   MeaningSection,
   TwoColumnAspects,
@@ -87,7 +88,7 @@ export default function CardDetailPage({ params }: PageProps) {
 
   return (
     <div className="page-layout">
-      <div className="container mx-auto max-w-6xl px-4 py-8">
+      <div className="container mx-auto max-w-7xl px-4 py-8">
         {/* Navigation */}
         <div className="mb-8">
           <Link href="/cards" className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors">
@@ -96,173 +97,300 @@ export default function CardDetailPage({ params }: PageProps) {
           </Link>
         </div>
 
-        {/* Hero Section */}
-        <div className="grid gap-8 mb-12 md:grid-cols-3">
-          {/* Card Image */}
-          <div className="md:col-span-1">
-            {card.imageUrl && (
-              <div className="sticky top-20 rounded-xl overflow-hidden shadow-2xl">
-                <div className="relative aspect-[2.5/3.5]">
-                  <Image
-                    src={card.imageUrl}
-                    alt={card.name}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-              </div>
-            )}
+        {/* Hero Section with Enhanced Design */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">Card #{card.id}</span>
+            </div>
+            <h1 className="text-6xl font-bold text-foreground mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {card.name}
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {card.uprightMeaning}
+            </p>
           </div>
 
-          {/* Card Info */}
-          <div className="md:col-span-2 space-y-6">
-             {/* Number and Name */}
-             <div>
-               <div className="text-sm font-semibold text-primary mb-2">Card #{card.id}</div>
-               <h1 className="text-5xl font-bold text-foreground mb-4">{card.name}</h1>
-               {card.imageUrl && (
-                 <div className="relative w-32 h-48 rounded-lg overflow-hidden shadow-md border border-border">
-                   <Image
-                     src={card.imageUrl}
-                     alt={card.name}
-                     fill
-                     className="object-cover"
-                   />
-                 </div>
-               )}
-             </div>
-
-            {/* Core Meaning */}
-            <div className="rounded-lg bg-primary/10 border border-primary/20 p-6">
-              <h3 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wider">Core Meaning</h3>
-              <p className="text-lg leading-relaxed text-foreground">{card.uprightMeaning}</p>
-            </div>
-
-            {/* Metadata */}
-            <div className="flex flex-wrap gap-3">
-              {card.strength && (
-                <Badge variant="outline" className="px-3 py-2">
-                  <span className="text-xs font-semibold mr-2">⚡ Strength:</span>
-                  <span className="text-xs">{card.strength}</span>
-                </Badge>
-              )}
-              {card.timing && (
-                <Badge variant="outline" className="px-3 py-2">
-                  <span className="text-xs font-semibold mr-2">⏱ Timing:</span>
-                  <span className="text-xs">{card.timing}</span>
-                </Badge>
-              )}
-            </div>
-
-            {/* Keywords as small badges */}
-            <div className="pt-2">
-              <div className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Associated with:</div>
-              <div className="flex flex-wrap gap-2">
-                {card.keywords.map((keyword, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {keyword}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-         {/* Tabs Section */}
-         <div className="mt-12">
-         <Tabs defaultValue="meanings" className="w-full">
-           <TabsList className="grid w-full grid-cols-2 mb-8">
-             <TabsTrigger value="meanings">Meanings</TabsTrigger>
-             <TabsTrigger value="combos">Combinations ({combos.length})</TabsTrigger>
-           </TabsList>
-
-          {/* Meanings Tab */}
-          <TabsContent value="meanings" className="space-y-8">
-            {meaning && (
-              <>
-                {/* General Meaning */}
-                <MeaningSection
-                  title="General Meaning"
-                  content={meaning.general}
-                />
-
-                {/* Positive and Negative Aspects Side by Side */}
-                <TwoColumnAspects
-                  positiveTitle="Positive Aspects"
-                  positiveAspects={meaning.positive}
-                  negativeTitle="Challenging Aspects"
-                  negativeAspects={meaning.negative}
-                />
-
-                {/* Contextual Interpretations */}
-                {(meaning.relationships || meaning.careerFinance || meaning.timing) && (
-                  <div className="border-t border-border pt-8">
-                    <h2 className="text-2xl font-bold text-foreground mb-6">In Different Contexts</h2>
-                    <div className="grid gap-6 md:grid-cols-3">
-                      {meaning.relationships && (
-                        <div className="rounded-lg bg-card border border-border p-6">
-                          <h3 className="text-lg font-semibold text-foreground mb-3">In Relationships</h3>
-                          <p className="text-muted-foreground leading-relaxed">{meaning.relationships}</p>
-                        </div>
-                      )}
-                      {meaning.careerFinance && (
-                        <div className="rounded-lg bg-card border border-border p-6">
-                          <h3 className="text-lg font-semibold text-foreground mb-3">Career & Finance</h3>
-                          <p className="text-muted-foreground leading-relaxed">{meaning.careerFinance}</p>
-                        </div>
-                      )}
-                      {meaning.timing && (
-                        <div className="rounded-lg bg-card border border-border p-6">
-                          <h3 className="text-lg font-semibold text-foreground mb-3">Timing & Seasons</h3>
-                          <p className="text-muted-foreground leading-relaxed">{meaning.timing}</p>
-                        </div>
-                      )}
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Card Image */}
+            <div className="lg:col-span-1">
+              {card.imageUrl && (
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                  <div className="relative rounded-xl overflow-hidden shadow-2xl">
+                    <div className="relative aspect-[2.5/3.5]">
+                      <Image
+                        src={card.imageUrl}
+                        alt={card.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        priority
+                      />
                     </div>
                   </div>
-                )}
+                </div>
+              )}
+            </div>
 
-                {/* Historical Context */}
-                {card.historicalMeaning && (
-                  <div className="rounded-lg bg-muted/50 border border-border p-6">
-                    <h3 className="text-lg font-semibold text-foreground mb-3">Historical Context</h3>
-                    <p className="text-muted-foreground leading-relaxed">{card.historicalMeaning}</p>
+            {/* Quick Info Cards */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Keywords Card */}
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Star className="h-5 w-5 text-primary" />
+                    Core Keywords
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {card.keywords.map((keyword, i) => (
+                      <Badge key={i} variant="secondary" className="px-3 py-1 text-sm">
+                        {keyword}
+                      </Badge>
+                    ))}
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Properties Grid */}
+              <div className="grid gap-4 md:grid-cols-2">
+                {card.strength && (
+                  <Card className="border-border">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Target className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">Strength</p>
+                          <p className="text-sm text-muted-foreground">{card.strength}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
-              </>
-            )}
-          </TabsContent>
+                {card.timing && (
+                  <Card className="border-border">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Clock className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">Timing</p>
+                          <p className="text-sm text-muted-foreground">{card.timing}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
 
-          {/* Combinations Tab */}
-          <TabsContent value="combos">
-            <ComboSection
-              combos={combos}
-              getCardName={getCardName}
-            />
+              {/* Quick Stats */}
+              <div className="flex gap-4 text-center">
+                <div className="flex-1 rounded-lg bg-muted/50 p-4">
+                  <p className="text-2xl font-bold text-primary">{combos.length}</p>
+                  <p className="text-sm text-muted-foreground">Combinations</p>
+                </div>
+                <div className="flex-1 rounded-lg bg-muted/50 p-4">
+                  <p className="text-2xl font-bold text-primary">{card.keywords.length}</p>
+                  <p className="text-sm text-muted-foreground">Keywords</p>
+                </div>
+                <div className="flex-1 rounded-lg bg-muted/50 p-4">
+                  <p className="text-2xl font-bold text-primary">{card.id}/36</p>
+                  <p className="text-sm text-muted-foreground">In Deck</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+         {/* Enhanced Tabs Section */}
+         <div className="mb-16">
+         <Tabs defaultValue="overview" className="w-full">
+           <TabsList className="grid w-full grid-cols-3 mb-8 h-12">
+             <TabsTrigger value="overview" className="gap-2">
+               <BookOpen className="h-4 w-4" />
+               Overview
+             </TabsTrigger>
+             <TabsTrigger value="meanings" className="gap-2">
+               <Heart className="h-4 w-4" />
+               Meanings
+             </TabsTrigger>
+             <TabsTrigger value="combos" className="gap-2">
+               <Users className="h-4 w-4" />
+               Combinations ({combos.length})
+             </TabsTrigger>
+           </TabsList>
+
+           {/* Overview Tab */}
+           <TabsContent value="overview" className="space-y-8">
+             {/* Core Meaning Highlight */}
+             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+               <CardHeader>
+                 <CardTitle className="text-2xl">Core Essence</CardTitle>
+               </CardHeader>
+               <CardContent>
+                 <p className="text-lg leading-relaxed text-foreground">{card.uprightMeaning}</p>
+               </CardContent>
+             </Card>
+
+             {/* Quick Context Grid */}
+             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+               {card.strength && (
+                 <Card>
+                   <CardHeader className="pb-3">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                       <Target className="h-5 w-5 text-primary" />
+                       Strength Level
+                     </CardTitle>
+                   </CardHeader>
+                   <CardContent>
+                     <p className="text-muted-foreground">{card.strength}</p>
+                   </CardContent>
+                 </Card>
+               )}
+               {card.timing && (
+                 <Card>
+                   <CardHeader className="pb-3">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                       <Clock className="h-5 w-5 text-primary" />
+                       Timing Influence
+                     </CardTitle>
+                   </CardHeader>
+                   <CardContent>
+                     <p className="text-muted-foreground">{card.timing}</p>
+                   </CardContent>
+                 </Card>
+               )}
+               <Card>
+                 <CardHeader className="pb-3">
+                   <CardTitle className="text-lg flex items-center gap-2">
+                     <Sparkles className="h-5 w-5 text-primary" />
+                     Key Themes
+                   </CardTitle>
+                 </CardHeader>
+                 <CardContent>
+                   <div className="flex flex-wrap gap-1">
+                     {card.keywords.slice(0, 3).map((keyword, i) => (
+                       <Badge key={i} variant="outline" className="text-xs">
+                         {keyword}
+                       </Badge>
+                     ))}
+                     {card.keywords.length > 3 && (
+                       <Badge variant="outline" className="text-xs">
+                         +{card.keywords.length - 3} more
+                       </Badge>
+                     )}
+                   </div>
+                 </CardContent>
+               </Card>
+             </div>
+
+             {/* Historical Context */}
+             {card.historicalMeaning && (
+               <Card className="border-border">
+                 <CardHeader>
+                   <CardTitle className="text-xl flex items-center gap-2">
+                     <BookOpen className="h-5 w-5 text-primary" />
+                     Historical Context
+                   </CardTitle>
+                 </CardHeader>
+                 <CardContent>
+                   <p className="text-muted-foreground leading-relaxed">{card.historicalMeaning}</p>
+                 </CardContent>
+               </Card>
+             )}
            </TabsContent>
-         </Tabs>
-         </div>
 
-        {/* Navigation Buttons */}
-        <div className="mt-12 flex items-center justify-between border-t border-border pt-8">
-          <Link href={`/cards/${previousCardId}`}>
-            <Button variant="outline" size="lg" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Previous Card
-            </Button>
-          </Link>
-          
-          <div className="text-center text-sm text-muted-foreground">
-            Card {card.id} of 36
+           {/* Meanings Tab */}
+           <TabsContent value="meanings" className="space-y-8">
+             {meaning && (
+               <>
+                 {/* General Meaning */}
+                 <MeaningSection
+                   title="General Meaning"
+                   content={meaning.general}
+                 />
+
+                 {/* Positive and Negative Aspects Side by Side */}
+                 <TwoColumnAspects
+                   positiveTitle="Positive Aspects"
+                   positiveAspects={meaning.positive}
+                   negativeTitle="Challenging Aspects"
+                   negativeAspects={meaning.negative}
+                 />
+
+                 {/* Contextual Interpretations */}
+                 {(meaning.relationships || meaning.careerFinance || meaning.timing) && (
+                   <div className="border-t border-border pt-8">
+                     <h2 className="text-2xl font-bold text-foreground mb-6">In Different Contexts</h2>
+                     <div className="grid gap-6 md:grid-cols-3">
+                       {meaning.relationships && (
+                         <div className="rounded-lg bg-card border border-border p-6">
+                           <h3 className="text-lg font-semibold text-foreground mb-3">In Relationships</h3>
+                           <p className="text-muted-foreground leading-relaxed">{meaning.relationships}</p>
+                         </div>
+                       )}
+                       {meaning.careerFinance && (
+                         <div className="rounded-lg bg-card border border-border p-6">
+                           <h3 className="text-lg font-semibold text-foreground mb-3">Career & Finance</h3>
+                           <p className="text-muted-foreground leading-relaxed">{meaning.careerFinance}</p>
+                         </div>
+                       )}
+                       {meaning.timing && (
+                         <div className="rounded-lg bg-card border border-border p-6">
+                           <h3 className="text-lg font-semibold text-foreground mb-3">Timing & Seasons</h3>
+                           <p className="text-muted-foreground leading-relaxed">{meaning.timing}</p>
+                         </div>
+                       )}
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Historical Context */}
+                 {card.historicalMeaning && (
+                   <div className="rounded-lg bg-muted/50 border border-border p-6">
+                     <h3 className="text-lg font-semibold text-foreground mb-3">Historical Context</h3>
+                     <p className="text-muted-foreground leading-relaxed">{card.historicalMeaning}</p>
+                   </div>
+                 )}
+               </>
+             )}
+           </TabsContent>
+
+           {/* Combinations Tab */}
+           <TabsContent value="combos">
+             <ComboSection
+               combos={combos}
+               getCardName={getCardName}
+             />
+            </TabsContent>
+          </Tabs>
           </div>
 
-          <Link href={`/cards/${nextCardId}`}>
-            <Button variant="outline" size="lg" className="gap-2">
-              Next Card
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+         {/* Navigation Buttons */}
+         <div className="mt-12 flex items-center justify-between border-t border-border pt-8">
+           <Link href={`/cards/${previousCardId}`}>
+             <Button variant="outline" size="lg" className="gap-2">
+               <ArrowLeft className="h-4 w-4" />
+               Previous Card
+             </Button>
+           </Link>
+           
+           <div className="text-center text-sm text-muted-foreground">
+             Card {card.id} of 36
+           </div>
+
+           <Link href={`/cards/${nextCardId}`}>
+             <Button variant="outline" size="lg" className="gap-2">
+               Next Card
+               <ArrowRight className="h-4 w-4" />
+             </Button>
+           </Link>
+         </div>
       </div>
     </div>
   )

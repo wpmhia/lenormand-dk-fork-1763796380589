@@ -13,6 +13,10 @@
     "uprightMeaning": "News arriving soon, messages, movement, a young man",
     "combos": [
       {
+        "withCardId": 2,
+        "meaning": "Good news bringing luck and opportunity"
+      },
+      {
         "withCardId": 3,
         "meaning": "A friend from overseas is coming to visit"
       },
@@ -41,8 +45,20 @@
         "meaning": "An admirer has ordered flowers for you"
       },
       {
+        "withCardId": 10,
+        "meaning": "Sudden news or unexpected changes"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "News about conflict or arguments"
+      },
+      {
         "withCardId": 12,
         "meaning": "Your casual romantic interest will blossom into a relationship (being a couple)"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "News about new beginnings or children"
       },
       {
         "withCardId": 14,
@@ -67,6 +83,10 @@
       {
         "withCardId": 19,
         "meaning": "A period of isolation"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Public news or social events"
       },
       {
         "withCardId": 21,
@@ -97,6 +117,18 @@
         "meaning": "That emergency room visit bill is on the way"
       },
       {
+        "withCardId": 28,
+        "meaning": "Rider combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Rider combined with Woman brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Peaceful news or mature matters"
+      },
+      {
         "withCardId": 31,
         "meaning": "A news story exposing corruption"
       },
@@ -109,12 +141,20 @@
         "meaning": "Finding lost keys"
       },
       {
+        "withCardId": 34,
+        "meaning": "News about finances or abundance"
+      },
+      {
         "withCardId": 35,
         "meaning": "You read a news story that changes you forever"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Challenging news or burdens"
       }
     ],
     "imageUrl": "/images/cards/01-rider.png",
-     "meaning": "News, messages, and important communication. This card signifies the arrival of information, letters, or news that requires attention."
+    "meaning": "News, messages, and important communication. This card signifies the arrival of information, letters, or news that requires attention."
   },
   {
     "id": 2,
@@ -234,6 +274,14 @@
         "meaning": "Lucky message, fortunate communication, blessed information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Clover combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Clover combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Lucky wisdom, fortunate maturity, blessed peace"
       },
@@ -263,7 +311,7 @@
       }
     ],
     "imageUrl": "/images/cards/02-clover.png",
-     "meaning": "Luck, opportunity, and small blessings. This card signifies a stroke of good fortune or a moment of unexpected luck."
+    "meaning": "Luck, opportunity, and small blessings. This card signifies a stroke of good fortune or a moment of unexpected luck."
   },
   {
     "id": 3,
@@ -323,6 +371,10 @@
         "meaning": "Social journey, group travel, communication during trips, travel gossip"
       },
       {
+        "withCardId": 13,
+        "meaning": "Ship combined with Child brings unique energy and insights"
+      },
+      {
         "withCardId": 14,
         "meaning": "Business travel, work journey, strategic trip, professional voyage"
       },
@@ -379,6 +431,14 @@
         "meaning": "Communication journey, message during travel, postal voyage, information trip"
       },
       {
+        "withCardId": 28,
+        "meaning": "Ship combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Ship combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Spiritual journey, peaceful travel, wisdom voyage, mature expedition"
       },
@@ -408,7 +468,7 @@
       }
     ],
     "imageUrl": "/images/cards/03-ship.png",
-     "meaning": "Travel, distance, and exploration. This card represents journeys, whether physical travel or movement away from the current situation."
+    "meaning": "Travel, distance, and exploration. This card represents journeys, whether physical travel or movement away from the current situation."
   },
   {
     "id": 4,
@@ -528,6 +588,14 @@
         "meaning": "Family message, home communication, domestic information, household letter"
       },
       {
+        "withCardId": 28,
+        "meaning": "House combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "House combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Peaceful home, family wisdom, domestic maturity, household ethics"
       },
@@ -557,7 +625,7 @@
       }
     ],
     "imageUrl": "/images/cards/04-house.png",
-     "meaning": "Home, family, and stability. This card represents the foundation of security, whether physical property or emotional grounding."
+    "meaning": "Home, family, and stability. This card represents the foundation of security, whether physical property or emotional grounding."
   },
   {
     "id": 5,
@@ -677,6 +745,14 @@
         "meaning": "Health message, medical communication, wellness information, recovery news"
       },
       {
+        "withCardId": 28,
+        "meaning": "Tree combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Tree combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Health wisdom, medical maturity, wellness peace, healing ethics"
       },
@@ -706,7 +782,7 @@
       }
     ],
     "imageUrl": "/images/cards/05-tree.png",
-     "meaning": "Nature, growth, and renewal. This card represents natural processes, healing, and organic development."
+    "meaning": "Nature, growth, and renewal. This card represents natural processes, healing, and organic development."
   },
   {
     "id": 6,
@@ -826,6 +902,14 @@
         "meaning": "Confusing messages or communication, unclear letters or foggy information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Clouds combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Clouds combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Confusing peace or harmony, unclear tranquility or foggy balance"
       },
@@ -855,7 +939,7 @@
       }
     ],
     "imageUrl": "/images/cards/06-clouds.png",
-     "meaning": "Confusion, uncertainty, and illusion. This card warns of unclear situations, miscommunication, or being misled."
+    "meaning": "Confusion, uncertainty, and illusion. This card warns of unclear situations, miscommunication, or being misled."
   },
   {
     "id": 7,
@@ -975,6 +1059,14 @@
         "meaning": "False message, deceptive communication, betrayed information, hidden letter"
       },
       {
+        "withCardId": 28,
+        "meaning": "Snake combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Snake combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "False wisdom, deceptive maturity, betrayed ethics, hidden peace"
       },
@@ -1004,7 +1096,7 @@
       }
     ],
     "imageUrl": "/images/cards/07-snake.png",
-     "meaning": "Betrayal, deceit, and hidden wisdom. This card warns of deception but also represents deep knowledge and healing through understanding."
+    "meaning": "Betrayal, deceit, and hidden wisdom. This card warns of deception but also represents deep knowledge and healing through understanding."
   },
   {
     "id": 8,
@@ -1124,6 +1216,14 @@
         "meaning": "End of messages, communication closure, information ending, final letter"
       },
       {
+        "withCardId": 28,
+        "meaning": "Coffin combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Coffin combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "End of wisdom, maturity closure, ethics ending, final peace"
       },
@@ -1153,7 +1253,7 @@
       }
     ],
     "imageUrl": "/images/cards/08-coffin.png",
-     "meaning": "Endings, closure, and transformation. This card represents the natural conclusion of cycles and the death that precedes rebirth."
+    "meaning": "Endings, closure, and transformation. This card represents the natural conclusion of cycles and the death that precedes rebirth."
   },
   {
     "id": 9,
@@ -1273,6 +1373,14 @@
         "meaning": "Message gift, information appreciation, letter surprise, blessed communication"
       },
       {
+        "withCardId": 28,
+        "meaning": "Bouquet combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Bouquet combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Peace gift, maturity appreciation, ethics surprise, blessed wisdom"
       },
@@ -1302,7 +1410,7 @@
       }
     ],
     "imageUrl": "/images/cards/09-bouquet.png",
-     "meaning": "Celebration, gifts, and good news. This card represents joy, rewards, and positive recognition."
+    "meaning": "Celebration, gifts, and good news. This card represents joy, rewards, and positive recognition."
   },
   {
     "id": 10,
@@ -1422,6 +1530,14 @@
         "meaning": "Sudden message, cutting silence, decisive communication, harvest of information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Scythe combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Scythe combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Sudden wisdom, cutting immaturity, decisive maturity, harvest of peace"
       },
@@ -1451,7 +1567,7 @@
       }
     ],
     "imageUrl": "/images/cards/10-scythe.png",
-     "meaning": "Sharp change, decisions, and cutting through confusion. This card represents clear action and important decisions."
+    "meaning": "Sharp change, decisions, and cutting through confusion. This card represents clear action and important decisions."
   },
   {
     "id": 11,
@@ -1571,6 +1687,14 @@
         "meaning": "Message conflict, information argument, passionate communication, disciplined letter"
       },
       {
+        "withCardId": 28,
+        "meaning": "Whip combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Whip combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Peace conflict, maturity argument, passionate wisdom, disciplined ethics"
       },
@@ -1600,7 +1724,7 @@
       }
     ],
     "imageUrl": "/images/cards/11-whip.png",
-     "meaning": "Conflict, repetition, and discipline. This card represents challenges, arguments, and the need for strength."
+    "meaning": "Conflict, repetition, and discipline. This card represents challenges, arguments, and the need for strength."
   },
   {
     "id": 12,
@@ -1720,6 +1844,14 @@
         "meaning": "Message communication, information gossip, anxious letter, social communication"
       },
       {
+        "withCardId": 28,
+        "meaning": "Birds combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Birds combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Peace communication, maturity gossip, anxious wisdom, social ethics"
       },
@@ -1749,7 +1881,7 @@
       }
     ],
     "imageUrl": "/images/cards/12-birds.png",
-     "meaning": "Communication, anxiety, and nervous energy. This card represents worry, discussions, and mental activity."
+    "meaning": "Communication, anxiety, and nervous energy. This card represents worry, discussions, and mental activity."
   },
   {
     "id": 13,
@@ -1869,6 +2001,14 @@
         "meaning": "New message, innocent communication, creative letter, youthful information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Child combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Child combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "New wisdom, innocent maturity, creative ethics, youthful peace"
       },
@@ -1898,7 +2038,7 @@
       }
     ],
     "imageUrl": "/images/cards/13-child.png",
-     "meaning": "New beginnings, innocence, and potential. This card represents fresh starts and untapped possibilities."
+    "meaning": "New beginnings, innocence, and potential. This card represents fresh starts and untapped possibilities."
   },
   {
     "id": 14,
@@ -2018,6 +2158,14 @@
         "meaning": "Cunning message, strategic communication, intelligent letter, cautious information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Fox combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Fox combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Cunning wisdom, strategic maturity, intelligent ethics, cautious peace"
       },
@@ -2047,7 +2195,7 @@
       }
     ],
     "imageUrl": "/images/cards/14-fox.png",
-     "meaning": "Intelligence, cunning, and work. This card represents mental agility, wit, and active employment."
+    "meaning": "Intelligence, cunning, and work. This card represents mental agility, wit, and active employment."
   },
   {
     "id": 15,
@@ -2167,6 +2315,14 @@
         "meaning": "Powerful message, strong communication, protected letter, authoritative information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Bear combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Bear combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Powerful wisdom, strong maturity, protected ethics, authoritative peace"
       },
@@ -2196,7 +2352,7 @@
       }
     ],
     "imageUrl": "/images/cards/15-bear.png",
-     "meaning": "Strength, authority, and protection. This card represents power, confidence, and stable authority."
+    "meaning": "Strength, authority, and protection. This card represents power, confidence, and stable authority."
   },
   {
     "id": 16,
@@ -2316,6 +2472,14 @@
         "meaning": "Hopeful message, guided communication, wished-for letter, destined information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Stars combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Stars combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Hopeful wisdom, guided maturity, wished-for ethics, destined peace"
       },
@@ -2345,7 +2509,7 @@
       }
     ],
     "imageUrl": "/images/cards/16-stars.png",
-     "meaning": "Hope, wishes, and spiritual goals. This card represents idealism, inspiration, and optimistic vision."
+    "meaning": "Hope, wishes, and spiritual goals. This card represents idealism, inspiration, and optimistic vision."
   },
   {
     "id": 17,
@@ -2465,6 +2629,14 @@
         "meaning": "Changing message, moving communication, returning letter, delivered information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Stork combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Stork combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Changing wisdom, moving maturity, returning ethics, delivered peace"
       },
@@ -2494,7 +2666,7 @@
       }
     ],
     "imageUrl": "/images/cards/17-stork.png",
-     "meaning": "Change, movement, and new directions. This card represents transformation, pregnancy, and major shifts."
+    "meaning": "Change, movement, and new directions. This card represents transformation, pregnancy, and major shifts."
   },
   {
     "id": 18,
@@ -2614,6 +2786,14 @@
         "meaning": "Loyal message, trustworthy communication, protected letter, companionable information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Dog combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Dog combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Loyal wisdom, trustworthy maturity, protected ethics, companionable peace"
       },
@@ -2643,7 +2823,7 @@
       }
     ],
     "imageUrl": "/images/cards/18-dog.png",
-     "meaning": "Loyalty, friendship, and companionship. This card represents true friends, pets, and faithful connections."
+    "meaning": "Loyalty, friendship, and companionship. This card represents true friends, pets, and faithful connections."
   },
   {
     "id": 19,
@@ -2763,6 +2943,14 @@
         "meaning": "Authoritative message, institutional communication, isolated letter, structured information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Tower combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Tower combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Authoritative wisdom, institutional maturity, isolated ethics, structured peace"
       },
@@ -2792,7 +2980,7 @@
       }
     ],
     "imageUrl": "/images/cards/19-tower.png",
-     "meaning": "Authority, isolation, and solitude. This card represents leadership, institutions, and being set apart."
+    "meaning": "Authority, isolation, and solitude. This card represents leadership, institutions, and being set apart."
   },
   {
     "id": 20,
@@ -2912,6 +3100,14 @@
         "meaning": "Public message, social communication, community letter, natural information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Garden combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Garden combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Public wisdom, social maturity, community ethics, natural peace"
       },
@@ -2941,7 +3137,7 @@
       }
     ],
     "imageUrl": "/images/cards/20-garden.png",
-     "meaning": "Social gathering, community, and public space. This card represents connections with others and shared experiences."
+    "meaning": "Social gathering, community, and public space. This card represents connections with others and shared experiences."
   },
   {
     "id": 21,
@@ -3061,6 +3257,14 @@
         "meaning": "Obstacle message, challenging communication, delayed letter, enduring information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Mountain combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Mountain combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Obstacle wisdom, challenging maturity, delayed ethics, enduring peace"
       },
@@ -3090,7 +3294,7 @@
       }
     ],
     "imageUrl": "/images/cards/21-mountain.png",
-     "meaning": "Obstacles, delays, and challenges. This card represents what stands in the way and requires patience."
+    "meaning": "Obstacles, delays, and challenges. This card represents what stands in the way and requires patience."
   },
   {
     "id": 22,
@@ -3112,6 +3316,10 @@
       {
         "withCardId": 2,
         "meaning": "Choice luck, decision opportunity, directional chance, optional fortune"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Paths combined with Ship brings unique energy and insights"
       },
       {
         "withCardId": 4,
@@ -3204,6 +3412,14 @@
       {
         "withCardId": 27,
         "meaning": "Choice message, decision communication, directional letter, optional information"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Paths combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Paths combined with Woman brings unique energy and insights"
       },
       {
         "withCardId": 30,
@@ -3235,7 +3451,7 @@
       }
     ],
     "imageUrl": "/images/cards/22-paths.png",
-     "meaning": "Choices, decisions, and crossroads. This card represents important decision points and multiple paths."
+    "meaning": "Choices, decisions, and crossroads. This card represents important decision points and multiple paths."
   },
   {
     "id": 23,
@@ -3257,6 +3473,10 @@
       {
         "withCardId": 2,
         "meaning": "Choice luck, decision opportunity, directional chance, optional fortune"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Mice combined with Ship brings unique energy and insights"
       },
       {
         "withCardId": 4,
@@ -3331,8 +3551,8 @@
         "meaning": "Choice obstacle, decision challenge, directional endurance, optional difficulty"
       },
       {
-        "withCardId": 23,
-        "meaning": "Choice loss, decision stress, directional recovery, optional healing"
+        "withCardId": 22,
+        "meaning": "Mice combined with Paths brings unique energy and insights"
       },
       {
         "withCardId": 24,
@@ -3349,6 +3569,14 @@
       {
         "withCardId": 27,
         "meaning": "Choice message, decision communication, directional letter, optional information"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Mice combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Mice combined with Woman brings unique energy and insights"
       },
       {
         "withCardId": 30,
@@ -3380,7 +3608,7 @@
       }
     ],
     "imageUrl": "/images/cards/23-mice.png",
-     "meaning": "Loss, worry, and details. This card represents what you fear losing and attention to small matters."
+    "meaning": "Loss, worry, and details. This card represents what you fear losing and attention to small matters."
   },
   {
     "id": 24,
@@ -3500,6 +3728,14 @@
         "meaning": "Love message, emotional communication, romantic letter, compassionate information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Heart combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Heart combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Love wisdom, emotional maturity, romantic ethics, compassionate peace"
       },
@@ -3529,7 +3765,7 @@
       }
     ],
     "imageUrl": "/images/cards/24-heart.png",
-     "meaning": "Love, emotions, and passion. This card represents matters of the heart and deep emotional connections."
+    "meaning": "Love, emotions, and passion. This card represents matters of the heart and deep emotional connections."
   },
   {
     "id": 25,
@@ -3649,6 +3885,14 @@
         "meaning": "Committed message, contractual communication, married letter, cyclical information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Ring combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Ring combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Committed wisdom, contractual maturity, married ethics, cyclical peace"
       },
@@ -3678,7 +3922,7 @@
       }
     ],
     "imageUrl": "/images/cards/25-ring.png",
-     "meaning": "Commitment, marriage, and binding contracts. This card represents lasting unions and serious agreements."
+    "meaning": "Commitment, marriage, and binding contracts. This card represents lasting unions and serious agreements."
   },
   {
     "id": 26,
@@ -3798,6 +4042,14 @@
         "meaning": "Knowledge message, secret communication, learning letter, mysterious information, educational message"
       },
       {
+        "withCardId": 28,
+        "meaning": "Book combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Book combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Knowledge wisdom, secret purity, learning peace, mysterious maturity, educational wisdom"
       },
@@ -3827,7 +4079,7 @@
       }
     ],
     "imageUrl": "/images/cards/26-book.png",
-     "meaning": "Knowledge, learning, and education. This card represents study, wisdom, and intellectual pursuits."
+    "meaning": "Knowledge, learning, and education. This card represents study, wisdom, and intellectual pursuits."
   },
   {
     "id": 27,
@@ -3947,6 +4199,14 @@
         "meaning": "Message knowledge, communication secret, document learning, news mystery, information education"
       },
       {
+        "withCardId": 28,
+        "meaning": "Letter combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Letter combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Message wisdom, communication purity, document peace, news maturity, information ethics"
       },
@@ -3976,7 +4236,7 @@
       }
     ],
     "imageUrl": "/images/cards/27-letter.png",
-     "meaning": "Written communication, documents, and important papers. This card represents contracts, letters, and written records."
+    "meaning": "Written communication, documents, and important papers. This card represents contracts, letters, and written records."
   },
   {
     "id": 28,
@@ -3990,9 +4250,150 @@
       "logic"
     ],
     "uprightMeaning": "Man, husband, father, masculine energy, authority",
-    "combos": [],
+    "combos": [
+      {
+        "withCardId": 1,
+        "meaning": "Man combined with Rider brings unique energy and insights"
+      },
+      {
+        "withCardId": 2,
+        "meaning": "Man combined with Clover brings unique energy and insights"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Man combined with Ship brings unique energy and insights"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Man combined with House brings unique energy and insights"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Man combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Man combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Man combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Man combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Man combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Man combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Man combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Man combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Man combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Man combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Man combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Man combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Man combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Man combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Man combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Man combined with Garden brings unique energy and insights"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Man combined with Mountain brings unique energy and insights"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Man combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Man combined with Mice brings unique energy and insights"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Man combined with Heart brings unique energy and insights"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Man combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Man combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Man combined with Letter brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Man combined with Woman brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Man combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 31,
+        "meaning": "Man combined with Sun brings unique energy and insights"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Man combined with Moon brings unique energy and insights"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "Man combined with Key brings unique energy and insights"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Man combined with Fish brings unique energy and insights"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Man combined with Anchor brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Man combined with Cross brings unique energy and insights"
+      }
+    ],
     "imageUrl": "/images/cards/28-gentleman.png",
-     "meaning": "Masculine energy, men, and paternal figures. This card represents men, fathers, authority figures, and masculine qualities."
+    "meaning": "Masculine energy, men, and paternal figures. This card represents men, fathers, authority figures, and masculine qualities."
   },
   {
     "id": 29,
@@ -4006,9 +4407,150 @@
       "emotion"
     ],
     "uprightMeaning": "Woman, wife, mother, feminine energy, intuition",
-    "combos": [],
+    "combos": [
+      {
+        "withCardId": 1,
+        "meaning": "Woman combined with Rider brings unique energy and insights"
+      },
+      {
+        "withCardId": 2,
+        "meaning": "Woman combined with Clover brings unique energy and insights"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Woman combined with Ship brings unique energy and insights"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Woman combined with House brings unique energy and insights"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Woman combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Woman combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Woman combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Woman combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Woman combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Woman combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Woman combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Woman combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Woman combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Woman combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Woman combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Woman combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Woman combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Woman combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Woman combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Woman combined with Garden brings unique energy and insights"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Woman combined with Mountain brings unique energy and insights"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Woman combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Woman combined with Mice brings unique energy and insights"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Woman combined with Heart brings unique energy and insights"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Woman combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Woman combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Woman combined with Letter brings unique energy and insights"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Woman combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Woman combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 31,
+        "meaning": "Woman combined with Sun brings unique energy and insights"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Woman combined with Moon brings unique energy and insights"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "Woman combined with Key brings unique energy and insights"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Woman combined with Fish brings unique energy and insights"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Woman combined with Anchor brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Woman combined with Cross brings unique energy and insights"
+      }
+    ],
     "imageUrl": "/images/cards/29-lady.png",
-     "meaning": "Feminine energy, women, and maternal figures. This card represents women, mothers, feminine qualities, and nurturing."
+    "meaning": "Feminine energy, women, and maternal figures. This card represents women, mothers, feminine qualities, and nurturing."
   },
   {
     "id": 30,
@@ -4132,6 +4674,14 @@
         "meaning": "Pure message, peaceful communication, wise letter, mature information, ethical document"
       },
       {
+        "withCardId": 28,
+        "meaning": "Lily combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Lily combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 31,
         "meaning": "Pure success, peaceful happiness, wise achievement, mature victory, ethical joy"
       },
@@ -4157,7 +4707,7 @@
       }
     ],
     "imageUrl": "/images/cards/30-lilies.png",
-     "meaning": "Purity, peace, wisdom, maturity, ethics. This card represents spiritual growth, moral integrity, and inner peace."
+    "meaning": "Purity, peace, wisdom, maturity, ethics. This card represents spiritual growth, moral integrity, and inner peace."
   },
   {
     "id": 31,
@@ -4179,10 +4729,142 @@
       {
         "withCardId": 2,
         "meaning": "Lucky success - fortunate achievement"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Sun combined with Ship brings unique energy and insights"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Sun combined with House brings unique energy and insights"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Sun combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Sun combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Sun combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Sun combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Sun combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Sun combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Sun combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Sun combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Sun combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Sun combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Sun combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Sun combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Sun combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Sun combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Sun combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Sun combined with Garden brings unique energy and insights"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Sun combined with Mountain brings unique energy and insights"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Sun combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Sun combined with Mice brings unique energy and insights"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Sun combined with Heart brings unique energy and insights"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Sun combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Sun combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Sun combined with Letter brings unique energy and insights"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Sun combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Sun combined with Woman brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Sun combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Sun combined with Moon brings unique energy and insights"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "Sun combined with Key brings unique energy and insights"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Sun combined with Fish brings unique energy and insights"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Sun combined with Anchor brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Sun combined with Cross brings unique energy and insights"
       }
     ],
     "imageUrl": "/images/cards/31-sun.png",
-     "meaning": "Success, vitality, and clarity. This card represents achievement, brightness, and the fulfillment of positive outcomes."
+    "meaning": "Success, vitality, and clarity. This card represents achievement, brightness, and the fulfillment of positive outcomes."
   },
   {
     "id": 32,
@@ -4198,16 +4880,148 @@
     "uprightMeaning": "Intuition, emotions, dreams, creativity, illusion",
     "combos": [
       {
-        "withCardId": 29,
-        "meaning": "Woman's intuition - female emotions"
+        "withCardId": 1,
+        "meaning": "News about emotions or intuition"
+      },
+      {
+        "withCardId": 2,
+        "meaning": "Moon combined with Clover brings unique energy and insights"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Moon combined with Ship brings unique energy and insights"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Moon combined with House brings unique energy and insights"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Moon combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Moon combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Moon combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Moon combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Moon combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Moon combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Moon combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Moon combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Moon combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Moon combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Moon combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Moon combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Moon combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Moon combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Moon combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Moon combined with Garden brings unique energy and insights"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Moon combined with Mountain brings unique energy and insights"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Moon combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Moon combined with Mice brings unique energy and insights"
       },
       {
         "withCardId": 24,
         "meaning": "Emotional love - romantic feelings"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Moon combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Moon combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Moon combined with Letter brings unique energy and insights"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Moon combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Woman's intuition - female emotions"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Moon combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 31,
+        "meaning": "Moon combined with Sun brings unique energy and insights"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "Moon combined with Key brings unique energy and insights"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Moon combined with Fish brings unique energy and insights"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Moon combined with Anchor brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Moon combined with Cross brings unique energy and insights"
       }
     ],
     "imageUrl": "/images/cards/32-moon.png",
-     "meaning": "Intuition, emotions, and cycles. This card represents inner knowing, emotional intelligence, and psychic abilities."
+    "meaning": "Intuition, emotions, and cycles. This card represents inner knowing, emotional intelligence, and psychic abilities."
   },
   {
     "id": 33,
@@ -4227,12 +5041,144 @@
         "meaning": "Key news - solution announcement"
       },
       {
+        "withCardId": 2,
+        "meaning": "Key combined with Clover brings unique energy and insights"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Key combined with Ship brings unique energy and insights"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Key combined with House brings unique energy and insights"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Key combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Key combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Key combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Key combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Key combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Key combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Key combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Key combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Key combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Key combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Key combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Key combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Key combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Key combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Key combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Key combined with Garden brings unique energy and insights"
+      },
+      {
         "withCardId": 21,
         "meaning": "Key to obstacles - solution found"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Key combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Key combined with Mice brings unique energy and insights"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Key combined with Heart brings unique energy and insights"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Key combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Key combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Key combined with Letter brings unique energy and insights"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Key combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Key combined with Woman brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Key combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 31,
+        "meaning": "Key combined with Sun brings unique energy and insights"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Key combined with Moon brings unique energy and insights"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Key combined with Fish brings unique energy and insights"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Key combined with Anchor brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Key combined with Cross brings unique energy and insights"
       }
     ],
     "imageUrl": "/images/cards/33-key.png",
-     "meaning": "Solutions, importance, and answers. This card represents the key to problems and ultimate importance."
+    "meaning": "Solutions, importance, and answers. This card represents the key to problems and ultimate importance."
   },
   {
     "id": 34,
@@ -4252,12 +5198,144 @@
         "meaning": "Wealth news - business announcement"
       },
       {
+        "withCardId": 2,
+        "meaning": "Fish combined with Clover brings unique energy and insights"
+      },
+      {
         "withCardId": 3,
         "meaning": "Business travel - commerce journey"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Fish combined with House brings unique energy and insights"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Fish combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Fish combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Fish combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Fish combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Fish combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Fish combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Fish combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Fish combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Fish combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Fish combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Fish combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Fish combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Fish combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Fish combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Fish combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Fish combined with Garden brings unique energy and insights"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Fish combined with Mountain brings unique energy and insights"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Fish combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Fish combined with Mice brings unique energy and insights"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Fish combined with Heart brings unique energy and insights"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Fish combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Fish combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Fish combined with Letter brings unique energy and insights"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "Fish combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Fish combined with Woman brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Fish combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 31,
+        "meaning": "Fish combined with Sun brings unique energy and insights"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Fish combined with Moon brings unique energy and insights"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "Fish combined with Key brings unique energy and insights"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Fish combined with Anchor brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Fish combined with Cross brings unique energy and insights"
       }
     ],
     "imageUrl": "/images/cards/34-fish.png",
-     "meaning": "Finance, abundance, and business. This card represents money, wealth, and material resources."
+    "meaning": "Finance, abundance, and business. This card represents money, wealth, and material resources."
   },
   {
     "id": 35,
@@ -4273,16 +5351,148 @@
     "uprightMeaning": "Stability, security, hope, grounding, patience",
     "combos": [
       {
+        "withCardId": 1,
+        "meaning": "News about stability or security"
+      },
+      {
+        "withCardId": 2,
+        "meaning": "Anchor combined with Clover brings unique energy and insights"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "Anchor combined with Ship brings unique energy and insights"
+      },
+      {
         "withCardId": 4,
         "meaning": "Home stability - secure family"
       },
       {
+        "withCardId": 5,
+        "meaning": "Anchor combined with Tree brings unique energy and insights"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Anchor combined with Clouds brings unique energy and insights"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Anchor combined with Snake brings unique energy and insights"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "Anchor combined with Coffin brings unique energy and insights"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "Anchor combined with Bouquet brings unique energy and insights"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "Anchor combined with Scythe brings unique energy and insights"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Anchor combined with Whip brings unique energy and insights"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Anchor combined with Birds brings unique energy and insights"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "Anchor combined with Child brings unique energy and insights"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Anchor combined with Fox brings unique energy and insights"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Anchor combined with Bear brings unique energy and insights"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "Anchor combined with Stars brings unique energy and insights"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "Anchor combined with Stork brings unique energy and insights"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Anchor combined with Dog brings unique energy and insights"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Anchor combined with Tower brings unique energy and insights"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "Anchor combined with Garden brings unique energy and insights"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Anchor combined with Mountain brings unique energy and insights"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "Anchor combined with Paths brings unique energy and insights"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "Anchor combined with Mice brings unique energy and insights"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Anchor combined with Heart brings unique energy and insights"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Anchor combined with Ring brings unique energy and insights"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Anchor combined with Book brings unique energy and insights"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "Anchor combined with Letter brings unique energy and insights"
+      },
+      {
         "withCardId": 28,
         "meaning": "Man's stability - secure male"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Anchor combined with Woman brings unique energy and insights"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Anchor combined with Lily brings unique energy and insights"
+      },
+      {
+        "withCardId": 31,
+        "meaning": "Anchor combined with Sun brings unique energy and insights"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Anchor combined with Moon brings unique energy and insights"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "Anchor combined with Key brings unique energy and insights"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Anchor combined with Fish brings unique energy and insights"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "Anchor combined with Cross brings unique energy and insights"
       }
     ],
     "imageUrl": "/images/cards/35-anchor.png",
-     "meaning": "Stability, security, and grounding. This card represents solid foundations, patience, and earthly prosperity."
+    "meaning": "Stability, security, and grounding. This card represents solid foundations, patience, and earthly prosperity."
   },
   {
     "id": 36,
@@ -4370,6 +5580,10 @@
         "meaning": "Authoritative friendship, institutional loyalty, isolated trust, structured companionship"
       },
       {
+        "withCardId": 19,
+        "meaning": "Cross combined with Tower brings unique energy and insights"
+      },
+      {
         "withCardId": 20,
         "meaning": "Authoritative community, institutional gathering, isolated social event, structured group"
       },
@@ -4402,6 +5616,14 @@
         "meaning": "Authoritative message, institutional communication, isolated letter, structured information"
       },
       {
+        "withCardId": 28,
+        "meaning": "Cross combined with Man brings unique energy and insights"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Cross combined with Woman brings unique energy and insights"
+      },
+      {
         "withCardId": 30,
         "meaning": "Authoritative wisdom, institutional maturity, isolated ethics, structured peace"
       },
@@ -4424,13 +5646,9 @@
       {
         "withCardId": 35,
         "meaning": "Authoritative stability, institutional security, isolated grounding, structured patience"
-      },
-      {
-        "withCardId": 36,
-        "meaning": "Authoritative faith, institutional sacrifice, isolated destiny, structured burden"
       }
     ],
     "imageUrl": "/images/cards/36-cross.png",
-     "meaning": "Burden, fate, and sacrifice. This card represents heavy burdens, destiny, and what must be accepted."
+    "meaning": "Burden, fate, and sacrifice. This card represents heavy burdens, destiny, and what must be accepted."
   }
 ]

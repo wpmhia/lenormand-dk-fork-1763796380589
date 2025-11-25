@@ -90,11 +90,16 @@ interface CardComboItemProps {
 export function CardComboItem({ relatedCardId, relatedCardName, meaning }: CardComboItemProps) {
   return (
     <Link href={`/cards/${relatedCardId}`}>
-      <div className="group rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-lg">
-        <p className="font-medium text-primary group-hover:text-primary/80">
-          + {relatedCardName}
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{meaning}</p>
+      <div className="group rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-lg hover:-translate-y-1">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+            {relatedCardId}
+          </div>
+          <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+            {relatedCardName}
+          </p>
+        </div>
+        <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">{meaning}</p>
       </div>
     </Link>
   )
@@ -137,6 +142,59 @@ export function ComboGrid({ combos, getCardName, searchTerm = '' }: ComboGridPro
   )
 }
 
+interface ComboListProps {
+  combos: Array<{ withCardId: number; meaning: string }>
+  getCardName: (id: number) => string
+  searchTerm?: string
+}
+
+export function ComboList({ combos, getCardName, searchTerm = '' }: ComboListProps) {
+  if (!combos || combos.length === 0) return null
+
+  const filteredCombos = searchTerm
+    ? combos.filter(combo =>
+        getCardName(combo.withCardId).toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : combos
+
+  if (filteredCombos.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-border p-8 text-center">
+        <p className="text-muted-foreground">No combinations found for &quot;{searchTerm}&quot;</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      {filteredCombos.map((combo) => (
+        <Link key={combo.withCardId} href={`/cards/${combo.withCardId}`}>
+          <div className="group flex items-center justify-between rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md">
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary">
+                {combo.withCardId}
+              </div>
+              <div>
+                <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                  {getCardName(combo.withCardId)}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                  {combo.meaning}
+                </p>
+              </div>
+            </div>
+            <div className="text-muted-foreground group-hover:text-primary transition-colors">
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  )
+}
+
 interface ComboSectionProps {
   combos: Array<{ withCardId: number; meaning: string }>
   getCardName: (id: number) => string
@@ -144,23 +202,58 @@ interface ComboSectionProps {
 
 export function ComboSection({ combos, getCardName }: ComboSectionProps) {
   const [searchTerm, setSearchTerm] = useState('')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   if (!combos || combos.length === 0) return null
 
   return (
-    <div className="space-y-4">
-      <div className="relative">
-        <Input
-          placeholder="Search combinations by card name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full"
-        />
+    <div className="space-y-6">
+      {/* Search and View Controls */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1 max-w-md">
+          <Input
+            placeholder="Search combinations by card name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('grid')}
+          >
+            Grid
+          </Button>
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('list')}
+          >
+            List
+          </Button>
+        </div>
       </div>
-      <ComboGrid combos={combos} getCardName={getCardName} searchTerm={searchTerm} />
-      <p className="text-sm text-muted-foreground text-center">
-        {combos.length} combinations available
-      </p>
+
+      {/* Combo Display */}
+      {viewMode === 'grid' ? (
+        <ComboGrid combos={combos} getCardName={getCardName} searchTerm={searchTerm} />
+      ) : (
+        <ComboList combos={combos} getCardName={getCardName} searchTerm={searchTerm} />
+      )}
+
+      {/* Stats */}
+      <div className="flex items-center justify-between text-sm text-muted-foreground border-t pt-4">
+        <span>{combos.length} total combinations</span>
+        {searchTerm && (
+          <span>
+            {combos.filter(combo =>
+              getCardName(combo.withCardId).toLowerCase().includes(searchTerm.toLowerCase())
+            ).length} results found
+          </span>
+        )}
+      </div>
     </div>
   )
 }
