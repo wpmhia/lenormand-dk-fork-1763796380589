@@ -2,7 +2,7 @@
 
 import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, Sparkles, Clock, Users, Heart, Target, BookOpen, Star } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Sparkles, Clock, Users, Heart, Target, BookOpen, Star, Briefcase, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card as CardType } from '@/lib/types'
@@ -15,6 +15,7 @@ import {
   MeaningSection,
   TwoColumnAspects,
   ComboSection,
+  ContextualMeaning,
 } from '@/components/CardDetailSections'
 
 interface PageProps {
@@ -100,14 +101,14 @@ export default function CardDetailPage({ params }: PageProps) {
         {/* Hero Section with Enhanced Design */}
         <div className="mb-16">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 mb-4">
               <Sparkles className="h-4 w-4 text-primary" />
               <span className="text-sm font-semibold text-primary">Card #{card.id}</span>
             </div>
-            <h1 className="text-6xl font-bold text-foreground mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <h1 className="mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-6xl font-bold text-transparent">
               {card.name}
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
               {card.uprightMeaning}
             </p>
           </div>
@@ -116,15 +117,15 @@ export default function CardDetailPage({ params }: PageProps) {
             {/* Card Image */}
             <div className="lg:col-span-1">
               {card.imageUrl && (
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
-                  <div className="relative rounded-xl overflow-hidden shadow-2xl">
+                <div className="group relative">
+                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary to-purple-600 blur opacity-25 transition duration-1000 group-hover:opacity-40"></div>
+                  <div className="relative overflow-hidden rounded-xl shadow-2xl">
                     <div className="relative aspect-[2.5/3.5]">
                       <Image
                         src={card.imageUrl}
                         alt={card.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                         priority
                       />
                     </div>
@@ -134,7 +135,7 @@ export default function CardDetailPage({ params }: PageProps) {
             </div>
 
             {/* Quick Info Cards */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="space-y-4 lg:col-span-2">
               {/* Keywords Card */}
               <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                 <CardHeader>
@@ -160,7 +161,7 @@ export default function CardDetailPage({ params }: PageProps) {
                   <Card className="border-border">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
+                        <div className="rounded-lg bg-primary/10 p-2">
                           <Target className="h-4 w-4 text-primary" />
                         </div>
                         <div>
@@ -175,7 +176,7 @@ export default function CardDetailPage({ params }: PageProps) {
                   <Card className="border-border">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
+                        <div className="rounded-lg bg-primary/10 p-2">
                           <Clock className="h-4 w-4 text-primary" />
                         </div>
                         <div>
@@ -210,7 +211,7 @@ export default function CardDetailPage({ params }: PageProps) {
          {/* Enhanced Tabs Section */}
          <div className="mb-16">
          <Tabs defaultValue="overview" className="w-full">
-           <TabsList className="grid w-full grid-cols-3 mb-8 h-12">
+           <TabsList className="mb-8 grid h-12 w-full grid-cols-3">
              <TabsTrigger value="overview" className="gap-2">
                <BookOpen className="h-4 w-4" />
                Overview
@@ -242,7 +243,7 @@ export default function CardDetailPage({ params }: PageProps) {
                {card.strength && (
                  <Card>
                    <CardHeader className="pb-3">
-                     <CardTitle className="text-lg flex items-center gap-2">
+                     <CardTitle className="flex items-center gap-2 text-lg">
                        <Target className="h-5 w-5 text-primary" />
                        Strength Level
                      </CardTitle>
@@ -255,7 +256,7 @@ export default function CardDetailPage({ params }: PageProps) {
                {card.timing && (
                  <Card>
                    <CardHeader className="pb-3">
-                     <CardTitle className="text-lg flex items-center gap-2">
+                     <CardTitle className="flex items-center gap-2 text-lg">
                        <Clock className="h-5 w-5 text-primary" />
                        Timing Influence
                      </CardTitle>
@@ -267,7 +268,7 @@ export default function CardDetailPage({ params }: PageProps) {
                )}
                <Card>
                  <CardHeader className="pb-3">
-                   <CardTitle className="text-lg flex items-center gap-2">
+                   <CardTitle className="flex items-center gap-2 text-lg">
                      <Sparkles className="h-5 w-5 text-primary" />
                      Key Themes
                    </CardTitle>
@@ -293,13 +294,13 @@ export default function CardDetailPage({ params }: PageProps) {
              {card.historicalMeaning && (
                <Card className="border-border">
                  <CardHeader>
-                   <CardTitle className="text-xl flex items-center gap-2">
+                   <CardTitle className="flex items-center gap-2 text-xl">
                      <BookOpen className="h-5 w-5 text-primary" />
                      Historical Context
                    </CardTitle>
                  </CardHeader>
                  <CardContent>
-                   <p className="text-muted-foreground leading-relaxed">{card.historicalMeaning}</p>
+                   <p className="leading-relaxed text-muted-foreground">{card.historicalMeaning}</p>
                  </CardContent>
                </Card>
              )}
@@ -326,35 +327,35 @@ export default function CardDetailPage({ params }: PageProps) {
                  {/* Contextual Interpretations */}
                  {(meaning.relationships || meaning.careerFinance || meaning.timing) && (
                    <div className="border-t border-border pt-8">
-                     <h2 className="text-2xl font-bold text-foreground mb-6">In Different Contexts</h2>
-                     <div className="grid gap-6 md:grid-cols-3">
-                       {meaning.relationships && (
-                         <div className="rounded-lg bg-card border border-border p-6">
-                           <h3 className="text-lg font-semibold text-foreground mb-3">In Relationships</h3>
-                           <p className="text-muted-foreground leading-relaxed">{meaning.relationships}</p>
-                         </div>
-                       )}
-                       {meaning.careerFinance && (
-                         <div className="rounded-lg bg-card border border-border p-6">
-                           <h3 className="text-lg font-semibold text-foreground mb-3">Career & Finance</h3>
-                           <p className="text-muted-foreground leading-relaxed">{meaning.careerFinance}</p>
-                         </div>
-                       )}
-                       {meaning.timing && (
-                         <div className="rounded-lg bg-card border border-border p-6">
-                           <h3 className="text-lg font-semibold text-foreground mb-3">Timing & Seasons</h3>
-                           <p className="text-muted-foreground leading-relaxed">{meaning.timing}</p>
-                         </div>
-                       )}
+                     <h2 className="mb-6 text-2xl font-bold text-foreground">In Different Contexts</h2>
+                     <div className="grid gap-4 lg:grid-cols-3">
+                       <ContextualMeaning
+                         icon={<Heart className="h-5 w-5" />}
+                         title="In Relationships"
+                         content={meaning.relationships}
+                       />
+                       <ContextualMeaning
+                         icon={<Briefcase className="h-5 w-5" />}
+                         title="Career & Finance"
+                         content={meaning.careerFinance}
+                       />
+                       <ContextualMeaning
+                         icon={<Calendar className="h-5 w-5" />}
+                         title="Timing & Seasons"
+                         content={meaning.timing}
+                       />
                      </div>
                    </div>
                  )}
 
                  {/* Historical Context */}
                  {card.historicalMeaning && (
-                   <div className="rounded-lg bg-muted/50 border border-border p-6">
-                     <h3 className="text-lg font-semibold text-foreground mb-3">Historical Context</h3>
-                     <p className="text-muted-foreground leading-relaxed">{card.historicalMeaning}</p>
+                   <div className="rounded-lg border border-border bg-muted/50 p-6">
+                     <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-foreground">
+                       <BookOpen className="h-5 w-5 text-primary" />
+                       Historical Context
+                     </h3>
+                     <p className="leading-relaxed text-muted-foreground">{card.historicalMeaning}</p>
                    </div>
                  )}
                </>
@@ -372,24 +373,26 @@ export default function CardDetailPage({ params }: PageProps) {
           </div>
 
          {/* Navigation Buttons */}
-         <div className="mt-12 flex items-center justify-between border-t border-border pt-8">
-           <Link href={`/cards/${previousCardId}`}>
-             <Button variant="outline" size="lg" className="gap-2">
-               <ArrowLeft className="h-4 w-4" />
-               Previous Card
-             </Button>
-           </Link>
-           
-           <div className="text-center text-sm text-muted-foreground">
-             Card {card.id} of 36
-           </div>
+         <div className="border-t border-border pt-8">
+           <div className="flex items-center justify-between">
+             <Link href={`/cards/${previousCardId}`}>
+               <Button variant="outline" size="lg" className="gap-2">
+                 <ArrowLeft className="h-4 w-4" />
+                 Previous Card
+               </Button>
+             </Link>
+             
+             <div className="text-center text-sm text-muted-foreground">
+               Card {card.id} of 36
+             </div>
 
-           <Link href={`/cards/${nextCardId}`}>
-             <Button variant="outline" size="lg" className="gap-2">
-               Next Card
-               <ArrowRight className="h-4 w-4" />
-             </Button>
-           </Link>
+             <Link href={`/cards/${nextCardId}`}>
+               <Button variant="outline" size="lg" className="gap-2">
+                 Next Card
+                 <ArrowRight className="h-4 w-4" />
+               </Button>
+             </Link>
+           </div>
          </div>
       </div>
     </div>

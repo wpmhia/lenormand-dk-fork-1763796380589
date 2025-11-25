@@ -154,7 +154,29 @@
       }
     ],
     "imageUrl": "/images/cards/01-rider.png",
-    "meaning": "News, messages, and important communication. This card signifies the arrival of information, letters, or news that requires attention."
+    "meaning": {
+      "general": "The Rider brings news and swift communication. It represents information that must be processed or acted upon quickly, often bringing a sense of urgency to situations.",
+      "positive": [
+        "Quick news arrives",
+        "Important messages coming",
+        "Important information",
+        "Swift communication",
+        "Progress through messages"
+      ],
+      "negative": [
+        "Delayed information",
+        "Unclear communication",
+        "Rushed decisions",
+        "Incomplete information",
+        "Communication mishaps"
+      ],
+      "relationships": "News about a romantic interest or relationship development. A messenger bringing information about love matters or a young man with romantic significance.",
+      "careerFinance": "Business communications, job announcements, or important workplace news. Good for contract negotiations and professional advancement.",
+      "timing": "Within 1-3 weeks; news arriving imminently"
+    },
+    "historicalMeaning": "The Rider traditionally represents a messenger or courier bringing news from afar. In historical contexts, this was one of the most important cards as communication was vital.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 2,
@@ -311,7 +333,29 @@
       }
     ],
     "imageUrl": "/images/cards/02-clover.png",
-    "meaning": "Luck, opportunity, and small blessings. This card signifies a stroke of good fortune or a moment of unexpected luck."
+    "meaning": {
+      "general": "The Clover represents a fortunate turn of events and happy coincidence. It brings relief and reassurance through small miracles and unexpected opportunities.",
+      "positive": [
+        "Lucky chance",
+        "Good fortune",
+        "Small blessings",
+        "Happy accident",
+        "Favorable opportunity"
+      ],
+      "negative": [
+        "Missed opportunity",
+        "Small loss",
+        "Bad timing",
+        "Wasted luck",
+        "Shallow good fortune"
+      ],
+      "relationships": "A pleasant romantic surprise or lucky meeting. Romance blossoms unexpectedly or a positive turn in relationship matters.",
+      "careerFinance": "Small financial gains, lucky business deals, or unexpected professional opportunities. Prosperity through fortunate circumstances.",
+      "timing": "Within 1-2 weeks; swift positive developments"
+    },
+    "historicalMeaning": "The Clover is one of the most positive cards in the deck, bringing hope and relief. Historically, four-leaf clovers were collected for their legendary luck.",
+    "strength": "STRONG",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 3,
@@ -468,7 +512,29 @@
       }
     ],
     "imageUrl": "/images/cards/03-ship.png",
-    "meaning": "Travel, distance, and exploration. This card represents journeys, whether physical travel or movement away from the current situation."
+    "meaning": {
+      "general": "The Ship sails forward with movement and exploration. It represents change of location, journeys, and the passage between one state and another.",
+      "positive": [
+        "Successful journey",
+        "Adventure and exploration",
+        "Important movement",
+        "Positive travel",
+        "Progress through change"
+      ],
+      "negative": [
+        "Delayed travel",
+        "Difficult journey",
+        "Separation from loved ones",
+        "Stagnation despite movement",
+        "Unwanted distance"
+      ],
+      "relationships": "Distance in relationships or travel affecting romantic matters. A journey that separates or brings people together.",
+      "careerFinance": "Business travel, relocation for work, or career advancement through movement. Commerce and trade opportunities.",
+      "timing": "Travel or change within 2-4 weeks"
+    },
+    "historicalMeaning": "The Ship represents historical trade routes and travel. Traditionally, ships brought wealth through commerce and represented both danger and opportunity.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 4,
@@ -625,7 +691,29 @@
       }
     ],
     "imageUrl": "/images/cards/04-house.png",
-    "meaning": "Home, family, and stability. This card represents the foundation of security, whether physical property or emotional grounding."
+    "meaning": {
+      "general": "The House provides security and permanence. It represents home, family matters, and the stable foundation upon which life is built.",
+      "positive": [
+        "Stable home",
+        "Family harmony",
+        "Property matters resolved",
+        "Safe haven",
+        "Foundation building"
+      ],
+      "negative": [
+        "Unstable home",
+        "Family conflict",
+        "Property issues",
+        "Lack of security",
+        "Homelessness or displacement"
+      ],
+      "relationships": "Family involvement in relationships or domestic partnership. Marriage or commitment regarding home and family.",
+      "careerFinance": "Family business, working from home, or career stability. Real estate and property investments.",
+      "timing": "Long-term stability; developments over weeks or months"
+    },
+    "historicalMeaning": "The House represents the estate or family seat. Historically, a person's home was their greatest asset and symbol of status.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 5,
@@ -782,7 +870,29 @@
       }
     ],
     "imageUrl": "/images/cards/05-tree.png",
-    "meaning": "Nature, growth, and renewal. This card represents natural processes, healing, and organic development."
+    "meaning": {
+      "general": "The Tree grows with strength and stability. It represents longevity, health, family roots, and the passage of time through natural cycles.",
+      "positive": [
+        "Good health",
+        "Strong growth",
+        "Deep roots",
+        "Longevity",
+        "Natural healing"
+      ],
+      "negative": [
+        "Health challenges",
+        "Slow progress",
+        "Stuck growth",
+        "Family issues",
+        "Setbacks to development"
+      ],
+      "relationships": "Long-term relationship growth or family lineage. Deep roots in partnership or generational matters.",
+      "careerFinance": "Slow but steady career growth, long-term investment, or family business succession. Established businesses.",
+      "timing": "Long-term; months or years for full development"
+    },
+    "historicalMeaning": "The Tree represents the family tree and ancestral roots. It symbolizes stability rooted in history and natural cycles of life.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 6,
@@ -939,7 +1049,29 @@
       }
     ],
     "imageUrl": "/images/cards/06-clouds.png",
-    "meaning": "Confusion, uncertainty, and illusion. This card warns of unclear situations, miscommunication, or being misled."
+    "meaning": {
+      "general": "The Clouds obscure truth and clarity. It represents confusion, uncertainty, and the need to wait for clarity before proceeding.",
+      "positive": [
+        "Clarity coming",
+        "Temporary confusion",
+        "Illusion lifting",
+        "Mystery solving",
+        "Truth emerging"
+      ],
+      "negative": [
+        "Confusion reigns",
+        "Unclear situation",
+        "Deception present",
+        "Obscured truth",
+        "Mental fog"
+      ],
+      "relationships": "Unclear romantic situation or miscommunication between partners. Confusion about feelings or intentions.",
+      "careerFinance": "Unclear business situation or confused financial matters. Delayed clarity in professional dealings.",
+      "timing": "Confusion lifting within 1-3 weeks"
+    },
+    "historicalMeaning": "Clouds traditionally obscured the sun, representing divine judgment and mystery. They symbolize the unknown and uncertain future.",
+    "strength": "WEAK",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 7,
@@ -1096,7 +1228,29 @@
       }
     ],
     "imageUrl": "/images/cards/07-snake.png",
-    "meaning": "Betrayal, deceit, and hidden wisdom. This card warns of deception but also represents deep knowledge and healing through understanding."
+    "meaning": {
+      "general": "The Snake reveals hidden dangers and transformation. It represents deception, temptation, and the wisdom gained through understanding darkness.",
+      "positive": [
+        "Hidden wisdom",
+        "Healing insight",
+        "Clever thinking",
+        "Transformation",
+        "Deep knowledge"
+      ],
+      "negative": [
+        "Betrayal occurring",
+        "Deception present",
+        "Temptation seduction",
+        "Hidden enemy",
+        "Poisoned situation"
+      ],
+      "relationships": "Betrayal in love or deception by a romantic interest. Jealousy, temptation, or infidelity concerns.",
+      "careerFinance": "Deception in business or hidden competitor. Betrayal by colleagues or unclear business practices.",
+      "timing": "Deception or transformation within 1-2 weeks"
+    },
+    "historicalMeaning": "The Snake has dual symbolism: wisdom and danger. Ancient traditions saw snakes as both healer and destroyer.",
+    "strength": "WEAK",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 8,
@@ -1253,7 +1407,29 @@
       }
     ],
     "imageUrl": "/images/cards/08-coffin.png",
-    "meaning": "Endings, closure, and transformation. This card represents the natural conclusion of cycles and the death that precedes rebirth."
+    "meaning": {
+      "general": "The Coffin closes one chapter. It represents endings, conclusions, and the necessary death that allows rebirth and new beginnings.",
+      "positive": [
+        "Necessary ending",
+        "Release from burden",
+        "Transformation",
+        "Conclusion",
+        "Fresh start coming"
+      ],
+      "negative": [
+        "Unwanted ending",
+        "Difficult conclusion",
+        "Loss",
+        "Stagnation after ending",
+        "Trapped by past"
+      ],
+      "relationships": "End of a relationship or transformation of feelings. A chapter closing in love matters.",
+      "careerFinance": "Job ending or business closure. Career transformation or retirement approaching.",
+      "timing": "Conclusion within 1-3 weeks; transformation beginning"
+    },
+    "historicalMeaning": "Death and transformation in Lenormand represent natural cycles. The coffin was the final container, symbolizing completeness.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 9,
@@ -1410,7 +1586,29 @@
       }
     ],
     "imageUrl": "/images/cards/09-bouquet.png",
-    "meaning": "Celebration, gifts, and good news. This card represents joy, rewards, and positive recognition."
+    "meaning": {
+      "general": "The Bouquet brings gifts and celebration. It represents joy, appreciation, social pleasantness, and rewards for efforts.",
+      "positive": [
+        "Happy celebration",
+        "Gifts received",
+        "Social success",
+        "Positive recognition",
+        "Joy abundant"
+      ],
+      "negative": [
+        "Hollow celebration",
+        "Unappreciated gift",
+        "Social disappointment",
+        "Failed celebration",
+        "Insincere appreciation"
+      ],
+      "relationships": "Romance, gifts, and romantic celebration. Positive social events involving love interests.",
+      "careerFinance": "Professional recognition, bonuses, or promotions. Business success and appreciation.",
+      "timing": "Celebration and gifts within 1-3 weeks"
+    },
+    "historicalMeaning": "Flowers and bouquets were valuable gifts historically, symbolizing social status and romantic interest. Gifts represented obligation and appreciation.",
+    "strength": "STRONG",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 10,
@@ -1567,7 +1765,29 @@
       }
     ],
     "imageUrl": "/images/cards/10-scythe.png",
-    "meaning": "Sharp change, decisions, and cutting through confusion. This card represents clear action and important decisions."
+    "meaning": {
+      "general": "The Scythe cuts decisively and harvests results. It represents sharp change, crucial decisions, and the harvest of past efforts.",
+      "positive": [
+        "Clear decision",
+        "Harvest of efforts",
+        "Positive change",
+        "Cutting through confusion",
+        "Swift resolution"
+      ],
+      "negative": [
+        "Harsh cut",
+        "Unwanted decision",
+        "Danger present",
+        "Sharp loss",
+        "Abrupt change"
+      ],
+      "relationships": "Decisive relationship moment or sudden separation. Important choice regarding romantic future.",
+      "careerFinance": "Job loss or career cut, but also important business decision. Harvest of financial efforts.",
+      "timing": "Swift change within 1-2 weeks"
+    },
+    "historicalMeaning": "The Scythe harvests crops and also represents death and danger. It symbolizes both reaping rewards and the sharp edge of fate.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 11,
@@ -1724,7 +1944,29 @@
       }
     ],
     "imageUrl": "/images/cards/11-whip.png",
-    "meaning": "Conflict, repetition, and discipline. This card represents challenges, arguments, and the need for strength."
+    "meaning": {
+      "general": "The Whip brings conflict and repetition. It represents arguments, tension, and the need for discipline and assertiveness.",
+      "positive": [
+        "Conflict resolved",
+        "Discipline applied",
+        "Arguments clearing air",
+        "Assertiveness needed",
+        "Strength tested"
+      ],
+      "negative": [
+        "Active conflict",
+        "Repeated arguments",
+        "Harsh discipline",
+        "Abuse present",
+        "Tension ongoing"
+      ],
+      "relationships": "Arguments with romantic interest or passionate conflicts. Sexual tension or intimate conflict.",
+      "careerFinance": "Workplace conflict or difficult negotiations. Need for assertiveness in professional dealings.",
+      "timing": "Conflict or discipline within 1-2 weeks"
+    },
+    "historicalMeaning": "The Whip represents both discipline and cruelty. Historically, it was used for punishment and also for driving progress.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 12,
@@ -1881,7 +2123,29 @@
       }
     ],
     "imageUrl": "/images/cards/12-birds.png",
-    "meaning": "Communication, anxiety, and nervous energy. This card represents worry, discussions, and mental activity."
+    "meaning": {
+      "general": "The Birds bring chatter and nervous energy. They represent communication, gossip, anxiety, and the mental restlessness of multiple thoughts.",
+      "positive": [
+        "Good communication",
+        "Social activity",
+        "Mental clarity",
+        "Shared ideas",
+        "Social connection"
+      ],
+      "negative": [
+        "Gossip spreading",
+        "Anxiety present",
+        "Nervous tension",
+        "Miscommunication",
+        "Worried thoughts"
+      ],
+      "relationships": "Discussions about relationship or social butterfly behavior. Communication with romantic interest.",
+      "careerFinance": "Workplace discussions, meetings, or professional communication. Networking and social business.",
+      "timing": "Communication within 1-3 weeks; ongoing social activity"
+    },
+    "historicalMeaning": "Birds were auguries in ancient times, representing messages from the divine. Multiple birds symbolized increased activity and communication.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 13,
@@ -2038,7 +2302,29 @@
       }
     ],
     "imageUrl": "/images/cards/13-child.png",
-    "meaning": "New beginnings, innocence, and potential. This card represents fresh starts and untapped possibilities."
+    "meaning": {
+      "general": "The Child represents new beginnings and innocence. It brings fresh starts, creative energy, and the potential of youth or actual children.",
+      "positive": [
+        "New beginning",
+        "Innocent joy",
+        "Creative energy",
+        "Youth and potential",
+        "Fresh start"
+      ],
+      "negative": [
+        "Immaturity",
+        "Naive mistake",
+        "Blocked new beginning",
+        "Innocence lost",
+        "Stunted growth"
+      ],
+      "relationships": "New romance beginning or pregnancy. Innocent approach to love or childlike joy in relationship.",
+      "careerFinance": "New job or business venture starting. Entry-level position or fresh career beginning.",
+      "timing": "New beginning within 1-4 weeks"
+    },
+    "historicalMeaning": "The Child represents rebirth and regeneration. Children were symbols of hope and future potential in traditional societies.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 14,
@@ -2195,7 +2481,29 @@
       }
     ],
     "imageUrl": "/images/cards/14-fox.png",
-    "meaning": "Intelligence, cunning, and work. This card represents mental agility, wit, and active employment."
+    "meaning": {
+      "general": "The Foxes cunning strategy and intelligence. It represents quick thinking, strategy, and sometimes manipulation or deception.",
+      "positive": [
+        "Clever strategy",
+        "Quick thinking",
+        "Intelligent solution",
+        "Witty approach",
+        "Strategic move"
+      ],
+      "negative": [
+        "Deceptive strategy",
+        "Cunning against you",
+        "Manipulation",
+        "Sneaky behavior",
+        "Clever trap"
+      ],
+      "relationships": "Clever romantic approach or someone being manipulative in love. Need for caution with new romantic interest.",
+      "careerFinance": "Clever business strategy or professional cunning. Success through intelligent maneuvering.",
+      "timing": "Clever development within 1-3 weeks"
+    },
+    "historicalMeaning": "The Fox represents cunning and survival. Historically, foxes were symbols of intelligence but also of trickery and danger.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 15,
@@ -2352,7 +2660,29 @@
       }
     ],
     "imageUrl": "/images/cards/15-bear.png",
-    "meaning": "Strength, authority, and protection. This card represents power, confidence, and stable authority."
+    "meaning": {
+      "general": "The Bear represents strength and authority. It brings power, protection, and the need to assert dominance or defend position.",
+      "positive": [
+        "Strong position",
+        "Protection assured",
+        "Authority earned",
+        "Power growing",
+        "Resilience tested"
+      ],
+      "negative": [
+        "Aggressive force",
+        "Oppression present",
+        "Overbearing behavior",
+        "Loss of strength",
+        "Vulnerable position"
+      ],
+      "relationships": "Strong protective partner or overbearing behavior. Powerful attraction or jealous possessiveness.",
+      "careerFinance": "Strong professional position or boss figure. Power in business dealings.",
+      "timing": "Strength manifesting within 1-4 weeks"
+    },
+    "historicalMeaning": "The Bear was a symbol of untamed nature and strength. It represented both protection and danger in ancient symbolism.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 16,
@@ -2509,7 +2839,29 @@
       }
     ],
     "imageUrl": "/images/cards/16-stars.png",
-    "meaning": "Hope, wishes, and spiritual goals. This card represents idealism, inspiration, and optimistic vision."
+    "meaning": {
+      "general": "The Stars bring wishes and hope. It represents aspirations, guidance, and the manifestation of dreams and desires.",
+      "positive": [
+        "Wishes coming true",
+        "Hope fulfilled",
+        "Guidance received",
+        "Inspiration present",
+        "Dreams manifesting"
+      ],
+      "negative": [
+        "Wishes delayed",
+        "Hope fading",
+        "Lost direction",
+        "Unrealistic wishes",
+        "Guidance unclear"
+      ],
+      "relationships": "Wished-for romance coming true or romantic aspirations. Meeting ideal partner.",
+      "careerFinance": "Career dreams manifesting or desired opportunity arriving. Business wishes coming true.",
+      "timing": "Wishes manifesting within 2-4 weeks or longer"
+    },
+    "historicalMeaning": "Stars were navigation guides and symbols of destiny. The wish-granting star represents hope and divine guidance.",
+    "strength": "NEUTRAL",
+    "timing": "Variable"
   },
   {
     "id": 17,
@@ -2666,7 +3018,29 @@
       }
     ],
     "imageUrl": "/images/cards/17-stork.png",
-    "meaning": "Change, movement, and new directions. This card represents transformation, pregnancy, and major shifts."
+    "meaning": {
+      "general": "The Stork brings change and movement. It represents transitions, relocation, and the movement between one state and another.",
+      "positive": [
+        "Positive change",
+        "Smooth transition",
+        "Beneficial movement",
+        "New direction",
+        "Progress forward"
+      ],
+      "negative": [
+        "Unwanted change",
+        "Difficult transition",
+        "Disrupted movement",
+        "Lost direction",
+        "Stalled progress"
+      ],
+      "relationships": "Change in romantic situation or transition to new relationship phase. Movement in love matters.",
+      "careerFinance": "Job change or career transition. Relocation for work or business shift.",
+      "timing": "Change within 1-3 weeks; transition period"
+    },
+    "historicalMeaning": "Storks symbolized delivery and change in many cultures. They represented bringing new situations and transitions.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 18,
@@ -2823,7 +3197,29 @@
       }
     ],
     "imageUrl": "/images/cards/18-dog.png",
-    "meaning": "Loyalty, friendship, and companionship. This card represents true friends, pets, and faithful connections."
+    "meaning": {
+      "general": "The Dog brings loyalty and friendship. It represents faithful companions, trustworthy allies, and deep emotional bonds.",
+      "positive": [
+        "Loyal friendship",
+        "Trustworthy companion",
+        "Faithful bond",
+        "True friend",
+        "Reliable support"
+      ],
+      "negative": [
+        "Betrayed trust",
+        "Unfaithful companion",
+        "Abandoned friendship",
+        "Unreliable support",
+        "Disloyalty"
+      ],
+      "relationships": "Loyal romantic partner or deep friendship in love. Trustworthy bond between partners.",
+      "careerFinance": "Reliable business partner or loyal colleague. Trustworthy professional relationship.",
+      "timing": "Loyalty and friendship developing over time"
+    },
+    "historicalMeaning": "Dogs were symbols of loyalty and protection. They represented faithful companions and guardians in traditional symbolism.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 19,
@@ -2980,7 +3376,29 @@
       }
     ],
     "imageUrl": "/images/cards/19-tower.png",
-    "meaning": "Authority, isolation, and solitude. This card represents leadership, institutions, and being set apart."
+    "meaning": {
+      "general": "The Tower represents structure and authority. It brings law, order, rules, and sometimes isolation or imprisonment.",
+      "positive": [
+        "Structure established",
+        "Authority respected",
+        "Law and order",
+        "Security through rules",
+        "Protected boundaries"
+      ],
+      "negative": [
+        "Oppressive rules",
+        "Isolation enforced",
+        "Authority abuse",
+        "Prison-like situation",
+        "Rigid boundaries"
+      ],
+      "relationships": "Distant relationship or relationship under strict rules. Possible separation or isolation.",
+      "careerFinance": "Strict professional environment or government/corporate structure. Authority figure in business.",
+      "timing": "Long-term structural issues or establishment"
+    },
+    "historicalMeaning": "The Tower represents fortification and security. It symbolized both protection and imprisonment depending on context.",
+    "strength": "NEUTRAL",
+    "timing": "Variable"
   },
   {
     "id": 20,
@@ -3137,7 +3555,29 @@
       }
     ],
     "imageUrl": "/images/cards/20-garden.png",
-    "meaning": "Social gathering, community, and public space. This card represents connections with others and shared experiences."
+    "meaning": {
+      "general": "The Judgement card brings destiny and important crossroads. It represents major decisions, judgment moments, and life-changing realizations.",
+      "positive": [
+        "Positive judgment",
+        "Destiny revealed",
+        "Important calling",
+        "Right decision",
+        "Awakening"
+      ],
+      "negative": [
+        "Harsh judgment",
+        "Destiny resisted",
+        "Wrong decision",
+        "Important loss",
+        "Awakening to reality"
+      ],
+      "relationships": "Fated meeting or important romantic decision. Destiny in love matters.",
+      "careerFinance": "Career-defining moment or important business judgment. Destiny in professional matters.",
+      "timing": "Important crossroads immediately or within 1-3 weeks"
+    },
+    "historicalMeaning": "The Judgment card represents cosmic justice and important turning points. It symbolizes the moment of reckoning and revelation.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 21,
@@ -3294,7 +3734,29 @@
       }
     ],
     "imageUrl": "/images/cards/21-mountain.png",
-    "meaning": "Obstacles, delays, and challenges. This card represents what stands in the way and requires patience."
+    "meaning": {
+      "general": "The Mountain represents obstacles and challenges. It brings difficulty, slow progress, and the need for perseverance and determination.",
+      "positive": [
+        "Obstacle overcome",
+        "Challenge met",
+        "Strength developed",
+        "Progress despite difficulty",
+        "Perseverance rewarded"
+      ],
+      "negative": [
+        "Blocked progress",
+        "Obstacle overwhelming",
+        "Difficulty increasing",
+        "Weakness showing",
+        "Surrender to challenge"
+      ],
+      "relationships": "Relationship obstacles or challenges to overcome. Difficult period in love.",
+      "careerFinance": "Career obstacles or difficult business situation. Financial challenges requiring perseverance.",
+      "timing": "Challenge period lasting weeks or months"
+    },
+    "historicalMeaning": "Mountains represented barriers and tests in traditional symbolism. They symbolized both danger and the testing of character.",
+    "strength": "NEUTRAL",
+    "timing": "Long-term (weeks/months)"
   },
   {
     "id": 22,
@@ -3451,7 +3913,29 @@
       }
     ],
     "imageUrl": "/images/cards/22-paths.png",
-    "meaning": "Choices, decisions, and crossroads. This card represents important decision points and multiple paths."
+    "meaning": {
+      "general": "The Crossroads brings choice and direction. It represents multiple options, important decisions, and the need to choose wisely.",
+      "positive": [
+        "Clear choice",
+        "Right path",
+        "Wise decision",
+        "Multiple good options",
+        "Direction found"
+      ],
+      "negative": [
+        "Unclear choice",
+        "Wrong path",
+        "Indecision",
+        "Difficult decision",
+        "Lost direction"
+      ],
+      "relationships": "Choice in romantic matters or important relationship decision. Choosing between partners.",
+      "careerFinance": "Career decision or business direction choice. Multiple professional opportunities.",
+      "timing": "Decision required within 1-3 weeks"
+    },
+    "historicalMeaning": "Crossroads were traditionally seen as magical and dangerous places. They represented important decisions and life changes.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 23,
@@ -3608,7 +4092,29 @@
       }
     ],
     "imageUrl": "/images/cards/23-mice.png",
-    "meaning": "Loss, worry, and details. This card represents what you fear losing and attention to small matters."
+    "meaning": {
+      "general": "The Rats bring loss and worry. It represents stress, anxiety, loss, and the gnawing worry that accompanies difficult situations.",
+      "positive": [
+        "Loss accepted",
+        "Worry fading",
+        "Stress relief",
+        "Problem solved",
+        "Release from burden"
+      ],
+      "negative": [
+        "Loss increasing",
+        "Stress mounting",
+        "Worry consuming",
+        "Problem growing",
+        "Burden overwhelming"
+      ],
+      "relationships": "Loss in relationship or worry about romantic situation. Stress affecting partnership.",
+      "careerFinance": "Financial loss or stress about money. Work-related anxiety and pressure.",
+      "timing": "Stress and worry period lasting 1-4 weeks"
+    },
+    "historicalMeaning": "Rats were symbols of loss, plague, and decay. They represented the gnawing worry and damage of unseen threats.",
+    "strength": "WEAK",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 24,
@@ -3765,7 +4271,29 @@
       }
     ],
     "imageUrl": "/images/cards/24-heart.png",
-    "meaning": "Love, emotions, and passion. This card represents matters of the heart and deep emotional connections."
+    "meaning": {
+      "general": "The Heart brings love and emotion. It represents romance, passionate feelings, and deep emotional connection.",
+      "positive": [
+        "True love",
+        "Passionate romance",
+        "Emotional depth",
+        "Love reciprocated",
+        "Heart harmony"
+      ],
+      "negative": [
+        "Heartbreak",
+        "Unrequited love",
+        "Emotional pain",
+        "Love lost",
+        "Heart conflict"
+      ],
+      "relationships": "Romantic love and passionate attraction. Deep emotional connection or new romance.",
+      "careerFinance": "Career of passion or work you love. Emotional investment in business.",
+      "timing": "Love development within weeks or ongoing"
+    },
+    "historicalMeaning": "The Heart represents the center of emotion and life force. It symbolized love, passion, and the soul itself.",
+    "strength": "STRONG",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 25,
@@ -3922,7 +4450,29 @@
       }
     ],
     "imageUrl": "/images/cards/25-ring.png",
-    "meaning": "Commitment, marriage, and binding contracts. This card represents lasting unions and serious agreements."
+    "meaning": {
+      "general": "The Ring brings commitment and binding. It represents contracts, marriage, commitment, and promises that bind people together.",
+      "positive": [
+        "Commitment deepened",
+        "Promise kept",
+        "Contract signed",
+        "Binding agreement",
+        "Lasting bond"
+      ],
+      "negative": [
+        "Commitment broken",
+        "Promise failed",
+        "Contract disputed",
+        "Binding too tight",
+        "Trapped by agreement"
+      ],
+      "relationships": "Engagement, marriage, or serious commitment. Binding romantic agreement.",
+      "careerFinance": "Business contract or binding agreement. Professional commitment or partnership.",
+      "timing": "Commitment or contract within 1-4 weeks or longer"
+    },
+    "historicalMeaning": "Rings symbolized eternal bonds and unbreakable promises. They were symbols of commitment and sacred obligation.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 26,
@@ -4079,7 +4629,29 @@
       }
     ],
     "imageUrl": "/images/cards/26-book.png",
-    "meaning": "Knowledge, learning, and education. This card represents study, wisdom, and intellectual pursuits."
+    "meaning": {
+      "general": "The Book brings knowledge and secrets. It represents learning, education, hidden information, and the revelation of secrets.",
+      "positive": [
+        "Knowledge gained",
+        "Secret revealed",
+        "Learning completed",
+        "Wisdom acquired",
+        "Truth discovered"
+      ],
+      "negative": [
+        "Knowledge hidden",
+        "Secret kept",
+        "Learning blocked",
+        "Confusion about truth",
+        "Ignorance persisting"
+      ],
+      "relationships": "Secret in relationship or learning about partner. Hidden information about romantic situation.",
+      "careerFinance": "Professional education or career advancement through knowledge. Business secrets.",
+      "timing": "Knowledge or secrets revealed within 1-3 weeks"
+    },
+    "historicalMeaning": "Books were symbols of wisdom and hidden knowledge. They represented both learning and the carefully guarded secrets of institutions.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 27,
@@ -4236,7 +4808,29 @@
       }
     ],
     "imageUrl": "/images/cards/27-letter.png",
-    "meaning": "Written communication, documents, and important papers. This card represents contracts, letters, and written records."
+    "meaning": {
+      "general": "The Syringe brings medicine and healing. It represents medical attention, medication, healthcare, and physical remedies.",
+      "positive": [
+        "Healing received",
+        "Medicine effective",
+        "Health improving",
+        "Recovery begun",
+        "Remedy found"
+      ],
+      "negative": [
+        "Health declining",
+        "Medicine ineffective",
+        "Health crisis",
+        "Treatment fails",
+        "Illness persisting"
+      ],
+      "relationships": "Health affecting relationship or medical concerns. Partner's health situation.",
+      "careerFinance": "Medical career or health-related business. Insurance or medical finance.",
+      "timing": "Medical treatment or health matters within weeks"
+    },
+    "historicalMeaning": "Medicine and injections represented intervention and healing. They symbolized the ability to address problems at their root.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 28,
@@ -4393,7 +4987,29 @@
       }
     ],
     "imageUrl": "/images/cards/28-gentleman.png",
-    "meaning": "Masculine energy, men, and paternal figures. This card represents men, fathers, authority figures, and masculine qualities."
+    "meaning": {
+      "general": "The Man represents a specific mature male figure. He brings masculine energy, maturity, and represents a man in the querent's life.",
+      "positive": [
+        "Strong man",
+        "Reliable presence",
+        "Masculine energy",
+        "Protective figure",
+        "Mature support"
+      ],
+      "negative": [
+        "Weak man",
+        "Unreliable presence",
+        "Aggressive energy",
+        "Threatening figure",
+        "Immature behavior"
+      ],
+      "relationships": "A significant man in romantic context or the querent if male. Partner or romantic interest.",
+      "careerFinance": "Male boss, colleague, or business partner. Masculine authority in professional matters.",
+      "timing": "Represents a person rather than timing"
+    },
+    "historicalMeaning": "The Man card specifically represents one of the significators in traditional Lenormand readings. It identifies a key person in the situation.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 29,
@@ -4550,7 +5166,29 @@
       }
     ],
     "imageUrl": "/images/cards/29-lady.png",
-    "meaning": "Feminine energy, women, and maternal figures. This card represents women, mothers, feminine qualities, and nurturing."
+    "meaning": {
+      "general": "The Woman represents a specific mature female figure. She brings feminine energy, maturity, and represents a woman in the querent's life.",
+      "positive": [
+        "Strong woman",
+        "Reliable presence",
+        "Feminine energy",
+        "Nurturing figure",
+        "Mature support"
+      ],
+      "negative": [
+        "Weak woman",
+        "Unreliable presence",
+        "Aggressive energy",
+        "Threatening figure",
+        "Immature behavior"
+      ],
+      "relationships": "A significant woman in romantic context or the querent if female. Partner or romantic interest.",
+      "careerFinance": "Female boss, colleague, or business partner. Feminine authority in professional matters.",
+      "timing": "Represents a person rather than timing"
+    },
+    "historicalMeaning": "The Woman card specifically represents one of the significators in traditional Lenormand readings. She identifies a key person in the situation.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 30,
@@ -4707,7 +5345,29 @@
       }
     ],
     "imageUrl": "/images/cards/30-lilies.png",
-    "meaning": "Purity, peace, wisdom, maturity, ethics. This card represents spiritual growth, moral integrity, and inner peace."
+    "meaning": {
+      "general": "The Lily brings wisdom and peace. It represents maturity, wisdom, ethical matters, and spiritual or contemplative peace.",
+      "positive": [
+        "Wisdom gained",
+        "Peaceful resolution",
+        "Ethical path",
+        "Spiritual growth",
+        "Mature perspective"
+      ],
+      "negative": [
+        "Foolish choice",
+        "Conflict persisting",
+        "Unethical behavior",
+        "Spiritual emptiness",
+        "Naive approach"
+      ],
+      "relationships": "Mature love or spiritual connection. Wisdom in relationship matters.",
+      "careerFinance": "Wise business decision or ethical business practice. Mature professional approach.",
+      "timing": "Wisdom and peace developing over time"
+    },
+    "historicalMeaning": "Lilies represented purity and wisdom in spiritual traditions. They symbolized peace achieved through understanding and ethical living.",
+    "strength": "NEUTRAL",
+    "timing": "Long-term (weeks/months)"
   },
   {
     "id": 31,
@@ -4864,7 +5524,29 @@
       }
     ],
     "imageUrl": "/images/cards/31-sun.png",
-    "meaning": "Success, vitality, and clarity. This card represents achievement, brightness, and the fulfillment of positive outcomes."
+    "meaning": {
+      "general": "The Sun brings success and happiness. It represents achievement, victory, joy, and the bright clarity of success.",
+      "positive": [
+        "Success achieved",
+        "Happiness found",
+        "Victory won",
+        "Joy abundant",
+        "Clear success"
+      ],
+      "negative": [
+        "Success delayed",
+        "Happiness elusive",
+        "Victory lost",
+        "Joy fading",
+        "Unclear outcome"
+      ],
+      "relationships": "Happy romance or successful relationship. Joy and success in love.",
+      "careerFinance": "Career success or business achievement. Financial victory and prosperity.",
+      "timing": "Success manifesting within weeks or longer"
+    },
+    "historicalMeaning": "The Sun represented clarity, success, and divine favor. It symbolized the peak of achievement and the light of victory.",
+    "strength": "STRONG",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 32,
@@ -5021,7 +5703,29 @@
       }
     ],
     "imageUrl": "/images/cards/32-moon.png",
-    "meaning": "Intuition, emotions, and cycles. This card represents inner knowing, emotional intelligence, and psychic abilities."
+    "meaning": {
+      "general": "The Moon brings dreams and intuition. It represents the subconscious, creative inspiration, emotional depths, and intuitive knowledge.",
+      "positive": [
+        "Intuition correct",
+        "Dreams manifesting",
+        "Creativity flowing",
+        "Subconscious clarity",
+        "Emotional depth"
+      ],
+      "negative": [
+        "Intuition wrong",
+        "Nightmares",
+        "Creative block",
+        "Confusion",
+        "Emotional turmoil"
+      ],
+      "relationships": "Intuitive connection or emotional depth in relationship. Dreams and fantasies about love.",
+      "careerFinance": "Creative work or intuitive business decision. Imagination in professional matters.",
+      "timing": "Dreams and intuition revealing truth within days or weeks"
+    },
+    "historicalMeaning": "The Moon represented the hidden, the subconscious, and feminine mystery. It symbolized intuition and the depths of emotion.",
+    "strength": "NEUTRAL",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 33,
@@ -5178,7 +5882,29 @@
       }
     ],
     "imageUrl": "/images/cards/33-key.png",
-    "meaning": "Solutions, importance, and answers. This card represents the key to problems and ultimate importance."
+    "meaning": {
+      "general": "The Key brings solutions and access. It represents finding answers, opportunities opening, and the key to resolving situations.",
+      "positive": [
+        "Solution found",
+        "Access granted",
+        "Opportunity opens",
+        "Answer revealed",
+        "Door unlocking"
+      ],
+      "negative": [
+        "Solution elusive",
+        "Access denied",
+        "Opportunity closes",
+        "Answer hidden",
+        "Door locked"
+      ],
+      "relationships": "Solution to relationship problem or key to understanding partner. Access to deeper connection.",
+      "careerFinance": "Business solution or opportunity opening. Key to financial success.",
+      "timing": "Solution or opportunity within 1-3 weeks"
+    },
+    "historicalMeaning": "Keys represented access to knowledge, property, and power. They symbolized the solution to problems and the opening of new possibilities.",
+    "strength": "NEUTRAL",
+    "timing": "Variable"
   },
   {
     "id": 34,
@@ -5335,7 +6061,29 @@
       }
     ],
     "imageUrl": "/images/cards/34-fish.png",
-    "meaning": "Finance, abundance, and business. This card represents money, wealth, and material resources."
+    "meaning": {
+      "general": "The Fish brings prosperity and abundance. It represents wealth, financial success, and the flow of resources.",
+      "positive": [
+        "Abundance flowing",
+        "Prosperity growing",
+        "Wealth increasing",
+        "Resources available",
+        "Success assured"
+      ],
+      "negative": [
+        "Abundance blocked",
+        "Prosperity delayed",
+        "Wealth decreasing",
+        "Resources scarce",
+        "Success uncertain"
+      ],
+      "relationships": "Prosperous partnership or financial security in relationship. Abundance of love.",
+      "careerFinance": "Financial prosperity or business abundance. Successful ventures and wealth growth.",
+      "timing": "Prosperity manifesting within weeks or months"
+    },
+    "historicalMeaning": "Fish symbolized fertility, abundance, and the flow of wealth. They represented the abundance of the waters and nature's provision.",
+    "strength": "STRONG",
+    "timing": "Near future (1-3 weeks)"
   },
   {
     "id": 35,
@@ -5492,7 +6240,29 @@
       }
     ],
     "imageUrl": "/images/cards/35-anchor.png",
-    "meaning": "Stability, security, and grounding. This card represents solid foundations, patience, and earthly prosperity."
+    "meaning": {
+      "general": "The Anchor brings stability and grounding. It represents security, stability, steady foundations, and being anchored to what matters.",
+      "positive": [
+        "Stability secured",
+        "Grounding found",
+        "Security assured",
+        "Steady progress",
+        "Anchored safely"
+      ],
+      "negative": [
+        "Instability increasing",
+        "Grounding lost",
+        "Security threatened",
+        "Being dragged",
+        "Anchored to problems"
+      ],
+      "relationships": "Stable relationship foundation or grounding in love. Security and commitment.",
+      "careerFinance": "Career stability or secure financial foundation. Steady business success.",
+      "timing": "Stability developing over time or long-term"
+    },
+    "historicalMeaning": "The Anchor represented security and safe harbor. It symbolized stability in the midst of life's storms.",
+    "strength": "NEUTRAL",
+    "timing": "Long-term (weeks/months)"
   },
   {
     "id": 36,
@@ -5649,6 +6419,28 @@
       }
     ],
     "imageUrl": "/images/cards/36-cross.png",
-    "meaning": "Burden, fate, and sacrifice. This card represents heavy burdens, destiny, and what must be accepted."
+    "meaning": {
+      "general": "The Cross brings destiny and spiritual burden. It represents fate, karmic lessons, spiritual growth through difficulty, and divine will.",
+      "positive": [
+        "Burden accepted",
+        "Destiny embraced",
+        "Spiritual growth",
+        "Lesson learned",
+        "Transformation complete"
+      ],
+      "negative": [
+        "Burden overwhelming",
+        "Fate resisted",
+        "Spiritual emptiness",
+        "Lesson unlearned",
+        "Suffering continues"
+      ],
+      "relationships": "Karmic relationship or destined meeting. Spiritual lessons through love.",
+      "careerFinance": "Karmic career path or destined profession. Business lessons and spiritual growth.",
+      "timing": "Fate and destiny ongoing; lessons unfolding over time"
+    },
+    "historicalMeaning": "The Cross represented faith, sacrifice, and divine purpose. It symbolized the burden of destiny and spiritual transformation.",
+    "strength": "WEAK",
+    "timing": "Long-term (weeks/months)"
   }
 ]

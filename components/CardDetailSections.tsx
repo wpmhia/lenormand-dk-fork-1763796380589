@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { CardMeaning } from '@/lib/types'
 import Link from 'next/link'
+import { Heart, Briefcase, Calendar, CheckCircle, AlertCircle } from 'lucide-react'
 
 interface MeaningSectionProps {
   title: string
@@ -34,10 +36,14 @@ export function AspectList({ title, aspects, variant = 'positive' }: AspectListP
 
   const bulletColor = variant === 'positive' ? 'text-primary' : 'text-destructive'
   const bgColor = variant === 'positive' ? 'bg-primary/10' : 'bg-destructive/10'
+  const icon = variant === 'positive' ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <div className="flex items-center gap-2">
+        <span className={bulletColor}>{icon}</span>
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      </div>
       <div className={`rounded-lg p-4 ${bgColor}`}>
         <ul className="space-y-2">
           {aspects.map((aspect, index) => (
@@ -77,6 +83,28 @@ export function TwoColumnAspects({
       {negativeAspects && negativeAspects.length > 0 && (
         <AspectList title={negativeTitle} aspects={negativeAspects} variant="negative" />
       )}
+    </div>
+  )
+}
+
+interface ContextualMeaningProps {
+  icon: React.ReactNode
+  title: string
+  content: string | null | undefined
+}
+
+export function ContextualMeaning({ icon, title, content }: ContextualMeaningProps) {
+  if (!content) return null
+  
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 transition-colors">
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 mt-0.5 text-primary">{icon}</div>
+        <div>
+          <h4 className="font-semibold text-foreground mb-2">{title}</h4>
+          <p className="text-sm leading-relaxed text-muted-foreground">{content}</p>
+        </div>
+      </div>
     </div>
   )
 }
