@@ -90,24 +90,33 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: '/data/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
-          },
-        ],
-      },
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains',
-          },
-        ],
-      },
+       {
+         source: '/data/:path*',
+         headers: [
+           {
+             key: 'Cache-Control',
+             value: 'no-cache, no-store, must-revalidate',
+           },
+         ],
+       },
+       {
+         source: '/cards/:path*',
+         headers: [
+           {
+             key: 'Cache-Control',
+             value: 'no-cache, no-store, must-revalidate, private',
+           },
+         ],
+       },
+       {
+         source: '/:path*',
+         headers: [
+           {
+             key: 'Strict-Transport-Security',
+             value: 'max-age=31536000; includeSubDomains',
+           },
+         ],
+       },
     ];
   },
 };
