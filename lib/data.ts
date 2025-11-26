@@ -1,11 +1,12 @@
 import { Card, Reading, ReadingCard } from './types'
-import cardsData from '../public/data/cards.json'
 
-// Load cards from JSON file
+// Load cards from JSON file - bypass caching in development
 export function getCards(): Card[] {
-  // Use imported JSON data for both server and client
+  // Use dynamic require to bypass Next.js/webpack static import caching
+  // This ensures fresh data on every call during development
+  const cardsData = require('../public/data/cards.json')
   const data = cardsData as unknown as Card[]
-  console.log('✅ Cards loaded:', data.length, 'cards')
+  console.log('✅ Cards loaded:', data.length, 'cards', 'at', new Date().toISOString())
   return data
 }
 
