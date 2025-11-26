@@ -18,30 +18,30 @@ import {
 export default function HistoryPage() {
   const timeline = [
     {
-      year: "1790s",
-      title: "Marie Anne Adelaide Lenormand",
-      description: "The famous French fortune teller begins her career, gaining fame for her accurate predictions and readings for Napoleon Bonaparte.",
+      year: "1770s-1820s",
+      title: "Marie Anne Adelaide Lenormand's Era",
+      description: "The legendary French fortune teller Marie Anne Adelaide Lenormand (1772-1843) gains fame for her readings and high-profile clientele including Napoleon and Josephine. She becomes one of the most celebrated diviners of her time.",
       icon: User,
       color: "from-primary to-primary/80"
     },
     {
       year: "Early 1800s",
-      title: "The Petit Lenormand",
-      description: "The first Lenormand decks appear, based on Marie Lenormand's system. These early decks feature simple, symbolic imagery.",
+      title: "Early Divination Decks",
+      description: "Various fortune-telling decks emerge during this era. While directly attributed to Lenormand posthumously, these decks evolved from the broader tradition of European cartomancy that flourished during her lifetime.",
       icon: BookOpen,
       color: "from-primary to-primary/80"
     },
     {
-      year: "1840s-1860s",
-      title: "Golden Age of Cartomancy",
-      description: "Lenormand becomes extremely popular in Europe, especially in France and Germany. Various schools of interpretation develop.",
+      year: "1840s-1890s",
+      title: "Posthumous Popularization",
+      description: "After Lenormand's death in 1843, the 36-card system becomes widely known as the Lenormand deck. Publishers capitalize on her name and legacy, creating standardized versions and interpretation guides that shaped modern Lenormand readings.",
       icon: Crown,
       color: "from-primary to-primary/80"
     },
     {
       year: "Modern Era",
-      title: "Global Renaissance",
-      description: "Lenormand experiences a worldwide revival, with contemporary artists creating beautiful new decks and innovative interpretations.",
+      title: "Global Revival & Evolution",
+      description: "Contemporary artists and readers honor Lenormand's legacy by creating beautiful new decks and refined interpretations. Modern Lenormand combines historical tradition with contemporary insights, respecting the symbolic heritage even as it continues to evolve.",
       icon: Sparkles,
       color: "from-primary to-primary/80"
     }
@@ -111,19 +111,19 @@ export default function HistoryPage() {
               Marie Anne Adelaide Lenormand
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="leading-relaxed text-muted-foreground">
-              Born in 1772 in Alençon, France, Marie Anne Adelaide Lenormand was one of the most famous fortune tellers of the 18th and 19th centuries. Her extraordinary accuracy and high-profile clientele made her a legend in her time.
-            </p>
-            <p className="leading-relaxed text-muted-foreground">
-              Among her famous clients were Napoleon Bonaparte, Empress Josephine, and many other figures of French aristocracy. Her predictions were said to be remarkably accurate, and               she became known as &ldquo;the Sibyl of the Faubourg Saint-Germain.&rdquo;
-            </p>
-            <div className="rounded-lg border border-border bg-muted p-4">
-              <p className="text-sm italic text-foreground">
-                &ldquo;Lenormand predicted Napoleon&apos;s defeat at Waterloo and his exile to St. Helena. She also foresaw the restoration of the monarchy and the fall of Charles X.&rdquo;
-              </p>
-            </div>
-          </CardContent>
+           <CardContent className="space-y-4">
+             <p className="leading-relaxed text-muted-foreground">
+               Born in 1772 in Alençon, France, Marie Anne Adelaide Lenormand (1772-1843) was one of the most celebrated fortune tellers of her era. Her clientele included Napoleon Bonaparte, Empress Josephine, and members of French aristocracy. She became known as &ldquo;the Sibyl of the Faubourg Saint-Germain,&rdquo; famous for her readings and predictions.
+             </p>
+             <p className="leading-relaxed text-muted-foreground">
+               <strong>Important Note:</strong> While Lenormand was a legendary diviner, she did not leave behind a documented system specifically for the 36-card deck that now bears her name. The modern Lenormand system and interpretations were developed and popularized <em>after her death</em> by publishers and readers who honored her legacy by associating the deck with her name. The symbolic language and reading traditions we know today as Lenormand evolved from the broader European cartomantic traditions of her era and the decades following.
+             </p>
+             <div className="rounded-lg border border-border bg-muted p-4">
+               <p className="text-sm italic text-foreground">
+                 This platform respects Lenormand&apos;s historical significance while offering interpretations inspired by the spirit of divination traditions connected to her legacy—a living tradition that honors the past while continuing to evolve.
+               </p>
+             </div>
+           </CardContent>
         </Card>
 
         {/* Historical Timeline */}

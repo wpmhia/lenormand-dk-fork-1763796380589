@@ -127,13 +127,13 @@ export default function Home() {
           <div className="absolute left-4 top-4 h-16 w-16 rounded-full bg-primary/20 blur-xl"></div>
           <div className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-primary/20 blur-lg"></div>
            <div className="relative z-10">
-                <h2 className="relative mb-4 text-4xl font-bold text-foreground">
-                  Lenormand&apos;s Wisdom, <span className="text-primary">Awakened by AI</span>
-                 <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
-               </h2>
-              <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-               Experience her timeless wisdom through modern intelligence
-             </p>
+            <h2 className="relative mb-4 text-4xl font-bold text-foreground">
+                   The Lenormand Tradition, <span className="text-primary">Powered by AI</span>
+                  <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
+                </h2>
+               <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
+                Explore interpretations inspired by historical Lenormand traditions through modern intelligence
+              </p>
             <Link href="/read/new">
               <Button size="lg">
                 Discover Your Path

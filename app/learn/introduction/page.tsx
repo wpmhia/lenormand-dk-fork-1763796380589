@@ -82,12 +82,12 @@ export default function IntroductionPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="leading-relaxed text-muted-foreground">
-              Lenormand is a form of cartomancy (divination using cards) that originated in 18th century France. Unlike Tarot&apos;s esoteric symbolism, Lenormand speaks in the language of everyday symbols and practical wisdom. Its 36 cards represent concrete concepts, people, and situations that mirror real life.
-            </p>
-            <p className="leading-relaxed text-muted-foreground">
-              Named after the famous French fortune teller Marie Anne Adelaide Lenormand, this system has been used for over two centuries to provide clear, direct guidance on relationships, career, health, and life&apos;s important decisions.
-            </p>
+             <p className="leading-relaxed text-muted-foreground">
+               Lenormand is a form of cartomancy (divination using cards) that originated in 18th century France. Unlike Tarot&apos;s esoteric symbolism, Lenormand speaks in the language of everyday symbols and practical wisdom. Its 36 cards represent concrete concepts, people, and situations that mirror real life.
+             </p>
+             <p className="leading-relaxed text-muted-foreground">
+               The modern 36-card deck and its interpretation methods became known as Lenormand in the 19th century, posthumously associated with the legendary French fortune teller Marie Anne Adelaide Lenormand. While she didn&apos;t leave behind a documented system for this specific deck, the symbolic language and reading traditions connected to her name reflect the evolution of divination during and after her era. This platform offers an interpretation inspired by the spirit of Lenormand readings as they developed historically, providing clear, direct guidance on relationships, career, health, and life&apos;s important decisions.
+             </p>
           </CardContent>
         </Card>
 

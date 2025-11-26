@@ -51,9 +51,9 @@ export default function MarieAnnesSystemPage() {
             <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
              Marie-Anne&apos;s System
             </h1>
-          <p className="text-lg text-muted-foreground">
-            How she actually read the cards in her Paris salon (1800-1843)
-          </p>
+           <p className="text-lg text-muted-foreground">
+             Historical reading traditions inspired by the Lenormand legacy
+           </p>
         </div>
 
         {/* Content */}
@@ -66,17 +66,17 @@ export default function MarieAnnesSystemPage() {
                 Who Was Marie-Anne Lenormand?
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-foreground">
+             <CardContent className="space-y-4 text-foreground">
+                <p>
+                  Marie-Anne Adelaide Lenormand (1772–1843) was the most celebrated fortune-teller of the Napoleonic era. She read for Empress Josephine, revolutionary leaders, and thousands of clients in her Paris salon. Her reputation for sharp, practical readings made her legendary.
+                </p>
                <p>
-                 Marie-Anne Adelaide Lenormand (1772&ndash;1843) was the most famous fortune-teller of the Napoleonic era. She read for Empress Josephine, revolutionary leaders, and thousands of working women in her Paris salon. She didn&apos;t read for pleasure&ndash;she read to solve real problems.
+                 While she did not leave behind a documented system for the 36-card deck now bearing her name, the modern Lenormand deck evolved from German fortune-telling games like <em>Das Spiel der Hoffnung</em> (The Game of Hope). After her death, the deck became posthumously associated with her legacy, and modern interpretations have developed to honor the spirit of reading traditions from her era.
                </p>
-              <p>
-                Her deck of 36 cards, based on a German game called <em>Das Spiel der Hoffnung</em> (The Game of Hope), became the standard Lenormand deck used today.
-              </p>
-               <p className="text-sm text-muted-foreground italic">
-                 &quot;I tell what is. Not what you wish to hear.&quot;
+               <p>
+                 This page explores reading principles inspired by the historical Lenormand tradition—practical, direct guidance drawn from the symbolic language and techniques that became known as Lenormand divination.
                </p>
-            </CardContent>
+             </CardContent>
           </Card>
 
           {/* Her Five Core Principles */}
