@@ -1,5 +1,8 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, ArrowRight, Sparkles, Clock, Users, Heart, Target, BookOpen, Star, Briefcase, Calendar } from 'lucide-react'
