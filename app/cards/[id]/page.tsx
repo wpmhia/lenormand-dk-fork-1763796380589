@@ -189,21 +189,7 @@ export default function CardDetailPage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Quick Stats */}
-              <div className="flex gap-4 text-center">
-                <div className="flex-1 rounded-lg bg-muted/50 p-4">
-                  <p className="text-2xl font-bold text-primary">{combos.length}</p>
-                  <p className="text-sm text-muted-foreground">Combinations</p>
-                </div>
-                <div className="flex-1 rounded-lg bg-muted/50 p-4">
-                  <p className="text-2xl font-bold text-primary">{card.keywords.length}</p>
-                  <p className="text-sm text-muted-foreground">Keywords</p>
-                </div>
-                <div className="flex-1 rounded-lg bg-muted/50 p-4">
-                  <p className="text-2xl font-bold text-primary">{card.id}/36</p>
-                  <p className="text-sm text-muted-foreground">In Deck</p>
-                </div>
-              </div>
+              {/* Quick Stats - Removed */}
             </div>
           </div>
         </div>
