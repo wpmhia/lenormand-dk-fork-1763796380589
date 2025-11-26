@@ -23,8 +23,10 @@ export function CookieConsent() {
     analytics: false,
     necessary: true
   })
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     // Check if user has already made a choice
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY)
     const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY)
@@ -86,9 +88,9 @@ export function CookieConsent() {
      document.head.appendChild(script2)
    }
 
-  if (!showBanner && !showSettings) return null
+   if (!mounted || (!showBanner && !showSettings)) return null
 
-  return (
+   return (
     <>
       {/* Cookie Banner */}
       {showBanner && (

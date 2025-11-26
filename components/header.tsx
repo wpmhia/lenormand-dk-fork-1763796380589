@@ -2,18 +2,23 @@
 
 import Link from 'next/link';
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <>
-      <header className="z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
+      <header className="z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60" suppressHydrationWarning>
       <div className="container flex h-14 items-center px-4">
         <div className="flex items-center space-x-2">
            <Link href="/" className="text-base font-bold leading-normal transition-opacity hover:opacity-80 sm:text-lg" style={{ fontFamily: "'Crimson Pro', 'Crimson Text', serif" }}>
@@ -73,16 +78,17 @@ export function Header() {
          </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden border-t border-border bg-card/95 backdrop-blur md:hidden"
-          >
+       {/* Mobile Navigation Menu */}
+       {mounted && (
+         <AnimatePresence>
+           {mobileMenuOpen && (
+             <motion.div
+               initial={{ height: 0, opacity: 0 }}
+               animate={{ height: 'auto', opacity: 1 }}
+               exit={{ height: 0, opacity: 0 }}
+               transition={{ duration: 0.3, ease: 'easeInOut' }}
+               className="overflow-hidden border-t border-border bg-card/95 backdrop-blur md:hidden"
+             >
              <nav className="container space-y-2 px-4 py-3" role="navigation">
               <Link
                 href="/"
@@ -118,10 +124,11 @@ export function Header() {
                 <Sparkles className="h-5 w-5" />
                 <span>Learn</span>
               </Link>
-              </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+               </nav>
+             </motion.div>
+           )}
+         </AnimatePresence>
+       )}
     </header>
     </>
   );

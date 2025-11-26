@@ -1,10 +1,7 @@
-"use client"
-
 import Link from 'next/link'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { Suspense } from 'react'
+import { ReadingTypeCard } from '@/components/ReadingTypeCard'
 import {
   Sparkles,
   ArrowRight,
@@ -12,10 +9,6 @@ import {
   Shield,
   Calendar
 } from 'lucide-react'
-
-const ReadingTypeCard = dynamic(() => import('@/components/ReadingTypeCard').then(mod => mod.ReadingTypeCard), {
-  loading: () => <div className="h-48 rounded-lg bg-muted animate-pulse" />
-})
 
 export default function Home() {
 
