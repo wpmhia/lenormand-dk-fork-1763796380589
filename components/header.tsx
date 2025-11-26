@@ -65,9 +65,9 @@ export function Header() {
              </a>
           </nav>
 
-          <div className="md:hidden">
-           {/* Mobile menu button */}
-             <button
+           <div className="md:hidden ml-auto">
+            {/* Mobile menu button */}
+              <button
                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95 md:hidden"
                aria-label="Toggle mobile menu"
