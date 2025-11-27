@@ -2,6 +2,10 @@ import { Card, Reading, ReadingCard } from './types'
 
 // Load cards from JSON file - bypass caching in development
 export function getCards(): Card[] {
+  // Clear require cache to ensure fresh data on every call
+  const jsonPath = require.resolve('../public/data/cards.json')
+  delete require.cache[jsonPath]
+
   // Use dynamic require to bypass Next.js/webpack static import caching
   // This ensures fresh data on every call during development
   const cardsData = require('../public/data/cards.json')
