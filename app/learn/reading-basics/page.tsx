@@ -113,7 +113,7 @@ export default function ReadingBasicsPage() {
                 <div key={index} className="rounded-lg border border-border bg-muted p-4">
                   <div className="mb-2 flex items-center">
                     <diff.icon className="mr-2 h-5 w-5 text-primary" />
-                    <h4 className="font-semibold text-foreground">{diff.feature}</h4>
+                    <h3 className="font-semibold text-foreground">{diff.feature}</h3>
                   </div>
                   <div className="grid gap-4 text-sm md:grid-cols-2">
                     <div>
@@ -145,7 +145,7 @@ export default function ReadingBasicsPage() {
             </p>
 
             <div className="rounded-lg border border-border bg-muted p-6">
-              <h4 className="mb-3 font-semibold text-foreground">Example: Three-Card Spread</h4>
+              <h3 className="mb-3 font-semibold text-foreground">Example: Three-Card Spread</h3>
               <div className="space-y-3">
                      <div className="flex flex-col items-center">
                   <div className="inline-flex items-center space-x-4 rounded-lg bg-card p-4 shadow-sm">
@@ -200,7 +200,7 @@ export default function ReadingBasicsPage() {
 
              <div className="grid gap-6 md:grid-cols-2">
                <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-                 <h4 className="mb-2 font-semibold text-foreground">MODE 1: SENTENCE ONLY (Quick)</h4>
+                 <h3 className="mb-2 font-semibold text-foreground">MODE 1: SENTENCE ONLY (Quick)</h3>
                  <div className="space-y-2 text-sm text-muted-foreground">
                    <p><strong>Time:</strong> 10–15 seconds</p>
                    <p><strong>Method:</strong> Read cards 1-2-3-4-5 as ONE grammatical sentence and stop.</p>
@@ -211,7 +211,7 @@ export default function ReadingBasicsPage() {
                </div>
 
                <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-                 <h4 className="mb-2 font-semibold text-foreground">MODE 2: FULL STRUCTURED (Deep)</h4>
+                 <h3 className="mb-2 font-semibold text-foreground">MODE 2: FULL STRUCTURED (Deep)</h3>
                  <div className="space-y-2 text-sm text-muted-foreground">
                    <p><strong>Time:</strong> 60–90 seconds</p>
                    <p><strong>Method:</strong> Start with the sentence, then layer three optional interpretive lenses, analyze adjacent pairs, and add timing if needed.</p>
@@ -249,7 +249,7 @@ export default function ReadingBasicsPage() {
                   <span className="text-sm font-bold text-white">1</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Prepare Your Space</h4>
+                  <h3 className="font-semibold text-foreground">Prepare Your Space</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Find a quiet, comfortable space. Clear your mind and focus on your question or situation.
                   </p>
@@ -261,7 +261,7 @@ export default function ReadingBasicsPage() {
                   <span className="text-sm font-bold text-white">2</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Shuffle Intuitively</h4>
+                  <h3 className="font-semibold text-foreground">Shuffle Intuitively</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Shuffle the cards while thinking about your question. When you feel ready, stop shuffling.
                   </p>
@@ -273,7 +273,7 @@ export default function ReadingBasicsPage() {
                   <span className="text-sm font-bold text-white">3</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Draw Your Cards</h4>
+                  <h3 className="font-semibold text-foreground">Draw Your Cards</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Draw cards in the spread pattern you&apos;re using. Place them face up in order.
                   </p>
@@ -285,7 +285,7 @@ export default function ReadingBasicsPage() {
                   <span className="text-sm font-bold text-white">4</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Read as a Sentence</h4>
+                  <h3 className="font-semibold text-foreground">Read as a Sentence</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Read the card meanings in sequence to form a coherent message or story.
                   </p>
@@ -297,7 +297,7 @@ export default function ReadingBasicsPage() {
                   <span className="text-sm font-bold text-white">5</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Trust Your Intuition</h4>
+                  <h3 className="font-semibold text-foreground">Trust Your Intuition</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     While meanings are concrete, your intuition helps connect the dots and find personal relevance.
                   </p>
@@ -318,7 +318,7 @@ export default function ReadingBasicsPage() {
           <CardContent>
              <div className="grid gap-6 md:grid-cols-2">
                <div className="space-y-3">
-                 <h4 className="font-semibold text-foreground">3-Card Sentence Reading (Primary)</h4>
+                 <h3 className="font-semibold text-foreground">3-Card Sentence Reading (Primary)</h3>
                  <p className="text-sm text-muted-foreground">
                    Card 1 → Card 2 → Card 3 flowing as a narrative sentence. The core Lenormand method.
                  </p>
@@ -328,7 +328,7 @@ export default function ReadingBasicsPage() {
                </div>
 
                <div className="space-y-3">
-                 <h4 className="font-semibold text-foreground">3-Card Past-Present-Future</h4>
+                 <h3 className="font-semibold text-foreground">3-Card Past-Present-Future</h3>
                  <p className="text-sm text-muted-foreground">
                    Past → Present → Future. Timeline-based guidance.
                  </p>
@@ -338,7 +338,7 @@ export default function ReadingBasicsPage() {
                </div>
 
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground">5-Card: Sentence Reading (Quick)</h4>
+                  <h3 className="font-semibold text-foreground">5-Card: Sentence Reading (Quick)</h3>
                   <p className="text-sm text-muted-foreground">
                     Read cards 1-2-3-4-5 as ONE grammatical sentence (subject-verb-object-modifier-outcome). Stop. Fast headline reading.
                   </p>
@@ -348,7 +348,7 @@ export default function ReadingBasicsPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground">5-Card: Structured Reading (Full)</h4>
+                  <h3 className="font-semibold text-foreground">5-Card: Structured Reading (Full)</h3>
                   <p className="text-sm text-muted-foreground">
                     Start with the same sentence, then layer three optional interpretive lenses, analyze four adjacent pairs, add timing if needed, identify significators. Complete deep analysis.
                   </p>
@@ -358,7 +358,7 @@ export default function ReadingBasicsPage() {
                 </div>
 
                <div className="space-y-3">
-                 <h4 className="font-semibold text-foreground">9-Card Spread</h4>
+                 <h3 className="font-semibold text-foreground">9-Card Spread</h3>
                  <p className="text-sm text-muted-foreground">
                    Comprehensive life overview with detailed insights.
                  </p>
@@ -368,7 +368,7 @@ export default function ReadingBasicsPage() {
                </div>
 
                <div className="space-y-3">
-                 <h4 className="font-semibold text-foreground">36-Card Grand Tableau</h4>
+                 <h3 className="font-semibold text-foreground">36-Card Grand Tableau</h3>
                  <p className="text-sm text-muted-foreground">
                    Complete reading using all cards for maximum detail.
                  </p>

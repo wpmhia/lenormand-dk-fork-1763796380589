@@ -102,7 +102,7 @@ export default function IntroductionPage() {
           <CardContent>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">Lenormand</h4>
+                <h3 className="font-semibold text-foreground">Lenormand</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>• 36 cards with concrete meanings</li>
                   <li>• No reversals - meanings are built-in</li>
@@ -112,7 +112,7 @@ export default function IntroductionPage() {
                 </ul>
               </div>
               <div className="space-y-3">
-                <h4 className="font-semibold text-foreground">Tarot</h4>
+                <h3 className="font-semibold text-foreground">Tarot</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>• 78 cards with archetypal symbolism</li>
                   <li>• Reversals add complexity</li>
@@ -139,32 +139,27 @@ export default function IntroductionPage() {
                 <div className="flex items-start space-x-3">
                   <Target className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-foreground">Direct Answers</h4>
+                    <h3 className="font-semibold text-foreground">Direct Answers</h3>
                     <p className="text-sm text-muted-foreground">
                       Get clear, practical guidance without esoteric interpretation
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                 <div className="flex items-start space-x-3">
+                   <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                    <div>
-                     <h2 className=\"mb-2 text-sm font-semibold text-foreground\">Characteristics:</h2>
-                     <ul className=\"space-y-1\">
-                       {culture.characteristics.map((char, charIndex) => (
-                         <li key={charIndex} className=\"flex items-center text-sm text-muted-foreground\">
-                           <span className=\"mr-2 text-primary\">•</span>
-                           {char}
-                         </li>
-                       ))}
-                     </ul>
+                     <h3 className="font-semibold text-foreground">Relationship Focus</h3>
+                     <p className="text-sm text-muted-foreground">
+                       Excel at understanding interpersonal dynamics and emotions
+                     </p>
                    </div>
-                </div>
+                 </div>
               </div>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-foreground">Timing Insights</h4>
+                    <h3 className="font-semibold text-foreground">Timing Insights</h3>
                     <p className="text-sm text-muted-foreground">
                       Understand when events will occur with remarkable accuracy
                     </p>
@@ -173,7 +168,7 @@ export default function IntroductionPage() {
                 <div className="flex items-start space-x-3">
                   <BookOpen className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-foreground">Accessible Learning</h4>
+                    <h3 className="font-semibold text-foreground">Accessible Learning</h3>
                     <p className="text-sm text-muted-foreground">
                       Master the system quickly with concrete meanings and associations
                     </p>
@@ -199,7 +194,7 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">1</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">History & Origins</h4>
+                  <h3 className="font-semibold text-foreground">History & Origins</h3>
                   <p className="text-sm text-muted-foreground">
                     Discover the fascinating story behind Lenormand and its evolution
                   </p>
@@ -210,7 +205,7 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">2</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Reading Fundamentals</h4>
+                  <h3 className="font-semibold text-foreground">Reading Fundamentals</h3>
                   <p className="text-sm text-muted-foreground">
                     Master the art of reading cards as meaningful sentences
                   </p>
@@ -221,7 +216,7 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">3</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Card Meanings</h4>
+                  <h3 className="font-semibold text-foreground">Card Meanings</h3>
                   <p className="text-sm text-muted-foreground">
                     Learn all 36 card meanings and their symbolic associations
                   </p>
@@ -232,7 +227,7 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">4</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Spreads & Techniques</h4>
+                  <h3 className="font-semibold text-foreground">Spreads & Techniques</h3>
                   <p className="text-sm text-muted-foreground">
                     Discover powerful spreads and advanced reading methods
                   </p>
@@ -243,7 +238,7 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">5</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Advanced Concepts</h4>
+                  <h3 className="font-semibold text-foreground">Advanced Concepts</h3>
                   <p className="text-sm text-muted-foreground">
                     Time associations, playing cards, and cultural interpretations
                   </p>

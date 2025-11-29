@@ -81,7 +81,7 @@ export default function PrivacyPage() {
 
            <Card className="border-border bg-muted">
              <CardHeader>
-               <CardTitle className="flex items-center gap-2 text-foreground" as="h2">
+               <CardTitle className="flex items-center gap-2 text-foreground">
                  <Cookie className="h-5 w-5 text-primary/80" />
                  Cookies & Analytics
                </CardTitle>
