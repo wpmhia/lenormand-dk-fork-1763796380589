@@ -146,9 +146,9 @@ export default function HistoryPage() {
                       <Badge className="bg-muted text-muted-foreground">
                         {event.year}
                       </Badge>
-                      <h4 className="font-semibold text-foreground">
+                      <h2 className="font-semibold text-foreground">
                         {event.title}
-                      </h4>
+                       </h2>
                     </div>
                     <p className="text-sm leading-relaxed text-muted-foreground">
                       {event.description}

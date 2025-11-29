@@ -147,12 +147,17 @@ export default function IntroductionPage() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-                  <div>
-                    <h4 className="font-semibold text-foreground">Relationship Focus</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Excel at understanding interpersonal dynamics and emotions
-                    </p>
-                  </div>
+                   <div>
+                     <h2 className=\"mb-2 text-sm font-semibold text-foreground\">Characteristics:</h2>
+                     <ul className=\"space-y-1\">
+                       {culture.characteristics.map((char, charIndex) => (
+                         <li key={charIndex} className=\"flex items-center text-sm text-muted-foreground\">
+                           <span className=\"mr-2 text-primary\">•</span>
+                           {char}
+                         </li>
+                       ))}
+                     </ul>
+                   </div>
                 </div>
               </div>
               <div className="space-y-4">

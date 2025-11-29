@@ -259,7 +259,7 @@ export default function CardMeaningsPage() {
         {/* Learning Tips */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle className="flex items-center text-2xl text-foreground" as="h2">
               <BookOpen className="mr-3 h-6 w-6 text-primary" />
               Learning the Cards
             </CardTitle>

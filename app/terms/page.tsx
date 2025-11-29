@@ -50,27 +50,27 @@ export default function TermsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border bg-muted">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <AlertTriangle className="h-5 w-5 text-primary/80" />
-                Important Disclaimers
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 text-foreground">
-              <div className="space-y-4">
-                <div>
-                  <h4 className="mb-2 font-semibold text-foreground">Entertainment Purpose</h4>
+           <Card className="border-border bg-muted">
+             <CardHeader>
+               <CardTitle className="flex items-center gap-2 text-foreground">
+                 <AlertTriangle className="h-5 w-5 text-primary/80" />
+                 Important Disclaimers
+               </CardTitle>
+             </CardHeader>
+             <CardContent className="space-y-4 text-foreground">
+               <div className="space-y-4">
+                 <div>
+                   <h2 className="mb-2 font-semibold text-foreground">Entertainment Purpose</h2>
                   <p>Our services are for entertainment, spiritual guidance, and personal reflection only. They should not be used as a substitute for professional advice.</p>
                 </div>
                 
                 <div>
-                  <h4 className="mb-2 font-semibold text-foreground">No Professional Advice</h4>
-                  <p>Readings are not medical, legal, financial, or psychological advice. Always consult qualified professionals for important decisions.</p>
-                </div>
-                
-                <div>
-                  <h4 className="mb-2 font-semibold text-foreground">Age Requirement</h4>
+                   <h2 className="mb-2 font-semibold text-foreground">No Professional Advice</h2>
+                   <p>Readings are not medical, legal, financial, or psychological advice. Always consult qualified professionals for important decisions.</p>
+                 </div>
+                 
+                 <div>
+                   <h2 className="mb-2 font-semibold text-foreground">Age Requirement</h2>
                   <p>You must be 18 years or older to use our services, or have parental/guardian permission.</p>
                 </div>
               </div>

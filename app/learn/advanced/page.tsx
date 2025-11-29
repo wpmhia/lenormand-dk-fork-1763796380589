@@ -171,7 +171,7 @@ export default function AdvancedPage() {
             </div>
 
             <div className="mt-6 rounded-lg border border-border bg-muted p-4">
-              <h4 className="mb-2 font-semibold text-foreground">Important Notes:</h4>
+                  <h2 className="mb-2 font-semibold text-foreground">Important Notes:</h2>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• Time associations are traditional guidelines, not absolute predictions</li>
                 <li>• Context from surrounding cards can modify timing</li>
@@ -221,7 +221,7 @@ export default function AdvancedPage() {
             </div>
 
             <div className="mt-6 rounded-lg border border-border bg-muted p-4">
-              <h4 className="mb-2 font-semibold text-foreground">How to Use Playing Cards:</h4>
+                <h2 className="mb-2 font-semibold text-foreground">How to Use Playing Cards:</h2>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• Add playing card associations for additional context</li>
                 <li>• Particularly useful in Hoodoo and ATR practices</li>
@@ -351,7 +351,7 @@ export default function AdvancedPage() {
             </div>
 
             <div className="rounded-lg border border-border bg-card p-4">
-              <h4 className="mb-3 font-semibold text-foreground">Reading Order Matters</h4>
+              <h2 className="mb-3 font-semibold text-foreground">Reading Order Matters</h2>
               <p className="mb-2 text-sm text-card-foreground">
                 Always read in this exact sequence: <strong>A → B → C → D → (E if needed)</strong>
               </p>
@@ -377,7 +377,7 @@ export default function AdvancedPage() {
 
             <div className="space-y-4">
               <div className="rounded-lg border border-border bg-muted p-4">
-                <h4 className="mb-3 font-semibold text-foreground">Rule 1: Columns = Weeks (or Months)</h4>
+                <h2 className="mb-3 font-semibold text-foreground">Rule 1: Columns = Weeks (or Months)</h2>
                 <p className="mb-2 text-sm text-card-foreground">
                   Each vertical column of the 4×9 grid represents one week of time (or one month if the question is long-range).
                 </p>
@@ -389,7 +389,7 @@ export default function AdvancedPage() {
               </div>
 
               <div className="rounded-lg border border-border bg-muted p-4">
-                <h4 className="mb-3 font-semibold text-foreground">Rule 2: Pip Values = Days</h4>
+                <h2 className="mb-3 font-semibold text-foreground">Rule 2: Pip Values = Days</h2>
                 <p className="mb-2 text-sm text-card-foreground">
                   Count the playing card value of cards near the significator to get precise day counts.
                 </p>
@@ -401,7 +401,7 @@ export default function AdvancedPage() {
               </div>
 
               <div className="rounded-lg border border-border bg-muted p-4">
-                <h4 className="mb-3 font-semibold text-foreground">Timing Examples</h4>
+                <h2 className="mb-3 font-semibold text-foreground">Timing Examples</h2>
                 <ul className="space-y-2 text-sm text-card-foreground">
                   <li>• Significator in <strong>column 2, past card is Clover (Ace value)</strong> → story began <strong>1 day ago</strong></li>
                   <li>• Significator in <strong>column 5, future card is Ship (8 value)</strong> → next event in <strong>8 days</strong></li>

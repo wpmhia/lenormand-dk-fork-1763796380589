@@ -173,8 +173,8 @@ export default function ReadingBasicsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="font-medium text-foreground">Possible Interpretations:</p>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
+                   <h3 className="font-medium text-foreground">Possible Interpretations:</h3>
+                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• &ldquo;News about deception brings a gift&rdquo; - Warning about deceptive news that leads to something positive</li>
                     <li>• &ldquo;A message reveals hidden wisdom as a gift&rdquo; - Learning something valuable from a communication</li>
                     <li>• &ldquo;Quick changes bring celebration&rdquo; - Positive changes happening soon</li>
