@@ -105,28 +105,20 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
 
     const trimmedContent = content.trim()
 
-    const parts = trimmedContent.split('\n\n').filter(p => p.trim().length > 0)
+    // Split by ### markers that separate the two required sections
+    const sections = trimmedContent.split('###').map(s => s.trim()).filter(s => s.length > 0)
+    
     let prophecy = trimmedContent
     let practicalTranslation: string | undefined
     
-    if (parts.length > 2) {
-      if (cards.length <= 5) {
-        prophecy = parts.slice(0, Math.ceil(parts.length / 2)).join('\n\n')
-        practicalTranslation = parts.slice(Math.ceil(parts.length / 2)).join('\n\n')
-      } else {
-        const splitIndex = Math.ceil(parts.length * 0.7)
-        prophecy = parts.slice(0, splitIndex).join('\n\n')
-        if (splitIndex < parts.length) {
-          practicalTranslation = parts.slice(splitIndex).join('\n\n')
-        }
-      }
-    } else if (parts.length === 2) {
-      prophecy = parts[0]
-      practicalTranslation = parts[1]
+    if (sections.length >= 2) {
+      // First section is prophecy, second is practical translation
+      prophecy = sections[0]
+      practicalTranslation = sections[1]
     }
 
     console.log('DeepSeek response parsed:', {
-      totalParts: parts.length,
+      sectionCount: sections.length,
       prophecyLength: prophecy.length,
       translationLength: practicalTranslation?.length || 0
     })
@@ -193,14 +185,16 @@ THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 === CRITICAL: TWO COMPLETE SECTIONS REQUIRED ===
 Your response MUST include exactly 2 sections. DO NOT OMIT EITHER SECTION.
 
-${langConfig.sectionProphecy} (${spread.sentences} sentences):
+SECTION 1 - THE PROPHECY (${spread.sentences} sentences):
 - Weave all ${cards.length} cards into ONE symbolic narrative
 - Each card mentioned EXACTLY ONCE in parentheses on first mention
 - Direct, commanding, brutal language
 ${isYesNoSpread ? '- End with YES or NO or MAYBE, then give a specific imperative action command' : '- End with a specific imperative action command'}
 
-${langConfig.sectionExplanation} (NOT another reading):
-Your job: Take the prophecy above and TRANSLATE it into plain, everyday language.
+###
+
+SECTION 2 - THE EXPLANATION:
+Your job: Take the prophecy above and TRANSLATE it into plain, everyday language in ${langConfig.name}.
 A person who has never heard of Lenormand should understand the full answer by reading ONLY this section.
 
 DO NOT:
@@ -208,7 +202,6 @@ DO NOT:
 - Use card names
 - Use symbolic language
 - Use ANY mystical language ("lunar cycles", "cosmic timing", "the universe", "the key", etc.)
-- Mention deadlines or timelines
 
 DO THIS:
 - State the direct answer to: "${question}"
@@ -225,13 +218,7 @@ EXAMPLE OF WRONG (what NOT to do in Section 2):
 "A silent child carries the weight of a sealed book. Dark clouds obscure the path forward. The mountain is an immovable wall, and a fox whispers deception in the shadows. Yet a key gleams within the garden of community."
 ^ This is WRONG - it's the prophecy restated in different words. Still symbolic, still retelling the cards.
 
-NOW: Translate the prophecy above into plain, simple language for the reader's language. Assume the reader knows nothing about Lenormand cards. No card names in parentheses. No symbolic language. Just facts and what needs to happen.
-
-BOTH SECTIONS ALWAYS. NEVER OMIT THE PRACTICAL TRANSLATION.
-
-Separate the two sections with one blank line.
-
-${langConfig.nowWrite}
+NOW WRITE BOTH SECTIONS SEPARATED BY ###. DO NOT INCLUDE THE ### IN THE OUTPUT - LET IT BE YOUR SEPARATOR ONLY.
 `
 }
 
