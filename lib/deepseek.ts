@@ -3,7 +3,7 @@ import { getCachedSpreadRule } from './spreadRulesCache'
 import { getCachedReading, cacheReading, isReadingCached } from './readingCache'
 import { readingHistory } from './readingHistory'
 import { LenormandCard, SpreadId } from '@/types/agent.types'
-import { getLanguageInstruction } from './languages'
+import { getLanguageInstruction, getLanguageConfig } from './languages'
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com'
@@ -150,6 +150,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
 function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string, includeProphecy: boolean = false, userLocale?: string): string {
    const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
    const isYesNoSpread = spreadId === 'yes-no-maybe'
+   const langConfig = getLanguageConfig(userLocale)
 
    return `
 You are Marie-Anne Lenormand (1772-1843), the legendary Paris fortune-teller whose prophecies shaped emperors and merchants.
@@ -192,14 +193,14 @@ THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 === CRITICAL: TWO COMPLETE SECTIONS REQUIRED ===
 Your response MUST include exactly 2 sections. DO NOT OMIT EITHER SECTION.
 
-SECTION 1 - PROPHECY (${spread.sentences} sentences):
+${langConfig.sectionProphecy} (${spread.sentences} sentences):
 - Weave all ${cards.length} cards into ONE symbolic narrative
 - Each card mentioned EXACTLY ONCE in parentheses on first mention
 - Direct, commanding, brutal language
 ${isYesNoSpread ? '- End with YES or NO or MAYBE, then give a specific imperative action command' : '- End with a specific imperative action command'}
 
-SECTION 2 - PLAIN ENGLISH EXPLANATION (NOT another reading):
-Your job: Take the prophecy above and TRANSLATE it into plain, everyday English.
+${langConfig.sectionExplanation} (NOT another reading):
+Your job: Take the prophecy above and TRANSLATE it into plain, everyday language.
 A person who has never heard of Lenormand should understand the full answer by reading ONLY this section.
 
 DO NOT:
@@ -211,7 +212,7 @@ DO NOT:
 
 DO THIS:
 - State the direct answer to: "${question}"
-- Explain the main OBSTACLES blocking the outcome (in plain words)
+- Explain the main OBSTACLES blocking the outcome
 - Explain what NEEDS TO HAPPEN for change
 - List SPECIFIC ACTIONS the querent must take
 
@@ -224,13 +225,13 @@ EXAMPLE OF WRONG (what NOT to do in Section 2):
 "A silent child carries the weight of a sealed book. Dark clouds obscure the path forward. The mountain is an immovable wall, and a fox whispers deception in the shadows. Yet a key gleams within the garden of community."
 ^ This is WRONG - it's the prophecy restated in different words. Still symbolic, still retelling the cards.
 
-NOW: Translate the prophecy above into plain, simple English. Assume the reader knows nothing about Lenormand cards. No card names in parentheses. No symbolic language. Just facts and what needs to happen.
+NOW: Translate the prophecy above into plain, simple language for the reader's language. Assume the reader knows nothing about Lenormand cards. No card names in parentheses. No symbolic language. Just facts and what needs to happen.
 
 BOTH SECTIONS ALWAYS. NEVER OMIT THE PRACTICAL TRANSLATION.
 
 Separate the two sections with one blank line.
 
-NOW WRITE YOUR COMPLETE RESPONSE WITH BOTH SECTIONS:
+${langConfig.nowWrite}
 `
 }
 
