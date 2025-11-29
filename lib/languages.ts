@@ -3,7 +3,7 @@
  * Converts browser locales (e.g., "en-US") to language codes and names
  */
 
-export type SupportedLanguage = 'en' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'nl' | 'ja' | 'zh' | 'ru'
+export type SupportedLanguage = 'en' | 'fr' | 'es' | 'de' | 'it' | 'pt' | 'nl' | 'ja' | 'zh' | 'ru' | 'da'
 
 export interface LanguageConfig {
   code: SupportedLanguage
@@ -67,13 +67,19 @@ export const LANGUAGE_CONFIGS: Record<SupportedLanguage, LanguageConfig> = {
     nativeName: '中文',
     prompt: '用中文回答。'
   },
-  ru: {
-    code: 'ru',
-    name: 'Russian',
-    nativeName: 'Русский',
-    prompt: 'Ответьте на русском языке.'
-  }
-}
+   ru: {
+     code: 'ru',
+     name: 'Russian',
+     nativeName: 'Русский',
+     prompt: 'Ответьте на русском языке.'
+   },
+   da: {
+     code: 'da',
+     name: 'Danish',
+     nativeName: 'Dansk',
+     prompt: 'Svar på dansk.'
+   }
+ }
 
 /**
  * Detects language from browser locale string
