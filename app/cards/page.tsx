@@ -20,13 +20,21 @@ export default function CardsPage() {
     let filtered = cards
 
     if (searchTerm) {
-      filtered = filtered.filter(card =>
-        card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.keywords.some(keyword =>
-          keyword.toLowerCase().includes(searchTerm.toLowerCase())
-        ) ||
-        card.uprightMeaning.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      const searchLower = searchTerm.toLowerCase()
+      filtered = filtered.filter(card => {
+        // Exact name match
+        const nameMatch = card.name.toLowerCase() === searchLower
+        
+        // Exact keyword match
+        const keywordMatch = card.keywords.some(keyword =>
+          keyword.toLowerCase() === searchLower
+        )
+        
+        // Substring match in meaning (allow partial matches in meaning)
+        const meaningMatch = card.uprightMeaning.toLowerCase().includes(searchLower)
+        
+        return nameMatch || keywordMatch || meaningMatch
+      })
     }
 
     filtered = [...filtered].sort((a, b) => {
