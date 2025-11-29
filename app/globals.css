@@ -5,15 +5,15 @@
 @layer base {
   :root {
     --background: 25 35% 8%;
-    --foreground: 45 20% 90%;
+    --foreground: 45 10% 98%;
     --card: 25 30% 12%;
-    --card-foreground: 45 20% 90%;
+    --card-foreground: 45 10% 98%;
     --primary: 35 40% 65%;
     --primary-foreground: 25 35% 15%;
     --secondary: 330 40% 65%;
     --secondary-foreground: 25 35% 15%;
     --muted: 25 30% 18%;
-    --muted-foreground: 45 10% 65%;
+    --muted-foreground: 45 10% 80%;
     --border: 25 30% 20%;
     --radius: 0.5rem;
     --popover: 222.2 84% 4.9%;
@@ -210,21 +210,21 @@
   }
 
   /* Alerts */
-  .alert-success {
-    @apply rounded-lg border-2 border-green-300 bg-green-100 px-4 py-3 text-green-800;
-  }
+   .alert-success {
+     @apply rounded-lg border-2 border-green-700 bg-green-50 px-4 py-3 text-green-900;
+   }
 
-  .alert-error {
-    @apply rounded-lg border-2 border-red-300 bg-red-100 px-4 py-3 text-red-800;
-  }
+   .alert-error {
+     @apply rounded-lg border-2 border-red-700 bg-red-50 px-4 py-3 text-red-900;
+   }
 
-  .alert-warning {
-    @apply rounded-lg border-2 border-yellow-300 bg-yellow-100 px-4 py-3 text-yellow-800;
-  }
+   .alert-warning {
+     @apply rounded-lg border-2 border-yellow-700 bg-yellow-50 px-4 py-3 text-yellow-900;
+   }
 
-  .alert-info {
-    @apply rounded-lg border-2 border-blue-300 bg-blue-100 px-4 py-3 text-blue-800;
-  }
+   .alert-info {
+     @apply rounded-lg border-2 border-blue-700 bg-blue-50 px-4 py-3 text-blue-900;
+   }
 
   /* Scrollbar */
   ::-webkit-scrollbar {
