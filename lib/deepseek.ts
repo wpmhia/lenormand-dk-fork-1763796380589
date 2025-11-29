@@ -3,6 +3,7 @@ import { getCachedSpreadRule } from './spreadRulesCache'
 import { getCachedReading, cacheReading, isReadingCached } from './readingCache'
 import { readingHistory } from './readingHistory'
 import { LenormandCard, SpreadId } from '@/types/agent.types'
+import { getLanguageInstruction } from './languages'
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com'
@@ -60,7 +61,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       name: c.name
     }))
 
-    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy)
+    const deepseekPrompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy, request.userLocale)
      
     console.log('Sending request to DeepSeek API...')
     let maxTokens: number
@@ -75,16 +76,16 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
       },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: 'You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.' },
-          { role: 'user', content: deepseekPrompt }
-        ],
-        temperature: 0.4,
-        max_tokens: maxTokens,
-        top_p: 0.9
-      })
+       body: JSON.stringify({
+         model: 'deepseek-chat',
+         messages: [
+           { role: 'system', content: 'You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only. ' + getLanguageInstruction(request.userLocale) },
+           { role: 'user', content: deepseekPrompt }
+         ],
+         temperature: 0.4,
+         max_tokens: maxTokens,
+         top_p: 0.9
+       })
     })
 
     console.log('DeepSeek API response status:', response.status)
@@ -146,7 +147,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
   }
 }
 
-function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string, includeProphecy: boolean = false): string {
+function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string, includeProphecy: boolean = false, userLocale?: string): string {
    const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
    const isYesNoSpread = spreadId === 'yes-no-maybe'
 
@@ -255,7 +256,7 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
       name: c.name
     }))
 
-     const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy)
+      const prompt = buildPromptForDeepSeek(cards, spread, request.question || 'What guidance do these cards have for me?', spreadId, request.includeProphecy, request.userLocale)
 
      console.log('Sending streaming request to DeepSeek API...')
      let maxTokens: number
@@ -270,17 +271,17 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
       },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          { role: 'system', content: 'You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.4,
-        max_tokens: maxTokens,
-        top_p: 0.9,
-        stream: true
-      })
+       body: JSON.stringify({
+         model: 'deepseek-chat',
+         messages: [
+           { role: 'system', content: 'You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only. ' + getLanguageInstruction(request.userLocale) },
+           { role: 'user', content: prompt }
+         ],
+         temperature: 0.4,
+         max_tokens: maxTokens,
+         top_p: 0.9,
+         stream: true
+       })
     })
 
     console.log('DeepSeek streaming API response status:', response.status)
