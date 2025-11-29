@@ -211,13 +211,13 @@ function NewReadingPageContent() {
         card = allCards.find(c => c.id === cardNum)
       }
       
-      // If not found by number, try by name or keywords
-      if (!card) {
-        card = allCards.find(c =>
-          c.name.toLowerCase().includes(cardInput.toLowerCase()) ||
-          c.keywords.some(k => k.toLowerCase().includes(cardInput.toLowerCase()))
-        )
-      }
+       // If not found by number, try by name (exact match) or keywords
+       if (!card) {
+         card = allCards.find(c =>
+           c.name.toLowerCase() === cardInput.toLowerCase() ||
+           c.keywords.some(k => k.toLowerCase() === cardInput.toLowerCase())
+         )
+       }
       
       if (card) {
         readingCards.push({
