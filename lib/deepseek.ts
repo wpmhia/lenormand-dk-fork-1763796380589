@@ -142,6 +142,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
 function buildPromptForDeepSeek(cards: LenormandCard[], spread: any, question: string, spreadId?: string, includeProphecy: boolean = false, userLocale?: string): string {
    const cardsText = cards.map((c, i) => `${i + 1}. ${c.name}`).join(' — ')
    const isYesNoSpread = spreadId === 'yes-no-maybe'
+   const isWeekAheadSpread = spreadId === 'week-ahead'
    const langConfig = getLanguageConfig(userLocale)
 
    return `
@@ -167,15 +168,18 @@ YOUR VOICE AND METHODOLOGY:
 
 STRUCTURE:
 - Write EXACTLY ${spread.sentences} sentences. Each is a narrative beat.
-- Sentence 1-2: SYMBOLIC DIAGNOSIS (what blocks? what is the situation?)
+${isWeekAheadSpread ? `- Each sentence covers one day: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+- Format: "MONDAY: [card in parentheses] brings [meaning]. TUESDAY: [card in parentheses] shows [meaning]." etc.
+- Each card mentioned EXACTLY ONCE in parentheses on its day
+- Connect days into a narrative arc showing progression through the week` : `- Sentence 1-2: SYMBOLIC DIAGNOSIS (what blocks? what is the situation?)
 - Sentence 2-3: MECHANISM (how does this resolve? what is the hidden force at work?)
 - Sentence 3: OUTCOME + COMMAND${isYesNoSpread ? ' (YES/NO/MAYBE + imperative action)' : ' (imperative action) - only add deadline if cards warrant it'}
 - Introduce each card EXACTLY ONCE in parentheses: (CardName)
 - Subsequent card mentions drop parentheses for narrative flow
-- Use vivid, physical language: weight, wall, crack, shadow, light, door, stone, water, fire, ice, seal, push, move
+- Use vivid, physical language: weight, wall, crack, shadow, light, door, stone, water, fire, ice, seal, push, move`}
 
 PROPHECY EXAMPLE (Your Standard):
-${isYesNoSpread ? '"YES—the path opens before you. (Letter) carries the answer sealed within. (Sun) breaks through (Clouds), revealing your choice is already made. Move forward without hesitation."' : '"A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain\'s icy shadow cracks under the bear\'s relentless strength, revealing a door where there was only wall. Shoulder the weight and push the door open."'}
+${isWeekAheadSpread ? '"MONDAY: (Rider) arrives with news. TUESDAY: (Clouds) obscure the path—friction and confusion. WEDNESDAY: (Birds) bring clarity through conversation. THURSDAY: (Key) unlocks the solution. FRIDAY: (Sun) breaks through, bringing relief and social ease. SATURDAY: (Garden) invites reflection and rest. SUNDAY: (Lily) settles the week in peaceful completion."' : isYesNoSpread ? '"YES—the path opens before you. (Letter) carries the answer sealed within. (Sun) breaks through (Clouds), revealing your choice is already made. Move forward without hesitation."' : '"A sealed (Letter) arrives bearing the weight of a powerful protector (Bear), but a mountain of obstacles blocks your path (Mountain). The mountain\'s icy shadow cracks under the bear\'s relentless strength, revealing a door where there was only wall. Shoulder the weight and push the door open."'}
 
 THIS IS WHAT MARIE-ANNE PROPHECIES SOUND LIKE:
 - Direct. Symbolic. Brutal. Action-commanded.
@@ -204,14 +208,22 @@ DO NOT:
 - Use ANY mystical language ("lunar cycles", "cosmic timing", "the universe", "the key", etc.)
 
 DO THIS:
-- State the direct answer to: "${question}"
+${isWeekAheadSpread ? `- Break down each day with CONCRETE guidance
+- Format EXACTLY like this: "MONDAY: [specific action/focus]. TUESDAY: [specific action/focus]." etc.
+- Make each day actionable and specific
+- Show progression: early week is about [X], midweek shifts to [Y], late week brings [Z]
+- Include obstacles on the days when they appear, and solutions when they emerge
+- Make it clear what the person should DO on each day, not just what will happen` : `- State the direct answer to: "${question}"
 - Explain the main OBSTACLES blocking the outcome
 - Explain what NEEDS TO HAPPEN for change
 - List SPECIFIC ACTIONS the querent must take
 
-${cards.length >= 36 ? '- 12-18 sentences: Break down: Current situation → Main obstacles → What must change → Specific actions → Likelihood of success' : cards.length >= 9 ? '- 6-10 sentences: Situation → Obstacles → What needs to change → Actions needed' : cards.length >= 7 ? '- 5-8 sentences: Current state → Key challenges → Required changes → Actions' : cards.length >= 5 ? '- 4-6 sentences: Situation → Challenge → Resources → Next steps' : '- 2-3 sentences: Direct answer'}
+${cards.length >= 36 ? '- 12-18 sentences: Break down: Current situation → Main obstacles → What must change → Specific actions → Likelihood of success' : cards.length >= 9 ? '- 6-10 sentences: Situation → Obstacles → What needs to change → Actions needed' : cards.length >= 7 ? '- 5-8 sentences: Current state → Key challenges → Required changes → Actions' : cards.length >= 5 ? '- 4-6 sentences: Situation → Challenge → Resources → Next steps' : '- 2-3 sentences: Direct answer'}`}
 
-EXAMPLE (what GOOD plain English looks like):
+EXAMPLE (what GOOD plain English looks like for WEEK-AHEAD):
+"MONDAY: New information or communication arrives—stay alert and open to what's coming. TUESDAY: Expect confusion or mixed signals; don't make major decisions yet. WEDNESDAY: Conversations clarify the situation; speak up if you've been quiet. THURSDAY: A breakthrough solution becomes visible; this is your pivot point. FRIDAY: Things ease up noticeably; social situations and relationships improve. SATURDAY: Take time to rest and reflect on what you've learned this week. SUNDAY: A sense of closure and peace settles in; use this to prepare for next week."
+
+EXAMPLE (what GOOD plain English looks like for OTHER spreads):
 "YES, Kristoffer will be able to talk, but it will not happen easily or quickly. The primary obstacle is a complex combination of a deep-seated medical or neurological condition and his current environment. There is also a risk of receiving incorrect advice from certain specialists. The situation requires a complete transformation in approach, moving to a fundamentally different method, likely involving a new specialist. You must secure a stable daily routine, seek multiple medical opinions, demand a full review of all diagnoses, involve a supportive community, and implement a specific practice regimen. Be prepared for setbacks. Success is highly likely only if you commit fully to these major changes. If you continue on the current path, nothing will change. The key is to stop what you are doing now and pursue a completely new strategy with determination."
 
 EXAMPLE OF WRONG (what NOT to do in Section 2):
@@ -219,6 +231,8 @@ EXAMPLE OF WRONG (what NOT to do in Section 2):
 ^ This is WRONG - it's the prophecy restated in different words. Still symbolic, still retelling the cards.
 
 NOW WRITE BOTH SECTIONS SEPARATED BY ###. DO NOT INCLUDE THE ### IN THE OUTPUT - LET IT BE YOUR SEPARATOR ONLY.
+
+${isWeekAheadSpread ? 'CRITICAL FOR WEEK-AHEAD: The Explanation section (Section 2) MUST follow the day-by-day format. Each day from Monday through Sunday must be clearly labeled and given specific, actionable guidance. This is the most important part for the user to understand their week.' : ''}
 `
 }
 
