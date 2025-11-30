@@ -55,6 +55,13 @@ export const metadata: Metadata = {
     description: 'Get personalized Lenormand card readings powered by AI. Explore card meanings, learn divination techniques, and discover guidance from the 36-card deck.',
     images: [
       {
+        url: 'https://lenormand-intelligence.com/favicon-512.png',
+        width: 512,
+        height: 512,
+        alt: 'Lenormand Intelligence - AI-Powered Card Readings',
+        type: 'image/png',
+      },
+      {
         url: 'https://lenormand-intelligence.com/images/hero-image.jpg',
         width: 1200,
         height: 800,
@@ -67,11 +74,17 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Lenormand Intelligence | AI-Powered Lenormand Card Readings',
     description: 'Get personalized Lenormand card readings powered by AI. Explore card meanings and discover guidance.',
-    images: ['https://lenormand-intelligence.com/images/hero-image.jpg'],
+    images: ['https://lenormand-intelligence.com/favicon-512.png'],
+    creator: '@LenormandAI',
   },
   icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
+    icon: [
+      { rel: 'icon', url: '/favicon.ico' },
+      { rel: 'icon', url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { rel: 'icon', url: '/favicon-192.png', sizes: '192x192', type: 'image/png' },
+      { rel: 'icon', url: '/favicon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: '/favicon-192.png',
   },
   robots: {
     index: true,
