@@ -70,7 +70,7 @@ export default function Home() {
         </div>
 
         {/* Reading Types */}
-            <div className="container-section">
+            <div className="container-section py-16">
             <div className="relative mb-12">
              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
               <div className="relative z-10 mb-8 text-center">
