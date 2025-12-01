@@ -40,7 +40,7 @@ export default function AboutPage() {
                   Lenormand Intelligence emerged from a vision: to preserve the profound depth of Lenormand divination while making it accessible to a new generation of seekers and practitioners.
                 </p>
                 <p>
-                  Our founders—experienced Lenormand readers, historians devoted to the deck's evolution, and engineers passionate about responsible AI—came together with a singular mission. We painstakingly digitized decades of annotated readings, rare spreads, classical texts, and practitioner notes. This living archive became our training foundation.
+                  Our founders—experienced Lenormand readers, historians devoted to the deck&apos;s evolution, and engineers passionate about responsible AI—came together with a singular mission. We painstakingly digitized decades of annotated readings, rare spreads, classical texts, and practitioner notes. This living archive became our training foundation.
                 </p>
                 <p>
                   Through careful curation and rigorous validation, we taught AI systems to recognize the subtle relationships between cards, detect timing patterns, and propose meaningful interpretations grounded in both tradition and real-world outcomes. What began as a private repository of knowledge has evolved into a collaborative platform that serves readers, students, and researchers worldwide.
