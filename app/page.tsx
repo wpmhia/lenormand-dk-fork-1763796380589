@@ -70,15 +70,74 @@ export default function Home() {
         </div>
 
        {/* What is Lenormand Section */}
-       <div className="container-section py-12">
-         <div className="mx-auto max-w-3xl text-center">
-           <h2 className="mb-6 text-3xl font-bold text-foreground">What is Lenormand?</h2>
-           <div className="space-y-4 text-lg leading-relaxed text-muted-foreground">
-             <p>
-               Lenormand is a 36-card divination system created in 1800s France. Unlike Tarot&apos;s symbolic approach, Lenormand cards are read as straightforward sentences for direct, practical guidance.
-             </p>
-             <p>
-               This site combines historical reading methods with modern AI analysis—completely free, no account required, and built by the community.
+       <div className="container-section py-16">
+         <div className="mx-auto max-w-5xl">
+           <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+             What is Lenormand?
+           </h2>
+
+           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+             {/* Left: Core Definition */}
+             <div className="space-y-6">
+               <div>
+                 <h3 className="mb-3 text-lg font-semibold text-foreground">A Practical Divination System</h3>
+                 <p className="leading-relaxed text-muted-foreground">
+                   Lenormand is a 36-card divination system created in 1800s France. Unlike Tarot&apos;s symbolic approach, Lenormand cards are read as straightforward sentences for direct, practical guidance.
+                 </p>
+               </div>
+
+               <div>
+                 <h3 className="mb-3 text-lg font-semibold text-foreground">How It Works</h3>
+                 <p className="leading-relaxed text-muted-foreground">
+                   Cards are combined to form coherent narratives. Draw 3 cards and read them left-to-right as a sentence. The meanings are concrete and literal—no complex symbolism required.
+                 </p>
+               </div>
+             </div>
+
+             {/* Right: Comparison */}
+             <div className="rounded-lg border border-border bg-card/50 p-6">
+               <h3 className="mb-4 text-lg font-semibold text-foreground">Lenormand vs. Tarot</h3>
+               <div className="space-y-4 text-sm">
+                 <div className="flex gap-4">
+                   <div className="flex-1">
+                     <p className="mb-1 font-medium text-foreground">Lenormand</p>
+                     <p className="text-muted-foreground">36 cards, practical, sentences</p>
+                   </div>
+                   <div className="flex-1">
+                     <p className="mb-1 font-medium text-foreground">Tarot</p>
+                     <p className="text-muted-foreground">78 cards, symbolic, psychology</p>
+                   </div>
+                 </div>
+                 <div className="h-px bg-border"></div>
+                 <div className="flex gap-4">
+                   <div className="flex-1">
+                     <p className="mb-1 font-medium text-foreground">Direct answers</p>
+                     <p className="text-muted-foreground">Yes, practical guidance</p>
+                   </div>
+                   <div className="flex-1">
+                     <p className="mb-1 font-medium text-foreground">Deeper insight</p>
+                     <p className="text-muted-foreground">Spiritual growth</p>
+                   </div>
+                 </div>
+                 <div className="h-px bg-border"></div>
+                 <div className="flex gap-4">
+                   <div className="flex-1">
+                     <p className="mb-1 font-medium text-foreground">Easy to learn</p>
+                     <p className="text-muted-foreground">Master basics in hours</p>
+                   </div>
+                   <div className="flex-1">
+                     <p className="mb-1 font-medium text-foreground">Learning curve</p>
+                     <p className="text-muted-foreground">Weeks to master</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+
+           {/* About This Site */}
+           <div className="mt-12 rounded-lg bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-6 text-center">
+             <p className="leading-relaxed text-muted-foreground">
+               This site combines <span className="font-semibold text-foreground">historical reading methods</span> from 1800s France with <span className="font-semibold text-foreground">modern AI analysis</span>. Completely free, no account required, and built by the community.
              </p>
            </div>
          </div>
