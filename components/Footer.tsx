@@ -1,82 +1,113 @@
 import Link from 'next/link'
-import { Heart, Shield, Eye } from 'lucide-react'
+import { Heart, Mail, Sparkles } from 'lucide-react'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-border/50 bg-background/50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Compact Footer Grid */}
-        <div className="mb-6 grid gap-6 sm:grid-cols-4 text-sm text-muted-foreground">
-           {/* About */}
-           <div className="space-y-1">
-             <h4 className="text-base font-medium text-foreground/60">About</h4>
-             <p className="text-xs leading-relaxed text-muted-foreground/80">
-               Explore the wisdom of Lenormand cards with AI-enhanced interpretations. Discover timeless divination traditions combined with modern technology.
-             </p>
-           </div>
-
-           {/* Quick Links */}
-           <div className="space-y-1">
-             <h4 className="text-base font-medium text-foreground/60">Navigate</h4>
-              <nav className="space-y-0 text-xs" aria-label="Quick navigation">
-              <Link href="/read/new" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                New Reading
-              </Link>
-              <Link href="/cards" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                Explore Cards
-              </Link>
-              <Link href="/learn/reading-basics" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                Learn
-              </Link>
-            </nav>
+    <footer className="border-t border-border bg-gradient-to-b from-background to-background/80">
+      <div className="container mx-auto px-4 py-12">
+        {/* Main Footer Content */}
+        <div className="grid gap-8 md:grid-cols-12 mb-8">
+          {/* Brand Section */}
+          <div className="md:col-span-3">
+            <Link href="/" className="inline-block mb-4">
+              <h3 className="text-lg font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+                Lenormand
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">AI-Enhanced Divination</p>
+            </Link>
+            <p className="text-xs text-muted-foreground/70 leading-relaxed max-w-xs">
+              Explore timeless card wisdom combined with modern AI insights for meaningful readings.
+            </p>
           </div>
 
-            {/* Resources */}
-            <div className="space-y-1">
-              <h4 className="text-base font-medium text-foreground/60">Resources</h4>
-               <nav className="space-y-0 text-xs" aria-label="Learning resources">
-               <Link href="/learn/spreads" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                 Spreads
-               </Link>
-               <Link href="/learn/history" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                 History
-               </Link>
-               <Link href="/about" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                 About
-               </Link>
-             </nav>
-           </div>
+          {/* Navigation Links */}
+          <div className="md:col-span-3">
+            <h4 className="text-sm font-semibold text-foreground/80 mb-3">Explore</h4>
+            <ul className="space-y-2 text-xs">
+              <li>
+                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/read/new" className="text-muted-foreground hover:text-primary transition-colors">
+                  New Reading
+                </Link>
+              </li>
+              <li>
+                <Link href="/cards" className="text-muted-foreground hover:text-primary transition-colors">
+                  Card Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/learn" className="text-muted-foreground hover:text-primary transition-colors">
+                  Learn
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-           {/* Legal */}
-           <div className="space-y-1">
-             <h4 className="text-base font-medium text-foreground/60">Legal</h4>
-              <nav className="space-y-0 text-xs" aria-label="Legal and privacy">
-              <Link href="/privacy" className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                <Shield className="h-3 w-3 flex-shrink-0" />
-                Privacy
-              </Link>
-              <Link href="/terms" className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                <Eye className="h-3 w-3 flex-shrink-0" />
-                Terms
-              </Link>
-            </nav>
+          {/* Resources */}
+          <div className="md:col-span-3">
+            <h4 className="text-sm font-semibold text-foreground/80 mb-3">Resources</h4>
+            <ul className="space-y-2 text-xs">
+              <li>
+                <Link href="/learn/spreads" className="text-muted-foreground hover:text-primary transition-colors">
+                  Spreads
+                </Link>
+              </li>
+              <li>
+                <Link href="/learn/history" className="text-muted-foreground hover:text-primary transition-colors">
+                  History
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Privacy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Support */}
+          <div className="md:col-span-3">
+            <h4 className="text-sm font-semibold text-foreground/80 mb-3">Support</h4>
+            <p className="text-xs text-muted-foreground/70 mb-3">
+              Enjoying Lenormand Intelligence?
+            </p>
+            <a 
+              href='https://ko-fi.com/Y8Y81NVDEK' 
+              target='_blank' 
+              rel='noopener noreferrer' 
+              className="inline-flex items-center gap-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              <Heart className="h-3.5 w-3.5" />
+              Support Us
+            </a>
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-border via-border/50 to-border mb-6" />
+
         {/* Bottom Bar */}
-         <div className="border-t border-border/50 pt-4">
-           <div className="flex flex-col items-center justify-center gap-3 text-xs text-muted-foreground/70">
-             <p>© {currentYear} Lenormand Intelligence</p>
-             <div className="flex items-center gap-1">
-               <span>Made with</span>
-               <Heart className="h-3 w-3 text-primary/60" aria-hidden="true" />
-               <span>in Denmark</span>
-             </div>
-             <p className="text-xs text-muted-foreground/60">Entertainment & spiritual guidance</p>
-           </div>
-         </div>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground/60">
+          <div className="text-center md:text-left">
+            <p>© {currentYear} Lenormand Intelligence. Entertainment & spiritual guidance.</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <span>Made with</span>
+            <Heart className="h-3 w-3 text-primary/60" aria-hidden="true" />
+            <span>in Denmark</span>
+          </div>
+        </div>
       </div>
     </footer>
   )
