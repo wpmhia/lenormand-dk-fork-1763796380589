@@ -69,35 +69,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Trust Signals */}
-        <div className="container-section bg-gradient-to-r from-primary/5 via-transparent to-primary/5 py-8">
-          <div className="mx-auto max-w-4xl">
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-                 <p className="mb-2 text-xl">🆓</p>
-                 <p className="text-sm font-semibold text-foreground">Completely Free</p>
-                 <p className="text-xs text-muted-foreground mt-1">No hidden costs ever</p>
-               </div>
-               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-                 <p className="mb-2 text-xl">⚡</p>
-                 <p className="text-sm font-semibold text-foreground">No Signup</p>
-                 <p className="text-xs text-muted-foreground mt-1">Start reading instantly</p>
-               </div>
-               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-                 <p className="mb-2 text-xl">🔒</p>
-                 <p className="text-sm font-semibold text-foreground">No Tracking</p>
-                 <p className="text-xs text-muted-foreground mt-1">Your privacy matters</p>
-               </div>
-               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-                 <p className="mb-2 text-xl">📖</p>
-                 <p className="text-sm font-semibold text-foreground">Open Data</p>
-                 <p className="text-xs text-muted-foreground mt-1">Verified card meanings</p>
-               </div>
-            </div>
-          </div>
-        </div>
-
-           {/* Reading Types */}
+        {/* Reading Types */}
             <div className="container-section">
             <div className="relative mb-12">
              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
