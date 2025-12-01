@@ -427,7 +427,7 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
                 <CardContent className="relative z-10 space-y-6 p-8">
                   <div className="text-center">
-                    <h2 className="mb-2 flex items-center justify-center gap-2 text-2xl font-semibold text-foreground">
+                    <h2 className="mb-4 flex items-center justify-center gap-2 text-2xl font-semibold text-foreground">
                       <Sparkles className="h-6 w-6 text-primary" />
                       Card Analysis
                     </h2>

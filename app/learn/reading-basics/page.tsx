@@ -188,8 +188,8 @@ export default function ReadingBasicsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                   <h3 className="font-medium text-foreground">Possible Interpretations:</h3>
+                 <div className="space-y-3">
+                    <h3 className="mb-3 font-medium text-foreground">Possible Interpretations:</h3>
                    <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• &ldquo;News about deception brings a gift&rdquo; - Warning about deceptive news that leads to something positive</li>
                     <li>• &ldquo;A message reveals hidden wisdom as a gift&rdquo; - Learning something valuable from a communication</li>
@@ -215,8 +215,8 @@ export default function ReadingBasicsPage() {
              </p>
 
              <div className="grid gap-6 md:grid-cols-2">
-               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-                 <h3 className="mb-2 font-semibold text-foreground">MODE 1: SENTENCE ONLY (Quick)</h3>
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                  <h3 className="mb-3 font-semibold text-foreground">MODE 1: SENTENCE ONLY (Quick)</h3>
                  <div className="space-y-2 text-sm text-muted-foreground">
                    <p><strong>Time:</strong> 10–15 seconds</p>
                    <p><strong>Method:</strong> Read cards 1-2-3-4-5 as ONE grammatical sentence and stop.</p>
@@ -226,8 +226,8 @@ export default function ReadingBasicsPage() {
                  </div>
                </div>
 
-               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-                 <h3 className="mb-2 font-semibold text-foreground">MODE 2: FULL STRUCTURED (Deep)</h3>
+                <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                  <h3 className="mb-3 font-semibold text-foreground">MODE 2: FULL STRUCTURED (Deep)</h3>
                  <div className="space-y-2 text-sm text-muted-foreground">
                    <p><strong>Time:</strong> 60–90 seconds</p>
                    <p><strong>Method:</strong> Start with the sentence, then layer three optional interpretive lenses, analyze adjacent pairs, and add timing if needed.</p>

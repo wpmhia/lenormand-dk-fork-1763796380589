@@ -202,7 +202,7 @@ export default function CardMeaningsPage() {
                      />
                     <div className="space-y-3">
                      <div>
-                       <h4 className="mb-1 text-sm font-semibold text-foreground">Keywords:</h4>
+                       <h4 className="mb-2 text-sm font-semibold text-foreground">Keywords:</h4>
                        <div className="flex flex-wrap gap-1">
                          {card.keywords.map((keyword, index) => (
                            <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
@@ -212,15 +212,15 @@ export default function CardMeaningsPage() {
                        </div>
                      </div>
                      <div>
-                       <h4 className="mb-1 text-sm font-semibold text-foreground">Timing:</h4>
+                       <h4 className="mb-2 text-sm font-semibold text-foreground">Timing:</h4>
                        <p className="text-xs text-muted-foreground">{card.timing}</p>
                      </div>
                      <div>
-                       <h4 className="mb-1 text-sm font-semibold text-foreground">Where to Watch:</h4>
+                       <h4 className="mb-2 text-sm font-semibold text-foreground">Where to Watch:</h4>
                        <p className="text-xs text-muted-foreground">{card.location}</p>
                      </div>
                      <div>
-                       <h4 className="mb-1 text-sm font-semibold text-foreground">Associations:</h4>
+                       <h4 className="mb-2 text-sm font-semibold text-foreground">Associations:</h4>
                        <p className="text-xs leading-relaxed text-primary">
                          {card.associations.join(', ')}
                        </p>

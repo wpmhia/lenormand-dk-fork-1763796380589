@@ -471,25 +471,25 @@ export default function CardCombinationsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="font-semibold text-foreground mb-2">The Principle of Interaction</h3>
+              <h3 className="mb-3 font-semibold text-foreground">The Principle of Interaction</h3>
               <p className="text-muted-foreground">
                 In Lenormand, cards don&apos;t exist in isolation. When two cards appear together, they modify and enhance each other&apos;s meanings. The combination creates a new, unified message that&apos;s more specific than either card alone.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">Modifier Cards</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Modifier Cards</h3>
               <p className="text-muted-foreground">
                 Certain cards act as &quot;modifiers&quot; - they change the meaning of adjacent cards. The Key adds certainty, Clouds add confusion, the Scythe adds suddenness. Learning to identify these modifiers is crucial to accurate combination reading.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">Context Matters</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Context Matters</h3>
               <p className="text-muted-foreground">
                 The same combination can have different meanings depending on the context of the reading. A Lover + Tower in a love question might mean relationship breakup, but in a career question it might indicate conflict with a colleague.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-2">Reading Direction</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Reading Direction</h3>
               <p className="text-muted-foreground">
                 In most Lenormand spreads, cards are read left to right, creating a narrative flow. The first card influences the second, and together they tell a story. Pay attention to the order and direction of your cards.
               </p>

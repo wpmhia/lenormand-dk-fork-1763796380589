@@ -48,7 +48,7 @@ export default function EnvCheckPage() {
     <div className="page-layout">
       <div className="container mx-auto max-w-4xl p-6">
         <div className="mb-6">
-          <h1 className="mb-2 text-3xl font-bold text-foreground">Environment Variables Status</h1>
+          <h1 className="mb-6 text-3xl font-bold text-foreground">Environment Variables Status</h1>
         <p className="mt-2 flex flex-wrap items-center gap-1 text-base text-muted-foreground">
             <span className="rounded-md bg-muted px-2 py-1 font-semibold text-muted-foreground">Steps</span> Switch to{' '}
           <span className="inline-flex items-center gap-1 font-medium text-primary">
@@ -121,7 +121,7 @@ export default function EnvCheckPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div>
-                    <h4 className="mb-1 text-sm font-semibold">How to get this variable:</h4>
+                    <h4 className="mb-2 text-sm font-semibold">How to get this variable:</h4>
                     <div 
                       className="prose prose-sm max-w-none text-sm text-muted-foreground"
                       dangerouslySetInnerHTML={{
@@ -136,7 +136,7 @@ export default function EnvCheckPage() {
                   </div>
                   {isSet && (
                     <div>
-                      <h4 className="mb-1 text-sm font-semibold">Current value (debug):</h4>
+                      <h4 className="mb-2 text-sm font-semibold">Current value (debug):</h4>
                       <div className="break-all rounded bg-muted p-2 font-mono text-xs">
                         {envVar.name.includes('KEY') 
                           ? `${envValues[envVar.name].substring(0, 8)}...${envValues[envVar.name].substring(envValues[envVar.name].length - 4)}`

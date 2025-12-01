@@ -139,7 +139,7 @@ export default function AboutPage() {
             <div className="space-y-6">
               {/* Principle 1 */}
               <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-2 font-semibold text-foreground">Data-First, Expert-Verified</h3>
+                <h3 className="mb-3 font-semibold text-foreground">Data-First, Expert-Verified</h3>
                 <p className="text-foreground">
                   Every training input comes from vetted readings and historical texts. Every AI output is reviewed by experienced readers before reaching you. Quality flows from curated foundations.
                 </p>
@@ -147,7 +147,7 @@ export default function AboutPage() {
 
               {/* Principle 2 */}
               <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-2 font-semibold text-foreground">Transparent Assistance</h3>
+                <h3 className="mb-3 font-semibold text-foreground">Transparent Assistance</h3>
                 <p className="text-foreground">
                   We present AI insights as suggestions and probabilities, never deterministic answers. Human context, intuition, and consent guide the final interpretation. The card reader remains the authority.
                 </p>
@@ -155,7 +155,7 @@ export default function AboutPage() {
 
               {/* Principle 3 */}
               <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-2 font-semibold text-foreground">Privacy & Ethical Practice</h3>
+                <h3 className="mb-3 font-semibold text-foreground">Privacy & Ethical Practice</h3>
                 <p className="text-foreground">
                   Client confidentiality and explicit consent are fundamental. We never use personal data for training without permission. Your readings remain yours alone.
                 </p>
@@ -163,7 +163,7 @@ export default function AboutPage() {
 
               {/* Principle 4 */}
               <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-2 font-semibold text-foreground">Continuous Evolution</h3>
+                <h3 className="mb-3 font-semibold text-foreground">Continuous Evolution</h3>
                 <p className="text-foreground">
                   Feedback from users, practitioners, and researchers refines both our AI models and teaching materials. We grow through listening, learning, and respectful iteration.
                 </p>
@@ -177,28 +177,28 @@ export default function AboutPage() {
           <h2 className="mb-8 text-3xl font-bold text-foreground">Who We Serve</h2>
           <div className="space-y-4">
             <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-2 font-semibold text-foreground">Curious Beginners</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Curious Beginners</h3>
               <p className="text-foreground">
                 Start with guided practice and reliable examples. Build confidence through structured learning and supportive AI feedback as you discover the language of the cards.
               </p>
             </div>
 
             <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-2 font-semibold text-foreground">Practicing Readers</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Practicing Readers</h3>
               <p className="text-foreground">
                 Deepen your craft with tools that increase consistency and speed. Access documented methods, reusable spreads, and insights that enhance your intuitive practice without replacing it.
               </p>
             </div>
 
             <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-2 font-semibold text-foreground">Professional Consultants</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Professional Consultants</h3>
               <p className="text-foreground">
                 Strengthen your practice with structured templates, AI-assisted consistency checks, and client-ready reports. Build your reputation on both expertise and transparency.
               </p>
             </div>
 
             <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-2 font-semibold text-foreground">Researchers & Historians</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Researchers & Historians</h3>
               <p className="text-foreground">
                 Explore the deck's evolution, usage patterns, and cultural significance through our curated archive of texts, translations, and annotated readings spanning centuries of practice.
               </p>

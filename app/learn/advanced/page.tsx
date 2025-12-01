@@ -187,7 +187,7 @@ export default function AdvancedPage() {
             </div>
 
             <div className="mt-6 rounded-lg border border-border bg-muted p-4">
-                  <h2 className="mb-2 font-semibold text-foreground">Important Notes:</h2>
+                  <h2 className="mb-4 font-semibold text-foreground">Important Notes:</h2>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• Time associations are traditional guidelines, not absolute predictions</li>
                 <li>• Context from surrounding cards can modify timing</li>
@@ -237,7 +237,7 @@ export default function AdvancedPage() {
             </div>
 
             <div className="mt-6 rounded-lg border border-border bg-muted p-4">
-                <h2 className="mb-2 font-semibold text-foreground">How to Use Playing Cards:</h2>
+                <h2 className="mb-4 font-semibold text-foreground">How to Use Playing Cards:</h2>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• Add playing card associations for additional context</li>
                 <li>• Particularly useful in Hoodoo and ATR practices</li>

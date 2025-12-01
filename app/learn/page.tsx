@@ -347,7 +347,7 @@ export default function LearnPage() {
         {/* CTA Section */}
         <div className="rounded-3xl border border-border/50 bg-gradient-to-r from-primary/10 to-primary/5 p-8 text-center">
           <Zap className="mx-auto mb-4 h-8 w-8 text-primary" />
-          <h3 className="mb-2 text-2xl font-bold text-foreground">
+          <h3 className="mb-3 text-2xl font-bold text-foreground">
             Ready to Start Your Journey?
           </h3>
           <p className="mx-auto mb-6 max-w-2xl text-muted-foreground">

@@ -130,21 +130,21 @@ export default function HistoryPage() {
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 <div>
-                  <h3 className="mb-2 font-semibold text-foreground">Early Life & Education</h3>
+                  <h3 className="mb-3 font-semibold text-foreground">Early Life & Education</h3>
                   <p className="leading-relaxed text-muted-foreground">
                     Marie Anne Adelaide Lenormand was born on <strong>May 27, 1772</strong> in <strong>Alençon, Normandy, France</strong>, to Jean Louis Antoine Lenormand (a draper) and Marie Anne Lenormand (née Gilbert). Orphaned at the age of five, she was educated in a convent school. This early religious education would shape her spiritual worldview throughout her life.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="mb-2 font-semibold text-foreground">Coming of Age During the French Revolution</h3>
+                  <h3 className="mb-3 font-semibold text-foreground">Coming of Age During the French Revolution</h3>
                    <p className="leading-relaxed text-muted-foreground">
                      Lenormand left Alençon for <strong>Paris in 1786</strong> at approximately age 14. Remarkably, at age 17, she witnessed the <strong>storming of the Bastille on July 14, 1789</strong>—a pivotal moment in history. She came of age during the turbulent French Revolution, which would profoundly influence her practice and clientele.
                    </p>
                 </div>
 
                 <div>
-                  <h3 className="mb-2 font-semibold text-foreground">A Legendary Diviner (1790s-1820s)</h3>
+                  <h3 className="mb-3 font-semibold text-foreground">A Legendary Diviner (1790s-1820s)</h3>
                   <p className="leading-relaxed text-muted-foreground">
                     Lenormand built her reputation over more than <strong>40 years of active practice</strong>. She claimed to have given cartomantic advice to many famous persons, including:
                   </p>
@@ -160,14 +160,14 @@ export default function HistoryPage() {
                 </div>
 
                 <div>
-                  <h3 className="mb-2 font-semibold text-foreground">Imprisonment & Controversy (1809)</h3>
+                  <h3 className="mb-3 font-semibold text-foreground">Imprisonment & Controversy (1809)</h3>
                   <p className="leading-relaxed text-muted-foreground">
                     In <strong>1809</strong>, Lenormand was arrested and imprisoned for her activities. She published a memoir about this experience titled <em>&ldquo;Les Souvenirs prophétiques d&apos;une sibylle sur les causes secrètes de son arrestation&rdquo;</em> (The Prophetic Memories of a Sibyl on the Secret Causes of Her Arrest). Though she was imprisoned more than once, these periods were never lengthy. Her notoriety only increased her mystique and fame.
                   </p>
                 </div>
 
                 <div>
-                   <h3 className="mb-2 font-semibold text-foreground">Second Career as a Published Author (1814+)</h3>
+                   <h3 className="mb-3 font-semibold text-foreground">Second Career as a Published Author (1814+)</h3>
                    <p className="leading-relaxed text-muted-foreground">
                      In <strong>1814</strong>, Lenormand began a second literary career, publishing numerous texts that sparked public controversies. She authored at least <strong>13 major works</strong>, including:
                    </p>
@@ -192,7 +192,7 @@ export default function HistoryPage() {
                  </div>
 
                 <div>
-                  <h3 className="mb-2 font-semibold text-foreground">Legacy & Wealth</h3>
+                  <h3 className="mb-3 font-semibold text-foreground">Legacy & Wealth</h3>
                   <p className="leading-relaxed text-muted-foreground">
                     Marie Anne Lenormand died in <strong>Paris on June 25, 1843</strong> at the age of 71. She left behind a substantial fortune of <strong>500,000 Francs</strong> (an enormous sum for the time), a testament to her successful practice and publications. She is buried in <strong>Division 3 of Père Lachaise Cemetery</strong> in Paris, France—the most prestigious cemetery in the city.
                   </p>
@@ -225,14 +225,14 @@ export default function HistoryPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="mb-2 font-semibold text-foreground">Before Lenormand: A German Board Game</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Before Lenormand: A German Board Game</h3>
               <p className="leading-relaxed text-muted-foreground">
                 The 36-card Lenormand deck we know today is not directly created by Marie Anne Lenormand herself. Rather, it evolved from a German board game called <strong><em>Das Spiel der Hoffnung</em></strong> (<strong>The Game of Hope</strong>), which was published around <strong>1799</strong> by <strong>Johann Kaspar Hechtel</strong> of <strong>Nuremberg, Germany</strong>.
               </p>
             </div>
 
             <div>
-              <h3 className="mb-2 font-semibold text-foreground">A Game of Chance Becomes a Divination Tool</h3>
+              <h3 className="mb-3 font-semibold text-foreground">A Game of Chance Becomes a Divination Tool</h3>
               <p className="leading-relaxed text-muted-foreground">
                 Originally, Das Spiel der Hoffnung was designed as a board game of chance. The 36 cards were arranged in a 6×6 grid and played with a pair of six-sided dice. Card #1 (The Rider) marked the start, and Card #35 (The Anchor/Hope) marked the goal. Players moved around the grid based on dice rolls:
               </p>
@@ -248,14 +248,14 @@ export default function HistoryPage() {
             </div>
 
             <div>
-              <h3 className="mb-2 font-semibold text-foreground">From Game to Divination Deck</h3>
+              <h3 className="mb-3 font-semibold text-foreground">From Game to Divination Deck</h3>
               <p className="leading-relaxed text-muted-foreground">
                 While Das Spiel der Hoffnung was popular as a game, its structure naturally lent itself to fortune-telling. The symbolic meanings of the cards and their narrative flow made them ideal for divination through card spreads. This is where fortune-tellers like Marie Anne Lenormand came in—not as creators of the deck, but as brilliant interpreters who recognized the divinatory potential of these cards.
               </p>
             </div>
 
             <div>
-              <h3 className="mb-2 font-semibold text-foreground">Posthumous Naming & Modern Legacy</h3>
+              <h3 className="mb-3 font-semibold text-foreground">Posthumous Naming & Modern Legacy</h3>
               <p className="leading-relaxed text-muted-foreground">
                 After Lenormand&apos;s death in 1843, publishers capitalized on her legendary fame and reputation. The 36-card deck became widely marketed under her name as the <strong>&quot;Petit Lenormand&quot;</strong> (Little Lenormand), even though Lenormand never formally created it. The deck&apos;s association with her name enhanced its mystique and helped popularize it across Europe, particularly in France, Germany, Eastern Europe, Russia, and eventually Brazil.
               </p>

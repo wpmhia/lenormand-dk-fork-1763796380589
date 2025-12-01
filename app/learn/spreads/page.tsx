@@ -337,7 +337,7 @@ export default function SpreadsPage() {
                   return (
                   <div key={groupIndex} id={categoryId}>
                     <div className="mb-4">
-                     <h2 className="text-2xl font-bold text-foreground">{group.category}</h2>
+                      <h2 className="mb-3 text-2xl font-bold text-foreground">{group.category}</h2>
                      <p className="mt-1 text-sm text-muted-foreground">{group.description}</p>
                    </div>
                    <div className="space-y-6">
@@ -346,8 +346,8 @@ export default function SpreadsPage() {
                          <CardContent className="p-6">
                            <div className="mb-4 flex items-start justify-between">
                              <div>
-                               <div className="flex items-center gap-2">
-                                 <h3 className="mb-2 text-lg font-semibold text-foreground">
+                                <div className="flex items-center gap-2">
+                                  <h3 className="mb-0 text-lg font-semibold text-foreground">
                                    {spread.name}
                                  </h3>
                                  {spread.isPrimary && (
@@ -373,7 +373,7 @@ export default function SpreadsPage() {
                            </div>
 
                            <div className="mb-4 rounded-lg bg-muted p-4">
-                             <h4 className="mb-2 font-semibold text-foreground">Layout:</h4>
+                             <h4 className="mb-3 font-semibold text-foreground">Layout:</h4>
                              <p className="text-sm font-medium text-muted-foreground">
                                {spread.layout}
                              </p>
@@ -437,7 +437,7 @@ export default function SpreadsPage() {
                     </p>
 
                     <div>
-                      <h4 className="mb-2 text-sm font-semibold text-foreground">Examples:</h4>
+                      <h4 className="mb-3 text-sm font-semibold text-foreground">Examples:</h4>
                       <ul className="space-y-1">
                         {technique.examples.map((example, exIndex) => (
                           <li key={exIndex} className="flex items-start text-sm text-muted-foreground">
@@ -491,8 +491,8 @@ export default function SpreadsPage() {
               </div>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
-              <h4 className="font-semibold text-foreground">Step 1: Prepare & Charge the Cards</h4>
+             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+               <h4 className="mb-2 font-semibold text-foreground">Step 1: Prepare & Charge the Cards</h4>
               <ul className="space-y-2 text-sm text-card-foreground">
                 <li>• Shuffle the 36 cards while stating your question aloud (concentrated intent)</li>
                 <li>• Cut toward yourself with the left hand ((&quot;feminine&quot;quot;feminine(&quot;feminine&quot;quot; cut—Lenormand&apos;s requirement)</li>
@@ -500,8 +500,8 @@ export default function SpreadsPage() {
               </ul>
             </div>
 
-             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
-               <h4 className="font-semibold text-foreground">Step 2: Locate the Significator</h4>
+              <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+                <h4 className="mb-2 font-semibold text-foreground">Step 2: Locate the Significator</h4>
                <ul className="space-y-2 text-sm text-card-foreground">
                  <li>• <strong>Man</strong> card (28) = the central person (the questioner or focus of the reading; use they/them if gender unknown)</li>
                  <li>• <strong>Woman</strong> card (29) = another key person or influence (secondary figure; use they/them if gender unknown)</li>
@@ -511,8 +511,8 @@ export default function SpreadsPage() {
                </ul>
              </div>
 
-            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
-              <h4 className="font-semibold text-foreground">Step 3: Read the Five Essential Strips (in order)</h4>
+             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+               <h4 className="mb-2 font-semibold text-foreground">Step 3: Read the Five Essential Strips (in order)</h4>
               <div className="space-y-3">
                 <div className="rounded bg-card p-3">
                   <p className="font-semibold text-foreground">A. The Row (Story of the Moment)</p>
@@ -537,8 +537,8 @@ export default function SpreadsPage() {
               </div>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
-              <h4 className="font-semibold text-foreground">Step 4: Timing in the Tableau</h4>
+             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+               <h4 className="mb-2 font-semibold text-foreground">Step 4: Timing in the Tableau</h4>
               <ul className="space-y-2 text-sm text-card-foreground">
                 <li>• <strong>Columns</strong> represent weeks (or months for long-range questions)</li>
                 <li>• <strong>First &quot;past&quot; card</strong> (left of significator): count pip value = how many days ago the story began</li>
@@ -547,8 +547,8 @@ export default function SpreadsPage() {
               </ul>
             </div>
 
-            <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
-              <h4 className="font-semibold text-foreground">Step 5: End the Session</h4>
+             <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-4">
+               <h4 className="mb-2 font-semibold text-foreground">Step 5: End the Session</h4>
               <ul className="space-y-2 text-sm text-card-foreground">
                 <li>• Look for repeating motifs (same number, color, symbol)</li>
                 <li>• State the bottom-center card (position 36) as the &quot;last page the cards have turned&quot;—your closing advice</li>
@@ -578,7 +578,7 @@ export default function SpreadsPage() {
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
                   <span className="font-bold text-white">1</span>
                 </div>
-                <h4 className="font-semibold text-foreground">Start Small</h4>
+                <h4 className="mb-2 font-semibold text-foreground">Start Small</h4>
                 <p className="text-sm text-muted-foreground">
                   Begin with 3-card spreads to build confidence before moving to larger layouts.
                 </p>
@@ -588,7 +588,7 @@ export default function SpreadsPage() {
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
                   <span className="font-bold text-white">2</span>
                 </div>
-                <h4 className="font-semibold text-foreground">Practice Daily</h4>
+                <h4 className="mb-2 font-semibold text-foreground">Practice Daily</h4>
                 <p className="text-sm text-muted-foreground">
                   Regular practice with different spreads helps you understand card interactions.
                 </p>
@@ -598,7 +598,7 @@ export default function SpreadsPage() {
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
                   <span className="font-bold text-white">3</span>
                 </div>
-                <h4 className="font-semibold text-foreground">Keep a Journal</h4>
+                <h4 className="mb-2 font-semibold text-foreground">Keep a Journal</h4>
                 <p className="text-sm text-muted-foreground">
                   Record your readings and revisit them later to see how accurate your interpretations were.
                 </p>
