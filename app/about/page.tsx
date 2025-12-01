@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Sparkles, Lightbulb, Users, BookOpen, Shield, Compass } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,18 +11,33 @@ export default function AboutPage() {
     <div className="page-layout mystical-bg">
       <div className="container mx-auto max-w-5xl px-4 py-12">
         {/* Hero Section */}
-        <div className="mb-16 text-center">
-          <div className="mb-6 flex items-center justify-center gap-3">
-            <Sparkles className="h-10 w-10 text-primary animate-pulse" />
-            <h1 className="text-5xl font-bold text-foreground">Lenormand Intelligence</h1>
-            <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+        <div className="mb-16">
+          <div className="grid gap-8 md:grid-cols-2 md:items-center mb-12">
+            {/* Text Content */}
+            <div>
+              <div className="mb-6 flex items-center gap-3">
+                <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+                <h1 className="text-5xl font-bold text-foreground">Lenormand Intelligence</h1>
+                <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+              </div>
+              <p className="mb-4 text-xl text-muted-foreground">
+                Where ancient wisdom meets modern intelligence
+              </p>
+              <p className="text-lg text-muted-foreground">
+                We bridge the timeless art of Lenormand divination with trained AI, creating a platform where human expertise and machine learning work in perfect harmony to illuminate the patterns hidden within the cards.
+              </p>
+            </div>
+            {/* Image */}
+            <div className="relative h-96 md:h-full rounded-lg overflow-hidden shadow-lg">
+              <Image
+                src="/images/about-hero.webp"
+                alt="Lenormand Intelligence"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
           </div>
-          <p className="mb-4 text-xl text-muted-foreground">
-            Where ancient wisdom meets modern intelligence
-          </p>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            We bridge the timeless art of Lenormand divination with trained AI, creating a platform where human expertise and machine learning work in perfect harmony to illuminate the patterns hidden within the cards.
-          </p>
         </div>
 
         {/* Our Story */}
