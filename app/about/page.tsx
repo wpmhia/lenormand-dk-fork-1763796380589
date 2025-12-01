@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import { Sparkles, Lightbulb, Users, BookOpen, Shield, Compass } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
