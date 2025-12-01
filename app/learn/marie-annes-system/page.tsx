@@ -107,9 +107,8 @@ export default function MarieAnnesSystemPage() {
               <div className="space-y-4">
                 <div className="border-l-2 border-amber-500 pl-4">
                   <h3 className="font-semibold">1. The Significator is Sacred</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                     Every reading begins with a significator&ndash;(Man) for male querents, (Woman) for females. This card represents the person asking the question. It is the center, the anchor, the heart of the reading. Without it, the reading has no focus.
-                  </p>
+                   <p className="text-sm text-muted-foreground mt-1">
+                      Every reading begins with a significator. Choose the <strong>Man card (first person)</strong> to represent the querent&apos;s perspective, or the <strong>Woman card (second person)</strong> for the other person&apos;s perspective. The significator is the center, the anchor, the heart of the reading. Without it, the reading has no focus. This is about positioning in the reading, not the gender of the person asking.                   </p>
                 </div>
 
                 <div className="border-l-2 border-amber-500 pl-4">
@@ -224,8 +223,8 @@ export default function MarieAnnesSystemPage() {
               <div className="space-y-3">
                 <div>
                   <h4 className="font-semibold mb-2">Step 1: Choose or Draw the Significator</h4>
-                  <p className="text-sm text-muted-foreground">
-                    (Man) if the querent is male or seeking male guidance. (Woman) if female or seeking female guidance. This card represents the person asking and anchors the entire reading.
+                   <p className="text-sm text-muted-foreground">
+                     <strong>Man (First Person):</strong> Use to represent the querent&apos;s primary perspective. <strong>Woman (Second Person):</strong> Use to represent another person&apos;s perspective or the secondary focus. These positional significators work with any person, regardless of gender. This is about positioning in the reading structure, not the gender of those involved.
                   </p>
                 </div>
 
