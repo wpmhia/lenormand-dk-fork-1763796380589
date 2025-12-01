@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { BreadcrumbNav } from '@/components/BreadcrumbNav'
+import { LearningProgressTracker } from '@/components/LearningProgressTracker'
 import {
   ArrowLeft,
   ArrowRight,
@@ -18,6 +20,19 @@ import {
 export default function MarieAnnesSystemPage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Breadcrumb */}
+      <div className="border-b border-border bg-card/50 backdrop-blur">
+        <div className="container mx-auto max-w-4xl px-4 py-4">
+          <BreadcrumbNav
+            items={[
+              { name: 'Home', url: '/' },
+              { name: 'Learn', url: '/learn' },
+              { name: "Marie-Anne's System", url: '/learn/marie-annes-system' },
+            ]}
+          />
+        </div>
+      </div>
+
       {/* Navigation */}
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
@@ -264,6 +279,11 @@ export default function MarieAnnesSystemPage() {
                </p>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Progress Tracker */}
+        <div className="mb-8">
+          <LearningProgressTracker moduleId="marie-annes-system" />
         </div>
 
         {/* Footer Navigation */}
