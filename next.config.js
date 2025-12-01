@@ -4,6 +4,15 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
+  redirects: async () => {
+    return [
+      {
+        source: '/read',
+        destination: '/read/new',
+        permanent: true, // 301 redirect - tells search engines to index destination
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
