@@ -9,18 +9,18 @@ export function Footer() {
       <div className="container mx-auto px-4 py-8">
         {/* Compact Footer Grid */}
         <div className="mb-6 grid gap-6 sm:grid-cols-4 text-sm text-muted-foreground">
-          {/* About */}
-          <div className="space-y-2">
-            <h4 className="text-base font-medium text-foreground/60">About</h4>
-            <p className="text-xs leading-relaxed text-muted-foreground/80">
-              Explore the wisdom of Lenormand cards with AI-enhanced interpretations. Discover timeless divination traditions combined with modern technology.
-            </p>
-          </div>
+           {/* About */}
+           <div className="space-y-1">
+             <h4 className="text-base font-medium text-foreground/60">About</h4>
+             <p className="text-xs leading-relaxed text-muted-foreground/80">
+               Explore the wisdom of Lenormand cards with AI-enhanced interpretations. Discover timeless divination traditions combined with modern technology.
+             </p>
+           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-2">
-            <h4 className="text-base font-medium text-foreground/60">Navigate</h4>
-            <nav className="space-y-1" aria-label="Quick navigation">
+           {/* Quick Links */}
+           <div className="space-y-1">
+             <h4 className="text-base font-medium text-foreground/60">Navigate</h4>
+             <nav className="space-y-0.5" aria-label="Quick navigation">
               <Link href="/read/new" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
                 New Reading
               </Link>
@@ -33,10 +33,10 @@ export function Footer() {
             </nav>
           </div>
 
-           {/* Resources */}
-           <div className="space-y-2">
-             <h4 className="text-base font-medium text-foreground/60">Resources</h4>
-             <nav className="space-y-1" aria-label="Learning resources">
+            {/* Resources */}
+            <div className="space-y-1">
+              <h4 className="text-base font-medium text-foreground/60">Resources</h4>
+              <nav className="space-y-0.5" aria-label="Learning resources">
                <Link href="/learn/spreads" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
                  Spreads
                </Link>
@@ -49,10 +49,10 @@ export function Footer() {
              </nav>
            </div>
 
-          {/* Legal */}
-          <div className="space-y-2">
-            <h4 className="text-base font-medium text-foreground/60">Legal</h4>
-            <nav className="space-y-1" aria-label="Legal and privacy">
+           {/* Legal */}
+           <div className="space-y-1">
+             <h4 className="text-base font-medium text-foreground/60">Legal</h4>
+             <nav className="space-y-0.5" aria-label="Legal and privacy">
               <Link href="/privacy" className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground/80">
                 <Shield className="h-3 w-3 flex-shrink-0" />
                 Privacy
