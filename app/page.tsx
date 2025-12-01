@@ -70,17 +70,16 @@ export default function Home() {
         </div>
 
         {/* Reading Types */}
-            <div className="container-section py-16">
-            <div className="relative mb-12">
-             <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
-              <div className="relative z-10 mb-8 text-center">
+            <div className="container-section py-16 px-4">
+            <div className="relative mb-12 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-8 md:p-12">
+             <div className="relative z-10 mb-8 text-center">
                   <h2 className="relative mb-4 text-center text-4xl font-bold text-foreground">
                     Choose Your Reading Type
                     <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
                   </h2>
                  <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Start with quick answers or explore deeper insights</p>
              </div>
-                 <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
                      <ReadingTypeCard
                        icon={<Shield className="h-5 w-5 text-primary" />}
                        title="Single Card"
