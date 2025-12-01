@@ -28,7 +28,7 @@ export default function AboutPage() {
               </p>
             </div>
             {/* Image */}
-            <div className="relative h-96 md:h-full rounded-lg overflow-hidden shadow-lg">
+            <div className="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
               <Image
                 src="/images/about-hero.webp"
                 alt="Lenormand Intelligence"
