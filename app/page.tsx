@@ -35,7 +35,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
-              Get free AI-powered Lenormand card readings online. Explore card meanings, spreads, and personalized interpretations with our intelligent divination tool.
+              Get your Lenormand reading in 30 seconds. No signup, no account, completely free.
             </p>
               <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
                 <Link href="/read/new">
@@ -69,155 +69,159 @@ export default function Home() {
           </div>
         </div>
 
-       {/* What is Lenormand Section */}
-       <div className="container-section py-16">
-         <div className="mx-auto max-w-5xl">
-           <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
-             What is Lenormand?
-           </h2>
-
-           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-             {/* Left: Core Definition */}
-             <div className="space-y-6">
-               <div>
-                 <h3 className="mb-3 text-lg font-semibold text-foreground">A Practical Divination System</h3>
-                 <p className="leading-relaxed text-muted-foreground">
-                   Lenormand is a 36-card divination system created in 1800s France. Unlike Tarot&apos;s symbolic approach, Lenormand cards are read as straightforward sentences for direct, practical guidance.
-                 </p>
+        {/* Trust Signals */}
+        <div className="container-section bg-gradient-to-r from-primary/5 via-transparent to-primary/5 py-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
+                 <p className="mb-2 text-xl">🆓</p>
+                 <p className="text-sm font-semibold text-foreground">Completely Free</p>
+                 <p className="text-xs text-muted-foreground mt-1">No hidden costs ever</p>
                </div>
-
-               <div>
-                 <h3 className="mb-3 text-lg font-semibold text-foreground">How It Works</h3>
-                 <p className="leading-relaxed text-muted-foreground">
-                   Cards are combined to form coherent narratives. Draw 3 cards and read them left-to-right as a sentence. The meanings are concrete and literal—no complex symbolism required.
-                 </p>
+               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
+                 <p className="mb-2 text-xl">⚡</p>
+                 <p className="text-sm font-semibold text-foreground">No Signup</p>
+                 <p className="text-xs text-muted-foreground mt-1">Start reading instantly</p>
                </div>
-             </div>
-
-             {/* Right: Comparison */}
-             <div className="rounded-lg border border-border bg-card/50 p-6">
-               <h3 className="mb-4 text-lg font-semibold text-foreground">Lenormand vs. Tarot</h3>
-               <div className="space-y-4 text-sm">
-                 <div className="flex gap-4">
-                   <div className="flex-1">
-                     <p className="mb-1 font-medium text-foreground">Lenormand</p>
-                     <p className="text-muted-foreground">36 cards, practical, sentences</p>
-                   </div>
-                   <div className="flex-1">
-                     <p className="mb-1 font-medium text-foreground">Tarot</p>
-                     <p className="text-muted-foreground">78 cards, symbolic, psychology</p>
-                   </div>
-                 </div>
-                 <div className="h-px bg-border"></div>
-                 <div className="flex gap-4">
-                   <div className="flex-1">
-                     <p className="mb-1 font-medium text-foreground">Direct answers</p>
-                     <p className="text-muted-foreground">Yes, practical guidance</p>
-                   </div>
-                   <div className="flex-1">
-                     <p className="mb-1 font-medium text-foreground">Deeper insight</p>
-                     <p className="text-muted-foreground">Spiritual growth</p>
-                   </div>
-                 </div>
-                 <div className="h-px bg-border"></div>
-                 <div className="flex gap-4">
-                   <div className="flex-1">
-                     <p className="mb-1 font-medium text-foreground">Easy to learn</p>
-                     <p className="text-muted-foreground">Master basics in hours</p>
-                   </div>
-                   <div className="flex-1">
-                     <p className="mb-1 font-medium text-foreground">Learning curve</p>
-                     <p className="text-muted-foreground">Weeks to master</p>
-                   </div>
-                 </div>
+               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
+                 <p className="mb-2 text-xl">🔒</p>
+                 <p className="text-sm font-semibold text-foreground">No Tracking</p>
+                 <p className="text-xs text-muted-foreground mt-1">Your privacy matters</p>
                </div>
-             </div>
-           </div>
-
-           {/* About This Site */}
-           <div className="mt-12 rounded-lg bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-6 text-center">
-             <p className="leading-relaxed text-muted-foreground">
-               This site combines <span className="font-semibold text-foreground">historical reading methods</span> from 1800s France with <span className="font-semibold text-foreground">modern AI analysis</span>. Completely free, no account required, and built by the community.
-             </p>
-           </div>
-         </div>
-       </div>
-
-       {/* Trust Signals */}
-       <div className="container-section bg-gradient-to-r from-primary/5 via-transparent to-primary/5 py-8">
-         <div className="mx-auto max-w-4xl">
-           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-             <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-               <p className="text-sm font-semibold text-foreground">Completely Free</p>
-               <p className="text-xs text-muted-foreground mt-1">No hidden costs ever</p>
-             </div>
-             <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-               <p className="text-sm font-semibold text-foreground">No Signup</p>
-               <p className="text-xs text-muted-foreground mt-1">Start reading instantly</p>
-             </div>
-             <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-               <p className="text-sm font-semibold text-foreground">No Tracking</p>
-               <p className="text-xs text-muted-foreground mt-1">Your privacy matters</p>
-             </div>
-             <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
-               <p className="text-sm font-semibold text-foreground">Open Data</p>
-               <p className="text-xs text-muted-foreground mt-1">Verified card meanings</p>
-             </div>
-           </div>
-         </div>
-       </div>
-
-          {/* Reading Types */}
-           <div className="container-section">
-           <div className="relative mb-12">
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
-             <div className="relative z-10 mb-8 text-center">
-                <h2 className="relative mb-4 text-center text-4xl font-bold text-foreground">
-                  Explore Your Future
-                  <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
-                </h2>
-               <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Choose the wisdom that speaks to your soul</p>
+               <div className="rounded-lg border border-border bg-card/50 p-4 text-center">
+                 <p className="mb-2 text-xl">📖</p>
+                 <p className="text-sm font-semibold text-foreground">Open Data</p>
+                 <p className="text-xs text-muted-foreground mt-1">Verified card meanings</p>
+               </div>
             </div>
-                <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    <ReadingTypeCard
-                      icon={<Shield className="h-5 w-5 text-primary" />}
-                      title="Single Card"
-                      description="Quick daily guidance for direct answers and immediate action"
-                      cardCount={1}
-                      badge="Authentic"
-                      badgeVariant="default"
-                      spreadId="single-card"
-                    />
-                    <ReadingTypeCard
-                      icon={<Sparkles className="h-5 w-5 text-primary" />}
-                      title="3-Card Sentence"
-                      description="Three cards flowing as a narrative sentence - the core Lenormand reading method"
-                      cardCount={3}
-                      badge="Authentic"
-                      badgeVariant="default"
-                      spreadId="sentence-3"
-                    />
-                    <ReadingTypeCard
-                      icon={<Heart className="h-5 w-5 text-primary" />}
-                      title="9-Card Reading"
-                      description="Deeper exploration of complex situations without overwhelming detail"
-                      cardCount={9}
-                      badge="Authentic"
-                      badgeVariant="default"
-                      spreadId="comprehensive"
-                    />
-                    <ReadingTypeCard
-                      icon={<Calendar className="h-5 w-5 text-primary" />}
-                      title="Grand Tableau"
-                      description="Complete life situation through full 4x9 grid - the most comprehensive reading"
-                      cardCount={36}
-                      badge="Authentic"
-                      badgeVariant="default"
-                      spreadId="grand-tableau"
-                    />
-               </div>
-           </div>
-         </div>
+          </div>
+        </div>
+
+           {/* Reading Types */}
+            <div className="container-section">
+            <div className="relative mb-12">
+             <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5"></div>
+              <div className="relative z-10 mb-8 text-center">
+                  <h2 className="relative mb-4 text-center text-4xl font-bold text-foreground">
+                    Choose Your Reading Type
+                    <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
+                  </h2>
+                 <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">Start with quick answers or explore deeper insights</p>
+             </div>
+                 <div className="relative z-10 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                     <ReadingTypeCard
+                       icon={<Shield className="h-5 w-5 text-primary" />}
+                       title="Single Card"
+                       description="Quick daily guidance • 30 seconds"
+                       cardCount={1}
+                       badge="Authentic"
+                       badgeVariant="default"
+                       spreadId="single-card"
+                     />
+                     <ReadingTypeCard
+                       icon={<Sparkles className="h-5 w-5 text-primary" />}
+                       title="3-Card Sentence"
+                       description="Three-card narrative • 2 minutes"
+                       cardCount={3}
+                       badge="Authentic"
+                       badgeVariant="default"
+                       spreadId="sentence-3"
+                     />
+                     <ReadingTypeCard
+                       icon={<Heart className="h-5 w-5 text-primary" />}
+                       title="9-Card Reading"
+                       description="Deeper situation analysis • 5 minutes"
+                       cardCount={9}
+                       badge="Authentic"
+                       badgeVariant="default"
+                       spreadId="comprehensive"
+                     />
+                     <ReadingTypeCard
+                       icon={<Calendar className="h-5 w-5 text-primary" />}
+                       title="Grand Tableau"
+                       description="Complete 360° life reading • 15 minutes"
+                       cardCount={36}
+                       badge="Authentic"
+                       badgeVariant="default"
+                       spreadId="grand-tableau"
+                     />
+                </div>
+            </div>
+          </div>
+
+        {/* What is Lenormand Section */}
+        <div className="container-section py-16">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+              What is Lenormand?
+            </h2>
+
+            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+              {/* Left: Core Definition */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="mb-3 text-lg font-semibold text-foreground">A Practical Divination System</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    Lenormand is a 36-card divination system created in 1800s France. Unlike Tarot&apos;s symbolic approach, Lenormand cards are read as straightforward sentences for direct, practical guidance.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-3 text-lg font-semibold text-foreground">How It Works</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    Cards are combined to form coherent narratives. Draw 3 cards and read them left-to-right as a sentence. The meanings are concrete and literal—no complex symbolism required.
+                  </p>
+                </div>
+              </div>
+
+              {/* Right: Comparison */}
+              <div className="rounded-lg border border-border bg-card/50 p-6">
+                <h3 className="mb-4 text-lg font-semibold text-foreground">Lenormand vs. Tarot</h3>
+                <div className="space-y-4 text-sm">
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <p className="mb-1 font-medium text-foreground">Lenormand</p>
+                      <p className="text-muted-foreground">36 cards, practical, sentences</p>
+                    </div>
+                    <div className="flex-1">
+                      <p className="mb-1 font-medium text-foreground">Tarot</p>
+                      <p className="text-muted-foreground">78 cards, symbolic, psychology</p>
+                    </div>
+                  </div>
+                  <div className="h-px bg-border"></div>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <p className="mb-1 font-medium text-foreground">Direct answers</p>
+                      <p className="text-muted-foreground">Yes, practical guidance</p>
+                    </div>
+                    <div className="flex-1">
+                      <p className="mb-1 font-medium text-foreground">Deeper insight</p>
+                      <p className="text-muted-foreground">Spiritual growth</p>
+                    </div>
+                  </div>
+                  <div className="h-px bg-border"></div>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <p className="mb-1 font-medium text-foreground">Easy to learn</p>
+                      <p className="text-muted-foreground">Master basics in hours</p>
+                    </div>
+                    <div className="flex-1">
+                      <p className="mb-1 font-medium text-foreground">Learning curve</p>
+                      <p className="text-muted-foreground">Weeks to master</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* About This Site */}
+            <div className="mt-12 rounded-lg bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-6 text-center">
+              <p className="leading-relaxed text-muted-foreground">
+                This site combines <span className="font-semibold text-foreground">historical reading methods</span> from 1800s France with <span className="font-semibold text-foreground">modern AI analysis</span>. Completely free, no account required, and built by the community.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Learning Section */}
         <div className="container-section bg-gradient-to-r from-primary/5 via-transparent to-primary/5 py-16">
