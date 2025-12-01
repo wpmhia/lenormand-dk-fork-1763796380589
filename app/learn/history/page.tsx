@@ -138,9 +138,9 @@ export default function HistoryPage() {
 
                 <div>
                   <h3 className="mb-2 font-semibold text-foreground">Coming of Age During the French Revolution</h3>
-                  <p className="leading-relaxed text-muted-foreground">
-                    Lenormand left Alençon for <strong>Paris in 1786</strong> at the age of 14. Remarkably, she was in Paris during the <strong>storming of the Bastille on July 14, 1789</strong>—a witness to one of history&apos;s most pivotal moments. She came of age during the turbulent French Revolution, which would profoundly influence her practice and clientele.
-                  </p>
+                   <p className="leading-relaxed text-muted-foreground">
+                     Lenormand left Alençon for <strong>Paris in 1786</strong> at approximately age 14. Remarkably, at age 17, she witnessed the <strong>storming of the Bastille on July 14, 1789</strong>—a pivotal moment in history. She came of age during the turbulent French Revolution, which would profoundly influence her practice and clientele.
+                   </p>
                 </div>
 
                 <div>
@@ -167,21 +167,29 @@ export default function HistoryPage() {
                 </div>
 
                 <div>
-                  <h3 className="mb-2 font-semibold text-foreground">Second Career as a Published Author (1814+)</h3>
-                  <p className="leading-relaxed text-muted-foreground">
-                    In <strong>1814</strong>, Lenormand began a second literary career, publishing numerous texts that sparked public controversies. She authored at least <strong>13 major works</strong>, including:
-                  </p>
-                  <ul className="mt-2 space-y-1 pl-4 text-sm text-muted-foreground">
-                    <li>• <em>Les Souvenirs prophétiques d&apos;une sibylle</em> (1814) - 592 pages</li>
-                    <li>• <em>Mémoires historiques et secrets de l&apos;impératrice Joséphine</em> (1820) - 556 pages</li>
-                    <li>• <em>Les oracles sibyllins ou la suite des souvenirs prophétiques</em> (1817) - 528 pages</li>
-                    <li>• <em>La sibylle au congrès d&apos;Aix-la-Chapelle</em> (1819) - 316 pages</li>
-                    <li>• <em>Souvenirs de la Belgique</em> (1822) - 416 pages</li>
-                  </ul>
-                  <p className="mt-3 leading-relaxed text-muted-foreground">
-                    These works established her as a major literary and historical figure, not merely a fortune teller, but a political commentator and memoirist of her era.
-                  </p>
-                </div>
+                   <h3 className="mb-2 font-semibold text-foreground">Second Career as a Published Author (1814+)</h3>
+                   <p className="leading-relaxed text-muted-foreground">
+                     In <strong>1814</strong>, Lenormand began a second literary career, publishing numerous texts that sparked public controversies. She authored at least <strong>13 major works</strong>, including:
+                   </p>
+                   <ul className="mt-2 space-y-1 pl-4 text-sm text-muted-foreground">
+                     <li>• <em>Les Souvenirs prophétiques d&apos;une sibylle</em> (1814) - 592 pages - Her foundational memoir about her arrest</li>
+                     <li>• <em>Anniversaire de la mort de l&apos;impératrice Josephine</em> (1815) - Anniversary reflections on Empress Josephine</li>
+                     <li>• <em>La sibylle au tombeau de Louis XVI</em> (1816) - The Sibyl at the Tomb of Louis XVI</li>
+                     <li>• <em>Les oracles sibyllins ou la suite des souvenirs prophétiques</em> (1817) - 528 pages - Continuation of her prophetic memories</li>
+                     <li>• <em>La sibylle au congrès d&apos;Aix-la-Chapelle</em> (1819) - 316 pages - The Sibyl at the Congress of Aachen</li>
+                     <li>• <em>Mémoires historiques et secrets de l&apos;impératrice Joséphine</em> (1820) - 556 pages - Historical and secret memoirs of Empress Josephine</li>
+                     <li>• <em>Mémoire justificatif présenté par Mlle Le Normand</em> (1821) - Justificatory Memoir</li>
+                     <li>• <em>Cri de l&apos;honneur</em> (1821) - Cry of Honor</li>
+                     <li>• <em>Souvenirs de la Belgique</em> (1822) - 416 pages - Memories of Belgium</li>
+                     <li>• <em>L&apos;ange protecteur de la France au tombeau de Louis XVIII</em> (1824) - The Guardian Angel of France</li>
+                     <li>• <em>L&apos;ombre immortelle de Catherine II au tombeau d&apos;Alexandre Ier</em> (1826) - The Immortal Shadow of Catherine II</li>
+                     <li>• <em>L&apos;ombre de Henri IV au palais d&apos;Orléans</em> (1830) - 107 pages - The Shadow of Henry IV</li>
+                     <li>• <em>Le petit homme rouge au château des Tuileries</em> (1831) - 107 pages - The Little Red Man at the Tuileries Palace</li>
+                   </ul>
+                   <p className="mt-3 leading-relaxed text-muted-foreground">
+                     These works established her as a major literary and historical figure, not merely a fortune teller, but a political commentator and memoirist of her era. She continued publishing until the 1830s, with additional works on French politics and history.
+                   </p>
+                 </div>
 
                 <div>
                   <h3 className="mb-2 font-semibold text-foreground">Legacy & Wealth</h3>
@@ -205,6 +213,63 @@ export default function HistoryPage() {
                 </p>
               </div>
             </CardContent>
+        </Card>
+
+        {/* Origins of the Deck Section */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle id="origins-of-the-deck" className="flex items-center text-2xl text-foreground">
+              <BookOpen className="mr-3 h-6 w-6 text-primary" />
+              The True Origins: Das Spiel der Hoffnung
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="mb-2 font-semibold text-foreground">Before Lenormand: A German Board Game</h3>
+              <p className="leading-relaxed text-muted-foreground">
+                The 36-card Lenormand deck we know today is not directly created by Marie Anne Lenormand herself. Rather, it evolved from a German board game called <strong><em>Das Spiel der Hoffnung</em></strong> (<strong>The Game of Hope</strong>), which was published around <strong>1799</strong> by <strong>Johann Kaspar Hechtel</strong> of <strong>Nuremberg, Germany</strong>.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="mb-2 font-semibold text-foreground">A Game of Chance Becomes a Divination Tool</h3>
+              <p className="leading-relaxed text-muted-foreground">
+                Originally, Das Spiel der Hoffnung was designed as a board game of chance. The 36 cards were arranged in a 6×6 grid and played with a pair of six-sided dice. Card #1 (The Rider) marked the start, and Card #35 (The Anchor/Hope) marked the goal. Players moved around the grid based on dice rolls:
+              </p>
+              <ul className="mt-2 space-y-1 pl-4 text-sm text-muted-foreground">
+                <li>• Some cards granted money from the pot or advanced the player</li>
+                <li>• Others forced payment into the pot or moved players backward</li>
+                <li>• Landing on Card #8 (The Coffin) trapped you until rolling doubles</li>
+                <li>• Overshooting Card #35 onto Card #36 (The Cross) also trapped the player</li>
+              </ul>
+              <p className="mt-3 leading-relaxed text-muted-foreground">
+                Remarkably, each card also depicted German- or French-suited playing cards in the upper field, allowing the deck to function as a standard 36-card German playing card deck as well.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="mb-2 font-semibold text-foreground">From Game to Divination Deck</h3>
+              <p className="leading-relaxed text-muted-foreground">
+                While Das Spiel der Hoffnung was popular as a game, its structure naturally lent itself to fortune-telling. The symbolic meanings of the cards and their narrative flow made them ideal for divination through card spreads. This is where fortune-tellers like Marie Anne Lenormand came in—not as creators of the deck, but as brilliant interpreters who recognized the divinatory potential of these cards.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="mb-2 font-semibold text-foreground">Posthumous Naming & Modern Legacy</h3>
+              <p className="leading-relaxed text-muted-foreground">
+                After Lenormand&apos;s death in 1843, publishers capitalized on her legendary fame and reputation. The 36-card deck became widely marketed under her name as the <strong>&quot;Petit Lenormand&quot;</strong> (Little Lenormand), even though Lenormand never formally created it. The deck&apos;s association with her name enhanced its mystique and helped popularize it across Europe, particularly in France, Germany, Eastern Europe, Russia, and eventually Brazil.
+              </p>
+              <p className="mt-3 leading-relaxed text-muted-foreground">
+                This naming convention—while historically inaccurate—proved brilliant for the deck&apos;s global expansion. Lenormand&apos;s documented reputation as an accurate and respected diviner lent credibility to the cards that bore her name.
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm text-foreground">
+                <strong>Historical Note:</strong> The symbiotic relationship between Das Spiel der Hoffnung and Marie Anne Lenormand&apos;s fame shows how history is not always straightforward. The cards were not invented by Lenormand, but her legendary status as a diviner ensured they would be remembered by her name for centuries to come.
+              </p>
+            </div>
+          </CardContent>
         </Card>
 
         {/* Historical Timeline */}
