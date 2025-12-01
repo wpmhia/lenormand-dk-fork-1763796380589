@@ -90,59 +90,140 @@ export function FAQSchema() {
 }
 
 export function LearningFAQSchema() {
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'How long does it take to learn Lenormand?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Our free course takes approximately 3 hours to complete from start to finish. Most learners can master the basics in 1-2 weeks of regular practice.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do I need prior divination experience to learn Lenormand?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'No! This course is designed for complete beginners. We start from the fundamentals and progress step-by-step to advanced techniques.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'What\'s the difference between Lenormand and Tarot?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Lenormand uses 36 concrete cards read as sentences for direct guidance, while Tarot uses 78 archetypal cards for deeper psychological insight. Lenormand is more practical and literal.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Which module should I start with?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Begin with the Introduction module, then progress through History, Reading Basics, Card Meanings, Spreads, and Advanced Concepts in order. Each builds on the previous one.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Can I download the course materials?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'All course content is available online and can be bookmarked. You can also explore our card explorer to reference all 36 card meanings anytime.',
-        },
-      },
-    ],
-  };
+   const schema = {
+     '@context': 'https://schema.org',
+     '@type': 'FAQPage',
+     mainEntity: [
+       {
+         '@type': 'Question',
+         name: 'How long does it take to learn Lenormand?',
+         acceptedAnswer: {
+           '@type': 'Answer',
+           text: 'Our free course takes approximately 3 hours to complete from start to finish. Most learners can master the basics in 1-2 weeks of regular practice.',
+         },
+       },
+       {
+         '@type': 'Question',
+         name: 'Do I need prior divination experience to learn Lenormand?',
+         acceptedAnswer: {
+           '@type': 'Answer',
+           text: 'No! This course is designed for complete beginners. We start from the fundamentals and progress step-by-step to advanced techniques.',
+         },
+       },
+       {
+         '@type': 'Question',
+         name: 'What\'s the difference between Lenormand and Tarot?',
+         acceptedAnswer: {
+           '@type': 'Answer',
+           text: 'Lenormand uses 36 concrete cards read as sentences for direct guidance, while Tarot uses 78 archetypal cards for deeper psychological insight. Lenormand is more practical and literal.',
+         },
+       },
+       {
+         '@type': 'Question',
+         name: 'Which module should I start with?',
+         acceptedAnswer: {
+           '@type': 'Answer',
+           text: 'Begin with the Introduction module, then progress through History, Reading Basics, Card Meanings, Spreads, and Advanced Concepts in order. Each builds on the previous one.',
+         },
+       },
+       {
+         '@type': 'Question',
+         name: 'Can I download the course materials?',
+         acceptedAnswer: {
+           '@type': 'Answer',
+           text: 'All course content is available online and can be bookmarked. You can also explore our card explorer to reference all 36 card meanings anytime.',
+         },
+       },
+     ],
+   };
 
-  return (
-    <Script
-      id="learning-faq-schema"
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      strategy="afterInteractive"
-    />
-  );
+   return (
+     <Script
+       id="learning-faq-schema"
+       type="application/ld+json"
+       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+       strategy="afterInteractive"
+     />
+   );
+}
+
+export function LearningCourseSchema() {
+   const schema = {
+     '@context': 'https://schema.org',
+     '@type': 'CourseCollection',
+     name: 'Lenormand Intelligence Courses',
+     description: 'Free structured learning courses for mastering Lenormand divination from beginner to advanced',
+     url: 'https://lenormand-intelligence.com/learn',
+     hasCourse: [
+       {
+         '@type': 'Course',
+         name: 'Introduction to Lenormand',
+         description: 'Discover the ancient wisdom and unique power of the 36-card oracle system',
+         url: 'https://lenormand-intelligence.com/learn/introduction',
+         inLanguage: 'en',
+         isAccessibleForFree: true,
+         educationalLevel: 'Beginner',
+         duration: 'PT15M',
+       },
+       {
+         '@type': 'Course',
+         name: 'Card Meanings & Associations',
+         description: 'Master the language of all 36 cards with keywords, timing, and symbolic meanings',
+         url: 'https://lenormand-intelligence.com/learn/card-meanings',
+         inLanguage: 'en',
+         isAccessibleForFree: true,
+         educationalLevel: 'Beginner',
+         duration: 'PT45M',
+       },
+       {
+         '@type': 'Course',
+         name: 'How to Read Lenormand',
+         description: 'Master the fundamental techniques of reading cards as meaningful sentences',
+         url: 'https://lenormand-intelligence.com/learn/reading-basics',
+         inLanguage: 'en',
+         isAccessibleForFree: true,
+         educationalLevel: 'Beginner',
+         duration: 'PT25M',
+       },
+       {
+         '@type': 'Course',
+         name: 'Spreads & Techniques',
+         description: 'Learn powerful spreads from 3-card to Grand Tableau with step-by-step guidance',
+         url: 'https://lenormand-intelligence.com/learn/spreads',
+         inLanguage: 'en',
+         isAccessibleForFree: true,
+         educationalLevel: 'Intermediate',
+         duration: 'PT30M',
+       },
+       {
+         '@type': 'Course',
+         name: 'Card Combinations',
+         description: 'Understand how cards interact and create new meanings when read together',
+         url: 'https://lenormand-intelligence.com/learn/card-combinations',
+         inLanguage: 'en',
+         isAccessibleForFree: true,
+         educationalLevel: 'Intermediate',
+         duration: 'PT25M',
+       },
+       {
+         '@type': 'Course',
+         name: 'Advanced Concepts',
+         description: 'Time associations, playing cards, and professional reading techniques',
+         url: 'https://lenormand-intelligence.com/learn/advanced',
+         inLanguage: 'en',
+         isAccessibleForFree: true,
+         educationalLevel: 'Advanced',
+         duration: 'PT35M',
+       },
+     ],
+   };
+
+   return (
+     <Script
+       id="learning-course-schema"
+       type="application/ld+json"
+       dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+       strategy="afterInteractive"
+     />
+   );
 }

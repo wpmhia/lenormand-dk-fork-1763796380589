@@ -8,7 +8,7 @@ import { Footer } from '@/components/Footer';
 import { ThemeProvider } from '@/components/providers';
 import { Header } from '@/components/header';
 import { CookieConsent } from '@/components/CookieConsent';
-import { StructuredData, FAQSchema } from '@/lib/structured-data';
+import { StructuredData, FAQSchema, LearningCourseSchema } from '@/lib/structured-data';
 
 
 const inter = Inter({ 
@@ -169,7 +169,8 @@ export default function RootLayout({
            </ThemeProvider>
          </TooltipProvider>
         <StructuredData />
-        <FAQSchema />
+         <FAQSchema />
+         <LearningCourseSchema />
       </body>
     </html>
   );
