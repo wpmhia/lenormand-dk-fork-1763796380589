@@ -28,15 +28,38 @@ export default function TermsPage() {
                 By using Lenormand Intelligence, you agree to these terms of service. These terms govern your use of our divination platform and the services we provide.
               </p>
             </CardContent>
-          </Card>
+           </Card>
 
-          <Card className="border-border bg-muted">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <Heart className="h-5 w-5 text-primary/80" />
-                Service Description
-              </CardTitle>
-            </CardHeader>
+           <Card className="border-border bg-muted">
+             <CardHeader>
+               <CardTitle className="flex items-center gap-2 text-foreground">
+                 <AlertTriangle className="h-5 w-5 text-primary/80" />
+                 Non-Commercial Use Only
+               </CardTitle>
+             </CardHeader>
+             <CardContent className="space-y-4 text-foreground">
+               <p>
+                 Lenormand Intelligence is provided exclusively for non-commercial use. This means:
+               </p>
+               <ul className="ml-4 list-inside list-disc space-y-2">
+                 <li>You may not use this service for any commercial, business, or profit-generating purposes</li>
+                 <li>You may not resell, license, or monetize readings or content from this service</li>
+                 <li>You may not integrate this service into a commercial product or service</li>
+                 <li>Personal, educational, and spiritual use for yourself and friends is permitted</li>
+               </ul>
+               <p className="text-sm text-muted-foreground mt-4">
+                 If you are interested in using Lenormand Intelligence for commercial purposes, please contact us to discuss licensing options.
+               </p>
+             </CardContent>
+           </Card>
+
+           <Card className="border-border bg-muted">
+             <CardHeader>
+               <CardTitle className="flex items-center gap-2 text-foreground">
+                 <Heart className="h-5 w-5 text-primary/80" />
+                 Service Description
+               </CardTitle>
+             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
               <p>
                 Lenormand Intelligence provides:

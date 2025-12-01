@@ -225,6 +225,18 @@ Optional variables:
 
 This project is licensed under the MIT License.
 
+## Non-Commercial Use
+
+**Lenormand Intelligence is provided exclusively for non-commercial use.**
+
+This means:
+- You may use this service for personal, educational, and spiritual purposes
+- You may not use this service for any commercial, business, or profit-generating purposes
+- You may not resell, license, or monetize readings or content from this service
+- You may not integrate this service into a commercial product or service
+
+If you are interested in using Lenormand Intelligence for commercial purposes, please contact us to discuss licensing options.
+
 ## Support
 
 For issues and questions:
