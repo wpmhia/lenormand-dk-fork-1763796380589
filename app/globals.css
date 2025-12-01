@@ -182,14 +182,19 @@
      @apply min-h-10 min-w-10 px-3 py-2 text-xs;
    }
 
-   /* Hero button group */
-   .btn-group-hero {
-     @apply mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row;
-   }
+    /* Hero section */
+    .hero-image-cell {
+      @apply flex items-center justify-center;
+    }
 
-   .btn-group-hero-item {
-     @apply h-16 flex-1 rounded-xl;
-   }
+    /* Hero button group */
+    .btn-group-hero {
+      @apply mx-auto flex max-w-lg flex-col justify-center gap-4 sm:flex-row;
+    }
+
+    .btn-group-hero-item {
+      @apply h-16 flex-1 rounded-xl;
+    }
 
    /* Touch target spacing */
    button, [role="button"], a[href] {
