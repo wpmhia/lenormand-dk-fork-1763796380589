@@ -49,7 +49,7 @@ export default function AboutPage() {
               </div>
               <div className="relative rounded-lg overflow-hidden shadow-lg">
                 <Image
-                  src="/images/team.webp"
+                  src="/images/team.webp?v=1"
                   alt="Lenormand Intelligence Team"
                   width={400}
                   height={320}
