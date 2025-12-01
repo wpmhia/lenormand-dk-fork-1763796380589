@@ -48,7 +48,7 @@ export default function Home() {
             <div className="relative z-10 flex justify-center lg:flex-1 lg:justify-end">
               <div className="hero-image-cell rounded-none bg-transparent p-0">
                   <Image
-                    src="/images/hero-image.jpg?v=2"
+                    src="/images/hero-image.jpg?v=3"
                     alt="Mystical Lenormand cards arranged in a reading spread"
                     width={800}
                     height={600}
