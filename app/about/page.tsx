@@ -200,7 +200,7 @@ export default function AboutPage() {
             <div className="rounded-lg border border-border bg-muted p-6">
               <h3 className="mb-3 font-semibold text-foreground">Researchers & Historians</h3>
               <p className="text-foreground">
-                Explore the deck's evolution, usage patterns, and cultural significance through our curated archive of texts, translations, and annotated readings spanning centuries of practice.
+                 Explore the deck&apos;s evolution, usage patterns, and cultural significance through our curated archive of texts, translations, and annotated readings spanning centuries of practice.
               </p>
             </div>
           </div>
@@ -241,7 +241,7 @@ export default function AboutPage() {
         <div className="rounded-lg border border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 p-8 text-center">
           <h2 className="mb-4 text-2xl font-bold text-foreground">Begin Your Journey</h2>
           <p className="mb-6 text-lg text-muted-foreground">
-            Whether you're taking your first step into Lenormand or deepening a lifelong practice, we're here to illuminate your path.
+             Whether you&apos;re taking your first step into Lenormand or deepening a lifelong practice, we&apos;re here to illuminate your path.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link href="/read/new">
@@ -263,7 +263,7 @@ export default function AboutPage() {
             Lenormand Intelligence is a living project, continuously refined through the wisdom of practitioners, feedback from our community, and the evolving capabilities of responsible AI.
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            Questions or stories to share? We'd love to hear from you.
+             Questions or stories to share? We&apos;d love to hear from you.
           </p>
         </div>
       </div>
