@@ -492,6 +492,7 @@ function NewReadingPageContent() {
                           }}
                           className="btn-group-hero-item"
                           size="lg"
+                          variant="default"
                         >
                           ✨ Draw cards for me
                         </Button>
@@ -502,6 +503,7 @@ function NewReadingPageContent() {
                           }}
                           className="btn-group-hero-item"
                           size="lg"
+                          variant="default"
                         >
                           🎴 I already have cards
                         </Button>
@@ -650,12 +652,14 @@ function NewReadingPageContent() {
                   {/* Submit Button for Physical Cards */}
                   {path === 'physical' && selectedSpread && (
                     <Button
-                      onClick={() => handleDraw(parsedCards)}
-                      disabled={parsedCards.length !== selectedSpread.cards}
-                      className="w-full rounded-xl bg-primary py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-all duration-500 hover:scale-105 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-                    >
-                      ✨ Start Reading
-                    </Button>
+                       onClick={() => handleDraw(parsedCards)}
+                       disabled={parsedCards.length !== selectedSpread.cards}
+                       className="w-full"
+                       size="lg"
+                       variant="default"
+                     >
+                       ✨ Start Reading
+                     </Button>
                   )}
 
                   <div className="text-center">
@@ -735,12 +739,12 @@ function NewReadingPageContent() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  onClick={confirmStartOver}
-                  className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                >
-                  Start Over
-                </Button>
+                 <Button
+                   onClick={confirmStartOver}
+                   variant="destructive"
+                 >
+                   Start Over
+                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
