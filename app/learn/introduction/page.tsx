@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { BreadcrumbNav } from '@/components/BreadcrumbNav'
+import { LearningProgressTracker } from '@/components/LearningProgressTracker'
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,6 +21,19 @@ import {
 export default function IntroductionPage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Breadcrumb */}
+      <div className="border-b border-border bg-card/50 backdrop-blur">
+        <div className="container mx-auto max-w-4xl px-4 py-4">
+          <BreadcrumbNav
+            items={[
+              { name: 'Home', url: '/' },
+              { name: 'Learn', url: '/learn' },
+              { name: 'Introduction', url: '/learn/introduction' },
+            ]}
+          />
+        </div>
+      </div>
+
       {/* Navigation */}
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
@@ -248,21 +263,26 @@ export default function IntroductionPage() {
           </CardContent>
         </Card>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between border-t border-border pt-8">
-          <Link href="/learn">
-            <Button variant="outline" className="border-border text-card-foreground hover:bg-muted">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Course Overview
-            </Button>
-          </Link>
-          <Link href="/learn/history">
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Continue to History
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+         {/* Progress Tracker */}
+         <div className="mb-8">
+           <LearningProgressTracker moduleId="introduction" />
+         </div>
+
+         {/* Navigation */}
+         <div className="flex items-center justify-between border-t border-border pt-8">
+           <Link href="/learn">
+             <Button variant="outline" className="border-border text-card-foreground hover:bg-muted">
+               <ArrowLeft className="mr-2 h-4 w-4" />
+               Back to Course Overview
+             </Button>
+           </Link>
+           <Link href="/learn/history">
+             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+               Continue to History
+               <ArrowRight className="ml-2 h-4 w-4" />
+             </Button>
+           </Link>
+         </div>
       </div>
     </div>
   )
