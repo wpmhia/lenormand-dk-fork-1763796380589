@@ -127,19 +127,84 @@ export default function HistoryPage() {
               Marie Anne Adelaide Lenormand
             </CardTitle>
           </CardHeader>
-           <CardContent className="space-y-4">
-             <p className="leading-relaxed text-muted-foreground">
-               Born in 1772 in Alençon, France, Marie Anne Adelaide Lenormand (1772-1843) was one of the most celebrated fortune tellers of her era. Her clientele included Napoleon Bonaparte, Empress Josephine, and members of French aristocracy. She became known as &ldquo;the Sibyl of the Faubourg Saint-Germain,&rdquo; famous for her readings and predictions.
-             </p>
-             <p className="leading-relaxed text-muted-foreground">
-               <strong>Important Note:</strong> While Lenormand was a legendary diviner, she did not leave behind a documented system specifically for the 36-card deck that now bears her name. The modern Lenormand system and interpretations were developed and popularized <em>after her death</em> by publishers and readers who honored her legacy by associating the deck with her name. The symbolic language and reading traditions we know today as Lenormand evolved from the broader European cartomantic traditions of her era and the decades following.
-             </p>
-             <div className="rounded-lg border border-border bg-muted p-4">
-               <p className="text-sm italic text-foreground">
-                 This platform respects Lenormand&apos;s historical significance while offering interpretations inspired by the spirit of divination traditions connected to her legacy—a living tradition that honors the past while continuing to evolve.
-               </p>
-             </div>
-           </CardContent>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="mb-2 font-semibold text-foreground">Early Life & Education</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    Marie Anne Adelaide Lenormand was born on <strong>May 27, 1772</strong> in <strong>Alençon, Normandy, France</strong>, to Jean Louis Antoine Lenormand (a draper) and Marie Anne Lenormand (née Gilbert). Orphaned at the age of five, she was educated in a convent school. This early religious education would shape her spiritual worldview throughout her life.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-foreground">Coming of Age During the French Revolution</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    Lenormand left Alençon for <strong>Paris in 1786</strong> at the age of 14. Remarkably, she was in Paris during the <strong>storming of the Bastille on July 14, 1789</strong>—a witness to one of history&apos;s most pivotal moments. She came of age during the turbulent French Revolution, which would profoundly influence her practice and clientele.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-foreground">A Legendary Diviner (1790s-1820s)</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    Lenormand built her reputation over more than <strong>40 years of active practice</strong>. She claimed to have given cartomantic advice to many famous persons, including:
+                  </p>
+                  <ul className="mt-2 space-y-1 pl-4 text-sm text-muted-foreground">
+                    <li>• <strong>Leaders of the French Revolution:</strong> Jean-Paul Marat, Maximilien Robespierre, and Louis Antoine de Saint-Just</li>
+                    <li>• <strong>Empress Josephine</strong> (wife of Napoleon Bonaparte)</li>
+                    <li>• <strong>Tsar Alexander I</strong> of Russia</li>
+                    <li>• <strong>Napoleon Bonaparte</strong> and members of French aristocracy</li>
+                  </ul>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">
+                    She became known as &ldquo;the Sibyl of the Faubourg Saint-Germain,&rdquo; famous for her direct, practical readings and accurate predictions about political and personal matters.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-foreground">Imprisonment & Controversy (1809)</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    In <strong>1809</strong>, Lenormand was arrested and imprisoned for her activities. She published a memoir about this experience titled <em>&ldquo;Les Souvenirs prophétiques d&apos;une sibylle sur les causes secrètes de son arrestation&rdquo;</em> (The Prophetic Memories of a Sibyl on the Secret Causes of Her Arrest). Though she was imprisoned more than once, these periods were never lengthy. Her notoriety only increased her mystique and fame.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-foreground">Second Career as a Published Author (1814+)</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    In <strong>1814</strong>, Lenormand began a second literary career, publishing numerous texts that sparked public controversies. She authored at least <strong>13 major works</strong>, including:
+                  </p>
+                  <ul className="mt-2 space-y-1 pl-4 text-sm text-muted-foreground">
+                    <li>• <em>Les Souvenirs prophétiques d&apos;une sibylle</em> (1814) - 592 pages</li>
+                    <li>• <em>Mémoires historiques et secrets de l&apos;impératrice Joséphine</em> (1820) - 556 pages</li>
+                    <li>• <em>Les oracles sibyllins ou la suite des souvenirs prophétiques</em> (1817) - 528 pages</li>
+                    <li>• <em>La sibylle au congrès d&apos;Aix-la-Chapelle</em> (1819) - 316 pages</li>
+                    <li>• <em>Souvenirs de la Belgique</em> (1822) - 416 pages</li>
+                  </ul>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">
+                    These works established her as a major literary and historical figure, not merely a fortune teller, but a political commentator and memoirist of her era.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-foreground">Legacy & Wealth</h3>
+                  <p className="leading-relaxed text-muted-foreground">
+                    Marie Anne Lenormand died in <strong>Paris on June 25, 1843</strong> at the age of 71. She left behind a substantial fortune of <strong>500,000 Francs</strong> (an enormous sum for the time), a testament to her successful practice and publications. She is buried in <strong>Division 3 of Père Lachaise Cemetery</strong> in Paris, France—the most prestigious cemetery in the city.
+                  </p>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">
+                    Interestingly, she had no heirs other than a nephew who was in the army at the time of her death. A devout Catholic, her nephew burned all of her occult paraphernalia after inheriting her fortune, preserving only the monetary wealth she left behind.
+                  </p>
+                </div>
+              </div>
+
+              <hr className="my-4 border-border" />
+
+              <p className="leading-relaxed text-muted-foreground">
+                <strong>Important Note:</strong> While Lenormand was a legendary diviner, she did not leave behind a documented system specifically for the 36-card deck that now bears her name. The modern Lenormand system and interpretations were developed and popularized <em>after her death</em> by publishers and readers who honored her legacy by associating the deck with her name. The symbolic language and reading traditions we know today as Lenormand evolved from the broader European cartomantic traditions of her era and the decades following.
+              </p>
+              <div className="rounded-lg border border-border bg-muted p-4">
+                <p className="text-sm italic text-foreground">
+                  This platform respects Lenormand&apos;s historical significance while offering interpretations inspired by the spirit of divination traditions connected to her legacy—a living tradition that honors the past while continuing to evolve.
+                </p>
+              </div>
+            </CardContent>
         </Card>
 
         {/* Historical Timeline */}
