@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link';
-import { Sparkles, Home, BookOpen, Plus, Menu, X } from 'lucide-react';
+import { Sparkles, Home, BookOpen, Plus, Menu, X, Info } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -53,16 +53,23 @@ export function Header() {
                 <Plus className="h-5 w-5" />
                 <span>New Reading</span>
               </button>
-            <Link
-              href="/learn"
-              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
-            >
-              <Sparkles className="h-5 w-5" />
-              <span>Learn</span>
-            </Link>
-             <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-flex min-h-11 min-w-11 items-center justify-center rounded transition-transform hover:scale-105 active:scale-95">
-               <img height='36' style={{border: '0px', height: '36px'}} loading='lazy' src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
-             </a>
+             <Link
+               href="/learn"
+               className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+             >
+               <Sparkles className="h-5 w-5" />
+               <span>Learn</span>
+             </Link>
+             <Link
+               href="/about"
+               className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+             >
+               <Info className="h-5 w-5" />
+               <span>About</span>
+             </Link>
+              <a href='https://ko-fi.com/Y8Y81NVDEK' target='_blank' rel='noopener noreferrer' className="inline-flex min-h-11 min-w-11 items-center justify-center rounded transition-transform hover:scale-105 active:scale-95">
+                <img height='36' style={{border: '0px', height: '36px'}} loading='lazy' src='https://storage.ko-fi.com/cdn/kofi1.png?v=6' alt='Buy Me a Coffee at ko-fi.com' />
+              </a>
           </nav>
 
            <div className="md:hidden ml-auto">
@@ -116,15 +123,23 @@ export function Header() {
                   <Plus className="h-5 w-5" />
                   <span>New Reading</span>
                 </button>
-              <Link
-                href="/learn"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
-              >
-                <Sparkles className="h-5 w-5" />
-                <span>Learn</span>
-              </Link>
-               </nav>
+               <Link
+                 href="/learn"
+                 onClick={() => setMobileMenuOpen(false)}
+                 className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+               >
+                 <Sparkles className="h-5 w-5" />
+                 <span>Learn</span>
+               </Link>
+               <Link
+                 href="/about"
+                 onClick={() => setMobileMenuOpen(false)}
+                 className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:text-primary hover:bg-accent/50"
+               >
+                 <Info className="h-5 w-5" />
+                 <span>About</span>
+               </Link>
+                </nav>
              </motion.div>
            )}
          </AnimatePresence>
