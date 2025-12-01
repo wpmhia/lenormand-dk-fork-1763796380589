@@ -11,33 +11,18 @@ export default function AboutPage() {
     <div className="page-layout mystical-bg">
       <div className="container mx-auto max-w-5xl px-4 py-12">
         {/* Hero Section */}
-        <div className="mb-16">
-          <div className="grid gap-8 md:grid-cols-2 md:items-center mb-12">
-            {/* Text Content */}
-            <div>
-              <div className="mb-6 flex items-center gap-3">
-                <Sparkles className="h-10 w-10 text-primary animate-pulse" />
-                <h1 className="text-5xl font-bold text-foreground">Lenormand Intelligence</h1>
-                <Sparkles className="h-10 w-10 text-primary animate-pulse" />
-              </div>
-              <p className="mb-4 text-xl text-muted-foreground">
-                Where ancient wisdom meets modern intelligence
-              </p>
-              <p className="text-lg text-muted-foreground">
-                We bridge the timeless art of Lenormand divination with trained AI, creating a platform where human expertise and machine learning work in perfect harmony to illuminate the patterns hidden within the cards.
-              </p>
-            </div>
-            {/* Image */}
-            <div className="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
-              <Image
-                src="/images/about-hero.webp"
-                alt="Lenormand Intelligence"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
+        <div className="mb-16 text-center">
+          <div className="mb-6 flex items-center justify-center gap-3">
+            <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+            <h1 className="text-5xl font-bold text-foreground">Lenormand Intelligence</h1>
+            <Sparkles className="h-10 w-10 text-primary animate-pulse" />
           </div>
+          <p className="mb-4 text-xl text-muted-foreground">
+            Where ancient wisdom meets modern intelligence
+          </p>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            We bridge the timeless art of Lenormand divination with trained AI, creating a platform where human expertise and machine learning work in perfect harmony to illuminate the patterns hidden within the cards.
+          </p>
         </div>
 
         {/* Our Story */}
@@ -48,19 +33,32 @@ export default function AboutPage() {
               Our Journey
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 text-foreground">
-            <p>
-              Lenormand Intelligence emerged from a vision: to preserve the profound depth of Lenormand divination while making it accessible to a new generation of seekers and practitioners.
-            </p>
-            <p>
-              Our founders—experienced Lenormand readers, historians devoted to the deck's evolution, and engineers passionate about responsible AI—came together with a singular mission. We painstakingly digitized decades of annotated readings, rare spreads, classical texts, and practitioner notes. This living archive became our training foundation.
-            </p>
-            <p>
-              Through careful curation and rigorous validation, we taught AI systems to recognize the subtle relationships between cards, detect timing patterns, and propose meaningful interpretations grounded in both tradition and real-world outcomes. What began as a private repository of knowledge has evolved into a collaborative platform that serves readers, students, and researchers worldwide.
-            </p>
-            <p className="text-sm italic text-muted-foreground">
-              Every reading here carries the weight of tradition and the clarity of technology—neither overwhelming the other, but each amplifying what the other can offer.
-            </p>
+          <CardContent>
+            <div className="grid gap-6 md:grid-cols-2 md:items-start">
+              <div className="space-y-4 text-foreground">
+                <p>
+                  Lenormand Intelligence emerged from a vision: to preserve the profound depth of Lenormand divination while making it accessible to a new generation of seekers and practitioners.
+                </p>
+                <p>
+                  Our founders—experienced Lenormand readers, historians devoted to the deck's evolution, and engineers passionate about responsible AI—came together with a singular mission. We painstakingly digitized decades of annotated readings, rare spreads, classical texts, and practitioner notes. This living archive became our training foundation.
+                </p>
+                <p>
+                  Through careful curation and rigorous validation, we taught AI systems to recognize the subtle relationships between cards, detect timing patterns, and propose meaningful interpretations grounded in both tradition and real-world outcomes. What began as a private repository of knowledge has evolved into a collaborative platform that serves readers, students, and researchers worldwide.
+                </p>
+                <p className="text-sm italic text-muted-foreground">
+                  Every reading here carries the weight of tradition and the clarity of technology—neither overwhelming the other, but each amplifying what the other can offer.
+                </p>
+              </div>
+              <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-lg">
+                <Image
+                  src="/images/team.webp"
+                  alt="Lenormand Intelligence Team"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
