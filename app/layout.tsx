@@ -62,7 +62,7 @@ export const metadata: Metadata = {
         type: 'image/png',
       },
        {
-         url: 'https://lenormand-intelligence.com/images/hero-image.jpg?v=3',
+         url: 'https://lenormand-intelligence.com/images/hero-image.jpg',
          width: 1200,
          height: 800,
          alt: 'Lenormand Intelligence - AI-Powered Card Readings',
