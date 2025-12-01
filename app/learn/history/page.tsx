@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { BreadcrumbNav } from '@/components/BreadcrumbNav'
 import { LearningProgressTracker } from '@/components/LearningProgressTracker'
+import { BackToTop } from '@/components/BackToTop'
 import {
   ArrowLeft,
   ArrowRight,
@@ -121,7 +122,7 @@ export default function HistoryPage() {
         {/* Marie Lenormand */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="marie-anne-biography" className="flex items-center text-2xl text-foreground">
               <User className="mr-3 h-6 w-6 text-primary" />
               Marie Anne Adelaide Lenormand
             </CardTitle>
@@ -256,6 +257,8 @@ export default function HistoryPage() {
           </Link>
         </div>
       </div>
+
+      <BackToTop />
     </div>
   )
 }

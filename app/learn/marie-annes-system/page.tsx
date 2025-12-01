@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { BreadcrumbNav } from '@/components/BreadcrumbNav'
 import { LearningProgressTracker } from '@/components/LearningProgressTracker'
+import { BackToTop } from '@/components/BackToTop'
 import {
   ArrowLeft,
   ArrowRight,
@@ -76,7 +77,7 @@ export default function MarieAnnesSystemPage() {
           {/* Who She Was */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle id="who-was-marie-anne" className="flex items-center gap-2">
                 <Crown className="h-5 w-5 text-amber-500" />
                 Who Was Marie-Anne Lenormand?
               </CardTitle>
@@ -97,7 +98,7 @@ export default function MarieAnnesSystemPage() {
           {/* Her Five Core Principles */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle id="five-core-principles" className="flex items-center gap-2">
                 <Zap className="h-5 w-5 text-amber-500" />
                 Her Five Core Principles
               </CardTitle>
@@ -299,6 +300,8 @@ export default function MarieAnnesSystemPage() {
           </div>
         </div>
       </div>
+
+      <BackToTop />
     </div>
   )
 }

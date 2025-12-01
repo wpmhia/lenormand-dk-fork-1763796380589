@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { BreadcrumbNav } from '@/components/BreadcrumbNav'
 import { LearningProgressTracker } from '@/components/LearningProgressTracker'
+import { BackToTop } from '@/components/BackToTop'
 import {
   ArrowLeft,
   ArrowRight,
@@ -91,7 +92,7 @@ export default function IntroductionPage() {
         {/* What is Lenormand */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="what-is-lenormand" className="flex items-center text-2xl text-foreground">
               <Sparkles className="mr-3 h-6 w-6 text-primary" />
               What is Lenormand?
             </CardTitle>
@@ -284,6 +285,8 @@ export default function IntroductionPage() {
            </Link>
          </div>
       </div>
+
+      <BackToTop />
     </div>
   )
 }
