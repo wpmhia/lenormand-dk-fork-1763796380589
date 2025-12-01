@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { BreadcrumbNav } from '@/components/BreadcrumbNav'
 import { LearningProgressTracker } from '@/components/LearningProgressTracker'
+import { BackToTop } from '@/components/BackToTop'
 import {
   ArrowLeft,
   ArrowRight,
@@ -324,7 +325,7 @@ export default function SpreadsPage() {
         {/* Popular Spreads */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="popular-spreads" className="flex items-center text-2xl text-foreground">
               <Compass className="mr-3 h-6 w-6 text-primary" />
               Popular Spreads
             </CardTitle>
@@ -412,7 +413,7 @@ export default function SpreadsPage() {
         {/* Advanced Techniques */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="reading-techniques" className="flex items-center text-2xl text-foreground">
               <Target className="mr-3 h-6 w-6 text-primary" />
               Advanced Reading Techniques
             </CardTitle>
@@ -627,6 +628,8 @@ export default function SpreadsPage() {
           </Link>
         </div>
       </div>
+
+      <BackToTop />
     </div>
   )
 }

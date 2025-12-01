@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { BreadcrumbNav } from '@/components/BreadcrumbNav'
 import { LearningProgressTracker } from '@/components/LearningProgressTracker'
+import { BackToTop } from '@/components/BackToTop'
 import {
   ArrowLeft,
   ArrowRight,
@@ -159,7 +160,7 @@ export default function AdvancedPage() {
         {/* Time Associations */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="time-associations" className="flex items-center text-2xl text-foreground">
               <Clock className="mr-3 h-6 w-6 text-primary" />
               Time Associations
             </CardTitle>
@@ -200,7 +201,7 @@ export default function AdvancedPage() {
         {/* Playing Card Associations */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="playing-card-associations" className="flex items-center text-2xl text-foreground">
               <Spade className="mr-3 h-6 w-6 text-primary" />
               Playing Card Associations
             </CardTitle>
@@ -250,7 +251,7 @@ export default function AdvancedPage() {
         {/* Cultural Interpretations */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="cultural-interpretations" className="flex items-center text-2xl text-foreground">
               <Globe className="mr-3 h-6 w-6 text-primary" />
               Cultural Interpretations
             </CardTitle>
@@ -289,7 +290,7 @@ export default function AdvancedPage() {
         {/* Grand Tableau: The Five Essential Strips */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="five-essential-strips" className="flex items-center text-2xl text-foreground">
               <MapPin className="mr-3 h-6 w-6 text-primary" />
               Mastering the Five Essential Strips
             </CardTitle>
@@ -380,7 +381,7 @@ export default function AdvancedPage() {
         {/* Timing and Numbers */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
+            <CardTitle id="historical-timing-rules" className="flex items-center text-2xl text-foreground">
               <Clock className="mr-3 h-6 w-6 text-primary" />
               Historical Timing Rules (1820s Method)
             </CardTitle>
@@ -540,6 +541,8 @@ export default function AdvancedPage() {
           </Link>
         </div>
       </div>
+
+      <BackToTop />
     </div>
   )
 }
