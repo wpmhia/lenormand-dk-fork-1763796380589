@@ -61,13 +61,13 @@ export const metadata: Metadata = {
         alt: 'Lenormand Intelligence - AI-Powered Card Readings',
         type: 'image/png',
       },
-      {
-        url: 'https://lenormand-intelligence.com/images/hero-image.jpg',
-        width: 1200,
-        height: 800,
-        alt: 'Lenormand Intelligence - AI-Powered Card Readings',
-        type: 'image/jpeg',
-      },
+       {
+         url: 'https://lenormand-intelligence.com/images/hero-image.jpg?v=2',
+         width: 1200,
+         height: 800,
+         alt: 'Lenormand Intelligence - AI-Powered Card Readings',
+         type: 'image/jpeg',
+       },
     ],
   },
   twitter: {
