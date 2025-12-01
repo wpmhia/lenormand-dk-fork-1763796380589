@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
+import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
 
 
@@ -37,23 +37,40 @@ interface AIReadingDisplayProps {
 
 
 export function AIReadingDisplay({
-  aiReading,
-  isLoading,
-  error,
-  errorDetails,
-  onRetry,
-  retryCount = 0,
-  cards,
-  allCards,
-  spreadId,
-  question,
-  isStreaming = false
-}: AIReadingDisplayProps) {
-  const [activeTab, setActiveTab] = useState('results')
-  const spreadLearningLinks = getSpreadLearningLinks(spreadId)
+   aiReading,
+   isLoading,
+   error,
+   errorDetails,
+   onRetry,
+   retryCount = 0,
+   cards,
+   allCards,
+   spreadId,
+   question,
+   isStreaming = false
+ }: AIReadingDisplayProps) {
+   const [activeTab, setActiveTab] = useState('results')
+   const [copyClicked, setCopyClicked] = useState(false)
+   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
-   // Return content as-is without adding links
-   const getContent = (content: string): string => content
+    // Return content as-is without adding links
+    const getContent = (content: string): string => content
+
+    const handleCopy = async () => {
+      if (!aiReading?.reading && !aiReading?.practicalTranslation) return
+      
+      const contentToCopy = activeTab === 'results' ? aiReading.reading : aiReading.practicalTranslation
+      const attribution = '\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).'
+      const fullContent = (contentToCopy || '') + attribution
+      
+      try {
+        await navigator.clipboard.writeText(fullContent)
+        setCopyClicked(true)
+        setTimeout(() => setCopyClicked(false), 2000)
+      } catch (err) {
+        console.error('Failed to copy:', err)
+      }
+    }
 
      if (isLoading && !aiReading?.practicalTranslation) {
        return (
@@ -222,17 +239,35 @@ export function AIReadingDisplay({
                     </div>
                   )}
 
-                   {/* Learn the Method Button - Always Visible */}
-                   {spreadLearningLinks && (
-                     <div className="border-t border-border pt-6 mt-6 flex flex-wrap gap-2">
-                       <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
-                         <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
-                           Learn the Method
-                           <ExternalLink className="h-3 w-3" />
-                         </Button>
-                       </a>
-                     </div>
-                    )}
+                    {/* Learn the Method Button - Always Visible */}
+                    {spreadLearningLinks && (
+                      <div className="border-t border-border pt-6 mt-6 flex flex-wrap gap-2">
+                        <Button
+                          onClick={handleCopy}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 border-border hover:bg-muted text-foreground"
+                        >
+                          {copyClicked ? (
+                            <>
+                              <Check className="h-3 w-3" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3" />
+                              Copy Reading
+                            </>
+                          )}
+                        </Button>
+                        <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
+                          <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
+                            Learn the Method
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </a>
+                      </div>
+                     )}
                 </CardContent>
              </Card>
            )}

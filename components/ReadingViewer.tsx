@@ -10,7 +10,7 @@ import { AnimatedCard } from './AnimatedCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardModal } from './CardModal'
-import { Share2, Calendar, Clock } from 'lucide-react'
+import { Share2, Calendar, Clock, Copy, Check } from 'lucide-react'
 
 interface ReadingViewerProps {
   reading: Reading
@@ -162,7 +162,8 @@ export function ReadingViewer({
    spreadId
 }: ReadingViewerProps) {
    const [selectedCard, setSelectedCard] = useState<CardType | null>(null)
-   const [shareClicked, setShareClicked] = useState(false)
+    const [shareClicked, setShareClicked] = useState(false)
+    const [copyClicked, setCopyClicked] = useState(false)
 
    const countdown = useMemo(() => {
      if (!reading.deadlineDate || !reading.timingDays) return null
@@ -173,14 +174,35 @@ export function ReadingViewer({
      )
    }, [reading])
 
-  const getAdjacentCards = (currentCard: ReadingCard): ReadingCard[] => {
-    if (reading.layoutType === 36) {
-      return getGrandTableauAdjacentCards(reading.cards, currentCard.position)
-    } else {
-      const index = reading.cards.findIndex(c => c.position === currentCard.position)
-      return getLinearAdjacentCards(reading.cards, index)
-    }
-  }
+   const getAdjacentCards = (currentCard: ReadingCard): ReadingCard[] => {
+     if (reading.layoutType === 36) {
+       return getGrandTableauAdjacentCards(reading.cards, currentCard.position)
+     } else {
+       const index = reading.cards.findIndex(c => c.position === currentCard.position)
+       return getLinearAdjacentCards(reading.cards, index)
+     }
+   }
+
+   const handleCopyReading = async () => {
+     const cardsList = reading.cards
+       .map(rc => {
+         const card = getCardById(allCards, rc.id)
+         return card?.name || `Card ${rc.id}`
+       })
+       .join(', ')
+     
+     const readingInfo = `${reading.title}${
+       reading.question ? `\nQuestion: ${reading.question}` : ''
+     }\n\nCards: ${cardsList}\nDate: ${new Date(reading.createdAt).toLocaleDateString()}\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).`
+     
+     try {
+       await navigator.clipboard.writeText(readingInfo)
+       setCopyClicked(true)
+       setTimeout(() => setCopyClicked(false), 2000)
+     } catch (err) {
+       console.error('Failed to copy:', err)
+     }
+   }
 
    const renderLayout = () => {
      if (reading.layoutType === 1) {
@@ -412,20 +434,38 @@ export function ReadingViewer({
                      </div>
                    )}
                    {showShareButton && onShare && (
-                     <Button 
-                       onClick={async () => {
-                         setShareClicked(true)
-                         await onShare()
-                         setTimeout(() => setShareClicked(false), 2000)
-                       }} 
-                       variant="outline" 
-                       size="sm" 
-                       className="border-border hover:bg-muted"
-                     >
-                       <Share2 className="mr-2 h-4 w-4" />
-                       {shareClicked ? 'Copied!' : 'Share'}
-                     </Button>
-                   )}
+                      <Button 
+                        onClick={async () => {
+                          setShareClicked(true)
+                          await onShare()
+                          setTimeout(() => setShareClicked(false), 2000)
+                        }} 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-border hover:bg-muted"
+                      >
+                        <Share2 className="mr-2 h-4 w-4" />
+                        {shareClicked ? 'Copied!' : 'Share'}
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={handleCopyReading} 
+                      variant="outline" 
+                      size="sm" 
+                      className="border-border hover:bg-muted"
+                    >
+                      {copyClicked ? (
+                        <>
+                          <Check className="mr-2 h-4 w-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Copy Reading
+                        </>
+                      )}
+                    </Button>
                </div>
              </div>
              {countdown?.isExpired && (
