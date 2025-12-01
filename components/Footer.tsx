@@ -33,18 +33,21 @@ export function Footer() {
             </nav>
           </div>
 
-          {/* Resources */}
-          <div className="space-y-2">
-            <h4 className="text-base font-medium text-foreground/60">Resources</h4>
-            <nav className="space-y-1" aria-label="Learning resources">
-              <Link href="/learn/spreads" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                Spreads
-              </Link>
-              <Link href="/learn/history" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
-                History
-              </Link>
-            </nav>
-          </div>
+           {/* Resources */}
+           <div className="space-y-2">
+             <h4 className="text-base font-medium text-foreground/60">Resources</h4>
+             <nav className="space-y-1" aria-label="Learning resources">
+               <Link href="/learn/spreads" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
+                 Spreads
+               </Link>
+               <Link href="/learn/history" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
+                 History
+               </Link>
+               <Link href="/about" className="block text-xs text-muted-foreground transition-colors hover:text-foreground/80">
+                 About
+               </Link>
+             </nav>
+           </div>
 
           {/* Legal */}
           <div className="space-y-2">
