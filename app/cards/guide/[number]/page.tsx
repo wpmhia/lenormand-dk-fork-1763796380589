@@ -55,9 +55,9 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto max-w-4xl px-4 py-8">
           <h1 className="text-2xl font-bold">Card Not Found</h1>
-          <p className="mt-4 text-muted-foreground">
-            The card you're looking for doesn't exist.
-          </p>
+           <p className="mt-4 text-muted-foreground">
+             The card you&apos;re looking for doesn&apos;t exist.
+           </p>
           <Link href="/cards">
             <Button className="mt-4">Back to Cards</Button>
           </Link>

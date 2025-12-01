@@ -77,6 +77,16 @@ export default function LearnPage() {
       learningPoints: ['3-card spreads', 'Cross spreads', 'Advanced layouts']
     },
     {
+      id: 'card-combinations',
+      title: 'Card Combinations',
+      description: 'Master how cards interact and create new meanings together. Learn combinations across love, finance, health, career, and spirituality.',
+      icon: Zap,
+      duration: '25 min',
+      difficulty: 'Intermediate',
+      color: 'from-primary to-primary/80',
+      learningPoints: ['Pair meanings', 'Modifier cards', 'Context-based interpretations']
+    },
+    {
       id: 'advanced',
       title: 'Advanced Concepts',
       description: 'Time associations, playing cards, and cultural interpretations. Take your Lenormand practice to the next level.',

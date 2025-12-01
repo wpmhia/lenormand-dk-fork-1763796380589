@@ -23,6 +23,7 @@ const MODULES = [
   'reading-basics',
   'card-meanings',
   'spreads',
+  'card-combinations',
   'advanced',
   'marie-annes-system',
 ];
