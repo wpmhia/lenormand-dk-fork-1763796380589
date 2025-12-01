@@ -72,7 +72,16 @@ export function LearningProgressTracker({
   const progressPercentage = (completedCount / MODULES.length) * 100;
 
   if (!mounted) {
-    return null;
+    return (
+      <div className="space-y-4 rounded-lg border border-border/50 bg-gradient-to-r from-primary/5 to-primary/10 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-foreground">Your Learning Progress</h3>
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!isOnlyTracking) {

@@ -23,7 +23,7 @@ import {
 } from 'lucide-react'
 
 export default function LearnPage() {
-  const { completedCount } = useLearningProgress()
+  const { completedCount, mounted } = useLearningProgress()
 
   const modules = [
     {
@@ -145,7 +145,7 @@ export default function LearnPage() {
                 From beginner fundamentals to advanced techniques, master the 36-card oracle that has guided seekers for centuries.
               </p>
 
-              {completedCount > 0 && (
+              {mounted && completedCount > 0 && (
                 <div className="flex items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary w-fit mx-auto">
                   <CheckCircle2 className="h-4 w-4" />
                   You&apos;ve completed {completedCount} module{completedCount !== 1 ? 's' : ''}!
@@ -173,7 +173,7 @@ export default function LearnPage() {
       </div>
 
       {/* Progress Tracker */}
-      {completedCount === 0 && (
+      {mounted && completedCount === 0 && (
         <div className="border-t border-border bg-gradient-to-r from-primary/5 via-primary/2 to-primary/5 py-12">
           <div className="container mx-auto max-w-6xl px-4">
             <div className="rounded-2xl border border-primary/20 bg-card/50 p-8 backdrop-blur-sm">
