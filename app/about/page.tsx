@@ -49,12 +49,13 @@ export default function AboutPage() {
                   Every reading here carries the weight of tradition and the clarity of technology—neither overwhelming the other, but each amplifying what the other can offer.
                 </p>
               </div>
-              <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-lg">
+              <div className="relative rounded-lg overflow-hidden shadow-lg">
                 <Image
                   src="/images/team.webp"
                   alt="Lenormand Intelligence Team"
-                  fill
-                  className="object-cover"
+                  width={400}
+                  height={320}
+                  className="w-full h-auto object-cover"
                   priority
                 />
               </div>
