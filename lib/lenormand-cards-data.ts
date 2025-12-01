@@ -407,31 +407,31 @@ export const LENORMAND_CARDS = [
   {
     number: 28,
     name: "The Man",
-    keywords: ["You", "Central person", "Focus", "The querent"],
+    keywords: ["First person", "Primary position", "Querent", "Central focus"],
     timing: "Present moment",
-    location: "The central focus person (use they/them if gender unknown)",
-    associations: ["The questioner", "Authority figure", "Primary subject", "Key person in focus"],
-    description: "The male querent or a significant man. Focus and central figure.",
+    location: "The first person in the reading (the primary perspective)",
+    associations: ["The questioner", "Primary subject", "First person's perspective", "Primary key person"],
+    description: "The first person in the reading (not necessarily male). Central figure, primary focus, the querent's perspective.",
     playingCard: "Ace of Hearts",
     combinations: {
-      withHeart: "Love for man",
-      withRing: "Relationship commitment",
-      withStork: "Man's transformation"
+      withHeart: "Love involving first person",
+      withRing: "Commitment from first person",
+      withStork: "Transformation of first person"
     }
   },
   {
     number: 29,
     name: "The Woman",
-    keywords: ["Other person", "Secondary figure", "Another key player", "Influence"],
+    keywords: ["Second person", "Secondary position", "Other figure", "Related person"],
     timing: "Present moment",
-    location: "Another key person or influence (use they/them if gender unknown)",
-    associations: ["Secondary subject", "Another player", "Related person", "Influence in the situation"],
-    description: "The female querent or a significant woman. Another key player.",
+    location: "The second person in the reading (the secondary perspective)",
+    associations: ["The other subject", "Secondary figure", "Second person's perspective", "Related key person"],
+    description: "The second person in the reading (not necessarily female). Another key player, secondary focus, related person's perspective.",
     playingCard: "Ace of Spades",
     combinations: {
-      withHeart: "Love for woman",
-      withRing: "Relationship commitment",
-      withStork: "Woman's transformation"
+      withHeart: "Love involving second person",
+      withRing: "Commitment from second person",
+      withStork: "Transformation of second person"
     }
   },
   {
@@ -476,7 +476,7 @@ export const LENORMAND_CARDS = [
     combinations: {
       withStars: "Dreams and visions",
       withHeart: "Emotional recognition",
-      withWoman: "Women's intuition"
+      withWoman: "Intuition from second person"
     }
   },
   {

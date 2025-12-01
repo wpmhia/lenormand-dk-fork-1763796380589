@@ -15,7 +15,8 @@ import {
   Eye,
   MessageSquare,
   RotateCcw,
-  BookOpen
+  BookOpen,
+  Users
 } from 'lucide-react'
 
 export default function ReadingBasicsPage() {
@@ -393,10 +394,77 @@ export default function ReadingBasicsPage() {
                  </div>
                </div>
              </div>
-          </CardContent>
-        </Card>
+           </CardContent>
+         </Card>
 
-        {/* Progress Tracker */}
+         {/* Understanding The Man and The Woman: Position Roles */}
+         <Card className="mb-8 border-border bg-card">
+           <CardHeader>
+             <CardTitle className="flex items-center text-2xl text-foreground">
+               <Users className="mr-3 h-6 w-6 text-primary" />
+               Understanding The Man and The Woman: Position Roles
+             </CardTitle>
+           </CardHeader>
+           <CardContent className="space-y-6">
+             <div className="rounded-lg border border-border bg-muted p-6">
+               <p className="mb-4 leading-relaxed text-muted-foreground">
+                  <strong className="text-foreground">Critical Terminology:</strong> In Lenormand, &ldquo;The Man&rdquo; and &ldquo;The Woman&rdquo; refer to <strong className="text-foreground">positions in the reading, not gender</strong>. These terms date back to Marie-Anne&apos;s original system and represent structural roles rather than the gender of people involved.
+               </p>
+             </div>
+
+             <div className="grid gap-4 md:grid-cols-2">
+               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                 <h3 className="mb-3 font-semibold text-foreground flex items-center">
+                   <span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">1</span>
+                   The Man (First Person)
+                 </h3>
+                 <div className="space-y-2 text-sm text-muted-foreground">
+                   <p><strong className="text-card-foreground">Meaning:</strong> The first person in the reading</p>
+                   <p><strong className="text-card-foreground">Also called:</strong> Primary subject, the querent, central figure</p>
+                    <p><strong className="text-card-foreground">In a relationship reading:</strong> The primary perspective being examined (could be anyone&mdash;man, woman, or any person)</p>
+                    <p><strong className="text-card-foreground">Example:</strong> In a reading about two people meeting, if you shuffle and get The Man in position 1, it represents the first person&apos;s perspective, regardless of their actual gender.</p>
+                 </div>
+               </div>
+
+               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                 <h3 className="mb-3 font-semibold text-foreground flex items-center">
+                   <span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">2</span>
+                   The Woman (Second Person)
+                 </h3>
+                 <div className="space-y-2 text-sm text-muted-foreground">
+                   <p><strong className="text-card-foreground">Meaning:</strong> The second person in the reading</p>
+                   <p><strong className="text-card-foreground">Also called:</strong> Secondary subject, another figure, related person</p>
+                    <p><strong className="text-card-foreground">In a relationship reading:</strong> The secondary perspective or the other person involved (could be anyone&mdash;woman, man, or any person)</p>
+                    <p><strong className="text-card-foreground">Example:</strong> If you&apos;re reading about a meeting between two people and The Woman appears, it represents the second person&apos;s perspective or role, regardless of their actual gender.</p>
+                 </div>
+               </div>
+             </div>
+
+             <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
+               <p className="text-sm text-muted-foreground">
+                  <strong className="text-card-foreground">How to Interpret:</strong> Rather than thinking &ldquo;male&rdquo; or &ldquo;female,&rdquo; think &ldquo;first person&rdquo; and &ldquo;second person.&rdquo; This allows for accurate reading of any situation&mdash;gender-neutral, same-gender relationships, or any dynamic where perspective matters.
+               </p>
+             </div>
+
+             <div className="rounded-lg border border-border bg-muted p-4">
+               <h3 className="mb-3 font-semibold text-foreground">Example: Relationship Reading</h3>
+               <div className="space-y-3 text-sm text-muted-foreground">
+                 <p>
+                   <strong className="text-card-foreground">Scenario:</strong> Two people want to understand their meeting.
+                 </p>
+                 <ul className="space-y-2 ml-4 list-disc">
+                    <li><strong className="text-card-foreground">The Man appears:</strong> Represents the first person&apos;s perspective (their emotions, actions, viewpoint)</li>
+                    <li><strong className="text-card-foreground">The Woman appears:</strong> Represents the second person&apos;s perspective (the other person&apos;s emotions, actions, viewpoint)</li>
+                 </ul>
+                 <p className="mt-2">
+                    This creates a reading framework where the interpretation tells you what each person brings to the dynamic, what they&apos;re experiencing, and how the situation will unfold from both perspectives.
+                 </p>
+               </div>
+             </div>
+           </CardContent>
+         </Card>
+
+         {/* Progress Tracker */}
         <div className="mb-8">
           <LearningProgressTracker moduleId="reading-basics" />
         </div>
