@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getCards } from '@/lib/data'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const cards = getCards()

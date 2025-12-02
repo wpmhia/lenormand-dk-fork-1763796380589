@@ -1,5 +1,7 @@
 import { streamAIReading, AIReadingRequest } from '@/lib/deepseek'
 
+export const dynamic = 'force-dynamic'
+
 const logger = {
   info: (msg: string, data?: any) => console.log(`[INFO] ${msg}`, data ? JSON.stringify(data, null, 2) : ''),
   warn: (msg: string, data?: any) => console.warn(`[WARN] ${msg}`, data ? JSON.stringify(data, null, 2) : ''),
