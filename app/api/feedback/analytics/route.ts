@@ -10,29 +10,31 @@ export async function GET() {
       optimization: {
         status: 'active',
         description: 'Feedback is being collected and used to optimize AI readings',
+        systemHelpfulnessRate: status.systemHelpfulnessRate.toFixed(1) + '%',
         metrics: {
-          totalFeedback: status.totalFeedback,
-          totalFewShotExamples: status.totalFewShotExamples,
-          averageQualityScore: (status.averageQualityScore * 100).toFixed(1),
-          excellentReadingsPercent: status.excellentReadingsPercent.toFixed(1),
-          readingsUsedForOptimization: status.readingsUsedForOptimization
+          spreads: status.spreads.map(s => ({
+            spreadId: s.spreadId,
+            totalFeedback: s.totalFeedback,
+            helpfulnessRate: s.helpfulnessRate.toFixed(1) + '%'
+          })),
+          topPerformingVariants: status.topPerformingVariants.map(v => ({
+            name: v.name,
+            spreadId: v.spreadId,
+            helpfulnessRate: v.helpfulnessRate.toFixed(1) + '%'
+          }))
         },
         explanation: {
-          totalFeedback: 'Total number of feedback records collected',
-          totalFewShotExamples: 'Number of high-quality examples extracted for few-shot prompting',
-          averageQualityScore:
-            'Average quality score (0-100) of all feedback, used to identify excellent readings',
-          excellentReadingsPercent: 'Percentage of readings rated as excellent by users',
-          readingsUsedForOptimization:
-            'Number of feedback records converted to few-shot examples for AI optimization'
+          systemHelpfulnessRate: 'Overall system helpfulness across all spreads',
+          spreads: 'Helpfulness rate for each individual spread type',
+          topPerformingVariants: 'Best performing prompt variants ranked by helpfulness'
         },
         how_it_works: {
-          step1: 'User provides feedback (excellent/helpful/unhelpful/etc)',
-          step2: 'Feedback is automatically scored (excellent=90, helpful=70, unhelpful=20)',
-          step3: 'High-quality feedback (75+) is converted into few-shot examples',
-          step4: 'Few-shot examples are injected into future prompts to guide AI',
-          step5: 'System continuously improves as more feedback is collected',
-          step6: 'Analytics track improvement over time'
+          step1: 'User clicks thumbs up or down on each reading',
+          step2: 'Feedback is recorded and mapped to the prompt variant used',
+          step3: 'Prompt variants are ranked by helpfulness percentage',
+          step4: 'System identifies which variants work best for each spread',
+          step5: 'Future readings can use high-performing variants preferentially',
+          step6: 'Continuous A/B testing as new variants are tested'
         }
       }
     })

@@ -19,7 +19,7 @@ model Reading {
 
 model Feedback {
   id                    String   @id @default(uuid())
-  type                  String // "helpful", "unhelpful", "inaccurate", "excellent"
+  isHelpful             Boolean  // true = thumbs up, false = thumbs down
   question              String?
   spreadId              String?
   cards                 Json?
@@ -27,52 +27,68 @@ model Feedback {
   translationText       String?
   aiInterpretationId    String?  @map("ai_interpretation_id")
   userReadingId         String?  @map("user_reading_id")
-  qualityScore          Int      @default(0) @map("quality_score") // 0-100, calculated from feedback type
-  usedForOptimization   Boolean  @default(false) @map("used_for_optimization")
-  optimizationNotes     String?  @map("optimization_notes")
+  promptTemperature     Float?   @map("prompt_temperature") // track which temperature was used
+  promptVariant         String?  @map("prompt_variant") // track which prompt variant generated this
   createdAt             DateTime @default(now()) @map("created_at")
-  updatedAt             DateTime @updatedAt @map("updated_at")
 
-  @@index([type])
-  @@index([qualityScore])
-  @@index([usedForOptimization])
+  @@index([isHelpful])
+  @@index([spreadId])
+  @@index([promptVariant])
   @@map("feedback")
 }
 
-model FewShotExample {
+model PromptVariant {
   id                    String   @id @default(uuid())
-  question              String
-  cards                 Json // array of cards used
+  name                  String   // e.g., "v1_baseline", "v2_detailed_instructions"
+  description           String?
   spreadId              String   @map("spread_id")
-  excellentResponse     String   @map("excellent_response")
-  sourceReadingId       String?  @map("source_reading_id")
-  sourceFeedbackId      String?  @map("source_feedback_id")
-  usageCount            Int      @default(0) @map("usage_count")
-  averageQualityScore   Float    @default(0) @map("average_quality_score")
+  temperature           Float    // temperature used with this variant
+  promptTemplate        String   @map("prompt_template") // the actual prompt template
   isActive              Boolean  @default(true) @map("is_active")
+  totalReadingsGenerated Int    @default(0) @map("total_readings_generated")
+  helpfulCount          Int      @default(0) @map("helpful_count")
+  unhelpfulCount        Int      @default(0) @map("unhelpful_count")
+  helpfulnessRate       Float    @default(0) @map("helpfulness_rate") // helpful_count / (helpful_count + unhelpful_count)
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
 
   @@index([spreadId])
   @@index([isActive])
-  @@index([averageQualityScore])
-  @@map("few_shot_examples")
+  @@index([helpfulnessRate])
+  @@map("prompt_variants")
+}
+
+model FeedbackPattern {
+  id                    String   @id @default(uuid())
+  spreadId              String   @map("spread_id")
+  pattern               String   // e.g., "cards_with_timing", "emotional_vs_practical"
+  totalOccurrences      Int      @default(0) @map("total_occurrences")
+  helpfulCount          Int      @default(0) @map("helpful_count")
+  helpfulnessRate       Float    @default(0) @map("helpfulness_rate")
+  insights              String?  // text description of what works
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@unique([spreadId, pattern])
+  @@index([helpfulnessRate])
+  @@map("feedback_patterns")
 }
 
 model OptimizationMetrics {
-  id                        String   @id @default(uuid())
-  periodStartDate           DateTime @map("period_start_date")
-  periodEndDate             DateTime @map("period_end_date")
-  totalFeedbackCollected    Int      @map("total_feedback_collected")
-  averageQualityScore       Float    @map("average_quality_score")
-  excellentReadingsPercent  Float    @map("excellent_readings_percent")
-  unhelpfulReadingsPercent  Float    @map("unhelpful_readings_percent")
-  fewShotExamplesGenerated  Int      @map("few_shot_examples_generated")
-  readingsOptimizedWith     Int      @map("readings_optimized_with")
-  averageImprovementScore   Float?   @map("average_improvement_score")
-  createdAt                 DateTime @default(now()) @map("created_at")
+  id                      String   @id @default(uuid())
+  periodStartDate         DateTime @map("period_start_date")
+  periodEndDate           DateTime @map("period_end_date")
+  spreadId                String   @map("spread_id")
+  totalFeedbackCollected  Int      @map("total_feedback_collected")
+  helpfulCount            Int      @map("helpful_count")
+  unhelpfulCount          Int      @map("unhelpful_count")
+  helpfulnessRate         Float    @map("helpfulness_rate")
+  bestPerformingVariant   String?  @map("best_performing_variant") // which variant had highest helpfulness
+  improvementSinceLastPeriod Float? @map("improvement_since_last_period")
+  createdAt               DateTime @default(now()) @map("created_at")
 
-  @@index([periodStartDate])
+  @@unique([periodStartDate, periodEndDate, spreadId])
+  @@index([spreadId])
   @@map("optimization_metrics")
 }
 

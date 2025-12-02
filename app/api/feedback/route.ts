@@ -1,70 +1,55 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
-import { calculateQualityScore, generateFewShotExampleFromFeedback } from '@/lib/feedbackOptimization'
+import { recordFeedback } from '@/lib/feedbackOptimization'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
     const {
-      feedback,
-      cards,
-      spreadId,
+      isHelpful,
+      readingId,
       question,
-      readingText,
-      translationText,
-      aiInterpretationId,
-      userReadingId
+      spreadId,
+      readingText
     } = body
 
-    // Validate feedback type
-    const validFeedbackTypes = ['excellent', 'helpful', 'neutral', 'unhelpful', 'inaccurate']
-    if (!validFeedbackTypes.includes(feedback)) {
+    // Validate required fields
+    if (typeof isHelpful !== 'boolean') {
       return NextResponse.json(
-        { success: false, error: 'Invalid feedback type' },
+        { success: false, error: 'isHelpful must be a boolean (true for helpful, false for not helpful)' },
         { status: 400 }
       )
     }
 
-    // Log to console for immediate visibility
-    console.log('--- FEEDBACK RECEIVED ---')
-    console.log(`Type: ${feedback}`)
-    console.log(`AI Interpretation ID: ${aiInterpretationId || 'not linked'}`)
-
-    // Calculate quality score based on feedback type
-    const qualityScore = calculateQualityScore(feedback)
-
-    // Save to database with quality score
-    const savedFeedback = await prisma.feedback.create({
-      data: {
-        type: feedback,
-        question,
-        spreadId,
-        cards: cards as any,
-        readingText,
-        translationText,
-        aiInterpretationId,
-        userReadingId,
-        qualityScore,
-        usedForOptimization: false
-      }
-    })
-
-    // Auto-generate few-shot example for excellent/helpful feedback
-    let fewShotExampleId: string | null = null
-    if ((feedback === 'excellent' || feedback === 'helpful') && readingText) {
-      const result = await generateFewShotExampleFromFeedback(savedFeedback.id)
-      if (result.success && result.exampleId) {
-        fewShotExampleId = result.exampleId
-        console.log(`Few-shot example generated: ${fewShotExampleId}`)
-      }
+    if (!readingId) {
+      return NextResponse.json(
+        { success: false, error: 'readingId is required' },
+        { status: 400 }
+      )
     }
+
+    // Record the feedback
+    const result = await recordFeedback(
+      isHelpful,
+      readingId,
+      question,
+      spreadId,
+      readingText
+    )
+
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, error: result.error || 'Failed to record feedback' },
+        { status: 500 }
+      )
+    }
+
+    console.log(`Feedback recorded: ${isHelpful ? 'HELPFUL' : 'NOT HELPFUL'} for reading ${readingId}`)
 
     return NextResponse.json({
       success: true,
-      feedbackId: savedFeedback.id,
-      qualityScore,
-      fewShotExampleId,
-      optimizationNote: `Feedback quality score: ${qualityScore}/100`
+      feedbackId: result.feedbackId,
+      message: isHelpful ? 'Thank you for the positive feedback!' : 'Thank you for your feedback. We are working to improve.',
+      optimizationNote: 'Your feedback helps us improve future readings'
     })
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error)
