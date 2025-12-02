@@ -12,7 +12,10 @@ export async function POST(request: Request) {
       readingId,
       question,
       spreadId,
-      readingText
+      readingText,
+      aiInterpretationId,
+      userReadingId,
+      comments
     } = body
 
     // Validate required fields
@@ -23,9 +26,9 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!readingId) {
+    if (!readingId && !aiInterpretationId && !userReadingId) {
       return NextResponse.json(
-        { success: false, error: 'readingId is required' },
+        { success: false, error: 'At least one of readingId, aiInterpretationId, or userReadingId is required' },
         { status: 400 }
       )
     }
@@ -36,7 +39,10 @@ export async function POST(request: Request) {
       readingId,
       question,
       spreadId,
-      readingText
+      readingText,
+      aiInterpretationId,
+      userReadingId,
+      comments
     )
 
     if (!result.success) {

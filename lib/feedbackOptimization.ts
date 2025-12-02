@@ -8,16 +8,21 @@ export async function recordFeedback(
   readingId: string,
   question?: string,
   spreadId?: string,
-  readingText?: string
+  readingText?: string,
+  aiInterpretationId?: string,
+  userReadingId?: string,
+  comments?: string
 ): Promise<{ success: boolean; feedbackId?: string; error?: string }> {
   try {
     const feedback = await prisma.feedback.create({
       data: {
         isHelpful,
-        aiInterpretationId: readingId,
+        aiInterpretationId: aiInterpretationId || readingId,
         question,
         spreadId,
-        readingText
+        readingText,
+        userReadingId,
+        comments
       }
     })
 

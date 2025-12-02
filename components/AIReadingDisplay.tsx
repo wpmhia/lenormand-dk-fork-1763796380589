@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp, Copy, Check, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
+import { ReadingFeedback } from './ReadingFeedback'
 
 
 interface AIReadingDisplayProps {
@@ -48,10 +49,9 @@ export function AIReadingDisplay({
    spreadId,
    question,
    isStreaming = false
- }: AIReadingDisplayProps) {
-   const [activeTab, setActiveTab] = useState('results')
-   const [copyClicked, setCopyClicked] = useState(false)
-   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
+  }: AIReadingDisplayProps) {
+    const [activeTab, setActiveTab] = useState('results')
+    const [copyClicked, setCopyClicked] = useState(false)
    const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
     // Return content as-is without adding links
@@ -70,28 +70,6 @@ export function AIReadingDisplay({
         setTimeout(() => setCopyClicked(false), 2000)
       } catch (err) {
         console.error('Failed to copy:', err)
-      }
-    }
-
-    const handleFeedback = async (type: 'up' | 'down') => {
-      const newFeedback = feedback === type ? null : type
-      setFeedback(newFeedback)
-
-      try {
-        await fetch('/api/feedback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            feedback: newFeedback,
-            cards,
-            spreadId,
-            question,
-            readingText: aiReading?.reading,
-            translationText: aiReading?.practicalTranslation
-          })
-        })
-      } catch (err) {
-        console.error('Failed to send feedback:', err)
       }
     }
 
@@ -306,10 +284,66 @@ export function AIReadingDisplay({
                           </Button>
                         </a>
                       </div>
-                     )}
-                </CardContent>
-             </Card>
-           )}
-        </div>
+                   )}
+
+                      {/* Learn the Method & Feedback Actions */}
+                      {spreadLearningLinks && (
+                        <div className="border-t border-border pt-xl mt-xl flex items-center justify-between gap-lg">
+                          <div className="flex items-center gap-sm">
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             onClick={() => handleFeedback('up')}
+                              className={`h-11 w-11 p-0 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                           >
+                             <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
+                             <span className="sr-only">Helpful</span>
+                           </Button>
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             onClick={() => handleFeedback('down')}
+                              className={`h-11 w-11 p-0 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                           >
+                             <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
+                             <span className="sr-only">Not helpful</span>
+                           </Button>
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             onClick={handleCopy}
+                              className="h-11 w-11 p-0 text-muted-foreground hover:text-foreground"
+                           >
+                             {copyClicked ? (
+                               <Check className="h-4 w-4" />
+                             ) : (
+                               <Copy className="h-4 w-4" />
+                             )}
+                             <span className="sr-only">Copy reading</span>
+                           </Button>
+                         </div>
+
+                         <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
+                           <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
+                             Learn the Method
+                             <ExternalLink className="h-3 w-3" />
+                           </Button>
+                         </a>
+                       </div>
+                      )}
+                 </CardContent>
+              </Card>
+            )}
+
+            {/* Detailed Feedback Form */}
+            {aiReading && (
+              <ReadingFeedback
+                readingId={cards ? 'temp' : undefined} // TODO: Pass actual reading ID
+                aiInterpretationId={aiReading.id || undefined}
+                spreadId={spreadId}
+                question={question}
+              />
+            )}
+         </div>
       )
 }
