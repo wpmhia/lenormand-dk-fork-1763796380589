@@ -153,19 +153,19 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
 
   const isStructuredFiveCard = spreadId === 'structured-reading' && cards.length === 5
 
-  return (
-    <div className="animate-in fade-in slide-in-from-bottom-8 delay-300 duration-500">
-      <Card className="border-border bg-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            Card Meanings
-          </CardTitle>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Interpretations for: &quot;{question}&quot;
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-2">
+   return (
+     <div className="animate-in fade-in slide-in-from-bottom-8 delay-300 duration-500">
+       <Card className="border-border bg-card shadow-elevation-1">
+         <CardHeader>
+           <CardTitle className="flex items-center gap-md">
+             <BookOpen className="h-5 w-5 text-primary" />
+             Card Meanings
+           </CardTitle>
+           <p className="mt-md text-sm text-muted-foreground">
+             Interpretations for: &quot;{question}&quot;
+           </p>
+         </CardHeader>
+         <CardContent className="space-y-md">
           {cards.map((card, index) => {
             const fullCard = getCardById(allCards, card.id)
             const positionInfo = getPositionInfo(index, spreadId)
@@ -174,36 +174,36 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
             const isExpanded = expandedCards[index] || false
 
             return (
-              <div
-                key={`${card.id}-${index}`}
-                className="rounded-lg border border-border bg-card overflow-hidden transition-all duration-200"
-              >
-                <button
-                  onClick={() => toggleCard(index)}
-                  className="w-full p-4 flex items-start justify-between hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 focus:ring-offset-background transition-colors"
-                  aria-expanded={isExpanded}
-                >
-                  <div className="flex items-center gap-3 flex-1 text-left">
-                     {fullCard?.imageUrl && (
-                       <div className="relative w-12 h-16 flex-shrink-0 rounded overflow-hidden border border-border">
-                         <Image
-                           src={fullCard.imageUrl}
-                           alt={fullCard.name}
-                           fill
-                           className="object-cover"
-                         />
-                       </div>
-                     )}
-                     <div className="min-w-0 flex-1">
-                       <h3 className="text-foreground font-medium">
-                         {fullCard?.name || 'Unknown Card'}
-                       </h3>
-                       <p className="text-sm text-primary">
-                         {positionInfo.title}
-                       </p>
-                     </div>
-                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+               <div
+                 key={`${card.id}-${index}`}
+                 className="rounded-lg border border-border bg-card overflow-hidden transition-all duration-200 shadow-elevation-1"
+               >
+                 <button
+                   onClick={() => toggleCard(index)}
+                   className="w-full p-md flex items-start justify-between hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 focus:ring-offset-background transition-colors"
+                   aria-expanded={isExpanded}
+                 >
+                   <div className="flex items-center gap-lg flex-1 text-left">
+                      {fullCard?.imageUrl && (
+                        <div className="relative w-12 h-16 flex-shrink-0 rounded-md overflow-hidden border border-border">
+                          <Image
+                            src={fullCard.imageUrl}
+                            alt={fullCard.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-foreground font-medium">
+                          {fullCard?.name || 'Unknown Card'}
+                        </h3>
+                        <p className="text-sm text-primary">
+                          {positionInfo.title}
+                        </p>
+                      </div>
+                    </div>
+                   <div className="flex items-center gap-md flex-shrink-0 ml-md">
                     <Badge variant="outline" className="border-border text-muted-foreground text-xs">
                       #{card.id}
                     </Badge>
@@ -215,20 +215,20 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
                   </div>
                 </button>
 
-                {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-border animate-in fade-in slide-in-from-top-2 duration-200">
-                    {positionInfo.description && (
-                      <p className="mb-3 text-xs italic text-muted-foreground pt-3">
-                        {positionInfo.description}
-                      </p>
-                    )}
+                 {isExpanded && (
+                   <div className="px-md pb-md border-t border-border animate-in fade-in slide-in-from-top-2 duration-200">
+                     {positionInfo.description && (
+                       <p className="mb-md text-xs italic text-muted-foreground pt-md">
+                         {positionInfo.description}
+                       </p>
+                     )}
 
-                    <p className="mb-3 text-sm text-foreground leading-relaxed">
-                      {meaning}
-                    </p>
+                     <p className="mb-md text-sm text-foreground leading-relaxed">
+                       {meaning}
+                     </p>
 
-                    {keywords.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
+                     {keywords.length > 0 && (
+                       <div className="flex flex-wrap gap-sm">
                         {keywords.map((keyword, keywordIndex) => (
                           <Badge
                             key={keywordIndex}
@@ -248,90 +248,90 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
         </CardContent>
       </Card>
 
-      {isStructuredFiveCard && (
-        <div className="mt-6 animate-in fade-in slide-in-from-bottom-8 delay-500 duration-500">
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <button
-                onClick={() => setShowStructuredAnalysis(!showStructuredAnalysis)}
-                className="w-full flex items-center justify-between hover:text-primary transition-colors"
-              >
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Structured Analysis Layers
-                </CardTitle>
+       {isStructuredFiveCard && (
+         <div className="mt-xl animate-in fade-in slide-in-from-bottom-8 delay-500 duration-500">
+           <Card className="border-border bg-card shadow-elevation-1">
+             <CardHeader>
+               <button
+                 onClick={() => setShowStructuredAnalysis(!showStructuredAnalysis)}
+                 className="w-full flex items-center justify-between hover:text-primary transition-colors"
+               >
+                 <CardTitle className="flex items-center gap-md">
+                   <BookOpen className="h-5 w-5 text-primary" />
+                   Structured Analysis Layers
+                 </CardTitle>
                 <ChevronDown
                   className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
                     showStructuredAnalysis ? 'rotate-180' : ''
                   }`}
                 />
               </button>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Deeper insights: interpretive lenses, adjacent pairs, and timing calculations
-              </p>
-            </CardHeader>
+               <p className="mt-md text-sm text-muted-foreground">
+                 Deeper insights: interpretive lenses, adjacent pairs, and timing calculations
+               </p>
+             </CardHeader>
 
-            {showStructuredAnalysis && (
-              <CardContent className="space-y-6 border-t border-border pt-6">
-                {/* Adjacent Pairs Section */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-foreground">Adjacent Pairs (Narrative Beats)</h3>
-                  <p className="text-xs text-muted-foreground">Each pair tells a micro-clause of the story:</p>
-                  <div className="space-y-2">
+             {showStructuredAnalysis && (
+               <CardContent className="space-y-xl border-t border-border pt-xl">
+                 {/* Adjacent Pairs Section */}
+                 <div className="space-y-md">
+                   <h3 className="font-semibold text-foreground">Adjacent Pairs (Narrative Beats)</h3>
+                   <p className="text-xs text-muted-foreground">Each pair tells a micro-clause of the story:</p>
+                   <div className="space-y-sm">
                     {[0, 1, 2, 3].map((pairIndex) => {
                       const card1 = getCardById(allCards, cards[pairIndex].id)
                       const card2 = getCardById(allCards, cards[pairIndex + 1].id)
                       if (!card1 || !card2) return null
                       return (
-                        <div key={`pair-${pairIndex}`} className="rounded-lg bg-muted p-3">
-                          <p className="text-sm font-medium text-foreground">
-                            Pair {pairIndex + 1}: {card1.name} + {card2.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {card1.name} flows into {card2.name}—this is a moment of transition or influence between these two forces.
-                          </p>
-                        </div>
+                         <div key={`pair-${pairIndex}`} className="rounded-lg bg-muted p-md">
+                           <p className="text-sm font-medium text-foreground">
+                             Pair {pairIndex + 1}: {card1.name} + {card2.name}
+                           </p>
+                           <p className="text-xs text-muted-foreground mt-sm">
+                             {card1.name} flows into {card2.name}—this is a moment of transition or influence between these two forces.
+                           </p>
+                         </div>
                       )
                     })}
                   </div>
                 </div>
 
-                {/* Interpretive Lenses Section */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-foreground">Interpretive Lenses (Choose One or Layer Them)</h3>
-                  <p className="text-xs text-muted-foreground">
-                    The five cards can be read through different frameworks depending on your question:
-                  </p>
-                  <div className="space-y-3">
-                    <div className="rounded-lg border border-border bg-muted/50 p-3">
-                      <p className="text-sm font-medium text-foreground">Lens A: Past-Present-Future</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Cards 1-2 (past forces) → Card 3 (present moment) → Cards 4-5 (emerging future)
-                      </p>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-3">
-                      <p className="text-sm font-medium text-foreground">Lens B: Problem-Advice-Outcome</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Cards 1-2 (what holds you back) → Card 3 (the advice or pivot) → Cards 4-5 (the outcome if you follow it)
-                      </p>
-                    </div>
-                    <div className="rounded-lg border border-border bg-muted/50 p-3">
-                      <p className="text-sm font-medium text-foreground">Lens C: Situation-Action-Result</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Card 1 (your topic/situation) → Cards 2-3 (action or development) → Cards 4-5 (the result or answer)
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                 {/* Interpretive Lenses Section */}
+                 <div className="space-y-md">
+                   <h3 className="font-semibold text-foreground">Interpretive Lenses (Choose One or Layer Them)</h3>
+                   <p className="text-xs text-muted-foreground">
+                     The five cards can be read through different frameworks depending on your question:
+                   </p>
+                   <div className="space-y-md">
+                     <div className="rounded-lg border border-border bg-muted/50 p-md">
+                       <p className="text-sm font-medium text-foreground">Lens A: Past-Present-Future</p>
+                       <p className="text-xs text-muted-foreground mt-sm">
+                         Cards 1-2 (past forces) → Card 3 (present moment) → Cards 4-5 (emerging future)
+                       </p>
+                     </div>
+                     <div className="rounded-lg border border-border bg-muted/50 p-md">
+                       <p className="text-sm font-medium text-foreground">Lens B: Problem-Advice-Outcome</p>
+                       <p className="text-xs text-muted-foreground mt-sm">
+                         Cards 1-2 (what holds you back) → Card 3 (the advice or pivot) → Cards 4-5 (the outcome if you follow it)
+                       </p>
+                     </div>
+                     <div className="rounded-lg border border-border bg-muted/50 p-md">
+                       <p className="text-sm font-medium text-foreground">Lens C: Situation-Action-Result</p>
+                       <p className="text-xs text-muted-foreground mt-sm">
+                         Card 1 (your topic/situation) → Cards 2-3 (action or development) → Cards 4-5 (the result or answer)
+                       </p>
+                     </div>
+                   </div>
+                 </div>
 
-                {/* Timing Calculation Section */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-foreground">Timing Calculation (Optional)</h3>
-                  <p className="text-xs text-muted-foreground">
-                    Add the pip count of Card 5 (the outcome card). For Lenormand, use the card number (1-36):
-                  </p>
-                  <div className="rounded-lg bg-muted p-3">
-                    <p className="text-sm text-foreground">
+                 {/* Timing Calculation Section */}
+                 <div className="space-y-md">
+                   <h3 className="font-semibold text-foreground">Timing Calculation (Optional)</h3>
+                   <p className="text-xs text-muted-foreground">
+                     Add the pip count of Card 5 (the outcome card). For Lenormand, use the card number (1-36):
+                   </p>
+                   <div className="rounded-lg bg-muted p-md">
+                     <p className="text-sm text-foreground">
                       {(() => {
                         const card5 = getCardById(allCards, cards[4].id)
                         if (!card5) return "Unable to calculate timing"
@@ -341,40 +341,40 @@ export function CardInterpretation({ cards, allCards, spreadId, question }: Card
                         else if (pips <= 20) timing = `${pips - 10} weeks`
                         else timing = `${Math.ceil((pips - 20) / 1.5)} months`
                         return `Card 5 (${card5.name}): Card #${pips} = approximately ${timing}`
-                      })()}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Formula: 1-10 = days, 11-20 = weeks, 21-36 = months
-                    </p>
-                  </div>
-                </div>
+                       })()}
+                     </p>
+                     <p className="text-xs text-muted-foreground mt-md">
+                       Formula: 1-10 = days, 11-20 = weeks, 21-36 = months
+                     </p>
+                   </div>
+                 </div>
 
-                {/* Quick Checklist */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-foreground">Verification Checklist</h3>
-                  <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 space-y-2">
-                    <div className="flex items-start gap-2">
-                      <span className="text-sm font-medium text-foreground">☑</span>
-                      <p className="text-sm text-muted-foreground">Read the five cards as ONE fluent sentence?</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="text-sm font-medium text-foreground">☑</span>
-                      <p className="text-sm text-muted-foreground">Chose one interpretive lens that fits your question?</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="text-sm font-medium text-foreground">☑</span>
-                      <p className="text-sm text-muted-foreground">Examined the four adjacent pairs as narrative beats?</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="text-sm font-medium text-foreground">☑</span>
-                      <p className="text-sm text-muted-foreground">Extracted timing if the question involves timeline?</p>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span className="text-sm font-medium text-foreground">☑</span>
-                      <p className="text-sm text-muted-foreground">Identified significators (if the question is about a person)?</p>
-                    </div>
-                  </div>
-                </div>
+                 {/* Quick Checklist */}
+                 <div className="space-y-md">
+                   <h3 className="font-semibold text-foreground">Verification Checklist</h3>
+                   <div className="rounded-lg bg-primary/5 border border-primary/20 p-md space-y-md">
+                     <div className="flex items-start gap-md">
+                       <span className="text-sm font-medium text-foreground">☑</span>
+                       <p className="text-sm text-muted-foreground">Read the five cards as ONE fluent sentence?</p>
+                     </div>
+                     <div className="flex items-start gap-md">
+                       <span className="text-sm font-medium text-foreground">☑</span>
+                       <p className="text-sm text-muted-foreground">Chose one interpretive lens that fits your question?</p>
+                     </div>
+                     <div className="flex items-start gap-md">
+                       <span className="text-sm font-medium text-foreground">☑</span>
+                       <p className="text-sm text-muted-foreground">Examined the four adjacent pairs as narrative beats?</p>
+                     </div>
+                     <div className="flex items-start gap-md">
+                       <span className="text-sm font-medium text-foreground">☑</span>
+                       <p className="text-sm text-muted-foreground">Extracted timing if the question involves timeline?</p>
+                     </div>
+                     <div className="flex items-start gap-md">
+                       <span className="text-sm font-medium text-foreground">☑</span>
+                       <p className="text-sm text-muted-foreground">Identified significators (if the question is about a person)?</p>
+                     </div>
+                   </div>
+                 </div>
               </CardContent>
             )}
           </Card>

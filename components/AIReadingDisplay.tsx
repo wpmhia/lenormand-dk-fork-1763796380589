@@ -95,12 +95,12 @@ export function AIReadingDisplay({
       }
     }
 
-     if (isLoading && !aiReading?.practicalTranslation) {
-       return (
-        <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none loading-skeleton">
-           <Card className="border-border bg-card">
-             <CardContent className="space-y-4 p-8 text-center">
-               <div className="flex items-center justify-center gap-2 mb-4">
+      if (isLoading && !aiReading?.practicalTranslation) {
+        return (
+         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none loading-skeleton">
+            <Card className="border-border bg-card shadow-elevation-1">
+              <CardContent className="space-y-lg p-xl text-center">
+                <div className="flex items-center justify-center gap-lg mb-lg">
                  <Badge variant="default" className="loading-skeleton-pulse">
                    <Zap className="h-3 w-3 mr-1" />
                    Processing
@@ -167,14 +167,14 @@ export function AIReadingDisplay({
     }
 
         return (
-          <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-6">
-            {/* Reading with Tabs */}
-            {aiReading && (
-              <Card className="border-border bg-card">
-                <CardHeader className="border-b border-border">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex gap-2">
+         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-xl">
+             {/* Reading with Tabs */}
+             {aiReading && (
+               <Card className="border-border bg-card shadow-elevation-2">
+                 <CardHeader className="border-b border-border">
+                   <div className="space-y-lg">
+                     <div className="flex items-center justify-between gap-lg">
+                       <div className="flex gap-md">
                         <Button
                           variant={activeTab === 'results' ? 'default' : 'ghost'}
                           size="sm"
@@ -199,23 +199,23 @@ export function AIReadingDisplay({
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-6 p-8">
-                  {/* Results Tab - Shows Prophecy */}
-                  {activeTab === 'results' && aiReading?.reading && (
-                    <div className="text-foreground">
-                      <ReactMarkdown
-                        components={{
-                          h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
-                          h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
-                          h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
-                          p: ({node, ...props}) => <p className="mb-4" {...props} />,
-                          ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                          ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                          li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                          blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
-                          strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                          em: ({node, ...props}) => <em className="italic" {...props} />,
-                          hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                 <CardContent className="space-y-xl p-xl">
+                   {/* Results Tab - Shows Prophecy */}
+                   {activeTab === 'results' && aiReading?.reading && (
+                     <div className="text-foreground">
+                       <ReactMarkdown
+                         components={{
+                           h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
+                           h2: ({node, ...props}) => <h2 className="mb-md mt-xl" {...props} />,
+                           h3: ({node, ...props}) => <h3 className="mb-md mt-lg" {...props} />,
+                           p: ({node, ...props}) => <p className="mb-lg" {...props} />,
+                           ul: ({node, ...props}) => <ul className="mb-lg list-disc space-y-md pl-lg" {...props} />,
+                           ol: ({node, ...props}) => <ol className="mb-lg list-decimal space-y-md pl-lg" {...props} />,
+                           li: ({node, ...props}) => <li className="pl-sm" {...props} />,
+                            blockquote: ({node, ...props}) => <blockquote className="my-lg border-l-4 border-border pl-md italic text-muted-foreground" {...props} />,
+                           strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                           em: ({node, ...props}) => <em className="italic" {...props} />,
+                           hr: ({node, ...props}) => <hr className="my-xl border-border" {...props} />,
                           a: ({node, ...props}: any) => (
                             <a 
                               {...props} 
@@ -236,17 +236,17 @@ export function AIReadingDisplay({
                     <div className="text-foreground">
                       <ReactMarkdown
                         components={{
-                          h1: ({node, ...props}) => <h1 className="mb-4" {...props} />,
-                          h2: ({node, ...props}) => <h2 className="mb-3 mt-6" {...props} />,
-                          h3: ({node, ...props}) => <h3 className="mb-2 mt-4" {...props} />,
-                          p: ({node, ...props}) => <p className="mb-4" {...props} />,
-                          ul: ({node, ...props}) => <ul className="mb-4 list-disc space-y-2 pl-6" {...props} />,
-                          ol: ({node, ...props}) => <ol className="mb-4 list-decimal space-y-2 pl-6" {...props} />,
-                          li: ({node, ...props}) => <li className="pl-1" {...props} />,
-                          blockquote: ({node, ...props}) => <blockquote className="my-4 border-l-4 border-border pl-4 italic text-muted-foreground" {...props} />,
-                          strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                          em: ({node, ...props}) => <em className="italic" {...props} />,
-                          hr: ({node, ...props}) => <hr className="my-6 border-border" {...props} />,
+                           h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
+                           h2: ({node, ...props}) => <h2 className="mb-md mt-xl" {...props} />,
+                           h3: ({node, ...props}) => <h3 className="mb-md mt-lg" {...props} />,
+                           p: ({node, ...props}) => <p className="mb-lg" {...props} />,
+                           ul: ({node, ...props}) => <ul className="mb-lg list-disc space-y-md pl-lg" {...props} />,
+                           ol: ({node, ...props}) => <ol className="mb-lg list-decimal space-y-md pl-lg" {...props} />,
+                           li: ({node, ...props}) => <li className="pl-sm" {...props} />,
+                           blockquote: ({node, ...props}) => <blockquote className="my-lg border-l-4 border-border pl-md italic text-muted-foreground" {...props} />,
+                           strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                           em: ({node, ...props}) => <em className="italic" {...props} />,
+                           hr: ({node, ...props}) => <hr className="my-xl border-border" {...props} />,
                           a: ({node, ...props}: any) => (
                             <a 
                               {...props} 
@@ -262,15 +262,15 @@ export function AIReadingDisplay({
                     </div>
                   )}
 
-                    {/* Learn the Method & Feedback Actions */}
-                    {spreadLearningLinks && (
-                      <div className="border-t border-border pt-6 mt-6 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-1">
+                     {/* Learn the Method & Feedback Actions */}
+                     {spreadLearningLinks && (
+                       <div className="border-t border-border pt-xl mt-xl flex items-center justify-between gap-lg">
+                         <div className="flex items-center gap-sm">
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleFeedback('up')}
-                            className={`h-8 w-8 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                             className={`h-11 w-11 p-0 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                           >
                             <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
                             <span className="sr-only">Helpful</span>
@@ -279,7 +279,7 @@ export function AIReadingDisplay({
                             variant="ghost"
                             size="icon"
                             onClick={() => handleFeedback('down')}
-                            className={`h-8 w-8 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                             className={`h-11 w-11 p-0 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                           >
                             <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
                             <span className="sr-only">Not helpful</span>
@@ -288,7 +288,7 @@ export function AIReadingDisplay({
                             variant="ghost"
                             size="icon"
                             onClick={handleCopy}
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                             className="h-11 w-11 p-0 text-muted-foreground hover:text-foreground"
                           >
                             {copyClicked ? (
                               <Check className="h-4 w-4" />

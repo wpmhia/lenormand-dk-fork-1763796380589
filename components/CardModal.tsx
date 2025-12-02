@@ -55,11 +55,11 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
           onClose()
         }
       }}>
-        <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
-          <div className="flex items-center justify-center h-32">
-            <div className="text-muted-foreground">Loading card data...</div>
-          </div>
-        </DialogContent>
+         <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-md sm:p-lg">
+           <div className="flex items-center justify-center h-32">
+             <div className="text-muted-foreground">Loading card data...</div>
+           </div>
+         </DialogContent>
       </Dialog>
     )
   }
@@ -70,7 +70,7 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
         onClose()
       }
     }}>
-       <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-4 sm:p-6">
+        <DialogContent className="max-h-[85vh] sm:max-h-[90vh] max-w-xl sm:max-w-2xl overflow-y-auto border-border bg-card text-card-foreground p-md sm:p-lg">
           <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <span className="text-2xl font-bold">{fullCard.id}.</span>
@@ -78,10 +78,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
               </DialogTitle>
           </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Card Image and Keywords - Always Visible */}
-          <div className="flex items-start gap-4">
-            <div className="card-mystical relative h-64 w-48 flex-shrink-0 overflow-hidden rounded-xl border border-purple-500/30 shadow-lg">
+         <div className="space-y-lg">
+           {/* Card Image and Keywords - Always Visible */}
+           <div className="flex items-start gap-lg">
+             <div className="card-mystical relative h-64 w-48 flex-shrink-0 overflow-hidden rounded-lg border border-purple-500/30 shadow-elevation-2">
               <Image
                 src={fullCard.imageUrl || ''}
                 alt={fullCard.name}
@@ -91,10 +91,10 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                 sizes="192px"
               />
             </div>
-            <div className="flex-1 space-y-3">
-              <div>
-                <h3 className="mb-2 text-sm font-semibold text-foreground">Keywords</h3>
-                <div className="flex flex-wrap gap-2">
+             <div className="flex-1 space-y-lg">
+               <div>
+                 <h3 className="mb-md text-sm font-semibold text-foreground">Keywords</h3>
+                 <div className="flex flex-wrap gap-sm">
                   {fullCard.keywords.map((keyword, index) => (
                     <Badge key={index} variant="secondary" className="bg-muted text-xs text-muted-foreground">
                       {keyword}
@@ -105,24 +105,24 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
             </div>
           </div>
 
-            {/* Meaning Section - Always Visible */}
-            <div className="rounded-lg bg-muted/50 p-4 space-y-4">
-              <h3 className="font-semibold text-foreground">Meaning</h3>
+             {/* Meaning Section - Always Visible */}
+             <div className="rounded-lg bg-muted/50 p-md space-y-md">
+               <h3 className="font-semibold text-foreground">Meaning</h3>
               {(() => {
                 const meaning = fullCard.meaning
                 if (!meaning) {
                   return <p className="text-muted-foreground">{fullCard.uprightMeaning}</p>
                 }
-                return (
-                <div className="space-y-4 text-sm">
-                   <div>
-                     <h4 className="font-semibold text-foreground mb-1">General meaning</h4>
-                     <p className="text-muted-foreground">{meaning.general}</p>
-                   </div>
-                   
-                   <div>
-                     <h4 className="font-semibold text-foreground mb-2">Positive aspects</h4>
-                     <ul className="space-y-1">
+                 return (
+                 <div className="space-y-lg text-sm">
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-sm">General meaning</h4>
+                      <p className="text-muted-foreground">{meaning.general}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-md">Positive aspects</h4>
+                      <ul className="space-y-sm">
                        {meaning.positive.map((aspect, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <span className="text-primary mt-1 flex-shrink-0">•</span>
@@ -133,8 +133,8 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                   </div>
                   
                    <div>
-                     <h4 className="font-semibold text-foreground mb-2">Challenging aspects</h4>
-                     <ul className="space-y-1">
+                      <h4 className="font-semibold text-foreground mb-md">Challenging aspects</h4>
+                      <ul className="space-y-sm">
                        {meaning.negative.map((aspect, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <span className="text-destructive mt-1 flex-shrink-0">•</span>
@@ -144,40 +144,40 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
                     </ul>
                   </div>
                   
-                   {meaning.relationships && (
+                    {meaning.relationships && (
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-sm">In relationships</h4>
+                        <p className="text-muted-foreground">{meaning.relationships}</p>
+                      </div>
+                    )}
+                    
+                    {meaning.careerFinance && (
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-sm">Career & finance</h4>
+                        <p className="text-muted-foreground">{meaning.careerFinance}</p>
+                      </div>
+                    )}
+                    
+                    {meaning.timing && (
                      <div>
-                       <h4 className="font-semibold text-foreground mb-1">In relationships</h4>
-                       <p className="text-muted-foreground">{meaning.relationships}</p>
+                       <h4 className="font-semibold text-foreground mb-sm">Timing</h4>
+                        <p className="text-muted-foreground">{meaning.timing}</p>
                      </div>
-                   )}
-                   
-                   {meaning.careerFinance && (
-                     <div>
-                       <h4 className="font-semibold text-foreground mb-1">Career & finance</h4>
-                       <p className="text-muted-foreground">{meaning.careerFinance}</p>
-                     </div>
-                   )}
-                   
-                   {meaning.timing && (
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-1">Timing</h4>
-                       <p className="text-muted-foreground">{meaning.timing}</p>
-                    </div>
-                   )}
+                    )}
                    </div>
                  )}
                  )()}
             </div>
 
            {/* House Meaning - Grand Tableau Only */}
-           {layoutType === 36 && position !== undefined && (
-             <Collapsible open={openSections.house} onOpenChange={() => toggleSection('house')}>
-               <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-4 py-3 transition-colors hover:bg-muted">
-                 <h3 className="font-semibold text-foreground">House Meaning</h3>
-                 <ChevronDown className={`h-4 w-4 transition-transform ${openSections.house ? 'rotate-180' : ''}`} />
-               </CollapsibleTrigger>
-               <CollapsibleContent className="border-l-2 border-primary/30 px-4 py-3 text-sm text-muted-foreground">
-                 <p className="mb-2">Position {position + 1} in Grand Tableau represents:</p>
+            {layoutType === 36 && position !== undefined && (
+              <Collapsible open={openSections.house} onOpenChange={() => toggleSection('house')}>
+                <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-md py-md transition-colors hover:bg-muted">
+                  <h3 className="font-semibold text-foreground">House Meaning</h3>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${openSections.house ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="border-l-2 border-primary/30 px-md py-md text-sm text-muted-foreground">
+                  <p className="mb-md">Position {position + 1} in Grand Tableau represents:</p>
                  <p className="font-medium text-foreground">
                    {(() => {
                      const houseMeanings = [
@@ -225,15 +225,15 @@ export function CardModal({ card, onClose, layoutType, position }: CardModalProp
              </Collapsible>
            )}
 
-            {/* Combinations Section - Always Visible */}
-            {combos.length > 0 && (
-              <div className="rounded-lg bg-muted/50 p-4 space-y-3">
-                <h3 className="font-semibold text-foreground">Card Combinations ({combos.length})</h3>
-                <div className="space-y-2">
+             {/* Combinations Section - Always Visible */}
+             {combos.length > 0 && (
+               <div className="rounded-lg bg-muted/50 p-md space-y-md">
+                 <h3 className="font-semibold text-foreground">Card Combinations ({combos.length})</h3>
+                 <div className="space-y-sm">
                  {combos.map((combo: any, index: number) => {
                    const comboCard = allCards.find(c => c.id === combo.withCardId)
                    return (
-                     <div key={index} className="flex items-start gap-2 rounded-lg bg-muted p-2">
+                      <div key={index} className="flex items-start gap-sm rounded-lg bg-muted p-sm">
                        <div className="h-12 w-9 flex-shrink-0 overflow-hidden rounded border border-border bg-card">
                          {comboCard && (
                            <Image

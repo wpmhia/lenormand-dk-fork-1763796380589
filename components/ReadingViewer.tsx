@@ -183,10 +183,10 @@ export function ReadingViewer({
    }
 
    const renderLayout = () => {
-     if (reading.layoutType === 1) {
-       // Single card layout
-       return (
-         <div className="flex justify-center py-4">
+      if (reading.layoutType === 1) {
+        // Single card layout
+        return (
+          <div className="flex justify-center py-lg">
            {reading.cards.map((readingCard, index) => {
              const card = getCardById(allCards, readingCard.id)
              if (!card) return null
@@ -194,9 +194,9 @@ export function ReadingViewer({
              const positionInfo = getPositionInfo(index, spreadId)
 
              return (
-               <AnimatedCard key={index} delay={0} className="flex flex-col items-center space-y-3">
-                 <div className="flex flex-col items-center space-y-2">
-                    <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                <AnimatedCard key={index} delay={0} className="flex flex-col items-center space-y-lg">
+                  <div className="flex flex-col items-center space-y-md">
+                     <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                       {positionInfo.label}
                     </div>
                      <CardWithTooltip
@@ -285,7 +285,7 @@ export function ReadingViewer({
       return (
         <div className="space-y-6">
           {/* Reading Guide */}
-          <div className="space-y-2 rounded-lg bg-muted p-4 text-center">
+           <div className="space-y-sm rounded-lg bg-muted p-md text-center">
             <h3 className="text-lg font-semibold text-foreground">Grand Tableau: The Five Essential Strips</h3>
             <div className="text-sm text-muted-foreground">
               {significatorCard ? (
@@ -300,7 +300,7 @@ export function ReadingViewer({
           </div>
 
            {/* 4x9 Grid */}
-           <div className="mx-auto grid max-w-6xl gap-1 rounded-lg border-2 border-primary/30 bg-card/10 p-3" style={{ gridTemplateColumns: 'repeat(9, minmax(0, 1fr))' }}>
+            <div className="mx-auto grid max-w-6xl gap-sm rounded-lg border-2 border-primary/30 bg-card/10 p-md" style={{ gridTemplateColumns: 'repeat(9, minmax(0, 1fr))' }}>
            {reading.cards.map((readingCard, index) => {
                 const card = getCardById(allCards, readingCard.id)
              if (!card) return null
@@ -310,8 +310,8 @@ export function ReadingViewer({
              const isSignificator = index === significatorIndex
 
              return (
-               <AnimatedCard key={index} delay={index * 0.05} className={`flex flex-col items-center space-y-1 rounded-lg border-2 transition-all ${stripClass} ${isSignificator ? 'ring-2 ring-primary' : ''}`}>
-                 <div className="flex w-full flex-col items-center space-y-1 p-1">
+                <AnimatedCard key={index} delay={index * 0.05} className={`flex flex-col items-center space-y-sm rounded-lg border-2 transition-all ${stripClass} ${isSignificator ? 'ring-2 ring-primary' : ''}`}>
+                  <div className="flex w-full flex-col items-center space-y-sm p-sm">
                     {stripLabel && (
                       <div className="text-center text-xs font-semibold text-primary">
                         {stripLabel}
@@ -332,9 +332,9 @@ export function ReadingViewer({
          </div>
 
          {/* Reading Instructions */}
-         <div className="space-y-3 rounded-lg border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+          <div className="space-y-md rounded-lg border border-border bg-muted/50 p-md text-sm text-muted-foreground">
            <p className="font-semibold text-foreground">How to read the Grand Tableau:</p>
-           <ol className="list-inside list-decimal space-y-2 text-xs">
+            <ol className="list-inside list-decimal space-y-sm text-xs">
              <li><strong>Strip A (Row):</strong> Read the nine cards in the significator&apos;s row (left→right) as the narrative of the moment</li>
              <li><strong>Strip B (Column):</strong> Read the four cards in the significator&apos;s column (top→bottom) to understand what weighs on the mind</li>
              <li><strong>Strip C (Cross):</strong> The four adjacent cards form the immediate pivot—the crossing point</li>
@@ -345,9 +345,9 @@ export function ReadingViewer({
        </div>
      )
       } else {
-       // Linear layouts (3, 5, 7, 9 cards)
-        return (
-          <div className={`mx-auto grid gap-4 overflow-visible ${
+        // Linear layouts (3, 5, 7, 9 cards)
+         return (
+           <div className={`mx-auto grid gap-lg overflow-visible ${
             reading.layoutType === 3 ? 'max-w-4xl grid-cols-1 sm:grid-cols-3' :
             reading.layoutType === 5 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-5' :
             reading.layoutType === 7 ? 'max-w-6xl grid-cols-1 sm:grid-cols-3 md:grid-cols-7' :
@@ -361,9 +361,9 @@ export function ReadingViewer({
              const positionInfo = getPositionInfo(index, spreadId)
 
              return (
-               <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-3">
-                 <div className="flex flex-col items-center space-y-2">
-                    <div className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                <AnimatedCard key={index} delay={index * 0.08} className="flex flex-col items-center space-y-lg">
+                  <div className="flex flex-col items-center space-y-md">
+                     <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                       {positionInfo.label}
                     </div>
                      <CardWithTooltip
@@ -383,19 +383,19 @@ export function ReadingViewer({
     }
   }
 
-   return (
-     <div className="space-y-8">
-       {/* Reading Header */}
-       {showReadingHeader && (
-         <div className="animate-in fade-in slide-in-from-top-8 duration-500">
-            <div className="rounded-xl border border-border bg-card p-8 text-center">
+    return (
+      <div className="space-y-2xl">
+        {/* Reading Header */}
+        {showReadingHeader && (
+          <div className="animate-in fade-in slide-in-from-top-8 duration-500">
+             <div className="rounded-lg border border-border bg-card p-xl text-center shadow-elevation-2">
               <h2 className="text-3xl font-bold text-foreground">
                 {reading.title}
               </h2>
-              {reading.question && reading.question !== reading.title && (
-                 <p className="mt-4 text-lg italic text-muted-foreground">&ldquo;{reading.question}&rdquo;</p>
-              )}
-               <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+               {reading.question && reading.question !== reading.title && (
+                  <p className="mt-lg text-lg italic text-muted-foreground">&ldquo;{reading.question}&rdquo;</p>
+               )}
+                <div className="mt-xl flex flex-wrap items-center justify-center gap-lg text-sm text-muted-foreground">
                  <div className="flex items-center gap-2">
                    <Calendar className="h-4 w-4 text-primary" />
                    {new Date(reading.createdAt).toLocaleDateString()}
@@ -436,9 +436,9 @@ export function ReadingViewer({
 
 
         {/* Cards Layout Section */}
-        <div className="animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500 overflow-visible">
-          <div className="rounded-xl border border-border bg-card p-8 overflow-visible">
-            <h3 className="mb-6 text-xl font-semibold text-foreground">Your Cards</h3>
+         <div className="animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500 overflow-visible">
+           <div className="rounded-lg border border-border bg-card p-xl overflow-visible shadow-elevation-1">
+             <h3 className="mb-lg text-xl font-semibold text-foreground">Your Cards</h3>
             {renderLayout()}
           </div>
         </div>
@@ -453,25 +453,25 @@ export function ReadingViewer({
          />
        )}
 
-       {/* Combinations Panel */}
-       {selectedCard && (
-           <div className="animate-in fade-in slide-in-from-bottom-8 rounded-xl border border-border bg-card p-8 duration-500">
-            <h3 className="mb-6 text-xl font-semibold text-foreground">Card Combinations</h3>
-          <div className="space-y-3">
+        {/* Combinations Panel */}
+        {selectedCard && (
+            <div className="animate-in fade-in slide-in-from-bottom-8 rounded-lg border border-border bg-card p-xl duration-500 shadow-elevation-1">
+             <h3 className="mb-lg text-xl font-semibold text-foreground">Card Combinations</h3>
+           <div className="space-y-md">
             {(() => {
               const readingCard = reading.cards.find(c => c.id === selectedCard.id)
               if (!readingCard) return null
 
               const adjacentCards = getAdjacentCards(readingCard)
               
-              if (adjacentCards.length === 0) {
-                return (
-                   <div className="py-8 text-center text-muted-foreground/60">
-                     <p className="mb-2 italic">No adjacent cards in this layout</p>
-                     <p className="text-sm">In larger spreads, this card would interact with nearby cards</p>
-                   </div>
-                )
-              }
+               if (adjacentCards.length === 0) {
+                 return (
+                    <div className="py-xl text-center text-muted-foreground/60">
+                      <p className="mb-md italic">No adjacent cards in this layout</p>
+                      <p className="text-sm">In larger spreads, this card would interact with nearby cards</p>
+                    </div>
+                 )
+               }
               
               return adjacentCards.map((adjCard, index) => {
                 const card = getCardById(allCards, adjCard.id)
@@ -479,17 +479,17 @@ export function ReadingViewer({
 
                  const combination = getCombinationMeaning(selectedCard, card, readingCard.position, adjCard.position)
 
-                 return (
-                    <div key={index} className="flex items-center gap-4 rounded-lg border border-border bg-card/50 p-4">
-                     <div className="flex items-center gap-3">
+                  return (
+                     <div key={index} className="flex items-center gap-md rounded-lg border border-border bg-card/50 p-md">
+                      <div className="flex items-center gap-md">
                         <Card card={selectedCard} size="sm" />
                        <span className="text-lg font-medium text-primary">+</span>
                        <Card card={card} size="sm" />
                      </div>
-                     <div className="flex-1">
-                       <div className="mb-1 font-medium text-muted-foreground">
-                          {selectedCard.name} + {card.name}
-                       </div>
+                      <div className="flex-1">
+                        <div className="mb-sm font-medium text-muted-foreground">
+                           {selectedCard.name} + {card.name}
+                        </div>
                        <div className="text-sm text-muted-foreground/80">
                          {combination || 'These cards work together to create a unique meaning in your reading.'}
                        </div>
