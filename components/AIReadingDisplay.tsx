@@ -53,6 +53,8 @@ export function AIReadingDisplay({
   }: AIReadingDisplayProps) {
     const [activeTab, setActiveTab] = useState('results')
     const [copyClicked, setCopyClicked] = useState(false)
+    const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
+    const [feedbackLoading, setFeedbackLoading] = useState(false)
     const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
     // Check if deadline has passed
@@ -89,6 +91,49 @@ export function AIReadingDisplay({
         setTimeout(() => setCopyClicked(false), 2000)
       } catch (err) {
         console.error('Failed to copy:', err)
+      }
+    }
+
+    const handleFeedback = async (type: 'up' | 'down') => {
+      // Toggle feedback state
+      const newFeedback = feedback === type ? null : type
+      setFeedback(newFeedback)
+
+      // If feedback is cleared, don't send to API
+      if (newFeedback === null) return
+
+      setFeedbackLoading(true)
+      try {
+        const response = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            isHelpful: type === 'up',
+            aiInterpretationId: aiReading?.id,
+            readingId: cards ? `reading-${cards[0]?.id}` : undefined,
+            spreadId,
+            question,
+            readingText: activeTab === 'results' ? aiReading?.reading : aiReading?.practicalTranslation,
+          }),
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('Feedback submission failed:', error)
+          // Revert feedback state on error
+          setFeedback(feedback)
+        } else {
+          const result = await response.json()
+          console.log('Feedback submitted:', result)
+        }
+      } catch (err) {
+        console.error('Error submitting feedback:', err)
+        // Revert feedback state on error
+        setFeedback(feedback)
+      } finally {
+        setFeedbackLoading(false)
       }
     }
 
@@ -262,25 +307,27 @@ export function AIReadingDisplay({
                      {/* Learn the Method & Feedback Actions */}
                      {spreadLearningLinks && (
                        <div className="border-t border-border pt-xl mt-xl flex items-center justify-between gap-lg">
-                         <div className="flex items-center gap-sm">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleFeedback('up')}
-                             className={`h-11 w-11 p-0 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                          >
-                            <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
-                            <span className="sr-only">Helpful</span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleFeedback('down')}
-                             className={`h-11 w-11 p-0 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                          >
-                            <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
-                            <span className="sr-only">Not helpful</span>
-                          </Button>
+                          <div className="flex items-center gap-sm">
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             onClick={() => handleFeedback('up')}
+                             disabled={feedbackLoading}
+                              className={`h-11 w-11 p-0 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'} ${feedbackLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           >
+                             <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
+                             <span className="sr-only">Helpful</span>
+                           </Button>
+                           <Button
+                             variant="ghost"
+                             size="icon"
+                             onClick={() => handleFeedback('down')}
+                             disabled={feedbackLoading}
+                              className={`h-11 w-11 p-0 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'} ${feedbackLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           >
+                             <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
+                             <span className="sr-only">Not helpful</span>
+                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
