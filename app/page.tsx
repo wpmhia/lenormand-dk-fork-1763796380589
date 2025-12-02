@@ -23,7 +23,7 @@ export default function Home() {
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
       <div className="container-hero">
-        <div className="relative mb-8 flex flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+        <div className="relative mb-8 flex flex-col items-center justify-center gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
           <div className="space-component relative z-10 overflow-visible text-center lg:flex-1 lg:text-left">
             <h1 className="relative mb-4 overflow-visible pb-2 text-4xl font-bold leading-normal text-foreground sm:text-5xl lg:text-6xl xl:text-7xl">
               <span className="relative inline-block">
