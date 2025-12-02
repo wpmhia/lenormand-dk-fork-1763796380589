@@ -322,7 +322,7 @@ export function AIReadingDisplay({
             {/* Accuracy Tracker - Show when deadline has passed */}
             {aiReading && aiReading.deadline && aiReading.task && isDeadlinePassed && (
               <AccuracyTracker
-                aiInterpretationId={aiReading.id || 'temp'}
+                readingId={aiReading.id || 'temp'}
                 deadline={aiReading.deadline}
                 task={aiReading.task}
               />

@@ -1,23 +1,29 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { Star, CheckCircle, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface AccuracyTrackerProps {
-  aiInterpretationId: string
+  readingId: string
   deadline: string
   task: string
   onAccuracySubmitted?: () => void
 }
 
+interface StoredAccuracy {
+  readingId: string
+  rating: number
+  notes: string
+  submittedAt: string
+}
+
 export function AccuracyTracker({
-  aiInterpretationId,
+  readingId,
   deadline,
   task,
   onAccuracySubmitted
@@ -27,36 +33,54 @@ export function AccuracyTracker({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
+  // Check if this reading has already been rated
+  useEffect(() => {
+    const stored = localStorage.getItem('lenormand_accuracy_tracking')
+    if (stored) {
+      try {
+        const accuracies: StoredAccuracy[] = JSON.parse(stored)
+        const existing = accuracies.find(a => a.readingId === readingId)
+        if (existing) {
+          setRating(existing.rating)
+          setNotes(existing.notes)
+          setSubmitted(true)
+        }
+      } catch (error) {
+        console.error('Error parsing stored accuracy data:', error)
+      }
+    }
+  }, [readingId])
+
   const handleSubmit = async () => {
-    if (rating === null) return
+    if (rating === null || submitted) return
 
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/readings/accuracy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          aiInterpretationId,
-          accuracyRating: rating,
-          accuracyNotes: notes.trim() || undefined
-        }),
-      })
+      // Store locally since there's no user authentication
+      const stored = localStorage.getItem('lenormand_accuracy_tracking') || '[]'
+      const accuracies: StoredAccuracy[] = JSON.parse(stored)
 
-      const data = await response.json()
+      // Remove any existing entry for this reading
+      const filtered = accuracies.filter(a => a.readingId !== readingId)
 
-      if (response.ok) {
-        setSubmitted(true)
-        toast.success('Thank you for tracking the accuracy!')
-        onAccuracySubmitted?.()
-      } else {
-        toast.error(data.error || 'Failed to submit accuracy')
+      // Add new entry
+      const newAccuracy: StoredAccuracy = {
+        readingId,
+        rating,
+        notes: notes.trim(),
+        submittedAt: new Date().toISOString()
       }
+
+      filtered.push(newAccuracy)
+      localStorage.setItem('lenormand_accuracy_tracking', JSON.stringify(filtered))
+
+      setSubmitted(true)
+      toast.success('Accuracy feedback saved locally!')
+      onAccuracySubmitted?.()
     } catch (error) {
-      console.error('Failed to submit accuracy:', error)
-      toast.error('Failed to submit accuracy')
+      console.error('Failed to save accuracy:', error)
+      toast.error('Failed to save accuracy feedback')
     } finally {
       setIsSubmitting(false)
     }
@@ -70,6 +94,14 @@ export function AccuracyTracker({
             <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
             <p>Accuracy tracked!</p>
             <p className="text-sm mt-1">Your feedback helps improve future readings.</p>
+            <div className="mt-3 flex justify-center">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Star
+                  key={i}
+                  className={`h-4 w-4 ${i < (rating || 0) ? 'text-yellow-500 fill-current' : 'text-muted-foreground'}`}
+                />
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -135,11 +167,11 @@ export function AccuracyTracker({
           className="w-full gap-2"
         >
           <CheckCircle className="h-4 w-4" />
-          {isSubmitting ? 'Submitting...' : 'Submit Accuracy'}
+          {isSubmitting ? 'Saving...' : 'Save Accuracy'}
         </Button>
 
         <p className="text-xs text-muted-foreground text-center">
-          Your accuracy feedback helps us improve our AI readings
+          Your accuracy feedback is saved locally and helps improve future readings
         </p>
       </CardContent>
     </Card>
