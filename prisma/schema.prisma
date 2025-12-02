@@ -130,6 +130,10 @@ model AIInterpretation {
   deadline               String?
   task                   String?
   timingDays             Int?     @map("timing_days")
+  accuracyConfirmed      Boolean? @map("accuracy_confirmed") // Whether user confirmed if prediction came true
+  accuracyRating         Int?     @map("accuracy_rating") // 1-5 rating of accuracy
+  accuracyNotes          String?  @map("accuracy_notes") // User's notes about what happened
+  accuracyConfirmedAt    DateTime? @map("accuracy_confirmed_at") // When accuracy was confirmed
   createdAt              DateTime @default(now()) @map("created_at")
 
   userReading UserReading @relation(fields: [readingId], references: [id], onDelete: Cascade)

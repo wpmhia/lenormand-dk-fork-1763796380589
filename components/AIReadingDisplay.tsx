@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp, Copy, Check, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
 import { ReadingFeedback } from './ReadingFeedback'
+import { AccuracyTracker } from './AccuracyTracker'
 
 
 interface AIReadingDisplayProps {
@@ -52,7 +53,25 @@ export function AIReadingDisplay({
   }: AIReadingDisplayProps) {
     const [activeTab, setActiveTab] = useState('results')
     const [copyClicked, setCopyClicked] = useState(false)
-   const spreadLearningLinks = getSpreadLearningLinks(spreadId)
+    const spreadLearningLinks = getSpreadLearningLinks(spreadId)
+
+    // Check if deadline has passed
+    const isDeadlinePassed = aiReading?.deadline ? (() => {
+      // Simple check - if deadline contains "by" and a past date, consider it passed
+      // In a real app, you'd parse the deadline properly
+      const deadlineText = aiReading.deadline.toLowerCase()
+      const now = new Date()
+      const currentDay = now.toLocaleLowerCase('en-US', { weekday: 'long' })
+      
+      // Check if deadline mentions a day that has already passed this week
+      if (deadlineText.includes('monday') && currentDay !== 'monday') return true
+      if (deadlineText.includes('tuesday') && ['wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(currentDay)) return true
+      if (deadlineText.includes('wednesday') && ['thursday', 'friday', 'saturday', 'sunday'].includes(currentDay)) return true
+      if (deadlineText.includes('thursday') && ['friday', 'saturday', 'sunday'].includes(currentDay)) return true
+      if (deadlineText.includes('friday') && ['saturday', 'sunday'].includes(currentDay)) return true
+      
+      return false // For now, assume deadline hasn't passed
+    })() : false
 
     // Return content as-is without adding links
     const getContent = (content: string): string => content
@@ -284,53 +303,8 @@ export function AIReadingDisplay({
                           </Button>
                         </a>
                       </div>
-                   )}
-
-                      {/* Learn the Method & Feedback Actions */}
-                      {spreadLearningLinks && (
-                        <div className="border-t border-border pt-xl mt-xl flex items-center justify-between gap-lg">
-                          <div className="flex items-center gap-sm">
-                           <Button
-                             variant="ghost"
-                             size="icon"
-                             onClick={() => handleFeedback('up')}
-                              className={`h-11 w-11 p-0 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                           >
-                             <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
-                             <span className="sr-only">Helpful</span>
-                           </Button>
-                           <Button
-                             variant="ghost"
-                             size="icon"
-                             onClick={() => handleFeedback('down')}
-                              className={`h-11 w-11 p-0 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                           >
-                             <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
-                             <span className="sr-only">Not helpful</span>
-                           </Button>
-                           <Button
-                             variant="ghost"
-                             size="icon"
-                             onClick={handleCopy}
-                              className="h-11 w-11 p-0 text-muted-foreground hover:text-foreground"
-                           >
-                             {copyClicked ? (
-                               <Check className="h-4 w-4" />
-                             ) : (
-                               <Copy className="h-4 w-4" />
-                             )}
-                             <span className="sr-only">Copy reading</span>
-                           </Button>
-                         </div>
-
-                         <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
-                           <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
-                             Learn the Method
-                             <ExternalLink className="h-3 w-3" />
-                           </Button>
-                         </a>
-                       </div>
                       )}
+
                  </CardContent>
               </Card>
             )}
@@ -342,6 +316,15 @@ export function AIReadingDisplay({
                 aiInterpretationId={aiReading.id || undefined}
                 spreadId={spreadId}
                 question={question}
+              />
+            )}
+
+            {/* Accuracy Tracker - Show when deadline has passed */}
+            {aiReading && aiReading.deadline && aiReading.task && isDeadlinePassed && (
+              <AccuracyTracker
+                aiInterpretationId={aiReading.id || 'temp'}
+                deadline={aiReading.deadline}
+                task={aiReading.task}
               />
             )}
          </div>
