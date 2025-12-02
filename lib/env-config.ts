@@ -12,24 +12,12 @@ export const ENV_VARIABLES: EnvVariable[] = [
     required: false,
     instructions: "Only set if using a custom DeepSeek endpoint. Default is the official API endpoint with /v1 suffix."
   },
-  {
-    name: "DATABASE_URL",
-    description: "Supabase database connection string",
-    required: true,
-    instructions: "Get this from Supabase Dashboard > Project Settings > Database > Connection string (URI)"
-  },
-  {
-    name: "NEXT_PUBLIC_SUPABASE_URL",
-    description: "Supabase Project URL",
-    required: true,
-    instructions: "Get this from Supabase Dashboard > Project Settings > API"
-  },
-  {
-    name: "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    description: "Supabase Anonymous Key",
-    required: true,
-    instructions: "Get this from Supabase Dashboard > Project Settings > API"
-  }
+   {
+     name: "DATABASE_URL",
+     description: "Neon PostgreSQL database connection string",
+     required: true,
+     instructions: "Get this from Neon Dashboard > Project > Connection string. Format: postgresql://user:password@host/dbname?sslmode=require"
+   }
 ];
 
 export interface EnvVariable {
