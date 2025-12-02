@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react'
+import { Sparkles, RefreshCw, AlertCircle, ExternalLink, Zap, CheckCircle2, ChevronDown, ChevronUp, Copy, Check, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { getSpreadLearningLinks } from '@/lib/spreadLearning'
 
 
@@ -51,6 +51,7 @@ export function AIReadingDisplay({
  }: AIReadingDisplayProps) {
    const [activeTab, setActiveTab] = useState('results')
    const [copyClicked, setCopyClicked] = useState(false)
+   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
    const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
     // Return content as-is without adding links
@@ -239,27 +240,43 @@ export function AIReadingDisplay({
                     </div>
                   )}
 
-                    {/* Learn the Method Button - Always Visible */}
+                    {/* Learn the Method & Feedback Actions */}
                     {spreadLearningLinks && (
-                      <div className="border-t border-border pt-6 mt-6 flex flex-wrap gap-2">
-                        <Button
-                          onClick={handleCopy}
-                          variant="outline"
-                          size="sm"
-                          className="gap-2 border-border hover:bg-muted text-foreground"
-                        >
-                          {copyClicked ? (
-                            <>
-                              <Check className="h-3 w-3" />
-                              Copied!
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-3 w-3" />
-                              Copy Reading
-                            </>
-                          )}
-                        </Button>
+                      <div className="border-t border-border pt-6 mt-6 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setFeedback(feedback === 'up' ? null : 'up')}
+                            className={`h-8 w-8 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                          >
+                            <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
+                            <span className="sr-only">Helpful</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setFeedback(feedback === 'down' ? null : 'down')}
+                            className={`h-8 w-8 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                          >
+                            <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
+                            <span className="sr-only">Not helpful</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleCopy}
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          >
+                            {copyClicked ? (
+                              <Check className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                            <span className="sr-only">Copy reading</span>
+                          </Button>
+                        </div>
+
                         <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
                           <Button variant="default" size="sm" className="gap-2 bg-primary/80 hover:bg-primary text-primary-foreground">
                             Learn the Method
