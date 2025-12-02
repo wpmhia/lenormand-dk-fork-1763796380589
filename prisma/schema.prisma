@@ -18,17 +18,62 @@ model Reading {
 }
 
 model Feedback {
-  id              String   @id @default(uuid())
-  type            String
-  question        String?
-  spreadId        String?
-  cards           Json?
-  readingText     String?
-  translationText String?
-  createdAt       DateTime @default(now()) @map("created_at")
-  readingId       String?
+  id                    String   @id @default(uuid())
+  type                  String // "helpful", "unhelpful", "inaccurate", "excellent"
+  question              String?
+  spreadId              String?
+  cards                 Json?
+  readingText           String?
+  translationText       String?
+  aiInterpretationId    String?  @map("ai_interpretation_id")
+  userReadingId         String?  @map("user_reading_id")
+  qualityScore          Int      @default(0) @map("quality_score") // 0-100, calculated from feedback type
+  usedForOptimization   Boolean  @default(false) @map("used_for_optimization")
+  optimizationNotes     String?  @map("optimization_notes")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
 
+  @@index([type])
+  @@index([qualityScore])
+  @@index([usedForOptimization])
   @@map("feedback")
+}
+
+model FewShotExample {
+  id                    String   @id @default(uuid())
+  question              String
+  cards                 Json // array of cards used
+  spreadId              String   @map("spread_id")
+  excellentResponse     String   @map("excellent_response")
+  sourceReadingId       String?  @map("source_reading_id")
+  sourceFeedbackId      String?  @map("source_feedback_id")
+  usageCount            Int      @default(0) @map("usage_count")
+  averageQualityScore   Float    @default(0) @map("average_quality_score")
+  isActive              Boolean  @default(true) @map("is_active")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@index([spreadId])
+  @@index([isActive])
+  @@index([averageQualityScore])
+  @@map("few_shot_examples")
+}
+
+model OptimizationMetrics {
+  id                        String   @id @default(uuid())
+  periodStartDate           DateTime @map("period_start_date")
+  periodEndDate             DateTime @map("period_end_date")
+  totalFeedbackCollected    Int      @map("total_feedback_collected")
+  averageQualityScore       Float    @map("average_quality_score")
+  excellentReadingsPercent  Float    @map("excellent_readings_percent")
+  unhelpfulReadingsPercent  Float    @map("unhelpful_readings_percent")
+  fewShotExamplesGenerated  Int      @map("few_shot_examples_generated")
+  readingsOptimizedWith     Int      @map("readings_optimized_with")
+  averageImprovementScore   Float?   @map("average_improvement_score")
+  createdAt                 DateTime @default(now()) @map("created_at")
+
+  @@index([periodStartDate])
+  @@map("optimization_metrics")
 }
 
 model User {

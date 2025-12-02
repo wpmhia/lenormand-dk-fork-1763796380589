@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import type { UserReading, AIInterpretation } from '@prisma/client'
 
 export async function GET(
   request: Request,
@@ -21,7 +22,7 @@ export async function GET(
         aiInterpretations: {
           orderBy: { createdAt: 'desc' },
           take: 1
-        }
+        } as any
       }
     })
 
