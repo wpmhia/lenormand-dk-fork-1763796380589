@@ -5,7 +5,7 @@ import { PrometheusMetrics } from '@/lib/metrics'
 export async function GET(request: NextRequest) {
   const prometheusMetrics = new PrometheusMetrics()
 
-  const stats = readingHistory.getStats()
+  const stats = await readingHistory.getStats()
   const memoryUsage = process.memoryUsage()
 
   prometheusMetrics.addMetric(

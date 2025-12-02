@@ -42,7 +42,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       if (cachedReading) {
         console.log('Cache hit! Returning cached reading')
         const duration = Date.now() - startTime
-        readingHistory.addReading(request, cachedReading, duration)
+        await readingHistory.addReading(request, cachedReading, duration)
         return cachedReading
       }
     }
@@ -130,7 +130,7 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
     
     cacheReading(request, aiResponse)
     const duration = Date.now() - startTime
-    readingHistory.addReading(request, aiResponse, duration)
+    await readingHistory.addReading(request, aiResponse, duration)
     return aiResponse
      
   } catch (error) {

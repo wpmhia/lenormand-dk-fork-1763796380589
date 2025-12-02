@@ -1,23 +1,26 @@
 import { NextResponse } from 'next/server'
+import prisma from '@/lib/prisma'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
     const { feedback, cards, spreadId, question, readingText, translationText } = body
 
-    // Log the feedback for analysis/optimization
-    console.log('--- READING FEEDBACK RECEIVED ---')
+    // Log to console for immediate visibility
+    console.log('--- FEEDBACK RECEIVED ---')
     console.log(`Type: ${feedback}`)
-    console.log(`Question: ${question}`)
-    console.log(`Spread: ${spreadId}`)
-    console.log(`Cards: ${JSON.stringify(cards)}`)
-    console.log(`Timestamp: ${new Date().toISOString()}`)
-    // We log the text length to avoid cluttering logs too much, but enough to know which reading it was
-    console.log(`Reading Length: ${readingText?.length}`)
-    console.log('-----------------------------------')
-
-    // In a real implementation with a database, we would save this to:
-    // await db.feedback.create({ ... })
+    
+    // Save to database
+    await prisma.feedback.create({
+      data: {
+        type: feedback,
+        question,
+        spreadId,
+        cards: cards as any,
+        readingText,
+        translationText
+      }
+    })
     
     return NextResponse.json({ success: true })
   } catch (error) {

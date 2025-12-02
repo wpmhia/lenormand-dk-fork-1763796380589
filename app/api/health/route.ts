@@ -4,6 +4,8 @@ import { readingHistory } from '@/lib/readingHistory'
 export async function GET(request: NextRequest) {
   const timestamp = new Date().toISOString()
   
+  const stats = await readingHistory.getStats()
+
   const health = {
     status: 'healthy',
     timestamp,
@@ -25,9 +27,9 @@ export async function GET(request: NextRequest) {
       readingHistory: 'operational',
     },
     analytics: {
-      totalReadings: readingHistory.getStats().totalReadings,
-      uniqueSpreads: Object.keys(readingHistory.getStats().spreads).length,
-      averageInterpretationTime: readingHistory.getStats().averageDuration,
+      totalReadings: stats.totalReadings,
+      uniqueSpreads: Object.keys(stats.spreads).length,
+      averageInterpretationTime: stats.averageDuration,
     },
   }
 
