@@ -32,44 +32,19 @@ export function ReadingFeedback({
   const handleFeedback = async (type: 'helpful' | 'unhelpful') => {
     if (submitted) return
 
-    setFeedbackType(type)
-    setIsSubmitting(true)
-
-    try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          isHelpful: type === 'helpful',
-          question,
-          spreadId,
-          aiInterpretationId,
-          userReadingId: readingId,
-          comments: comments.trim() || undefined
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setSubmitted(true)
-        toast.success(type === 'helpful' ? 'Thank you for the positive feedback!' : 'Thank you for your feedback. We\'re working to improve.')
-        onFeedbackSubmitted?.()
-      } else {
-        toast.error(data.error || 'Failed to submit feedback')
-      }
-    } catch (error) {
-      console.error('Failed to submit feedback:', error)
-      toast.error('Failed to submit feedback')
-    } finally {
-      setIsSubmitting(false)
+    // Toggle: if clicking the same button, clear the selection
+    if (feedbackType === type) {
+      setFeedbackType(null)
+      setComments('')
+      return
     }
+
+    // If selecting a different button, update the feedback type
+    setFeedbackType(type)
   }
 
-  const handleDetailedFeedback = async () => {
-    if (!comments.trim() || submitted) return
+  const handleSubmitFeedback = async () => {
+    if (!feedbackType || submitted) return
 
     setIsSubmitting(true)
 
@@ -85,7 +60,7 @@ export function ReadingFeedback({
           spreadId,
           aiInterpretationId,
           userReadingId: readingId,
-          comments: comments.trim()
+          comments: comments.trim() || undefined
         }),
       })
 
@@ -93,7 +68,7 @@ export function ReadingFeedback({
 
       if (response.ok) {
         setSubmitted(true)
-        toast.success('Thank you for your detailed feedback!')
+        toast.success(feedbackType === 'helpful' ? 'Thank you for the positive feedback!' : 'Thank you for your feedback. We\'re working to improve.')
         onFeedbackSubmitted?.()
       } else {
         toast.error(data.error || 'Failed to submit feedback')
@@ -105,6 +80,8 @@ export function ReadingFeedback({
       setIsSubmitting(false)
     }
   }
+
+
 
   if (submitted) {
     return (
@@ -181,8 +158,8 @@ export function ReadingFeedback({
             </div>
 
             <Button
-              onClick={handleDetailedFeedback}
-              disabled={!comments.trim() || isSubmitting}
+              onClick={handleSubmitFeedback}
+              disabled={isSubmitting}
               size="sm"
               className="w-full gap-2"
             >
