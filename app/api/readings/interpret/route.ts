@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAIReading, AIReadingRequest } from '@/lib/deepseek'
 import { SPREAD_RULES } from '@/lib/spreadRules'
+import prisma from '@/lib/prisma'
 
 const logger = {
   info: (msg: string, data?: any) => console.log(`[INFO] ${msg}`, data ? JSON.stringify(data, null, 2) : ''),
@@ -98,20 +99,46 @@ export async function POST(request: Request) {
       )
     }
 
-    const duration = Date.now() - startTime
-    logger.info(`[${requestId}] Reading generated successfully`, {
-      duration: `${duration}ms`,
-      storyLength: result.reading?.length,
-      deadline: result.deadline
-    })
-
-     return NextResponse.json({
-       reading: result.reading,
-       practicalTranslation: result.practicalTranslation,
-       deadline: result.deadline,
-       task: result.task,
-       timingDays: result.timingDays
+     const duration = Date.now() - startTime
+     logger.info(`[${requestId}] Reading generated successfully`, {
+       duration: `${duration}ms`,
+       storyLength: result.reading?.length,
+       deadline: result.deadline
      })
+
+     // Save AI interpretation to database if readingId is provided
+     let aiInterpretationId: string | null = null
+     if (body.readingId) {
+       try {
+         const aiInterpretation = await prisma.aIInterpretation.create({
+           data: {
+             readingId: body.readingId,
+             readingText: result.reading || '',
+             practicalTranslation: result.practicalTranslation || undefined,
+             deadline: result.deadline || undefined,
+             task: result.task || undefined,
+             timingDays: result.timingDays || undefined
+           }
+         })
+         aiInterpretationId = aiInterpretation.id
+         logger.info(`[${requestId}] AI interpretation saved to database`, {
+           aiInterpretationId
+         })
+       } catch (dbError) {
+         const dbErrorMsg = dbError instanceof Error ? dbError.message : String(dbError)
+         logger.warn(`[${requestId}] Failed to save AI interpretation to database`, { error: dbErrorMsg })
+         // Continue and return the result even if database save fails
+       }
+     }
+
+      return NextResponse.json({
+        reading: result.reading,
+        practicalTranslation: result.practicalTranslation,
+        deadline: result.deadline,
+        task: result.task,
+        timingDays: result.timingDays,
+        aiInterpretationId
+      })
   } catch (error) {
     const duration = Date.now() - startTime
     const errorMsg = error instanceof Error ? error.message : String(error)
