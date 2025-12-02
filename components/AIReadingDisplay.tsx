@@ -73,6 +73,28 @@ export function AIReadingDisplay({
       }
     }
 
+    const handleFeedback = async (type: 'up' | 'down') => {
+      const newFeedback = feedback === type ? null : type
+      setFeedback(newFeedback)
+
+      try {
+        await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            feedback: newFeedback,
+            cards,
+            spreadId,
+            question,
+            readingText: aiReading?.reading,
+            translationText: aiReading?.practicalTranslation
+          })
+        })
+      } catch (err) {
+        console.error('Failed to send feedback:', err)
+      }
+    }
+
      if (isLoading && !aiReading?.practicalTranslation) {
        return (
         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none loading-skeleton">
@@ -247,7 +269,7 @@ export function AIReadingDisplay({
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setFeedback(feedback === 'up' ? null : 'up')}
+                            onClick={() => handleFeedback('up')}
                             className={`h-8 w-8 ${feedback === 'up' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                           >
                             <ThumbsUp className={`h-4 w-4 ${feedback === 'up' ? 'fill-current' : ''}`} />
@@ -256,7 +278,7 @@ export function AIReadingDisplay({
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setFeedback(feedback === 'down' ? null : 'down')}
+                            onClick={() => handleFeedback('down')}
                             className={`h-8 w-8 ${feedback === 'down' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                           >
                             <ThumbsDown className={`h-4 w-4 ${feedback === 'down' ? 'fill-current' : ''}`} />
