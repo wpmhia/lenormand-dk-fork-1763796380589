@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getOptimizationStatus } from '@/lib/feedbackOptimization'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const status = await getOptimizationStatus()
