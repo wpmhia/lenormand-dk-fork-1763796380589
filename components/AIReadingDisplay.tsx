@@ -104,6 +104,13 @@ export function AIReadingDisplay({
 
       setFeedbackLoading(true)
       try {
+        // Prepare card data for model learning
+        const cardData = cards ? cards.map(card => ({
+          id: card.id,
+          name: card.name,
+          position: card.position
+        })) : undefined
+
         const response = await fetch('/api/feedback', {
           method: 'POST',
           headers: {
@@ -112,10 +119,14 @@ export function AIReadingDisplay({
           body: JSON.stringify({
             isHelpful: type === 'up',
             aiInterpretationId: aiReading?.id,
-            readingId: cards ? `reading-${cards[0]?.id}` : undefined,
             spreadId,
             question,
-            readingText: activeTab === 'results' ? aiReading?.reading : aiReading?.practicalTranslation,
+            readingText: aiReading?.reading,
+            translationText: aiReading?.practicalTranslation,
+            // Include card data for model to learn patterns
+            cards: cardData,
+            // Track which prompt variant/temperature performed well
+            promptTemperature: 0.7, // default temperature used
           }),
         })
 
@@ -126,7 +137,7 @@ export function AIReadingDisplay({
           setFeedback(feedback)
         } else {
           const result = await response.json()
-          console.log('Feedback submitted:', result)
+          console.log('Feedback submitted successfully:', result.message)
         }
       } catch (err) {
         console.error('Error submitting feedback:', err)

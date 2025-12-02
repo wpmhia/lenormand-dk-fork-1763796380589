@@ -1,7 +1,12 @@
 import prisma from './prisma'
 
 /**
- * Record user feedback for a reading (thumbs up/down)
+ * Record user feedback for a reading (thumbs up/down) with model learning data
+ * This data is used to:
+ * - Track which prompt variants perform best
+ * - Learn which card combinations users find most helpful
+ * - Optimize prompt temperature and parameters
+ * - Analyze patterns by spread type
  */
 export async function recordFeedback(
   isHelpful: boolean,
@@ -11,7 +16,11 @@ export async function recordFeedback(
   readingText?: string,
   aiInterpretationId?: string,
   userReadingId?: string,
-  comments?: string
+  comments?: string,
+  translationText?: string,
+  cards?: Array<{ id: number; name: string; position: number }>,
+  promptTemperature?: number,
+  promptVariant?: string
 ): Promise<{ success: boolean; feedbackId?: string; error?: string }> {
   try {
     const feedback = await prisma.feedback.create({
@@ -21,14 +30,23 @@ export async function recordFeedback(
         question,
         spreadId,
         readingText,
+        translationText,
         userReadingId,
-        comments
+        comments,
+        cards: cards ? JSON.stringify(cards) : null,
+        promptTemperature,
+        promptVariant
       }
     })
 
     // Update prompt variant stats if promptVariant was tracked
-    if (feedback.promptVariant) {
-      await updatePromptVariantStats(feedback.promptVariant, isHelpful)
+    if (promptVariant) {
+      await updatePromptVariantStats(promptVariant, isHelpful)
+    }
+
+    // Log card patterns for model learning
+    if (cards && cards.length > 0 && spreadId) {
+      console.log(`[Model Learning] Recorded ${isHelpful ? 'positive' : 'negative'} feedback for ${cards.length} cards in ${spreadId}`)
     }
 
     // Update feedback patterns if spread_id is available
