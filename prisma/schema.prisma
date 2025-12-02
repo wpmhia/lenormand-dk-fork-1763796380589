@@ -26,6 +26,53 @@ model Feedback {
   readingText     String?
   translationText String?
   createdAt       DateTime @default(now()) @map("created_at")
+  readingId       String?
 
   @@map("feedback")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userReadings UserReading[]
+
+  @@map("users")
+}
+
+model UserReading {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String?
+  question  String
+  spreadId  String   @map("spread_id")
+  cards     Json
+  layoutType Int      @map("layout_type")
+  isPublic  Boolean  @default(false) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aiInterpretations AIInterpretation[]
+
+  @@index([userId])
+  @@map("user_readings")
+}
+
+model AIInterpretation {
+  id                     String   @id @default(uuid())
+  readingId              String   @map("reading_id")
+  readingText            String   @map("reading_text")
+  practicalTranslation   String?  @map("practical_translation")
+  deadline               String?
+  task                   String?
+  timingDays             Int?     @map("timing_days")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  userReading UserReading @relation(fields: [readingId], references: [id], onDelete: Cascade)
+
+  @@index([readingId])
+  @@map("ai_interpretations")
 }
