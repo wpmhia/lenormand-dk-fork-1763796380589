@@ -1,0 +1,28 @@
+# Vercel Build Configuration
+
+This file documents the build process for Vercel deployment.
+
+## Build Command
+npm run build
+
+## Output Directory
+.next
+
+## Install Command
+npm install
+
+## Environment Variables Required
+- DATABASE_URL (required)
+- DEEPSEEK_API_KEY (optional)
+- DEEPSEEK_BASE_URL (optional)
+
+## Build Process
+1. npm install (runs postinstall → prisma generate)
+2. prisma generate (explicitly in build command)
+3. rm -rf .next (clean previous builds)
+4. next build (build Next.js app)
+
+## Notes
+- Prisma Client is generated twice to ensure types are available
+- Database connection is validated during build
+- All 58 pages are pre-rendered
