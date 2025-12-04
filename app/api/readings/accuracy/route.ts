@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import type { AIInterpretation } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 export async function POST(request: Request) {
   try {
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
 
     // Update the AI interpretation with accuracy data
-    const updateData = {
+    const updateData: Prisma.AIInterpretationUpdateInput = {
       accuracyConfirmed: true,
       accuracyRating,
       accuracyNotes: accuracyNotes || null,
