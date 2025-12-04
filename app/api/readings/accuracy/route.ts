@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
 
     // Update the AI interpretation with accuracy data
-    const updateData: Prisma.AIInterpretationUpdateInput = {
+    const updateData: Prisma.AIInterpretationUncheckedUpdateInput = {
       accuracyConfirmed: true,
       accuracyRating,
       accuracyNotes: accuracyNotes || null,
