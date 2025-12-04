@@ -29,7 +29,7 @@ export interface AgentRequest {
 export interface AgentResponse {
   story: string
   deadline?: string
-  task?: string
+  task: string
   timingDays?: number
 }
 

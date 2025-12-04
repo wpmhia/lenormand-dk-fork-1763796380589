@@ -1,4 +1,4 @@
-import prisma from './prisma'
+import prisma from '@/lib/prisma'
 
 /**
  * Record user feedback for a reading (thumbs up/down) with model learning data

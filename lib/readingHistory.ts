@@ -1,4 +1,4 @@
-import prisma from './prisma'
+import prisma from '@/lib/prisma'
 import { AIReadingRequest, AIReadingResponse } from './deepseek'
 
 export const readingHistory = {
