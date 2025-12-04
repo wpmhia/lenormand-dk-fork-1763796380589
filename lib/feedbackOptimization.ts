@@ -24,19 +24,18 @@ export async function recordFeedback(
 ): Promise<{ success: boolean; feedbackId?: string; error?: string }> {
   try {
     const feedback = await prisma.feedback.create({
-      data: {
-        isHelpful,
-        aiInterpretationId: aiInterpretationId || readingId,
-        question,
-        spreadId,
-        readingText,
-        translationText,
-        userReadingId,
-        comments,
-        cards: cards ? JSON.stringify(cards) : null,
-        promptTemperature,
-        promptVariant
-      }
+       data: {
+         isHelpful,
+         aiInterpretationId: aiInterpretationId || readingId,
+         question,
+         spreadId,
+         readingText,
+         translationText,
+         userReadingId,
+         cards: cards ? JSON.stringify(cards) : undefined,
+         promptTemperature,
+         promptVariant
+       }
     })
 
     // Update prompt variant stats if promptVariant was tracked

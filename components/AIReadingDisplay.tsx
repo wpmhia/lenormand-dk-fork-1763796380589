@@ -63,7 +63,7 @@ export function AIReadingDisplay({
       // In a real app, you'd parse the deadline properly
       const deadlineText = aiReading.deadline.toLowerCase()
       const now = new Date()
-      const currentDay = now.toLocaleLowerCase('en-US', { weekday: 'long' })
+      const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
       
       // Check if deadline mentions a day that has already passed this week
       if (deadlineText.includes('monday') && currentDay !== 'monday') return true
@@ -118,7 +118,7 @@ export function AIReadingDisplay({
           },
           body: JSON.stringify({
             isHelpful: type === 'up',
-            aiInterpretationId: aiReading?.id,
+            aiInterpretationId: aiReading?.aiInterpretationId,
             spreadId,
             question,
             readingText: aiReading?.reading,
@@ -371,7 +371,7 @@ export function AIReadingDisplay({
             {aiReading && (
               <ReadingFeedback
                 readingId={cards ? 'temp' : undefined} // TODO: Pass actual reading ID
-                aiInterpretationId={aiReading.id || undefined}
+                aiInterpretationId={aiReading.aiInterpretationId || undefined}
                 spreadId={spreadId}
                 question={question}
               />
@@ -380,7 +380,7 @@ export function AIReadingDisplay({
             {/* Accuracy Tracker - Show when deadline has passed */}
             {aiReading && aiReading.deadline && aiReading.task && isDeadlinePassed && (
               <AccuracyTracker
-                readingId={aiReading.id || 'temp'}
+                readingId={aiReading.aiInterpretationId || 'temp'}
                 deadline={aiReading.deadline}
                 task={aiReading.task}
               />

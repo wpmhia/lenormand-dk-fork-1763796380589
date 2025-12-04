@@ -138,3 +138,43 @@ export function getGrandTableauAdjacentCards(cards: ReadingCard[], currentIndex:
   
   return adjacent
 }
+// Get all combinations of adjacent cards in a reading
+export function getReadingCombinations(cards: ReadingCard[], allCards: Card[]): Array<{
+  card1: Card
+  card2: Card
+  position1: number
+  position2: number
+  meaning: string | null
+}> {
+  const combinations: Array<{
+    card1: Card
+    card2: Card
+    position1: number
+    position2: number
+    meaning: string | null
+  }> = []
+
+  // Find combinations between adjacent cards
+  for (let i = 0; i < cards.length - 1; i++) {
+    const currentCard = cards[i]
+    const nextCard = cards[i + 1]
+    
+    const card1 = getCardById(allCards, currentCard.id)
+    const card2 = getCardById(allCards, nextCard.id)
+    
+    if (card1 && card2) {
+      const meaning = getCombinationMeaning(card1, card2, currentCard.position, nextCard.position)
+      if (meaning) {
+        combinations.push({
+          card1,
+          card2,
+          position1: currentCard.position,
+          position2: nextCard.position,
+          meaning
+        })
+      }
+    }
+  }
+  
+  return combinations
+}

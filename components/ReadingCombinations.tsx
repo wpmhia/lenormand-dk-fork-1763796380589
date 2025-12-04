@@ -2,7 +2,7 @@
 
 import { Card as UICard, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Card, ReadingCard } from '@/types'
+import { Card, ReadingCard } from '@/lib/types'
 import { getReadingCombinations } from '@/lib/data'
 
 interface ReadingCombinationsProps {
