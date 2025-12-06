@@ -213,10 +213,13 @@ function PhysicalReadingPage() {
                // Check if we've found the separator
                if (!hasSeparator && content.includes('---SEPARATOR---')) {
                  hasSeparator = true
+                 console.log('🔮 SEPARATOR FOUND! Showing prophecy immediately...')
                  setSeparatorFound(true)
                  
                  // Parse and display content so far
                  const parts = content.split('---SEPARATOR---')
+                 console.log('📖 Prophecy length:', parts[0].length, 'chars')
+                 console.log('💡 Practical length:', parts[1]?.length || 0, 'chars')
                  setProphecyContent(parts[0].trim())
                  if (parts[1]) {
                    setPracticalContent(parts[1].trim())

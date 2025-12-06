@@ -57,7 +57,19 @@ export function AIReadingDisplay({
    practicalContent = '',
    separatorFound = false
   }: AIReadingDisplayProps) {
-    const [activeTab, setActiveTab] = useState('results')
+     const [activeTab, setActiveTab] = useState('results')
+     
+     // Debug logging
+     const debugInfo = {
+       separatorFound,
+       prophecyLength: prophecyContent.length,
+       practicalLength: practicalContent.length,
+       isLoading,
+       isStreaming,
+       hasAiReading: !!aiReading?.reading,
+       hasError: !!error
+     }
+     console.log('🎨 AIReadingDisplay rendered with props:', debugInfo)
     const [copyClicked, setCopyClicked] = useState(false)
     const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
     const [feedbackLoading, setFeedbackLoading] = useState(false)
@@ -138,116 +150,7 @@ export function AIReadingDisplay({
       }
     }
 
-     // Show streaming content as soon as prophecy arrives
-     if (separatorFound && prophecyContent) {
-       return (
-        <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 space-y-xl">
-          <Card className="border-border bg-card shadow-elevation-2">
-            <CardHeader className="border-b border-border">
-              <div className="space-y-lg">
-                <div className="flex items-center justify-between gap-lg">
-                  <div className="flex gap-md">
-                   <Button
-                     variant={activeTab === 'results' ? 'default' : 'ghost'}
-                     size="sm"
-                     onClick={() => setActiveTab('results')}
-                     className={activeTab === 'results' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}
-                   >
-                     Results
-                   </Button>
-                   <Button
-                     variant={activeTab === 'explain' ? 'default' : 'ghost'}
-                     size="sm"
-                     onClick={() => setActiveTab('explain')}
-                     className={activeTab === 'explain' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}
-                     disabled={!practicalContent}
-                   >
-                     Explain
-                   </Button>
-                 </div>
-                 <Badge variant="secondary" className="flex items-center gap-1">
-                   <Zap className="h-3 w-3" />
-                   {isStreaming ? 'Streaming...' : 'Complete'}
-                 </Badge>
-               </div>
-             </div>
-           </CardHeader>
-            <CardContent className="space-y-xl p-xl">
-              {/* Results Tab - Shows Prophecy */}
-               {activeTab === 'results' && prophecyContent && (
-                 <div className="prophecy-section space-y-md">
-                   <ReactMarkdown
-                    components={{
-                       h1: ({node, ...props}) => <h1 className="text-amber-100 mb-lg" {...props} />,
-                       h2: ({node, ...props}) => <h2 className="text-amber-100 mb-md mt-lg" {...props} />,
-                       h3: ({node, ...props}) => <h3 className="text-amber-100 mb-md mt-md" {...props} />,
-                       p: ({node, ...props}) => <p className="text-amber-50 leading-relaxed mb-md" {...props} />,
-                       ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-amber-50" {...props} />,
-                       ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-amber-50" {...props} />,
-                       li: ({node, ...props}) => <li className="pl-sm text-amber-50" {...props} />,
-                        blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-amber-600 pl-md italic text-amber-100" {...props} />,
-                       strong: ({node, ...props}) => <strong className="font-semibold text-amber-100" {...props} />,
-                       em: ({node, ...props}) => <em className="italic text-amber-100" {...props} />,
-                       hr: ({node, ...props}) => <hr className="my-lg border-amber-600/20" {...props} />,
-                      a: ({node, ...props}: any) => (
-                        <a 
-                          {...props} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-amber-300 hover:text-amber-200 underline"
-                        />
-                      ),
-                    }}
-                  >
-                    {getContent(prophecyContent)}
-                  </ReactMarkdown>
-                 </div>
-               )}
-
-              {/* Explain Tab - Shows Plain English Explanation */}
-              {activeTab === 'explain' && practicalContent && (
-                <div className="practical-section space-y-md">
-                  <ReactMarkdown
-                   components={{
-                       h1: ({node, ...props}) => <h1 className="text-slate-100 mb-lg" {...props} />,
-                       h2: ({node, ...props}) => <h2 className="text-slate-100 mb-md mt-lg" {...props} />,
-                       h3: ({node, ...props}) => <h3 className="text-slate-100 mb-md mt-md" {...props} />,
-                       p: ({node, ...props}) => <p className="text-slate-100 leading-relaxed mb-md" {...props} />,
-                       ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-slate-100" {...props} />,
-                       ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-slate-100" {...props} />,
-                       li: ({node, ...props}) => <li className="pl-sm text-slate-100" {...props} />,
-                       blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-slate-500 pl-md italic text-slate-200" {...props} />,
-                       strong: ({node, ...props}) => <strong className="font-semibold text-slate-100" {...props} />,
-                       em: ({node, ...props}) => <em className="italic text-slate-100" {...props} />,
-                       hr: ({node, ...props}) => <hr className="my-lg border-slate-600/20" {...props} />,
-                      a: ({node, ...props}: any) => (
-                        <a 
-                          {...props} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-slate-300 hover:text-slate-200 underline"
-                        />
-                      ),
-                    }}
-                  >
-                    {getContent(practicalContent)}
-                  </ReactMarkdown>
-                </div>
-              )}
-
-              {!practicalContent && activeTab === 'explain' && isStreaming && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <div className="inline-block h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                  <span className="text-sm">Generating explanation...</span>
-                </div>
-              )}
-            </CardContent>
-         </Card>
-       </div>
-     )
-   }
-
-     if (isLoading && !separatorFound) {
+     if (isLoading && !separatorFound && !prophecyContent) {
        return (
         <div className="animate-in fade-in slide-in-from-bottom-8 delay-200 duration-500 pointer-events-none loading-skeleton">
            <Card className="border-border bg-card shadow-elevation-1">
@@ -268,6 +171,9 @@ export function AIReadingDisplay({
                <p className="mt-1 text-sm text-muted-foreground">
                  Consulting the oracle...
                </p>
+             </div>
+             <div className="text-xs text-muted-foreground mt-4 bg-muted p-2 rounded">
+               separatorFound={String(separatorFound)} | prophecyLength={prophecyContent.length}
              </div>
            </CardContent>
          </Card>
