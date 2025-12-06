@@ -30,23 +30,26 @@ function PhysicalReadingPage() {
   const [error, setError] = useState('')
   const [step, setStep] = useState<'setup' | 'analysis'>('setup')
 
-  // AI-related state
-  const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null)
-  const [aiLoading, setAiLoading] = useState(false)
-  const [aiError, setAiError] = useState<string | null>(null)
-  const [aiErrorDetails, setAiErrorDetails] = useState<{
-    type?: string
-    helpUrl?: string
-    action?: string
-    waitTime?: number
-    fields?: string[]
-  } | null>(null)
-  const [aiRetryCount, setAiRetryCount] = useState(0)
-  const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [streamedContent, setStreamedContent] = useState('')
-  const [shareLink, setShareLink] = useState('')
-  const [shareClicked, setShareClicked] = useState(false)
+   // AI-related state
+   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null)
+   const [aiLoading, setAiLoading] = useState(false)
+   const [aiError, setAiError] = useState<string | null>(null)
+   const [aiErrorDetails, setAiErrorDetails] = useState<{
+     type?: string
+     helpUrl?: string
+     action?: string
+     waitTime?: number
+     fields?: string[]
+   } | null>(null)
+   const [aiRetryCount, setAiRetryCount] = useState(0)
+   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
+   const [isStreaming, setIsStreaming] = useState(false)
+   const [streamedContent, setStreamedContent] = useState('')
+   const [prophecyContent, setProphecyContent] = useState('')
+   const [practicalContent, setPracticalContent] = useState('')
+   const [separatorFound, setSeparatorFound] = useState(false)
+   const [shareLink, setShareLink] = useState('')
+   const [shareClicked, setShareClicked] = useState(false)
 
   useEffect(() => {
     fetchCards()
@@ -122,120 +125,144 @@ function PhysicalReadingPage() {
     }
   }
 
-   const performAIAnalysis = async (readingCards: ReadingCard[], isRetry = false) => {
-    setAiLoading(true)
-    setAiError(null)
-    setAiErrorDetails(null)
-    setStreamedContent('')
-    setIsStreaming(false)
+    const performAIAnalysis = async (readingCards: ReadingCard[], isRetry = false) => {
+     setAiLoading(true)
+     setAiError(null)
+     setAiErrorDetails(null)
+     setStreamedContent('')
+     setProphecyContent('')
+     setPracticalContent('')
+     setSeparatorFound(false)
+     setIsStreaming(false)
 
-    if (!isRetry) {
-      setAiRetryCount(0)
-    }
+     if (!isRetry) {
+       setAiRetryCount(0)
+     }
 
-    // Set a timeout to prevent indefinite loading
-    const loadingTimeout = setTimeout(() => {
-      console.log('AI loading timeout reached')
-      setAiLoading(false)
-      setAiError('AI analysis timed out. You can still save your reading.')
-    }, 45000) // 45 seconds
+     // Set a timeout to prevent indefinite loading
+     const loadingTimeout = setTimeout(() => {
+       console.log('AI loading timeout reached')
+       setAiLoading(false)
+       setAiError('AI analysis timed out. You can still save your reading.')
+     }, 45000) // 45 seconds
 
-    try {
-      const aiRequest: AIReadingRequest = {
-        question: question.trim(),
-        cards: readingCards.map(card => ({
-          id: card.id,
-          name: getCardById(allCards, card.id)?.name || 'Unknown',
-          position: card.position
-        })),
-        spreadId: selectedSpread.id
-      }
+     try {
+       const aiRequest: AIReadingRequest = {
+         question: question.trim(),
+         cards: readingCards.map(card => ({
+           id: card.id,
+           name: getCardById(allCards, card.id)?.name || 'Unknown',
+           position: card.position
+         })),
+         spreadId: selectedSpread.id
+       }
 
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 50000) // 50 second timeout
+       const controller = new AbortController()
+       const timeoutId = setTimeout(() => controller.abort(), 50000) // 50 second timeout
 
-      const response = await fetch('/api/readings/interpret/stream', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(aiRequest),
-        signal: controller.signal
-      })
+       const response = await fetch('/api/readings/interpret/stream', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(aiRequest),
+         signal: controller.signal
+       })
 
-      clearTimeout(timeoutId)
+       clearTimeout(timeoutId)
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        setAiErrorDetails({
-          type: errorData.type,
-          helpUrl: errorData.helpUrl,
-          action: errorData.action,
-          waitTime: errorData.waitTime,
-          fields: errorData.fields
-        })
-        throw new Error(errorData.error || 'AI analysis failed')
-      }
+       if (!response.ok) {
+         const errorData = await response.json()
+         setAiErrorDetails({
+           type: errorData.type,
+           helpUrl: errorData.helpUrl,
+           action: errorData.action,
+           waitTime: errorData.waitTime,
+           fields: errorData.fields
+         })
+         throw new Error(errorData.error || 'AI analysis failed')
+       }
 
-      setIsStreaming(true)
-      const reader = response.body?.getReader()
-      if (!reader) throw new Error('No response body')
+       setIsStreaming(true)
+       const reader = response.body?.getReader()
+       if (!reader) throw new Error('No response body')
 
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let content = ''
+       const decoder = new TextDecoder()
+       let buffer = ''
+       let content = ''
+       let hasSeparator = false
 
-      while (true) {
-        const { done, value } = await reader.read()
+       while (true) {
+         const { done, value } = await reader.read()
 
-        if (done) break
+         if (done) break
 
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
+         buffer += decoder.decode(value, { stream: true })
+         const lines = buffer.split('\n')
+         buffer = lines.pop() || ''
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6).trim()
-            if (data === '[DONE]') continue
+         for (const line of lines) {
+           if (line.startsWith('data: ')) {
+             const data = line.slice(6).trim()
+             if (data === '[DONE]') continue
 
-            try {
-              const parsed = JSON.parse(data)
-              const chunk = parsed.content || ''
-              content += chunk
-              setStreamedContent(content)
-            } catch (e) {
-              console.error('Error parsing stream data:', e)
-            }
-          }
-        }
-      }
+             try {
+               const parsed = JSON.parse(data)
+               const chunk = parsed.content || ''
+               content += chunk
+               setStreamedContent(content)
 
-      // Parse prophecy + practical translation format
-      const parts = content.split('---SEPARATOR---')
-      const reading = parts[0].trim()
-      const practicalTranslation = parts[1]?.trim() || ''
+               // Check if we've found the separator
+               if (!hasSeparator && content.includes('---SEPARATOR---')) {
+                 hasSeparator = true
+                 setSeparatorFound(true)
+                 
+                 // Parse and display content so far
+                 const parts = content.split('---SEPARATOR---')
+                 setProphecyContent(parts[0].trim())
+                 if (parts[1]) {
+                   setPracticalContent(parts[1].trim())
+                 }
+               } else if (hasSeparator) {
+                 // Update prophecy and practical as new content arrives
+                 const parts = content.split('---SEPARATOR---')
+                 setProphecyContent(parts[0].trim())
+                 if (parts[1]) {
+                   setPracticalContent(parts[1].trim())
+                 }
+               }
+             } catch (e) {
+               console.error('Error parsing stream data:', e)
+             }
+           }
+         }
+       }
 
-      setAiReading({ reading, practicalTranslation })
-      setAiRetryCount(0) // Reset on success
-    } catch (error) {
-      console.error('AI analysis error:', error)
-      let errorMessage = 'AI analysis failed'
+       // Final parse of complete content
+       const parts = content.split('---SEPARATOR---')
+       const reading = parts[0].trim()
+       const practicalTranslation = parts[1]?.trim() || ''
 
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          errorMessage = 'AI analysis is taking longer than expected. The service may be busy - please try again in a moment.'
-        } else {
-          errorMessage = error.message
-        }
-      }
+       setAiReading({ reading, practicalTranslation })
+       setAiRetryCount(0) // Reset on success
+     } catch (error) {
+       console.error('AI analysis error:', error)
+       let errorMessage = 'AI analysis failed'
 
-      setAiError(errorMessage)
-      setAiRetryCount(prev => prev + 1)
-    } finally {
-      clearTimeout(loadingTimeout)
-      setAiLoading(false)
-      setIsStreaming(false)
-    }
-  }
+       if (error instanceof Error) {
+         if (error.name === 'AbortError') {
+           errorMessage = 'AI analysis is taking longer than expected. The service may be busy - please try again in a moment.'
+         } else {
+           errorMessage = error.message
+         }
+       }
+
+       setAiError(errorMessage)
+       setAiRetryCount(prev => prev + 1)
+     } finally {
+       clearTimeout(loadingTimeout)
+       setAiLoading(false)
+       setIsStreaming(false)
+     }
+   }
 
   const retryAIAnalysis = () => {
     if (drawnCards.length > 0) {
@@ -247,22 +274,25 @@ function PhysicalReadingPage() {
     setShowStartOverConfirm(true)
   }
 
-   const confirmStartOver = () => {
-    setDrawnCards([])
-    setStep('setup')
-    setQuestion('')
-    setQuestionCharCount(0)
-    setSelectedSpread(COMPREHENSIVE_SPREADS[0])
-    setError('')
-    setAiReading(null)
-    setAiLoading(false)
-    setAiError(null)
-    setAiErrorDetails(null)
-    setPhysicalCards('')
-    setShowStartOverConfirm(false)
-    setStreamedContent('')
-    setIsStreaming(false)
-  }
+    const confirmStartOver = () => {
+     setDrawnCards([])
+     setStep('setup')
+     setQuestion('')
+     setQuestionCharCount(0)
+     setSelectedSpread(COMPREHENSIVE_SPREADS[0])
+     setError('')
+     setAiReading(null)
+     setAiLoading(false)
+     setAiError(null)
+     setAiErrorDetails(null)
+     setPhysicalCards('')
+     setShowStartOverConfirm(false)
+     setStreamedContent('')
+     setProphecyContent('')
+     setPracticalContent('')
+     setSeparatorFound(false)
+     setIsStreaming(false)
+   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -460,22 +490,25 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                   {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
                     <AIReadingDisplay
-                      aiReading={aiReading}
-                      isLoading={aiLoading}
-                      error={aiError}
-                      errorDetails={aiErrorDetails}
-                      onRetry={retryAIAnalysis}
-                      retryCount={aiRetryCount}
-                      cards={drawnCards.map(card => ({
-                        id: card.id,
-                        name: getCardById(allCards, card.id)?.name || 'Unknown',
-                        position: card.position
-                      }))}
-                      allCards={allCards}
-                      spreadId={selectedSpread.id}
-                      question={question}
-                      isStreaming={isStreaming}
-                    />
+                       aiReading={aiReading}
+                       isLoading={aiLoading}
+                       error={aiError}
+                       errorDetails={aiErrorDetails}
+                       onRetry={retryAIAnalysis}
+                       retryCount={aiRetryCount}
+                       cards={drawnCards.map(card => ({
+                         id: card.id,
+                         name: getCardById(allCards, card.id)?.name || 'Unknown',
+                         position: card.position
+                       }))}
+                       allCards={allCards}
+                       spreadId={selectedSpread.id}
+                       question={question}
+                       isStreaming={isStreaming}
+                       prophecyContent={prophecyContent}
+                       practicalContent={practicalContent}
+                       separatorFound={separatorFound}
+                     />
 
                    <div className="pt-4 flex gap-3 justify-center flex-wrap">
                     <Button
