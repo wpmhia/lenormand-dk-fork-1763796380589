@@ -189,11 +189,17 @@ function PhysicalReadingPage() {
        let buffer = ''
        let content = ''
        let hasSeparator = false
+       let chunkCount = 0
+
+       console.log('🌊 Starting to read streaming response...')
 
        while (true) {
          const { done, value } = await reader.read()
 
-         if (done) break
+         if (done) {
+           console.log(`✅ Stream done. Total chunks: ${chunkCount}`)
+           break
+         }
 
          buffer += decoder.decode(value, { stream: true })
          const lines = buffer.split('\n')
@@ -202,13 +208,21 @@ function PhysicalReadingPage() {
          for (const line of lines) {
            if (line.startsWith('data: ')) {
              const data = line.slice(6).trim()
-             if (data === '[DONE]') continue
+             if (data === '[DONE]') {
+               console.log('📍 Received [DONE] marker')
+               continue
+             }
 
              try {
+               chunkCount++
                const parsed = JSON.parse(data)
                const chunk = parsed.content || ''
                content += chunk
                setStreamedContent(content)
+               
+               if (chunkCount <= 3 || chunkCount % 10 === 0) {
+                 console.log(`📦 Chunk ${chunkCount}: ${chunk.length} chars, total: ${content.length} chars`)
+               }
 
                // Check if we've found the separator
                if (!hasSeparator && content.includes('---SEPARATOR---')) {
