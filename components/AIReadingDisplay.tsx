@@ -57,23 +57,7 @@ export function AIReadingDisplay({
     const [feedbackLoading, setFeedbackLoading] = useState(false)
     const spreadLearningLinks = getSpreadLearningLinks(spreadId)
 
-    // Check if deadline has passed
-    const isDeadlinePassed = aiReading?.deadline ? (() => {
-      // Simple check - if deadline contains "by" and a past date, consider it passed
-      // In a real app, you'd parse the deadline properly
-      const deadlineText = aiReading.deadline.toLowerCase()
-      const now = new Date()
-      const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
-      
-      // Check if deadline mentions a day that has already passed this week
-      if (deadlineText.includes('monday') && currentDay !== 'monday') return true
-      if (deadlineText.includes('tuesday') && ['wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(currentDay)) return true
-      if (deadlineText.includes('wednesday') && ['thursday', 'friday', 'saturday', 'sunday'].includes(currentDay)) return true
-      if (deadlineText.includes('thursday') && ['friday', 'saturday', 'sunday'].includes(currentDay)) return true
-      if (deadlineText.includes('friday') && ['saturday', 'sunday'].includes(currentDay)) return true
-      
-      return false // For now, assume deadline hasn't passed
-    })() : false
+    // Deadline checking removed - not using deadline field anymore
 
     // Return content as-is without adding links
     const getContent = (content: string): string => content
@@ -377,14 +361,7 @@ export function AIReadingDisplay({
               />
             )}
 
-            {/* Accuracy Tracker - Show when deadline has passed */}
-            {aiReading && aiReading.deadline && aiReading.task && isDeadlinePassed && (
-              <AccuracyTracker
-                readingId={aiReading.aiInterpretationId || 'temp'}
-                deadline={aiReading.deadline}
-                task={aiReading.task}
-              />
-            )}
+
          </div>
       )
 }

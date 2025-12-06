@@ -148,8 +148,7 @@ function PhysicalReadingPage() {
           name: getCardById(allCards, card.id)?.name || 'Unknown',
           position: card.position
         })),
-        spreadId: selectedSpread.id,
-        userLocale: navigator.language
+        spreadId: selectedSpread.id
       }
 
       const controller = new AbortController()
@@ -210,7 +209,12 @@ function PhysicalReadingPage() {
         }
       }
 
-      setAiReading({ reading: content })
+      // Parse prophecy + practical translation format
+      const parts = content.split('---SEPARATOR---')
+      const reading = parts[0].trim()
+      const practicalTranslation = parts[1]?.trim() || ''
+
+      setAiReading({ reading, practicalTranslation })
       setAiRetryCount(0) // Reset on success
     } catch (error) {
       console.error('AI analysis error:', error)
