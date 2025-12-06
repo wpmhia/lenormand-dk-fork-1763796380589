@@ -239,65 +239,65 @@ export function AIReadingDisplay({
                  <CardContent className="space-y-xl p-xl">
                    {/* Results Tab - Shows Prophecy */}
                     {activeTab === 'results' && aiReading?.reading && (
-                      <div className="prophecy-section">
+                      <div className="prophecy-section space-y-md">
                         <ReactMarkdown
                          components={{
-                           h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
-                           h2: ({node, ...props}) => <h2 className="mb-md mt-xl" {...props} />,
-                           h3: ({node, ...props}) => <h3 className="mb-md mt-lg" {...props} />,
-                           p: ({node, ...props}) => <p className="mb-lg" {...props} />,
-                           ul: ({node, ...props}) => <ul className="mb-lg list-disc space-y-md pl-lg" {...props} />,
-                           ol: ({node, ...props}) => <ol className="mb-lg list-decimal space-y-md pl-lg" {...props} />,
-                           li: ({node, ...props}) => <li className="pl-sm" {...props} />,
-                            blockquote: ({node, ...props}) => <blockquote className="my-lg border-l-4 border-border pl-md italic text-muted-foreground" {...props} />,
-                           strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                           em: ({node, ...props}) => <em className="italic" {...props} />,
-                           hr: ({node, ...props}) => <hr className="my-xl border-border" {...props} />,
-                          a: ({node, ...props}: any) => (
-                            <a 
-                              {...props} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-primary hover:text-primary/80 underline"
-                            />
-                          ),
-                        }}
-                      >
-                        {getContent(aiReading.reading)}
-                      </ReactMarkdown>
-                    </div>
-                  )}
+                            h1: ({node, ...props}) => <h1 className="text-amber-100 mb-lg" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-amber-100 mb-md mt-lg" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-amber-100 mb-md mt-md" {...props} />,
+                            p: ({node, ...props}) => <p className="text-amber-50 leading-relaxed mb-md" {...props} />,
+                            ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-amber-50" {...props} />,
+                            ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-amber-50" {...props} />,
+                            li: ({node, ...props}) => <li className="pl-sm text-amber-50" {...props} />,
+                             blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-amber-600 pl-md italic text-amber-100" {...props} />,
+                            strong: ({node, ...props}) => <strong className="font-semibold text-amber-100" {...props} />,
+                            em: ({node, ...props}) => <em className="italic text-amber-100" {...props} />,
+                            hr: ({node, ...props}) => <hr className="my-lg border-amber-600/20" {...props} />,
+                           a: ({node, ...props}: any) => (
+                             <a 
+                               {...props} 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               className="text-amber-300 hover:text-amber-200 underline"
+                             />
+                           ),
+                         }}
+                       >
+                         {getContent(aiReading.reading)}
+                       </ReactMarkdown>
+                     </div>
+                   )}
 
                    {/* Explain Tab - Shows Plain English Explanation */}
                    {activeTab === 'explain' && aiReading?.practicalTranslation && (
-                     <div className="practical-section">
+                     <div className="practical-section space-y-md">
                        <ReactMarkdown
                         components={{
-                           h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
-                           h2: ({node, ...props}) => <h2 className="mb-md mt-xl" {...props} />,
-                           h3: ({node, ...props}) => <h3 className="mb-md mt-lg" {...props} />,
-                           p: ({node, ...props}) => <p className="mb-lg" {...props} />,
-                           ul: ({node, ...props}) => <ul className="mb-lg list-disc space-y-md pl-lg" {...props} />,
-                           ol: ({node, ...props}) => <ol className="mb-lg list-decimal space-y-md pl-lg" {...props} />,
-                           li: ({node, ...props}) => <li className="pl-sm" {...props} />,
-                           blockquote: ({node, ...props}) => <blockquote className="my-lg border-l-4 border-border pl-md italic text-muted-foreground" {...props} />,
-                           strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                           em: ({node, ...props}) => <em className="italic" {...props} />,
-                           hr: ({node, ...props}) => <hr className="my-xl border-border" {...props} />,
-                          a: ({node, ...props}: any) => (
-                            <a 
-                              {...props} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-primary hover:text-primary/80 underline"
-                            />
-                          ),
-                        }}
-                      >
-                        {getContent(aiReading.practicalTranslation)}
-                      </ReactMarkdown>
-                    </div>
-                  )}
+                            h1: ({node, ...props}) => <h1 className="text-slate-100 mb-lg" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-slate-100 mb-md mt-lg" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-slate-100 mb-md mt-md" {...props} />,
+                            p: ({node, ...props}) => <p className="text-slate-100 leading-relaxed mb-md" {...props} />,
+                            ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-slate-100" {...props} />,
+                            ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-slate-100" {...props} />,
+                            li: ({node, ...props}) => <li className="pl-sm text-slate-100" {...props} />,
+                            blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-slate-500 pl-md italic text-slate-200" {...props} />,
+                            strong: ({node, ...props}) => <strong className="font-semibold text-slate-100" {...props} />,
+                            em: ({node, ...props}) => <em className="italic text-slate-100" {...props} />,
+                            hr: ({node, ...props}) => <hr className="my-lg border-slate-600/20" {...props} />,
+                           a: ({node, ...props}: any) => (
+                             <a 
+                               {...props} 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               className="text-slate-300 hover:text-slate-200 underline"
+                             />
+                           ),
+                         }}
+                       >
+                         {getContent(aiReading.practicalTranslation)}
+                       </ReactMarkdown>
+                     </div>
+                   )}
 
                      {/* Learn the Method & Feedback Actions */}
                      {spreadLearningLinks && (
