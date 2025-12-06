@@ -35,15 +35,20 @@ Write a symbolic, direct prophecy that ANSWERS the question using all ${cards.le
 - End with a clear command or imperative action
 - 2-4 paragraphs total
 
-PART 2 - PLAIN ENGLISH EXPLANATION:
-After ---SEPARATOR---, provide a DETAILED explanation of what the prophecy means in practical terms.
-- Paragraph 1: Directly answer the question - What does this reading mean?
-- Paragraph 2-3: Break down each card - what it means in this specific context and how it applies
-- Paragraph 4: Explain the connections - how the cards work together, the flow and progression
-- Paragraph 5: Actionable guidance - specific, concrete next steps you should take
-- Paragraph 6: Timeline and urgency - when to act, how soon things may develop
-- Paragraph 7: What to watch for - signs to pay attention to, potential pitfalls, opportunities
-- Be thorough, practical, and specific with examples where possible
+PART 2 - DETAILED INTERPRETATION (NO CARD MENTIONS):
+After ---SEPARATOR---, provide a DETAILED interpretation of the SITUATION based on the cards' energy and meaning.
+- CRITICAL: DO NOT mention individual cards or card names at all
+- Sense the overall situation and energy conveyed by the cards
+- Paragraph 1: Directly answer the question - What is actually happening here?
+- Paragraph 2: The core dynamic or energy of the situation
+- Paragraph 3: What is blocking or challenging this situation (the obstacles)
+- Paragraph 4: What is helping or supporting this situation (the resources/allies)
+- Paragraph 5: The likely progression or natural flow of events
+- Paragraph 6: Specific, concrete actionable guidance - what to do now
+- Paragraph 7: Timeline and when things may shift or resolve
+- Paragraph 8: What to watch for - signs of progress, warnings, or pivotal moments
+- Use intuitive, holistic language that interprets the SITUATION itself, not individual cards
+- Be thorough, insightful, and practical
 - 6-8 detailed paragraphs total
 
 Format:
