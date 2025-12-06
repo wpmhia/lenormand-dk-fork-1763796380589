@@ -282,9 +282,49 @@
     @apply rounded bg-muted-foreground/30 transition-colors duration-200;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
-  }
+   ::-webkit-scrollbar-thumb:hover {
+     @apply bg-muted-foreground/50;
+   }
+
+   /* Reading Results Styling */
+   .reading-container {
+     @apply space-y-lg;
+   }
+
+   .prophecy-section {
+     @apply rounded-lg border-2 border-amber-700/30 bg-gradient-to-br from-amber-900/10 to-amber-800/10 p-lg shadow-elevation-2;
+   }
+
+   .prophecy-section p {
+     @apply text-amber-50 leading-relaxed text-base md:text-lg;
+     font-family: 'Crimson Text', serif;
+   }
+
+   .prophecy-title {
+     @apply text-amber-300 text-sm uppercase tracking-widest font-semibold mb-md;
+   }
+
+   .practical-section {
+     @apply rounded-lg border-2 border-slate-600/30 bg-gradient-to-br from-slate-900/10 to-slate-800/10 p-lg shadow-elevation-2;
+   }
+
+   .practical-section p {
+     @apply text-slate-100 leading-relaxed text-base;
+     font-family: 'Crimson Text', serif;
+   }
+
+   .practical-title {
+     @apply text-slate-300 text-sm uppercase tracking-widest font-semibold mb-md;
+   }
+
+   .reading-card {
+     @apply rounded-lg border border-border bg-card p-lg shadow-elevation-1;
+   }
+
+   /* Streaming Animation */
+   .reading-stream {
+     @apply animate-pulse;
+   }
 }
 
 /* Animation Preferences */

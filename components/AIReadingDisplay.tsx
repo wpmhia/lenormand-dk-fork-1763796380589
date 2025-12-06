@@ -238,9 +238,10 @@ export function AIReadingDisplay({
                 </CardHeader>
                  <CardContent className="space-y-xl p-xl">
                    {/* Results Tab - Shows Prophecy */}
-                   {activeTab === 'results' && aiReading?.reading && (
-                     <div className="text-foreground">
-                       <ReactMarkdown
+                    {activeTab === 'results' && aiReading?.reading && (
+                      <div className="prophecy-section">
+                        <div className="prophecy-title">Prophecy Reading</div>
+                        <ReactMarkdown
                          components={{
                            h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
                            h2: ({node, ...props}) => <h2 className="mb-md mt-xl" {...props} />,
@@ -268,10 +269,11 @@ export function AIReadingDisplay({
                     </div>
                   )}
 
-                  {/* Explain Tab - Shows Plain English Explanation */}
-                  {activeTab === 'explain' && aiReading?.practicalTranslation && (
-                    <div className="text-foreground">
-                      <ReactMarkdown
+                   {/* Explain Tab - Shows Plain English Explanation */}
+                   {activeTab === 'explain' && aiReading?.practicalTranslation && (
+                     <div className="practical-section">
+                       <div className="practical-title">Plain English Explanation</div>
+                       <ReactMarkdown
                         components={{
                            h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
                            h2: ({node, ...props}) => <h2 className="mb-md mt-xl" {...props} />,

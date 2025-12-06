@@ -27,17 +27,27 @@ QUESTION: "${question}"
 CARDS: ${cardsText}
 SPREAD: ${spread.template} (${cards.length} cards)
 
-PART 1 - THE PROPHECY:
-Write a symbolic, direct reading using all ${cards.length} cards. Each card should appear ONCE in parentheses on first mention: (CardName). Be evocative but clear. 2-4 paragraphs.
+PART 1 - THE PROPHECY (ANSWER THE QUESTION):
+Write a symbolic, direct prophecy that ANSWERS the question using all ${cards.length} cards. Each card should appear ONCE in parentheses on first mention: (CardName).
+- Start by directly addressing the question
+- Be evocative, symbolic, and clear
+- Use vivid language (weight, wall, crack, shadow, light, door, stone, water, fire, ice, seal, push, move)
+- End with a clear command or imperative action
+- 2-4 paragraphs total
 
 PART 2 - PLAIN ENGLISH EXPLANATION:
-After ---SEPARATOR---, explain what the prophecy means in practical terms. What does each card represent? What should the person do? Keep it clear and actionable. 2-3 paragraphs.
+After ---SEPARATOR---, explain what the prophecy means in practical terms.
+- Clearly answer: What does this mean for the question asked?
+- Explain what each card represents in this context
+- Provide actionable next steps
+- Keep it clear and practical
+- 2-3 paragraphs
 
-Format: 
-[PROPHECY HERE]
+Format:
+[PROPHECY ANSWERING THE QUESTION]
 
 ---SEPARATOR---
 
-[PRACTICAL EXPLANATION HERE]`
+[PRACTICAL EXPLANATION]`
   }
 }
