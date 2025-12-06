@@ -65,12 +65,12 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       spreadId
     })
 
-    // Simple token allocation - keep it low
-    let maxTokens = 400
-    if (cards.length >= 36) maxTokens = 600
-    else if (cards.length >= 9) maxTokens = 500
-    else if (cards.length >= 7) maxTokens = 450
-    else if (cards.length >= 5) maxTokens = 400
+    // Token allocation - increased for detailed explanations
+    let maxTokens = 600
+    if (cards.length >= 36) maxTokens = 1000
+    else if (cards.length >= 9) maxTokens = 800
+    else if (cards.length >= 7) maxTokens = 700
+    else if (cards.length >= 5) maxTokens = 650
     
     console.log('Sending request to DeepSeek API...')
     console.log(`Token budget: ${maxTokens} tokens`)
@@ -161,12 +161,12 @@ export async function streamAIReading(request: AIReadingRequest): Promise<Readab
       spreadId
     })
 
-    // Simple token allocation
-    let maxTokens = 400
-    if (cards.length >= 36) maxTokens = 600
-    else if (cards.length >= 9) maxTokens = 500
-    else if (cards.length >= 7) maxTokens = 450
-    else if (cards.length >= 5) maxTokens = 400
+    // Token allocation - increased for detailed explanations
+    let maxTokens = 600
+    if (cards.length >= 36) maxTokens = 1000
+    else if (cards.length >= 9) maxTokens = 800
+    else if (cards.length >= 7) maxTokens = 700
+    else if (cards.length >= 5) maxTokens = 650
 
     console.log('Sending streaming request to DeepSeek API...')
     console.log(`Token budget: ${maxTokens} tokens`)

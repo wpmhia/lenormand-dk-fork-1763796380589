@@ -36,12 +36,15 @@ Write a symbolic, direct prophecy that ANSWERS the question using all ${cards.le
 - 2-4 paragraphs total
 
 PART 2 - PLAIN ENGLISH EXPLANATION:
-After ---SEPARATOR---, explain what the prophecy means in practical terms.
-- Clearly answer: What does this mean for the question asked?
-- Explain what each card represents in this context
-- Provide actionable next steps
-- Keep it clear and practical
-- 2-3 paragraphs
+After ---SEPARATOR---, provide a DETAILED explanation of what the prophecy means in practical terms.
+- Paragraph 1: Directly answer the question - What does this reading mean?
+- Paragraph 2-3: Break down each card - what it means in this specific context and how it applies
+- Paragraph 4: Explain the connections - how the cards work together, the flow and progression
+- Paragraph 5: Actionable guidance - specific, concrete next steps you should take
+- Paragraph 6: Timeline and urgency - when to act, how soon things may develop
+- Paragraph 7: What to watch for - signs to pay attention to, potential pitfalls, opportunities
+- Be thorough, practical, and specific with examples where possible
+- 6-8 detailed paragraphs total
 
 Format:
 [PROPHECY ANSWERING THE QUESTION]

@@ -240,7 +240,6 @@ export function AIReadingDisplay({
                    {/* Results Tab - Shows Prophecy */}
                     {activeTab === 'results' && aiReading?.reading && (
                       <div className="prophecy-section">
-                        <div className="prophecy-title">Prophecy Reading</div>
                         <ReactMarkdown
                          components={{
                            h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
@@ -272,7 +271,6 @@ export function AIReadingDisplay({
                    {/* Explain Tab - Shows Plain English Explanation */}
                    {activeTab === 'explain' && aiReading?.practicalTranslation && (
                      <div className="practical-section">
-                       <div className="practical-title">Plain English Explanation</div>
                        <ReactMarkdown
                         components={{
                            h1: ({node, ...props}) => <h1 className="mb-lg" {...props} />,
