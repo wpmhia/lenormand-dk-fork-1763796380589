@@ -172,10 +172,7 @@ export function AIReadingDisplay({
                  Consulting the oracle...
                </p>
              </div>
-             <div className="text-xs text-muted-foreground mt-4 bg-muted p-2 rounded">
-               separatorFound={String(separatorFound)} | prophecyLength={prophecyContent.length}
-             </div>
-           </CardContent>
+            </CardContent>
          </Card>
        </div>
      )
