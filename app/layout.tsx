@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Crimson_Pro } from 'next/font/google';
 import Script from 'next/script';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
@@ -16,6 +16,14 @@ const inter = Inter({
   display: 'swap',
   preload: true,
   fallback: ['system-ui', 'arial']
+});
+
+const crimsonPro = Crimson_Pro({
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  fallback: ['serif'],
+  weight: ['700']
 });
 
 export const metadata: Metadata = {
