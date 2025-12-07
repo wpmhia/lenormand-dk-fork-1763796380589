@@ -307,32 +307,32 @@ export function AIReadingDisplay({
 
                      {/* Explain Tab - Shows Plain English Explanation */}
                      {activeTab === 'explain' && practical && (
-                       <div className="practical-section space-y-md">
+                       <div className="practical-section">
                          <ReactMarkdown
                           components={{
-                              h1: ({node, ...props}) => <h1 className="text-4xl md:text-5xl font-semibold text-slate-100 mb-lg" {...props} />,
-                              h2: ({node, ...props}) => <h2 className="text-3xl md:text-4xl font-semibold text-slate-100 mb-md mt-lg" {...props} />,
-                              h3: ({node, ...props}) => <h3 className="text-2xl md:text-3xl font-semibold text-slate-100 mb-md mt-md" {...props} />,
-                              p: ({node, ...props}) => <p className="text-base md:text-lg text-slate-100 leading-relaxed mb-md" {...props} />,
-                              ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-base md:text-lg text-slate-100" {...props} />,
-                              ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-base md:text-lg text-slate-100" {...props} />,
-                              li: ({node, ...props}) => <li className="pl-sm text-base md:text-lg text-slate-100" {...props} />,
-                              blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-slate-500 pl-md italic text-base md:text-lg text-slate-200" {...props} />,
-                              strong: ({node, ...props}) => <strong className="font-semibold text-slate-100" {...props} />,
-                              em: ({node, ...props}) => <em className="italic text-slate-100" {...props} />,
-                              hr: ({node, ...props}) => <hr className="my-lg border-slate-600/20" {...props} />,
-                             a: ({node, ...props}: any) => (
-                               <a 
-                                 {...props} 
-                                 target="_blank" 
-                                 rel="noopener noreferrer"
-                                 className="text-slate-300 hover:text-slate-200 underline"
-                               />
-                             ),
-                           }}
-                         >
-                           {getContent(practical)}
-                         </ReactMarkdown>
+                               h1: ({node, ...props}) => <h1 className="text-lg font-semibold text-slate-100 mb-2" {...props} />,
+                               h2: ({node, ...props}) => <h2 className="text-base font-semibold text-slate-100 mb-2 mt-2" {...props} />,
+                               h3: ({node, ...props}) => <h3 className="text-sm font-semibold text-slate-100 mb-1 mt-1" {...props} />,
+                               p: ({node, ...props}) => <p className="text-sm text-slate-100 leading-snug mb-2" {...props} />,
+                               ul: ({node, ...props}) => <ul className="mb-2 list-disc space-y-1 pl-4 text-sm text-slate-100" {...props} />,
+                               ol: ({node, ...props}) => <ol className="mb-2 list-decimal space-y-1 pl-4 text-sm text-slate-100" {...props} />,
+                               li: ({node, ...props}) => <li className="pl-1 text-sm text-slate-100" {...props} />,
+                               blockquote: ({node, ...props}) => <blockquote className="my-2 border-l-4 border-slate-500 pl-2 italic text-xs text-slate-200" {...props} />,
+                               strong: ({node, ...props}) => <strong className="font-semibold text-slate-100" {...props} />,
+                               em: ({node, ...props}) => <em className="italic text-slate-100" {...props} />,
+                               hr: ({node, ...props}) => <hr className="my-2 border-slate-600/20" {...props} />,
+                              a: ({node, ...props}: any) => (
+                                <a 
+                                  {...props} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-slate-300 hover:text-slate-200 underline"
+                                />
+                              ),
+                            }}
+                          >
+                            {getContent(practical)}
+                          </ReactMarkdown>
                        </div>
                      )}
 
