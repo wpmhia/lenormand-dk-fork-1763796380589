@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef, Suspense, lazy } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card as CardType, ReadingCard } from '@/lib/types'
@@ -16,12 +16,10 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { Eye, AlertTriangle } from 'lucide-react'
 import { getCards, getCardById, drawCards } from '@/lib/data'
 import { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
+import { ReadingViewer } from '@/components/ReadingViewer'
+import { AIReadingDisplay } from '@/components/AIReadingDisplay'
 
-const ReadingViewer = lazy(() => import('@/components/ReadingViewer').then(mod => ({ default: mod.ReadingViewer })))
-const AIReadingDisplay = lazy(() => import('@/components/AIReadingDisplay').then(mod => ({ default: mod.AIReadingDisplay })))
 
-const ReadingViewerSkeleton = () => <div className="h-96 rounded-lg bg-muted animate-pulse" />
-const AIReadingDisplaySkeleton = () => <div className="h-48 rounded-lg bg-muted animate-pulse" />
 
 function NewReadingPageContent() {
   const router = useRouter()
