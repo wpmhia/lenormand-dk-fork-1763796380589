@@ -21,7 +21,7 @@ export function Header() {
       <header className="z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60" suppressHydrationWarning>
       <div className="container flex h-14 items-center px-4">
         <div className="flex items-center space-x-2">
-           <Link href="/" className="text-base font-bold leading-normal transition-opacity hover:opacity-80 sm:text-lg" style={{ fontFamily: "'Crimson Pro', 'Crimson Text', serif" }}>
+            <Link href="/" className="text-base font-bold leading-normal transition-opacity hover:opacity-80 sm:text-lg logo-font">
              <span className="relative inline-block">
                Lenormand
                <div className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>

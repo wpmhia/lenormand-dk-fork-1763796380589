@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -83,6 +85,14 @@
 
   a {
     @apply text-primary hover:text-primary/80 transition-colors duration-200;
+  }
+}
+
+/* Logo Font */
+@layer components {
+  .logo-font {
+    font-family: 'Crimson Pro', 'Crimson Text', serif;
+    font-weight: 700;
   }
 }
 
