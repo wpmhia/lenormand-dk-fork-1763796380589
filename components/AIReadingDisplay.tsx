@@ -279,29 +279,26 @@ export function AIReadingDisplay({
                         <div className="prophecy-section space-y-md">
                           <ReactMarkdown
                            components={{
-                               h1: ({node, ...props}) => <h1 className="text-4xl md:text-5xl lg:text-6xl leading-tight font-semibold text-amber-100 mb-lg" {...props} />,
-                               h2: ({node, ...props}) => <h2 className="text-3xl md:text-4xl leading-snug font-semibold text-amber-100 mb-md mt-lg" {...props} />,
-                               h3: ({node, ...props}) => <h3 className="text-2xl md:text-3xl leading-snug font-semibold text-amber-100 mb-md mt-md" {...props} />,
-                               h4: ({node, ...props}) => <h4 className="text-xl md:text-2xl leading-snug font-semibold text-amber-100 mb-md mt-md" {...props} />,
-                               h5: ({node, ...props}) => <h5 className="text-lg md:text-xl font-semibold text-amber-100 mb-md mt-md" {...props} />,
-                               h6: ({node, ...props}) => <h6 className="text-base md:text-lg font-semibold text-amber-100 mb-md mt-md" {...props} />,
-                               p: ({node, ...props}) => <p className="text-amber-50 leading-relaxed mb-md" {...props} />,
-                               ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-amber-50" {...props} />,
-                               ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-amber-50" {...props} />,
-                               li: ({node, ...props}) => <li className="pl-sm text-amber-50" {...props} />,
-                                blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-amber-600 pl-md italic text-amber-100" {...props} />,
-                               strong: ({node, ...props}) => <strong className="font-semibold text-amber-100" {...props} />,
-                               em: ({node, ...props}) => <em className="italic text-amber-100" {...props} />,
-                               hr: ({node, ...props}) => <hr className="my-lg border-amber-600/20" {...props} />,
-                              a: ({node, ...props}: any) => (
-                                <a 
-                                  {...props} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-amber-300 hover:text-amber-200 underline"
-                                />
-                              ),
-                            }}
+                                h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-amber-100 mb-4 mt-4" {...props} />,
+                                h2: ({node, ...props}) => <h2 className="text-xl font-bold text-amber-100 mb-3 mt-4" {...props} />,
+                                h3: ({node, ...props}) => <h3 className="text-lg font-bold text-amber-100 mb-2 mt-3" {...props} />,
+                                p: ({node, ...props}) => <p className="text-base text-amber-50 mb-3" {...props} />,
+                                ul: ({node, ...props}) => <ul className="mb-3 list-disc pl-6 text-amber-50" {...props} />,
+                                ol: ({node, ...props}) => <ol className="mb-3 list-decimal pl-6 text-amber-50" {...props} />,
+                                li: ({node, ...props}) => <li className="mb-1 text-amber-50" {...props} />,
+                                blockquote: ({node, ...props}) => <blockquote className="mb-3 border-l-4 border-amber-600 pl-4 italic text-amber-100" {...props} />,
+                                strong: ({node, ...props}) => <strong className="font-bold text-amber-100" {...props} />,
+                                em: ({node, ...props}) => <em className="italic text-amber-100" {...props} />,
+                                hr: ({node, ...props}) => <hr className="my-4 border-amber-600/20" {...props} />,
+                               a: ({node, ...props}: any) => (
+                                 <a 
+                                   {...props} 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   className="text-amber-300 hover:underline"
+                                 />
+                               ),
+                             }}
                          >
                            {getContent(prophecy)}
                          </ReactMarkdown>
@@ -312,30 +309,27 @@ export function AIReadingDisplay({
                      {activeTab === 'explain' && practical && (
                        <div className="practical-section">
                          <ReactMarkdown
-                           components={{
-                                h1: ({node, ...props}) => <h1 className="text-4xl md:text-5xl lg:text-6xl leading-tight font-semibold text-slate-100 mb-lg" {...props} />,
-                                h2: ({node, ...props}) => <h2 className="text-3xl md:text-4xl leading-snug font-semibold text-slate-100 mb-md mt-lg" {...props} />,
-                                h3: ({node, ...props}) => <h3 className="text-2xl md:text-3xl leading-snug font-semibold text-slate-100 mb-md mt-md" {...props} />,
-                                h4: ({node, ...props}) => <h4 className="text-xl md:text-2xl leading-snug font-semibold text-slate-100 mb-md mt-md" {...props} />,
-                                h5: ({node, ...props}) => <h5 className="text-lg md:text-xl font-semibold text-slate-100 mb-md mt-md" {...props} />,
-                                h6: ({node, ...props}) => <h6 className="text-base md:text-lg font-semibold text-slate-100 mb-md mt-md" {...props} />,
-                                p: ({node, ...props}) => <p className="text-slate-100 leading-relaxed mb-md" {...props} />,
-                                ul: ({node, ...props}) => <ul className="mb-md list-disc space-y-sm pl-lg text-slate-100" {...props} />,
-                                ol: ({node, ...props}) => <ol className="mb-md list-decimal space-y-sm pl-lg text-slate-100" {...props} />,
-                                li: ({node, ...props}) => <li className="pl-sm text-slate-100" {...props} />,
-                                blockquote: ({node, ...props}) => <blockquote className="my-md border-l-4 border-slate-500 pl-md italic text-slate-200" {...props} />,
-                                strong: ({node, ...props}) => <strong className="font-semibold text-slate-100" {...props} />,
-                                em: ({node, ...props}) => <em className="italic text-slate-100" {...props} />,
-                                hr: ({node, ...props}) => <hr className="my-lg border-slate-600/20" {...props} />,
-                               a: ({node, ...props}: any) => (
-                                 <a 
-                                   {...props} 
-                                   target="_blank" 
-                                   rel="noopener noreferrer"
-                                   className="text-slate-300 hover:text-slate-200 underline"
-                                 />
-                               ),
-                             }}
+                            components={{
+                                 h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-slate-100 mb-4 mt-4" {...props} />,
+                                 h2: ({node, ...props}) => <h2 className="text-xl font-bold text-slate-100 mb-3 mt-4" {...props} />,
+                                 h3: ({node, ...props}) => <h3 className="text-lg font-bold text-slate-100 mb-2 mt-3" {...props} />,
+                                 p: ({node, ...props}) => <p className="text-base text-slate-100 mb-3" {...props} />,
+                                 ul: ({node, ...props}) => <ul className="mb-3 list-disc pl-6 text-slate-100" {...props} />,
+                                 ol: ({node, ...props}) => <ol className="mb-3 list-decimal pl-6 text-slate-100" {...props} />,
+                                 li: ({node, ...props}) => <li className="mb-1 text-slate-100" {...props} />,
+                                 blockquote: ({node, ...props}) => <blockquote className="mb-3 border-l-4 border-slate-500 pl-4 italic text-slate-200" {...props} />,
+                                 strong: ({node, ...props}) => <strong className="font-bold text-slate-100" {...props} />,
+                                 em: ({node, ...props}) => <em className="italic text-slate-100" {...props} />,
+                                 hr: ({node, ...props}) => <hr className="my-4 border-slate-600/20" {...props} />,
+                                a: ({node, ...props}: any) => (
+                                  <a 
+                                    {...props} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-slate-300 hover:underline"
+                                  />
+                                ),
+                              }}
                           >
                             {getContent(practical)}
                           </ReactMarkdown>
