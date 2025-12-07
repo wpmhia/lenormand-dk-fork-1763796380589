@@ -25,7 +25,7 @@ export default function Home() {
       <div className="container-hero">
         <div className="relative mb-8 flex flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:justify-center lg:gap-12">
           <div className="space-component relative z-10 overflow-visible text-center lg:max-w-md lg:text-left">
-            <h1 className="relative mb-4 overflow-visible pb-2 text-4xl font-bold leading-normal text-foreground sm:text-5xl lg:text-6xl xl:text-7xl">
+            <h1 className="relative mb-4 overflow-visible pb-2 text-4xl font-bold leading-normal text-foreground sm:text-5xl lg:text-6xl xl:text-7xl logo-font">
               <span className="relative inline-block">
                 Lenormand
                 <div className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
