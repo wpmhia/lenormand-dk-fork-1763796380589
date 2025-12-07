@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Crimson_Text, Crimson_Pro } from 'next/font/google';
 import Script from 'next/script';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
@@ -11,11 +11,20 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { StructuredData, FAQSchema, LearningCourseSchema } from '@/lib/structured-data';
 
 
-const inter = Inter({ 
+const crimsonText = Crimson_Text({ 
   subsets: ['latin'],
   display: 'swap',
   preload: true,
-  fallback: ['system-ui', 'arial']
+  fallback: ['serif'],
+  weight: ['400', '600', '700']
+});
+
+const crimsonPro = Crimson_Pro({
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  fallback: ['serif'],
+  weight: ['600', '700']
 });
 
 export const metadata: Metadata = {
@@ -154,7 +163,7 @@ export default function RootLayout({
            }}
          />
       </head>
-       <body className={`${inter.className} antialiased`}>
+       <body className={`${crimsonText.className} antialiased`}>
          <TooltipProvider>
            <ThemeProvider>
              <div className="flex min-h-screen flex-col bg-background text-foreground">
