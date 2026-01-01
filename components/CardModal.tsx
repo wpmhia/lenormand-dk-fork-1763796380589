@@ -85,7 +85,7 @@ export function CardModal({
       }}
     >
       <DialogContent className="max-h-[85vh] max-w-xl overflow-y-auto border-border bg-card p-md text-card-foreground sm:max-h-[90vh] sm:max-w-2xl sm:p-lg">
-        <DialogHeader>
+        <DialogHeader className="pb-md">
           <DialogTitle className="flex items-center gap-2">
             <span className="text-2xl font-bold">{fullCard.id}.</span>
             <span className="text-xl">{fullCard.name}</span>

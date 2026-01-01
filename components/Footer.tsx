@@ -30,7 +30,7 @@ export function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-foreground/80">
               Explore
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-1 text-xs">
               <li>
                 <Link
                   href="/"
@@ -71,7 +71,7 @@ export function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-foreground/80">
               Resources
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-1 text-xs">
               <li>
                 <Link
                   href="/learn/spreads"

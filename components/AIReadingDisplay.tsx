@@ -365,51 +365,51 @@ export function AIReadingDisplay({
           </div>
         </CardHeader>
         <CardContent className="space-y-xl p-xl">
-          <div className="reading-content">
+          <div className="reading-content space-y-4">
             <ReactMarkdown
               components={{
                 h1: ({ node, ...props }) => (
                   <h1
-                    className="mb-4 mt-4 text-2xl font-semibold text-foreground"
+                    className="text-2xl font-semibold text-foreground"
                     {...props}
                   />
                 ),
                 h2: ({ node, ...props }) => (
                   <h2
-                    className="mb-3 mt-4 text-xl font-semibold text-foreground"
+                    className="text-xl font-semibold text-foreground"
                     {...props}
                   />
                 ),
                 h3: ({ node, ...props }) => (
                   <h3
-                    className="mb-2 mt-3 text-lg font-semibold text-foreground"
+                    className="text-lg font-semibold text-foreground"
                     {...props}
                   />
                 ),
                 p: ({ node, ...props }) => (
                   <p
-                    className="mb-3 text-base leading-relaxed text-foreground/90"
+                    className="text-base leading-relaxed text-foreground/90"
                     {...props}
                   />
                 ),
                 ul: ({ node, ...props }) => (
                   <ul
-                    className="mb-3 list-disc pl-6 text-foreground/90"
+                    className="list-disc pl-6 text-foreground/90"
                     {...props}
                   />
                 ),
                 ol: ({ node, ...props }) => (
                   <ol
-                    className="mb-3 list-decimal pl-6 text-foreground/90"
+                    className="list-decimal pl-6 text-foreground/90"
                     {...props}
                   />
                 ),
                 li: ({ node, ...props }) => (
-                  <li className="mb-1 text-foreground/90" {...props} />
+                  <li className="text-foreground/90" {...props} />
                 ),
                 blockquote: ({ node, ...props }) => (
                   <blockquote
-                    className="mb-3 border-l-4 border-primary/40 pl-4 italic text-foreground/80"
+                    className="border-l-4 border-primary/40 pl-4 italic text-foreground/80"
                     {...props}
                   />
                 ),

@@ -112,7 +112,7 @@ export function CookieConsent() {
     <>
       {/* Cookie Banner */}
       {showBanner && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 shadow-lg backdrop-blur-sm">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 pb-6 shadow-lg backdrop-blur-sm">
           <div className="container mx-auto max-w-4xl">
             <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
               <div className="flex flex-shrink-0 items-center gap-2">

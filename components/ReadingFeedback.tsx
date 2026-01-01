@@ -105,7 +105,7 @@ export function ReadingFeedback({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-0">
         <CardTitle className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
           How was this reading?
