@@ -16,6 +16,32 @@ export function Header() {
     setMounted(true);
   }, []);
 
+  if (!mounted) {
+    return (
+      <header
+        className="z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60"
+        suppressHydrationWarning
+      >
+        <div className="container flex h-14 items-center px-4">
+          <div className="flex items-center space-x-2">
+            <Link
+              href="/"
+              className="logo-font text-base font-bold leading-normal transition-opacity hover:opacity-80 sm:text-lg"
+            >
+              <span className="relative inline-block">
+                Lenormand
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
+              </span>
+              <span className="block bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+                Intelligence
+              </span>
+            </Link>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <>
       <header

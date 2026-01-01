@@ -106,7 +106,14 @@ export function CookieConsent() {
     document.head.appendChild(script2);
   };
 
-  if (!mounted || (!showBanner && !showSettings)) return null;
+  // Don't render until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div suppressHydrationWarning />
+    );
+  }
+
+  if (!showBanner && !showSettings) return null;
 
   return (
     <>
