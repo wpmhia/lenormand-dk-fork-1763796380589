@@ -23,12 +23,12 @@ import { getSpreadLearningLinks } from "@/lib/spreadLearning";
 import { ReadingFeedback } from "./ReadingFeedback";
 
 const ORACLE_MESSAGES = [
-  "Shuffling the cards...",
-  "Aligning with the stars...",
-  "Unveiling hidden messages...",
-  "Marie-Anne is contemplating...",
-  "Revealing your destiny...",
-  "The oracle speaks...",
+  "Analyzing the question...",
+  "Reviewing the spread rules...",
+  "Interpreting the cards...",
+  "Examining card combinations...",
+  "Formulating an interpretation...",
+  "Synthesizing the results...",
 ] as const;
 
 const PROGRESS_STEPS = [
@@ -274,8 +274,7 @@ export function AIReadingDisplay({
 
             <div className="border-t border-border pt-md text-center">
               <p className="text-xs text-muted-foreground">
-                Marie-Anne Lenormand is interpreting your {cards?.length || 3}{" "}
-                cards...
+                Interpreting {cards?.length || 3} cards using the Lenormand method...
               </p>
             </div>
           </CardContent>
