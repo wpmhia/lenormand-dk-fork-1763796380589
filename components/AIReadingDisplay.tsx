@@ -67,16 +67,41 @@ export function AIReadingDisplay({
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
 
-    const attribution =
-      "\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).";
+    const attribution = "\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).";
     const fullContent = aiReading.reading + attribution;
 
     try {
-      await navigator.clipboard.writeText(fullContent);
+      const htmlContent = aiReading.reading
+        .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+        .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+        .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+        .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
+        .replace(/\*(.*)\*/gim, "<em>$1</em>")
+        .replace(/\n- (.*$)/gim, "<li>$1</li>")
+        .replace(/\n(\d+)\. (.*$)/gim, "<li>$2</li>")
+        .replace(/\n\n/gim, "<br><br>")
+        .replace(/\n/gim, "<br>");
+
+      const blobHtml = new Blob([`<div style="font-family: system-ui, sans-serif; line-height: 1.6;">${htmlContent}</div>${attribution.replace("\n\n---", "<hr>")}`], { type: "text/html" });
+      const blobText = new Blob([fullContent], { type: "text/plain" });
+
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": blobHtml,
+          "text/plain": blobText,
+        }),
+      ]);
       setCopyClicked(true);
       setTimeout(() => setCopyClicked(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
+      try {
+        await navigator.clipboard.writeText(fullContent);
+        setCopyClicked(true);
+        setTimeout(() => setCopyClicked(false), 2000);
+      } catch (fallbackErr) {
+        console.error("Fallback copy also failed:", fallbackErr);
+      }
     }
   };
 
