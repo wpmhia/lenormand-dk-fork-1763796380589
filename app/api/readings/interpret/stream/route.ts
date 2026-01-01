@@ -42,15 +42,17 @@ function validateStreamRequest(body: any): { valid: boolean; error?: string } {
   return { valid: true };
 }
 
-function parseStreamingResponse(line: string): string | null {
+function parseStreamingResponse(line: string): { content: string; finishReason: string | null } | null {
   if (!line.startsWith("data: ")) return null;
 
   const data = line.slice(6).trim();
-  if (data === "[DONE]") return null;
+  if (data === "[DONE]") return { content: "", finishReason: "stop" };
 
   try {
     const parsed = JSON.parse(data);
-    return parsed.choices?.[0]?.delta?.content || "";
+    const delta = parsed.choices?.[0]?.delta;
+    const finishReason = parsed.choices?.[0]?.finish_reason || null;
+    return { content: delta?.content || "", finishReason };
   } catch {
     return null;
   }

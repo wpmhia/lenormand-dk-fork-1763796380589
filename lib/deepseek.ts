@@ -26,6 +26,7 @@ export interface AIReadingRequest {
 export interface AIReadingResponse {
   reading: string;
   aiInterpretationId?: string;
+  wasContinued?: boolean;
 }
 
 export function isDeepSeekAvailable(): boolean {
@@ -71,15 +72,18 @@ export async function getAIReading(
       spreadId,
     });
 
-    let maxTokens = 2000;
-    if (cards.length >= 36) maxTokens = 4000;
-    else if (cards.length >= 9) maxTokens = 3000;
-    else if (cards.length >= 7) maxTokens = 2500;
-    else if (cards.length >= 5) maxTokens = 2000;
-    else maxTokens = 1500;
-
+    const maxTokens = 1000;
     console.log("Sending request to DeepSeek API...");
     console.log(`Token budget: ${maxTokens} tokens`);
+
+    const messages = [
+      {
+        role: "system",
+        content:
+          "You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.",
+      },
+      { role: "user", content: prompt },
+    ];
 
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: "POST",
@@ -89,14 +93,7 @@ export async function getAIReading(
       },
       body: JSON.stringify({
         model: "deepseek-chat",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.",
-          },
-          { role: "user", content: prompt },
-        ],
+        messages,
         temperature: 0.4,
         max_tokens: maxTokens,
         top_p: 0.9,
@@ -115,13 +112,62 @@ export async function getAIReading(
     const data = await response.json();
     console.log("DeepSeek API response data received");
     const content = data.choices?.[0]?.message?.content;
+    const finishReason = data.choices?.[0]?.finish_reason;
 
     if (!content) {
       throw new Error("DeepSeek returned empty content");
     }
 
+    let fullContent = content.trim();
+    let wasContinued = false;
+    let continuationCount = 0;
+    const maxContinuations = 5;
+
+    while (finishReason === 'length' && continuationCount < maxContinuations) {
+      console.log(`Response truncated, continuing (${continuationCount + 1}/${maxContinuations})...`);
+      wasContinued = true;
+      continuationCount++;
+
+      messages.push({ role: "assistant", content: fullContent });
+      messages.push({ role: "user", content: "Continue from where you left off. Do not repeat what you already said." });
+
+      const continueResponse = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages,
+          temperature: 0.4,
+          max_tokens: maxTokens,
+          top_p: 0.9,
+        }),
+      });
+
+      if (!continueResponse.ok) {
+        console.warn("Continuation request failed, using partial response");
+        break;
+      }
+
+      const continueData = await continueResponse.json();
+      const continueContent = continueData.choices?.[0]?.message?.content;
+      const continueFinishReason = continueData.choices?.[0]?.finish_reason;
+
+      if (continueContent) {
+        fullContent += continueContent.trim();
+        console.log(`Continuation received, total length: ${fullContent.length}`);
+      }
+
+      if (continueFinishReason !== 'length') {
+        break;
+      }
+    }
+
     const aiResponse = {
-      reading: content.trim(),
+      reading: fullContent,
+      wasContinued,
     };
 
     cacheReading(request, aiResponse);
@@ -166,13 +212,7 @@ export async function streamAIReading(
       spreadId,
     });
 
-    let maxTokens = 2000;
-    if (cards.length >= 36) maxTokens = 4000;
-    else if (cards.length >= 9) maxTokens = 3000;
-    else if (cards.length >= 7) maxTokens = 2500;
-    else if (cards.length >= 5) maxTokens = 2000;
-    else maxTokens = 1500;
-
+    const maxTokens = 1000;
     console.log("Sending streaming request to DeepSeek API...");
     console.log(`Token budget: ${maxTokens} tokens`);
 
