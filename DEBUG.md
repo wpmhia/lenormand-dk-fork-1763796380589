@@ -5,18 +5,23 @@
 After deploying your app, follow these steps to debug AI issues:
 
 ### 1. Check Environment Variables
+
 Visit: `https://your-domain.com/env-check`
 
 This will show you:
+
 - ✅ Which environment variables are set
 - 🔍 Debug values (API keys are partially masked)
 - 📋 Instructions for missing variables
 
 ### 2. Use Debug Endpoints
+
 The `/env-check` page now includes debug buttons that open:
 
 #### `/api/debug/env`
+
 Shows all environment variables and deployment info:
+
 ```json
 {
   "timestamp": "2024-11-02T16:20:00.000Z",
@@ -31,7 +36,9 @@ Shows all environment variables and deployment info:
 ```
 
 #### `/api/debug/ai`
+
 Shows AI configuration status:
+
 ```json
 {
   "deepseek": {
@@ -44,7 +51,9 @@ Shows AI configuration status:
 ```
 
 #### `/api/debug/test-ai`
+
 Tests actual AI call:
+
 ```json
 {
   "success": true,
@@ -61,19 +70,24 @@ Tests actual AI call:
 ### 3. Common Issues & Solutions
 
 #### ❌ "AI Analysis Unavailable"
+
 **Check**: `/api/debug/ai` shows `available: false`
 **Fix**: Add `DEEPSEEK_API_KEY` to deployment environment variables
 
 #### ❌ "Failed to generate AI interpretation"
+
 **Check**: `/api/debug/test-ai` shows `success: false`
-**Fix**: 
+**Fix**:
+
 1. Verify API key is valid
 2. Check `DEEPSEEK_BASE_URL` includes `/v1`
 3. Check deployment logs for API errors
 
 #### ❌ Environment variables not showing
+
 **Check**: `/api/debug/env` shows `NOT_SET`
-**Fix**: 
+**Fix**:
+
 - **Vercel**: Project Settings → Environment Variables
 - **Netlify**: Site settings → Build & deploy → Environment
 - **Railway**: Project → Variables tab
@@ -81,6 +95,7 @@ Tests actual AI call:
 ### 4. Environment Variable Setup
 
 #### For Vercel (Recommended)
+
 1. Go to your Vercel project dashboard
 2. Navigate to **Settings → Environment Variables**
 3. Add these variables:
@@ -91,6 +106,7 @@ Tests actual AI call:
 4. **Redeploy** your application
 
 #### For Other Platforms
+
 See `DEPLOYMENT.md` for detailed instructions
 
 ### 5. Verification Checklist

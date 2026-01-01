@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { motion } from "framer-motion";
 import React from "react";
@@ -25,7 +25,7 @@ export function AnimatedCard({
   delay = 0,
   initialY = 6,
   duration = 0.36,
-  staggerChildren = false
+  staggerChildren = false,
 }: Props) {
   return (
     <motion.div
@@ -35,7 +35,7 @@ export function AnimatedCard({
         duration,
         ease: "easeOut",
         delay,
-        staggerChildren: staggerChildren ? 0.1 : 0
+        staggerChildren: staggerChildren ? 0.1 : 0,
       }}
       whileHover={{ scale: hoverScale }}
       whileTap={{ scale: 0.995 }}

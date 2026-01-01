@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
-    console.error('Learn page error:', error, error.digest)
-  }, [error])
+    console.error("Learn page error:", error, error.digest);
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
@@ -26,11 +26,10 @@ export default function Error({
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-foreground">
-            Learning Error
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground">Learning Error</h1>
           <p className="text-muted-foreground">
-            We encountered an error while loading the learning content. Please try again.
+            We encountered an error while loading the learning content. Please
+            try again.
           </p>
         </div>
 
@@ -41,7 +40,7 @@ export default function Error({
           </Button>
           <Button
             variant="outline"
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
@@ -49,7 +48,7 @@ export default function Error({
           </Button>
         </div>
 
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === "development" && (
           <details className="mt-6 text-left">
             <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
               Error details (development only)
@@ -62,5 +61,5 @@ export default function Error({
         )}
       </div>
     </div>
-  )
+  );
 }

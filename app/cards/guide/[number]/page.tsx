@@ -1,32 +1,32 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { BreadcrumbNav } from "@/components/BreadcrumbNav"
-import { BackToTop } from "@/components/BackToTop"
-import { LENORMAND_CARDS, getCardByNumber } from "@/lib/lenormand-cards-data"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { BackToTop } from "@/components/BackToTop";
+import { LENORMAND_CARDS, getCardByNumber } from "@/lib/lenormand-cards-data";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface CardGuidePageProps {
   params: {
-    number: string
-  }
+    number: string;
+  };
 }
 
 export async function generateStaticParams() {
   return LENORMAND_CARDS.map((card) => ({
     number: card.number.toString(),
-  }))
+  }));
 }
 
 export async function generateMetadata({ params }: CardGuidePageProps) {
-  const card = getCardByNumber(parseInt(params.number))
+  const card = getCardByNumber(parseInt(params.number));
 
   if (!card) {
     return {
       title: "Card Not Found",
       description: "The card you're looking for doesn't exist.",
-    }
+    };
   }
 
   return {
@@ -43,33 +43,31 @@ export async function generateMetadata({ params }: CardGuidePageProps) {
       title: `${card.name} Lenormand Card`,
       description: `Master the meaning of the ${card.name} Lenormand card with keywords, combinations, and interpretations.`,
     },
-  }
+  };
 }
 
 export default function CardGuidePage({ params }: CardGuidePageProps) {
-  const cardNumber = parseInt(params.number)
-  const card = getCardByNumber(cardNumber)
+  const cardNumber = parseInt(params.number);
+  const card = getCardByNumber(cardNumber);
 
   if (!card) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto max-w-4xl px-4 py-8">
           <h1 className="text-2xl font-bold">Card Not Found</h1>
-           <p className="mt-4 text-muted-foreground">
-             The card you&apos;re looking for doesn&apos;t exist.
-           </p>
+          <p className="mt-4 text-muted-foreground">
+            The card you&apos;re looking for doesn&apos;t exist.
+          </p>
           <Link href="/cards">
             <Button className="mt-4">Back to Cards</Button>
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
-  const previousCard =
-    cardNumber > 1 ? getCardByNumber(cardNumber - 1) : null
-  const nextCard =
-    cardNumber < 36 ? getCardByNumber(cardNumber + 1) : null
+  const previousCard = cardNumber > 1 ? getCardByNumber(cardNumber - 1) : null;
+  const nextCard = cardNumber < 36 ? getCardByNumber(cardNumber + 1) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -89,20 +87,18 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
       <div className="container mx-auto max-w-4xl px-4 py-8">
         {/* Card Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <Badge className="text-lg py-1 px-3">Card #{card.number}</Badge>
+          <div className="mb-4 flex items-center justify-between">
+            <Badge className="px-3 py-1 text-lg">Card #{card.number}</Badge>
             <Badge variant="secondary">{card.playingCard}</Badge>
           </div>
           <h1 className="mb-4 text-4xl font-bold text-foreground">
             {card.name}
           </h1>
-          <p className="text-lg text-muted-foreground">
-            {card.description}
-          </p>
+          <p className="text-lg text-muted-foreground">{card.description}</p>
         </div>
 
         {/* Quick Reference Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-muted-foreground">
@@ -148,7 +144,7 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="text-sm py-1 px-3"
+                  className="px-3 py-1 text-sm"
                 >
                   {keyword}
                 </Badge>
@@ -187,10 +183,7 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
                     .replace(/([A-Z])/g, " $1")
                     .trim()
                     .split(" ")
-                    .map(
-                      (word) =>
-                        word.charAt(0).toUpperCase() + word.slice(1)
-                    )
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                     .join(" ")}
                 </dt>
                 <dd className="text-sm text-muted-foreground">{value}</dd>
@@ -200,7 +193,7 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
         </Card>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between border-t border-border pt-8 gap-4">
+        <div className="flex items-center justify-between gap-4 border-t border-border pt-8">
           {previousCard ? (
             <Link href={`/cards/guide/${previousCard.number}`}>
               <Button variant="outline" className="flex items-center gap-2">
@@ -231,5 +224,5 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
 
       <BackToTop />
     </div>
-  )
+  );
 }

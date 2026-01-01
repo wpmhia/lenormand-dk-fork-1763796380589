@@ -3,13 +3,7 @@
     "id": 1,
     "name": "Rider",
     "number": 1,
-    "keywords": [
-      "news",
-      "messages",
-      "delivery",
-      "movement",
-      "communication"
-    ],
+    "keywords": ["news", "messages", "delivery", "movement", "communication"],
     "uprightMeaning": "News arriving soon, messages, movement, a young man",
     "combos": [
       {
@@ -182,13 +176,7 @@
     "id": 2,
     "name": "Clover",
     "number": 2,
-    "keywords": [
-      "luck",
-      "chance",
-      "opportunity",
-      "fortune",
-      "joy"
-    ],
+    "keywords": ["luck", "chance", "opportunity", "fortune", "joy"],
     "uprightMeaning": "Good luck, opportunity, small wins, positive chance",
     "combos": [
       {
@@ -361,13 +349,7 @@
     "id": 3,
     "name": "Ship",
     "number": 3,
-    "keywords": [
-      "travel",
-      "journey",
-      "movement",
-      "commerce",
-      "exploration"
-    ],
+    "keywords": ["travel", "journey", "movement", "commerce", "exploration"],
     "uprightMeaning": "Travel, journey, movement, commerce, exploration",
     "combos": [
       {
@@ -540,13 +522,7 @@
     "id": 4,
     "name": "House",
     "number": 4,
-    "keywords": [
-      "home",
-      "family",
-      "security",
-      "stability",
-      "comfort"
-    ],
+    "keywords": ["home", "family", "security", "stability", "comfort"],
     "uprightMeaning": "Home, family, security, stability, comfort",
     "combos": [
       {
@@ -719,13 +695,7 @@
     "id": 5,
     "name": "Tree",
     "number": 5,
-    "keywords": [
-      "health",
-      "growth",
-      "nature",
-      "stability",
-      "life"
-    ],
+    "keywords": ["health", "growth", "nature", "stability", "life"],
     "uprightMeaning": "Health, growth, stability, long life, nature",
     "combos": [
       {
@@ -898,13 +868,7 @@
     "id": 6,
     "name": "Clouds",
     "number": 6,
-    "keywords": [
-      "confusion",
-      "uncertainty",
-      "doubt",
-      "clarity",
-      "problems"
-    ],
+    "keywords": ["confusion", "uncertainty", "doubt", "clarity", "problems"],
     "uprightMeaning": "Confusion, uncertainty, doubt, lack of clarity",
     "combos": [
       {
@@ -1256,13 +1220,7 @@
     "id": 8,
     "name": "Coffin",
     "number": 8,
-    "keywords": [
-      "endings",
-      "transformation",
-      "death",
-      "closure",
-      "change"
-    ],
+    "keywords": ["endings", "transformation", "death", "closure", "change"],
     "uprightMeaning": "Endings, transformation, closure, major change",
     "combos": [
       {
@@ -1435,13 +1393,7 @@
     "id": 9,
     "name": "Bouquet",
     "number": 9,
-    "keywords": [
-      "gift",
-      "appreciation",
-      "beauty",
-      "gratitude",
-      "social"
-    ],
+    "keywords": ["gift", "appreciation", "beauty", "gratitude", "social"],
     "uprightMeaning": "Gift, appreciation, beauty, gratitude, social invitation",
     "combos": [
       {
@@ -1614,13 +1566,7 @@
     "id": 10,
     "name": "Scythe",
     "number": 10,
-    "keywords": [
-      "cutting",
-      "decisions",
-      "harvest",
-      "sudden",
-      "danger"
-    ],
+    "keywords": ["cutting", "decisions", "harvest", "sudden", "danger"],
     "uprightMeaning": "Sudden change, cutting ties, decisions, harvest",
     "combos": [
       {
@@ -1793,13 +1739,7 @@
     "id": 11,
     "name": "Whip",
     "number": 11,
-    "keywords": [
-      "conflict",
-      "argument",
-      "discipline",
-      "action",
-      "passion"
-    ],
+    "keywords": ["conflict", "argument", "discipline", "action", "passion"],
     "uprightMeaning": "Conflict, argument, discipline, action, passion",
     "combos": [
       {
@@ -1972,13 +1912,7 @@
     "id": 12,
     "name": "Birds",
     "number": 12,
-    "keywords": [
-      "communication",
-      "gossip",
-      "anxiety",
-      "social",
-      "messages"
-    ],
+    "keywords": ["communication", "gossip", "anxiety", "social", "messages"],
     "uprightMeaning": "Communication, gossip, anxiety, social activity",
     "combos": [
       {
@@ -2151,13 +2085,7 @@
     "id": 13,
     "name": "Child",
     "number": 13,
-    "keywords": [
-      "newness",
-      "innocence",
-      "beginnings",
-      "creativity",
-      "youth"
-    ],
+    "keywords": ["newness", "innocence", "beginnings", "creativity", "youth"],
     "uprightMeaning": "New beginnings, innocence, creativity, youth, pregnancy",
     "combos": [
       {
@@ -2330,13 +2258,7 @@
     "id": 14,
     "name": "Fox",
     "number": 14,
-    "keywords": [
-      "cunning",
-      "intelligence",
-      "work",
-      "strategy",
-      "caution"
-    ],
+    "keywords": ["cunning", "intelligence", "work", "strategy", "caution"],
     "uprightMeaning": "Cunning, intelligence, work, strategy, caution needed",
     "combos": [
       {
@@ -2509,13 +2431,7 @@
     "id": 15,
     "name": "Bear",
     "number": 15,
-    "keywords": [
-      "power",
-      "strength",
-      "protection",
-      "authority",
-      "mother"
-    ],
+    "keywords": ["power", "strength", "protection", "authority", "mother"],
     "uprightMeaning": "Power, strength, protection, authority, mother figure",
     "combos": [
       {
@@ -2688,13 +2604,7 @@
     "id": 16,
     "name": "Stars",
     "number": 16,
-    "keywords": [
-      "hope",
-      "guidance",
-      "wishes",
-      "destiny",
-      "inspiration"
-    ],
+    "keywords": ["hope", "guidance", "wishes", "destiny", "inspiration"],
     "uprightMeaning": "Hope, guidance, wishes coming true, destiny",
     "combos": [
       {
@@ -2867,13 +2777,7 @@
     "id": 17,
     "name": "Stork",
     "number": 17,
-    "keywords": [
-      "change",
-      "movement",
-      "return",
-      "delivery",
-      "transition"
-    ],
+    "keywords": ["change", "movement", "return", "delivery", "transition"],
     "uprightMeaning": "Change, movement, return, delivery, transition",
     "combos": [
       {
@@ -3404,13 +3308,7 @@
     "id": 20,
     "name": "Garden",
     "number": 20,
-    "keywords": [
-      "social",
-      "community",
-      "public",
-      "gathering",
-      "nature"
-    ],
+    "keywords": ["social", "community", "public", "gathering", "nature"],
     "uprightMeaning": "Social gathering, community, public space, nature",
     "combos": [
       {
@@ -3583,13 +3481,7 @@
     "id": 21,
     "name": "Mountain",
     "number": 21,
-    "keywords": [
-      "obstacles",
-      "challenges",
-      "stability",
-      "endurance",
-      "delay"
-    ],
+    "keywords": ["obstacles", "challenges", "stability", "endurance", "delay"],
     "uprightMeaning": "Obstacles, challenges, stability, endurance, delay",
     "combos": [
       {
@@ -3762,13 +3654,7 @@
     "id": 22,
     "name": "Paths",
     "number": 22,
-    "keywords": [
-      "choices",
-      "decisions",
-      "journey",
-      "options",
-      "direction"
-    ],
+    "keywords": ["choices", "decisions", "journey", "options", "direction"],
     "uprightMeaning": "Choices, decisions, journey, options, direction",
     "combos": [
       {
@@ -3941,13 +3827,7 @@
     "id": 23,
     "name": "Mice",
     "number": 23,
-    "keywords": [
-      "loss",
-      "theft",
-      "stress",
-      "worry",
-      "erosion"
-    ],
+    "keywords": ["loss", "theft", "stress", "worry", "erosion"],
     "uprightMeaning": "Loss, theft, stress, worry, gradual erosion",
     "combos": [
       {
@@ -4120,13 +4000,7 @@
     "id": 24,
     "name": "Heart",
     "number": 24,
-    "keywords": [
-      "love",
-      "emotions",
-      "relationships",
-      "joy",
-      "compassion"
-    ],
+    "keywords": ["love", "emotions", "relationships", "joy", "compassion"],
     "uprightMeaning": "Love, emotions, relationships, joy, compassion",
     "combos": [
       {
@@ -4299,13 +4173,7 @@
     "id": 25,
     "name": "Ring",
     "number": 25,
-    "keywords": [
-      "commitment",
-      "marriage",
-      "contracts",
-      "cycles",
-      "completion"
-    ],
+    "keywords": ["commitment", "marriage", "contracts", "cycles", "completion"],
     "uprightMeaning": "Commitment, marriage, contracts, cycles, completion",
     "combos": [
       {
@@ -4478,13 +4346,7 @@
     "id": 26,
     "name": "Book",
     "number": 26,
-    "keywords": [
-      "knowledge",
-      "secrets",
-      "learning",
-      "mystery",
-      "education"
-    ],
+    "keywords": ["knowledge", "secrets", "learning", "mystery", "education"],
     "uprightMeaning": "Knowledge, secrets, learning, mystery, education",
     "combos": [
       {
@@ -4836,13 +4698,7 @@
     "id": 28,
     "name": "Man",
     "number": 28,
-    "keywords": [
-      "masculine",
-      "husband",
-      "father",
-      "authority",
-      "logic"
-    ],
+    "keywords": ["masculine", "husband", "father", "authority", "logic"],
     "uprightMeaning": "Man, husband, father, masculine energy, authority",
     "combos": [
       {
@@ -5015,13 +4871,7 @@
     "id": 29,
     "name": "Woman",
     "number": 29,
-    "keywords": [
-      "feminine",
-      "wife",
-      "mother",
-      "intuition",
-      "emotion"
-    ],
+    "keywords": ["feminine", "wife", "mother", "intuition", "emotion"],
     "uprightMeaning": "Woman, wife, mother, feminine energy, intuition",
     "combos": [
       {
@@ -5194,13 +5044,7 @@
     "id": 30,
     "name": "Lily",
     "number": 30,
-    "keywords": [
-      "purity",
-      "peace",
-      "wisdom",
-      "maturity",
-      "ethics"
-    ],
+    "keywords": ["purity", "peace", "wisdom", "maturity", "ethics"],
     "uprightMeaning": "Purity, peace, wisdom, maturity, ethics",
     "combos": [
       {
@@ -5373,13 +5217,7 @@
     "id": 31,
     "name": "Sun",
     "number": 31,
-    "keywords": [
-      "success",
-      "happiness",
-      "joy",
-      "clarity",
-      "energy"
-    ],
+    "keywords": ["success", "happiness", "joy", "clarity", "energy"],
     "uprightMeaning": "Success, happiness, joy, clarity, positive energy",
     "combos": [
       {
@@ -5552,13 +5390,7 @@
     "id": 32,
     "name": "Moon",
     "number": 32,
-    "keywords": [
-      "intuition",
-      "emotions",
-      "dreams",
-      "creativity",
-      "illusion"
-    ],
+    "keywords": ["intuition", "emotions", "dreams", "creativity", "illusion"],
     "uprightMeaning": "Intuition, emotions, dreams, creativity, illusion",
     "combos": [
       {
@@ -5731,13 +5563,7 @@
     "id": 33,
     "name": "Key",
     "number": 33,
-    "keywords": [
-      "solution",
-      "access",
-      "opportunity",
-      "answers",
-      "discovery"
-    ],
+    "keywords": ["solution", "access", "opportunity", "answers", "discovery"],
     "uprightMeaning": "Solution, access, opportunity, answers, discovery",
     "combos": [
       {
@@ -5910,13 +5736,7 @@
     "id": 34,
     "name": "Fish",
     "number": 34,
-    "keywords": [
-      "abundance",
-      "wealth",
-      "business",
-      "prosperity",
-      "flow"
-    ],
+    "keywords": ["abundance", "wealth", "business", "prosperity", "flow"],
     "uprightMeaning": "Abundance, wealth, business, prosperity, flow",
     "combos": [
       {
@@ -6089,13 +5909,7 @@
     "id": 35,
     "name": "Anchor",
     "number": 35,
-    "keywords": [
-      "stability",
-      "security",
-      "hope",
-      "grounding",
-      "patience"
-    ],
+    "keywords": ["stability", "security", "hope", "grounding", "patience"],
     "uprightMeaning": "Stability, security, hope, grounding, patience",
     "combos": [
       {
@@ -6268,13 +6082,7 @@
     "id": 36,
     "name": "Cross",
     "number": 36,
-    "keywords": [
-      "burden",
-      "sacrifice",
-      "destiny",
-      "faith",
-      "suffering"
-    ],
+    "keywords": ["burden", "sacrifice", "destiny", "faith", "suffering"],
     "uprightMeaning": "Burden, sacrifice, destiny, faith, suffering",
     "combos": [
       {

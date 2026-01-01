@@ -1,14 +1,13 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-import { NextResponse } from 'next/server'
-import { getCards } from '@/lib/data'
-
+import { NextResponse } from "next/server";
+import { getCards } from "@/lib/data";
 
 export async function GET() {
   try {
-    const cards = getCards()
-    const clover = cards.find(c => c.id === 2)
-    
+    const cards = getCards();
+    const clover = cards.find((c) => c.id === 2);
+
     return NextResponse.json({
       totalCards: cards.length,
       cloverHasMeaning: !!clover?.meaning,
@@ -18,11 +17,11 @@ export async function GET() {
         id: clover?.id,
         name: clover?.name,
         hasMeaning: !!clover?.meaning,
-        uprightMeaning: clover?.uprightMeaning
-      }
-    })
-   } catch (error) {
-     const message = error instanceof Error ? error.message : 'Unknown error'
-     return NextResponse.json({ error: message }, { status: 500 })
-   }
+        uprightMeaning: clover?.uprightMeaning,
+      },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

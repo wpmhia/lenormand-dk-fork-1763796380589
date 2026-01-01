@@ -48,6 +48,7 @@ NODE_ENV=production
 ### Setting Environment Variables
 
 #### Vercel
+
 1. Navigate to your Vercel project dashboard
 2. Click **Settings**
 3. Go to **Environment Variables**
@@ -56,7 +57,9 @@ NODE_ENV=production
 6. Redeploy your application
 
 #### Other Platforms (Railway, Heroku, etc.)
+
 Refer to your platform's documentation for setting environment variables. Typically found in:
+
 - Settings → Environment Variables
 - Configuration → Environment
 - Secrets management section
@@ -64,6 +67,7 @@ Refer to your platform's documentation for setting environment variables. Typica
 ### Environment Variable Validation
 
 After deployment, verify variables are set correctly by visiting:
+
 ```
 https://your-domain.com/env-check
 ```
@@ -101,6 +105,7 @@ This page shows which environment variables are configured correctly.
    - Enable HTTPS (automatic with Vercel)
 
 **Monitoring on Vercel**:
+
 - Visit project dashboard for real-time metrics
 - Enable Vercel Analytics for performance insights
 - Set up Slack notifications for deployments
@@ -153,6 +158,7 @@ GET /api/health
 ```
 
 **Response**:
+
 ```json
 {
   "status": "healthy",
@@ -185,13 +191,16 @@ GET /api/health
 ### Setting Up Health Checks
 
 #### Vercel
+
 1. Go to **Settings** → **Cron Jobs**
 2. Add new job: `GET /api/health`
 3. Set frequency: every 5 minutes
 4. Enable notifications on failure
 
 #### Other Platforms
+
 Use external monitoring services:
+
 - **UptimeRobot**: Monitor /api/health endpoint
 - **PagerDuty**: Set up escalation policies
 - **Datadog**: Custom health check monitors
@@ -206,6 +215,7 @@ GET /api/metrics
 ```
 
 **Output** (Prometheus format):
+
 ```
 # HELP lenormand_api_readings_total Total number of readings generated
 # TYPE lenormand_api_readings_total gauge
@@ -217,17 +227,19 @@ process_memory_heap_used_bytes 131072000
 ```
 
 **Integration with monitoring tools**:
+
 - **Prometheus**: Add scrape job for `/api/metrics`
 - **Grafana**: Create dashboards from Prometheus data
 - **Datadog**: Use custom metrics endpoint
 
 Example Prometheus config:
+
 ```yaml
 scrape_configs:
-  - job_name: 'lenormand-api'
+  - job_name: "lenormand-api"
     static_configs:
-      - targets: ['your-domain.com']
-    metrics_path: '/api/metrics'
+      - targets: ["your-domain.com"]
+    metrics_path: "/api/metrics"
     scrape_interval: 60s
 ```
 
@@ -283,6 +295,7 @@ location / {
 - Lazy loading enabled
 
 Verify optimization:
+
 ```bash
 npm run build
 # Check .next/static/chunks for optimized images
@@ -293,12 +306,14 @@ npm run build
 ### API Key Protection
 
 **DO NOT**:
+
 - Commit API keys to version control
 - Log API keys in error messages
 - Expose API keys in client-side code (server keys)
 - Share API keys through insecure channels
 
 **DO**:
+
 - Use environment variables only
 - Rotate API keys regularly
 - Use separate keys for different environments
@@ -307,6 +322,7 @@ npm run build
 ### CORS Configuration
 
 The API is configured for secure cross-origin requests:
+
 - Whitelisted origins only
 - Credentials enabled where needed
 - Proper headers in responses
@@ -316,16 +332,17 @@ The API is configured for secure cross-origin requests:
 Built-in rate limiting utility available:
 
 ```typescript
-import { apiLimiter } from '@/lib/rateLimit'
+import { apiLimiter } from "@/lib/rateLimit";
 
 // Check if request is allowed
-const allowed = apiLimiter.isAllowed(clientId, '/api/readings/interpret')
+const allowed = apiLimiter.isAllowed(clientId, "/api/readings/interpret");
 if (!allowed) {
-  return new Response('Rate limit exceeded', { status: 429 })
+  return new Response("Rate limit exceeded", { status: 429 });
 }
 ```
 
 **Suggested limits**:
+
 - `/api/readings/interpret`: 100 requests/minute per IP
 - `/api/health`: 1000 requests/minute per IP
 - `/api/metrics`: 100 requests/minute per IP
@@ -335,11 +352,11 @@ if (!allowed) {
 All endpoints validate input using the Validator utility:
 
 ```typescript
-import { Validator } from '@/lib/validation'
+import { Validator } from "@/lib/validation";
 
-const validation = Validator.validateAIReadingRequest(body)
+const validation = Validator.validateAIReadingRequest(body);
 if (!validation.valid) {
-  return Response.json({ error: validation.details }, { status: 400 })
+  return Response.json({ error: validation.details }, { status: 400 });
 }
 ```
 
@@ -348,6 +365,7 @@ if (!validation.valid) {
 - Enable HTTPS on all production domains
 - Use TLS 1.3 where possible
 - Set HSTS headers:
+
 ```
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 ```
@@ -355,6 +373,7 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 ### Security Headers
 
 Key headers automatically set:
+
 ```
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
@@ -425,6 +444,7 @@ wrk -t4 -c100 -d30s \
 **Error**: "Failed to compile"
 
 **Solutions**:
+
 1. Check Node.js version: `node --version` (requires v18+)
 2. Clear cache: `rm -rf .next node_modules && npm install`
 3. Check for TypeScript errors: `npm run type-check`
@@ -435,6 +455,7 @@ wrk -t4 -c100 -d30s \
 **Error**: "DeepSeek API connection failed"
 
 **Solutions**:
+
 1. Verify `DEEPSEEK_API_KEY` is set and valid
 2. Check if API quota is exceeded
 3. Verify network connectivity from server to api.deepseek.com
@@ -443,6 +464,7 @@ wrk -t4 -c100 -d30s \
 **Error**: "Request timeout"
 
 **Solutions**:
+
 1. Check server resources (CPU, memory)
 2. Review slow query logs
 3. Check rate limiting isn't blocking requests
@@ -453,6 +475,7 @@ wrk -t4 -c100 -d30s \
 **Error**: "JavaScript heap out of memory"
 
 **Solutions**:
+
 1. Increase Node.js memory: `NODE_OPTIONS=--max-old-space-size=2048`
 2. Review reading history size (max 1000 entries)
 3. Check for memory leaks in custom code
@@ -463,6 +486,7 @@ wrk -t4 -c100 -d30s \
 **Problem**: Slow API responses
 
 **Solutions**:
+
 1. Check `/api/metrics` for average interpretation time
 2. Review cache hit rates
 3. Monitor DeepSeek API response times
@@ -493,6 +517,7 @@ When issues arise in production:
 Your Lenormand Intelligence API is now ready for production deployment. Follow this guide for a smooth deployment experience and maintain high uptime and performance in production.
 
 For additional support, refer to:
+
 - `AGENT_ARCHITECTURE.md` - System architecture
 - `API_DOCUMENTATION.md` - API endpoint reference
 - `DEPLOYMENT_CHECKLIST.md` - Pre-deployment verification

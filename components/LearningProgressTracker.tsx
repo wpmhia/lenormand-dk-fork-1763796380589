@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, Circle } from "lucide-react";
 
 interface ModuleProgress {
   [moduleId: string]: {
@@ -18,17 +18,17 @@ interface LearningProgressTrackerProps {
 }
 
 const MODULES = [
-  'introduction',
-  'history',
-  'reading-basics',
-  'card-meanings',
-  'spreads',
-  'card-combinations',
-  'advanced',
-  'marie-annes-system',
+  "introduction",
+  "history",
+  "reading-basics",
+  "card-meanings",
+  "spreads",
+  "card-combinations",
+  "advanced",
+  "marie-annes-system",
 ];
 
-const STORAGE_KEY = 'lenormand_learning_progress';
+const STORAGE_KEY = "lenormand_learning_progress";
 
 export function LearningProgressTracker({
   moduleId,
@@ -69,7 +69,9 @@ export function LearningProgressTracker({
     }));
   };
 
-  const completedCount = Object.values(progress).filter((p) => p.completed).length;
+  const completedCount = Object.values(progress).filter(
+    (p) => p.completed,
+  ).length;
   const progressPercentage = (completedCount / MODULES.length) * 100;
 
   if (!mounted) {
@@ -77,7 +79,9 @@ export function LearningProgressTracker({
       <div className="space-y-4 rounded-lg border border-border/50 bg-gradient-to-r from-primary/5 to-primary/10 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-foreground">Your Learning Progress</h3>
+            <h3 className="font-semibold text-foreground">
+              Your Learning Progress
+            </h3>
             <p className="text-sm text-muted-foreground">Loading...</p>
           </div>
         </div>
@@ -108,7 +112,9 @@ export function LearningProgressTracker({
     <div className="space-y-4 rounded-lg border border-border/50 bg-gradient-to-r from-primary/5 to-primary/10 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-foreground">Your Learning Progress</h3>
+          <h3 className="font-semibold text-foreground">
+            Your Learning Progress
+          </h3>
           <p className="text-sm text-muted-foreground">
             {completedCount} of {MODULES.length} modules completed
           </p>
@@ -122,10 +128,7 @@ export function LearningProgressTracker({
 
       <div className="grid gap-3">
         {MODULES.map((mod) => (
-          <div
-            key={mod}
-            className="flex items-center gap-2 text-sm"
-          >
+          <div key={mod} className="flex items-center gap-2 text-sm">
             {progress[mod]?.completed ? (
               <CheckCircle2 className="h-4 w-4 text-primary" />
             ) : (
@@ -134,14 +137,14 @@ export function LearningProgressTracker({
             <span
               className={
                 progress[mod]?.completed
-                  ? 'text-foreground line-through opacity-60'
-                  : 'text-muted-foreground'
+                  ? "text-foreground line-through opacity-60"
+                  : "text-muted-foreground"
               }
             >
               {mod
-                .split('-')
+                .split("-")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ')}
+                .join(" ")}
             </span>
           </div>
         ))}
@@ -176,7 +179,9 @@ export function useLearningProgress() {
     }));
   };
 
-  const completedCount = Object.values(progress).filter((p) => p.completed).length;
+  const completedCount = Object.values(progress).filter(
+    (p) => p.completed,
+  ).length;
   const progressPercentage = (completedCount / MODULES.length) * 100;
 
   return {

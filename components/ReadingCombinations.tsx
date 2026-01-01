@@ -1,18 +1,27 @@
-"use client"
+"use client";
 
-import { Card as UICard, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Card, ReadingCard } from '@/lib/types'
-import { getReadingCombinations } from '@/lib/data'
+import {
+  Card as UICard,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card, ReadingCard } from "@/lib/types";
+import { getReadingCombinations } from "@/lib/data";
 
 interface ReadingCombinationsProps {
-  cards: ReadingCard[]
-  allCards: Card[]
-  spreadName?: string
+  cards: ReadingCard[];
+  allCards: Card[];
+  spreadName?: string;
 }
 
-export function ReadingCombinations({ cards, allCards, spreadName }: ReadingCombinationsProps) {
-  const combinations = getReadingCombinations(cards, allCards)
+export function ReadingCombinations({
+  cards,
+  allCards,
+  spreadName,
+}: ReadingCombinationsProps) {
+  const combinations = getReadingCombinations(cards, allCards);
 
   if (combinations.length === 0) {
     return (
@@ -22,11 +31,12 @@ export function ReadingCombinations({ cards, allCards, spreadName }: ReadingComb
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            No predefined combinations found in this reading. The cards may create unique meanings together.
+            No predefined combinations found in this reading. The cards may
+            create unique meanings together.
           </p>
         </CardContent>
       </UICard>
-    )
+    );
   }
 
   return (
@@ -44,8 +54,8 @@ export function ReadingCombinations({ cards, allCards, spreadName }: ReadingComb
       </CardHeader>
       <CardContent className="space-y-4">
         {combinations.map((combo, index) => (
-          <div key={index} className="border rounded-lg p-4 bg-card/50">
-            <div className="flex items-center gap-3 mb-2">
+          <div key={index} className="rounded-lg border bg-card/50 p-4">
+            <div className="mb-2 flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-primary">
                   #{combo.card1.number}
@@ -60,10 +70,10 @@ export function ReadingCombinations({ cards, allCards, spreadName }: ReadingComb
                 <span className="font-medium">{combo.card2.name}</span>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               {combo.meaning}
             </p>
-            <div className="flex gap-2 mt-2">
+            <div className="mt-2 flex gap-2">
               <Badge variant="outline" className="text-xs">
                 Pos {combo.position1 + 1}
               </Badge>
@@ -75,5 +85,5 @@ export function ReadingCombinations({ cards, allCards, spreadName }: ReadingComb
         ))}
       </CardContent>
     </UICard>
-  )
+  );
 }

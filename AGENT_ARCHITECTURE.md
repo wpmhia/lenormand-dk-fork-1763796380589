@@ -10,15 +10,15 @@ The Marie-Anne Agent is a modular, production-ready system that delivers **Marie
 
 ### Core Architecture
 
-| File | Purpose | LOC |
-|------|---------|-----|
-| `types/agent.types.ts` | Type-safe interfaces | 42 |
-| `lib/spreadRules.ts` | Spread metadata (all 12) | 128 |
-| `lib/agent.ts` | MarieAnneAgent class | 91 |
-| `lib/deadline.ts` | Pip → Friday calculation | 31 |
-| `lib/taskGen.ts` | Imperative task generation | 42 |
-| `lib/deepseek.ts` | DeepSeek integration (refactored) | 150 |
-| `tests/agent.test.ts` | 100% coverage test suite | 306 |
+| File                   | Purpose                           | LOC |
+| ---------------------- | --------------------------------- | --- |
+| `types/agent.types.ts` | Type-safe interfaces              | 42  |
+| `lib/spreadRules.ts`   | Spread metadata (all 12)          | 128 |
+| `lib/agent.ts`         | MarieAnneAgent class              | 91  |
+| `lib/deadline.ts`      | Pip → Friday calculation          | 31  |
+| `lib/taskGen.ts`       | Imperative task generation        | 42  |
+| `lib/deepseek.ts`      | DeepSeek integration (refactored) | 150 |
+| `tests/agent.test.ts`  | 100% coverage test suite          | 306 |
 
 **Total new code:** 790 lines (vs 461 old + 80 validation = 541 replaced)
 
@@ -47,9 +47,11 @@ AIReadingRequest (cards, spreadId, question)
 ## All 12 Spreads Supported
 
 ### Single Card (1)
+
 - `single-card` → 3 sentences, 1 template
 
 ### 3-Card (5)
+
 - `sentence-3` → 3 sentences, 3-card template
 - `past-present-future` → 3 sentences, 3-card template
 - `yes-no-maybe` → 3 sentences, 3-card template + polarity check
@@ -57,61 +59,73 @@ AIReadingRequest (cards, spreadId, question)
 - `mind-body-spirit` → 3 sentences, 3-card template
 
 ### 5-Card (2)
+
 - `sentence-5` → 5 sentences, 5-card template
 - `structured-reading` → 5 sentences, 5-card template
 
 ### 7-Card (2)
+
 - `week-ahead` → 7 sentences, 7-card template (timeline mode)
 - `relationship-double-significator` → 7 sentences, 7-card template
 
 ### 9-Card (1)
+
 - `comprehensive` → 7 sentences, 9-card template (3x3 layout)
 
 ### 36-Card (1)
+
 - `grand-tableau` → 9 sentences, 36-card template (4 paragraphs)
 
 ## Key Features
 
 ### 1. **Modular Design**
+
 Each module has one job:
+
 - `spreadRules.ts` → Define spreads
 - `deadline.ts` → Calculate deadlines
 - `taskGen.ts` → Generate tasks
 - `agent.ts` → Orchestrate
 
 ### 2. **Type Safety**
+
 ```typescript
 interface SpreadRule {
-  template: '1-card' | '3-card' | '5-card' | '7-card' | '9-card' | '36-card'
-  sentences: number
-  positions: string[]
-  beats: string[]
-  positionalLabels: string[]
-  requiresPolarity?: boolean
-  isTimeline?: boolean
-  requiresParagraphs?: number
-  requiresMinimumMentions?: number
+  template: "1-card" | "3-card" | "5-card" | "7-card" | "9-card" | "36-card";
+  sentences: number;
+  positions: string[];
+  beats: string[];
+  positionalLabels: string[];
+  requiresPolarity?: boolean;
+  isTimeline?: boolean;
+  requiresParagraphs?: number;
+  requiresMinimumMentions?: number;
 }
 ```
 
 ### 3. **Template-Based Tone Enforcement**
+
 Instead of 80+ validation rules, one example per template teaches DeepSeek the voice:
 
 ```typescript
 const TEMPLATE_3_CARD = `A close friend (Dog) ghosts you after an abrupt cut (Coffin), 
 leaving the week stuck (Mountain). The silence breaks next Thursday—send one check-in 
 text before then; if they don't bite, let the friendship sleep. Watch for the icy reply 
-around Thursday evening.`
+around Thursday evening.`;
 ```
 
 ### 4. **Deadline Rounding**
+
 `pipToDeadline(pip)` rounds to nearest Friday or Thursday:
+
 - Pip 3 → "by Thursday evening" (~3 days)
 - Pip 7 → "by Friday evening" (~7 days)
 - Pip 14+ → "by Friday evening" (capped at 2 weeks)
 
 ### 5. **Card-Driven Tasks**
+
 `makeTask(beat, cards)` generates imperative actions:
+
 - **Ring** → "Sign the document"
 - **Letter** → "Send the message"
 - **Key** → "Act on the solution"
@@ -119,7 +133,9 @@ around Thursday evening.`
 - **Default** → "Take the next step"
 
 ### 6. **Backward Compatibility**
+
 Old `AIReadingResponse { reading }` still works. New fields are additive:
+
 ```typescript
 {
   reading: "...",           // ← Old field (still there)
@@ -140,6 +156,7 @@ npm run test
 ```
 
 **Test coverage:**
+
 - ✅ All 12 spreads generate valid responses
 - ✅ Sentence counts match spread rules
 - ✅ Deadlines always end with "evening"
@@ -154,12 +171,14 @@ npm run test
 ## Integration Points
 
 ### Frontend
+
 - `ReadingViewer.tsx` → Uses `SPREAD_RULES[spreadId].positionalLabels`
 - `CardInterpretation.tsx` → Uses `SPREAD_RULES[spreadId].positionalLabels`
 - `app/read/new/page.tsx` → Calls API `/api/readings/interpret` with `{ spreadId, cards, question }`
 - `AIReadingDisplay.tsx` → Displays reading with deadline and task
 
 ### API Route: `/api/readings/interpret`
+
 ```
 POST /api/readings/interpret
 ├─ Request: { cards, question, spreadId, position }
@@ -167,6 +186,7 @@ POST /api/readings/interpret
 ```
 
 ### Backend Flow
+
 ```
 POST /api/readings/interpret
   ↓
@@ -189,6 +209,7 @@ getAIReading(AIReadingRequest)
 ```
 
 ### Card Reference Format
+
 - **Requirement:** Each card mentioned exactly once in parentheses format: `(CardName)`
 - **Validation:** `MarieAnneAgent.validateCardReferences(story, cards, spreadSize)`
 - **Enforced for spreads:** 9+ cards (comprehensive and grand-tableau)
@@ -196,24 +217,26 @@ getAIReading(AIReadingRequest)
 
 ## Performance
 
-| Metric | Value |
-|--------|-------|
-| Code size reduction | -311 lines (-58%) |
-| Validation simplification | 87% fewer checks |
-| Template coverage | 100% (all 12 spreads) |
-| Test coverage | 100% (26 tests) |
-| Type safety | Full (TypeScript) |
-| Backward compatibility | 100% |
+| Metric                    | Value                 |
+| ------------------------- | --------------------- |
+| Code size reduction       | -311 lines (-58%)     |
+| Validation simplification | 87% fewer checks      |
+| Template coverage         | 100% (all 12 spreads) |
+| Test coverage             | 100% (26 tests)       |
+| Type safety               | Full (TypeScript)     |
+| Backward compatibility    | 100%                  |
 
 ## Deployment
 
 ### Build
+
 ```bash
 npm run build
 # ✓ Compiled successfully
 ```
 
 ### Tests
+
 ```bash
 npm run test
 # Test Files  3 passed (3)
@@ -221,6 +244,7 @@ npm run test
 ```
 
 ### Production Ready
+
 - ✅ No breaking changes
 - ✅ Fully typed with TypeScript
 - ✅ 100% test coverage (61 tests)
@@ -232,6 +256,7 @@ npm run test
 ## Implementation Status
 
 ### Completed ✅
+
 - ✅ MarieAnneAgent class with all 6 templates
 - ✅ All 12 spreads with metadata
 - ✅ (CardName) format enforcement and validation
@@ -244,6 +269,7 @@ npm run test
 - ✅ Card reference validation for 9+ card spreads
 
 ### Recent Commits
+
 - `17e1e36` — Remove unused import from API route
 - `ff37808` — Integrate MarieAnneAgent into deepseek API
 - `161030f` — Restore authentic (CardName) format

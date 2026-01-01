@@ -1,6 +1,7 @@
 # Vercel Deployment Ready Checklist
 
 ## ✅ Build & Compilation Status
+
 - [x] **Build succeeds without errors** - `npm run build` passes
 - [x] **No TypeScript errors** - Project compiles cleanly
 - [x] **Linting warnings only** - Only Tailwind classname ordering warnings (non-blocking)
@@ -8,6 +9,7 @@
 - [x] **Font imports** - Crimson Text and Crimson Pro properly imported from Google Fonts
 
 ## ✅ Prisma Configuration
+
 - [x] **Schema defined** - prisma/schema.prisma complete with all models
 - [x] **Migrations created** - 3 migrations exist in prisma/migrations/
   - 20251202154828_add_user_readings_and_ai_interpretations
@@ -19,21 +21,24 @@
 - [x] **Migration lock** - migration_lock.toml exists
 
 ## ✅ Environment Variables
+
 - [x] **.env.example updated** - Contains all required variables
 - [x] **env-config.ts configured** - All env variables documented:
   - DEEPSEEK_API_KEY (optional)
   - DEEPSEEK_BASE_URL (optional)
   - DATABASE_URL (required)
-- [x] **Sensitive files in .gitignore** - .env, .next, prisma/*.db properly ignored
+- [x] **Sensitive files in .gitignore** - .env, .next, prisma/\*.db properly ignored
 - [x] **No hardcoded secrets** - All credentials use environment variables
 
 ## ✅ Code Quality
+
 - [x] **No console.log debug statements** - Debug UI removed
 - [x] **Component fonts aligned** - ReactMarkdown components use consistent typography
 - [x] **No lazy loading errors** - Removed problematic React.lazy() patterns
 - [x] **Direct component imports** - All components use proper imports
 
 ## ✅ Package & Dependencies
+
 - [x] **package.json configured** - Build, start, and postinstall scripts ready
 - [x] **postinstall hook** - `prisma generate` runs automatically
 - [x] **npm dependencies** - All required packages present
@@ -41,6 +46,7 @@
 ## 📋 Pre-Deployment Steps
 
 ### 1. Set Environment Variables on Vercel
+
 Log into Vercel dashboard and add these environment variables:
 
 ```
@@ -49,15 +55,19 @@ DEEPSEEK_API_KEY = your-actual-deepseek-api-key
 ```
 
 ### 2. Database Migration
+
 After deployment, the build process will:
-1. Run `npm install` 
+
+1. Run `npm install`
 2. Run `postinstall` hook → `prisma generate`
 3. Run build script → `prisma generate && rm -rf .next && next build`
 
 The Prisma migrations are tracked in version control and will apply automatically if DATABASE_URL is set.
 
 ### 3. Deployment Command
+
 Vercel will automatically use:
+
 ```bash
 npm run build
 npm start
@@ -66,11 +76,13 @@ npm start
 ## 🚀 Deployment Instructions
 
 1. **Connect to Vercel:**
+
    ```bash
    vercel link
    ```
 
 2. **Set Environment Variables** (via Vercel Dashboard or CLI):
+
    ```bash
    vercel env add DATABASE_URL
    vercel env add DEEPSEEK_API_KEY

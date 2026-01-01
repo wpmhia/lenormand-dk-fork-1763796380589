@@ -1,17 +1,15 @@
-"use client"
+"use client";
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Home, ArrowLeft } from 'lucide-react'
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Home, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-6 text-center">
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-foreground">
-            404
-          </h1>
+          <h1 className="text-4xl font-bold text-foreground">404</h1>
           <h2 className="text-2xl font-semibold text-foreground">
             Reading Not Found
           </h2>
@@ -38,5 +36,5 @@ export default function NotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

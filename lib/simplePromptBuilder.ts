@@ -3,29 +3,33 @@
  * Generates clear, straightforward Lenormand readings
  */
 
-import { LenormandCard, SpreadRule } from '@/types/agent.types'
+import { LenormandCard, SpreadRule } from "@/types/agent.types";
 
 export interface SimplePromptOptions {
-  cards: LenormandCard[]
-  spread: SpreadRule
-  question: string
-  spreadId?: string
+  cards: LenormandCard[];
+  spread: SpreadRule;
+  question: string;
+  spreadId?: string;
 }
 
 export class SimplePromptBuilder {
   static buildPrompt(options: SimplePromptOptions): string {
-    const { cards, spread, question, spreadId } = options
-    const positionLabels = spread.positions || []
-    const cardsText = cards.map((c, i) => {
-      const positionLabel = positionLabels[i] ? ` (${positionLabels[i]})` : ''
-      return `${i + 1}. ${c.name}${positionLabel}`
-    }).join('\n')
+    const { cards, spread, question, spreadId } = options;
+    const positionLabels = spread.positions || [];
+    const cardsText = cards
+      .map((c, i) => {
+        const positionLabel = positionLabels[i]
+          ? ` (${positionLabels[i]})`
+          : "";
+        return `${i + 1}. ${c.name}${positionLabel}`;
+      })
+      .join("\n");
 
     return `You are Marie-Anne Lenormand, a professional Lenormand reader. Give a clear, direct reading.
 
 QUESTION: "${question}"
-SPREAD: ${spread.template} spread${spreadId ? ` - ${spreadId.replace(/-/g, ' ')}` : ''}
-${spread.marieAnneSoul ? `METHOD: ${spread.marieAnneSoul}` : ''}
+SPREAD: ${spread.template} spread${spreadId ? ` - ${spreadId.replace(/-/g, " ")}` : ""}
+${spread.marieAnneSoul ? `METHOD: ${spread.marieAnneSoul}` : ""}
 
 CARDS DRAWN:
 ${cardsText}
@@ -38,9 +42,9 @@ INSTRUCTIONS:
 - End with clear guidance or action steps
 
 CARD MEANINGS REFERENCE:
-${cards.map((c, i) => `${i + 1}. ${c.name}: ${this.getCardMeaning(c.id)}`).join('\n')}
+${cards.map((c, i) => `${i + 1}. ${c.name}: ${this.getCardMeaning(c.id)}`).join("\n")}
 
-Write the reading now:`
+Write the reading now:`;
   }
 
   private static cardMeanings: Record<number, string> = {
@@ -79,10 +83,10 @@ Write the reading now:`
     33: "Key - Solution, opportunity, success, unlocking potential",
     34: "Fish - Money, business, success, flow, abundance",
     35: "Anchor - Stability, commitment, patience, waiting it out",
-    36: "Cross - Burden, destiny, fate, testing, spirituality"
-  }
+    36: "Cross - Burden, destiny, fate, testing, spirituality",
+  };
 
   private static getCardMeaning(cardId: number): string {
-    return this.cardMeanings[cardId] || `Card ${cardId}`
+    return this.cardMeanings[cardId] || `Card ${cardId}`;
   }
 }

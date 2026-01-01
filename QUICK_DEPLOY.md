@@ -3,6 +3,7 @@
 ## 🚀 Deploy in 3 Steps
 
 ### Step 1: Set Environment Variables
+
 Add these to your deployment platform (Vercel/Netlify/Railway):
 
 ```bash
@@ -16,16 +17,19 @@ DEEPSEEK_BASE_URL="https://api.deepseek.com"
 ### Step 2: Deploy
 
 **Vercel (Recommended)**
+
 ```bash
 npx vercel --prod
 ```
 
 **Or push to GitHub**
+
 ```bash
 git push origin main
 ```
 
 ### Step 3: Verify
+
 ```bash
 ./verify-production.sh https://your-app-url.com
 ```
@@ -33,11 +37,13 @@ git push origin main
 ---
 
 ## ✅ Pre-Deploy Checklist
+
 - [ ] Environment variables set in platform
 - [ ] DATABASE_URL points to your Neon database
 - [ ] Code committed to Git
 
 ## ✅ Post-Deploy Checklist
+
 - [ ] Visit `/api/health` - should return `{"status":"ok"}`
 - [ ] Test homepage loads
 - [ ] Create a test reading
@@ -46,6 +52,7 @@ git push origin main
 ---
 
 ## 🎯 Build Info
+
 - **Framework**: Next.js 14.2.31
 - **Database**: Neon PostgreSQL
 - **Pages**: 58 (40 static, 18 dynamic)
@@ -55,6 +62,7 @@ git push origin main
 ---
 
 ## 📚 Full Documentation
+
 See `DEPLOYMENT_READY.md` for complete guide.
 
 ---

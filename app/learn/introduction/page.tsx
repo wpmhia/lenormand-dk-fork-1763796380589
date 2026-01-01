@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { BreadcrumbNav } from '@/components/BreadcrumbNav'
-import { LearningProgressTracker } from '@/components/LearningProgressTracker'
-import { BackToTop } from '@/components/BackToTop'
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { LearningProgressTracker } from "@/components/LearningProgressTracker";
+import { BackToTop } from "@/components/BackToTop";
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,8 +16,8 @@ import {
   Users,
   Star,
   Clock,
-  Target
-} from 'lucide-react'
+  Target,
+} from "lucide-react";
 
 export default function IntroductionPage() {
   return (
@@ -27,9 +27,9 @@ export default function IntroductionPage() {
         <div className="container mx-auto max-w-4xl px-4 py-4">
           <BreadcrumbNav
             items={[
-              { name: 'Home', url: '/' },
-              { name: 'Learn', url: '/learn' },
-              { name: 'Introduction', url: '/learn/introduction' },
+              { name: "Home", url: "/" },
+              { name: "Learn", url: "/learn" },
+              { name: "Introduction", url: "/learn/introduction" },
             ]}
           />
         </div>
@@ -40,21 +40,29 @@ export default function IntroductionPage() {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/learn">
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary/80"
+              >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Course
               </Button>
             </Link>
-             <div className="flex items-center space-x-2">
-               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                 Module 1 of 6
-               </Badge>
-               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                 Beginner
-               </Badge>
-             </div>
+            <div className="flex items-center space-x-2">
+              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+                Module 1 of 6
+              </Badge>
+              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+                Beginner
+              </Badge>
+            </div>
             <Link href="/learn/history">
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary/80"
+              >
                 Next Module
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -71,11 +79,12 @@ export default function IntroductionPage() {
               <BookOpen className="h-8 w-8 text-white" />
             </div>
           </div>
-           <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
+          <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
             Introduction to Lenormand
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Welcome to the fascinating world of Lenormand divination. Let&apos;s explore what makes this 36-card oracle so special and powerful.
+            Welcome to the fascinating world of Lenormand divination. Let&apos;s
+            explore what makes this 36-card oracle so special and powerful.
           </p>
           <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-primary">
             <div className="flex items-center">
@@ -92,18 +101,35 @@ export default function IntroductionPage() {
         {/* What is Lenormand */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle id="what-is-lenormand" className="flex items-center text-2xl text-foreground">
+            <CardTitle
+              id="what-is-lenormand"
+              className="flex items-center text-2xl text-foreground"
+            >
               <Sparkles className="mr-3 h-6 w-6 text-primary" />
               What is Lenormand?
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-             <p className="leading-relaxed text-muted-foreground">
-               Lenormand is a form of cartomancy (divination using cards) that originated in 18th century France. Unlike Tarot&apos;s esoteric symbolism, Lenormand speaks in the language of everyday symbols and practical wisdom. Its 36 cards represent concrete concepts, people, and situations that mirror real life.
-             </p>
-             <p className="leading-relaxed text-muted-foreground">
-               The modern 36-card deck and its interpretation methods became known as Lenormand in the 19th century, posthumously associated with the legendary French fortune teller Marie Anne Adelaide Lenormand. While she didn&apos;t leave behind a documented system for this specific deck, the symbolic language and reading traditions connected to her name reflect the evolution of divination during and after her era. This platform offers an interpretation inspired by the spirit of Lenormand readings as they developed historically, providing clear, direct guidance on relationships, career, health, and life&apos;s important decisions.
-             </p>
+            <p className="leading-relaxed text-muted-foreground">
+              Lenormand is a form of cartomancy (divination using cards) that
+              originated in 18th century France. Unlike Tarot&apos;s esoteric
+              symbolism, Lenormand speaks in the language of everyday symbols
+              and practical wisdom. Its 36 cards represent concrete concepts,
+              people, and situations that mirror real life.
+            </p>
+            <p className="leading-relaxed text-muted-foreground">
+              The modern 36-card deck and its interpretation methods became
+              known as Lenormand in the 19th century, posthumously associated
+              with the legendary French fortune teller Marie Anne Adelaide
+              Lenormand. While she didn&apos;t leave behind a documented system
+              for this specific deck, the symbolic language and reading
+              traditions connected to her name reflect the evolution of
+              divination during and after her era. This platform offers an
+              interpretation inspired by the spirit of Lenormand readings as
+              they developed historically, providing clear, direct guidance on
+              relationships, career, health, and life&apos;s important
+              decisions.
+            </p>
           </CardContent>
         </Card>
 
@@ -155,27 +181,34 @@ export default function IntroductionPage() {
                 <div className="flex items-start space-x-3">
                   <Target className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Direct Answers</h3>
+                    <h3 className="font-semibold text-foreground">
+                      Direct Answers
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                      Get clear, practical guidance without esoteric interpretation
+                      Get clear, practical guidance without esoteric
+                      interpretation
                     </p>
                   </div>
                 </div>
-                 <div className="flex items-start space-x-3">
-                   <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-                   <div>
-                     <h3 className="font-semibold text-foreground">Relationship Focus</h3>
-                     <p className="text-sm text-muted-foreground">
-                       Excel at understanding interpersonal dynamics and emotions
-                     </p>
-                   </div>
-                 </div>
+                <div className="flex items-start space-x-3">
+                  <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">
+                      Relationship Focus
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Excel at understanding interpersonal dynamics and emotions
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Timing Insights</h3>
+                    <h3 className="font-semibold text-foreground">
+                      Timing Insights
+                    </h3>
                     <p className="text-sm text-muted-foreground">
                       Understand when events will occur with remarkable accuracy
                     </p>
@@ -184,9 +217,12 @@ export default function IntroductionPage() {
                 <div className="flex items-start space-x-3">
                   <BookOpen className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div>
-                    <h3 className="font-semibold text-foreground">Accessible Learning</h3>
+                    <h3 className="font-semibold text-foreground">
+                      Accessible Learning
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                      Master the system quickly with concrete meanings and associations
+                      Master the system quickly with concrete meanings and
+                      associations
                     </p>
                   </div>
                 </div>
@@ -210,9 +246,12 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">1</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">History & Origins</h3>
+                  <h3 className="font-semibold text-foreground">
+                    History & Origins
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    Discover the fascinating story behind Lenormand and its evolution
+                    Discover the fascinating story behind Lenormand and its
+                    evolution
                   </p>
                 </div>
               </div>
@@ -221,7 +260,9 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">2</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Reading Fundamentals</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Reading Fundamentals
+                  </h3>
                   <p className="text-sm text-muted-foreground">
                     Master the art of reading cards as meaningful sentences
                   </p>
@@ -232,7 +273,9 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">3</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Card Meanings</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Card Meanings
+                  </h3>
                   <p className="text-sm text-muted-foreground">
                     Learn all 36 card meanings and their symbolic associations
                   </p>
@@ -243,7 +286,9 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">4</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Spreads & Techniques</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Spreads & Techniques
+                  </h3>
                   <p className="text-sm text-muted-foreground">
                     Discover powerful spreads and advanced reading methods
                   </p>
@@ -254,9 +299,12 @@ export default function IntroductionPage() {
                   <span className="text-xs font-bold text-white">5</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Advanced Concepts</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Advanced Concepts
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    Time associations, playing cards, and cultural interpretations
+                    Time associations, playing cards, and cultural
+                    interpretations
                   </p>
                 </div>
               </div>
@@ -264,29 +312,32 @@ export default function IntroductionPage() {
           </CardContent>
         </Card>
 
-         {/* Progress Tracker */}
-         <div className="mb-8">
-           <LearningProgressTracker moduleId="introduction" />
-         </div>
+        {/* Progress Tracker */}
+        <div className="mb-8">
+          <LearningProgressTracker moduleId="introduction" />
+        </div>
 
-         {/* Navigation */}
-         <div className="flex items-center justify-between border-t border-border pt-8">
-           <Link href="/learn">
-             <Button variant="outline" className="border-border text-card-foreground hover:bg-muted">
-               <ArrowLeft className="mr-2 h-4 w-4" />
-               Back to Course Overview
-             </Button>
-           </Link>
-           <Link href="/learn/history">
-             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-               Continue to History
-               <ArrowRight className="ml-2 h-4 w-4" />
-             </Button>
-           </Link>
-         </div>
+        {/* Navigation */}
+        <div className="flex items-center justify-between border-t border-border pt-8">
+          <Link href="/learn">
+            <Button
+              variant="outline"
+              className="border-border text-card-foreground hover:bg-muted"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Course Overview
+            </Button>
+          </Link>
+          <Link href="/learn/history">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+              Continue to History
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <BackToTop />
     </div>
-  )
+  );
 }

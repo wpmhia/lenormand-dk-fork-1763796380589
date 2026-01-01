@@ -83,6 +83,7 @@ Prisma automatically detects and applies pending migrations on app startup.
 ## API Endpoints
 
 ### Feedback Recording
+
 ```
 POST /api/feedback
 {
@@ -95,11 +96,13 @@ POST /api/feedback
 ```
 
 ### Analytics
+
 ```
 GET /api/feedback/analytics
 ```
 
 ### Feedback List
+
 ```
 GET /api/feedback/list?type=helpful&limit=50&offset=0
 ```
@@ -107,6 +110,7 @@ GET /api/feedback/list?type=helpful&limit=50&offset=0
 ## Monitoring
 
 ### Health Endpoint
+
 ```
 GET /api/health
 ```
@@ -116,6 +120,7 @@ Returns database connection status and basic stats.
 ### Error Logging
 
 Errors are logged to console. In production, configure:
+
 - Sentry for error tracking
 - Vercel Analytics for performance monitoring
 

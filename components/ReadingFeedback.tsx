@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { ThumbsUp, ThumbsDown, MessageSquare, Send } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { ThumbsUp, ThumbsDown, MessageSquare, Send } from "lucide-react";
+import { toast } from "sonner";
 
 interface ReadingFeedbackProps {
-  readingId?: string
-  aiInterpretationId?: string
-  spreadId?: string
-  question?: string
-  onFeedbackSubmitted?: () => void
+  readingId?: string;
+  aiInterpretationId?: string;
+  spreadId?: string;
+  question?: string;
+  onFeedbackSubmitted?: () => void;
 }
 
 export function ReadingFeedback({
@@ -22,79 +22,85 @@ export function ReadingFeedback({
   aiInterpretationId,
   spreadId,
   question,
-  onFeedbackSubmitted
+  onFeedbackSubmitted,
 }: ReadingFeedbackProps) {
-  const [feedbackType, setFeedbackType] = useState<'helpful' | 'unhelpful' | null>(null)
-  const [comments, setComments] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [feedbackType, setFeedbackType] = useState<
+    "helpful" | "unhelpful" | null
+  >(null);
+  const [comments, setComments] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleFeedback = async (type: 'helpful' | 'unhelpful') => {
-    if (submitted) return
+  const handleFeedback = async (type: "helpful" | "unhelpful") => {
+    if (submitted) return;
 
     // Toggle: if clicking the same button, clear the selection
     if (feedbackType === type) {
-      setFeedbackType(null)
-      setComments('')
-      return
+      setFeedbackType(null);
+      setComments("");
+      return;
     }
 
     // If selecting a different button, update the feedback type
-    setFeedbackType(type)
-  }
+    setFeedbackType(type);
+  };
 
   const handleSubmitFeedback = async () => {
-    if (!feedbackType || submitted) return
+    if (!feedbackType || submitted) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
+      const response = await fetch("/api/feedback", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          isHelpful: feedbackType === 'helpful',
+          isHelpful: feedbackType === "helpful",
           question,
           spreadId,
           aiInterpretationId,
           userReadingId: readingId,
-          comments: comments.trim() || undefined
+          comments: comments.trim() || undefined,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        setSubmitted(true)
-        toast.success(feedbackType === 'helpful' ? 'Thank you for the positive feedback!' : 'Thank you for your feedback. We\'re working to improve.')
-        onFeedbackSubmitted?.()
+        setSubmitted(true);
+        toast.success(
+          feedbackType === "helpful"
+            ? "Thank you for the positive feedback!"
+            : "Thank you for your feedback. We're working to improve.",
+        );
+        onFeedbackSubmitted?.();
       } else {
-        toast.error(data.error || 'Failed to submit feedback')
+        toast.error(data.error || "Failed to submit feedback");
       }
     } catch (error) {
-      console.error('Failed to submit feedback:', error)
-      toast.error('Failed to submit feedback')
+      console.error("Failed to submit feedback:", error);
+      toast.error("Failed to submit feedback");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
-
-
+  };
 
   if (submitted) {
     return (
       <Card>
         <CardContent className="pt-6">
           <div className="text-center text-muted-foreground">
-            <MessageSquare className="h-8 w-8 mx-auto mb-2 text-primary" />
+            <MessageSquare className="mx-auto mb-2 h-8 w-8 text-primary" />
             <p>Thank you for your feedback!</p>
-            <p className="text-sm mt-1">Your input helps us improve our readings.</p>
+            <p className="mt-1 text-sm">
+              Your input helps us improve our readings.
+            </p>
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -108,9 +114,9 @@ export function ReadingFeedback({
       <CardContent className="space-y-4">
         <div className="flex gap-2">
           <Button
-            variant={feedbackType === 'helpful' ? 'default' : 'outline'}
+            variant={feedbackType === "helpful" ? "default" : "outline"}
             size="sm"
-            onClick={() => handleFeedback('helpful')}
+            onClick={() => handleFeedback("helpful")}
             disabled={isSubmitting}
             className="flex-1 gap-2"
           >
@@ -118,9 +124,9 @@ export function ReadingFeedback({
             Helpful
           </Button>
           <Button
-            variant={feedbackType === 'unhelpful' ? 'default' : 'outline'}
+            variant={feedbackType === "unhelpful" ? "default" : "outline"}
             size="sm"
-            onClick={() => handleFeedback('unhelpful')}
+            onClick={() => handleFeedback("unhelpful")}
             disabled={isSubmitting}
             className="flex-1 gap-2"
           >
@@ -133,13 +139,12 @@ export function ReadingFeedback({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Badge variant="secondary">
-                {feedbackType === 'helpful' ? '👍 Helpful' : '👎 Not helpful'}
+                {feedbackType === "helpful" ? "👍 Helpful" : "👎 Not helpful"}
               </Badge>
               <span className="text-sm text-muted-foreground">
-                {feedbackType === 'helpful'
-                  ? 'Great! Want to share more details?'
-                  : 'Sorry to hear that. How can we improve?'
-                }
+                {feedbackType === "helpful"
+                  ? "Great! Want to share more details?"
+                  : "Sorry to hear that. How can we improve?"}
               </span>
             </div>
 
@@ -164,17 +169,17 @@ export function ReadingFeedback({
               className="w-full gap-2"
             >
               <Send className="h-4 w-4" />
-              {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+              {isSubmitting ? "Submitting..." : "Submit Feedback"}
             </Button>
           </div>
         )}
 
         {!feedbackType && (
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-center text-sm text-muted-foreground">
             Your feedback helps us improve our AI readings
           </p>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

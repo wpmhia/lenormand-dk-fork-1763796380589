@@ -1,42 +1,59 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { CardMeaning } from '@/lib/types'
-import Link from 'next/link'
-import { Heart, Briefcase, Calendar, CheckCircle, AlertCircle } from 'lucide-react'
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { CardMeaning } from "@/lib/types";
+import Link from "next/link";
+import {
+  Heart,
+  Briefcase,
+  Calendar,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 
 interface MeaningSectionProps {
-  title: string
-  content: string | null
+  title: string;
+  content: string | null;
 }
 
 export function MeaningSection({ title, content }: MeaningSectionProps) {
-  if (!content) return null
-  
+  if (!content) return null;
+
   return (
     <div className="space-y-2">
       <h3 className="text-lg font-semibold text-foreground">{title}</h3>
       <p className="leading-relaxed text-muted-foreground">{content}</p>
     </div>
-  )
+  );
 }
 
 interface AspectListProps {
-  title: string
-  aspects: string[]
-  variant?: 'positive' | 'negative'
+  title: string;
+  aspects: string[];
+  variant?: "positive" | "negative";
 }
 
-export function AspectList({ title, aspects, variant = 'positive' }: AspectListProps) {
-  if (!aspects || aspects.length === 0) return null
+export function AspectList({
+  title,
+  aspects,
+  variant = "positive",
+}: AspectListProps) {
+  if (!aspects || aspects.length === 0) return null;
 
-  const bulletColor = variant === 'positive' ? 'text-primary' : 'text-destructive'
-  const bgColor = variant === 'positive' ? 'bg-primary/10' : 'bg-destructive/10'
-  const icon = variant === 'positive' ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />
+  const bulletColor =
+    variant === "positive" ? "text-primary" : "text-destructive";
+  const bgColor =
+    variant === "positive" ? "bg-primary/10" : "bg-destructive/10";
+  const icon =
+    variant === "positive" ? (
+      <CheckCircle className="h-4 w-4" />
+    ) : (
+      <AlertCircle className="h-4 w-4" />
+    );
 
   return (
     <div className="space-y-3">
@@ -48,112 +65,143 @@ export function AspectList({ title, aspects, variant = 'positive' }: AspectListP
         <ul className="space-y-2">
           {aspects.map((aspect, index) => (
             <li key={index} className="flex items-start gap-3">
-              <span className={`${bulletColor} font-bold text-lg`}>•</span>
+              <span className={`${bulletColor} text-lg font-bold`}>•</span>
               <span className="text-foreground">{aspect}</span>
             </li>
           ))}
         </ul>
       </div>
     </div>
-  )
+  );
 }
 
 interface TwoColumnAspectsProps {
-  positiveTitle: string
-  positiveAspects: string[]
-  negativeTitle: string
-  negativeAspects: string[]
+  positiveTitle: string;
+  positiveAspects: string[];
+  negativeTitle: string;
+  negativeAspects: string[];
 }
 
 export function TwoColumnAspects({
   positiveTitle,
   positiveAspects,
   negativeTitle,
-  negativeAspects
+  negativeAspects,
 }: TwoColumnAspectsProps) {
-  if ((!positiveAspects || positiveAspects.length === 0) && (!negativeAspects || negativeAspects.length === 0)) {
-    return null
+  if (
+    (!positiveAspects || positiveAspects.length === 0) &&
+    (!negativeAspects || negativeAspects.length === 0)
+  ) {
+    return null;
   }
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {positiveAspects && positiveAspects.length > 0 && (
-        <AspectList title={positiveTitle} aspects={positiveAspects} variant="positive" />
+        <AspectList
+          title={positiveTitle}
+          aspects={positiveAspects}
+          variant="positive"
+        />
       )}
       {negativeAspects && negativeAspects.length > 0 && (
-        <AspectList title={negativeTitle} aspects={negativeAspects} variant="negative" />
+        <AspectList
+          title={negativeTitle}
+          aspects={negativeAspects}
+          variant="negative"
+        />
       )}
     </div>
-  )
+  );
 }
 
 interface ContextualMeaningProps {
-  icon: React.ReactNode
-  title: string
-  content: string | null | undefined
+  icon: React.ReactNode;
+  title: string;
+  content: string | null | undefined;
 }
 
-export function ContextualMeaning({ icon, title, content }: ContextualMeaningProps) {
-  if (!content) return null
-  
+export function ContextualMeaning({
+  icon,
+  title,
+  content,
+}: ContextualMeaningProps) {
+  if (!content) return null;
+
   return (
-    <div className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 transition-colors">
+    <div className="rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/50">
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5 text-primary">{icon}</div>
+        <div className="mt-0.5 flex-shrink-0 text-primary">{icon}</div>
         <div>
-          <h4 className="font-semibold text-foreground mb-2">{title}</h4>
-          <p className="text-sm leading-relaxed text-muted-foreground">{content}</p>
+          <h4 className="mb-2 font-semibold text-foreground">{title}</h4>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {content}
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface CardComboItemProps {
-  relatedCardId: number
-  relatedCardName: string
-  meaning: string
+  relatedCardId: number;
+  relatedCardName: string;
+  meaning: string;
 }
 
-export function CardComboItem({ relatedCardId, relatedCardName, meaning }: CardComboItemProps) {
+export function CardComboItem({
+  relatedCardId,
+  relatedCardName,
+  meaning,
+}: CardComboItemProps) {
   return (
     <Link href={`/cards/${relatedCardId}`}>
-      <div className="group rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-lg hover:-translate-y-1">
-        <div className="flex items-center gap-3 mb-3">
+      <div className="group rounded-lg border border-border bg-card p-4 transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg">
+        <div className="mb-3 flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
             {relatedCardId}
           </div>
-          <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+          <p className="font-medium text-foreground transition-colors group-hover:text-primary">
             {relatedCardName}
           </p>
         </div>
-        <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">{meaning}</p>
+        <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+          {meaning}
+        </p>
       </div>
     </Link>
-  )
+  );
 }
 
 interface ComboGridProps {
-  combos: Array<{ withCardId: number; meaning: string }>
-  getCardName: (id: number) => string
-  searchTerm?: string
+  combos: Array<{ withCardId: number; meaning: string }>;
+  getCardName: (id: number) => string;
+  searchTerm?: string;
 }
 
-export function ComboGrid({ combos, getCardName, searchTerm = '' }: ComboGridProps) {
-  if (!combos || combos.length === 0) return null
+export function ComboGrid({
+  combos,
+  getCardName,
+  searchTerm = "",
+}: ComboGridProps) {
+  if (!combos || combos.length === 0) return null;
 
   const filteredCombos = searchTerm
-    ? combos.filter(combo =>
-        getCardName(combo.withCardId).toLowerCase().includes(searchTerm.toLowerCase())
+    ? combos.filter((combo) =>
+        getCardName(combo.withCardId)
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()),
       )
-    : combos
+    : combos;
 
   if (filteredCombos.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
-        <p className="text-muted-foreground">No combinations found for &quot;{searchTerm}&quot;</p>
+        <p className="text-muted-foreground">
+          No combinations found for &quot;{searchTerm}&quot;
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -167,30 +215,38 @@ export function ComboGrid({ combos, getCardName, searchTerm = '' }: ComboGridPro
         />
       ))}
     </div>
-  )
+  );
 }
 
 interface ComboListProps {
-  combos: Array<{ withCardId: number; meaning: string }>
-  getCardName: (id: number) => string
-  searchTerm?: string
+  combos: Array<{ withCardId: number; meaning: string }>;
+  getCardName: (id: number) => string;
+  searchTerm?: string;
 }
 
-export function ComboList({ combos, getCardName, searchTerm = '' }: ComboListProps) {
-  if (!combos || combos.length === 0) return null
+export function ComboList({
+  combos,
+  getCardName,
+  searchTerm = "",
+}: ComboListProps) {
+  if (!combos || combos.length === 0) return null;
 
   const filteredCombos = searchTerm
-    ? combos.filter(combo =>
-        getCardName(combo.withCardId).toLowerCase().includes(searchTerm.toLowerCase())
+    ? combos.filter((combo) =>
+        getCardName(combo.withCardId)
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()),
       )
-    : combos
+    : combos;
 
   if (filteredCombos.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border p-8 text-center">
-        <p className="text-muted-foreground">No combinations found for &quot;{searchTerm}&quot;</p>
+        <p className="text-muted-foreground">
+          No combinations found for &quot;{searchTerm}&quot;
+        </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -203,42 +259,52 @@ export function ComboList({ combos, getCardName, searchTerm = '' }: ComboListPro
                 {combo.withCardId}
               </div>
               <div>
-                <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                <p className="font-medium text-foreground transition-colors group-hover:text-primary">
                   {getCardName(combo.withCardId)}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
                   {combo.meaning}
                 </p>
               </div>
             </div>
-            <div className="text-muted-foreground group-hover:text-primary transition-colors">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <div className="text-muted-foreground transition-colors group-hover:text-primary">
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </div>
           </div>
         </Link>
       ))}
     </div>
-  )
+  );
 }
 
 interface ComboSectionProps {
-  combos: Array<{ withCardId: number; meaning: string }>
-  getCardName: (id: number) => string
+  combos: Array<{ withCardId: number; meaning: string }>;
+  getCardName: (id: number) => string;
 }
 
 export function ComboSection({ combos, getCardName }: ComboSectionProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  if (!combos || combos.length === 0) return null
+  if (!combos || combos.length === 0) return null;
 
   return (
     <div className="space-y-6">
       {/* Search and View Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative max-w-md flex-1">
           <Input
             placeholder="Search combinations by card name..."
             value={searchTerm}
@@ -248,16 +314,16 @@ export function ComboSection({ combos, getCardName }: ComboSectionProps) {
         </div>
         <div className="flex gap-2">
           <Button
-            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            variant={viewMode === "grid" ? "default" : "outline"}
             size="sm"
-            onClick={() => setViewMode('grid')}
+            onClick={() => setViewMode("grid")}
           >
             Grid
           </Button>
           <Button
-            variant={viewMode === 'list' ? 'default' : 'outline'}
+            variant={viewMode === "list" ? "default" : "outline"}
             size="sm"
-            onClick={() => setViewMode('list')}
+            onClick={() => setViewMode("list")}
           >
             List
           </Button>
@@ -265,23 +331,36 @@ export function ComboSection({ combos, getCardName }: ComboSectionProps) {
       </div>
 
       {/* Combo Display */}
-      {viewMode === 'grid' ? (
-        <ComboGrid combos={combos} getCardName={getCardName} searchTerm={searchTerm} />
+      {viewMode === "grid" ? (
+        <ComboGrid
+          combos={combos}
+          getCardName={getCardName}
+          searchTerm={searchTerm}
+        />
       ) : (
-        <ComboList combos={combos} getCardName={getCardName} searchTerm={searchTerm} />
+        <ComboList
+          combos={combos}
+          getCardName={getCardName}
+          searchTerm={searchTerm}
+        />
       )}
 
       {/* Stats */}
-      <div className="flex items-center justify-between text-sm text-muted-foreground border-t pt-4">
+      <div className="flex items-center justify-between border-t pt-4 text-sm text-muted-foreground">
         <span>{combos.length} total combinations</span>
         {searchTerm && (
           <span>
-            {combos.filter(combo =>
-              getCardName(combo.withCardId).toLowerCase().includes(searchTerm.toLowerCase())
-            ).length} results found
+            {
+              combos.filter((combo) =>
+                getCardName(combo.withCardId)
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()),
+              ).length
+            }{" "}
+            results found
           </span>
         )}
       </div>
     </div>
-  )
+  );
 }

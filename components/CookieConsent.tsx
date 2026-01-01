@@ -1,96 +1,114 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Cookie, Settings, X } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Cookie, Settings, X } from "lucide-react";
 
 interface CookiePreferences {
-  analytics: boolean
-  necessary: boolean // Always true for essential cookies
+  analytics: boolean;
+  necessary: boolean; // Always true for essential cookies
 }
 
-const COOKIE_CONSENT_KEY = 'lenormand-cookie-consent'
-const COOKIE_PREFERENCES_KEY = 'lenormand-cookie-preferences'
+const COOKIE_CONSENT_KEY = "lenormand-cookie-consent";
+const COOKIE_PREFERENCES_KEY = "lenormand-cookie-preferences";
 
 export function CookieConsent() {
-  const [showBanner, setShowBanner] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+  const [showBanner, setShowBanner] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     analytics: false,
-    necessary: true
-  })
-  const [mounted, setMounted] = useState(false)
+    necessary: true,
+  });
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
     // Check if user has already made a choice
-    const consent = localStorage.getItem(COOKIE_CONSENT_KEY)
-    const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY)
+    const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+    const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
 
     if (!consent) {
       // First visit - show banner
-      setShowBanner(true)
+      setShowBanner(true);
     } else if (savedPreferences) {
       // Load saved preferences
-      const parsed = JSON.parse(savedPreferences)
-      setPreferences(parsed)
+      const parsed = JSON.parse(savedPreferences);
+      setPreferences(parsed);
     }
-  }, [])
+  }, []);
 
   const acceptAll = () => {
-    const newPreferences = { analytics: true, necessary: true }
-    setPreferences(newPreferences)
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted')
-    localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(newPreferences))
-    setShowBanner(false)
+    const newPreferences = { analytics: true, necessary: true };
+    setPreferences(newPreferences);
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    localStorage.setItem(
+      COOKIE_PREFERENCES_KEY,
+      JSON.stringify(newPreferences),
+    );
+    setShowBanner(false);
 
     // Load Google Analytics
-    loadGoogleAnalytics()
-  }
+    loadGoogleAnalytics();
+  };
 
   const acceptNecessaryOnly = () => {
-    const newPreferences = { analytics: false, necessary: true }
-    setPreferences(newPreferences)
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted')
-    localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(newPreferences))
-    setShowBanner(false)
-  }
+    const newPreferences = { analytics: false, necessary: true };
+    setPreferences(newPreferences);
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    localStorage.setItem(
+      COOKIE_PREFERENCES_KEY,
+      JSON.stringify(newPreferences),
+    );
+    setShowBanner(false);
+  };
 
   const saveSettings = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted')
-    localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(preferences))
-    setShowBanner(false)
-    setShowSettings(false)
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(preferences));
+    setShowBanner(false);
+    setShowSettings(false);
 
     if (preferences.analytics) {
-      loadGoogleAnalytics()
+      loadGoogleAnalytics();
     }
-  }
+  };
 
-   const loadGoogleAnalytics = () => {
-     // Load Google Analytics script
-     const script1 = document.createElement('script')
-     script1.async = true
-     script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8'
-     document.head.appendChild(script1)
+  const loadGoogleAnalytics = () => {
+    // Load Google Analytics script
+    const script1 = document.createElement("script");
+    script1.async = true;
+    script1.src = "https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8";
+    document.head.appendChild(script1);
 
-     const script2 = document.createElement('script')
-     script2.innerHTML = `
+    const script2 = document.createElement("script");
+    script2.innerHTML = `
        window.dataLayer = window.dataLayer || [];
        function gtag(){dataLayer.push(arguments);}
        gtag('js', new Date());
        gtag('config', 'G-WDLWCCJCY8');
-     `
-     document.head.appendChild(script2)
-   }
+     `;
+    document.head.appendChild(script2);
+  };
 
-   if (!mounted || (!showBanner && !showSettings)) return null
+  if (!mounted || (!showBanner && !showSettings)) return null;
 
-   return (
+  return (
     <>
       {/* Cookie Banner */}
       {showBanner && (
@@ -99,12 +117,15 @@ export function CookieConsent() {
             <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
               <div className="flex flex-shrink-0 items-center gap-2">
                 <Cookie className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">Cookie Preferences</span>
+                <span className="font-semibold text-foreground">
+                  Cookie Preferences
+                </span>
               </div>
 
               <div className="flex-1 text-sm text-muted-foreground">
-                We use cookies to enhance your experience. Essential cookies are always enabled.
-                Analytics cookies help us understand how you use our site.
+                We use cookies to enhance your experience. Essential cookies are
+                always enabled. Analytics cookies help us understand how you use
+                our site.
               </div>
 
               <div className="flex flex-shrink-0 flex-col gap-2 sm:flex-row">
@@ -125,11 +146,7 @@ export function CookieConsent() {
                 >
                   Essential Only
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={acceptAll}
-                  className="text-xs"
-                >
+                <Button size="sm" onClick={acceptAll} className="text-xs">
                   Accept All
                 </Button>
               </div>
@@ -147,7 +164,8 @@ export function CookieConsent() {
               Cookie Preferences
             </DialogTitle>
             <DialogDescription>
-              Choose which cookies you want to allow. You can change these settings at any time.
+              Choose which cookies you want to allow. You can change these
+              settings at any time.
             </DialogDescription>
           </DialogHeader>
 
@@ -168,20 +186,25 @@ export function CookieConsent() {
               <div>
                 <Label className="font-medium">Analytics Cookies</Label>
                 <p className="text-sm text-muted-foreground">
-                  Help us understand how you use our site to improve your experience
+                  Help us understand how you use our site to improve your
+                  experience
                 </p>
               </div>
               <Switch
                 checked={preferences.analytics}
                 onCheckedChange={(checked) =>
-                  setPreferences(prev => ({ ...prev, analytics: checked }))
+                  setPreferences((prev) => ({ ...prev, analytics: checked }))
                 }
               />
             </div>
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button variant="outline" onClick={() => setShowSettings(false)} className="flex-1">
+            <Button
+              variant="outline"
+              onClick={() => setShowSettings(false)}
+              className="flex-1"
+            >
               Cancel
             </Button>
             <Button onClick={saveSettings} className="flex-1">
@@ -191,5 +214,5 @@ export function CookieConsent() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

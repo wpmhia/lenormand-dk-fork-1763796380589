@@ -59,6 +59,7 @@ vercel --prod
 ## Verification
 
 After deployment, check:
+
 1. Homepage loads at your domain
 2. `/env-check` shows environment status
 3. AI features work (if API keys configured)
@@ -74,6 +75,7 @@ After deployment, check:
 ## Best Practice
 
 For most Next.js projects, **no vercel.json is needed**. Vercel's auto-detection handles:
+
 - Framework detection
 - Build commands
 - Output directories
@@ -81,6 +83,7 @@ For most Next.js projects, **no vercel.json is needed**. Vercel's auto-detection
 - API routes
 
 Only use `vercel.json` when you need:
+
 - Custom function timeouts
 - Environment-specific settings
 - Custom headers/redirects

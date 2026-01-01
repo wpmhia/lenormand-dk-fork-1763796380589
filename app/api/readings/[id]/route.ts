@@ -1,39 +1,35 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
-import type { UserReading, AIInterpretation } from '@prisma/client'
-
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import type { UserReading, AIInterpretation } from "@prisma/client";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = params
+    const { id } = params;
 
-    if (!id || typeof id !== 'string') {
+    if (!id || typeof id !== "string") {
       return NextResponse.json(
-        { error: 'Invalid reading ID' },
-        { status: 400 }
-      )
+        { error: "Invalid reading ID" },
+        { status: 400 },
+      );
     }
 
     const reading = await prisma.userReading.findUnique({
       where: { id },
       include: {
         aiInterpretations: {
-          orderBy: { createdAt: 'desc' },
-          take: 1
-        } as any
-      }
-    })
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        } as any,
+      },
+    });
 
     if (!reading) {
-      return NextResponse.json(
-        { error: 'Reading not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: "Reading not found" }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -46,55 +42,52 @@ export async function GET(
       isPublic: reading.isPublic,
       createdAt: reading.createdAt,
       updatedAt: reading.updatedAt,
-      aiInterpretation: reading.aiInterpretations[0] || null
-    })
+      aiInterpretation: reading.aiInterpretations[0] || null,
+    });
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error)
-    console.error('Error retrieving reading:', errorMsg)
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("Error retrieving reading:", errorMsg);
 
     return NextResponse.json(
-      { error: 'Failed to retrieve reading' },
-      { status: 500 }
-    )
+      { error: "Failed to retrieve reading" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = params
+    const { id } = params;
 
-    if (!id || typeof id !== 'string') {
+    if (!id || typeof id !== "string") {
       return NextResponse.json(
-        { error: 'Invalid reading ID' },
-        { status: 400 }
-      )
+        { error: "Invalid reading ID" },
+        { status: 400 },
+      );
     }
 
     const reading = await prisma.userReading.delete({
-      where: { id }
-    })
+      where: { id },
+    });
 
     return NextResponse.json({
-      message: 'Reading deleted successfully',
-      id: reading.id
-    })
+      message: "Reading deleted successfully",
+      id: reading.id,
+    });
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error)
-    console.error('Error deleting reading:', errorMsg)
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("Error deleting reading:", errorMsg);
 
-    if (errorMsg.includes('not found')) {
-      return NextResponse.json(
-        { error: 'Reading not found' },
-        { status: 404 }
-      )
+    if (errorMsg.includes("not found")) {
+      return NextResponse.json({ error: "Reading not found" }, { status: 404 });
     }
 
     return NextResponse.json(
-      { error: 'Failed to delete reading' },
-      { status: 500 }
-    )
+      { error: "Failed to delete reading" },
+      { status: 500 },
+    );
   }
 }

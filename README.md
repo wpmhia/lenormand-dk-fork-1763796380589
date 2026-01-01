@@ -30,19 +30,21 @@ A complete Lenormand tarot reading web application built with Next.js 14, TypeSc
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL database
 - npm, yarn, or bun
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd lenormand-dk
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -52,11 +54,13 @@ A complete Lenormand tarot reading web application built with Next.js 14, TypeSc
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Edit `.env` and add your database URL and NextAuth secret:
+
    ```env
    DATABASE_URL="postgresql://username:password@localhost:5432/lenormand_dk"
    NEXTAUTH_SECRET="your-secret-key-here"
@@ -64,18 +68,20 @@ A complete Lenormand tarot reading web application built with Next.js 14, TypeSc
    ```
 
 4. **Set up the database**
+
    ```bash
    # Generate Prisma client
    npm run db:generate
-   
+
    # Run database migrations
    npm run db:migrate
-   
+
    # Seed the database with Lenormand cards
    npm run db:seed
    ```
 
 5. **Start the development server**
+
    ```bash
    npm run dev
    # or
@@ -126,15 +132,18 @@ lenormand-dk/
 ## API Endpoints
 
 ### Cards
+
 - `GET /api/cards` - List all cards
 - `GET /api/cards/:id` - Get specific card
 
 ### Readings
+
 - `POST /api/readings` - Create new reading
 - `GET /api/readings/:slug` - Get public reading
 - `GET /api/me/readings` - Get user's readings
 
 ### Authentication
+
 - `POST /api/auth/[...nextauth]` - NextAuth.js handlers
 
 ## Features in Detail
@@ -149,6 +158,7 @@ lenormand-dk/
 ### Card Meanings
 
 Each card includes:
+
 - Basic upright and reversed meanings
 - Keywords for quick reference
 - Combination meanings with other cards
@@ -177,6 +187,7 @@ npm run test
 ```
 
 Tests cover:
+
 - Shuffle algorithm randomness
 - Card drawing logic
 - Combination detection
@@ -206,11 +217,13 @@ npm run start
 ## Environment Variables
 
 Required variables:
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXTAUTH_SECRET` - Secret for NextAuth.js
 - `NEXTAUTH_URL` - Application URL
 
 Optional variables:
+
 - Email provider settings for magic links
 
 ## Contributing
@@ -230,6 +243,7 @@ This project is licensed under the MIT License.
 **Lenormand Intelligence is provided exclusively for non-commercial use.**
 
 This means:
+
 - You may use this service for personal, educational, and spiritual purposes
 - You may not use this service for any commercial, business, or profit-generating purposes
 - You may not resell, license, or monetize readings or content from this service
@@ -240,6 +254,7 @@ If you are interested in using Lenormand Intelligence for commercial purposes, p
 ## Support
 
 For issues and questions:
+
 - Create an issue on GitHub
 - Check the documentation
 - Review existing issues

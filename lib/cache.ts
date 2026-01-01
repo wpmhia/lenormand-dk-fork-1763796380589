@@ -4,17 +4,17 @@
  */
 
 interface CacheEntry<T> {
-  value: T
-  timestamp: number
-  ttl: number // Time to live in milliseconds
+  value: T;
+  timestamp: number;
+  ttl: number; // Time to live in milliseconds
 }
 
 class SimpleCache<T> {
-  private cache: Map<string, CacheEntry<T>> = new Map()
-  private defaultTTL: number // Default TTL in milliseconds
+  private cache: Map<string, CacheEntry<T>> = new Map();
+  private defaultTTL: number; // Default TTL in milliseconds
 
   constructor(defaultTTLSeconds: number = 3600) {
-    this.defaultTTL = defaultTTLSeconds * 1000
+    this.defaultTTL = defaultTTLSeconds * 1000;
   }
 
   /**
@@ -22,20 +22,20 @@ class SimpleCache<T> {
    * Returns null if expired or not found
    */
   get(key: string): T | null {
-    const entry = this.cache.get(key)
-    
+    const entry = this.cache.get(key);
+
     if (!entry) {
-      return null
+      return null;
     }
 
     // Check if entry has expired
-    const now = Date.now()
+    const now = Date.now();
     if (now - entry.timestamp > entry.ttl) {
-      this.cache.delete(key)
-      return null
+      this.cache.delete(key);
+      return null;
     }
 
-    return entry.value
+    return entry.value;
   }
 
   /**
@@ -45,19 +45,19 @@ class SimpleCache<T> {
    * @param ttlSeconds Optional TTL in seconds (uses default if not provided)
    */
   set(key: string, value: T, ttlSeconds?: number): void {
-    const ttl = (ttlSeconds ?? this.defaultTTL / 1000) * 1000
+    const ttl = (ttlSeconds ?? this.defaultTTL / 1000) * 1000;
     this.cache.set(key, {
       value,
       timestamp: Date.now(),
-      ttl
-    })
+      ttl,
+    });
   }
 
   /**
    * Check if key exists and is not expired
    */
   has(key: string): boolean {
-    return this.get(key) !== null
+    return this.get(key) !== null;
   }
 
   /**
@@ -65,60 +65,60 @@ class SimpleCache<T> {
    * Useful for lazy loading with caching
    */
   getOrCompute(key: string, compute: () => T, ttlSeconds?: number): T {
-    const cached = this.get(key)
+    const cached = this.get(key);
     if (cached !== null) {
-      return cached
+      return cached;
     }
 
-    const value = compute()
-    this.set(key, value, ttlSeconds)
-    return value
+    const value = compute();
+    this.set(key, value, ttlSeconds);
+    return value;
   }
 
   /**
    * Clear entire cache
    */
   clear(): void {
-    this.cache.clear()
+    this.cache.clear();
   }
 
   /**
    * Delete specific key
    */
   delete(key: string): void {
-    this.cache.delete(key)
+    this.cache.delete(key);
   }
 
   /**
    * Get cache statistics
    */
   stats(): {
-    size: number
-    keys: string[]
+    size: number;
+    keys: string[];
   } {
     // Clean expired entries
-    const now = Date.now()
-    const expiredKeys: string[] = []
-    
+    const now = Date.now();
+    const expiredKeys: string[] = [];
+
     this.cache.forEach((entry, key) => {
       if (now - entry.timestamp > entry.ttl) {
-        expiredKeys.push(key)
+        expiredKeys.push(key);
       }
-    })
+    });
 
-    expiredKeys.forEach(key => this.cache.delete(key))
+    expiredKeys.forEach((key) => this.cache.delete(key));
 
     return {
       size: this.cache.size,
-      keys: Array.from(this.cache.keys())
-    }
+      keys: Array.from(this.cache.keys()),
+    };
   }
 }
 
 // Create a singleton cache instance for SPREAD_RULES
-export const spreadRulesCache = new SimpleCache<any>(3600) // 1 hour TTL
+export const spreadRulesCache = new SimpleCache<any>(3600); // 1 hour TTL
 
 // Create a singleton cache instance for readings (shorter TTL)
-export const readingCache = new SimpleCache<any>(600) // 10 minutes TTL
+export const readingCache = new SimpleCache<any>(600); // 10 minutes TTL
 
-export default SimpleCache
+export default SimpleCache;

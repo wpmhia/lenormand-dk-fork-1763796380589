@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { BreadcrumbNav } from '@/components/BreadcrumbNav';
-import { LearningProgressTracker } from '@/components/LearningProgressTracker';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { ReactNode } from 'react';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { LearningProgressTracker } from "@/components/LearningProgressTracker";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ReactNode } from "react";
 
 interface ModuleWrapperProps {
   moduleId: string;
@@ -28,15 +28,16 @@ export function ModuleWrapper({
   nextModule,
   children,
 }: ModuleWrapperProps) {
-  const moduleNumber = {
-    introduction: 1,
-    history: 2,
-    'reading-basics': 3,
-    'card-meanings': 4,
-    spreads: 5,
-    advanced: 6,
-    'marie-annes-system': 7,
-  }[moduleId] || 1;
+  const moduleNumber =
+    {
+      introduction: 1,
+      history: 2,
+      "reading-basics": 3,
+      "card-meanings": 4,
+      spreads: 5,
+      advanced: 6,
+      "marie-annes-system": 7,
+    }[moduleId] || 1;
 
   const totalModules = 7;
 
@@ -47,8 +48,8 @@ export function ModuleWrapper({
         <div className="container mx-auto max-w-4xl px-4 py-4">
           <BreadcrumbNav
             items={[
-              { name: 'Home', url: '/' },
-              { name: 'Learn', url: '/learn' },
+              { name: "Home", url: "/" },
+              { name: "Learn", url: "/learn" },
               { name: title, url: `/learn/${moduleId}` },
             ]}
           />
@@ -103,7 +104,10 @@ export function ModuleWrapper({
         <div className="flex items-center justify-between border-t border-border pt-8">
           {previousModule ? (
             <Link href={`/learn/${previousModule.id}`}>
-              <Button variant="outline" className="border-border hover:bg-muted">
+              <Button
+                variant="outline"
+                className="border-border hover:bg-muted"
+              >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to {previousModule.title}
               </Button>

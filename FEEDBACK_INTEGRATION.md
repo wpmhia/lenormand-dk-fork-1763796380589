@@ -10,20 +10,20 @@ After a reading is displayed, add thumbs up/down buttons:
 
 ```typescript
 async function submitFeedback(isHelpful: boolean, readingId: string) {
-  const response = await fetch('/api/feedback', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/feedback", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       isHelpful,
       readingId,
-      spreadId: 'three-card',  // current spread
-      question: userQuestion,   // optional
-      readingText: aiResponse   // optional
-    })
+      spreadId: "three-card", // current spread
+      question: userQuestion, // optional
+      readingText: aiResponse, // optional
+    }),
   });
-  
+
   const data = await response.json();
-  console.log('Feedback recorded:', data.feedbackId);
+  console.log("Feedback recorded:", data.feedbackId);
 }
 ```
 
@@ -33,17 +33,18 @@ Check how your variants are performing:
 
 ```typescript
 async function getOptimizationStatus() {
-  const response = await fetch('/api/feedback/analytics');
+  const response = await fetch("/api/feedback/analytics");
   const data = await response.json();
-  
-  console.log('System helpfulness:', data.optimization.systemHelpfulnessRate);
-  console.log('Top variants:', data.optimization.metrics.topPerformingVariants);
+
+  console.log("System helpfulness:", data.optimization.systemHelpfulnessRate);
+  console.log("Top variants:", data.optimization.metrics.topPerformingVariants);
 }
 ```
 
 ## 3. Database Schema
 
 ### Feedback Table
+
 ```
 - id (UUID, primary key)
 - isHelpful (boolean)
@@ -57,6 +58,7 @@ async function getOptimizationStatus() {
 ```
 
 ### PromptVariant Table
+
 ```
 - id (UUID, primary key)
 - name (text) - e.g., "v1_baseline", "v2_detailed"
@@ -72,6 +74,7 @@ async function getOptimizationStatus() {
 ```
 
 ### OptimizationMetrics Table
+
 ```
 - id (UUID, primary key)
 - spreadId (text)
@@ -88,20 +91,24 @@ async function getOptimizationStatus() {
 ## 4. Workflow
 
 ### Initial Setup
+
 1. Create a base prompt variant (e.g., "v1_baseline") in `prompt_variants` table
 2. When generating readings, set `promptVariant = "v1_baseline"`
 
 ### Collecting Feedback
+
 1. User rates reading (👍 or 👎)
 2. `POST /api/feedback` records the vote
 3. System updates `promptVariant` stats automatically
 
 ### Analyzing Performance
+
 1. `GET /api/feedback/analytics` shows overall helpfulness
 2. Run queries to find best variants per spread type
 3. Create new variants with different instructions/temperature
 
 ### Optimizing
+
 1. Route more traffic to high-performing variants
 2. Test new variants alongside existing ones
 3. Monitor helpfulness trends over time
@@ -111,9 +118,9 @@ async function getOptimizationStatus() {
 Get top variants for a spread:
 
 ```sql
-SELECT name, helpfulness_rate 
-FROM prompt_variants 
-WHERE spread_id = 'three-card' 
+SELECT name, helpfulness_rate
+FROM prompt_variants
+WHERE spread_id = 'three-card'
   AND is_active = true
 ORDER BY helpfulness_rate DESC;
 ```
@@ -121,16 +128,16 @@ ORDER BY helpfulness_rate DESC;
 Get recent feedback:
 
 ```sql
-SELECT * FROM feedback 
+SELECT * FROM feedback
 WHERE spread_id = 'three-card'
-ORDER BY created_at DESC 
+ORDER BY created_at DESC
 LIMIT 50;
 ```
 
 Get helpfulness trend:
 
 ```sql
-SELECT 
+SELECT
   DATE(created_at) as date,
   COUNT(*) as total,
   SUM(CASE WHEN is_helpful THEN 1 ELSE 0 END)::float / COUNT(*) * 100 as helpfulness_rate

@@ -1,6 +1,7 @@
 # Streaming Implementation Summary
 
 ## Problem
+
 User was testing on the wrong page and not seeing the streaming effect.
 
 ## Solution Implemented
@@ -34,6 +35,7 @@ User was testing on the wrong page and not seeing the streaming effect.
 ### Visual Indicator
 
 Look for the **Badge** under the tabs:
+
 - `Processing` = Still loading (no content yet)
 - `Streaming...` = Content arriving (results visible, watching for more)
 - `Complete` = All done
@@ -41,6 +43,7 @@ Look for the **Badge** under the tabs:
 ### Debug Text
 
 At the bottom of the loading spinner, you'll see:
+
 - `separatorFound=false | prophecyLength=0` = Loading
 - `separatorFound=true | prophecyLength=XXX` = Results visible!
 
@@ -80,14 +83,14 @@ At the bottom of the loading spinner, you'll see:
 
 ## Key Differences
 
-| Feature | `/read/new` | `/read/physical` |
-|---------|-----------|-----------------|
-| **Endpoint** | `/api/readings/interpret` | `/api/readings/interpret/stream` |
-| **Response Type** | JSON | Server-Sent Events (SSE) |
-| **Streaming** | No | Yes ✅ |
-| **Shows results fast** | No | Yes ✅ |
-| **Card input** | Auto-shuffled deck | Manual card numbers/names |
-| **Use case** | Quick readings | Physical deck readings |
+| Feature                | `/read/new`               | `/read/physical`                 |
+| ---------------------- | ------------------------- | -------------------------------- |
+| **Endpoint**           | `/api/readings/interpret` | `/api/readings/interpret/stream` |
+| **Response Type**      | JSON                      | Server-Sent Events (SSE)         |
+| **Streaming**          | No                        | Yes ✅                           |
+| **Shows results fast** | No                        | Yes ✅                           |
+| **Card input**         | Auto-shuffled deck        | Manual card numbers/names        |
+| **Use case**           | Quick readings            | Physical deck readings           |
 
 ## Files Modified
 
@@ -99,10 +102,12 @@ At the bottom of the loading spinner, you'll see:
 ## Performance Impact
 
 **Before (Non-streaming):**
+
 - User waits entire time for complete response (5-10 seconds)
 - All content appears at once
 
 **After (Streaming):**
+
 - Prophecy visible in 2-3 seconds ✅
 - User sees partial content while practical section generates
 - Same total time, but better perceived speed (instant gratification)

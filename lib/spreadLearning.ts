@@ -1,65 +1,79 @@
 export interface SpreadLearningLinks {
-  methodologyPage: string
-  learnMoreUrl?: string
-  description: string
-  readMoreText?: string
+  methodologyPage: string;
+  learnMoreUrl?: string;
+  description: string;
+  readMoreText?: string;
 }
 
 export const SPREAD_LEARNING_MAP: Record<string, SpreadLearningLinks> = {
-  'single-card': {
-    methodologyPage: '/learn/spreads#single-card',
-    description: 'Single Card Reading Method - Quick daily guidance and immediate answers'
+  "single-card": {
+    methodologyPage: "/learn/spreads#single-card",
+    description:
+      "Single Card Reading Method - Quick daily guidance and immediate answers",
   },
-   'sentence-3': {
-     methodologyPage: '/learn/spreads#3-card-spreads',
-     description: 'Marie-Anne\'s 3-Card Sentence - Her primary daily reading method with flowing narrative'
-   },
-  'comprehensive': {
-    methodologyPage: '/learn/spreads#9-card-spreads',
-    learnMoreUrl: '/learn/marie-annes-system',
-    description: '9-Card Petit Grand Tableau - Deeper exploration without overwhelming complexity'
+  "sentence-3": {
+    methodologyPage: "/learn/spreads#3-card-spreads",
+    description:
+      "Marie-Anne's 3-Card Sentence - Her primary daily reading method with flowing narrative",
   },
-  'grand-tableau': {
-    methodologyPage: '/learn/marie-annes-system',
-    learnMoreUrl: '/learn/spreads#36-card-master-reading',
-    description: 'Grand Tableau (36-Card) - Marie-Anne\'s most comprehensive reading method'
+  comprehensive: {
+    methodologyPage: "/learn/spreads#9-card-spreads",
+    learnMoreUrl: "/learn/marie-annes-system",
+    description:
+      "9-Card Petit Grand Tableau - Deeper exploration without overwhelming complexity",
   },
-  'past-present-future': {
-    methodologyPage: '/learn/spreads#3-card-spreads',
-    description: 'Past-Present-Future - Classic timeline spread for understanding progression'
+  "grand-tableau": {
+    methodologyPage: "/learn/marie-annes-system",
+    learnMoreUrl: "/learn/spreads#36-card-master-reading",
+    description:
+      "Grand Tableau (36-Card) - Marie-Anne's most comprehensive reading method",
   },
-  'yes-no-maybe': {
-    methodologyPage: '/learn/spreads#3-card-spreads',
-    description: 'Yes or No - Direct answers using card meanings and position interpretation'
+  "past-present-future": {
+    methodologyPage: "/learn/spreads#3-card-spreads",
+    description:
+      "Past-Present-Future - Classic timeline spread for understanding progression",
   },
-  'situation-challenge-advice': {
-    methodologyPage: '/learn/spreads#3-card-spreads',
-    description: 'Situation-Challenge-Advice - Problem-solving through diagnostic method'
+  "yes-no-maybe": {
+    methodologyPage: "/learn/spreads#3-card-spreads",
+    description:
+      "Yes or No - Direct answers using card meanings and position interpretation",
   },
-  'mind-body-spirit': {
-    methodologyPage: '/learn/spreads#3-card-spreads',
-    description: 'Mind-Body-Spirit - Holistic view across mental, physical, and spiritual dimensions'
+  "situation-challenge-advice": {
+    methodologyPage: "/learn/spreads#3-card-spreads",
+    description:
+      "Situation-Challenge-Advice - Problem-solving through diagnostic method",
   },
-  'sentence-5': {
-    methodologyPage: '/learn/spreads#5-card-spreads',
-    description: '5-Card Sentence - Extended narrative using flowing story structure'
+  "mind-body-spirit": {
+    methodologyPage: "/learn/spreads#3-card-spreads",
+    description:
+      "Mind-Body-Spirit - Holistic view across mental, physical, and spiritual dimensions",
   },
-  'structured-reading': {
-    methodologyPage: '/learn/spreads#5-card-spreads',
-    description: 'Structured 5-Card - Analytical method with resources and outcomes'
+  "sentence-5": {
+    methodologyPage: "/learn/spreads#5-card-spreads",
+    description:
+      "5-Card Sentence - Extended narrative using flowing story structure",
   },
-  'week-ahead': {
-    methodologyPage: '/learn/spreads#7-card-spreads',
-    description: '7-Card Week Ahead - Daily structure with action-oriented interpretation'
+  "structured-reading": {
+    methodologyPage: "/learn/spreads#5-card-spreads",
+    description:
+      "Structured 5-Card - Analytical method with resources and outcomes",
   },
-  'relationship-double-significator': {
-    methodologyPage: '/learn/spreads#7-card-spreads',
-    learnMoreUrl: '/learn/marie-annes-system',
-    description: 'Relationship Reading - Dual significator method showing both partners\' perspectives'
-  }
-}
+  "week-ahead": {
+    methodologyPage: "/learn/spreads#7-card-spreads",
+    description:
+      "7-Card Week Ahead - Daily structure with action-oriented interpretation",
+  },
+  "relationship-double-significator": {
+    methodologyPage: "/learn/spreads#7-card-spreads",
+    learnMoreUrl: "/learn/marie-annes-system",
+    description:
+      "Relationship Reading - Dual significator method showing both partners' perspectives",
+  },
+};
 
-export function getSpreadLearningLinks(spreadId?: string): SpreadLearningLinks | null {
-  if (!spreadId) return null
-  return SPREAD_LEARNING_MAP[spreadId] || null
+export function getSpreadLearningLinks(
+  spreadId?: string,
+): SpreadLearningLinks | null {
+  if (!spreadId) return null;
+  return SPREAD_LEARNING_MAP[spreadId] || null;
 }

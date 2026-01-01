@@ -3,8 +3,8 @@
  * Caches identical readings based on cards and spread configuration
  */
 
-import { readingCache } from './cache'
-import { AIReadingRequest, AIReadingResponse } from './deepseek'
+import { readingCache } from "./cache";
+import { AIReadingRequest, AIReadingResponse } from "./deepseek";
 
 /**
  * Generate cache key from request parameters
@@ -14,21 +14,23 @@ export function generateReadingCacheKey(request: AIReadingRequest): string {
   // Sort cards by ID to ensure consistent cache hits
   const sortedCards = [...request.cards]
     .sort((a, b) => a.id - b.id)
-    .map(c => `${c.id}:${c.name}`)
-    .join(',')
+    .map((c) => `${c.id}:${c.name}`)
+    .join(",");
 
-  const spreadId = request.spreadId || 'sentence-3'
-  const question = (request.question || '').trim().toLowerCase()
+  const spreadId = request.spreadId || "sentence-3";
+  const question = (request.question || "").trim().toLowerCase();
 
-  return `reading_${spreadId}_${sortedCards}_${question}`
+  return `reading_${spreadId}_${sortedCards}_${question}`;
 }
 
 /**
  * Get cached reading or null if not found/expired
  */
-export function getCachedReading(request: AIReadingRequest): AIReadingResponse | null {
-  const key = generateReadingCacheKey(request)
-  return readingCache.get(key)
+export function getCachedReading(
+  request: AIReadingRequest,
+): AIReadingResponse | null {
+  const key = generateReadingCacheKey(request);
+  return readingCache.get(key);
 }
 
 /**
@@ -40,30 +42,30 @@ export function getCachedReading(request: AIReadingRequest): AIReadingResponse |
 export function cacheReading(
   request: AIReadingRequest,
   response: AIReadingResponse,
-  ttlSeconds: number = 600
+  ttlSeconds: number = 600,
 ): void {
-  const key = generateReadingCacheKey(request)
-  readingCache.set(key, response, ttlSeconds)
+  const key = generateReadingCacheKey(request);
+  readingCache.set(key, response, ttlSeconds);
 }
 
 /**
  * Check if reading is cached
  */
 export function isReadingCached(request: AIReadingRequest): boolean {
-  const key = generateReadingCacheKey(request)
-  return readingCache.has(key)
+  const key = generateReadingCacheKey(request);
+  return readingCache.has(key);
 }
 
 /**
  * Clear all reading cache
  */
 export function clearReadingCache(): void {
-  readingCache.clear()
+  readingCache.clear();
 }
 
 /**
  * Get cache statistics
  */
 export function getReadingCacheStats() {
-  return readingCache.stats()
+  return readingCache.stats();
 }

@@ -73,6 +73,7 @@ The most important thing is: **Do you see the results card appear BEFORE the pra
 ## Technical Details
 
 Files involved:
+
 - `app/read/physical/page.tsx` - Tracks streaming state, calls API
 - `components/AIReadingDisplay.tsx` - Displays results based on streaming state
 - `app/api/readings/interpret/stream/route.ts` - Streaming API endpoint

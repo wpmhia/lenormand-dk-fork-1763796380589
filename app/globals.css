@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -24,7 +24,7 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     /* Border Radius Scale */
     --radius: 0.5rem;
     --radius-xs: 0.25rem;
@@ -32,21 +32,24 @@
     --radius-md: 0.5rem;
     --radius-lg: 0.75rem;
     --radius-xl: 1rem;
-    
+
     /* Spacing Scale (4px base unit) */
-    --space-xs: 0.25rem;   /* 4px */
-    --space-sm: 0.5rem;    /* 8px */
-    --space-md: 1rem;      /* 16px */
-    --space-lg: 1.5rem;    /* 24px */
-    --space-xl: 2rem;      /* 32px */
-    --space-2xl: 3rem;     /* 48px */
-    
+    --space-xs: 0.25rem; /* 4px */
+    --space-sm: 0.5rem; /* 8px */
+    --space-md: 1rem; /* 16px */
+    --space-lg: 1.5rem; /* 24px */
+    --space-xl: 2rem; /* 32px */
+    --space-2xl: 3rem; /* 48px */
+
     /* Elevation/Shadow Scale */
     --shadow-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-elevation-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    
+    --shadow-elevation-2:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-elevation-3:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-elevation-4:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
     /* Opacity Scale */
     --opacity-subtle: 0.1;
     --opacity-low: 0.2;
@@ -62,36 +65,55 @@
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 }
 
 /* Typography System */
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
-    @apply text-foreground font-semibold;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-foreground;
   }
 
-  h1 { @apply text-4xl md:text-5xl lg:text-6xl leading-tight; }
-  h2 { @apply text-3xl md:text-4xl leading-snug; }
-  h3 { @apply text-2xl md:text-3xl leading-snug; }
-  h4 { @apply text-xl md:text-2xl leading-snug; }
-  h5 { @apply text-lg md:text-xl; }
-  h6 { @apply text-base md:text-lg; }
+  h1 {
+    @apply text-4xl leading-tight md:text-5xl lg:text-6xl;
+  }
+  h2 {
+    @apply text-3xl leading-snug md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl leading-snug md:text-3xl;
+  }
+  h4 {
+    @apply text-xl leading-snug md:text-2xl;
+  }
+  h5 {
+    @apply text-lg md:text-xl;
+  }
+  h6 {
+    @apply text-base md:text-lg;
+  }
 
   p {
     @apply leading-relaxed;
   }
 
   a {
-    @apply text-primary hover:text-primary/80 transition-colors duration-200;
+    @apply text-primary transition-colors duration-200 hover:text-primary/80;
   }
 }
 
 /* Logo Font */
 @layer components {
   .logo-font {
-    font-family: 'Crimson Pro', 'Crimson Text', serif;
+    font-family: "Crimson Pro", "Crimson Text", serif;
     font-weight: 700;
   }
 }
@@ -123,22 +145,42 @@
   }
 
   /* Grid System - Standardized gaps */
-  .grid-auto { @apply grid gap-lg lg:gap-xl; }
-  .grid-1 { @apply grid-cols-1; }
-  .grid-2 { @apply grid-cols-1 md:grid-cols-2; }
-  .grid-3 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3; }
-  .grid-4 { @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4; }
+  .grid-auto {
+    @apply grid gap-lg lg:gap-xl;
+  }
+  .grid-1 {
+    @apply grid-cols-1;
+  }
+  .grid-2 {
+    @apply grid-cols-1 md:grid-cols-2;
+  }
+  .grid-3 {
+    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+  }
+  .grid-4 {
+    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+  }
 
   /* Spacing Utilities */
-  .space-section { @apply space-y-2xl; }
-  .space-content { @apply space-y-xl; }
-  .space-component { @apply space-y-lg; }
+  .space-section {
+    @apply space-y-2xl;
+  }
+  .space-content {
+    @apply space-y-xl;
+  }
+  .space-component {
+    @apply space-y-lg;
+  }
 
   /* Card Components - Standardized */
   .card-mystical {
     aspect-ratio: 2.5 / 3.5;
-    @apply rounded-lg border-2 border-amber-700/20 shadow-elevation-2 transition-all duration-300 cursor-pointer;
-    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95), rgba(50, 50, 50, 0.95));
+    @apply cursor-pointer rounded-lg border-2 border-amber-700/20 shadow-elevation-2 transition-all duration-300;
+    background: linear-gradient(
+      135deg,
+      rgba(30, 30, 30, 0.95),
+      rgba(50, 50, 50, 0.95)
+    );
   }
 
   .card-mystical:hover {
@@ -147,7 +189,7 @@
   }
 
   .card-mystical img {
-    @apply w-full h-full object-cover object-center rounded-lg;
+    @apply h-full w-full rounded-lg object-cover object-center;
   }
 
   /* Standard Card Component */
@@ -159,16 +201,16 @@
     @apply shadow-elevation-2;
   }
 
-   /* Typography Effects */
-   .ethereal-glow {
-     @apply text-muted-foreground;
-   }
+  /* Typography Effects */
+  .ethereal-glow {
+    @apply text-muted-foreground;
+  }
 
-   .mystical-float {
-     @apply transition-all duration-300;
-   }
+  .mystical-float {
+    @apply transition-all duration-300;
+  }
 
-   /* Loading States */
+  /* Loading States */
   .loading-skeleton {
     @apply rounded bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200;
     pointer-events: none;
@@ -184,7 +226,8 @@
   }
 
   @keyframes pulse-smooth {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.6;
     }
     50% {
@@ -218,33 +261,35 @@
     @apply text-sm font-medium text-card-foreground transition-colors duration-200 hover:text-primary;
   }
 
-    /* Buttons - Standardized */
-    .btn-group {
-      @apply inline-flex gap-sm rounded-lg border border-border bg-muted p-sm;
-    }
+  /* Buttons - Standardized */
+  .btn-group {
+    @apply inline-flex gap-sm rounded-lg border border-border bg-muted p-sm;
+  }
 
-    .btn-group-item {
-      @apply min-h-11 min-w-11 px-md py-sm text-xs rounded-md;
-    }
+  .btn-group-item {
+    @apply min-h-11 min-w-11 rounded-md px-md py-sm text-xs;
+  }
 
-     /* Hero section */
-     .hero-image-cell {
-       @apply flex items-center justify-center;
-     }
+  /* Hero section */
+  .hero-image-cell {
+    @apply flex items-center justify-center;
+  }
 
-     /* Hero button group - Standardized */
-     .btn-group-hero {
-       @apply mx-auto flex max-w-lg flex-col justify-center gap-lg sm:flex-row;
-     }
+  /* Hero button group - Standardized */
+  .btn-group-hero {
+    @apply mx-auto flex max-w-lg flex-col justify-center gap-lg sm:flex-row;
+  }
 
-     .btn-group-hero-item {
-       @apply h-16 flex-1 rounded-lg;
-     }
+  .btn-group-hero-item {
+    @apply h-16 flex-1 rounded-lg;
+  }
 
-    /* Touch target spacing - Accessibility standard 44x44px */
-    button, [role="button"], a[href] {
-      @apply min-h-11 min-w-11;
-    }
+  /* Touch target spacing - Accessibility standard 44x44px */
+  button,
+  [role="button"],
+  a[href] {
+    @apply min-h-11 min-w-11;
+  }
 
   /* Forms - Standardized */
   input,
@@ -260,21 +305,21 @@
   }
 
   /* Alerts - Standardized */
-    .alert-success {
-      @apply rounded-lg border-2 border-green-700 bg-green-50 px-md py-sm text-green-900;
-    }
+  .alert-success {
+    @apply rounded-lg border-2 border-green-700 bg-green-50 px-md py-sm text-green-900;
+  }
 
-    .alert-error {
-      @apply rounded-lg border-2 border-red-700 bg-red-50 px-md py-sm text-red-900;
-    }
+  .alert-error {
+    @apply rounded-lg border-2 border-red-700 bg-red-50 px-md py-sm text-red-900;
+  }
 
-    .alert-warning {
-      @apply rounded-lg border-2 border-yellow-700 bg-yellow-50 px-md py-sm text-yellow-900;
-    }
+  .alert-warning {
+    @apply rounded-lg border-2 border-yellow-700 bg-yellow-50 px-md py-sm text-yellow-900;
+  }
 
-    .alert-info {
-      @apply rounded-lg border-2 border-blue-700 bg-blue-50 px-md py-sm text-blue-900;
-    }
+  .alert-info {
+    @apply rounded-lg border-2 border-blue-700 bg-blue-50 px-md py-sm text-blue-900;
+  }
 
   /* Scrollbar */
   ::-webkit-scrollbar {
@@ -290,47 +335,47 @@
     @apply rounded bg-muted-foreground/30 transition-colors duration-200;
   }
 
-   ::-webkit-scrollbar-thumb:hover {
-     @apply bg-muted-foreground/50;
-   }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
 
-   /* Reading Results Styling */
-   .reading-container {
-     @apply space-y-lg;
-   }
+  /* Reading Results Styling */
+  .reading-container {
+    @apply space-y-lg;
+  }
 
-   .prophecy-section {
-     @apply rounded-lg border-2 border-amber-700/30 bg-gradient-to-br from-amber-900/10 to-amber-800/10 p-lg shadow-elevation-2;
-   }
+  .prophecy-section {
+    @apply rounded-lg border-2 border-amber-700/30 bg-gradient-to-br from-amber-900/10 to-amber-800/10 p-lg shadow-elevation-2;
+  }
 
-    .prophecy-section p {
-      @apply text-amber-50 leading-relaxed text-base md:text-lg;
-    }
+  .prophecy-section p {
+    @apply text-base leading-relaxed text-amber-50 md:text-lg;
+  }
 
-   .prophecy-title {
-     @apply text-amber-300 text-sm uppercase tracking-widest font-semibold mb-md;
-   }
+  .prophecy-title {
+    @apply mb-md text-sm font-semibold uppercase tracking-widest text-amber-300;
+  }
 
-   .practical-section {
-     @apply rounded-lg border-2 border-slate-600/30 bg-gradient-to-br from-slate-900/10 to-slate-800/10 p-lg shadow-elevation-2;
-   }
+  .practical-section {
+    @apply rounded-lg border-2 border-slate-600/30 bg-gradient-to-br from-slate-900/10 to-slate-800/10 p-lg shadow-elevation-2;
+  }
 
-    .practical-section p {
-      @apply text-slate-100 leading-relaxed text-base;
-    }
+  .practical-section p {
+    @apply text-base leading-relaxed text-slate-100;
+  }
 
-   .practical-title {
-     @apply text-slate-300 text-sm uppercase tracking-widest font-semibold mb-md;
-   }
+  .practical-title {
+    @apply mb-md text-sm font-semibold uppercase tracking-widest text-slate-300;
+  }
 
-   .reading-card {
-     @apply rounded-lg border border-border bg-card p-lg shadow-elevation-1;
-   }
+  .reading-card {
+    @apply rounded-lg border border-border bg-card p-lg shadow-elevation-1;
+  }
 
-   /* Streaming Animation */
-   .reading-stream {
-     @apply animate-pulse;
-   }
+  /* Streaming Animation */
+  .reading-stream {
+    @apply animate-pulse;
+  }
 }
 
 /* Animation Preferences */
@@ -347,12 +392,17 @@
 @media print {
   body {
     @apply bg-white text-black;
-    font-family: 'Times New Roman', serif !important;
+    font-family: "Times New Roman", serif !important;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-black;
-    font-family: 'Times New Roman', serif !important;
+    font-family: "Times New Roman", serif !important;
   }
 
   .card-mystical {

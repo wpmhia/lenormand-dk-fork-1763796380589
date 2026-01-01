@@ -1,26 +1,33 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-import { NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { aiInterpretationId, accuracyRating, accuracyNotes } = body
+    const body = await request.json();
+    const { aiInterpretationId, accuracyRating, accuracyNotes } = body;
 
     // Validate required fields
     if (!aiInterpretationId) {
       return NextResponse.json(
-        { success: false, error: 'aiInterpretationId is required' },
-        { status: 400 }
-      )
+        { success: false, error: "aiInterpretationId is required" },
+        { status: 400 },
+      );
     }
 
-    if (typeof accuracyRating !== 'number' || accuracyRating < 1 || accuracyRating > 5) {
+    if (
+      typeof accuracyRating !== "number" ||
+      accuracyRating < 1 ||
+      accuracyRating > 5
+    ) {
       return NextResponse.json(
-        { success: false, error: 'accuracyRating must be a number between 1 and 5' },
-        { status: 400 }
-      )
+        {
+          success: false,
+          error: "accuracyRating must be a number between 1 and 5",
+        },
+        { status: 400 },
+      );
     }
 
     // Update the AI interpretation with accuracy data
@@ -30,32 +37,34 @@ export async function POST(request: Request) {
         accuracyConfirmed: true,
         accuracyRating,
         accuracyNotes: accuracyNotes || null,
-        accuracyConfirmedAt: new Date()
-      }
-    })
+        accuracyConfirmedAt: new Date(),
+      },
+    });
 
-    console.log(`Accuracy tracked for AI interpretation ${aiInterpretationId}: rating ${accuracyRating}`)
+    console.log(
+      `Accuracy tracked for AI interpretation ${aiInterpretationId}: rating ${accuracyRating}`,
+    );
 
     return NextResponse.json({
       success: true,
-      message: 'Accuracy feedback recorded successfully',
-      interpretationId: updatedInterpretation.id
-    })
+      message: "Accuracy feedback recorded successfully",
+      interpretationId: updatedInterpretation.id,
+    });
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : String(error)
-    console.error('Error recording accuracy:', errorMsg)
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("Error recording accuracy:", errorMsg);
 
     // Check if it's a not found error
-    if (errorMsg.includes('Record to update not found')) {
+    if (errorMsg.includes("Record to update not found")) {
       return NextResponse.json(
-        { success: false, error: 'AI interpretation not found' },
-        { status: 404 }
-      )
+        { success: false, error: "AI interpretation not found" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(
-      { success: false, error: 'Internal Server Error' },
-      { status: 500 }
-    )
+      { success: false, error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

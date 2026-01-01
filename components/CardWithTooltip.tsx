@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import { Card as CardType } from '@/lib/types'
-import { Card } from './Card'
+import { Card as CardType } from "@/lib/types";
+import { Card } from "./Card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from "@/components/ui/tooltip";
 
 interface CardWithTooltipProps {
-  card: CardType
-  onClick?: () => void
-  showBack?: boolean
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-  positionLabel?: string
-  positionDescription?: string
+  card: CardType;
+  onClick?: () => void;
+  showBack?: boolean;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  positionLabel?: string;
+  positionDescription?: string;
 }
 
 export function CardWithTooltip({
   card,
   onClick,
   showBack = false,
-  size = 'md',
+  size = "md",
   className,
   positionLabel,
-  positionDescription
+  positionDescription,
 }: CardWithTooltipProps) {
   return (
     <Tooltip>
@@ -40,20 +40,18 @@ export function CardWithTooltip({
           />
         </div>
       </TooltipTrigger>
-      <TooltipContent className="max-w-xs border-border bg-card p-4 shadow-lg z-50 overflow-visible">
+      <TooltipContent className="z-50 max-w-xs overflow-visible border-border bg-card p-4 shadow-lg">
         <div className="space-y-3">
           {/* Card Name and Position */}
           <div>
-            <h4 className="font-semibold text-foreground">
-              {card.name}
-            </h4>
+            <h4 className="font-semibold text-foreground">{card.name}</h4>
             {positionLabel && (
-              <p className="text-xs text-primary font-medium">
+              <p className="text-xs font-medium text-primary">
                 {positionLabel}
               </p>
             )}
             {positionDescription && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {positionDescription}
               </p>
             )}
@@ -72,7 +70,7 @@ export function CardWithTooltip({
               {card.keywords.slice(0, 4).map((keyword, idx) => (
                 <span
                   key={idx}
-                  className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded border border-primary/20"
+                  className="inline-block rounded border border-primary/20 bg-primary/10 px-2 py-1 text-xs text-primary"
                 >
                   {keyword}
                 </span>
@@ -82,5 +80,5 @@ export function CardWithTooltip({
         </div>
       </TooltipContent>
     </Tooltip>
-  )
+  );
 }

@@ -6,11 +6,11 @@ The thumbs up/down buttons in AI readings now feed data directly into the model 
 
 ## 3 Files Modified
 
-| File | Changes | Lines |
-|------|---------|-------|
-| `components/AIReadingDisplay.tsx` | Added feedback state + handleFeedback() + button updates | 56-57, 97-149, 315-326 |
-| `app/api/feedback/route.ts` | Accept cards, temperature, variant; return modelLearning metadata | 10-22, 41-54, 63-76 |
-| `lib/feedbackOptimization.ts` | Store card data, temperature, translation for model learning | 11-50 |
+| File                              | Changes                                                           | Lines                  |
+| --------------------------------- | ----------------------------------------------------------------- | ---------------------- |
+| `components/AIReadingDisplay.tsx` | Added feedback state + handleFeedback() + button updates          | 56-57, 97-149, 315-326 |
+| `app/api/feedback/route.ts`       | Accept cards, temperature, variant; return modelLearning metadata | 10-22, 41-54, 63-76    |
+| `lib/feedbackOptimization.ts`     | Store card data, temperature, translation for model learning      | 11-50                  |
 
 ## Data Flow
 
@@ -41,13 +41,14 @@ Model learns:
 ## Key Functions
 
 ### Frontend (handleFeedback)
+
 ```typescript
 const handleFeedback = async (type: 'up' | 'down') => {
   setFeedback(type === feedback ? null : type)  // Toggle
   if (!newFeedback) return  // Don't send if clearing
-  
+
   const cardData = cards?.map(c => ({id, name, position}))
-  
+
   fetch('/api/feedback', {
     method: 'POST',
     body: JSON.stringify({
@@ -60,6 +61,7 @@ const handleFeedback = async (type: 'up' | 'down') => {
 ```
 
 ### Backend (API Route)
+
 ```typescript
 POST /api/feedback
 Body: {isHelpful, cards, spreadId, question, ...}
@@ -67,6 +69,7 @@ Returns: {success, feedbackId, modelLearning: {cardsLearned, spreadId}}
 ```
 
 ### Data Storage (recordFeedback)
+
 ```typescript
 recordFeedback(
   isHelpful,
@@ -77,11 +80,11 @@ recordFeedback(
   aiInterpretationId,
   userReadingId,
   comments,
-  translationText,      // NEW
-  cards,                 // NEW
-  promptTemperature,    // NEW
-  promptVariant         // NEW
-)
+  translationText, // NEW
+  cards, // NEW
+  promptTemperature, // NEW
+  promptVariant, // NEW
+);
 ```
 
 ## Testing Checklist
@@ -122,12 +125,12 @@ recordFeedback(
 
 ## What Gets Learned
 
-| Data | Use Case | Example |
-|------|----------|---------|
-| Cards | Pattern analysis | "Rider+Man+Cross = 89% helpful" |
-| Spread | Type performance | "Celtic Cross = 87% helpful" |
-| Temperature | Parameter tuning | "0.7 temp = 85% vs 0.5 = 79%" |
-| Variants | Prompt comparison | "V1 baseline = 82% vs V2 = 85%" |
+| Data        | Use Case          | Example                         |
+| ----------- | ----------------- | ------------------------------- |
+| Cards       | Pattern analysis  | "Rider+Man+Cross = 89% helpful" |
+| Spread      | Type performance  | "Celtic Cross = 87% helpful"    |
+| Temperature | Parameter tuning  | "0.7 temp = 85% vs 0.5 = 79%"   |
+| Variants    | Prompt comparison | "V1 baseline = 82% vs V2 = 85%" |
 
 ## Database Tables Updated
 
@@ -194,5 +197,6 @@ The thumbs feedback system is fully operational and immediately collecting model
 ---
 
 For detailed documentation, see:
+
 - `MODEL_LEARNING.md` - Learning system overview
 - `THUMBS_FEEDBACK_IMPLEMENTATION.md` - Full implementation details

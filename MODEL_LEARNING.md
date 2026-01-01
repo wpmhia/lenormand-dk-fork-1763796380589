@@ -7,21 +7,25 @@ The thumbs up/down buttons in `AIReadingDisplay.tsx` are now fully integrated wi
 ## What Gets Learned
 
 ### 1. **Card Pattern Recognition**
+
 - **What**: Which card combinations users find helpful/unhelpful
 - **Stored in**: `Feedback.cards` (JSON array with card ID, name, position)
 - **Used for**: Identifying which card combinations and positions produce better readings
 
 ### 2. **Prompt Performance Tracking**
+
 - **What**: Which prompt variants, temperatures, and parameters work best
 - **Stored in**: `Feedback.promptTemperature` and `Feedback.promptVariant`
 - **Used for**: Optimizing which prompts to use for different spread types
 
 ### 3. **Spread-Specific Patterns**
+
 - **What**: Success/failure patterns specific to each spread type
 - **Stored in**: `FeedbackPattern` table with spread analysis
 - **Used for**: Learning which spreads benefit from different prompt strategies
 
 ### 4. **Reading Quality Metrics**
+
 - **What**: Overall quality and helpfulness by spread type
 - **Stored in**: `OptimizationMetrics` table
 - **Used for**: Generating improvement reports and identifying weak areas
@@ -56,30 +60,38 @@ Response includes modelLearning metadata
 ## Key Learning Features
 
 ### Prompt Variant Tracking
+
 Each feedback record helps the system understand which prompt variants are most effective:
+
 - `PromptVariant.helpfulCount` - successful readings
-- `PromptVariant.unhelpfulCount` - unsuccessful readings  
+- `PromptVariant.unhelpfulCount` - unsuccessful readings
 - `PromptVariant.helpfulnessRate` - success percentage
 
 ### Card Combination Analysis
+
 The system learns which card combinations users find most helpful:
+
 ```typescript
 // Stored as JSON for later analysis
 cards: [
   { id: 1, name: "The Rider", position: 1 },
   { id: 28, name: "The Man", position: 2 },
-  { id: 38, name: "The Cross", position: 3 }
-]
+  { id: 38, name: "The Cross", position: 3 },
+];
 ```
 
 ### Temperature Optimization
+
 Prompt temperature (creativity vs consistency) is tracked to find optimal settings:
+
 - Lower temps (0.3-0.5): More consistent, factual
 - Medium temps (0.7): Balanced
 - Higher temps (0.9-1.0): More creative, varied
 
 ### Spread Performance Metrics
+
 The system analyzes helpfulness patterns by spread type:
+
 ```
 FeedbackPattern:
   - spreadId: "celtic-cross"
@@ -94,26 +106,29 @@ FeedbackPattern:
 ### Querying Learning Data
 
 Get overall optimization status:
-```typescript
-import { getOptimizationStatus } from '@/lib/feedbackOptimization'
 
-const status = await getOptimizationStatus()
+```typescript
+import { getOptimizationStatus } from "@/lib/feedbackOptimization";
+
+const status = await getOptimizationStatus();
 // Returns top performing variants, spread metrics, system-wide helpfulness
 ```
 
 Get spread-specific metrics:
-```typescript
-import { getSpreadMetrics } from '@/lib/feedbackOptimization'
 
-const metrics = await getSpreadMetrics('celtic-cross')
+```typescript
+import { getSpreadMetrics } from "@/lib/feedbackOptimization";
+
+const metrics = await getSpreadMetrics("celtic-cross");
 // Returns helpfulness rate and top variant for that spread
 ```
 
 ### Generating Reports
-```typescript
-import { generateMetricsReport } from '@/lib/feedbackOptimization'
 
-await generateMetricsReport('celtic-cross', startDate, endDate)
+```typescript
+import { generateMetricsReport } from "@/lib/feedbackOptimization";
+
+await generateMetricsReport("celtic-cross", startDate, endDate);
 // Creates OptimizationMetrics record with period analysis
 ```
 
@@ -149,15 +164,18 @@ When a user submits feedback, the API returns model learning metadata:
 ## Implementation Details
 
 ### Component State Management
+
 - `feedback`: Tracks selected button (up/down/null)
 - `feedbackLoading`: Prevents duplicate submissions during API call
 
 ### API Integration
+
 - POST endpoint: `/api/feedback`
 - Fields: `isHelpful`, `spreadId`, `question`, `cards`, `promptTemperature`, and more
 - Automatically updates related optimization tables
 
 ### Data Validation
+
 - `isHelpful` must be boolean (true for up, false for down)
 - At least one ID required (readingId, aiInterpretationId, or userReadingId)
 - Card data is stored as JSON for flexible analysis
@@ -213,6 +231,7 @@ OptimizationMetrics
 ## Summary
 
 The thumbs up/down feedback system is now a fully-functional model learning pipeline that:
+
 - ✅ Captures comprehensive data about successful/unsuccessful readings
 - ✅ Tracks prompt parameters and card combinations
 - ✅ Analyzes patterns by spread type

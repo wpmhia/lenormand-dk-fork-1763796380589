@@ -1,31 +1,27 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
-    console.error('Error:', error, error.digest)
-  }, [error])
+    console.error("Error:", error, error.digest);
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6 text-center">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold">
-            Something went wrong
-          </h1>
-          <p className="text-gray-600">
-            We encountered an unexpected error.
-          </p>
+          <h1 className="text-2xl font-bold">Something went wrong</h1>
+          <p className="text-gray-600">We encountered an unexpected error.</p>
         </div>
 
         <div className="flex flex-col justify-center gap-3">
@@ -36,7 +32,7 @@ export default function Error({
             Try again
           </button>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="rounded border border-gray-300 px-4 py-2 hover:bg-gray-50"
           >
             Go home
@@ -44,5 +40,5 @@ export default function Error({
         </div>
       </div>
     </div>
-  )
+  );
 }
