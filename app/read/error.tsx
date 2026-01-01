@@ -1,5 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
 export default function Error({
   error,
   reset,
@@ -7,6 +10,12 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const router = useRouter()
+
+  useEffect(() => {
+    console.error('Reading error:', error, error.digest)
+  }, [error])
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6 text-center">
@@ -27,7 +36,7 @@ export default function Error({
             Try again
           </button>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => router.push('/')}
             className="rounded border border-gray-300 px-4 py-2 hover:bg-gray-50"
           >
             Go home

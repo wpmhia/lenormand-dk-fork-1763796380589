@@ -18,6 +18,7 @@ import { getCards, getCardById, drawCards } from '@/lib/data'
 import { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS } from '@/lib/spreads'
 import { ReadingViewer } from '@/components/ReadingViewer'
 import { AIReadingDisplay } from '@/components/AIReadingDisplay'
+import { AIReadingResponse } from '@/lib/deepseek'
 
 
 
@@ -35,7 +36,7 @@ function NewReadingPageContent() {
    const [cardSuggestions, setCardSuggestions] = useState<string[]>([])
    const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([])
    const [error, setError] = useState('')
-   const [aiReading, setAiReading] = useState(null)
+    const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null)
    const [aiLoading, setAiLoading] = useState(false)
    const [aiError, setAiError] = useState<string | null>(null)
    const [aiAttempted, setAiAttempted] = useState(false)

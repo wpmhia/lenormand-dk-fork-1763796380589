@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
@@ -11,8 +12,10 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const router = useRouter()
+
   useEffect(() => {
-    console.error('Learn page error:', error)
+    console.error('Learn page error:', error, error.digest)
   }, [error])
 
   return (
@@ -38,7 +41,7 @@ export default function Error({
           </Button>
           <Button
             variant="outline"
-            onClick={() => window.location.href = '/'}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
