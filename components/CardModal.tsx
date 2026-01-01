@@ -43,20 +43,6 @@ export function CardModal({
     const cards = getCards();
     setAllCards(cards);
     const completeCard = cards.find((c) => c.id === card.id);
-    console.log("=== CardModal useEffect ===");
-    console.log("Looking for card ID:", card.id);
-    console.log("CompleteCard found:", !!completeCard);
-    console.log("CompleteCard has meaning:", !!completeCard?.meaning);
-    if (completeCard?.meaning) {
-      console.log(
-        "CompleteCard meaning keys:",
-        Object.keys(completeCard.meaning),
-      );
-      console.log(
-        "CompleteCard meaning general:",
-        completeCard.meaning.general,
-      );
-    }
     setFullCard(completeCard || null);
   }, [card.id]);
 

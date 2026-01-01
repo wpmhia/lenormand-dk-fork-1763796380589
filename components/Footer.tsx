@@ -96,14 +96,26 @@ export function Footer() {
                   About
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/privacy"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Privacy
-                </Link>
-              </li>
+                <li>
+                  <Link
+                    href="/privacy"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Privacy
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("lenormand-cookie-consent");
+                      localStorage.removeItem("lenormand-cookie-preferences");
+                      window.location.reload();
+                    }}
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Cookie Preferences
+                  </button>
+                </li>
             </ul>
           </div>
 

@@ -94,7 +94,9 @@ export function AIReadingDisplay({
     }
   }, [isLoading, cards?.length]);
 
-  const [currentMessage, setCurrentMessage] = useState(ORACLE_MESSAGES[0]);
+  const [currentMessage, setCurrentMessage] = useState<
+    typeof ORACLE_MESSAGES[number]
+  >(ORACLE_MESSAGES[0]);
 
   useEffect(() => {
     if (isLoading) {
@@ -145,13 +147,11 @@ export function AIReadingDisplay({
       setCopyClicked(true);
       setTimeout(() => setCopyClicked(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
       try {
         await navigator.clipboard.writeText(fullContent);
         setCopyClicked(true);
         setTimeout(() => setCopyClicked(false), 2000);
       } catch (fallbackErr) {
-        console.error("Fallback copy also failed:", fallbackErr);
       }
     }
   };
@@ -188,7 +188,6 @@ export function AIReadingDisplay({
         }),
       });
     } catch (err) {
-      console.error("Error submitting feedback:", err);
       setFeedback(feedback);
     } finally {
       setFeedbackLoading(false);
