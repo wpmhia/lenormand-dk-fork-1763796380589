@@ -112,13 +112,12 @@ export async function POST(request: Request) {
       let aiInterpretationId: string | null = null
       if (body.readingId) {
         try {
-          const aiInterpretation = await prisma.aIInterpretation.create({
-            data: {
-              readingId: body.readingId,
-              readingText: result.reading || '',
-              practicalTranslation: result.practicalTranslation || undefined
-            }
-          })
+           const aiInterpretation = await prisma.aIInterpretation.create({
+             data: {
+               readingId: body.readingId,
+               readingText: result.reading || ''
+             }
+           })
           aiInterpretationId = aiInterpretation.id
           logger.info(`[${requestId}] AI interpretation saved to database`, {
             aiInterpretationId
@@ -131,10 +130,9 @@ export async function POST(request: Request) {
       }
 
        return NextResponse.json({
-         reading: result.reading,
-         practicalTranslation: result.practicalTranslation,
-         aiInterpretationId
-       })
+          reading: result.reading,
+          aiInterpretationId
+        })
   } catch (error) {
     const duration = Date.now() - startTime
     const errorMsg = error instanceof Error ? error.message : String(error)

@@ -44,11 +44,8 @@ function PhysicalReadingPage() {
    const [aiRetryCount, setAiRetryCount] = useState(0)
    const [showStartOverConfirm, setShowStartOverConfirm] = useState(false)
    const [isStreaming, setIsStreaming] = useState(false)
-   const [streamedContent, setStreamedContent] = useState('')
-   const [prophecyContent, setProphecyContent] = useState('')
-   const [practicalContent, setPracticalContent] = useState('')
-   const [separatorFound, setSeparatorFound] = useState(false)
-   const [shareLink, setShareLink] = useState('')
+    const [streamedContent, setStreamedContent] = useState('')
+    const [shareLink, setShareLink] = useState('')
    const [shareClicked, setShareClicked] = useState(false)
 
   useEffect(() => {
@@ -126,14 +123,11 @@ function PhysicalReadingPage() {
   }
 
     const performAIAnalysis = async (readingCards: ReadingCard[], isRetry = false) => {
-     setAiLoading(true)
-     setAiError(null)
-     setAiErrorDetails(null)
-     setStreamedContent('')
-     setProphecyContent('')
-     setPracticalContent('')
-     setSeparatorFound(false)
-     setIsStreaming(false)
+      setAiLoading(true)
+      setAiError(null)
+      setAiErrorDetails(null)
+      setStreamedContent('')
+      setIsStreaming(false)
 
      if (!isRetry) {
        setAiRetryCount(0)
@@ -185,11 +179,10 @@ function PhysicalReadingPage() {
        const reader = response.body?.getReader()
        if (!reader) throw new Error('No response body')
 
-       const decoder = new TextDecoder()
-       let buffer = ''
-       let content = ''
-       let hasSeparator = false
-       let chunkCount = 0
+        const decoder = new TextDecoder()
+        let buffer = ''
+        let content = ''
+        let chunkCount = 0
 
        console.log('🌊 Starting to read streaming response...')
 
@@ -220,45 +213,18 @@ function PhysicalReadingPage() {
                content += chunk
                setStreamedContent(content)
                
-               if (chunkCount <= 3 || chunkCount % 10 === 0) {
-                 console.log(`📦 Chunk ${chunkCount}: ${chunk.length} chars, total: ${content.length} chars`)
-               }
-
-               // Check if we've found the separator
-               if (!hasSeparator && content.includes('---SEPARATOR---')) {
-                 hasSeparator = true
-                 console.log('🔮 SEPARATOR FOUND! Showing prophecy immediately...')
-                 setSeparatorFound(true)
-                 
-                 // Parse and display content so far
-                 const parts = content.split('---SEPARATOR---')
-                 console.log('📖 Prophecy length:', parts[0].length, 'chars')
-                 console.log('💡 Practical length:', parts[1]?.length || 0, 'chars')
-                 setProphecyContent(parts[0].trim())
-                 if (parts[1]) {
-                   setPracticalContent(parts[1].trim())
-                 }
-               } else if (hasSeparator) {
-                 // Update prophecy and practical as new content arrives
-                 const parts = content.split('---SEPARATOR---')
-                 setProphecyContent(parts[0].trim())
-                 if (parts[1]) {
-                   setPracticalContent(parts[1].trim())
-                 }
-               }
-             } catch (e) {
+                if (chunkCount <= 3 || chunkCount % 10 === 0) {
+                  console.log(`📦 Chunk ${chunkCount}: ${chunk.length} chars, total: ${content.length} chars`)
+                }
+              } catch (e) {
                console.error('Error parsing stream data:', e)
              }
            }
          }
        }
 
-       // Final parse of complete content
-       const parts = content.split('---SEPARATOR---')
-       const reading = parts[0].trim()
-       const practicalTranslation = parts[1]?.trim() || ''
-
-       setAiReading({ reading, practicalTranslation })
+        // Final parse of complete content
+        setAiReading({ reading: content.trim() })
        setAiRetryCount(0) // Reset on success
      } catch (error) {
        console.error('AI analysis error:', error)
@@ -303,12 +269,9 @@ function PhysicalReadingPage() {
      setAiError(null)
      setAiErrorDetails(null)
      setPhysicalCards('')
-     setShowStartOverConfirm(false)
-     setStreamedContent('')
-     setProphecyContent('')
-     setPracticalContent('')
-     setSeparatorFound(false)
-     setIsStreaming(false)
+      setShowStartOverConfirm(false)
+      setStreamedContent('')
+      setIsStreaming(false)
    }
 
   return (
@@ -507,25 +470,22 @@ Or: ${selectedSpread.cards === 3 ? 'Rider, Sun, Key' : selectedSpread.cards === 
                   {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
                     <AIReadingDisplay
-                       aiReading={aiReading}
-                       isLoading={aiLoading}
-                       error={aiError}
-                       errorDetails={aiErrorDetails}
-                       onRetry={retryAIAnalysis}
-                       retryCount={aiRetryCount}
-                       cards={drawnCards.map(card => ({
-                         id: card.id,
-                         name: getCardById(allCards, card.id)?.name || 'Unknown',
-                         position: card.position
-                       }))}
-                       allCards={allCards}
-                       spreadId={selectedSpread.id}
-                       question={question}
-                       isStreaming={isStreaming}
-                       prophecyContent={prophecyContent}
-                       practicalContent={practicalContent}
-                       separatorFound={separatorFound}
-                     />
+                        aiReading={aiReading}
+                        isLoading={aiLoading}
+                        error={aiError}
+                        errorDetails={aiErrorDetails}
+                        onRetry={retryAIAnalysis}
+                        retryCount={aiRetryCount}
+                        cards={drawnCards.map(card => ({
+                          id: card.id,
+                          name: getCardById(allCards, card.id)?.name || 'Unknown',
+                          position: card.position
+                        }))}
+                        allCards={allCards}
+                        spreadId={selectedSpread.id}
+                        question={question}
+                        isStreaming={isStreaming}
+                      />
 
                    <div className="pt-4 flex gap-3 justify-center flex-wrap">
                     <Button

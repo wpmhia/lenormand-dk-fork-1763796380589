@@ -4,7 +4,7 @@ import { LenormandCard } from '@/types/agent.types'
 describe('Integration Tests - DeepSeek Reading Generation', () => {
   
   describe('3-Card Spread Workflow', () => {
-    it('should generate complete reading with practical translation', async () => {
+    it('should generate complete reading', async () => {
       const cards: LenormandCard[] = [
         { id: 18, name: 'Dog' },
         { id: 8, name: 'Coffin' },
@@ -22,10 +22,9 @@ describe('Integration Tests - DeepSeek Reading Generation', () => {
       expect(response).toBeDefined()
       expect(response?.reading).toBeDefined()
       expect(response?.reading).toBeTruthy()
-      expect(response?.practicalTranslation).toBeDefined()
     })
 
-    it('should include all card names in reading', async () => {
+    it('should include card names and positions in reading', async () => {
       const cards: LenormandCard[] = [
         { id: 6, name: 'Clouds' },
         { id: 27, name: 'Letter' },
@@ -71,13 +70,11 @@ describe('Integration Tests - DeepSeek Reading Generation', () => {
       expect(response).toBeDefined()
       expect(response?.reading).toBeDefined()
       expect(response?.reading).toBeTruthy()
-      expect(response?.practicalTranslation).toBeDefined()
-      expect(response?.practicalTranslation).toBeTruthy()
     })
   })
 
   describe('Response Format', () => {
-    it('should have prophecy and practical translation separated', async () => {
+    it('should return single reading interpretation', async () => {
       const cards: LenormandCard[] = [
         { id: 31, name: 'Sun' },
         { id: 26, name: 'Book' },
@@ -94,14 +91,8 @@ describe('Integration Tests - DeepSeek Reading Generation', () => {
 
       expect(response?.reading).toBeDefined()
       expect(response?.reading).toBeTruthy()
-      expect(response?.practicalTranslation).toBeDefined()
-      expect(response?.practicalTranslation).toBeTruthy()
-      
-      // Both should be non-empty strings
       expect(typeof response?.reading).toBe('string')
       expect(response?.reading.length).toBeGreaterThan(0)
-      expect(typeof response?.practicalTranslation).toBe('string')
-      expect(response?.practicalTranslation.length).toBeGreaterThan(0)
     })
   })
 })

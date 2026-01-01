@@ -20,7 +20,6 @@ export interface AIReadingRequest {
 
 export interface AIReadingResponse {
   reading: string
-  practicalTranslation?: string
   aiInterpretationId?: string
 }
 
@@ -108,16 +107,8 @@ export async function getAIReading(request: AIReadingRequest): Promise<AIReading
       throw new Error('DeepSeek returned empty content')
     }
 
-    const trimmedContent = content.trim()
-
-    // Parse prophecy + practical translation format
-    const parts = trimmedContent.split('---SEPARATOR---')
-    const reading = parts[0].trim()
-    const practicalTranslation = parts[1]?.trim()
-
     const aiResponse = {
-      reading,
-      practicalTranslation
+      reading: content.trim()
     }
     
     cacheReading(request, aiResponse)
