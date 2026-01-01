@@ -323,7 +323,7 @@ function NewReadingPageContent() {
         );
       }
     }
-  }, []);
+  }, [selectedSpread.cards]);
   // Parse physical cards when input changes
   useEffect(() => {
     if (path === "physical" && physicalCards) {

@@ -81,7 +81,7 @@ function PhysicalReadingPage() {
       setAllCards(cards);
     } catch (error) {
       console.error("Error fetching cards:", error);
-      setError("Failed to load cards");
+      setError("Unable to load card data. Please refresh the page to try again.");
     }
   };
 

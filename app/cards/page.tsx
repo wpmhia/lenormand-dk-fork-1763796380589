@@ -6,7 +6,8 @@ import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Search, XCircle } from "lucide-react";
 import { getCards } from "@/lib/data";
 
 export default function CardsPage() {
@@ -15,6 +16,7 @@ export default function CardsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const filterAndSortCards = useCallback(() => {
     let filtered = cards;
@@ -73,9 +75,11 @@ export default function CardsPage() {
         );
       }
       setCards(cardsData);
+      setFilteredCards(cardsData);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching cards:", error);
+      setError("Unable to load cards. Please refresh the page to try again.");
       setLoading(false);
     }
   };
@@ -124,6 +128,13 @@ export default function CardsPage() {
           Journey through the 36 archetypes that hold the keys to understanding
         </p>
       </div>
+
+      {error && (
+        <Alert variant="destructive" className="mb-6">
+          <XCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="relative flex-1">

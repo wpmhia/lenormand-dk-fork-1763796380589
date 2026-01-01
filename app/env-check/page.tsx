@@ -31,6 +31,25 @@ import {
 import { ENV_VARIABLES } from "@/lib/env-config";
 import Link from "next/link";
 
+function sanitizeHTML(html: string): string {
+  return html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatInstructions(text: string): string {
+  const sanitized = sanitizeHTML(text);
+  return sanitized
+    .replace(/\n/g, "<br>")
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>',
+    );
+}
+
 export default function EnvCheckPage() {
   // Check environment variables on server side
   const envStatus: { [key: string]: boolean } = {};
@@ -162,12 +181,7 @@ export default function EnvCheckPage() {
                       <div
                         className="prose prose-sm max-w-none text-sm text-muted-foreground"
                         dangerouslySetInnerHTML={{
-                          __html: envVar.instructions
-                            .replace(/\n/g, "<br>")
-                            .replace(
-                              /\[([^\]]+)\]\(([^)]+)\)/g,
-                              '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>',
-                            ),
+                          __html: formatInstructions(envVar.instructions),
                         }}
                       />
                     </div>
