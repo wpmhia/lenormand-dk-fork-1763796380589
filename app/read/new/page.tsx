@@ -168,13 +168,17 @@ function NewReadingPageContent() {
 
         clearTimeout(timeout);
 
-        console.log("Response status:", response.status);
+        console.log("AI Response status:", response.status);
 
         if (!response.ok) {
-          const errorData = await response
-            .json()
-            .catch(() => ({ error: "Server error" }));
-          throw new Error(errorData.error || "Server error");
+          let errorMsg = "Failed to generate AI interpretation";
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.error || errorMsg;
+          } catch {
+            errorMsg = `${errorMsg}: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorMsg);
         }
 
         const aiResult = await response.json();
@@ -189,7 +193,6 @@ function NewReadingPageContent() {
         let errorMessage = "AI analysis failed";
 
         if (error instanceof Error) {
-          // Provide more helpful error messages
           if (
             error.name === "AbortError" ||
             error.message.includes("timeout")
@@ -208,13 +211,14 @@ function NewReadingPageContent() {
         }
 
         setAiError(errorMessage);
+        setAiAttempted(true);
       } finally {
         console.log("AI Analysis complete");
         setAiLoading(false);
         aiProcessingRef.current = false;
       }
     },
-    [question, allCards, addLog, selectedSpread.id],
+    [question, allCards, selectedSpread.id],
   );
 
   // Auto-start AI analysis when entering results step

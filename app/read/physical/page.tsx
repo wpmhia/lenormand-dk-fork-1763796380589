@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card as CardType, ReadingCard } from "@/lib/types";
+import { Card as CardType, ReadingCard, Reading } from "@/lib/types";
 import { ReadingViewer } from "@/components/ReadingViewer";
 import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 
@@ -568,30 +568,30 @@ Or: ${selectedSpread.cards === 3 ? "Rider, Sun, Key" : selectedSpread.cards === 
                     isStreaming={isStreaming}
                   />
 
-                  <div className="flex flex-wrap justify-center gap-3 pt-4">
-                    <Button
-                      onClick={() => {
-                        const reading: any = {
-                          id: Math.random().toString(36).substr(2, 9),
-                          title: question || "Reading",
-                          slug: "",
-                          cards: drawnCards,
-                          layoutType: selectedSpread.cards,
-                          question: question,
-                          isPublic: true,
-                          createdAt: new Date(),
-                          updatedAt: new Date(),
-                        };
-                        const encoded = encodeReadingForUrl(reading);
-                        const url = `${typeof window !== "undefined" ? window.location.origin : ""}/read/shared/${encoded}`;
-                        setShareLink(url);
-                        navigator.clipboard.writeText(url);
-                        setShareClicked(true);
-                        setTimeout(() => setShareClicked(false), 2000);
-                      }}
-                      variant="outline"
-                      className="border-border hover:bg-muted"
-                    >
+                    <div className="flex flex-wrap justify-center gap-3 pt-4">
+                      <Button
+                        onClick={() => {
+                          const reading: Reading = {
+                            id: Math.random().toString(36).substr(2, 9),
+                            title: question || "Reading",
+                            slug: "",
+                            cards: drawnCards,
+                            layoutType: selectedSpread.cards,
+                            question: question,
+                            isPublic: true,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                          };
+                          const encoded = encodeReadingForUrl(reading);
+                          const url = `${typeof window !== "undefined" ? window.location.origin : ""}/read/shared/${encoded}`;
+                          setShareLink(url);
+                          navigator.clipboard.writeText(url);
+                          setShareClicked(true);
+                          setTimeout(() => setShareClicked(false), 2000);
+                        }}
+                        variant="outline"
+                        className="border-border hover:bg-muted"
+                      >
                       <Share2 className="mr-2 h-4 w-4" />
                       {shareClicked ? "Link Copied!" : "Share Reading"}
                     </Button>

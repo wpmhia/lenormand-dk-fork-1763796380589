@@ -7,8 +7,9 @@ import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, User, Share2, Sparkles } from "lucide-react";
-import { Reading } from "@/lib/types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Calendar, User, Share2, Sparkles, XCircle } from "lucide-react";
+import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
 import { getCards, decodeReadingFromUrl, getCardById } from "@/lib/data";
 import { AIReadingResponse } from "@/lib/deepseek";
 
@@ -40,8 +41,9 @@ function getSpreadIdFromLayoutType(layoutType: number): string {
 
 export default function SharedReadingPage({ params }: PageProps) {
   const [reading, setReading] = useState<Reading | null>(null);
-  const [allCards, setAllCards] = useState<any[]>([]);
+  const [allCards, setAllCards] = useState<CardType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
   // AI-related state
@@ -99,7 +101,7 @@ export default function SharedReadingPage({ params }: PageProps) {
 
   // AI analysis function
   const performAIAnalysis = useCallback(
-    async (readingCards: any[]) => {
+    async (readingCards: ReadingCard[]) => {
       if (!mountedRef.current || !reading) return;
 
       setAiLoading(true);
