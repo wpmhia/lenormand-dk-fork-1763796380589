@@ -72,11 +72,12 @@ export async function getAIReading(
     });
 
     // Token allocation - optimized for concise interpretations
-    let maxTokens = 500;
-    if (cards.length >= 36) maxTokens = 700;
-    else if (cards.length >= 9) maxTokens = 600;
-    else if (cards.length >= 7) maxTokens = 550;
-    else if (cards.length >= 5) maxTokens = 500;
+    let maxTokens = 800;
+    if (cards.length >= 36) maxTokens = 1200;
+    else if (cards.length >= 9) maxTokens = 1000;
+    else if (cards.length >= 7) maxTokens = 800;
+    else if (cards.length >= 5) maxTokens = 700;
+    else maxTokens = 500;
 
     console.log("Sending request to DeepSeek API...");
     console.log(`Token budget: ${maxTokens} tokens`);
@@ -167,11 +168,12 @@ export async function streamAIReading(
     });
 
     // Token allocation - optimized for concise interpretations
-    let maxTokens = 500;
-    if (cards.length >= 36) maxTokens = 700;
-    else if (cards.length >= 9) maxTokens = 600;
-    else if (cards.length >= 7) maxTokens = 550;
-    else if (cards.length >= 5) maxTokens = 500;
+    let maxTokens = 800;
+    if (cards.length >= 36) maxTokens = 1200;
+    else if (cards.length >= 9) maxTokens = 1000;
+    else if (cards.length >= 7) maxTokens = 800;
+    else if (cards.length >= 5) maxTokens = 700;
+    else maxTokens = 500;
 
     console.log("Sending streaming request to DeepSeek API...");
     console.log(`Token budget: ${maxTokens} tokens`);
