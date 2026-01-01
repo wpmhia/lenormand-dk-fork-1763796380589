@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { AIReadingResponse } from "@/lib/deepseek";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,22 @@ import {
 } from "lucide-react";
 import { getSpreadLearningLinks } from "@/lib/spreadLearning";
 import { ReadingFeedback } from "./ReadingFeedback";
+
+const ORACLE_MESSAGES = [
+  "Shuffling the cards...",
+  "Aligning with the stars...",
+  "Unveiling hidden messages...",
+  "Marie-Anne is contemplating...",
+  "Revealing your destiny...",
+  "The oracle speaks...",
+] as const;
+
+const PROGRESS_STEPS = [
+  "Analyzing your cards...",
+  "Interpreting positions...",
+  "Connecting the story...",
+  "Finalizing insights...",
+] as const;
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
@@ -44,6 +60,7 @@ interface AIReadingDisplayProps {
   spreadId?: string;
   question?: string;
   isStreaming?: boolean;
+  streamedContent?: string;
 }
 
 export function AIReadingDisplay({
@@ -58,16 +75,45 @@ export function AIReadingDisplay({
   spreadId,
   question,
   isStreaming = false,
+  streamedContent,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [progressStep, setProgressStep] = useState(0);
   const spreadLearningLinks = getSpreadLearningLinks(spreadId);
+
+  useEffect(() => {
+    if (isLoading) {
+      setProgressStep(0);
+      const steps = cards?.length || 3;
+      const interval = setInterval(() => {
+        setProgressStep((prev) => (prev < steps - 1 ? prev + 1 : prev));
+      }, 800);
+      return () => clearInterval(interval);
+    }
+  }, [isLoading, cards?.length]);
+
+  const [currentMessage, setCurrentMessage] = useState(ORACLE_MESSAGES[0]);
+
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setCurrentMessage(
+          ORACLE_MESSAGES[Math.floor(Math.random() * ORACLE_MESSAGES.length)],
+        );
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoading]);
+
+  const estimatedTime = cards ? Math.ceil(cards.length * 0.8) : 3;
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
 
-    const attribution = "\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).";
+    const attribution =
+      "\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).";
     const fullContent = aiReading.reading + attribution;
 
     try {
@@ -82,7 +128,12 @@ export function AIReadingDisplay({
         .replace(/\n\n/gim, "<br><br>")
         .replace(/\n/gim, "<br>");
 
-      const blobHtml = new Blob([`<div style="font-family: system-ui, sans-serif; line-height: 1.6;">${htmlContent}</div>${attribution.replace("\n\n---", "<hr>")}`], { type: "text/html" });
+      const blobHtml = new Blob(
+        [
+          `<div style="font-family: system-ui, sans-serif; line-height: 1.6;">${htmlContent}</div>${attribution.replace("\n\n---", "<hr>")}`,
+        ],
+        { type: "text/html" },
+      );
       const blobText = new Blob([fullContent], { type: "text/plain" });
 
       await navigator.clipboard.write([
@@ -145,27 +196,86 @@ export function AIReadingDisplay({
   };
 
   if (isLoading) {
+    const progress = Math.min(
+      (progressStep / Math.max((cards?.length || 3) - 1, 1)) * 100,
+      100,
+    );
     return (
       <div className="animate-in fade-in slide-in-from-bottom-8 loading-skeleton pointer-events-none delay-200 duration-500">
-        <Card className="border-border bg-card shadow-elevation-1">
-          <CardContent className="space-y-lg p-xl text-center">
-            <div className="mb-lg flex items-center justify-center gap-lg">
-              <Badge variant="default" className="loading-skeleton-pulse">
-                <Zap className="mr-1 h-3 w-3" />
-                Processing
-              </Badge>
+        <Card className="overflow-hidden border-border bg-card shadow-elevation-1">
+          <CardContent className="space-y-xl p-xl">
+            <div className="space-y-md">
+              <div className="flex items-center justify-between gap-sm">
+                <Badge variant="default" className="loading-skeleton-pulse">
+                  <Zap className="mr-1 h-3 w-3" />
+                  {
+                    PROGRESS_STEPS[
+                      Math.min(progressStep, PROGRESS_STEPS.length - 1)
+                    ]
+                  }
+                </Badge>
+                <span className="text-sm text-muted-foreground">
+                  ~{estimatedTime}s
+                </span>
+              </div>
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="absolute left-0 top-0 h-full bg-primary transition-all duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
             </div>
-            <div className="relative mx-auto h-16 w-16">
-              <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-              <div className="loading-spinner absolute inset-0 rounded-full border-4 border-primary border-t-transparent"></div>
-              <Sparkles className="loading-skeleton-pulse absolute inset-0 m-auto h-6 w-6 text-primary" />
+
+            <div className="grid gap-md sm:grid-cols-2">
+              <div className="space-y-sm">
+                <div className="relative mx-auto aspect-square max-w-[120px]">
+                  <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+                  <div className="loading-spinner absolute inset-0 h-full w-full rounded-full border-4 border-primary border-t-transparent"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Sparkles className="loading-skeleton-pulse h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <p className="animate-pulse text-center text-sm font-medium text-foreground">
+                  {currentMessage}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-center">
+                <div className="space-y-xs text-center">
+                  <p className="text-sm font-semibold text-foreground">
+                    Cards Being Read:
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-xs">
+                    {cards?.slice(0, 5).map((card, i) => (
+                      <Badge
+                        key={card.id}
+                        variant={i <= progressStep ? "default" : "outline"}
+                        className={`transition-all duration-300 ${
+                          i <= progressStep
+                            ? "bg-primary"
+                            : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {card.id}
+                      </Badge>
+                    ))}
+                    {(cards?.length || 0) > 5 && (
+                      <Badge
+                        variant="outline"
+                        className="bg-muted text-muted-foreground"
+                      >
+                        +{cards?.length || 0 - 5}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">
-                Generating your reading...
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Consulting the oracle...
+
+            <div className="border-t border-border pt-md text-center">
+              <p className="text-xs text-muted-foreground">
+                Marie-Anne Lenormand is interpreting your {cards?.length || 3}{" "}
+                cards...
               </p>
             </div>
           </CardContent>
@@ -223,6 +333,16 @@ export function AIReadingDisplay({
   if (!aiReading?.reading) {
     return null;
   }
+
+  // Check if content appears incomplete (ends abruptly without proper ending)
+  const isContentComplete =
+    aiReading.reading.length > 100 &&
+    (aiReading.reading.trim().endsWith(".") ||
+      aiReading.reading.trim().endsWith("!") ||
+      aiReading.reading.trim().endsWith("?") ||
+      aiReading.reading.includes("advice") ||
+      aiReading.reading.includes("guidance") ||
+      aiReading.reading.includes("recommend"));
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-8 space-y-xl delay-200 duration-500">
@@ -317,8 +437,14 @@ export function AIReadingDisplay({
                 ),
               }}
             >
-              {aiReading.reading}
+              {streamedContent || aiReading.reading}
             </ReactMarkdown>
+            {isStreaming && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                <span>Continue receiving...</span>
+              </div>
+            )}
           </div>
 
           {spreadLearningLinks && (

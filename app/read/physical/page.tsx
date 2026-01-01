@@ -566,6 +566,7 @@ Or: ${selectedSpread.cards === 3 ? "Rider, Sun, Key" : selectedSpread.cards === 
                     spreadId={selectedSpread.id}
                     question={question}
                     isStreaming={isStreaming}
+                    streamedContent={isStreaming ? streamedContent : undefined}
                   />
 
                     <div className="flex flex-wrap justify-center gap-3 pt-4">
