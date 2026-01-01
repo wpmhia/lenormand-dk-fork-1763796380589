@@ -1,8 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { Heart, Mail, Sparkles } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const resetCookieConsent = () => {
+    localStorage.removeItem("lenormand-cookie-consent");
+    localStorage.removeItem("lenormand-cookie-preferences");
+    window.location.reload();
+  };
 
   return (
     <footer className="border-t border-border bg-gradient-to-b from-background to-background/80">
@@ -106,11 +114,7 @@ export function Footer() {
                 </li>
                 <li>
                   <button
-                    onClick={() => {
-                      localStorage.removeItem("lenormand-cookie-consent");
-                      localStorage.removeItem("lenormand-cookie-preferences");
-                      window.location.reload();
-                    }}
+                    onClick={resetCookieConsent}
                     className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     Cookie Preferences
