@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react/no-unescaped-entities */
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +19,11 @@ import {
   RotateCcw,
   BookOpen,
   Users,
+  Clock,
+  HelpCircle,
+  Briefcase,
+  Heart,
+  TrendingUp,
 } from "lucide-react";
 
 export default function ReadingBasicsPage() {
@@ -673,6 +680,341 @@ export default function ReadingBasicsPage() {
                   tells you what each person brings to the dynamic, what
                   they&apos;re experiencing, and how the situation will unfold
                   from both perspectives.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Common Questions Section */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <HelpCircle className="mr-3 h-6 w-6 text-primary" />
+              Common Lenormand Questions
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-muted-foreground">
+              Lenormand excels at practical, everyday questions. Unlike Tarot focus on
+              psychological depth, Lenormand answers "how" and "when" about real-world
+              situations.
+            </p>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <div className="mb-3 flex items-center">
+                  <Heart className="mr-2 h-5 w-5 text-rose-500" />
+                  <h3 className="font-semibold text-foreground">Love & Relationships</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• "Will they contact me soon?"</li>
+                  <li>• "What is the future of this relationship?"</li>
+                  <li>• "How do they feel about me?"</li>
+                  <li>• "Will my ex come back?"</li>
+                  <li>• "Is a new relationship coming?"</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <div className="mb-3 flex items-center">
+                  <Briefcase className="mr-2 h-5 w-5 text-emerald-500" />
+                  <h3 className="font-semibold text-foreground">Career & Work</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• "What is the outcome of my job interview?"</li>
+                  <li>• "Should I change jobs?"</li>
+                  <li>• "What will happen at work this week?"</li>
+                  <li>• "Is this a good time to start a business?"</li>
+                  <li>• "What do I need to know about my career?"</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <div className="mb-3 flex items-center">
+                  <Clock className="mr-2 h-5 w-5 text-amber-500" />
+                  <h3 className="font-semibold text-foreground">Timing Questions</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• "When will I hear back about X?"</li>
+                  <li>• "When will this situation change?"</li>
+                  <li>• "How long until things improve?"</li>
+                  <li>• "What is the timeline for this outcome?"</li>
+                  <li>• "When should I take action?"</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <div className="mb-3 flex items-center">
+                  <TrendingUp className="mr-2 h-5 w-5 text-blue-500" />
+                  <h3 className="font-semibold text-foreground">General Guidance</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• "What do I need to know about situation?"</li>
+                  <li>• "What should I focus on this week?"</li>
+                  <li>• "What advice do the cards have for me?"</li>
+                  <li>• "What obstacles might I face?"</li>
+                  <li>• "What is the best path forward?"</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
+              <h3 className="mb-2 font-semibold text-foreground">
+                How to Ask Lenormand Questions
+              </h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <strong className="text-card-foreground">Be specific:</strong> Lenormand
+                  works best with concrete questions. "Will I get the job?" is better
+                  than "What about my career?"
+                </p>
+                <p>
+                  <strong className="text-card-foreground">Include timeframe:</strong> "What
+                  should I focus on this week?" gets better answers than open-ended
+                  "What about my future?"
+                </p>
+                <p>
+                  <strong className="text-card-foreground">Ask about others carefully:</strong>{" "}
+                  You can ask about others' actions toward you, but avoid questions that
+                  try to control or predict others' internal states.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Timing Reference Section */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <Clock className="mr-3 h-6 w-6 text-primary" />
+              Lenormand Timing Reference
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-muted-foreground">
+              One of Lenormand's greatest strengths is timing predictions. While not
+              exact dates, these associations help you understand when events might unfold.
+            </p>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="py-2 text-left font-medium text-foreground">Card</th>
+                    <th className="py-2 text-left font-medium text-foreground">Time Period</th>
+                    <th className="py-2 text-left font-medium text-foreground">Notes</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Rider (1)</td>
+                    <td className="py-2">Days</td>
+                    <td className="py-2">Very soon, immediate</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Clouds (6)</td>
+                    <td className="py-2">Days to weeks</td>
+                    <td className="py-2">Unclear, changeable timing</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Ship (3)</td>
+                    <td className="py-2">Weeks to months</td>
+                    <td className="py-2">Travel, distance involved</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">House (4)</td>
+                    <td className="py-2">Months</td>
+                    <td className="py-2">Stable, home/family matters</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Tree (5)</td>
+                    <td className="py-2">Months to years</td>
+                    <td className="py-2">Long-term, health-related</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Mountain (21)</td>
+                    <td className="py-2">Weeks to months</td>
+                    <td className="py-2">Delays, obstacles</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Garden (20)</td>
+                    <td className="py-2">Weeks</td>
+                    <td className="py-2">Social, public matters</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Path (22)</td>
+                    <td className="py-2">Weeks to months</td>
+                    <td className="py-2">Choice point, crossroads</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Stork (17)</td>
+                    <td className="py-2">Weeks to months</td>
+                    <td className="py-2">Changes, new beginnings</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Dog (18)</td>
+                    <td className="py-2">Weeks</td>
+                    <td className="py-2">Loyalty, friendship matters</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Ring (25)</td>
+                    <td className="py-2">Months to years</td>
+                    <td className="py-2">Commitments, cycles</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Letter (27)</td>
+                    <td className="py-2">Days to weeks</td>
+                    <td className="py-2">Communication, news</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Anchor (35)</td>
+                    <td className="py-2">Months to years</td>
+                    <td className="py-2">Long stability, waiting it out</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 font-medium text-foreground">Cross (36)</td>
+                    <td className="py-2">Months to years</td>
+                    <td className="py-2">Long-term burdens or destiny</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <h3 className="mb-2 font-semibold text-foreground">Timing Tips</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  • <strong className="text-card-foreground">Card 5 (timing):</strong> In a
+                  5-card spread, the pip value of the 5th card can indicate timing (1-10
+                  = days, 11-20 = weeks, 21+ = months)
+                </li>
+                <li>
+                  • <strong className="text-card-foreground">Directional:</strong> Reading
+                  left-to-right suggests forward motion; right-to-left may suggest looking
+                  back or delays
+                </li>
+                <li>
+                  • <strong className="text-card-foreground">Clouds = unclear:</strong> If
+                  Clouds appear near timing cards, the timeframe is uncertain
+                </li>
+                <li>
+                  • <strong className="text-card-foreground">Multiple timing cards:</strong>{" "}
+                  When several timing cards appear, consider them together for a range
+                </li>
+              </ul>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              <strong className="text-card-foreground">Important:</strong> Lenormand timing
+              is symbolic, not literal. Use these as guides for relative timing rather
+              than specific dates.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Example Readings Section */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <MessageSquare className="mr-3 h-6 w-6 text-primary" />
+              Example Readings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-muted-foreground">
+              Here are real examples of how to interpret common questions using Lenormand
+              spreads.
+            </p>
+
+            <div className="rounded-lg border border-border bg-muted p-6">
+              <h3 className="mb-4 font-semibold text-foreground">
+                Example 1: Love Question - "Will they contact me?"
+              </h3>
+              <div className="mb-4 grid gap-4 md:grid-cols-5">
+                {[
+                  { card: "Rider", pos: "1", desc: "News, message" },
+                  { card: "Heart", pos: "2", desc: "Love, feelings" },
+                  { card: "Ring", pos: "3", desc: "Commitment" },
+                  { card: "Letter", pos: "4", desc: "Communication" },
+                  { card: "Key", pos: "5", desc: "Positive outcome" },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center text-center">
+                    <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
+                      <span className="font-bold text-white">{item.pos}</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{item.card}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded bg-card p-4">
+                <h4 className="mb-2 font-medium text-foreground">Interpretation:</h4>
+                <p className="text-sm text-muted-foreground">
+                  "The Rider brings love commitment through communication and leads to a
+                  positive outcome." This reading suggests yes - expect contact related to
+                  matters of the heart, leading to something committed.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border bg-muted p-6">
+              <h3 className="mb-4 font-semibold text-foreground">
+                Example 2: Career Question - "Should I take this job offer?"
+              </h3>
+              <div className="mb-4 grid gap-4 md:grid-cols-5">
+                {[
+                  { card: "Bear", pos: "1", desc: "Strength, salary" },
+                  { card: "Ship", pos: "2", desc: "Travel, change" },
+                  { card: "Mountain", pos: "3", desc: "Challenges" },
+                  { card: "Stars", pos: "4", desc: "Hope, guidance" },
+                  { card: "Fish", pos: "5", desc: "Money, success" },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center text-center">
+                    <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
+                      <span className="font-bold text-white">{item.pos}</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{item.card}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded bg-card p-4">
+                <h4 className="mb-2 font-medium text-foreground">Interpretation:</h4>
+                <p className="text-sm text-muted-foreground">
+                  "Strong power and resources come with travel/changes and challenges, but
+                  bring hope and lead to financial success." This suggests the offer has
+                  good potential despite initial hurdles.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border bg-muted p-6">
+              <h3 className="mb-4 font-semibold text-foreground">
+                Example 3: Timing Question - "When will I hear back?"
+              </h3>
+              <div className="mb-4 grid gap-4 md:grid-cols-3">
+                {[
+                  { card: "Rider", pos: "1", desc: "News arriving" },
+                  { card: "Bird", pos: "2", desc: "Anxiety, chatter" },
+                  { card: "Letter", pos: "3", desc: "Written communication" },
+                ].map((item, i) => (
+                  <div key={i} className="flex flex-col items-center text-center">
+                    <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
+                      <span className="font-bold text-white">{item.pos}</span>
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{item.card}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded bg-card p-4">
+                <h4 className="mb-2 font-medium text-foreground">Interpretation:</h4>
+                <p className="text-sm text-muted-foreground">
+                  "Quick news creates nervous anticipation, followed by written
+                  communication." The Rider suggests a response is imminent - likely within
+                  days rather than weeks.
                 </p>
               </div>
             </div>
