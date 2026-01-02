@@ -502,142 +502,139 @@ function NewReadingPageContent() {
           )}
 
           {step === "setup" && (
-                {/* Essential Section - Always Visible */}
-                <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
-                      <Eye className="h-5 w-5" />
-                      Your Sacred Question
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Question Input */}
-                    <div className="space-y-3">
-                      <Textarea
-                        id="question"
-                        value={question}
-                        onChange={(e) => {
-                          setQuestion(e.target.value);
-                          setQuestionCharCount(e.target.value.length);
-                        }}
-                        placeholder="What guidance do the cards have for me today?"
-                        className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
-                        maxLength={500}
-                        aria-describedby="question-help question-count"
-                        required
-                      />
-                      <div
-                        id="question-count"
-                        className="text-right text-xs text-muted-foreground"
-                        aria-live="polite"
-                      >
-                        {questionCharCount}/500 characters
-                      </div>
-                    </div>
+            <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
+                  <Eye className="h-5 w-5" />
+                  Your Sacred Question
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Question Input */}
+                <div className="space-y-3">
+                  <Textarea
+                    id="question"
+                    value={question}
+                    onChange={(e) => {
+                      setQuestion(e.target.value);
+                      setQuestionCharCount(e.target.value.length);
+                    }}
+                    placeholder="What guidance do the cards have for me today?"
+                    className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
+                    maxLength={500}
+                    aria-describedby="question-help question-count"
+                    required
+                  />
+                  <div
+                    id="question-count"
+                    className="text-right text-xs text-muted-foreground"
+                    aria-live="polite"
+                  >
+                    {questionCharCount}/500 characters
+                  </div>
+                </div>
 
-                    {/* Spread Selection - Always Visible */}
-                    <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
-                      <Label
-                        htmlFor="manual-spread"
-                        className="font-medium text-foreground"
-                      >
-                        Choose Your Spread:
+                {/* Spread Selection - Always Visible */}
+                <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
+                  <Label
+                    htmlFor="manual-spread"
+                    className="font-medium text-foreground"
+                  >
+                    Choose Your Spread:
+                  </Label>
+                  <Select
+                    value={selectedSpread.id}
+                    onValueChange={(value) => {
+                      const spread = COMPREHENSIVE_SPREADS.find(
+                        (s) => s.id === value,
+                      );
+                      if (spread) setSelectedSpread(spread);
+                    }}
+                  >
+                    <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-border bg-card">
+                      {/* Authentic Spreads Header */}
+                      <div className="px-2 py-1.5 text-xs font-bold text-primary">
+                        ✨ AUTHENTIC SPREADS
+                      </div>
+                      {AUTHENTIC_SPREADS.map((spread) => (
+                        <SelectItem
+                          key={spread.id}
+                          value={spread.id}
+                          className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
+                        >
+                          {spread.label}
+                        </SelectItem>
+                      ))}
+
+                      {/* Divider */}
+                      <div className="my-2 border-t border-border" />
+
+                      {/* Modern Spreads Header */}
+                      <div className="px-2 py-1.5 text-xs font-bold text-primary">
+                        🔮 MODERN SPREADS
+                      </div>
+                      {MODERN_SPREADS.map((spread) => (
+                        <SelectItem
+                          key={spread.id}
+                          value={spread.id}
+                          className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
+                        >
+                          {spread.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Hero Path Selection */}
+                {!path ? (
+                  <div className="space-y-6">
+                    <div className="space-y-4 text-center">
+                      <Label className="mb-4 block text-lg font-medium text-foreground">
+                        Choose your reading path
                       </Label>
-                      <Select
-                        value={selectedSpread.id}
-                        onValueChange={(value) => {
-                          const spread = COMPREHENSIVE_SPREADS.find(
-                            (s) => s.id === value,
-                          );
-                          if (spread) setSelectedSpread(spread);
-                        }}
-                      >
-                        <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="border-border bg-card">
-                          {/* Authentic Spreads Header */}
-                          <div className="px-2 py-1.5 text-xs font-bold text-primary">
-                            ✨ AUTHENTIC SPREADS
-                          </div>
-                          {AUTHENTIC_SPREADS.map((spread) => (
-                            <SelectItem
-                              key={spread.id}
-                              value={spread.id}
-                              className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
-                            >
-                              {spread.label}
-                            </SelectItem>
-                          ))}
-
-                          {/* Divider */}
-                          <div className="my-2 border-t border-border" />
-
-                          {/* Modern Spreads Header */}
-                          <div className="px-2 py-1.5 text-xs font-bold text-primary">
-                            🔮 MODERN SPREADS
-                          </div>
-                          {MODERN_SPREADS.map((spread) => (
-                            <SelectItem
-                              key={spread.id}
-                              value={spread.id}
-                              className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
-                            >
-                              {spread.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Hero Path Selection */}
-                    {!path ? (
-                      <div className="space-y-6">
-                        <div className="space-y-4 text-center">
-                          <Label className="mb-4 block text-lg font-medium text-foreground">
-                            Choose your reading path
-                          </Label>
-                          <div className="btn-group-hero">
-                            <Button
-                              onClick={() => {
-                                setPath("virtual");
-                                setStep("drawing");
-                              }}
-                              className="btn-group-hero-item"
-                              size="lg"
-                              variant="default"
-                            >
-                              ✨ Draw cards for me
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                setPath("physical");
-                                setStep("drawing");
-                              }}
-                              className="btn-group-hero-item"
-                              size="lg"
-                              variant="default"
-                            >
-                              🎴 I already have cards
-                            </Button>
-                          </div>
-                          <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-                            <p className="flex items-center justify-center gap-2">
-                              <span className="h-2 w-2 rounded-full bg-primary/60"></span>
-                              Cards are shuffled in your browser—no account
-                              needed.
-                            </p>
-                            <p className="flex items-center justify-center gap-2">
-                              <span className="h-2 w-2 rounded-full bg-muted-foreground/60"></span>
-                              Your cards stay on your table; we only interpret
-                              them.
-                            </p>
-                          </div>
-                        </div>
+                      <div className="btn-group-hero">
+                        <Button
+                          onClick={() => {
+                            setPath("virtual");
+                            setStep("drawing");
+                          }}
+                          className="btn-group-hero-item"
+                          size="lg"
+                          variant="default"
+                        >
+                          ✨ Draw cards for me
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setPath("physical");
+                            setStep("drawing");
+                          }}
+                          className="btn-group-hero-item"
+                          size="lg"
+                          variant="default"
+                        >
+                          🎴 I already have cards
+                        </Button>
                       </div>
-                    ) : null}
-                  </CardContent>
-                </Card>
+                      <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                        <p className="flex items-center justify-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-primary/60"></span>
+                          Cards are shuffled in your browser—no account needed.
+                        </p>
+                        <p className="flex items-center justify-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-muted-foreground/60"></span>
+                          Your cards stay on your table; we only interpret them.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </CardContent>
+            </Card>
           )}
 
           {step === "drawing" && (

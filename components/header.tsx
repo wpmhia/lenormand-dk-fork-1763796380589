@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export function Header() {
@@ -130,16 +129,10 @@ export function Header() {
         </div>
 
         {/* Mobile Navigation Menu */}
-        {mounted && (
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="overflow-hidden border-t border-border bg-card/95 backdrop-blur md:hidden"
-              >
+        {mounted && mobileMenuOpen && (
+          <div
+            className="overflow-hidden border-t border-border bg-card/95 backdrop-blur md:hidden transition-all duration-300"
+          >
                 <nav
                   className="container space-y-2 px-4 py-3"
                   role="navigation"
@@ -179,11 +172,9 @@ export function Header() {
                     <span>Learn</span>
                   </Link>
                 </nav>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
-        )}
-      </header>
-    </>
-  );
-}
+          </header>
+        </>
+      );
+    }

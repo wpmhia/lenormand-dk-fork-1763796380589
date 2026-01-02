@@ -7,14 +7,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent,
-} from "@/components/ui/collapsible";
 import { Card as CardType } from "@/lib/types";
 import { getCards } from "@/lib/data";
 import { ChevronDown } from "lucide-react";
@@ -219,65 +213,67 @@ export function CardModal({
 
           {/* House Meaning - Grand Tableau Only */}
           {layoutType === 36 && position !== undefined && (
-            <Collapsible
-              open={openSections.house}
-              onOpenChange={() => toggleSection("house")}
-            >
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-muted/50 px-md py-md transition-colors hover:bg-muted">
+            <div className="space-y-md rounded-lg bg-muted/50 p-md">
+              <button
+                onClick={() => toggleSection("house")}
+                className="flex w-full items-center justify-between px-md py-md transition-colors hover:bg-muted/70"
+              >
                 <h3 className="font-semibold text-foreground">House Meaning</h3>
                 <ChevronDown
                   className={`h-4 w-4 transition-transform ${openSections.house ? "rotate-180" : ""}`}
                 />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="border-l-2 border-primary/30 px-md py-md text-sm text-muted-foreground">
-                <p className="mb-md">
-                  Position {position + 1} in Grand Tableau represents:
-                </p>
-                <p className="font-medium text-foreground">
-                  {(() => {
-                    const houseMeanings = [
-                      "Messages, news, communication, movement",
-                      "Luck, opportunities, small joys",
-                      "Travel, distance, foreign matters",
-                      "Home, family, stability, foundation",
-                      "Health, growth, longevity, nature",
-                      "Confusion, uncertainty, dreams, illusions",
-                      "Betrayal, deception, wisdom, healing",
-                      "Endings, transformation, closure, rebirth",
-                      "Gifts, celebrations, beauty, social success",
-                      "Cutting change, decisions, surgery, harvest",
-                      "Conflict, repetition, arguments, discipline",
-                      "Communication, anxiety, siblings, short trips",
-                      "New beginnings, innocence, children, playfulness",
-                      "Cunning, work, employment, intelligence",
-                      "Strength, money, protection, authority",
-                      "Hope, goals, wishes, spirituality, fame",
-                      "Change, movement, pregnancy, relocation",
-                      "Loyalty, friends, faithfulness, pets",
-                      "Authority, isolation, institutions, solitude",
-                      "Social life, public, gatherings, community",
-                      "Obstacles, delays, challenges, steadfastness",
-                      "Choices, decisions, crossroads, options",
-                      "Loss, worry, theft, details, stress",
-                      "Love, emotions, relationships, passion",
-                      "Commitment, cycles, marriage, contracts",
-                      "Secrets, learning, knowledge, education",
-                      "Written communication, documents, news",
-                      "Masculine energy, men, father, husband",
-                      "Feminine energy, women, mother, wife",
-                      "Peace, maturity, sexuality, harmony",
-                      "Success, vitality, happiness, clarity",
-                      "Intuition, emotions, cycles, psychic abilities",
-                      "Solutions, importance, answers, unlocking",
-                      "Finance, abundance, business, wealth",
-                      "Stability, security, patience, grounding",
-                      "Burden, fate, sacrifice, religion, suffering",
-                    ];
-                    return houseMeanings[position] || "Unknown house meaning";
-                  })()}
-                </p>
-              </CollapsibleContent>
-            </Collapsible>
+              </button>
+              {openSections.house && (
+                <div className="border-l-2 border-primary/30 px-md py-md text-sm text-muted-foreground">
+                  <p className="mb-md">
+                    Position {position + 1} in Grand Tableau represents:
+                  </p>
+                  <p className="font-medium text-foreground">
+                    {(() => {
+                      const houseMeanings = [
+                        "Messages, news, communication, movement",
+                        "Luck, opportunities, small joys",
+                        "Travel, distance, foreign matters",
+                        "Home, family, stability, foundation",
+                        "Health, growth, longevity, nature",
+                        "Confusion, uncertainty, dreams, illusions",
+                        "Betrayal, deception, wisdom, healing",
+                        "Endings, transformation, closure, rebirth",
+                        "Gifts, celebrations, beauty, social success",
+                        "Cutting change, decisions, surgery, harvest",
+                        "Conflict, repetition, arguments, discipline",
+                        "Communication, anxiety, siblings, short trips",
+                        "New beginnings, innocence, children, playfulness",
+                        "Cunning, work, employment, intelligence",
+                        "Strength, money, protection, authority",
+                        "Hope, goals, wishes, spirituality, fame",
+                        "Change, movement, pregnancy, relocation",
+                        "Loyalty, friends, faithfulness, pets",
+                        "Authority, isolation, institutions, solitude",
+                        "Social life, public, gatherings, community",
+                        "Obstacles, delays, challenges, steadfastness",
+                        "Choices, decisions, crossroads, options",
+                        "Loss, worry, theft, details, stress",
+                        "Love, emotions, relationships, passion",
+                        "Commitment, cycles, marriage, contracts",
+                        "Secrets, learning, knowledge, education",
+                        "Written communication, documents, news",
+                        "Masculine energy, men, father, husband",
+                        "Feminine energy, women, mother, wife",
+                        "Peace, maturity, sexuality, harmony",
+                        "Success, vitality, happiness, clarity",
+                        "Intuition, emotions, cycles, psychic abilities",
+                        "Solutions, importance, answers, unlocking",
+                        "Finance, abundance, business, wealth",
+                        "Stability, security, patience, grounding",
+                        "Burden, fate, sacrifice, religion, suffering",
+                      ];
+                      return houseMeanings[position] || "Unknown house meaning";
+                    })()}
+                  </p>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Combinations Section - Always Visible */}
