@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Deck } from "@/components/Deck";
 import { Button } from "@/components/ui/button";
@@ -36,6 +35,16 @@ import {
 import { ReadingViewer } from "@/components/ReadingViewer";
 import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 import { AIReadingResponse } from "@/lib/deepseek";
+
+function LoadingFallback() {
+  return (
+    <div className="space-y-4 animate-pulse">
+      <div className="h-40 bg-muted/50 rounded-xl" />
+      <div className="h-20 bg-muted/50 rounded-xl" />
+      <div className="h-12 bg-muted/50 rounded-lg" />
+    </div>
+  );
+}
 
 function NewReadingPageContent() {
   const router = useRouter();
@@ -492,16 +501,7 @@ function NewReadingPageContent() {
             </Alert>
           )}
 
-          <AnimatePresence mode="wait">
-            {step === "setup" && (
-              <motion.div
-                key="setup"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="space-y-4"
-              >
+          {step === "setup" && (
                 {/* Essential Section - Always Visible */}
                 <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                   <CardHeader className="pb-4">
@@ -638,17 +638,12 @@ function NewReadingPageContent() {
                     ) : null}
                   </CardContent>
                 </Card>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          )}
 
           {step === "drawing" && (
-            <motion.div
+            <div
               key="drawing"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="animate-in fade-in slide-in-from-bottom-4 duration-300"
             >
               <Card className="relative overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
@@ -819,17 +814,13 @@ function NewReadingPageContent() {
                   <div className="text-center"></div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           )}
 
           {step === "results" && drawnCards.length > 0 && (
-            <motion.div
+            <div
               key="results"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="space-y-6"
+              className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-6"
             >
               {/* Show the drawn cards */}
               {allCards.length > 0 ? (
@@ -873,8 +864,8 @@ function NewReadingPageContent() {
                   question={question}
                 />
               </div>
-            </motion.div>
-          )}
+              </div>
+            )}
 
           {/* Start Over Confirmation Dialog */}
           <Dialog
