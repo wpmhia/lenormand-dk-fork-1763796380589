@@ -554,7 +554,7 @@ function NewReadingPageContent() {
                     <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="border-border bg-card">
+                    <SelectContent className="border-border bg-popover text-popover-foreground">
                       {/* Authentic Spreads Header */}
                       <div className="px-2 py-1.5 text-xs font-bold text-primary">
                         ✨ AUTHENTIC SPREADS
