@@ -406,19 +406,19 @@ export default function SpreadsPage() {
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/learn">
+            <Link href="/learn/card-combinations">
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-primary hover:text-primary/80"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Course
+                Previous Module
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Module 5 of 6
+                Module 6 of 7
               </Badge>
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
                 Intermediate
@@ -912,13 +912,13 @@ export default function SpreadsPage() {
 
         {/* Navigation */}
         <div className="flex items-center justify-between border-t border-border pt-8">
-          <Link href="/learn/card-meanings">
+          <Link href="/learn/card-combinations">
             <Button
               variant="outline"
               className="border-border text-card-foreground hover:bg-muted"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Card Meanings
+              Back to Card Combinations
             </Button>
           </Link>
           <Link href="/learn/advanced">

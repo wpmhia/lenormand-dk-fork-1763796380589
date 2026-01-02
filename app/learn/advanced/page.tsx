@@ -330,7 +330,7 @@ export default function AdvancedPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="bg-muted text-muted-foreground">
-                Module 6 of 6
+                Module 7 of 7
               </Badge>
               <Badge className="bg-muted text-muted-foreground">Advanced</Badge>
             </div>

@@ -506,13 +506,13 @@ export default function CardMeaningsPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Module 4 of 6
+                Module 4 of 7
               </Badge>
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
                 Intermediate
               </Badge>
             </div>
-            <Link href="/learn/spreads">
+            <Link href="/learn/card-combinations">
               <Button
                 variant="ghost"
                 size="sm"
@@ -816,9 +816,9 @@ export default function CardMeaningsPage() {
               Back to Reading Basics
             </Button>
           </Link>
-          <Link href="/learn/spreads">
+          <Link href="/learn/card-combinations">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Continue to Spreads
+              Continue to Combinations
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

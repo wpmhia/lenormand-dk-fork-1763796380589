@@ -25,22 +25,28 @@ export const LEARNING_MODULES = [
     order: 4,
   },
   {
+    id: "card-combinations",
+    title: "Card Combinations",
+    path: "/learn/card-combinations",
+    order: 5,
+  },
+  {
     id: "spreads",
     title: "Spreads & Techniques",
     path: "/learn/spreads",
-    order: 5,
+    order: 6,
   },
   {
     id: "advanced",
     title: "Advanced Concepts",
     path: "/learn/advanced",
-    order: 6,
+    order: 7,
   },
   {
     id: "marie-annes-system",
     title: "Marie-Anne's System",
     path: "/learn/marie-annes-system",
-    order: 7,
+    order: 8,
   },
 ];
 

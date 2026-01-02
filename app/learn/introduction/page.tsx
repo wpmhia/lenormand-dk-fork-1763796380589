@@ -17,6 +17,12 @@ import {
   Star,
   Clock,
   Target,
+  Sun,
+  Scale,
+  Briefcase,
+  Lightbulb,
+  User,
+  Calendar,
 } from "lucide-react";
 
 export default function IntroductionPage() {
@@ -51,7 +57,7 @@ export default function IntroductionPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 1 of 6
+                Module 1 of 7
               </Badge>
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
                 Beginner
@@ -227,6 +233,89 @@ export default function IntroductionPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* What Lenormand Can Help With */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <Lightbulb className="mr-3 h-6 w-6 text-primary" />
+              What Lenormand Can Help With
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-6 text-muted-foreground">
+              Lenormand excels at providing practical, everyday guidance. The cards
+              answer specific questions about real-life situations. Here are common
+              applications:
+            </p>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="flex items-start space-x-3">
+                <Sun className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Daily Guidance</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Single card for the day ahead - themes, energy, and focus areas
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Scale className="mt-0.5 h-5 w-5 flex-shrink-0 text-indigo-500" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Decision Making</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Weigh options, see potential outcomes, find clarity on choices
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Heart className="mt-0.5 h-5 w-5 flex-shrink-0 text-rose-500" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Relationships</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Understand dynamics, connections, and emotions between people
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Briefcase className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Career & Work</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Job decisions, project outcomes, timing, and workplace dynamics
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Lightbulb className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-500" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Problem Solving</h3>
+                  <p className="text-sm text-muted-foreground">
+                    View situations from multiple angles, find hidden factors
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <User className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Self-Reflection</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Gain objective perspective on personal matters and situations
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 rounded-lg border border-amber-200/20 bg-amber-50/10 p-4 text-sm text-muted-foreground dark:bg-amber-950/10">
+              <p className="font-medium text-amber-700 dark:text-amber-400">
+                Key Principle: The cards answer specifically what you ask.
+              </p>
+              <p className="mt-1">
+                Be clear and specific in your questions. Vague questions lead to vague
+                answers. For best results, frame questions like: &quot;Should I accept
+                this job offer?&quot; rather than &quot;What about my career?&quot;
+              </p>
             </div>
           </CardContent>
         </Card>

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { LearningProgressTracker } from "@/components/LearningProgressTracker";
 import { BackToTop } from "@/components/BackToTop";
-import { Heart, Coins, Stethoscope, Briefcase, Zap, Users } from "lucide-react";
+import { Heart, Coins, Stethoscope, Briefcase, Zap, Users, ArrowLeft, ArrowRight } from "lucide-react";
 import { useHeadingIds } from "@/hooks/use-heading-ids";
 
 interface CardCombination {
@@ -471,6 +471,42 @@ export default function CardCombinationsPage() {
         </div>
       </div>
 
+      {/* Navigation */}
+      <div className="border-b border-border bg-card/80 backdrop-blur">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/learn/card-meanings">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary/80"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Previous Module
+              </Button>
+            </Link>
+            <div className="flex items-center space-x-2">
+              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+                Module 5 of 7
+              </Badge>
+              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+                Intermediate
+              </Badge>
+            </div>
+            <Link href="/learn/spreads">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary/80"
+              >
+                Next Module
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto max-w-4xl px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -486,11 +522,6 @@ export default function CardCombinationsPage() {
             comprehensive guide breaks down combinations across different life
             contexts.
           </p>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">Intermediate</Badge>
-            <Badge variant="secondary">20+ Minutes</Badge>
-            <Badge variant="secondary">Practical Technique</Badge>
-          </div>
         </div>
 
         {/* Learning Progress Tracker */}
@@ -691,14 +722,14 @@ export default function CardCombinationsPage() {
 
         {/* Navigation to Other Modules */}
         <div className="flex gap-4 border-t border-border pt-8">
-          <Link href="/learn/spreads" className="flex-1">
+          <Link href="/learn/card-meanings" className="flex-1">
             <Button variant="outline" className="w-full">
-              ← Spreads & Techniques
+              ← Card Meanings
             </Button>
           </Link>
-          <Link href="/learn" className="flex-1">
-            <Button variant="ghost" className="w-full">
-              Back to Learning Hub
+          <Link href="/learn/spreads" className="flex-1">
+            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+              Spreads & Techniques →
             </Button>
           </Link>
         </div>
