@@ -8,12 +8,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
-  Sparkles,
   RefreshCw,
   AlertCircle,
   ExternalLink,
   Zap,
-  CheckCircle2,
   Copy,
   Check,
   ThumbsUp,
@@ -286,30 +284,7 @@ export function AIReadingDisplay({
     <div className="space-y-6">
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Badge
-                variant={isStreaming ? "default" : "secondary"}
-                className={`flex items-center gap-1 ${
-                  isStreaming
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                }`}
-              >
-                {isStreaming ? (
-                  <>
-                    <Sparkles className="h-3 w-3 animate-pulse" />
-                    Streaming
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-3 w-3" />
-                    Complete
-                  </>
-                )}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-1">
+          <div className="mb-4 flex items-center justify-end gap-1">
               <Button
                 variant="ghost"
                 size="icon"
@@ -341,7 +316,6 @@ export function AIReadingDisplay({
                 {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
-          </div>
 
           <div className="reading-content space-y-4">
             <ReactMarkdown
