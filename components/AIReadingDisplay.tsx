@@ -18,24 +18,16 @@ import {
   Check,
   ThumbsUp,
   ThumbsDown,
+  Loader2,
 } from "lucide-react";
 import { getSpreadLearningLinks } from "@/lib/spreadLearning";
 import { ReadingFeedback } from "./ReadingFeedback";
 
-const ORACLE_MESSAGES = [
-  "Analyzing the question...",
-  "Reviewing the spread rules...",
-  "Interpreting the cards...",
-  "Examining card combinations...",
-  "Formulating an interpretation...",
-  "Synthesizing the results...",
-] as const;
-
-const PROGRESS_STEPS = [
-  "Analyzing your cards...",
-  "Interpreting positions...",
-  "Connecting the story...",
-  "Finalizing insights...",
+const PROGRESS_MESSAGES = [
+  { title: "Analyzing your spread", description: "Reviewing card positions and relationships" },
+  { title: "Interpreting the cards", description: "Applying Lenormand symbolism" },
+  { title: "Connecting the meanings", description: "Synthesizing the reading" },
+  { title: "Finalizing your interpretation", description: "Almost ready" },
 ] as const;
 
 interface AIReadingDisplayProps {
@@ -86,30 +78,14 @@ export function AIReadingDisplay({
   useEffect(() => {
     if (isLoading) {
       setProgressStep(0);
-      const steps = cards?.length || 3;
       const interval = setInterval(() => {
-        setProgressStep((prev) => (prev < steps - 1 ? prev + 1 : prev));
-      }, 800);
-      return () => clearInterval(interval);
-    }
-  }, [isLoading, cards?.length]);
-
-  const [currentMessage, setCurrentMessage] = useState<
-    typeof ORACLE_MESSAGES[number]
-  >(ORACLE_MESSAGES[0]);
-
-  useEffect(() => {
-    if (isLoading) {
-      const interval = setInterval(() => {
-        setCurrentMessage(
-          ORACLE_MESSAGES[Math.floor(Math.random() * ORACLE_MESSAGES.length)],
-        );
-      }, 3000);
+        setProgressStep((prev) => (prev < PROGRESS_MESSAGES.length - 1 ? prev + 1 : prev));
+      }, 2500);
       return () => clearInterval(interval);
     }
   }, [isLoading]);
 
-  const estimatedTime = cards ? Math.ceil(cards.length * 0.8) : 3;
+  const progress = ((progressStep + 1) / PROGRESS_MESSAGES.length) * 100;
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
@@ -195,90 +171,64 @@ export function AIReadingDisplay({
   };
 
   if (isLoading) {
-    const progress = Math.min(
-      (progressStep / Math.max((cards?.length || 3) - 1, 1)) * 100,
-      100,
-    );
     return (
-      <div className="animate-in fade-in slide-in-from-bottom-8 loading-skeleton pointer-events-none delay-200 duration-500">
-        <Card className="overflow-hidden border-border bg-card shadow-elevation-1">
-          <CardContent className="space-y-xl p-xl">
-            <div className="space-y-md">
-              <div className="flex items-center justify-between gap-sm">
-                <Badge variant="default" className="loading-skeleton-pulse">
-                  <Zap className="mr-1 h-3 w-3" />
-                  {
-                    PROGRESS_STEPS[
-                      Math.min(progressStep, PROGRESS_STEPS.length - 1)
-                    ]
-                  }
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  ~{estimatedTime}s
-                </span>
-              </div>
-              <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className="absolute left-0 top-0 h-full bg-primary transition-all duration-500 ease-out"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+      <Card className="border-border bg-card shadow-lg">
+        <CardHeader className="border-b border-border pb-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
             </div>
-
-            <div className="grid gap-md sm:grid-cols-2">
-              <div className="space-y-sm">
-                <div className="relative mx-auto aspect-square max-w-[120px]">
-                  <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-                  <div className="loading-spinner absolute inset-0 h-full w-full rounded-full border-4 border-primary border-t-transparent"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Sparkles className="loading-skeleton-pulse h-8 w-8 text-primary" />
-                  </div>
-                </div>
-                <p className="animate-pulse text-center text-sm font-medium text-foreground">
-                  {currentMessage}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-center">
-                <div className="space-y-xs text-center">
-                  <p className="text-sm font-semibold text-foreground">
-                    Cards Being Read:
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-xs">
-                    {cards?.slice(0, 5).map((card, i) => (
-                      <Badge
-                        key={card.id}
-                        variant={i <= progressStep ? "default" : "outline"}
-                        className={`transition-all duration-300 ${
-                          i <= progressStep
-                            ? "bg-primary"
-                            : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {card.id}
-                      </Badge>
-                    ))}
-                    {(cards?.length || 0) > 5 && (
-                      <Badge
-                        variant="outline"
-                        className="bg-muted text-muted-foreground"
-                      >
-                        +{cards?.length || 0 - 5}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-border pt-md text-center">
-              <p className="text-xs text-muted-foreground">
-                Interpreting {cards?.length || 3} cards using the Lenormand method...
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">
+                {PROGRESS_MESSAGES[progressStep].title}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {PROGRESS_MESSAGES[progressStep].description}
               </p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Progress</span>
+              <span className="text-muted-foreground">{Math.round(progress)}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full bg-primary transition-all duration-700 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-4 py-4">
+            <div className="flex gap-2">
+              {cards?.slice(0, 4).map((card, i) => (
+                <div
+                  key={card.id}
+                  className={`flex h-12 w-8 items-center justify-center rounded border-2 text-sm font-medium transition-all duration-500 ${
+                    i <= progressStep
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-muted/30 text-muted-foreground"
+                  }`}
+                >
+                  {card.id}
+                </div>
+              ))}
+              {(cards?.length || 0) > 4 && (
+                <div className="flex h-12 w-8 items-center justify-center rounded border-2 border-border bg-muted/30 text-sm text-muted-foreground">
+                  +{(cards?.length || 0) - 4}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-muted/30 px-4 py-3 text-center text-sm text-muted-foreground">
+            Interpreting {cards?.length || 3} cards using traditional Lenormand methods
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -332,27 +282,24 @@ export function AIReadingDisplay({
     return null;
   }
 
-  // Check if content appears incomplete (ends abruptly without proper ending)
-  const isContentComplete =
-    aiReading.reading.length > 100 &&
-    (aiReading.reading.trim().endsWith(".") ||
-      aiReading.reading.trim().endsWith("!") ||
-      aiReading.reading.trim().endsWith("?") ||
-      aiReading.reading.includes("advice") ||
-      aiReading.reading.includes("guidance") ||
-      aiReading.reading.includes("recommend"));
-
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-8 space-y-xl delay-200 duration-500">
-      <Card className="border-border bg-card shadow-elevation-2">
-        <CardHeader className="border-b border-border">
-          <div className="flex items-center justify-between gap-lg">
-            <div className="flex items-center gap-md">
-              <Badge variant="secondary" className="flex items-center gap-1">
+    <div className="space-y-6">
+      <Card className="border-border bg-card shadow-lg">
+        <CardContent className="p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={isStreaming ? "default" : "secondary"}
+                className={`flex items-center gap-1 ${
+                  isStreaming
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                }`}
+              >
                 {isStreaming ? (
                   <>
-                    <Zap className="h-3 w-3" />
-                    Streaming...
+                    <Sparkles className="h-3 w-3 animate-pulse" />
+                    Streaming
                   </>
                 ) : (
                   <>
@@ -362,51 +309,62 @@ export function AIReadingDisplay({
                 )}
               </Badge>
             </div>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleFeedback("up")}
+                disabled={feedbackLoading}
+                className={`h-9 w-9 ${
+                  feedback === "up" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                } ${feedbackLoading ? "cursor-not-allowed opacity-50" : ""}`}
+              >
+                <ThumbsUp className={`h-4 w-4 ${feedback === "up" ? "fill-current" : ""}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleFeedback("down")}
+                disabled={feedbackLoading}
+                className={`h-9 w-9 ${
+                  feedback === "down" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                } ${feedbackLoading ? "cursor-not-allowed opacity-50" : ""}`}
+              >
+                <ThumbsDown className={`h-4 w-4 ${feedback === "down" ? "fill-current" : ""}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopy}
+                className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              >
+                {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-xl p-xl">
+
           <div className="reading-content space-y-4">
             <ReactMarkdown
               components={{
                 h1: ({ node, ...props }) => (
-                  <h1
-                    className="text-2xl font-semibold text-foreground"
-                    {...props}
-                  />
+                  <h1 className="text-2xl font-semibold text-foreground" {...props} />
                 ),
                 h2: ({ node, ...props }) => (
-                  <h2
-                    className="text-xl font-semibold text-foreground"
-                    {...props}
-                  />
+                  <h2 className="text-xl font-semibold text-foreground" {...props} />
                 ),
                 h3: ({ node, ...props }) => (
-                  <h3
-                    className="text-lg font-semibold text-foreground"
-                    {...props}
-                  />
+                  <h3 className="text-lg font-semibold text-foreground" {...props} />
                 ),
                 p: ({ node, ...props }) => (
-                  <p
-                    className="text-base leading-relaxed text-foreground/90"
-                    {...props}
-                  />
+                  <p className="text-base leading-relaxed text-foreground/90" {...props} />
                 ),
                 ul: ({ node, ...props }) => (
-                  <ul
-                    className="list-disc pl-6 text-foreground/90"
-                    {...props}
-                  />
+                  <ul className="list-disc pl-6 text-foreground/90" {...props} />
                 ),
                 ol: ({ node, ...props }) => (
-                  <ol
-                    className="list-decimal pl-6 text-foreground/90"
-                    {...props}
-                  />
+                  <ol className="list-decimal pl-6 text-foreground/90" {...props} />
                 ),
-                li: ({ node, ...props }) => (
-                  <li className="text-foreground/90" {...props} />
-                ),
+                li: ({ node, ...props }) => <li className="text-foreground/90" {...props} />,
                 blockquote: ({ node, ...props }) => (
                   <blockquote
                     className="border-l-4 border-primary/40 pl-4 italic text-foreground/80"
@@ -414,17 +372,10 @@ export function AIReadingDisplay({
                   />
                 ),
                 strong: ({ node, ...props }) => (
-                  <strong
-                    className="font-semibold text-foreground"
-                    {...props}
-                  />
+                  <strong className="font-semibold text-foreground" {...props} />
                 ),
-                em: ({ node, ...props }) => (
-                  <em className="italic text-foreground/80" {...props} />
-                ),
-                hr: ({ node, ...props }) => (
-                  <hr className="my-4 border-border" {...props} />
-                ),
+                em: ({ node, ...props }) => <em className="italic text-foreground/80" {...props} />,
+                hr: ({ node, ...props }) => <hr className="my-4 border-border" {...props} />,
                 a: ({ node, ...props }: any) => (
                   <a
                     {...props}
@@ -446,57 +397,9 @@ export function AIReadingDisplay({
           </div>
 
           {spreadLearningLinks && (
-            <div className="mt-xl flex items-center justify-between gap-lg border-t border-border pt-xl">
-              <div className="flex items-center gap-sm">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleFeedback("up")}
-                  disabled={feedbackLoading}
-                  className={`h-11 w-11 p-0 ${feedback === "up" ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${feedbackLoading ? "cursor-not-allowed opacity-50" : ""}`}
-                >
-                  <ThumbsUp
-                    className={`h-4 w-4 ${feedback === "up" ? "fill-current" : ""}`}
-                  />
-                  <span className="sr-only">Helpful</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleFeedback("down")}
-                  disabled={feedbackLoading}
-                  className={`h-11 w-11 p-0 ${feedback === "down" ? "text-primary" : "text-muted-foreground hover:text-foreground"} ${feedbackLoading ? "cursor-not-allowed opacity-50" : ""}`}
-                >
-                  <ThumbsDown
-                    className={`h-4 w-4 ${feedback === "down" ? "fill-current" : ""}`}
-                  />
-                  <span className="sr-only">Not helpful</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleCopy}
-                  className="h-11 w-11 p-0 text-muted-foreground hover:text-foreground"
-                >
-                  {copyClicked ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                  <span className="sr-only">Copy reading</span>
-                </Button>
-              </div>
-
-              <a
-                href={spreadLearningLinks.methodologyPage}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="gap-2 bg-primary/80 text-primary-foreground hover:bg-primary"
-                >
+            <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
+              <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="gap-2">
                   Learn the Method
                   <ExternalLink className="h-3 w-3" />
                 </Button>
