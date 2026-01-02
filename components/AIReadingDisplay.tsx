@@ -19,7 +19,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { getSpreadLearningLinks } from "@/lib/spreadLearning";
-import { ReadingFeedback } from "./ReadingFeedback";
 
 const PROGRESS_MESSAGES = [
   { title: "Analyzing your spread", description: "Reviewing card positions and relationships" },
@@ -382,13 +381,6 @@ export function AIReadingDisplay({
           )}
         </CardContent>
       </Card>
-
-      <ReadingFeedback
-        readingId={cards ? "temp" : undefined}
-        aiInterpretationId={aiReading.aiInterpretationId || undefined}
-        spreadId={spreadId}
-        question={question}
-      />
     </div>
   );
 }
