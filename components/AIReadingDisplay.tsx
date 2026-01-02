@@ -18,7 +18,6 @@ import {
   ThumbsDown,
   Loader2,
 } from "lucide-react";
-import { getSpreadLearningLinks } from "@/lib/spreadLearning";
 
 const PROGRESS_MESSAGES = [
   { title: "Analyzing your spread", description: "Reviewing card positions and relationships" },
@@ -70,7 +69,6 @@ export function AIReadingDisplay({
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
-  const spreadLearningLinks = getSpreadLearningLinks(spreadId);
 
   useEffect(() => {
     if (isLoading) {
@@ -368,17 +366,6 @@ export function AIReadingDisplay({
               </div>
             )}
           </div>
-
-          {spreadLearningLinks && (
-            <div className="mt-6 flex items-center justify-end gap-3 border-t border-border pt-4">
-              <a href={spreadLearningLinks.methodologyPage} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="sm" className="gap-2">
-                  Learn the Method
-                  <ExternalLink className="h-3 w-3" />
-                </Button>
-              </a>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

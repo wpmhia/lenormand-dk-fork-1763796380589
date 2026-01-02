@@ -1,9 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { getAIReading, AIReadingRequest } from "@/lib/deepseek";
-import { SPREAD_RULES } from "@/lib/spreadRules";
-import prisma from "@/lib/prisma";
+import { getAIReading, AIReadingRequest, isDeepSeekAvailable } from "@/lib/deepseek";
+import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 
 const logger = {
   info: (msg: string, data?: any) =>
@@ -67,6 +66,13 @@ export async function POST(request: Request) {
 
   logger.info(`[${requestId}] POST /api/readings/interpret - Request received`);
 
+  if (!isDeepSeekAvailable()) {
+    return NextResponse.json(
+      { error: "AI interpretation is not configured. Please add DEEPSEEK_API_KEY to your environment variables." },
+      { status: 503 },
+    );
+  }
+
   try {
     let body: any;
     try {
@@ -118,34 +124,9 @@ export async function POST(request: Request) {
       storyLength: result.reading?.length,
     });
 
-    // Save AI interpretation to database if readingId is provided
-    let aiInterpretationId: string | null = null;
-    if (body.readingId) {
-      try {
-        const aiInterpretation = await prisma.aIInterpretation.create({
-          data: {
-            readingId: body.readingId,
-            readingText: result.reading || "",
-          },
-        });
-        aiInterpretationId = aiInterpretation.id;
-        logger.info(`[${requestId}] AI interpretation saved to database`, {
-          aiInterpretationId,
-        });
-      } catch (dbError) {
-        const dbErrorMsg =
-          dbError instanceof Error ? dbError.message : String(dbError);
-        logger.warn(
-          `[${requestId}] Failed to save AI interpretation to database`,
-          { error: dbErrorMsg },
-        );
-        // Continue and return the result even if database save fails
-      }
-    }
-
     return NextResponse.json({
       reading: result.reading,
-      aiInterpretationId,
+      aiInterpretationId: result.aiInterpretationId,
     });
   } catch (error) {
     const duration = Date.now() - startTime;

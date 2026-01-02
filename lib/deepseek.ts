@@ -1,12 +1,5 @@
-import { getCachedSpreadRule } from "./spreadRulesCache";
-import {
-  getCachedReading,
-  cacheReading,
-  isReadingCached,
-} from "./readingCache";
-import { readingHistory } from "./readingHistory";
-import { LenormandCard, SpreadId } from "@/types/agent.types";
-import { SimplePromptBuilder } from "./simplePromptBuilder";
+import { Spread, AUTHENTIC_SPREADS, MODERN_SPREADS } from "@/lib/spreads";
+import { Card } from "@/lib/types";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL =
@@ -33,48 +26,71 @@ export function isDeepSeekAvailable(): boolean {
   return !!DEEPSEEK_API_KEY;
 }
 
+function getAllSpreads(): Spread[] {
+  return [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
+}
+
+function getSpreadById(spreadId: string): Spread | undefined {
+  return getAllSpreads().find((s) => s.id === spreadId);
+}
+
+function buildPrompt(
+  cards: Array<{ id: number; name: string }>,
+  spread: Spread,
+  question: string,
+): string {
+  const cardList = cards
+    .map((c, i) => `Card ${i + 1}: ${c.name}`)
+    .join("\n");
+
+  return `You are Marie-Anne Lenormand, the famous French fortune teller known for your practical, accurate readings.
+
+You are reading a ${spread.cards}-card "${spread.label}" spread for the question: "${question}"
+
+${spread.description ? `About this spread: ${spread.description}` : ""}
+
+Cards in the spread:
+${cardList}
+
+Provide a clear, concise interpretation that:
+- Addresses the specific question asked
+- Creates a coherent narrative from the cards
+- Offers practical guidance
+
+Reply in plain text only, no markdown formatting.`;
+}
+
 export async function getAIReading(
   request: AIReadingRequest,
 ): Promise<AIReadingResponse | null> {
+  if (!isDeepSeekAvailable()) {
+    throw new Error("DeepSeek API key not configured");
+  }
+
   const startTime = Date.now();
-  console.log("getAIReading: Checking cache...");
+  console.log("getAIReading: Starting AI reading generation...");
 
   try {
-    if (isReadingCached(request)) {
-      const cachedReading = getCachedReading(request);
-      if (cachedReading) {
-        console.log("Cache hit! Returning cached reading");
-        const duration = Date.now() - startTime;
-        await readingHistory.addReading(request, cachedReading, duration);
-        return cachedReading;
-      }
-    }
-
-    console.log("Cache miss, generating reading with DeepSeek...");
-
-    const spreadId = (request.spreadId || "sentence-3") as SpreadId;
-    const spread = getCachedSpreadRule(spreadId);
+    const spreadId = request.spreadId || "sentence-3";
+    const spread = getSpreadById(spreadId);
 
     if (!spread) {
       throw new Error("Invalid spread ID: " + spreadId);
     }
 
-    const cards: LenormandCard[] = request.cards.map((c) => ({
+    const cards: Array<{ id: number; name: string }> = request.cards.map((c) => ({
       id: c.id,
       name: c.name,
     }));
 
-    // Build simple prompt
-    const prompt = SimplePromptBuilder.buildPrompt({
+    const prompt = buildPrompt(
       cards,
       spread,
-      question: request.question || "What guidance do these cards have for me?",
-      spreadId,
-    });
+      request.question || "What guidance do these cards have for me?",
+    );
 
-    const maxTokens = 1000;
+    const maxTokens = 1200;
     console.log("Sending request to DeepSeek API...");
-    console.log(`Token budget: ${maxTokens} tokens`);
 
     const messages = [
       {
@@ -121,15 +137,20 @@ export async function getAIReading(
     let fullContent = content.trim();
     let wasContinued = false;
     let continuationCount = 0;
-    const maxContinuations = 5;
+    const maxContinuations = 3;
 
-    while (finishReason === 'length' && continuationCount < maxContinuations) {
-      console.log(`Response truncated, continuing (${continuationCount + 1}/${maxContinuations})...`);
+    while (finishReason === "length" && continuationCount < maxContinuations) {
+      console.log(
+        `Response truncated, continuing (${continuationCount + 1}/${maxContinuations})...`,
+      );
       wasContinued = true;
       continuationCount++;
 
       messages.push({ role: "assistant", content: fullContent });
-      messages.push({ role: "user", content: "Continue from where you left off. Do not repeat what you already said." });
+      messages.push({
+        role: "user",
+        content: "Continue from where you left off. Do not repeat what you already said.",
+      });
 
       const continueResponse = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
         method: "POST",
@@ -160,20 +181,18 @@ export async function getAIReading(
         console.log(`Continuation received, total length: ${fullContent.length}`);
       }
 
-      if (continueFinishReason !== 'length') {
+      if (continueFinishReason !== "length") {
         break;
       }
     }
 
-    const aiResponse = {
+    const duration = Date.now() - startTime;
+    console.log(`AI reading generated in ${duration}ms`);
+
+    return {
       reading: fullContent,
       wasContinued,
     };
-
-    cacheReading(request, aiResponse);
-    const duration = Date.now() - startTime;
-    await readingHistory.addReading(request, aiResponse, duration);
-    return aiResponse;
   } catch (error) {
     console.error("AI reading error:", error);
     throw error;
@@ -192,29 +211,26 @@ export async function streamAIReading(
   console.log("DeepSeek is available. Preparing streaming request...");
 
   try {
-    const spreadId = (request.spreadId || "sentence-3") as SpreadId;
-    const spread = getCachedSpreadRule(spreadId);
+    const spreadId = request.spreadId || "sentence-3";
+    const spread = getSpreadById(spreadId);
 
     if (!spread) {
       throw new Error("Invalid spread ID: " + spreadId);
     }
 
-    const cards: LenormandCard[] = request.cards.map((c) => ({
+    const cards: Array<{ id: number; name: string }> = request.cards.map((c) => ({
       id: c.id,
       name: c.name,
     }));
 
-    // Build simple prompt
-    const prompt = SimplePromptBuilder.buildPrompt({
+    const prompt = buildPrompt(
       cards,
       spread,
-      question: request.question || "What guidance do these cards have for me?",
-      spreadId,
-    });
+      request.question || "What guidance do these cards have for me?",
+    );
 
-    const maxTokens = 1000;
+    const maxTokens = 1200;
     console.log("Sending streaming request to DeepSeek API...");
-    console.log(`Token budget: ${maxTokens} tokens`);
 
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: "POST",
