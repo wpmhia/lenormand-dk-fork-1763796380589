@@ -552,7 +552,7 @@ function NewReadingPageContent() {
                     }}
                   >
                     <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
-                      <SelectValue />
+                      <SelectValue>{selectedSpread.label}</SelectValue>
                     </SelectTrigger>
                     <SelectContent className="border-border bg-popover text-popover-foreground">
                       {/* Authentic Spreads Header */}
