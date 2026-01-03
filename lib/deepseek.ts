@@ -296,45 +296,62 @@ export async function streamAIReading(
 
     const isLargeSpread = spread.cards >= 9;
     const maxTokens = isLargeSpread ? 4000 : 2000;
-    console.log(`Sending streaming request to DeepSeek API... (${maxTokens} tokens)`);
 
-    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.",
-          },
-          { role: "user", content: prompt },
-        ],
-        temperature: 0.4,
-        max_tokens: maxTokens,
-        top_p: 0.9,
-        stream: true,
-      }),
-    });
+    // Retry logic for rate limiting
+    let lastError: Error | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) {
+        const waitTime = Math.pow(2, attempt) * 1000;
+        console.log(`Rate limit hit, waiting ${waitTime}ms before retry...`);
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+      }
 
-    console.log("DeepSeek streaming API response status:", response.status);
+      const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.",
+            },
+            { role: "user", content: prompt },
+          ],
+          temperature: 0.4,
+          max_tokens: maxTokens,
+          top_p: 0.9,
+          stream: true,
+        }),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `DeepSeek API error: ${response.status} ${response.statusText} - ${errorText}`,
-      );
+      console.log("DeepSeek streaming API response status:", response.status);
+
+      // Retry on 429 (rate limit) or 503 (service unavailable)
+      if (response.status === 429 || response.status === 503) {
+        lastError = new Error(`Rate limited: ${response.status}`);
+        continue;
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `DeepSeek API error: ${response.status} ${response.statusText} - ${errorText}`,
+        );
+      }
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      return response.body;
     }
 
-    if (!response.body) {
-      throw new Error("No response body");
-    }
-
-    return response.body;
+    throw lastError || new Error("Max retries exceeded");
   } catch (error) {
     console.error("AI reading setup error:", error);
     throw error;
