@@ -66,6 +66,8 @@ function NewReadingPageContent() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiAttempted, setAiAttempted] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamedContent, setStreamedContent] = useState("");
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
   const [questionCharCount, setQuestionCharCount] = useState(0);
   const [debugLog, setDebugLog] = useState<string[]>([]);
@@ -233,6 +235,9 @@ function NewReadingPageContent() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 180000);
 
+    setIsStreaming(true);
+    setStreamedContent("");
+
     const response = await fetch("/api/readings/interpret/stream", {
       method: "POST",
       headers: {
@@ -244,17 +249,19 @@ function NewReadingPageContent() {
 
     if (!response.ok) {
       clearTimeout(timeout);
+      setIsStreaming(false);
       throw new Error(`Stream failed: ${response.status}`);
     }
 
     if (!response.body) {
       clearTimeout(timeout);
+      setIsStreaming(false);
       throw new Error("No stream body");
     }
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
-    let streamedContent = "";
+    let content = "";
 
     setAiReading({ reading: "" });
     setAiAttempted(true);
@@ -263,6 +270,7 @@ function NewReadingPageContent() {
       const { done, value } = await reader.read();
       if (done) {
         clearTimeout(timeout);
+        setIsStreaming(false);
         break;
       }
 
@@ -274,17 +282,16 @@ function NewReadingPageContent() {
           const data = line.slice(6);
           if (data === "[DONE]") {
             clearTimeout(timeout);
+            setIsStreaming(false);
             return;
           }
 
           try {
             const parsed = JSON.parse(data);
             if (parsed.content?.content) {
-              streamedContent += parsed.content.content;
-              setAiReading({
-                reading: streamedContent,
-                wasContinued: true,
-              });
+              content += parsed.content.content;
+              setAiReading({ reading: content });
+              setStreamedContent(content);
             }
           } catch {
             // Skip invalid JSON
@@ -923,6 +930,8 @@ function NewReadingPageContent() {
                   }))}
                   allCards={allCards}
                   question={question}
+                  isStreaming={isStreaming}
+                  streamedContent={streamedContent}
                 />
               </div>
               </div>

@@ -168,59 +168,17 @@ export function AIReadingDisplay({
   if (isLoading) {
     return (
       <Card className="border-border bg-card shadow-lg">
-        <CardHeader className="border-b border-border pb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+        <CardContent className="py-8">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <span className="text-lg font-medium text-foreground">
+                Generating your reading...
+              </span>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">
-                {PROGRESS_MESSAGES[progressStep].title}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {PROGRESS_MESSAGES[progressStep].description}
-              </p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6 pt-6">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Progress</span>
-              <span className="text-muted-foreground">{Math.round(progress)}%</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full bg-primary transition-all duration-700 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center gap-4 py-4">
-            <div className="flex gap-2">
-              {cards?.slice(0, 4).map((card, i) => (
-                <div
-                  key={card.id}
-                  className={`flex h-12 w-8 items-center justify-center rounded border-2 text-sm font-medium transition-all duration-500 ${
-                    i <= progressStep
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-muted/30 text-muted-foreground"
-                  }`}
-                >
-                  {card.id}
-                </div>
-              ))}
-              {(cards?.length || 0) > 4 && (
-                <div className="flex h-12 w-8 items-center justify-center rounded border-2 border-border bg-muted/30 text-sm text-muted-foreground">
-                  +{(cards?.length || 0) - 4}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-muted/30 px-4 py-3 text-center text-sm text-muted-foreground">
-            Interpreting {cards?.length || 3} cards using traditional Lenormand methods
+            <p className="text-sm text-muted-foreground">
+              Interpreting {cards?.length || 3} cards
+            </p>
           </div>
         </CardContent>
       </Card>
