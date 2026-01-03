@@ -44,33 +44,49 @@ function buildPrompt(
     .join("\n");
 
   const positionLabels: Record<string, string[]> = {
-    "sentence-3": ["Opening Card", "Central Card", "Closing Card"],
     "single-card": ["The Card"],
+    "sentence-3": ["Opening Card", "Central Card", "Closing Card"],
+    "past-present-future": ["Past", "Present", "Future"],
+    "yes-no-maybe": ["First Card", "Center Card", "Third Card"],
+    "situation-challenge-advice": ["Situation", "Challenge", "Advice"],
+    "mind-body-spirit": ["Mind", "Body", "Spirit"],
+    "sentence-5": ["Element 1", "Element 2", "Element 3", "Element 4", "Element 5"],
+    "structured-reading": ["Subject", "Verb", "Object", "Modifier", "Outcome"],
+    "week-ahead": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+    "relationship-double-significator": [
+      "Partner 1 - Past",
+      "Partner 1 - Present",
+      "Relationship Core",
+      "Partner 2 - Present",
+      "Partner 2 - Future",
+    ],
     "comprehensive": [
-      "Recent Past - Inner World",
-      "Recent Past - Direct Actions",
-      "Recent Past - Outside World",
-      "Present - Inner World",
-      "Present - Direct Actions",
-      "Present - Outside World",
-      "Near Future - Inner World",
-      "Near Future - Direct Actions",
-      "Near Future - Outside World",
+      "Recent Past - Inner",
+      "Recent Past - Action",
+      "Recent Past - External",
+      "Present - Inner",
+      "Present - Action",
+      "Present - External",
+      "Near Future - Inner",
+      "Near Future - Action",
+      "Near Future - External",
     ],
     "grand-tableau": Array.from({ length: 36 }, (_, i) => `Position ${i + 1}`),
   };
 
-  const positions = positionLabels[spread.id] || cards.map((_, i) => `Position ${i + 1}`);
-
   const spreadGuidance: Record<string, string> = {
-    "sentence-3": `This is the classic 3-card sentence reading:
-- Opening Card: The situation/energy surrounding the question
-- Central Card: The core of the matter, the turning point
-- Closing Card: The outcome or near-future atmosphere
-Write a flowing narrative that connects all three.`,
-    "single-card": "One card for direct, immediate guidance. Focus on its core message.",
-    "comprehensive": "9-card Petit Grand Tableau: Read in 3 groups of 3 - Past (inner/direct/outer), Present (inner/direct/outer), Future (inner/direct/outer). Each horizontal row tells a complete story.",
-    "grand-tableau": "Full 36-card Grand Tableau. Focus on: central card = core energy, diagonals, 9-card rows, and how cards interact with the center.",
+    "single-card": "One card for immediate, direct guidance. Focus on its core message and how it applies to today.",
+    "sentence-3": "Classic 3-card sentence: Opening (situation) → Central (turning point) → Closing (outcome).",
+    "past-present-future": "Time-based: Past influences → Current situation → Likely outcome.",
+    "yes-no-maybe": "Count positive vs negative cards. Equal = tie-breaker decides. Be direct.",
+    "situation-challenge-advice": "Diagnostic: What's happening → What's blocking you → What to do about it.",
+    "mind-body-spirit": "Holistic: Mental state → Physical/reality → Spiritual/emotional guidance.",
+    "sentence-5": "Extended narrative flow: 5 cards creating a complete story arc.",
+    "structured-reading": "Analytical: Subject → Action → Impact → Conditions → Result.",
+    "week-ahead": "Daily structure with action model for each day of the week.",
+    "relationship-double-significator": "Two-person reading with central relationship dynamic.",
+    "comprehensive": "9-card Petit Grand Tableau: 3 rows of 3 - Past, Present, Future (each with inner/action/external).",
+    "grand-tableau": "Full 36-card Grand Tableau: Center = core energy, diagonals, 9-card rows, card interactions.",
   };
 
   return `You are Marie-Anne Lenormand (1761-1840), the legendary French fortune teller who read for Napoleon and Joséphine. Your style is practical, grounded, and specific—not vague or mystical.
