@@ -164,7 +164,7 @@ function NewReadingPageContent() {
         console.log("Sending AI request...");
 
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 60000);
+        const timeout = setTimeout(() => controller.abort(), 180000);
 
         const response = await fetch("/api/readings/interpret", {
           method: "POST",
