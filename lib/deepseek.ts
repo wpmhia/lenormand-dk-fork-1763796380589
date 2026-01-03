@@ -153,8 +153,10 @@ export async function getAIReading(
       request.question || "What guidance do these cards have for me?",
     );
 
-    const maxTokens = 2000;
-    console.log("Sending request to DeepSeek API...");
+    const isLargeSpread = spread.cards >= 9;
+    const maxTokens = isLargeSpread ? 4000 : 2000;
+    const maxContinuations = isLargeSpread ? 5 : 3;
+    console.log(`Sending request to DeepSeek API... (${maxTokens} tokens, max ${maxContinuations} continuations)`);
 
     const messages = [
       {
@@ -201,7 +203,6 @@ export async function getAIReading(
     let fullContent = content.trim();
     let wasContinued = false;
     let continuationCount = 0;
-    const maxContinuations = 3;
 
     while (finishReason === "length" && continuationCount < maxContinuations) {
       console.log(
@@ -293,8 +294,9 @@ export async function streamAIReading(
       request.question || "What guidance do these cards have for me?",
     );
 
-    const maxTokens = 2000;
-    console.log("Sending streaming request to DeepSeek API...");
+    const isLargeSpread = spread.cards >= 9;
+    const maxTokens = isLargeSpread ? 4000 : 2000;
+    console.log(`Sending streaming request to DeepSeek API... (${maxTokens} tokens)`);
 
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: "POST",
