@@ -148,6 +148,8 @@ function NewReadingPageContent() {
       setAiLoading(true);
       setAiError(null);
 
+      const isLargeSpread = readingCards.length >= 9;
+
       try {
         const aiRequest = {
           question:
@@ -161,42 +163,15 @@ function NewReadingPageContent() {
           userLocale: navigator.language,
         };
 
-        console.log("Sending AI request...");
+        console.log("Sending AI request...", isLargeSpread ? "(streaming mode)" : "(standard mode)");
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 180000);
-
-        const response = await fetch("/api/readings/interpret", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(aiRequest),
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeout);
-
-        console.log("AI Response status:", response.status);
-
-        if (!response.ok) {
-          let errorMsg = "Failed to generate AI interpretation";
-          try {
-            const errorData = await response.json();
-            errorMsg = errorData.error || errorMsg;
-          } catch {
-            errorMsg = `${errorMsg}: ${response.status} ${response.statusText}`;
-          }
-          throw new Error(errorMsg);
+        if (isLargeSpread) {
+          // Use streaming for large spreads (9+ cards) for faster feedback
+          await performStreamingAnalysis(aiRequest);
+        } else {
+          // Use standard request for smaller spreads
+          await performStandardAnalysis(aiRequest);
         }
-
-        const aiResult = await response.json();
-        console.log("AI Response received:", Object.keys(aiResult));
-
-        console.log("Setting AI reading state...");
-        setAiReading(aiResult);
-        setAiAttempted(true);
-        console.log("AI state update complete");
       } catch (error) {
         console.error("AI Analysis error:", error);
         let errorMessage = "AI analysis failed";
@@ -207,7 +182,7 @@ function NewReadingPageContent() {
             error.message.includes("timeout")
           ) {
             errorMessage =
-              "The interpretation took too long (>60 seconds). Please try again.";
+              "The interpretation took too long. Please try again.";
           } else if (error.message.includes("rate")) {
             errorMessage =
               "Too many requests. Please wait a moment and try again.";
@@ -229,6 +204,95 @@ function NewReadingPageContent() {
     },
     [question, allCards, selectedSpread.id],
   );
+
+  const performStandardAnalysis = async (aiRequest: any) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 180000);
+
+    const response = await fetch("/api/readings/interpret", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(aiRequest),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    const aiResult = await response.json();
+    setAiReading(aiResult);
+    setAiAttempted(true);
+  };
+
+  const performStreamingAnalysis = async (aiRequest: any) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 180000);
+
+    const response = await fetch("/api/readings/interpret/stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(aiRequest),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      clearTimeout(timeout);
+      throw new Error(`Stream failed: ${response.status}`);
+    }
+
+    if (!response.body) {
+      clearTimeout(timeout);
+      throw new Error("No stream body");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let streamedContent = "";
+
+    setAiReading({ reading: "" });
+    setAiAttempted(true);
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        clearTimeout(timeout);
+        break;
+      }
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n");
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const data = line.slice(6);
+          if (data === "[DONE]") {
+            clearTimeout(timeout);
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.content?.content) {
+              streamedContent += parsed.content.content;
+              setAiReading({
+                reading: streamedContent,
+                wasContinued: true,
+              });
+            }
+          } catch {
+            // Skip invalid JSON
+          }
+        }
+      }
+    }
+  };
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
