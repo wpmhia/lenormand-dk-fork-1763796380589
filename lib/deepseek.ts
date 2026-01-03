@@ -137,7 +137,7 @@ export async function getAIReading(
       request.question || "What guidance do these cards have for me?",
     );
 
-    const maxTokens = 1200;
+    const maxTokens = 2000;
     console.log("Sending request to DeepSeek API...");
 
     const messages = [
@@ -277,7 +277,7 @@ export async function streamAIReading(
       request.question || "What guidance do these cards have for me?",
     );
 
-    const maxTokens = 1200;
+    const maxTokens = 2000;
     console.log("Sending streaming request to DeepSeek API...");
 
     const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
