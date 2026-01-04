@@ -736,6 +736,7 @@ export default function ReadingFundamentalsPage() {
                   questions that try to control or predict others&apos; internal
                   states.
                 </p>
+                </div>
               </div>
             </CardContent>
         </Card>
