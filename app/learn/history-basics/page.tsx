@@ -11,21 +11,16 @@ import {
   ArrowLeft,
   ArrowRight,
   Sparkles,
-  Heart,
-  BookOpen,
-  Users,
-  Star,
   Clock,
-  Target,
-  Sun,
-  Scale,
-  Briefcase,
+  BookOpen,
+  Star,
+  Heart,
+  Users,
   Lightbulb,
-  User,
-  Calendar,
+  Target,
 } from "lucide-react";
 
-export default function IntroductionPage() {
+export default function HistoryBasicsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Breadcrumb */}
@@ -35,7 +30,7 @@ export default function IntroductionPage() {
             items={[
               { name: "Home", url: "/" },
               { name: "Learn", url: "/learn" },
-              { name: "Introduction", url: "/learn/introduction" },
+              { name: "History & Basics", url: "/learn/history-basics" },
             ]}
           />
         </div>
@@ -57,13 +52,13 @@ export default function IntroductionPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 1 of 7
+                Module 1 of 6
               </Badge>
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
                 Beginner
               </Badge>
             </div>
-            <Link href="/learn/history">
+            <Link href="/learn/reading-fundamentals">
               <Button
                 variant="ghost"
                 size="sm"
@@ -86,16 +81,16 @@ export default function IntroductionPage() {
             </div>
           </div>
           <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-            Introduction to Lenormand
+            History & Basics
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Welcome to the fascinating world of Lenormand divination. Let&apos;s
-            explore what makes this 36-card oracle so special and powerful.
+            Discover the origins of Lenormand divination and learn the fundamental
+            concepts that make this 36-card oracle unique and powerful.
           </p>
           <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-primary">
             <div className="flex items-center">
-              <Clock className="mr-1 h-4 w-4" />
-              15 minutes
+              <BookOpen className="mr-1 h-4 w-4" />
+              20 minutes
             </div>
             <div className="flex items-center">
               <Target className="mr-1 h-4 w-4" />
@@ -136,6 +131,66 @@ export default function IntroductionPage() {
               relationships, career, health, and life&apos;s important
               decisions.
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Origins and History */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle
+              id="origins-history"
+              className="flex items-center text-2xl text-foreground"
+            >
+              <Clock className="mr-3 h-6 w-6 text-primary" />
+              Origins & History
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="mb-3 font-semibold text-foreground">
+                Marie Anne Adelaide Lenormand (1772-1843)
+              </h3>
+              <p className="leading-relaxed text-muted-foreground">
+                The legendary French fortune teller who gained fame for her readings
+                and high-profile clientele including Napoleon and Josephine. She became one
+                of the most celebrated diviners of her time.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="mb-3 font-semibold text-foreground">
+                Das Spiel der Hoffnung (The Game of Hope)
+              </h3>
+              <p className="leading-relaxed text-muted-foreground">
+                The 36-card deck actually evolved from a German board game
+                published around 1799 by Johann Kaspar Hechtel. Originally designed as a game of
+                chance, the cards&apos; symbolic meanings naturally lent themselves to
+                divination.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="mb-3 font-semibold text-foreground">
+                Posthumous Naming
+              </h3>
+              <p className="leading-relaxed text-muted-foreground">
+                After Lenormand&apos;s death in 1843, the 36-card deck became
+                widely marketed under her name as the &quot;Petit
+                Lenormand.&quot; The deck&apos;s association with her name enhanced its
+                mystique and helped popularize it across Europe.
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm text-foreground">
+                <strong>Historical Note:</strong> While Lenormand was a legendary
+                diviner, she did not leave behind a documented system specifically
+                for the 36-card deck. The modern Lenormand system and
+                interpretations were developed and popularized{" "}
+                <em>after her death</em> by publishers and readers who honored
+                her legacy by associating the deck with her name.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
@@ -252,62 +307,57 @@ export default function IntroductionPage() {
               applications:
             </p>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <div className="flex items-start space-x-3">
-                <Sun className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
-                <div>
+              <div className="space-y-3">
+                <div className="mb-2">
                   <h3 className="font-semibold text-foreground">Daily Guidance</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Single card for the day ahead - themes, energy, and focus areas
-                  </p>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Single card for the day ahead - themes, energy, and focus
+                  areas
+                </p>
               </div>
-              <div className="flex items-start space-x-3">
-                <Scale className="mt-0.5 h-5 w-5 flex-shrink-0 text-indigo-500" />
-                <div>
+              <div className="space-y-3">
+                <div className="mb-2">
                   <h3 className="font-semibold text-foreground">Decision Making</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Weigh options, see potential outcomes, find clarity on choices
-                  </p>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Weigh options, see potential outcomes, find clarity on choices
+                </p>
               </div>
-              <div className="flex items-start space-x-3">
-                <Heart className="mt-0.5 h-5 w-5 flex-shrink-0 text-rose-500" />
-                <div>
+              <div className="space-y-3">
+                <div className="mb-2">
                   <h3 className="font-semibold text-foreground">Relationships</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Understand dynamics, connections, and emotions between people
-                  </p>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Understand dynamics, connections, and emotions between people
+                </p>
               </div>
-              <div className="flex items-start space-x-3">
-                <Briefcase className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" />
-                <div>
+              <div className="space-y-3">
+                <div className="mb-2">
                   <h3 className="font-semibold text-foreground">Career & Work</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Job decisions, project outcomes, timing, and workplace dynamics
-                  </p>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Job decisions, project outcomes, timing, and workplace dynamics
+                </p>
               </div>
-              <div className="flex items-start space-x-3">
-                <Lightbulb className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-500" />
-                <div>
+              <div className="space-y-3">
+                <div className="mb-2">
                   <h3 className="font-semibold text-foreground">Problem Solving</h3>
-                  <p className="text-sm text-muted-foreground">
-                    View situations from multiple angles, find hidden factors
-                  </p>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  View situations from multiple angles, find hidden factors
+                </p>
               </div>
-              <div className="flex items-start space-x-3">
-                <User className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
-                <div>
+              <div className="space-y-3">
+                <div className="mb-2">
                   <h3 className="font-semibold text-foreground">Self-Reflection</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Gain objective perspective on personal matters and situations
-                  </p>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Gain objective perspective on personal matters and situations
+                </p>
               </div>
             </div>
-            <div className="mt-6 rounded-lg border border-amber-200/20 bg-amber-50/10 p-4 text-sm text-muted-foreground dark:bg-amber-950/10">
+            <div className="mt-6 rounded-lg border border-amber-200/20 bg-amber-50/10 p-4 text-sm text-muted-foreground dark:bg-amber-950/10 dark:text-amber-400">
               <p className="font-medium text-amber-700 dark:text-amber-400">
                 Key Principle: The cards answer specifically what you ask.
               </p>
@@ -320,90 +370,9 @@ export default function IntroductionPage() {
           </CardContent>
         </Card>
 
-        {/* What You'll Learn */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
-              <Star className="mr-3 h-6 w-6 text-primary" />
-              What You&apos;ll Learn in This Course
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                  <span className="text-xs font-bold text-white">1</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    History & Origins
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Discover the fascinating story behind Lenormand and its
-                    evolution
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                  <span className="text-xs font-bold text-white">2</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Reading Fundamentals
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Master the art of reading cards as meaningful sentences
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                  <span className="text-xs font-bold text-white">3</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Card Meanings
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Learn all 36 card meanings and their symbolic associations
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                  <span className="text-xs font-bold text-white">4</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Spreads & Techniques
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Discover powerful spreads and advanced reading methods
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                  <span className="text-xs font-bold text-white">5</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Advanced Concepts
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Time associations, playing cards, and cultural
-                    interpretations
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Progress Tracker */}
         <div className="mb-8">
-          <LearningProgressTracker moduleId="introduction" />
+          <LearningProgressTracker moduleId="history-basics" />
         </div>
 
         {/* Navigation */}
@@ -417,9 +386,9 @@ export default function IntroductionPage() {
               Back to Course Overview
             </Button>
           </Link>
-          <Link href="/learn/history">
+          <Link href="/learn/reading-fundamentals">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Continue to History
+              Continue to Reading Fundamentals
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

@@ -30,104 +30,89 @@ export default function LearnPage() {
 
   const modules = [
     {
-      id: "introduction",
-      title: "Introduction to Lenormand",
+      id: "history-basics",
+      title: "History & Basics",
       description:
-        "Discover the ancient wisdom of Lenormand divination and its rich history. Learn what makes this 36-card oracle unique and powerful.",
+        "Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card oracle unique.",
       icon: BookOpen,
-      duration: "15 min",
-      difficulty: "Beginner",
-      color: "from-primary to-primary/80",
-      learningPoints: [
-        "What is Lenormand",
-        "History overview",
-        "Why learn Lenormand",
-      ],
-    },
-    {
-      id: "history",
-      title: "History & Origins",
-      description:
-        "Explore the fascinating history of Lenormand from 18th century France to modern day. Understand its evolution and cultural significance.",
-      icon: Clock,
       duration: "20 min",
       difficulty: "Beginner",
       color: "from-primary to-primary/80",
       learningPoints: [
-        "Marie-Anne Lenormand",
-        "Card origins",
-        "Cultural evolution",
+        "Historical origins",
+        "What is Lenormand",
+        "Why learn Lenormand",
       ],
     },
     {
-      id: "reading-basics",
-      title: "How to Read Lenormand",
+      id: "reading-fundamentals",
+      title: "Reading Fundamentals",
       description:
-        "Master the fundamentals of reading Lenormand cards as meaningful sentences. Learn the core methodology that makes Lenormand powerful.",
+        "Master the core methodology of reading Lenormand cards as meaningful sentences. Learn sentence structure and fundamental techniques.",
       icon: Target,
-      duration: "25 min",
+      duration: "30 min",
       difficulty: "Beginner",
       color: "from-primary to-primary/80",
       learningPoints: [
-        "Card combinations",
-        "Sentence structure",
-        "Position meanings",
+        "Reading as sentences",
+        "5-card methodology",
+        "Basic question types",
       ],
     },
     {
-      id: "card-meanings",
-      title: "Card Meanings & Associations",
+      id: "card-combinations",
+      title: "Card Combinations",
       description:
-        "Learn the traditional meanings and symbolic associations of all 36 cards. Master the language that Lenormand speaks.",
-      icon: Sparkles,
-      duration: "45 min",
+        "Master how cards interact and create new meanings together. Learn key combinations across different life contexts.",
+      icon: Zap,
+      duration: "25 min",
       difficulty: "Intermediate",
       color: "from-primary to-primary/80",
       learningPoints: [
-        "All 36 card meanings",
-        "Keywords & associations",
-        "Timing & location",
+        "Modifier cards",
+        "Context combinations",
+        "Pair meanings",
       ],
     },
     {
       id: "spreads",
       title: "Spreads & Techniques",
       description:
-        "Discover powerful spreads and advanced reading techniques. From 3-card to Grand Tableau, master diverse reading methods.",
+        "Discover powerful spreads from simple 3-card readings to comprehensive Grand Tableau. Master diverse reading methods.",
       icon: Compass,
-      duration: "30 min",
+      duration: "35 min",
       difficulty: "Intermediate",
       color: "from-primary to-primary/80",
-      learningPoints: ["3-card spreads", "Cross spreads", "Advanced layouts"],
-    },
-    {
-      id: "card-combinations",
-      title: "Card Combinations",
-      description:
-        "Master how cards interact and create new meanings together. Learn combinations across love, finance, health, career, and spirituality.",
-      icon: Zap,
-      duration: "25 min",
-      difficulty: "Intermediate",
-      color: "from-primary to-primary/80",
-      learningPoints: [
-        "Pair meanings",
-        "Modifier cards",
-        "Context-based interpretations",
-      ],
+      learningPoints: ["Popular spreads", "Grand Tableau", "Advanced techniques"],
     },
     {
       id: "advanced",
       title: "Advanced Concepts",
       description:
-        "Time associations, playing cards, and cultural interpretations. Take your Lenormand practice to the next level.",
+        "Time associations, playing card connections, cultural interpretations, and Marie-Anne's historical system.",
       icon: Lightbulb,
-      duration: "35 min",
+      duration: "40 min",
       difficulty: "Advanced",
       color: "from-primary to-primary/80",
       learningPoints: [
-        "Time associations",
-        "Playing card meanings",
-        "Professional reading",
+        "Timing methods",
+        "Playing card associations",
+        "Cultural schools",
+      ],
+    },
+    {
+      id: "marie-annes-system",
+      title: "Marie-Anne's System",
+      description:
+        "Learn the historical methodology inspired by Marie-Anne Lenormand's practical, deadline-driven readings and authentic techniques.",
+      icon: Sparkles,
+      duration: "30 min",
+      difficulty: "Advanced",
+      color: "from-amber-500 to-amber-600",
+      learningPoints: [
+        "Five core principles",
+        "Historical spreads",
+        "Authentic reading style",
       ],
     },
   ];
@@ -206,7 +191,7 @@ export default function LearnPage() {
             </div>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link href="/learn/introduction">
+              <Link href="/learn/history-basics">
                 <Button className="btn-learn">
                   <Sparkles className="mr-2 h-5 w-5" />
                   Start Your Journey
@@ -426,7 +411,7 @@ export default function LearnPage() {
             Begin with the fundamentals and progress at your own pace. No
             experience necessary.
           </p>
-          <Link href="/learn/introduction">
+          <Link href="/learn/history-basics">
             <Button size="lg" className="btn-learn">
               Start Learning Now
               <ArrowRight className="ml-2 h-5 w-5" />

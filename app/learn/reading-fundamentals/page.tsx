@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable react/no-unescaped-entities */
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,34 +24,34 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-export default function ReadingBasicsPage() {
-  const differences = [
-    {
-      feature: "Reversals",
-      lenormand: "No reversals - meanings are built into each card",
-      tarot: "Reversals add complexity and nuance",
-      icon: RotateCcw,
-    },
-    {
-      feature: "Reading Style",
-      lenormand: "Read as sentences in card order",
-      tarot: "Intuitive interpretation of symbols",
-      icon: MessageSquare,
-    },
-    {
-      feature: "Symbolism",
-      lenormand: "Concrete, everyday symbols",
-      tarot: "Archetypal, esoteric symbolism",
-      icon: Eye,
-    },
-    {
-      feature: "Focus",
-      lenormand: "Practical guidance and timing",
-      tarot: "Spiritual growth and transformation",
-      icon: Target,
-    },
-  ];
+const differences = [
+  {
+    feature: "Reversals",
+    lenormand: "No reversals - meanings are built into each card",
+    tarot: "Reversals add complexity and nuance",
+    icon: RotateCcw,
+  },
+  {
+    feature: "Reading Style",
+    lenormand: "Read as sentences in card order",
+    tarot: "Intuitive interpretation of symbols",
+    icon: MessageSquare,
+  },
+  {
+    feature: "Symbolism",
+    lenormand: "Concrete, everyday symbols",
+    tarot: "Archetypal, esoteric symbolism",
+    icon: Eye,
+  },
+  {
+    feature: "Focus",
+    lenormand: "Practical guidance and timing",
+    tarot: "Spiritual growth and transformation",
+    icon: Target,
+  },
+];
 
+export default function ReadingFundamentalsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Breadcrumb */}
@@ -63,7 +61,7 @@ export default function ReadingBasicsPage() {
             items={[
               { name: "Home", url: "/" },
               { name: "Learn", url: "/learn" },
-              { name: "How to Read Lenormand", url: "/learn/reading-basics" },
+              { name: "Reading Fundamentals", url: "/learn/reading-fundamentals" },
             ]}
           />
         </div>
@@ -73,7 +71,7 @@ export default function ReadingBasicsPage() {
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/learn">
+            <Link href="/learn/history-basics">
               <Button
                 variant="ghost"
                 size="sm"
@@ -85,13 +83,13 @@ export default function ReadingBasicsPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 3 of 7
+                Module 2 of 6
               </Badge>
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
                 Beginner
               </Badge>
             </div>
-            <Link href="/learn/card-meanings">
+            <Link href="/learn/combinations">
               <Button
                 variant="ghost"
                 size="sm"
@@ -114,16 +112,16 @@ export default function ReadingBasicsPage() {
             </div>
           </div>
           <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-            How to Read Lenormand
+            Reading Fundamentals
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Master the fundamental techniques of Lenormand divination. Learn how
-            to read cards as meaningful sentences.
+            Master the core methodology of Lenormand divination. Learn sentence
+            structure and fundamental techniques.
           </p>
           <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-primary">
             <div className="flex items-center">
               <Target className="mr-1 h-4 w-4" />
-              25 minutes
+              30 minutes
             </div>
             <div className="flex items-center">
               <BookOpen className="mr-1 h-4 w-4" />
@@ -205,9 +203,7 @@ export default function ReadingBasicsPage() {
                       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
                         <span className="font-bold text-white">1</span>
                       </div>
-                      <p className="text-sm font-medium text-foreground">
-                        The Rider
-                      </p>
+                      <p className="text-sm font-medium text-foreground">The Rider</p>
                       <p className="text-xs text-muted-foreground">
                         News, Messages
                       </p>
@@ -216,9 +212,7 @@ export default function ReadingBasicsPage() {
                       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
                         <span className="font-bold text-white">2</span>
                       </div>
-                      <p className="text-sm font-medium text-foreground">
-                        The Snake
-                      </p>
+                      <p className="text-sm font-medium text-foreground">The Snake</p>
                       <p className="text-xs text-muted-foreground">
                         Deception, Wisdom
                       </p>
@@ -227,9 +221,7 @@ export default function ReadingBasicsPage() {
                       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
                         <span className="font-bold text-white">3</span>
                       </div>
-                      <p className="text-sm font-medium text-foreground">
-                        The Bouquet
-                      </p>
+                      <p className="text-sm font-medium text-foreground">The Bouquet</p>
                       <p className="text-xs text-muted-foreground">
                         Gift, Celebration
                       </p>
@@ -243,16 +235,15 @@ export default function ReadingBasicsPage() {
                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>
                       • &ldquo;News about deception brings a gift&rdquo; -
-                      Warning about deceptive news that leads to something
-                      positive
+                      Warning about deceptive news that leads to something positive
                     </li>
                     <li>
-                      • &ldquo;A message reveals hidden wisdom as a gift&rdquo;
-                      - Learning something valuable from a communication
+                      • &ldquo;A message reveals hidden wisdom as a gift&rdquo; -
+                      Learning something valuable from a communication
                     </li>
                     <li>
-                      • &ldquo;Quick changes bring celebration&rdquo; - Positive
-                      changes happening soon
+                      • &ldquo;Quick changes bring celebration&rdquo; -
+                      Positive changes happening soon
                     </li>
                   </ul>
                 </div>
@@ -261,7 +252,7 @@ export default function ReadingBasicsPage() {
           </CardContent>
         </Card>
 
-        {/* 5-Card Methodology: Two Depth Modes */}
+        {/* 5-Card Methodology */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
@@ -294,13 +285,13 @@ export default function ReadingBasicsPage() {
                     (3) + Modifier (4) + Outcome (5)
                   </p>
                   <p>
-                    <strong>Best for:</strong> Daily draws, quick questions,
-                    when you only need the headline
+                    <strong>Best for:</strong> Daily draws, quick questions, when you
+                    only need the headline
                   </p>
                   <p>
-                    <strong>Example:</strong> &quot;The Rider (subject) brings
-                    (verb) an invitation (object) to the family (modifier) and
-                    leads to money (outcome).&quot;
+                    <strong>Example:</strong> &quot;The Rider (subject) brings an
+                    invitation (object) to the family (modifier) and leads to money
+                    (outcome).&quot;
                   </p>
                 </div>
               </div>
@@ -314,9 +305,9 @@ export default function ReadingBasicsPage() {
                     <strong>Time:</strong> 60–90 seconds
                   </p>
                   <p>
-                    <strong>Method:</strong> Start with the sentence, then layer
-                    three optional interpretive lenses, analyze adjacent pairs,
-                    and add timing if needed.
+                    <strong>Method:</strong> Start with the sentence, then layer three
+                    optional interpretive lenses, analyze adjacent pairs, and add timing if
+                    needed.
                   </p>
                   <p>
                     <strong>Layers:</strong>
@@ -327,8 +318,8 @@ export default function ReadingBasicsPage() {
                       Problem-Advice-Outcome OR Situation-Action-Result
                     </li>
                     <li>
-                      • Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as micro-story
-                      beats
+                      • Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as
+                      micro-story beats
                     </li>
                     <li>
                       • Optional timing: Add pips of card 5 (≤10=days,
@@ -340,10 +331,9 @@ export default function ReadingBasicsPage() {
                       situation or emotion)
                     </li>
                   </ul>
-                  <p className="mt-2">
-                    <strong>Best for:</strong> Important questions, relationship
-                    issues, decisions where you need to know{" "}
-                    <em>when, why, and who</em>
+                  <p>
+                    <strong>Best for:</strong> Important questions, relationship issues,
+                    decisions where you need to know <em>when, why, and who</em>
                   </p>
                 </div>
               </div>
@@ -351,8 +341,8 @@ export default function ReadingBasicsPage() {
 
             <div className="rounded-lg bg-muted p-4">
               <p className="text-sm font-medium text-foreground">
-                💡 Think of Sentence mode as the <strong>headline</strong>;
-                Structured mode is the <strong>full article</strong>.
+                💡 Think of Sentence mode as the <strong>headline</strong>; Structured
+                mode is the <strong>full article</strong>.
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
                 Use the light version when you&apos;re in a hurry. Run the full
@@ -450,7 +440,7 @@ export default function ReadingBasicsPage() {
           </CardContent>
         </Card>
 
-        {/* Common Spreads */}
+        {/* Popular Spreads */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
@@ -491,12 +481,10 @@ export default function ReadingBasicsPage() {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Read cards 1-2-3-4-5 as ONE grammatical sentence
-                  (subject-verb-object-modifier-outcome). Stop. Fast headline
-                  reading.
+                  (subject-verb-object-modifier-outcome). Stop. Fast headline reading.
                 </p>
                 <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Daily draws, quick questions, when you only need the
-                  headline
+                  Best for: Daily draws, quick questions, when you only need the headline
                 </div>
               </div>
 
@@ -506,12 +494,12 @@ export default function ReadingBasicsPage() {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Start with the same sentence, then layer three optional
-                  interpretive lenses, analyze four adjacent pairs, add timing
-                  if needed, identify significators. Complete deep analysis.
+                  interpretive lenses, analyze four adjacent pairs, add timing if needed,
+                  identify significators. Complete deep analysis.
                 </p>
                 <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Important questions, relationship issues, decisions
-                  that need clarity on **when, why, and who**
+                  Best for: Important questions, relationship issues, decisions that need
+                  clarity on **when, why, and who**
                 </div>
               </div>
 
@@ -540,7 +528,7 @@ export default function ReadingBasicsPage() {
           </CardContent>
         </Card>
 
-        {/* Understanding The Man and The Woman: Position Roles */}
+        {/* The Man and The Woman */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
@@ -550,7 +538,7 @@ export default function ReadingBasicsPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="rounded-lg border border-border bg-muted p-6">
-              <p className="mb-4 leading-relaxed text-muted-foreground">
+              <p className="leading-relaxed text-muted-foreground">
                 <strong className="text-foreground">
                   Critical Terminology:
                 </strong>{" "}
@@ -560,8 +548,7 @@ export default function ReadingBasicsPage() {
                   positions in the reading, not gender
                 </strong>
                 . These terms date back to Marie-Anne&apos;s original system and
-                represent structural roles rather than the gender of people
-                involved.
+                represent structural roles rather than the gender of people involved.
               </p>
             </div>
 
@@ -575,27 +562,24 @@ export default function ReadingBasicsPage() {
                 </h3>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    <strong className="text-card-foreground">Meaning:</strong>{" "}
-                    The first person in the reading
+                    <strong className="text-card-foreground">Meaning:</strong> The first
+                    person in the reading
                   </p>
                   <p>
-                    <strong className="text-card-foreground">
-                      Also called:
-                    </strong>{" "}
-                    Primary subject, the querent, central figure
+                    <strong className="text-card-foreground">Also called:</strong> Primary
+                    subject, the querent, central figure
                   </p>
                   <p>
                     <strong className="text-card-foreground">
                       In a relationship reading:
                     </strong>{" "}
-                    The primary perspective being examined (could be
-                    anyone&mdash;man, woman, or any person)
+                    The primary perspective being examined (could be anyone—man,
+                    woman, or any person)
                   </p>
                   <p>
-                    <strong className="text-card-foreground">Example:</strong>{" "}
-                    In a reading about two people meeting, if you shuffle and
-                    get The Man in position 1, it represents the first
-                    person&apos;s perspective, regardless of their actual
+                    <strong className="text-card-foreground">Example:</strong> In a reading
+                    about two people meeting, if you shuffle and get The Man in position 1, it
+                    represents the first person&apos;s perspective, regardless of their actual
                     gender.
                   </p>
                 </div>
@@ -610,28 +594,25 @@ export default function ReadingBasicsPage() {
                 </h3>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    <strong className="text-card-foreground">Meaning:</strong>{" "}
-                    The second person in the reading
+                    <strong className="text-card-foreground">Meaning:</strong> The second
+                    person in the reading
                   </p>
                   <p>
-                    <strong className="text-card-foreground">
-                      Also called:
-                    </strong>{" "}
-                    Secondary subject, another figure, related person
+                    <strong className="text-card-foreground">Also called:</strong> Secondary
+                    subject, another figure, related person
                   </p>
                   <p>
                     <strong className="text-card-foreground">
                       In a relationship reading:
                     </strong>{" "}
-                    The secondary perspective or the other person involved
-                    (could be anyone&mdash;woman, man, or any person)
+                    The secondary perspective or the other person involved (could be
+                    anyone—woman, man, or any person)
                   </p>
                   <p>
-                    <strong className="text-card-foreground">Example:</strong>{" "}
-                    If you&apos;re reading about a meeting between two people
-                    and The Woman appears, it represents the second
-                    person&apos;s perspective or role, regardless of their
-                    actual gender.
+                    <strong className="text-card-foreground">Example:</strong> If you&apos;re reading
+                    about a meeting between two people and The Woman appears, it represents
+                    the second person&apos;s perspective or role, regardless of their actual
+                    gender.
                   </p>
                 </div>
               </div>
@@ -642,51 +623,16 @@ export default function ReadingBasicsPage() {
                 <strong className="text-card-foreground">
                   How to Interpret:
                 </strong>{" "}
-                Rather than thinking &ldquo;male&rdquo; or &ldquo;female,&rdquo;
-                think &ldquo;first person&rdquo; and &ldquo;second
-                person.&rdquo; This allows for accurate reading of any
-                situation&mdash;gender-neutral, same-gender relationships, or
-                any dynamic where perspective matters.
+                Rather than thinking &ldquo;male&rdquo; or &ldquo;female,&rdquo; think
+                &ldquo;first person&rdquo; and &ldquo;second person.&rdquo; This allows for
+                accurate reading of any situation—gender-neutral, same-gender
+                relationships, or any dynamic where perspective matters.
               </p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted p-4">
-              <h3 className="mb-3 font-semibold text-foreground">
-                Example: Relationship Reading
-              </h3>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <p>
-                  <strong className="text-card-foreground">Scenario:</strong>{" "}
-                  Two people want to understand their meeting.
-                </p>
-                <ul className="ml-4 list-disc space-y-2">
-                  <li>
-                    <strong className="text-card-foreground">
-                      The Man appears:
-                    </strong>{" "}
-                    Represents the first person&apos;s perspective (their
-                    emotions, actions, viewpoint)
-                  </li>
-                  <li>
-                    <strong className="text-card-foreground">
-                      The Woman appears:
-                    </strong>{" "}
-                    Represents the second person&apos;s perspective (the other
-                    person&apos;s emotions, actions, viewpoint)
-                  </li>
-                </ul>
-                <p className="mt-2">
-                  This creates a reading framework where the interpretation
-                  tells you what each person brings to the dynamic, what
-                  they&apos;re experiencing, and how the situation will unfold
-                  from both perspectives.
-                </p>
-              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Common Questions Section */}
+        {/* Common Questions */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
@@ -697,64 +643,72 @@ export default function ReadingBasicsPage() {
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-muted-foreground">
               Lenormand excels at practical, everyday questions. Unlike Tarot focus on
-              psychological depth, Lenormand answers "how" and "when" about real-world
-              situations.
+              psychological depth, Lenormand answers &quot;how&quot; and
+              &quot;when&quot; about real-world situations.
             </p>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
                 <div className="mb-3 flex items-center">
                   <Heart className="mr-2 h-5 w-5 text-rose-500" />
-                  <h3 className="font-semibold text-foreground">Love & Relationships</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Love & Relationships
+                  </h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• "Will they contact me soon?"</li>
-                  <li>• "What is the future of this relationship?"</li>
-                  <li>• "How do they feel about me?"</li>
-                  <li>• "Will my ex come back?"</li>
-                  <li>• "Is a new relationship coming?"</li>
+                  <li>• &quot;Will they contact me soon?&quot;</li>
+                  <li>• &quot;What is the future of this relationship?&quot;</li>
+                  <li>• &quot;How do they feel about me?&quot;</li>
+                  <li>• &quot;Will my ex come back?&quot;</li>
+                  <li>• &quot;Is a new relationship coming?&quot;</li>
                 </ul>
               </div>
 
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
                 <div className="mb-3 flex items-center">
                   <Briefcase className="mr-2 h-5 w-5 text-emerald-500" />
-                  <h3 className="font-semibold text-foreground">Career & Work</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Career & Work
+                  </h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• "What is the outcome of my job interview?"</li>
-                  <li>• "Should I change jobs?"</li>
-                  <li>• "What will happen at work this week?"</li>
-                  <li>• "Is this a good time to start a business?"</li>
-                  <li>• "What do I need to know about my career?"</li>
+                  <li>• &quot;What is the outcome of my job interview?&quot;</li>
+                  <li>• &quot;Should I change jobs?&quot;</li>
+                  <li>• &quot;What will happen at work this week?&quot;</li>
+                  <li>• &quot;Is this a good time to start a business?&quot;</li>
+                  <li>• &quot;What do I need to know about my career?&quot;</li>
                 </ul>
               </div>
 
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
                 <div className="mb-3 flex items-center">
                   <Clock className="mr-2 h-5 w-5 text-amber-500" />
-                  <h3 className="font-semibold text-foreground">Timing Questions</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Timing Questions
+                  </h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• "When will I hear back about X?"</li>
-                  <li>• "When will this situation change?"</li>
-                  <li>• "How long until things improve?"</li>
-                  <li>• "What is the timeline for this outcome?"</li>
-                  <li>• "When should I take action?"</li>
+                  <li>• &quot;When will I hear back about X?&quot;</li>
+                  <li>• &quot;When will this situation change?&quot;</li>
+                  <li>• &quot;How long until things improve?&quot;</li>
+                  <li>• &quot;What is the timeline for this outcome?&quot;</li>
+                  <li>• &quot;When should I take action?&quot;</li>
                 </ul>
               </div>
 
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
                 <div className="mb-3 flex items-center">
                   <TrendingUp className="mr-2 h-5 w-5 text-blue-500" />
-                  <h3 className="font-semibold text-foreground">General Guidance</h3>
+                  <h3 className="font-semibold text-foreground">
+                    General Guidance
+                  </h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• "What do I need to know about situation?"</li>
-                  <li>• "What should I focus on this week?"</li>
-                  <li>• "What advice do the cards have for me?"</li>
-                  <li>• "What obstacles might I face?"</li>
-                  <li>• "What is the best path forward?"</li>
+                  <li>• &quot;What do I need to know about situation?&quot;</li>
+                  <li>• &quot;What should I focus on this week?&quot;</li>
+                  <li>• &quot;What advice do the cards have for me?&quot;</li>
+                  <li>• &quot;What obstacles might I face?&quot;</li>
+                  <li>• &quot;What is the best path forward?&quot;</li>
                 </ul>
               </div>
             </div>
@@ -766,280 +720,45 @@ export default function ReadingBasicsPage() {
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
                   <strong className="text-card-foreground">Be specific:</strong> Lenormand
-                  works best with concrete questions. "Will I get the job?" is better
-                  than "What about my career?"
+                  works best with concrete questions. &quot;Will I get the job?&quot; is
+                  better than &quot;What about my career?&quot;
                 </p>
                 <p>
-                  <strong className="text-card-foreground">Include timeframe:</strong> "What
-                  should I focus on this week?" gets better answers than open-ended
-                  "What about my future?"
+                  <strong className="text-card-foreground">Include timeframe:</strong> &quot;What
+                  should I focus on this week?&quot; gets better answers than
+                  open-ended &quot;What about my future?&quot;
                 </p>
                 <p>
-                  <strong className="text-card-foreground">Ask about others carefully:</strong>{" "}
-                  You can ask about others' actions toward you, but avoid questions that
-                  try to control or predict others' internal states.
+                  <strong className="text-card-foreground">
+                    Ask about others carefully:
+                  </strong>{" "}
+                  You can ask about others&apos; actions toward you, but avoid
+                  questions that try to control or predict others&apos; internal
+                  states.
                 </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Timing Reference Section */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
-              <Clock className="mr-3 h-6 w-6 text-primary" />
-              Lenormand Timing Reference
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="leading-relaxed text-muted-foreground">
-              One of Lenormand's greatest strengths is timing predictions. While not
-              exact dates, these associations help you understand when events might unfold.
-            </p>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="py-2 text-left font-medium text-foreground">Card</th>
-                    <th className="py-2 text-left font-medium text-foreground">Time Period</th>
-                    <th className="py-2 text-left font-medium text-foreground">Notes</th>
-                  </tr>
-                </thead>
-                <tbody className="text-muted-foreground">
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Rider (1)</td>
-                    <td className="py-2">Days</td>
-                    <td className="py-2">Very soon, immediate</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Clouds (6)</td>
-                    <td className="py-2">Days to weeks</td>
-                    <td className="py-2">Unclear, changeable timing</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Ship (3)</td>
-                    <td className="py-2">Weeks to months</td>
-                    <td className="py-2">Travel, distance involved</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">House (4)</td>
-                    <td className="py-2">Months</td>
-                    <td className="py-2">Stable, home/family matters</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Tree (5)</td>
-                    <td className="py-2">Months to years</td>
-                    <td className="py-2">Long-term, health-related</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Mountain (21)</td>
-                    <td className="py-2">Weeks to months</td>
-                    <td className="py-2">Delays, obstacles</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Garden (20)</td>
-                    <td className="py-2">Weeks</td>
-                    <td className="py-2">Social, public matters</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Path (22)</td>
-                    <td className="py-2">Weeks to months</td>
-                    <td className="py-2">Choice point, crossroads</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Stork (17)</td>
-                    <td className="py-2">Weeks to months</td>
-                    <td className="py-2">Changes, new beginnings</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Dog (18)</td>
-                    <td className="py-2">Weeks</td>
-                    <td className="py-2">Loyalty, friendship matters</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Ring (25)</td>
-                    <td className="py-2">Months to years</td>
-                    <td className="py-2">Commitments, cycles</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Letter (27)</td>
-                    <td className="py-2">Days to weeks</td>
-                    <td className="py-2">Communication, news</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Anchor (35)</td>
-                    <td className="py-2">Months to years</td>
-                    <td className="py-2">Long stability, waiting it out</td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 font-medium text-foreground">Cross (36)</td>
-                    <td className="py-2">Months to years</td>
-                    <td className="py-2">Long-term burdens or destiny</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <h3 className="mb-2 font-semibold text-foreground">Timing Tips</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  • <strong className="text-card-foreground">Card 5 (timing):</strong> In a
-                  5-card spread, the pip value of the 5th card can indicate timing (1-10
-                  = days, 11-20 = weeks, 21+ = months)
-                </li>
-                <li>
-                  • <strong className="text-card-foreground">Directional:</strong> Reading
-                  left-to-right suggests forward motion; right-to-left may suggest looking
-                  back or delays
-                </li>
-                <li>
-                  • <strong className="text-card-foreground">Clouds = unclear:</strong> If
-                  Clouds appear near timing cards, the timeframe is uncertain
-                </li>
-                <li>
-                  • <strong className="text-card-foreground">Multiple timing cards:</strong>{" "}
-                  When several timing cards appear, consider them together for a range
-                </li>
-              </ul>
-            </div>
-
-            <p className="text-sm text-muted-foreground">
-              <strong className="text-card-foreground">Important:</strong> Lenormand timing
-              is symbolic, not literal. Use these as guides for relative timing rather
-              than specific dates.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Example Readings Section */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
-              <MessageSquare className="mr-3 h-6 w-6 text-primary" />
-              Example Readings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="leading-relaxed text-muted-foreground">
-              Here are real examples of how to interpret common questions using Lenormand
-              spreads.
-            </p>
-
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-4 font-semibold text-foreground">
-                Example 1: Love Question - "Will they contact me?"
-              </h3>
-              <div className="mb-4 grid gap-4 md:grid-cols-5">
-                {[
-                  { card: "Rider", pos: "1", desc: "News, message" },
-                  { card: "Heart", pos: "2", desc: "Love, feelings" },
-                  { card: "Ring", pos: "3", desc: "Commitment" },
-                  { card: "Letter", pos: "4", desc: "Communication" },
-                  { card: "Key", pos: "5", desc: "Positive outcome" },
-                ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-center text-center">
-                    <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
-                      <span className="font-bold text-white">{item.pos}</span>
-                    </div>
-                    <p className="text-sm font-medium text-foreground">{item.card}</p>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded bg-card p-4">
-                <h4 className="mb-2 font-medium text-foreground">Interpretation:</h4>
-                <p className="text-sm text-muted-foreground">
-                  "The Rider brings love commitment through communication and leads to a
-                  positive outcome." This reading suggests yes - expect contact related to
-                  matters of the heart, leading to something committed.
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-4 font-semibold text-foreground">
-                Example 2: Career Question - "Should I take this job offer?"
-              </h3>
-              <div className="mb-4 grid gap-4 md:grid-cols-5">
-                {[
-                  { card: "Bear", pos: "1", desc: "Strength, salary" },
-                  { card: "Ship", pos: "2", desc: "Travel, change" },
-                  { card: "Mountain", pos: "3", desc: "Challenges" },
-                  { card: "Stars", pos: "4", desc: "Hope, guidance" },
-                  { card: "Fish", pos: "5", desc: "Money, success" },
-                ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-center text-center">
-                    <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
-                      <span className="font-bold text-white">{item.pos}</span>
-                    </div>
-                    <p className="text-sm font-medium text-foreground">{item.card}</p>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded bg-card p-4">
-                <h4 className="mb-2 font-medium text-foreground">Interpretation:</h4>
-                <p className="text-sm text-muted-foreground">
-                  "Strong power and resources come with travel/changes and challenges, but
-                  bring hope and lead to financial success." This suggests the offer has
-                  good potential despite initial hurdles.
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-4 font-semibold text-foreground">
-                Example 3: Timing Question - "When will I hear back?"
-              </h3>
-              <div className="mb-4 grid gap-4 md:grid-cols-3">
-                {[
-                  { card: "Rider", pos: "1", desc: "News arriving" },
-                  { card: "Bird", pos: "2", desc: "Anxiety, chatter" },
-                  { card: "Letter", pos: "3", desc: "Written communication" },
-                ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-center text-center">
-                    <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
-                      <span className="font-bold text-white">{item.pos}</span>
-                    </div>
-                    <p className="text-sm font-medium text-foreground">{item.card}</p>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="rounded bg-card p-4">
-                <h4 className="mb-2 font-medium text-foreground">Interpretation:</h4>
-                <p className="text-sm text-muted-foreground">
-                  "Quick news creates nervous anticipation, followed by written
-                  communication." The Rider suggests a response is imminent - likely within
-                  days rather than weeks.
-                </p>
-              </div>
-            </div>
-          </CardContent>
+            </CardContent>
         </Card>
 
         {/* Progress Tracker */}
         <div className="mb-8">
-          <LearningProgressTracker moduleId="reading-basics" />
+          <LearningProgressTracker moduleId="reading-fundamentals" />
         </div>
 
         {/* Navigation */}
         <div className="flex items-center justify-between border-t border-border pt-8">
-          <Link href="/learn/history">
+          <Link href="/learn/history-basics">
             <Button
               variant="outline"
               className="border-border text-card-foreground hover:bg-muted"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to History
+              Back to History & Basics
             </Button>
           </Link>
-          <Link href="/learn/card-meanings">
+          <Link href="/learn/combinations">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Continue to Card Meanings
+              Continue to Card Combinations
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>

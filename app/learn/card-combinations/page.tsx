@@ -474,20 +474,20 @@ export default function CardCombinationsPage() {
       {/* Navigation */}
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/learn/card-meanings">
+            <div className="flex items-center justify-between">
+             <Link href="/learn/reading-fundamentals">
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-primary hover:text-primary/80"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Previous Module
+                Back to Reading Fundamentals
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 5 of 7
+                Module 3 of 6
               </Badge>
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
                 Intermediate

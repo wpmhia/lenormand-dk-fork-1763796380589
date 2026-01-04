@@ -450,14 +450,32 @@ export default function SpreadsPage() {
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/learn/card-combinations">
+            <Link href="/learn/combinations">
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-primary hover:text-primary/80"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Previous Module
+                Back to Card Combinations
+              </Button>
+            </Link>
+            <div className="flex items-center space-x-2">
+              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+                Module 4 of 6
+              </Badge>
+              <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
+                Intermediate
+              </Badge>
+            </div>
+            <Link href="/learn/advanced">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary/80"
+              >
+                Next Module
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <div className="flex items-center space-x-2">

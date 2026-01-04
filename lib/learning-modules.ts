@@ -1,52 +1,49 @@
 // Learning module configuration for breadcrumbs and navigation
 export const LEARNING_MODULES = [
   {
-    id: "introduction",
-    title: "Introduction to Lenormand",
-    path: "/learn/introduction",
+    id: "history-basics",
+    title: "History & Basics",
+    path: "/learn/history-basics",
     order: 1,
   },
   {
-    id: "history",
-    title: "History & Origins",
-    path: "/learn/history",
+    id: "reading-fundamentals",
+    title: "Reading Fundamentals",
+    path: "/learn/reading-fundamentals",
     order: 2,
-  },
-  {
-    id: "reading-basics",
-    title: "How to Read Lenormand",
-    path: "/learn/reading-basics",
-    order: 3,
-  },
-  {
-    id: "card-meanings",
-    title: "Card Meanings & Associations",
-    path: "/learn/card-meanings",
-    order: 4,
   },
   {
     id: "card-combinations",
     title: "Card Combinations",
     path: "/learn/card-combinations",
-    order: 5,
+    order: 3,
   },
   {
     id: "spreads",
     title: "Spreads & Techniques",
     path: "/learn/spreads",
-    order: 6,
+    order: 4,
   },
   {
     id: "advanced",
     title: "Advanced Concepts",
     path: "/learn/advanced",
-    order: 7,
+    order: 5,
   },
   {
     id: "marie-annes-system",
     title: "Marie-Anne's System",
     path: "/learn/marie-annes-system",
-    order: 8,
+    order: 6,
+  },
+];
+
+// Reference modules (not part of sequential course)
+export const REFERENCE_MODULES = [
+  {
+    id: "card-meanings",
+    title: "Card Meanings Reference",
+    path: "/learn/card-meanings",
   },
 ];
 
@@ -75,6 +72,20 @@ export function getBreadcrumbItems(currentModuleId: string) {
   return [
     { name: "Home", url: "/" },
     { name: "Learn", url: "/learn" },
+    { name: foundModule.title, url: foundModule.path },
+  ];
+}
+
+export function getReferenceBreadcrumbItems(referenceModuleId: string) {
+  const foundModule = REFERENCE_MODULES.find(
+    (mod) => mod.id === referenceModuleId,
+  );
+  if (!foundModule) return [];
+
+  return [
+    { name: "Home", url: "/" },
+    { name: "Learn", url: "/learn" },
+    { name: "Reference", url: "/learn/reference" },
     { name: foundModule.title, url: foundModule.path },
   ];
 }
