@@ -6,7 +6,7 @@ export interface Spread {
   isAuthentic?: boolean;
 }
 
-// Marie-Anne's Original Spreads (1820s-1840s)
+// Marie-Anne's Original Spreads
 export const AUTHENTIC_SPREADS: Spread[] = [
   {
     id: "single-card",
@@ -41,7 +41,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   },
 ];
 
-// Modern Spreads (developed after Marie-Anne's time)
+// Modern Spreads
 export const MODERN_SPREADS: Spread[] = [
   {
     id: "past-present-future",
