@@ -85,28 +85,28 @@ export default function Home() {
             <ReadingTypeCard
               icon={<Shield className="h-5 w-5 text-primary" />}
               title="Single Card"
-              description="Quick daily guidance • 30 seconds"
+              description="Quick daily guidance"
               cardCount={1}
               spreadId="single-card"
             />
             <ReadingTypeCard
               icon={<Sparkles className="h-5 w-5 text-primary" />}
               title="3-Card Sentence"
-              description="Three-card narrative • 2 minutes"
+              description="Three-card narrative"
               cardCount={3}
               spreadId="sentence-3"
             />
             <ReadingTypeCard
               icon={<Heart className="h-5 w-5 text-primary" />}
               title="9-Card Reading"
-              description="Deeper situation analysis • 5 minutes"
+              description="Deeper situation analysis"
               cardCount={9}
               spreadId="comprehensive"
             />
             <ReadingTypeCard
               icon={<Calendar className="h-5 w-5 text-primary" />}
               title="Grand Tableau"
-              description="Complete 360° life reading • 15 minutes"
+              description="Complete 360° life reading"
               cardCount={36}
               spreadId="grand-tableau"
             />
