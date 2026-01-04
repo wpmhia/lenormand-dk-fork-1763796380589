@@ -370,9 +370,6 @@ export default function Home() {
       {/* CTA Section */}
       <div className="container-cta">
         <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 text-center shadow-2xl backdrop-blur-sm">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10"></div>
-          <div className="absolute left-4 top-4 h-16 w-16 rounded-full bg-primary/20 blur-xl"></div>
-          <div className="absolute bottom-4 right-4 h-12 w-12 rounded-full bg-primary/20 blur-lg"></div>
           <div className="relative z-10">
             <h2 className="relative mb-4 text-4xl font-bold text-foreground">
               The Lenormand Tradition,{" "}
