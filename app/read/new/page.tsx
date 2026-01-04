@@ -150,6 +150,16 @@ function NewReadingPageContent() {
   const [streamedContent, setStreamedContent] = useState("");
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  function parseSSEChunk(data: string): string | null {
+    if (data === "[DONE]") return null;
+    try {
+      const parsed = JSON.parse(data);
+      return parsed.content || parsed.choices?.[0]?.delta?.content || "";
+    } catch {
+      return null;
+    }
+  }
+
   // Streaming function
   const performStreamingAnalysis = useCallback(async () => {
     if (abortControllerRef.current) {
@@ -209,31 +219,23 @@ function NewReadingPageContent() {
       const decoder = new TextDecoder();
       let content = "";
       let buffer = "";
-      let chunkCount = 0;
 
-      console.log("Starting to read stream...");
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
-          // Process any remaining buffer
           if (buffer.trim()) {
             const text = parseSSEChunk(buffer);
             if (text) {
               content += text;
-              setStreamedContent(content);
-              setAiReading({ reading: content });
             }
           }
-          console.log("Stream complete, total chunks:", chunkCount, "total content length:", content.length);
           break;
         }
 
-        chunkCount++;
         buffer += decoder.decode(value, { stream: true });
 
-        // Process complete SSE messages (lines starting with "data:")
         const lines = buffer.split("\n");
-        buffer = lines.pop() || ""; // Keep incomplete line in buffer
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
@@ -246,6 +248,9 @@ function NewReadingPageContent() {
           }
         }
       }
+
+      setAiReading({ reading: content });
+      setStreamedContent(content);
     } catch (error) {
       if (error instanceof Error && error.name !== "AbortError") {
         console.error("Streaming error:", error);

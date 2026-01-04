@@ -54,10 +54,10 @@ const SPREAD_GUIDANCE: Record<string, string> = {
 };
 
 function getMaxTokens(spreadCards: number): number {
-  if (spreadCards <= 3) return 1500;
-  if (spreadCards <= 5) return 2000;
-  if (spreadCards < 9) return 3000;
-  return 4000;
+  if (spreadCards <= 3) return 800;
+  if (spreadCards <= 5) return 1200;
+  if (spreadCards < 9) return 2000;
+  return 2500;
 }
 
 export interface AIReadingRequest {
@@ -283,8 +283,6 @@ export async function streamAIReading(
     throw new Error("DeepSeek API key not configured");
   }
 
-  console.log("DeepSeek is available. Preparing streaming request...");
-
   try {
     const spreadId = request.spreadId || "sentence-3";
     const spread = getSpreadById(spreadId);
@@ -306,7 +304,6 @@ export async function streamAIReading(
 
     const maxTokens = getMaxTokens(spread.cards);
 
-    // Retry logic for rate limiting
     let lastError: Error | null = null;
     for (let attempt = 0; attempt < 3; attempt++) {
       if (attempt > 0) {
@@ -339,7 +336,6 @@ export async function streamAIReading(
 
       console.log("DeepSeek streaming API response status:", response.status);
 
-      // Retry on 429 (rate limit) or 503 (service unavailable)
       if (response.status === 429 || response.status === 503) {
         lastError = new Error(`Rate limited: ${response.status}`);
         continue;

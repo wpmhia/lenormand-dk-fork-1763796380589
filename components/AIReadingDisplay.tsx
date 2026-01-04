@@ -24,6 +24,45 @@ const PROGRESS_MESSAGES = [
   { title: "Finalizing your interpretation", description: "Almost ready" },
 ] as const;
 
+function ProgressIndicator({ cards }: { cards?: Array<{ id: number; name: string; position: number }> }) {
+  const [progressIndex, setProgressIndex] = useState(0);
+  const [showCards, setShowCards] = useState(false);
+
+  useEffect(() => {
+    const timer1 = setTimeout(() => setShowCards(true), 500);
+    const timer2 = setInterval(() => {
+      setProgressIndex((prev) => (prev + 1) % PROGRESS_MESSAGES.length);
+    }, 2000);
+    return () => {
+      clearTimeout(timer1);
+      clearInterval(timer2);
+    };
+  }, []);
+
+  return (
+    <div className="space-y-3 w-full max-w-md">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Zap className="h-4 w-4" />
+        <span>{PROGRESS_MESSAGES[progressIndex].title}</span>
+      </div>
+      {showCards && cards && cards.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 justify-center">
+          {cards.slice(0, 5).map((card, i) => (
+            <Badge key={card.id} variant="outline" className="text-xs">
+              {card.name}
+            </Badge>
+          ))}
+          {cards.length > 5 && (
+            <Badge variant="outline" className="text-xs">
+              +{cards.length - 5} more
+            </Badge>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
   isLoading: boolean;
@@ -137,6 +176,7 @@ export function AIReadingDisplay({
             <p className="text-sm text-muted-foreground">
               Interpreting {cards?.length || 3} cards
             </p>
+            <ProgressIndicator cards={cards} />
           </div>
         </CardContent>
       </Card>
