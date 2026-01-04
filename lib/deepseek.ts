@@ -40,7 +40,7 @@ const SPREAD_GUIDANCE: Record<string, string> = {
   "single-card": "One card for immediate, direct guidance. Focus on its core message and how it applies to the question.",
   "sentence-3": "Classic 3-card sentence: Opening (situation) → Central (turning point) → Closing (outcome).",
   "past-present-future": "Time-based: Past influences → Current situation → Likely outcome.",
-  "yes-no-maybe": "Count positive vs negative cards. Equal = tie-breaker decides. Be direct.",
+  "yes-no-maybe": "YES or NO answer. Count positive vs negative cards. More positive = YES. More negative = NO. Equal = CONDITIONAL/TIE.",
   "situation-challenge-advice": "Diagnostic: What's happening → What's blocking you → What to do about it.",
   "mind-body-spirit": "Holistic: Mental state → Physical/reality → Spiritual/emotional guidance.",
   "sentence-5": "Extended narrative flow: 5 cards creating a complete story arc.",
@@ -99,6 +99,19 @@ function buildPrompt(
   const positionLabels = POSITION_LABELS[spread.id] || [];
   const spreadGuidance = SPREAD_GUIDANCE[spread.id] || "";
 
+  const isYesNo = spread.id === "yes-no-maybe";
+
+  const structure = isYesNo
+    ? `STRUCTURE:
+1. VERDICT: YES | NO | CONDITIONAL (first line, bold)
+2. Cards: Brief meaning of each card (1-2 sentences)
+3. Reasoning: Why the verdict based on card energies`
+    : `STRUCTURE:
+1. Cards: 2-3 sentences per card with meaning and position
+2. Summary: One sentence connecting all cards
+3. Story: 2-3 paragraphs on the journey and outcome
+4. Action: Clear advice—what to do, warnings, timing if relevant`;
+
   return `You are Marie-Anne Lenormand, a practical French fortune teller (1761-1840). Be direct and specific—never vague or mystical.
 
 QUESTION: "${question}"
@@ -110,11 +123,7 @@ ${spreadGuidance}
 CARDS:
 ${cardList}
 
-STRUCTURE:
-1. Cards: 2-3 sentences per card with meaning and position
-2. Summary: One sentence connecting all cards
-3. Story: 2-3 paragraphs on the journey and outcome
-4. Action: Clear advice—what to do, warnings, timing if relevant
+${structure}
 
 Be practical and helpful.`;
 }
