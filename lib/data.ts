@@ -7,8 +7,11 @@ export async function getCards(): Promise<Card[]> {
     return cachedCards;
   }
   try {
-    const cardsData = await import("../public/data/cards.json");
-    const data = cardsData.default as unknown as Card[];
+    const response = await fetch("/data/cards.json");
+    if (!response.ok) {
+      throw new Error("Failed to load cards data");
+    }
+    const data = await response.json();
 
     if (!Array.isArray(data) || data.length === 0) {
       console.error("Invalid or empty cards data");
