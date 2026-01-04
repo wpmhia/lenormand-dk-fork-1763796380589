@@ -14,11 +14,22 @@ import {
   Star,
   Briefcase,
   Calendar,
+  Grid3X3,
+  Crown,
+  User,
+  Zap,
+  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card as CardType } from "@/lib/types";
 import { getCards, getCardById } from "@/lib/data";
+import {
+  GRAND_TABLEAU_TOPIC_CARDS,
+  GRAND_TABLEAU_CORNERS,
+  GRAND_TABLEAU_CARDS_OF_FATE,
+  SIGNIFICATOR_CARDS,
+} from "@/lib/spreads";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -324,6 +335,105 @@ export default function CardDetailPage({ params }: PageProps) {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Grand Tableau Information */}
+              <Card className="border-primary/20 bg-gradient-to-br from-amber-900/5 to-transparent">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Grid3X3 className="h-5 w-5 text-amber-600" />
+                    In the Grand Tableau
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {/* Significator Role */}
+                    {card.id === SIGNIFICATOR_CARDS.anima && (
+                      <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Crown className="h-5 w-5 text-amber-600" />
+                          <h4 className="font-semibold text-foreground">Significator (Anima)</h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          This card represents the <strong>female querent</strong> in the Grand Tableau. 
+                          All reading flows from this card - cards to the left represent the past, 
+                          cards above represent conscious thoughts, and diagonals show influences and possibilities.
+                        </p>
+                      </div>
+                    )}
+                    {card.id === SIGNIFICATOR_CARDS.animus && (
+                      <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Crown className="h-5 w-5 text-amber-600" />
+                          <h4 className="font-semibold text-foreground">Significator (Animus)</h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          This card represents the <strong>male querent</strong> in the Grand Tableau. 
+                          All reading flows from this card - cards to the left represent the past, 
+                          cards above represent conscious thoughts, and diagonals show influences and possibilities.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Topic Card Role */}
+                    {GRAND_TABLEAU_TOPIC_CARDS[card.id] && (
+                      <div className="rounded-lg bg-primary/10 p-4">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Zap className="h-5 w-5 text-primary" />
+                          <h4 className="font-semibold text-foreground">Topic Card: {GRAND_TABLEAU_TOPIC_CARDS[card.id].label}</h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          When this card appears in the Grand Tableau, it acts as a <strong>focus point</strong> for that life area. 
+                          Read the surrounding 8 cards as a mini 9-card spread to understand this aspect of life.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Corner Card */}
+                    {GRAND_TABLEAU_CORNERS.includes(card.id) && (
+                      <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-950/30">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Sparkles className="h-5 w-5 text-purple-600" />
+                          <h4 className="font-semibold text-foreground">Corner Card</h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          This card sits at a <strong>corner position</strong> (positions 1, 8, 25, or 32) 
+                          providing context and framing the overall reading. It represents the external environment 
+                          and surrounding circumstances.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Cards of Fate */}
+                    {GRAND_TABLEAU_CARDS_OF_FATE.includes(card.id) && (
+                      <div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/30">
+                        <div className="mb-2 flex items-center gap-2">
+                          <MessageSquare className="h-5 w-5 text-red-600" />
+                          <h4 className="font-semibold text-foreground">Card of Fate</h4>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          This card is among the final 4 cards (positions 32-35), known as the <strong>Cards of Fate</strong>. 
+                          These cards provide predictive insight for approximately 8-12 weeks from the present.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* General Grand Tableau Position Info */}
+                    <div className="rounded-lg bg-muted/50 p-4">
+                      <div className="mb-2 flex items-center gap-2">
+                        <Grid3X3 className="h-5 w-5 text-muted-foreground" />
+                        <h4 className="font-semibold text-foreground">Grid Position</h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Card #{card.id} appears at position {card.id} in the 4×9 Grand Tableau grid. 
+                        {card.id <= 9 && " In the first row, it relates to recent past and immediate concerns."}
+                        {card.id >= 10 && card.id <= 18 && " In the second row, it connects to present circumstances."}
+                        {card.id >= 19 && card.id <= 27 && " In the third row, it bridges present and future."}
+                        {card.id >= 28 && " In the fourth row, it relates to future outcomes and longer-term trends."}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Meanings Tab */}

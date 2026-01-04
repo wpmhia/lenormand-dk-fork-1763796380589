@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Reading, ReadingCard, Card as CardType } from "@/lib/types";
 import {
   getCardById,
@@ -8,12 +8,49 @@ import {
   getLinearAdjacentCards,
   getGrandTableauAdjacentCards,
 } from "@/lib/data";
+import {
+  GrandTableauPosition,
+  getGrandTableauPosition,
+  getPositionZone,
+  getTopicCardsInSpread,
+  getDiagonalCards,
+  GRAND_TABLEAU_TOPIC_CARDS,
+  GRAND_TABLEAU_CORNERS,
+  GRAND_TABLEAU_CARDS_OF_FATE,
+  GRAND_TABLEAU_CENTER_CARDS,
+  DIRECTIONAL_ZONES,
+  SignificatorType,
+  SIGNIFICATOR_CARDS,
+} from "@/lib/spreads";
 import { Card } from "./Card";
 import { CardWithTooltip } from "./CardWithTooltip";
 import { AnimatedCard } from "./AnimatedCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Share2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Share2,
+  Heart,
+  Home,
+  TreeDeciduous,
+  Briefcase,
+  User,
+  Anchor,
+  Fish,
+  Ship,
+  Sparkles,
+  Target,
+  Clock,
+  Eye,
+  Brain,
+  Zap,
+} from "lucide-react";
 
 interface ReadingViewerProps {
   reading: Reading;
@@ -257,14 +294,29 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
   };
 };
 
-const getGrandTableauPosition = (index: number) => {
-  const row = Math.floor(index / 9);
-  const col = index % 9;
-  return {
-    row,
-    col,
-    label: "R" + (row + 1) + "C" + (col + 1),
-  };
+const getTopicIcon = (type: string) => {
+  switch (type) {
+    case "health": return <TreeDeciduous className="h-3 w-3" />;
+    case "home": return <Home className="h-3 w-3" />;
+    case "love": return <Heart className="h-3 w-3" />;
+    case "job": return <Briefcase className="h-3 w-3" />;
+    case "boss": return <User className="h-3 w-3" />;
+    case "career": return <Anchor className="h-3 w-3" />;
+    case "money": return <Fish className="h-3 w-3" />;
+    case "travel": return <Ship className="h-3 w-3" />;
+    default: return <Sparkles className="h-3 w-3" />;
+  }
+};
+
+const getZoneIcon = (zone: string) => {
+  switch (zone) {
+    case "left": return <Clock className="h-4 w-4" />;
+    case "right": return <Target className="h-4 w-4" />;
+    case "above": return <Brain className="h-4 w-4" />;
+    case "below": return <Eye className="h-4 w-4" />;
+    case "top-left": case "top-right": case "bottom-left": case "bottom-right": return <Zap className="h-4 w-4" />;
+    default: return null;
+  }
 };
 
 export function ReadingViewer({
@@ -277,6 +329,20 @@ export function ReadingViewer({
 }: ReadingViewerProps) {
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [shareClicked, setShareClicked] = useState(false);
+  const [significatorType, setSignificatorType] = useState<SignificatorType>("none");
+
+  const significatorCardId = significatorType !== "none" ? SIGNIFICATOR_CARDS[significatorType] : -1;
+  const significatorIndex = reading.cards.findIndex(c => c.id === significatorCardId);
+
+  const topicCards = useMemo(() => {
+    if (reading.layoutType !== 36) return [];
+    return getTopicCardsInSpread(reading.cards.map(c => c.id));
+  }, [reading]);
+
+  const diagonals = useMemo(() => {
+    if (reading.layoutType !== 36 || significatorIndex === -1) return null;
+    return getDiagonalCards(significatorIndex, reading.cards.map(c => c.id));
+  }, [reading, significatorIndex]);
 
   const getAdjacentCards = (currentCard: ReadingCard): ReadingCard[] => {
     if (reading.layoutType === 36) {
@@ -322,34 +388,181 @@ export function ReadingViewer({
     } else if (reading.layoutType === 36) {
       return (
         <div className="space-y-sm">
+          {/* Grand Tableau directional legend */}
+          {significatorIndex !== -1 && (
+            <div className="mb-lg flex flex-wrap items-center justify-center gap-lg text-xs">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-amber-600" />
+                <span className="text-muted-foreground">Left = Past</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-blue-600" />
+                <span className="text-muted-foreground">Right = Future</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Brain className="h-4 w-4 text-purple-600" />
+                <span className="text-muted-foreground">Above = Conscious</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-emerald-600" />
+                <span className="text-muted-foreground">Below = Unconscious</span>
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-sm" style={{ gridTemplateColumns: "repeat(9, minmax(0, 1fr))" }}>
             {reading.cards.map((readingCard, index) => {
               const card = getCardById(allCards, readingCard.id);
               if (!card) return null;
 
               const pos = getGrandTableauPosition(index);
+              const isSignificator = index === significatorIndex;
+              const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
+              const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
+              const isCardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
+              const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card.id];
+              
+              const zoneInfo = significatorIndex !== -1 
+                ? getPositionZone(significatorIndex, index)
+                : { zone: "general", distance: 0, direction: "" };
+              
+              const zone = DIRECTIONAL_ZONES[zoneInfo.zone];
+
+              let borderClass = "border-border";
+              if (isSignificator) {
+                borderClass = "border-amber-500 ring-2 ring-amber-500/30";
+              } else if (isCorner) {
+                borderClass = "border-purple-500/50";
+              } else if (isCardsOfFate) {
+                borderClass = "border-red-500/50";
+              } else if (isCenter) {
+                borderClass = "border-green-500/50";
+              }
 
               return (
                 <AnimatedCard
                   key={index}
-                  delay={index * 0.05}
-                  className="flex flex-col items-center space-y-sm rounded-lg border-2 border-border p-sm"
+                  delay={index * 0.03}
+                  className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
+                    isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
+                  } ${borderClass}`}
                 >
-                  <div className="text-center text-xs font-semibold text-muted-foreground">
-                    {pos.label}
+                  {/* Position header */}
+                  <div className="flex w-full items-center justify-between text-xs">
+                    <span className="font-medium text-muted-foreground">
+                      {pos.row + 1}-{pos.col + 1}
+                    </span>
+                    {isSignificator && (
+                      <Badge variant="default" className="bg-amber-600 text-[10px]">
+                        YOU
+                      </Badge>
+                    )}
+                    {isCorner && (
+                      <Badge variant="outline" className="text-[10px] border-purple-500/50 text-purple-600">
+                        Context
+                      </Badge>
+                    )}
+                    {isCardsOfFate && (
+                      <Badge variant="outline" className="text-[10px] border-red-500/50 text-red-600">
+                        Fate
+                      </Badge>
+                    )}
+                    {isCenter && (
+                      <Badge variant="outline" className="text-[10px] border-green-500/50 text-green-600">
+                        Heart
+                      </Badge>
+                    )}
                   </div>
+
+                  {/* Directional indicator */}
+                  {zone && significatorIndex !== -1 && !isSignificator && (
+                    <div className={`flex items-center gap-1 text-[10px] ${zone.color}`}>
+                      {getZoneIcon(zoneInfo.zone)}
+                      <span>{zone.name}</span>
+                      <span className="text-muted-foreground">({zoneInfo.distance})</span>
+                    </div>
+                  )}
+
                   <CardWithTooltip
                     card={card}
                     size="sm"
                     onClick={() => setSelectedCard(card)}
                     className="cursor-pointer"
-                    positionLabel={pos.label}
-                    positionDescription={`Position ${index + 1}`}
+                    positionLabel={isSignificator ? "Significator (You)" : zone?.name || undefined}
+                    positionDescription={
+                      isSignificator 
+                        ? "This card represents you in the reading"
+                        : zoneInfo.direction 
+                          ? `${zone.description} - Distance: ${zoneInfo.distance}`
+                          : undefined
+                    }
                   />
+
+                  {/* Topic card badge */}
+                  {topicInfo && (
+                    <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+                      {getTopicIcon(topicInfo.type)}
+                      <span>{topicInfo.label}</span>
+                    </div>
+                  )}
                 </AnimatedCard>
               );
             })}
           </div>
+
+          {/* Topic cards summary */}
+          {topicCards.length > 0 && (
+            <div className="mt-lg rounded-lg border border-border bg-card p-md">
+              <h4 className="mb-md flex items-center gap-2 text-sm font-semibold">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Topic Cards in This Reading
+              </h4>
+              <div className="flex flex-wrap gap-md">
+                {topicCards.map((tc) => {
+                  const card = getCardById(allCards, tc.cardId);
+                  if (!card) return null;
+                  return (
+                    <div
+                      key={tc.cardId}
+                      className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card/50 px-3 py-2 transition-colors hover:bg-muted"
+                      onClick={() => {
+                        const cardElement = document.querySelector(`[data-card-index="${tc.index}"]`);
+                        cardElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }}
+                    >
+                      {getTopicIcon(tc.topic.type)}
+                      <div>
+                        <div className="text-xs font-medium">{card.name}</div>
+                        <div className="text-[10px] text-muted-foreground">{tc.topic.label}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Diagonals summary */}
+          {diagonals && (
+            <div className="mt-lg grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {[
+                { key: "topLeft", label: "Conscious Influences", cards: diagonals.topLeft, color: "text-violet-600" },
+                { key: "bottomLeft", label: "Unconscious Influences", cards: diagonals.bottomLeft, color: "text-teal-600" },
+                { key: "topRight", label: "Conscious Possibilities", cards: diagonals.topRight, color: "text-indigo-600" },
+                { key: "bottomRight", label: "Unconscious Possibilities", cards: diagonals.bottomRight, color: "text-cyan-600" },
+              ].map((diag) => (
+                <div key={diag.key} className="rounded-lg border border-border bg-card p-md">
+                  <div className={`mb-2 flex items-center gap-2 text-sm font-medium ${diag.color}`}>
+                    <Zap className="h-4 w-4" />
+                    {diag.label}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {diag.cards.length} card{diag.cards.length !== 1 ? "s" : ""}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       );
     } else {
@@ -395,6 +608,37 @@ export function ReadingViewer({
         <div className="relative">
           <div className="mb-lg flex flex-wrap items-center justify-center gap-lg text-sm text-muted-foreground">
             <Badge variant="secondary">{reading.layoutType} Cards</Badge>
+            
+            {/* Significator selector for Grand Tableau */}
+            {reading.layoutType === 36 && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs">Significator:</span>
+                <Select
+                  value={significatorType}
+                  onValueChange={(value) => setSignificatorType(value as SignificatorType)}
+                >
+                  <SelectTrigger className="h-8 w-[120px] border-border text-xs">
+                    <SelectValue placeholder="None" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="anima">
+                      <div className="flex items-center gap-2">
+                        <User className="h-3 w-3" />
+                        Anima (28)
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="animus">
+                      <div className="flex items-center gap-2">
+                        <User className="h-3 w-3" />
+                        Animus (29)
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
             {showShareButton && onShare && (
               <Button
                 onClick={async () => {
