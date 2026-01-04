@@ -3,7 +3,7 @@ import { Card } from "@/lib/types";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL =
-  process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1";
+  process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
 const POSITION_LABELS: Record<string, string[]> = {
   "single-card": ["The Card"],
