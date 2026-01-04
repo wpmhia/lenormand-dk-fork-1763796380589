@@ -283,7 +283,7 @@ const spreads = [
   },
   {
     category: "36-Card Master Reading",
-    description: "Complete deck reading for ultimate comprehensive guidance",
+    description: "Complete deck reading for comprehensive guidance",
     spreads: [
       {
         name: "Grand Tableau (36-Card Reading)",

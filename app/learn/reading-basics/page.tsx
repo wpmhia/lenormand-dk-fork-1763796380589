@@ -462,7 +462,7 @@ export default function ReadingBasicsPage() {
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-3">
                 <h3 className="font-semibold text-foreground">
-                  3-Card Sentence Reading (Primary)
+                  3-Card Sentence Reading
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Card 1 → Card 2 → Card 3 flowing as a narrative sentence. The
