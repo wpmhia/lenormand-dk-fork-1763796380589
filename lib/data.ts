@@ -1,6 +1,11 @@
 import { Card, Reading, ReadingCard } from "./types";
 
+let cachedCards: Card[] | null = null;
+
 export function getCards(): Card[] {
+  if (cachedCards) {
+    return cachedCards;
+  }
   try {
     const cardsData = require("../public/data/cards.json");
     const data = cardsData as unknown as Card[];
@@ -10,13 +15,7 @@ export function getCards(): Card[] {
       return [];
     }
 
-    console.log(
-      "✅ Cards loaded:",
-      data.length,
-      "cards",
-      "at",
-      new Date().toISOString(),
-    );
+    cachedCards = data;
     return data;
   } catch (error) {
     console.error("Failed to load cards data:", error);

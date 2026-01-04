@@ -5,6 +5,59 @@ const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL =
   process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1";
 
+const POSITION_LABELS: Record<string, string[]> = {
+  "single-card": ["The Card"],
+  "sentence-3": ["Opening Card", "Central Card", "Closing Card"],
+  "past-present-future": ["Past", "Present", "Future"],
+  "yes-no-maybe": ["First Card", "Center Card", "Third Card"],
+  "situation-challenge-advice": ["Situation", "Challenge", "Advice"],
+  "mind-body-spirit": ["Mind", "Body", "Spirit"],
+  "sentence-5": ["Element 1", "Element 2", "Element 3", "Element 4", "Element 5"],
+  "structured-reading": ["Subject", "Verb", "Object", "Modifier", "Outcome"],
+  "week-ahead": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+  "relationship-double-significator": [
+    "Partner 1 - Past",
+    "Partner 1 - Present",
+    "Relationship Core",
+    "Partner 2 - Present",
+    "Partner 2 - Future",
+  ],
+  "comprehensive": [
+    "Recent Past - Inner World",
+    "Recent Past - Direct Actions",
+    "Recent Past - Outside World",
+    "Present - Inner World",
+    "Present - Direct Actions",
+    "Present - Outside World",
+    "Near Future - Inner World",
+    "Near Future - Direct Actions",
+    "Near Future - Outside World",
+  ],
+  "grand-tableau": Array.from({ length: 36 }, (_, i) => `Position ${i + 1}`),
+};
+
+const SPREAD_GUIDANCE: Record<string, string> = {
+  "single-card": "One card for immediate, direct guidance. Focus on its core message and how it applies to the question.",
+  "sentence-3": "Classic 3-card sentence: Opening (situation) → Central (turning point) → Closing (outcome).",
+  "past-present-future": "Time-based: Past influences → Current situation → Likely outcome.",
+  "yes-no-maybe": "Count positive vs negative cards. Equal = tie-breaker decides. Be direct.",
+  "situation-challenge-advice": "Diagnostic: What's happening → What's blocking you → What to do about it.",
+  "mind-body-spirit": "Holistic: Mental state → Physical/reality → Spiritual/emotional guidance.",
+  "sentence-5": "Extended narrative flow: 5 cards creating a complete story arc.",
+  "structured-reading": "Analytical: Subject → Action → Impact → Conditions → Result.",
+  "week-ahead": "Daily structure with action model for each day of the week.",
+  "relationship-double-significator": "Two-person reading with central relationship dynamic.",
+  "comprehensive": "9-card Petit Grand Tableau: 3 rows of 3 - Past, Present, Future (each with inner/action/external).",
+  "grand-tableau": "Full 36-card Grand Tableau: Center = core energy, diagonals, 9-card rows, card interactions.",
+};
+
+function getMaxTokens(spreadCards: number): number {
+  if (spreadCards <= 3) return 1500;
+  if (spreadCards <= 5) return 2000;
+  if (spreadCards < 9) return 3000;
+  return 4000;
+}
+
 export interface AIReadingRequest {
   question: string;
   cards: Array<{
@@ -43,51 +96,8 @@ function buildPrompt(
     .map((c, i) => `Card ${i + 1}: ${c.name}`)
     .join("\n");
 
-  const positionLabels: Record<string, string[]> = {
-    "single-card": ["The Card"],
-    "sentence-3": ["Opening Card", "Central Card", "Closing Card"],
-    "past-present-future": ["Past", "Present", "Future"],
-    "yes-no-maybe": ["First Card", "Center Card", "Third Card"],
-    "situation-challenge-advice": ["Situation", "Challenge", "Advice"],
-    "mind-body-spirit": ["Mind", "Body", "Spirit"],
-    "sentence-5": ["Element 1", "Element 2", "Element 3", "Element 4", "Element 5"],
-    "structured-reading": ["Subject", "Verb", "Object", "Modifier", "Outcome"],
-    "week-ahead": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
-    "relationship-double-significator": [
-      "Partner 1 - Past",
-      "Partner 1 - Present",
-      "Relationship Core",
-      "Partner 2 - Present",
-      "Partner 2 - Future",
-    ],
-    "comprehensive": [
-      "Recent Past - Inner World",
-      "Recent Past - Direct Actions",
-      "Recent Past - Outside World",
-      "Present - Inner World",
-      "Present - Direct Actions",
-      "Present - Outside World",
-      "Near Future - Inner World",
-      "Near Future - Direct Actions",
-      "Near Future - Outside World",
-    ],
-    "grand-tableau": Array.from({ length: 36 }, (_, i) => `Position ${i + 1}`),
-  };
-
-  const spreadGuidance: Record<string, string> = {
-    "single-card": "One card for immediate, direct guidance. Focus on its core message and how it applies to the question.",
-    "sentence-3": "Classic 3-card sentence: Opening (situation) → Central (turning point) → Closing (outcome).",
-    "past-present-future": "Time-based: Past influences → Current situation → Likely outcome.",
-    "yes-no-maybe": "Count positive vs negative cards. Equal = tie-breaker decides. Be direct.",
-    "situation-challenge-advice": "Diagnostic: What's happening → What's blocking you → What to do about it.",
-    "mind-body-spirit": "Holistic: Mental state → Physical/reality → Spiritual/emotional guidance.",
-    "sentence-5": "Extended narrative flow: 5 cards creating a complete story arc.",
-    "structured-reading": "Analytical: Subject → Action → Impact → Conditions → Result.",
-    "week-ahead": "Daily structure with action model for each day of the week.",
-    "relationship-double-significator": "Two-person reading with central relationship dynamic.",
-    "comprehensive": "9-card Petit Grand Tableau: 3 rows of 3 - Past, Present, Future (each with inner/action/external).",
-    "grand-tableau": "Full 36-card Grand Tableau: Center = core energy, diagonals, 9-card rows, card interactions.",
-  };
+  const positionLabels = POSITION_LABELS[spread.id] || [];
+  const spreadGuidance = SPREAD_GUIDANCE[spread.id] || "";
 
   return `You are Marie-Anne Lenormand (1761-1840), the legendary French fortune teller who read for Napoleon and Joséphine. Your style is practical, grounded, and specific—not vague or mystical.
 
@@ -153,8 +163,8 @@ export async function getAIReading(
       request.question || "What guidance do these cards have for me?",
     );
 
+    const maxTokens = getMaxTokens(spread.cards);
     const isLargeSpread = spread.cards >= 9;
-    const maxTokens = isLargeSpread ? 4000 : 2000;
     const maxContinuations = isLargeSpread ? 5 : 3;
     console.log(`Sending request to DeepSeek API... (${maxTokens} tokens, max ${maxContinuations} continuations)`);
 
@@ -299,8 +309,7 @@ export async function streamAIReading(
       request.question || "What guidance do these cards have for me?",
     );
 
-    const isLargeSpread = spread.cards >= 9;
-    const maxTokens = isLargeSpread ? 4000 : 2000;
+    const maxTokens = getMaxTokens(spread.cards);
 
     // Retry logic for rate limiting
     let lastError: Error | null = null;
