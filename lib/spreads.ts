@@ -82,7 +82,7 @@ export const MODERN_SPREADS: Spread[] = [
     id: "structured-reading",
     cards: 5,
     label: "5-Card Reading: Structured",
-    description: "Her analysis method: block → resources → action",
+    description: "Grammar-based analysis: Subject → Verb → Object → Modifier → Outcome",
     isAuthentic: false,
   },
   {

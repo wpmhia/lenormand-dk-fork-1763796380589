@@ -111,6 +111,50 @@ const spreads = [
           },
         ],
       },
+      {
+        name: "3-Card: Yes or No",
+        description: "Direct answer to your yes or no question",
+        layout: "First Card → Center Card → Third Card",
+        useCase: "Binary decisions, clear answers",
+        difficulty: "Beginner",
+        isPrimary: false,
+        positions: [
+          {
+            name: "First Card",
+            description: "The foundation of your question",
+          },
+          {
+            name: "Center Card",
+            description: "The central issue or influence",
+          },
+          {
+            name: "Third Card",
+            description: "The resolution or outcome",
+          },
+        ],
+      },
+      {
+        name: "3-Card: Situation-Challenge-Advice",
+        description: "Diagnostic spread for problem-solving",
+        layout: "Situation → Challenge → Advice",
+        useCase: "Problem analysis, decision making",
+        difficulty: "Beginner",
+        isPrimary: false,
+        positions: [
+          {
+            name: "Situation",
+            description: "What's currently happening",
+          },
+          {
+            name: "Challenge",
+            description: "What's blocking or opposing you",
+          },
+          {
+            name: "Advice",
+            description: "What to do about it",
+          },
+        ],
+      },
     ],
   },
   {

@@ -16,11 +16,13 @@ const POSITION_LABELS: Record<string, string[]> = {
   "structured-reading": ["Subject", "Verb", "Object", "Modifier", "Outcome"],
   "week-ahead": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
   "relationship-double-significator": [
-    "Partner 1 - Past",
-    "Partner 1 - Present",
-    "Relationship Core",
-    "Partner 2 - Present",
-    "Partner 2 - Future",
+    "Your Past",
+    "Your Present",
+    "Your Future",
+    "Connection",
+    "Their Past",
+    "Their Present",
+    "Their Future",
   ],
   "comprehensive": [
     "Recent Past - Inner World",

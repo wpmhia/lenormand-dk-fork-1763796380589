@@ -157,8 +157,8 @@ export function getGrandTableauAdjacentCards(
     return adjacent;
   }
 
-  const row = Math.floor(currentIndex / 4);
-  const col = currentIndex % 4;
+  const row = Math.floor(currentIndex / 9);
+  const col = currentIndex % 9;
 
   // Adjacent positions in grid (top, bottom, left, right)
   const adjacentPositions = [
@@ -166,10 +166,10 @@ export function getGrandTableauAdjacentCards(
     { r: row + 1, c: col }, // bottom
     { r: row, c: col - 1 }, // left
     { r: row, c: col + 1 }, // right
-  ].filter((pos) => pos.r >= 0 && pos.r < 9 && pos.c >= 0 && pos.c < 4);
+  ].filter((pos) => pos.r >= 0 && pos.r < 4 && pos.c >= 0 && pos.c < 9);
 
   adjacentPositions.forEach((pos) => {
-    const adjIndex = pos.r * 4 + pos.c;
+    const adjIndex = pos.r * 9 + pos.c;
     const adjCard = cards.find((card) => card.position === adjIndex);
     if (adjCard) adjacent.push(adjCard);
   });
