@@ -87,8 +87,6 @@ export default function Home() {
               title="Single Card"
               description="Quick daily guidance • 30 seconds"
               cardCount={1}
-              badge="Authentic"
-              badgeVariant="default"
               spreadId="single-card"
             />
             <ReadingTypeCard
@@ -96,8 +94,6 @@ export default function Home() {
               title="3-Card Sentence"
               description="Three-card narrative • 2 minutes"
               cardCount={3}
-              badge="Authentic"
-              badgeVariant="default"
               spreadId="sentence-3"
             />
             <ReadingTypeCard
@@ -105,8 +101,6 @@ export default function Home() {
               title="9-Card Reading"
               description="Deeper situation analysis • 5 minutes"
               cardCount={9}
-              badge="Authentic"
-              badgeVariant="default"
               spreadId="comprehensive"
             />
             <ReadingTypeCard
@@ -114,8 +108,6 @@ export default function Home() {
               title="Grand Tableau"
               description="Complete 360° life reading • 15 minutes"
               cardCount={36}
-              badge="Authentic"
-              badgeVariant="default"
               spreadId="grand-tableau"
             />
           </div>
