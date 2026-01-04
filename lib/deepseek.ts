@@ -191,7 +191,12 @@ export async function getAIReading(
       );
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("Failed to parse DeepSeek API response");
+    }
     console.log("DeepSeek API response data received");
     const content = data.choices?.[0]?.message?.content;
     const finishReason = data.choices?.[0]?.finish_reason;

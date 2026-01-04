@@ -47,9 +47,17 @@ export function CookieConsent() {
       // First visit - show banner
       setShowBanner(true);
     } else if (savedPreferences) {
-      // Load saved preferences
-      const parsed = JSON.parse(savedPreferences);
-      setPreferences(parsed);
+      try {
+        const parsed = JSON.parse(savedPreferences);
+        if (parsed && typeof parsed === "object") {
+          setPreferences({
+            analytics: parsed.analytics ?? false,
+            necessary: parsed.necessary ?? true,
+          });
+        }
+      } catch {
+        localStorage.removeItem(COOKIE_PREFERENCES_KEY);
+      }
     }
   }, []);
 
@@ -90,19 +98,18 @@ export function CookieConsent() {
   };
 
   const loadGoogleAnalytics = () => {
-    // Load Google Analytics script
     const script1 = document.createElement("script");
     script1.async = true;
     script1.src = "https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8";
     document.head.appendChild(script1);
 
     const script2 = document.createElement("script");
-    script2.innerHTML = `
+    script2.textContent = `
        window.dataLayer = window.dataLayer || [];
        function gtag(){dataLayer.push(arguments);}
        gtag('js', new Date());
        gtag('config', 'G-WDLWCCJCY8');
-     `;
+      `;
     document.head.appendChild(script2);
   };
 

@@ -1,18 +1,27 @@
 import { Card, Reading, ReadingCard } from "./types";
 
-// Load cards from JSON file - simple approach
 export function getCards(): Card[] {
-  // Simple require without cache clearing
-  const cardsData = require("../public/data/cards.json");
-  const data = cardsData as unknown as Card[];
-  console.log(
-    "✅ Cards loaded:",
-    data.length,
-    "cards",
-    "at",
-    new Date().toISOString(),
-  );
-  return data;
+  try {
+    const cardsData = require("../public/data/cards.json");
+    const data = cardsData as unknown as Card[];
+
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error("Invalid or empty cards data");
+      return [];
+    }
+
+    console.log(
+      "✅ Cards loaded:",
+      data.length,
+      "cards",
+      "at",
+      new Date().toISOString(),
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to load cards data:", error);
+    return [];
+  }
 }
 
 export function getCardById(cards: Card[], id: number): Card | undefined {
