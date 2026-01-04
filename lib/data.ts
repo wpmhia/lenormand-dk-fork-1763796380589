@@ -2,13 +2,13 @@ import { Card, Reading, ReadingCard } from "./types";
 
 let cachedCards: Card[] | null = null;
 
-export function getCards(): Card[] {
+export async function getCards(): Promise<Card[]> {
   if (cachedCards) {
     return cachedCards;
   }
   try {
-    const cardsData = require("../public/data/cards.json");
-    const data = cardsData as unknown as Card[];
+    const cardsData = await import("../public/data/cards.json");
+    const data = cardsData.default as unknown as Card[];
 
     if (!Array.isArray(data) || data.length === 0) {
       console.error("Invalid or empty cards data");

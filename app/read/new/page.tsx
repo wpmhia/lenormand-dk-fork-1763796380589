@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Eye, AlertTriangle } from "lucide-react";
-import { getCards, getCardById, drawCards } from "@/lib/data";
+import { getCards, getCardById } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
   MODERN_SPREADS,
@@ -134,9 +134,12 @@ function NewReadingPageContent() {
 
   // Load cards on mount
   useEffect(() => {
-    const cards = getCards();
-    setAllCards(cards);
-    addLog("Cards loaded: " + cards.length);
+    async function loadCards() {
+      const cards = await getCards();
+      setAllCards(cards);
+      addLog("Cards loaded: " + cards.length);
+    }
+    loadCards();
   }, [addLog]);
 
   // ...
