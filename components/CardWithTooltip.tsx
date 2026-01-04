@@ -42,11 +42,11 @@ export function CardWithTooltip({
       </TooltipTrigger>
       <TooltipContent className="z-50 max-w-xs overflow-visible border-border bg-card p-4 shadow-lg">
         <div className="space-y-3">
-          {/* Card Name and Position */}
+          {/* Card Name */}
           <div>
             <h4 className="font-semibold text-foreground">{card.name}</h4>
             {positionLabel && (
-              <p className="text-xs font-medium text-primary">
+              <p className="text-sm font-medium text-primary">
                 {positionLabel}
               </p>
             )}
@@ -64,17 +64,22 @@ export function CardWithTooltip({
             </p>
           </div>
 
-          {/* Keywords */}
+          {/* Keywords - clearly labeled and styled */}
           {card.keywords && card.keywords.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {card.keywords.slice(0, 4).map((keyword, idx) => (
-                <span
-                  key={idx}
-                  className="inline-block rounded border border-primary/20 bg-primary/10 px-2 py-1 text-xs text-primary"
-                >
-                  {keyword}
-                </span>
-              ))}
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Keywords
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {card.keywords.slice(0, 3).map((keyword, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex rounded-md bg-muted px-2 py-1 text-xs font-medium text-foreground"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
