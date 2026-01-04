@@ -4,18 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "HOST=0.0.0.0 PORT=4000 next dev",
-    "build": "prisma generate && rm -rf .next && next build",
+    "build": "rm -rf .next && next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "postinstall": "prisma generate"
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@prisma/client": "5.19.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.7",
@@ -54,17 +52,16 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
-    "@types/node": "22.7.4",
-    "@types/react": "18.3.11",
-    "@types/react-dom": "18.3.1",
-    "autoprefixer": "10.4.20",
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4",
     "eslint-plugin-tailwindcss": "^3.18.2",
-    "postcss": "8.4.32",
+    "postcss": "^8.4.32",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
-    "prisma": "5.19.0",
     "tsx": "^4.7.0",
     "vitest": "^1.1.0"
   }
