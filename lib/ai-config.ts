@@ -123,4 +123,10 @@ export interface AIReadingRequest {
   spreadId?: string;
 }
 
+export interface AIReadingResponse {
+  reading: string;
+  aiInterpretationId?: string;
+  wasContinued?: boolean;
+}
+
 export { DEEPSEEK_BASE_URL };
