@@ -34,7 +34,7 @@ import {
 } from "@/lib/spreads";
 import { ReadingViewer } from "@/components/ReadingViewer";
 import { AIReadingDisplay } from "@/components/AIReadingDisplay";
-import { AIReadingResponse } from "@/lib/deepseek";
+import { useChat } from "@ai-sdk/react";
 
 function LoadingFallback() {
   return (
@@ -62,19 +62,13 @@ function NewReadingPageContent() {
   const [cardSuggestions, setCardSuggestions] = useState<string[]>([]);
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([]);
   const [error, setError] = useState("");
-  const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [aiAttempted, setAiAttempted] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [streamedContent, setStreamedContent] = useState("");
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
   const [questionCharCount, setQuestionCharCount] = useState(0);
   const [debugLog, setDebugLog] = useState<string[]>([]);
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
 
   const mountedRef = useRef(true);
-  const aiProcessingRef = useRef(false);
   const aiAnalysisStartedRef = useRef(false);
 
   const addLog = useCallback((msg: string) => {
@@ -93,10 +87,7 @@ function NewReadingPageContent() {
       setQuestion("");
       setSelectedSpread(AUTHENTIC_SPREADS[1]);
       setError("");
-      setAiReading(null);
-      setAiLoading(false);
       setAiError(null);
-      setAiAttempted(false);
       setPhysicalCards("");
       setPhysicalCardsError(null);
       setParsedCards([]);
@@ -142,127 +133,34 @@ function NewReadingPageContent() {
     loadCards();
   }, [addLog]);
 
-  // ...
-
-  const performAIAnalysis = useCallback(
-    async (readingCards: ReadingCard[]) => {
-      if (aiProcessingRef.current) return;
-
-      aiProcessingRef.current = true;
-      console.log("AI analysis started with", readingCards.length, "cards");
-      setAiLoading(true);
-      setAiError(null);
-
-      try {
-        const aiRequest = {
-          question:
-            question.trim() || "What guidance do these cards have for me?",
-          cards: readingCards.map((card) => ({
-            id: card.id,
-            name: getCardById(allCards, card.id)?.name || "Unknown",
-            position: card.position,
-          })),
-          spreadId: selectedSpread.id,
-          userLocale: navigator.language,
-        };
-
-        console.log("Sending AI request... (streaming)");
-        await performStreamingAnalysis(aiRequest);
-      } catch (error) {
-        console.error("AI Analysis error:", error);
-        let errorMessage = "AI analysis failed";
-
-        if (error instanceof Error) {
-          if (error.name === "AbortError" || error.message.includes("timeout")) {
-            errorMessage = "The interpretation took too long. Please try again.";
-          } else if (error.message.includes("rate")) {
-            errorMessage = "Too many requests. Please wait a moment and try again.";
-          } else if (error.message.includes("Server error")) {
-            errorMessage = "Server error. Try again in a moment.";
-          } else {
-            errorMessage = `Unable to generate interpretation: ${error.message}`;
-          }
-        }
-
-        setAiError(errorMessage);
-        setAiAttempted(true);
-      } finally {
-        console.log("AI Analysis complete");
-        setAiLoading(false);
-        aiProcessingRef.current = false;
-      }
+  // useChat hook for AI streaming
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit: chatHandleSubmit,
+    isLoading: chatLoading,
+    error: chatError,
+    stop,
+    reload,
+  } = useChat({
+    api: "/api/readings/interpret",
+    body: {
+      question: question.trim() || "What guidance do these cards have for me?",
+      cards: drawnCards.map((card) => ({
+        id: card.id,
+        name: getCardById(allCards, card.id)?.name || "Unknown",
+        position: card.position,
+      })),
+      spreadId: selectedSpread.id,
     },
-    [question, allCards, selectedSpread.id],
-  );
-
-  const performStreamingAnalysis = async (aiRequest: any) => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 180000);
-
-    setIsStreaming(true);
-    setStreamedContent("");
-
-    const response = await fetch("/api/readings/interpret/stream", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(aiRequest),
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      clearTimeout(timeout);
-      setIsStreaming(false);
-      throw new Error(`Stream failed: ${response.status}`);
-    }
-
-    if (!response.body) {
-      clearTimeout(timeout);
-      setIsStreaming(false);
-      throw new Error("No stream body");
-    }
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let content = "";
-
-    setAiReading({ reading: "" });
-    setAiAttempted(true);
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        clearTimeout(timeout);
-        setIsStreaming(false);
-        break;
-      }
-
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split("\n");
-
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const data = line.slice(6);
-          if (data === "[DONE]") {
-            clearTimeout(timeout);
-            setIsStreaming(false);
-            return;
-          }
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.content?.content) {
-              content += parsed.content.content;
-              setAiReading({ reading: content });
-              setStreamedContent(content);
-            }
-          } catch {
-            // Skip invalid JSON
-          }
-        }
-      }
-    }
-  };
-
-  const performStandardAnalysis = () => {};
+    onFinish: (message) => {
+      console.log("AI reading complete, message length:", message.content.length);
+    },
+    onError: (error) => {
+      console.error("Chat error:", error);
+    },
+  });
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
@@ -273,11 +171,11 @@ function NewReadingPageContent() {
     ) {
       aiAnalysisStartedRef.current = true;
       addLog("Auto-starting AI analysis");
-      performAIAnalysis(drawnCards);
+      chatHandleSubmit(new Event("submit"));
     } else if (step !== "results") {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, performAIAnalysis, addLog]);
+  }, [step, drawnCards, chatHandleSubmit, addLog]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): ReadingCard[] => {
@@ -398,10 +296,10 @@ function NewReadingPageContent() {
 
   // Clear AI error when loading starts
   useEffect(() => {
-    if (aiLoading) {
+    if (chatLoading) {
       setAiError(null);
     }
-  }, [aiLoading]);
+  }, [chatLoading]);
 
   const getButtonLabel = useCallback(() => {
     if (step === "setup") {
@@ -430,9 +328,9 @@ function NewReadingPageContent() {
 
   const retryAIAnalysis = useCallback(() => {
     if (drawnCards.length > 0) {
-      performAIAnalysis(drawnCards);
+      reload();
     }
-  }, [drawnCards, performAIAnalysis]);
+  }, [drawnCards, reload]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -881,10 +779,14 @@ function NewReadingPageContent() {
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">
                 <AIReadingDisplay
-                  aiReading={aiReading}
-                  isLoading={aiLoading}
-                  error={aiError}
-                  onRetry={() => performAIAnalysis(drawnCards)}
+                  aiReading={
+                    messages.length > 0
+                      ? { reading: messages[messages.length - 1].content }
+                      : null
+                  }
+                  isLoading={chatLoading}
+                  error={aiError || (chatError ? chatError.message : null)}
+                  onRetry={() => reload()}
                   spreadId={selectedSpread.id}
                   cards={drawnCards.map((card) => ({
                     id: card.id,
@@ -893,8 +795,10 @@ function NewReadingPageContent() {
                   }))}
                   allCards={allCards}
                   question={question}
-                  isStreaming={isStreaming}
-                  streamedContent={streamedContent}
+                  isStreaming={chatLoading && messages.length > 0}
+                  streamedContent={
+                    messages.length > 0 ? messages[messages.length - 1].content : ""
+                  }
                 />
               </div>
               </div>
