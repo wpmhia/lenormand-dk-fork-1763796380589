@@ -34,7 +34,7 @@ import {
 } from "@/lib/spreads";
 import { ReadingViewer } from "@/components/ReadingViewer";
 import { AIReadingDisplay } from "@/components/AIReadingDisplay";
-import { useChat } from "@ai-sdk/react";
+import { useCompletion } from "@ai-sdk/react";
 
 function LoadingFallback() {
   return (
@@ -133,17 +133,14 @@ function NewReadingPageContent() {
     loadCards();
   }, [addLog]);
 
-  // useChat hook for AI streaming
+  // useCompletion hook for AI streaming
   const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit: chatHandleSubmit,
+    completion,
+    complete,
     isLoading: chatLoading,
     error: chatError,
     stop,
-    reload,
-  } = useChat({
+  } = useCompletion({
     api: "/api/readings/interpret",
     body: {
       question: question.trim() || "What guidance do these cards have for me?",
@@ -155,7 +152,7 @@ function NewReadingPageContent() {
       spreadId: selectedSpread.id,
     },
     onFinish: (message) => {
-      console.log("AI reading complete, message length:", message.content.length);
+      console.log("AI reading complete, message length:", message.length);
     },
     onError: (error) => {
       console.error("Chat error:", error);
@@ -171,11 +168,11 @@ function NewReadingPageContent() {
     ) {
       aiAnalysisStartedRef.current = true;
       addLog("Auto-starting AI analysis");
-      chatHandleSubmit(new Event("submit"));
+      complete("Generate reading");
     } else if (step !== "results") {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, chatHandleSubmit, addLog]);
+  }, [step, drawnCards, complete, addLog]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): ReadingCard[] => {
@@ -328,9 +325,9 @@ function NewReadingPageContent() {
 
   const retryAIAnalysis = useCallback(() => {
     if (drawnCards.length > 0) {
-      reload();
+      complete("Generate reading");
     }
-  }, [drawnCards, reload]);
+  }, [drawnCards, complete]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -780,13 +777,13 @@ function NewReadingPageContent() {
               <div className="mt-6">
                 <AIReadingDisplay
                   aiReading={
-                    messages.length > 0
-                      ? { reading: messages[messages.length - 1].content }
+                    completion
+                      ? { reading: completion }
                       : null
                   }
                   isLoading={chatLoading}
                   error={aiError || (chatError ? chatError.message : null)}
-                  onRetry={() => reload()}
+                  onRetry={() => complete("Generate reading")}
                   spreadId={selectedSpread.id}
                   cards={drawnCards.map((card) => ({
                     id: card.id,
@@ -795,10 +792,8 @@ function NewReadingPageContent() {
                   }))}
                   allCards={allCards}
                   question={question}
-                  isStreaming={chatLoading && messages.length > 0}
-                  streamedContent={
-                    messages.length > 0 ? messages[messages.length - 1].content : ""
-                  }
+                  isStreaming={chatLoading && !!completion}
+                  streamedContent={completion || ""}
                 />
               </div>
               </div>
