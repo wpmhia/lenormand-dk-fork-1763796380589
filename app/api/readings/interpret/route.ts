@@ -1,13 +1,9 @@
 export const dynamic = "force-dynamic";
 
-import { streamText } from "ai";
-import { createDeepSeek } from "@ai-sdk/deepseek";
 import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config";
 
-const deepseek = createDeepSeek({
-  baseURL: process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY,
-});
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
 const logger = {
   info: (msg: string, data?: any) =>
@@ -95,23 +91,51 @@ export async function POST(request: Request) {
       maxTokens,
     });
 
-    try {
-      const result = await streamText({
-        model: deepseek("deepseek-chat"),
-        prompt,
+    // Direct fetch to DeepSeek, bypassing AI SDK
+    const deepseekResponse = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+          { role: "user", content: prompt },
+        ],
         temperature: 0.4,
-        maxOutputTokens: maxTokens,
-      });
+        max_tokens: maxTokens,
+        stream: true,
+      }),
+    });
 
-      logger.info(`[${requestId}] Stream initiated, returning response`);
-
-      return result.toTextStreamResponse();
-    } catch (streamError) {
-      logger.error(`[${requestId}] Stream error`, {
-        error: streamError instanceof Error ? streamError.message : String(streamError),
-      });
-      throw streamError;
+    if (!deepseekResponse.ok) {
+      const errorText = await deepseekResponse.text();
+      logger.error(`[${requestId}] DeepSeek API error`, { status: deepseekResponse.status, error: errorText });
+      return new Response(
+        JSON.stringify({ error: `DeepSeek API error: ${deepseekResponse.status}` }),
+        { status: 502, headers: { "Content-Type": "application/json" } }
+      );
     }
+
+    if (!deepseekResponse.body) {
+      return new Response(
+        JSON.stringify({ error: "No response body from DeepSeek" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    logger.info(`[${requestId}] Streaming directly from DeepSeek`);
+
+    // Return the stream directly
+    return new Response(deepseekResponse.body, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "X-Request-ID": requestId,
+      },
+    });
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMsg = error instanceof Error ? error.message : String(error);
