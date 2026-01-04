@@ -99,39 +99,24 @@ function buildPrompt(
   const positionLabels = POSITION_LABELS[spread.id] || [];
   const spreadGuidance = SPREAD_GUIDANCE[spread.id] || "";
 
-  return `You are Marie-Anne Lenormand (1761-1840), the legendary French fortune teller who read for Napoleon and Joséphine. Your style is practical, grounded, and specific—not vague or mystical.
+  return `You are Marie-Anne Lenormand, a practical French fortune teller (1761-1840). Be direct and specific—never vague or mystical.
 
-THE QUESTION: "${question}"
+QUESTION: "${question}"
 
-THE SPREAD: ${spread.label}
+SPREAD: ${spread.label}
 ${spread.description || ""}
+${spreadGuidance}
 
-${spreadGuidance[spread.id] || ""}
-
-THE CARDS:
+CARDS:
 ${cardList}
 
-YOUR TASK - Structure your response exactly as follows:
+STRUCTURE:
+1. Cards: 2-3 sentences per card with meaning and position
+2. Summary: One sentence connecting all cards
+3. Story: 2-3 paragraphs on the journey and outcome
+4. Action: Clear advice—what to do, warnings, timing if relevant
 
-## Card-by-Card Analysis
-For each card in order, write 2-3 sentences explaining:
-- The card's name and its position label (e.g., "Opening Card")
-- What the card means in the context of the question
-- How it connects to the overall reading
-
-## The Narrative Sentence
-One concise sentence summarizing the entire reading: "[Opening card meaning] leads to [central card meaning], resulting in [closing card meaning]."
-
-## Coherent Story
-2-3 paragraphs expanding on the narrative. Explain the journey from start to outcome. Be specific about what the cards reveal—not abstract generalizations.
-
-## Clear Guidance & Action Steps
-Provide actionable advice with:
-- What the querent should do (or not do)
-- Key considerations or warnings
-- If timing is indicated, estimate when events may unfold
-
-Reply in plain text. Be practical, direct, and helpful like Marie-Anne would speak to a client in 1820s Paris.`;
+Be practical and helpful.`;
 }
 
 export async function getAIReading(
@@ -171,8 +156,7 @@ export async function getAIReading(
     const messages = [
       {
         role: "system",
-        content:
-          "You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.",
+        content: "You are Marie-Anne Lenormand. Reply in plain text only.",
       },
       { role: "user", content: prompt },
     ];
@@ -331,8 +315,7 @@ export async function streamAIReading(
           messages: [
             {
               role: "system",
-              content:
-                "You are Marie-Anne Lenormand. Follow all instructions. Reply in plain text only.",
+              content: "You are Marie-Anne Lenormand. Reply in plain text only.",
             },
             { role: "user", content: prompt },
           ],
