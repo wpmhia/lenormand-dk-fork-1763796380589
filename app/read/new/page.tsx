@@ -159,6 +159,14 @@ function NewReadingPageContent() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    // Timeout after 60 seconds
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      setAiError("Request timed out");
+      setAiLoading(false);
+      setIsStreaming(false);
+    }, 60000);
+
     setAiLoading(true);
     setAiError(null);
     setIsStreaming(true);
@@ -176,6 +184,8 @@ function NewReadingPageContent() {
         spreadId: selectedSpread.id,
       };
 
+      console.log("Sending request to /api/readings/interpret...");
+
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -183,8 +193,12 @@ function NewReadingPageContent() {
         signal: controller.signal,
       });
 
+      console.log("API Response status:", response.status);
+
       if (!response.ok) {
-        throw new Error(`Stream failed: ${response.status}`);
+        const errorText = await response.text();
+        console.error("API Error:", response.status, errorText);
+        throw new Error(`Stream failed: ${response.status} - ${errorText}`);
       }
 
       if (!response.body) {
@@ -194,21 +208,30 @@ function NewReadingPageContent() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let content = "";
+      let chunkCount = 0;
 
+      console.log("Starting to read stream...");
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (done) {
+          console.log("Stream complete, total chunks:", chunkCount, "total content length:", content.length);
+          break;
+        }
 
+        chunkCount++;
         const chunk = decoder.decode(value, { stream: true });
+        console.log("Chunk", chunkCount, "length:", chunk.length, "preview:", chunk.substring(0, 100));
         content += chunk;
         setStreamedContent(content);
         setAiReading({ reading: content });
       }
     } catch (error) {
       if (error instanceof Error && error.name !== "AbortError") {
+        console.error("Streaming error:", error);
         setAiError(error.message);
       }
     } finally {
+      clearTimeout(timeoutId);
       setAiLoading(false);
       setIsStreaming(false);
     }

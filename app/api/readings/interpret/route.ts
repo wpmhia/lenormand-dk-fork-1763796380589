@@ -95,16 +95,23 @@ export async function POST(request: Request) {
       maxTokens,
     });
 
-    const result = await streamText({
-      model: deepseek("deepseek-chat"),
-      prompt,
-      temperature: 0.4,
-      maxOutputTokens: maxTokens,
-    });
+    try {
+      const result = await streamText({
+        model: deepseek("deepseek-chat"),
+        prompt,
+        temperature: 0.4,
+        maxOutputTokens: maxTokens,
+      });
 
-    logger.info(`[${requestId}] Stream initiated, returning response`);
+      logger.info(`[${requestId}] Stream initiated, returning response`);
 
-    return result.toTextStreamResponse();
+      return result.toTextStreamResponse();
+    } catch (streamError) {
+      logger.error(`[${requestId}] Stream error`, {
+        error: streamError instanceof Error ? streamError.message : String(streamError),
+      });
+      throw streamError;
+    }
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMsg = error instanceof Error ? error.message : String(error);
