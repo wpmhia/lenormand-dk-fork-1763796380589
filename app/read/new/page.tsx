@@ -208,22 +208,43 @@ function NewReadingPageContent() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let content = "";
+      let buffer = "";
       let chunkCount = 0;
 
       console.log("Starting to read stream...");
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
+          // Process any remaining buffer
+          if (buffer.trim()) {
+            const text = parseSSEChunk(buffer);
+            if (text) {
+              content += text;
+              setStreamedContent(content);
+              setAiReading({ reading: content });
+            }
+          }
           console.log("Stream complete, total chunks:", chunkCount, "total content length:", content.length);
           break;
         }
 
         chunkCount++;
-        const chunk = decoder.decode(value, { stream: true });
-        console.log("Chunk", chunkCount, "length:", chunk.length, "preview:", chunk.substring(0, 100));
-        content += chunk;
-        setStreamedContent(content);
-        setAiReading({ reading: content });
+        buffer += decoder.decode(value, { stream: true });
+
+        // Process complete SSE messages (lines starting with "data:")
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const text = parseSSEChunk(line.slice(6));
+            if (text) {
+              content += text;
+              setStreamedContent(content);
+              setAiReading({ reading: content });
+            }
+          }
+        }
       }
     } catch (error) {
       if (error instanceof Error && error.name !== "AbortError") {
