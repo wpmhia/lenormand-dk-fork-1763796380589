@@ -18,7 +18,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   {
     id: "sentence-3",
     cards: 3,
-    label: "3-Card Sentence (Marie-Anne's Primary)",
+    label: "3-Card Sentence",
     description:
       "Her daily reading: opening → turning point → outcome + deadline + action",
     isAuthentic: true,
@@ -34,7 +34,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   {
     id: "grand-tableau",
     cards: 36,
-    label: "36-Card Grand Tableau (Marie-Anne's Ultimate)",
+    label: "36-Card Grand Tableau",
     description:
       "Complete life situation through full 4x9 grid - her most comprehensive reading",
     isAuthentic: true,
