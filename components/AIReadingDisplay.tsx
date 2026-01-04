@@ -14,8 +14,6 @@ import {
   Zap,
   Copy,
   Check,
-  ThumbsUp,
-  ThumbsDown,
   Loader2,
 } from "lucide-react";
 
@@ -66,8 +64,6 @@ export function AIReadingDisplay({
   streamedContent,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
-  const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
-  const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
 
   useEffect(() => {
@@ -124,44 +120,6 @@ export function AIReadingDisplay({
         setTimeout(() => setCopyClicked(false), 2000);
       } catch (fallbackErr) {
       }
-    }
-  };
-
-  const handleFeedback = async (type: "up" | "down") => {
-    const newFeedback = feedback === type ? null : type;
-    setFeedback(newFeedback);
-
-    if (newFeedback === null) return;
-
-    setFeedbackLoading(true);
-    try {
-      const cardData = cards
-        ? cards.map((card) => ({
-            id: card.id,
-            name: card.name,
-            position: card.position,
-          }))
-        : undefined;
-
-      await fetch("/api/feedback", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          isHelpful: type === "up",
-          aiInterpretationId: aiReading?.aiInterpretationId,
-          spreadId,
-          question,
-          readingText: aiReading?.reading,
-          cards: cardData,
-          promptTemperature: 0.4,
-        }),
-      });
-    } catch (err) {
-      setFeedback(feedback);
-    } finally {
-      setFeedbackLoading(false);
     }
   };
 
@@ -240,28 +198,6 @@ export function AIReadingDisplay({
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="p-6">
           <div className="mb-4 flex items-center justify-end gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleFeedback("up")}
-                disabled={feedbackLoading}
-                className={`h-9 w-9 ${
-                  feedback === "up" ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                } ${feedbackLoading ? "cursor-not-allowed opacity-50" : ""}`}
-              >
-                <ThumbsUp className={`h-4 w-4 ${feedback === "up" ? "fill-current" : ""}`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleFeedback("down")}
-                disabled={feedbackLoading}
-                className={`h-9 w-9 ${
-                  feedback === "down" ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                } ${feedbackLoading ? "cursor-not-allowed opacity-50" : ""}`}
-              >
-                <ThumbsDown className={`h-4 w-4 ${feedback === "down" ? "fill-current" : ""}`} />
-              </Button>
               <Button
                 variant="ghost"
                 size="icon"
