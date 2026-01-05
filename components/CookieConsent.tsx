@@ -126,7 +126,13 @@ export function CookieConsent() {
     <>
       {/* Cookie Banner */}
       {showBanner && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 pb-6 shadow-lg backdrop-blur-sm">
+        <div
+          id="cookie-banner"
+          className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 shadow-lg backdrop-blur-sm md:pb-6"
+          role="dialog"
+          aria-label="Cookie consent banner"
+          aria-describedby="cookie-banner-description"
+        >
           <div className="container mx-auto max-w-4xl">
             <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
               <div className="flex flex-shrink-0 items-center gap-2">
@@ -136,7 +142,10 @@ export function CookieConsent() {
                 </span>
               </div>
 
-              <div className="flex-1 text-sm text-muted-foreground">
+              <div
+                id="cookie-banner-description"
+                className="flex-1 text-sm text-muted-foreground"
+              >
                 We use cookies to enhance your experience. Essential cookies are
                 always enabled. Analytics cookies help us understand how you use
                 our site.

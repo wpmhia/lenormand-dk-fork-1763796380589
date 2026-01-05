@@ -26,6 +26,13 @@ export function Card({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   const sizeClasses = {
     sm: "w-20 h-32 text-xs",
     md: "w-28 h-40 text-sm sm:text-base",
@@ -41,14 +48,9 @@ export function Card({
           className,
         )}
         onClick={handleCardClick}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            handleCardClick();
-          }
-        }}
-        tabIndex={0}
-        role="button"
+        onKeyDown={onClick ? handleKeyDown : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        role={onClick ? "button" : undefined}
         aria-label="Lenormand card back. Click to draw or select card"
       >
         <Image
@@ -71,14 +73,9 @@ export function Card({
           className,
         )}
         onClick={handleCardClick}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            handleCardClick();
-          }
-        }}
-        tabIndex={0}
-        role="button"
+        onKeyDown={onClick ? handleKeyDown : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        role={onClick ? "button" : undefined}
         aria-label={`${card.name} card. Click to ${onClick ? "select" : "view details"}`}
       >
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">

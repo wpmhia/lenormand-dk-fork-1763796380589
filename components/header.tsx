@@ -85,6 +85,7 @@ export function Header() {
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />
@@ -96,7 +97,12 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="border-t border-border bg-card/95 backdrop-blur md:hidden">
+        <div
+          id="mobile-menu"
+          className="border-t border-border bg-card/95 backdrop-blur md:hidden"
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
           <nav
             className="container space-y-2 px-4 py-3"
             role="navigation"
