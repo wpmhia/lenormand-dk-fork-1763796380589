@@ -193,8 +193,6 @@ function NewReadingPageContent() {
         spreadId: selectedSpread.id,
       };
 
-      console.log("Sending request to /api/readings/interpret...");
-
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -202,12 +200,9 @@ function NewReadingPageContent() {
         signal: controller.signal,
       });
 
-      console.log("API Response status:", response.status);
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("API Error:", response.status, errorText);
-        throw new Error(`Stream failed: ${response.status} - ${errorText}`);
+        throw new Error(`Stream failed: ${response.status}`);
       }
 
       if (!response.body) {
@@ -218,17 +213,14 @@ function NewReadingPageContent() {
       const decoder = new TextDecoder();
       let content = "";
       let buffer = "";
-      let chunksReceived = 0;
 
       while (true) {
         try {
           const { done, value } = await reader.read();
           if (done) {
-            console.log("Stream done, total chunks:", chunksReceived, "content length:", content.length);
             break;
           }
 
-          chunksReceived++;
           const chunk = decoder.decode(value, { stream: true });
           buffer += chunk;
 
@@ -239,7 +231,6 @@ function NewReadingPageContent() {
             if (line.startsWith("data: ")) {
               const data = line.slice(6);
               if (data === "[DONE]") {
-                console.log("Received [DONE]");
                 break;
               }
               const text = parseSSEChunk(data);
@@ -247,30 +238,22 @@ function NewReadingPageContent() {
                 content += text;
                 setStreamedContent(content);
                 setAiReading({ reading: content });
-                if (chunksReceived <= 3) {
-                  console.log(`Chunk ${chunksReceived}:`, JSON.stringify(text).substring(0, 50));
-                }
               }
             }
           }
         } catch (streamError) {
           if (streamError instanceof Error && streamError.name === "AbortError") {
-            console.log("Stream aborted");
             break;
           }
-          console.warn("Stream read error:", streamError);
+          setAiError("Connection interrupted");
           break;
         }
       }
 
-      console.log("Stream complete, content length:", content.length);
-
       if (content.length > 0) {
-        console.log("Streaming succeeded with", content.length, "characters");
         setAiReading({ reading: content });
         setStreamedContent(content);
       } else {
-        console.log("Stream was empty, falling back to non-streaming...");
         setIsStreaming(false);
         setAiLoading(true);
         try {
@@ -283,7 +266,6 @@ function NewReadingPageContent() {
           if (fullResponse.ok) {
             const data = await fullResponse.json();
             if (data.reading) {
-              console.log("Fallback got", data.reading.length, "characters");
               setAiReading({ reading: data.reading });
               setStreamedContent(data.reading);
             } else {
@@ -292,14 +274,12 @@ function NewReadingPageContent() {
           } else {
             setAiError(`API error: ${fullResponse.status}`);
           }
-        } catch (fallbackError) {
-          console.error("Fallback failed:", fallbackError);
+        } catch {
           setAiError("Failed to get reading");
         }
       }
     } catch (error) {
       if (error instanceof Error && error.name !== "AbortError") {
-        console.error("Streaming error:", error);
         setAiError(error.message);
       }
     } finally {

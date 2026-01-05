@@ -164,6 +164,7 @@ export function AIReadingDisplay({
             >
               {streamedContent}
             </ReactMarkdown>
+            <span className="inline-block w-1 h-4 ml-1 align-middle bg-primary animate-pulse" />
           </div>
         </CardContent>
       </Card>
