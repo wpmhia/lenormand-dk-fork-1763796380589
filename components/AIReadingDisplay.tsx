@@ -164,7 +164,6 @@ export function AIReadingDisplay({
             >
               {streamedContent}
             </ReactMarkdown>
-            <span className="inline-block w-1 h-4 ml-1 align-middle bg-primary animate-pulse" />
           </div>
         </CardContent>
       </Card>
@@ -281,12 +280,6 @@ export function AIReadingDisplay({
             >
               {streamedContent || aiReading.reading}
             </ReactMarkdown>
-            {isStreaming && (
-              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-                <span>Continue receiving...</span>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
