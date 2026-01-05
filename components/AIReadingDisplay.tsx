@@ -162,7 +162,7 @@ export function AIReadingDisplay({
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !streamedContent) {
     return (
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="py-8">
@@ -177,6 +177,65 @@ export function AIReadingDisplay({
               Interpreting {cards?.length || 3} cards
             </p>
             <ProgressIndicator cards={cards} />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isLoading && streamedContent) {
+    return (
+      <Card className="border-border bg-card shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-4 text-sm text-primary">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Generating...</span>
+          </div>
+          <div className="reading-content space-y-4 opacity-80">
+            <ReactMarkdown
+              components={{
+                h1: ({ node, ...props }) => (
+                  <h1 className="text-2xl font-semibold text-foreground" {...props} />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2 className="text-xl font-semibold text-foreground" {...props} />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3 className="text-lg font-semibold text-foreground" {...props} />
+                ),
+                p: ({ node, ...props }) => (
+                  <p className="text-base leading-relaxed text-foreground/90" {...props} />
+                ),
+                ul: ({ node, ...props }) => (
+                  <ul className="list-disc pl-6 text-foreground/90" {...props} />
+                ),
+                ol: ({ node, ...props }) => (
+                  <ol className="list-decimal pl-6 text-foreground/90" {...props} />
+                ),
+                li: ({ node, ...props }) => <li className="text-foreground/90" {...props} />,
+                blockquote: ({ node, ...props }) => (
+                  <blockquote
+                    className="border-l-4 border-primary/40 pl-4 italic text-foreground/80"
+                    {...props}
+                  />
+                ),
+                strong: ({ node, ...props }) => (
+                  <strong className="font-semibold text-foreground" {...props} />
+                ),
+                em: ({ node, ...props }) => <em className="italic text-foreground/80" {...props} />,
+                hr: ({ node, ...props }) => <hr className="my-4 border-border" {...props} />,
+                a: ({ node, ...props }: any) => (
+                  <a
+                    {...props}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  />
+                ),
+              }}
+            >
+              {streamedContent}
+            </ReactMarkdown>
           </div>
         </CardContent>
       </Card>
