@@ -218,21 +218,26 @@ function NewReadingPageContent() {
       const decoder = new TextDecoder();
       let content = "";
       let buffer = "";
+      let chunksReceived = 0;
 
       while (true) {
         try {
           const { done, value } = await reader.read();
           if (done) {
+            console.log("Stream done, total chunks:", chunksReceived, "content length:", content.length);
             if (buffer.trim()) {
               const text = parseSSEChunk(buffer);
               if (text) {
                 content += text;
+                console.log("Final buffer content:", text.substring(0, 100));
               }
             }
             break;
           }
 
-          buffer += decoder.decode(value, { stream: true });
+          chunksReceived++;
+          const chunk = decoder.decode(value, { stream: true });
+          buffer += chunk;
 
           const lines = buffer.split("\n");
           buffer = lines.pop() || "";
@@ -242,6 +247,9 @@ function NewReadingPageContent() {
               const text = parseSSEChunk(line.slice(6));
               if (text) {
                 content += text;
+                if (chunksReceived <= 5) {
+                  console.log(`Chunk ${chunksReceived}:`, text.substring(0, 50));
+                }
                 setStreamedContent(content);
                 setAiReading({ reading: content });
               }
@@ -249,32 +257,46 @@ function NewReadingPageContent() {
           }
         } catch (streamError) {
           if (streamError instanceof Error && streamError.name === "AbortError") {
+            console.log("Stream aborted");
             break;
           }
-          console.warn("Stream read error, falling back to waiting:", streamError);
+          console.warn("Stream read error:", streamError);
           break;
         }
       }
 
+      console.log("Stream complete, content length:", content.length);
+
       if (content.length > 0) {
+        console.log("Streaming succeeded with", content.length, "characters");
         setAiReading({ reading: content });
         setStreamedContent(content);
       } else {
-        console.log("Stream was empty, waiting for full response...");
+        console.log("Stream was empty, falling back to non-streaming...");
         setIsStreaming(false);
         setAiLoading(true);
-        const fullResponse = await fetch("/api/readings/interpret", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...aiRequest, _fallback: true }),
-        });
+        try {
+          const fullResponse = await fetch("/api/readings/interpret", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...aiRequest, _fallback: true }),
+          });
 
-        if (fullResponse.ok) {
-          const data = await fullResponse.json();
-          if (data.reading) {
-            setAiReading({ reading: data.reading });
-            setStreamedContent(data.reading);
+          if (fullResponse.ok) {
+            const data = await fullResponse.json();
+            if (data.reading) {
+              console.log("Fallback got", data.reading.length, "characters");
+              setAiReading({ reading: data.reading });
+              setStreamedContent(data.reading);
+            } else {
+              setAiError("No reading received from API");
+            }
+          } else {
+            setAiError(`API error: ${fullResponse.status}`);
           }
+        } catch (fallbackError) {
+          console.error("Fallback failed:", fallbackError);
+          setAiError("Failed to get reading");
         }
       }
     } catch (error) {

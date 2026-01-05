@@ -134,53 +134,15 @@ export async function POST(request: Request) {
       );
     }
 
-    logger.info(`[${requestId}] Streaming response, formatting as SSE`);
+    logger.info(`[${requestId}] Passing through raw stream`);
 
-    const encoder = new TextEncoder();
-    const reader = deepseekResponse.body?.getReader();
-
-    if (!reader) {
-      return new Response(
-        JSON.stringify({ error: "No response body from DeepSeek" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    return new Response(
-      new ReadableStream({
-        async start(controller) {
-          let buffer = "";
-          try {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) {
-                if (buffer.trim()) {
-                  const lines = buffer.split("\n");
-                  for (const line of lines) {
-                    if (line.includes("content")) {
-                      controller.enqueue(encoder.encode(`data: ${line}\n\n`));
-                    }
-                  }
-                }
-                controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-                break;
-              }
-              buffer += new TextDecoder().decode(value, { stream: true });
-            }
-          } catch (error) {
-            controller.error(error);
-          }
-        },
-      }),
-      {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "X-Request-ID": requestId,
-        },
-      }
-    );
+    return new Response(deepseekResponse.body, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
+    });
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMsg = error instanceof Error ? error.message : String(error);
