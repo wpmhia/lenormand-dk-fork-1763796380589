@@ -7,61 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  RefreshCw,
-  AlertCircle,
-  ExternalLink,
-  Zap,
-  Copy,
-  Check,
-  Loader2,
-} from "lucide-react";
-
-const PROGRESS_MESSAGES = [
-  { title: "Analyzing your spread", description: "Reviewing card positions and relationships" },
-  { title: "Interpreting the cards", description: "Applying Lenormand symbolism" },
-  { title: "Connecting the meanings", description: "Synthesizing the reading" },
-  { title: "Finalizing your interpretation", description: "Almost ready" },
-] as const;
-
-function ProgressIndicator({ cards }: { cards?: Array<{ id: number; name: string; position: number }> }) {
-  const [progressIndex, setProgressIndex] = useState(0);
-  const [showCards, setShowCards] = useState(false);
-
-  useEffect(() => {
-    const timer1 = setTimeout(() => setShowCards(true), 500);
-    const timer2 = setInterval(() => {
-      setProgressIndex((prev) => (prev + 1) % PROGRESS_MESSAGES.length);
-    }, 2000);
-    return () => {
-      clearTimeout(timer1);
-      clearInterval(timer2);
-    };
-  }, []);
-
-  return (
-    <div className="space-y-3 w-full max-w-md">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Zap className="h-4 w-4" />
-        <span>{PROGRESS_MESSAGES[progressIndex].title}</span>
-      </div>
-      {showCards && cards && cards.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 justify-center">
-          {cards.slice(0, 5).map((card, i) => (
-            <Badge key={card.id} variant="outline" className="text-xs">
-              {card.name}
-            </Badge>
-          ))}
-          {cards.length > 5 && (
-            <Badge variant="outline" className="text-xs">
-              +{cards.length - 5} more
-            </Badge>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+import { RefreshCw, Loader2, Copy, Check, AlertCircle, ExternalLink } from "lucide-react";
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
@@ -103,19 +49,6 @@ export function AIReadingDisplay({
   streamedContent,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
-  const [progressStep, setProgressStep] = useState(0);
-
-  useEffect(() => {
-    if (isLoading) {
-      setProgressStep(0);
-      const interval = setInterval(() => {
-        setProgressStep((prev) => (prev < PROGRESS_MESSAGES.length - 1 ? prev + 1 : prev));
-      }, 2500);
-      return () => clearInterval(interval);
-    }
-  }, [isLoading]);
-
-  const progress = ((progressStep + 1) / PROGRESS_MESSAGES.length) * 100;
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
@@ -165,18 +98,10 @@ export function AIReadingDisplay({
   if (isLoading && !streamedContent) {
     return (
       <Card className="border-border bg-card shadow-lg">
-        <CardContent className="py-8">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="flex items-center gap-3">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              <span className="text-lg font-medium text-foreground">
-                Generating your reading...
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Interpreting {cards?.length || 3} cards
-            </p>
-            <ProgressIndicator cards={cards} />
+        <CardContent className="py-12">
+          <div className="flex flex-col items-center justify-center text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Generating your reading...</p>
           </div>
         </CardContent>
       </Card>
@@ -187,8 +112,11 @@ export function AIReadingDisplay({
     return (
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 mb-4 text-sm text-primary">
-            <Loader2 className="h-4 w-4 animate-spin" />
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
             <span>Generating...</span>
           </div>
           <div className="reading-content space-y-4 opacity-80">
