@@ -138,7 +138,6 @@ export async function getAIReading(
   }
 
   const startTime = Date.now();
-  console.log("getAIReading: Starting AI reading generation...");
 
   try {
     const spreadId = request.spreadId || "sentence-3";
@@ -162,7 +161,6 @@ export async function getAIReading(
     const maxTokens = getMaxTokens(spread.cards);
     const isLargeSpread = spread.cards >= 9;
     const maxContinuations = isLargeSpread ? 5 : 3;
-    console.log(`Sending request to DeepSeek API... (${maxTokens} tokens, max ${maxContinuations} continuations)`);
 
     const messages = [
       {
@@ -187,8 +185,6 @@ export async function getAIReading(
       }),
     });
 
-    console.log("DeepSeek API response status:", response.status);
-
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
@@ -202,7 +198,6 @@ export async function getAIReading(
     } catch {
       throw new Error("Failed to parse DeepSeek API response");
     }
-    console.log("DeepSeek API response data received");
     const content = data.choices?.[0]?.message?.content;
     const finishReason = data.choices?.[0]?.finish_reason;
 
@@ -215,9 +210,6 @@ export async function getAIReading(
     let continuationCount = 0;
 
     while (finishReason === "length" && continuationCount < maxContinuations) {
-      console.log(
-        `Response truncated, continuing (${continuationCount + 1}/${maxContinuations})...`,
-      );
       wasContinued = true;
       continuationCount++;
 
@@ -243,7 +235,6 @@ export async function getAIReading(
       });
 
       if (!continueResponse.ok) {
-        console.warn("Continuation request failed, using partial response");
         break;
       }
 
@@ -253,7 +244,6 @@ export async function getAIReading(
 
       if (continueContent) {
         fullContent += continueContent.trim();
-        console.log(`Continuation received, total length: ${fullContent.length}`);
       }
 
       if (continueFinishReason !== "length") {
@@ -261,15 +251,11 @@ export async function getAIReading(
       }
     }
 
-    const duration = Date.now() - startTime;
-    console.log(`AI reading generated in ${duration}ms`);
-
     return {
       reading: fullContent,
       wasContinued,
     };
   } catch (error) {
-    console.error("AI reading error:", error);
     throw error;
   }
 }
@@ -277,9 +263,7 @@ export async function getAIReading(
 export async function streamAIReading(
   request: AIReadingRequest,
 ): Promise<ReadableStream<Uint8Array> | null> {
-  console.log("streamAIReading: Checking availability...");
   if (!isDeepSeekAvailable()) {
-    console.log("DeepSeek not available");
     throw new Error("DeepSeek API key not configured");
   }
 
@@ -308,7 +292,6 @@ export async function streamAIReading(
     for (let attempt = 0; attempt < 3; attempt++) {
       if (attempt > 0) {
         const waitTime = Math.pow(2, attempt) * 1000;
-        console.log(`Rate limit hit, waiting ${waitTime}ms before retry...`);
         await new Promise((resolve) => setTimeout(resolve, waitTime));
       }
 
@@ -332,9 +315,7 @@ export async function streamAIReading(
           top_p: 0.9,
           stream: true,
         }),
-      });
-
-      console.log("DeepSeek streaming API response status:", response.status);
+        });
 
       if (response.status === 429 || response.status === 503) {
         lastError = new Error(`Rate limited: ${response.status}`);
@@ -357,7 +338,6 @@ export async function streamAIReading(
 
     throw lastError || new Error("Max retries exceeded");
   } catch (error) {
-    console.error("AI reading setup error:", error);
     throw error;
   }
 }

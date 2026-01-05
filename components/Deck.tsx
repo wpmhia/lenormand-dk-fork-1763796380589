@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card as CardType } from "@/lib/types";
 import { Card } from "./Card";
 import { Button } from "@/components/ui/button";
@@ -26,11 +26,20 @@ export function Deck({
   const [isShuffling, setIsShuffling] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnCards, setDrawnCards] = useState<CardType[]>([]);
+  const shuffleTimeoutRef = useRef<number | null>(null);
+  const drawTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setDeck(cards || []);
     setDrawnCards([]);
   }, [cards]);
+
+  useEffect(() => {
+    return () => {
+      if (shuffleTimeoutRef.current) clearTimeout(shuffleTimeoutRef.current);
+      if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
+    };
+  }, []);
 
   const shuffle = () => {
     if (!Array.isArray(deck)) return;
@@ -46,7 +55,7 @@ export function Deck({
 
     setDeck(shuffled);
 
-    setTimeout(() => {
+    shuffleTimeoutRef.current = window.setTimeout(() => {
       setIsShuffling(false);
     }, 500);
   };
@@ -73,7 +82,7 @@ export function Deck({
     setDeck(remainingDeck);
     setDrawnCards(newDrawnCards);
 
-    setTimeout(() => {
+    drawTimeoutRef.current = window.setTimeout(() => {
       setIsDrawing(false);
       if (onDraw) {
         onDraw(newDrawnCards);

@@ -55,12 +55,13 @@ export function encodeReadingForUrl(reading: Reading): string {
 // Decode reading data from URL
 export function decodeReadingFromUrl(encoded: string): Partial<Reading> | null {
   try {
-    // Reverse the base64 URL encoding
     const base64 = encoded.replace(
       /[-_]/g,
       (c) => ({ "-": "+", _: "/" })[c] || c,
     );
-    const json = atob(base64 + "==".slice(0, (3 - (base64.length % 3)) % 3));
+    const padLength = (4 - (base64.length % 4)) % 4;
+    const paddedBase64 = base64 + "=".repeat(padLength);
+    const json = atob(paddedBase64);
     const data = JSON.parse(json);
 
     return {

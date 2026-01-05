@@ -75,7 +75,11 @@ export function buildPrompt(
   spreadId: string,
   question: string
 ): string {
-  const spread = getSpreadById(spreadId) || getSpreadById("sentence-3")!;
+  const spread = getSpreadById(spreadId) || getSpreadById("sentence-3");
+
+  if (!spread) {
+    throw new Error("Invalid spread ID and default spread not found");
+  }
 
   const cardList = cards
     .map((c, i) => `Card ${i + 1}: ${c.name}`)

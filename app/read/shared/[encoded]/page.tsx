@@ -208,10 +208,10 @@ export default function SharedReadingPage({ params }: PageProps) {
 
   // Trigger AI analysis when reading is loaded
   useEffect(() => {
-    if (reading && allCards.length > 0 && !aiAttempted) {
+    if (reading && allCards.length > 0 && !aiAttempted && reading.cards) {
       performAIAnalysis(reading.cards);
     }
-  }, [reading, allCards.length, aiAttempted, performAIAnalysis]);
+  }, [reading?.cards, allCards.length, aiAttempted, performAIAnalysis]);
 
   // Cleanup on unmount
   useEffect(() => {
