@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { RefreshCw, Loader2, Copy, Check, AlertCircle, ExternalLink } from "lucide-react";
+import {
+  RefreshCw,
+  Loader2,
+  Copy,
+  Check,
+  AlertCircle,
+  ExternalLink,
+} from "lucide-react";
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
@@ -90,8 +97,7 @@ export function AIReadingDisplay({
         await navigator.clipboard.writeText(fullContent);
         setCopyClicked(true);
         setTimeout(() => setCopyClicked(false), 2000);
-      } catch (fallbackErr) {
-      }
+      } catch (fallbackErr) {}
     }
   };
 
@@ -100,7 +106,7 @@ export function AIReadingDisplay({
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="py-12">
           <div className="flex flex-col items-center justify-center text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+            <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary" />
             <p className="text-muted-foreground">Generating your reading...</p>
           </div>
         </CardContent>
@@ -112,10 +118,10 @@ export function AIReadingDisplay({
     return (
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
             </span>
             <span>Generating...</span>
           </div>
@@ -123,24 +129,44 @@ export function AIReadingDisplay({
             <ReactMarkdown
               components={{
                 h1: ({ node, ...props }) => (
-                  <h1 className="text-2xl font-semibold text-foreground" {...props} />
+                  <h1
+                    className="text-2xl font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
                 h2: ({ node, ...props }) => (
-                  <h2 className="text-xl font-semibold text-foreground" {...props} />
+                  <h2
+                    className="text-xl font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
                 h3: ({ node, ...props }) => (
-                  <h3 className="text-lg font-semibold text-foreground" {...props} />
+                  <h3
+                    className="text-lg font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
                 p: ({ node, ...props }) => (
-                  <p className="text-base leading-relaxed text-foreground/90" {...props} />
+                  <p
+                    className="text-base leading-relaxed text-foreground/90"
+                    {...props}
+                  />
                 ),
                 ul: ({ node, ...props }) => (
-                  <ul className="list-disc pl-6 text-foreground/90" {...props} />
+                  <ul
+                    className="list-disc pl-6 text-foreground/90"
+                    {...props}
+                  />
                 ),
                 ol: ({ node, ...props }) => (
-                  <ol className="list-decimal pl-6 text-foreground/90" {...props} />
+                  <ol
+                    className="list-decimal pl-6 text-foreground/90"
+                    {...props}
+                  />
                 ),
-                li: ({ node, ...props }) => <li className="text-foreground/90" {...props} />,
+                li: ({ node, ...props }) => (
+                  <li className="text-foreground/90" {...props} />
+                ),
                 blockquote: ({ node, ...props }) => (
                   <blockquote
                     className="border-l-4 border-primary/40 pl-4 italic text-foreground/80"
@@ -148,10 +174,17 @@ export function AIReadingDisplay({
                   />
                 ),
                 strong: ({ node, ...props }) => (
-                  <strong className="font-semibold text-foreground" {...props} />
+                  <strong
+                    className="font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
-                em: ({ node, ...props }) => <em className="italic text-foreground/80" {...props} />,
-                hr: ({ node, ...props }) => <hr className="my-4 border-border" {...props} />,
+                em: ({ node, ...props }) => (
+                  <em className="italic text-foreground/80" {...props} />
+                ),
+                hr: ({ node, ...props }) => (
+                  <hr className="my-4 border-border" {...props} />
+                ),
                 a: ({ node, ...props }: any) => (
                   <a
                     {...props}
@@ -225,38 +258,62 @@ export function AIReadingDisplay({
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="p-6">
           <div className="mb-4 flex items-center justify-end gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCopy}
-                className="h-9 w-9 text-muted-foreground hover:text-foreground"
-              >
-                {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleCopy}
+              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+            >
+              {copyClicked ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
 
           <div className="reading-content space-y-4">
             <ReactMarkdown
               components={{
                 h1: ({ node, ...props }) => (
-                  <h1 className="text-2xl font-semibold text-foreground" {...props} />
+                  <h1
+                    className="text-2xl font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
                 h2: ({ node, ...props }) => (
-                  <h2 className="text-xl font-semibold text-foreground" {...props} />
+                  <h2
+                    className="text-xl font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
                 h3: ({ node, ...props }) => (
-                  <h3 className="text-lg font-semibold text-foreground" {...props} />
+                  <h3
+                    className="text-lg font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
                 p: ({ node, ...props }) => (
-                  <p className="text-base leading-relaxed text-foreground/90" {...props} />
+                  <p
+                    className="text-base leading-relaxed text-foreground/90"
+                    {...props}
+                  />
                 ),
                 ul: ({ node, ...props }) => (
-                  <ul className="list-disc pl-6 text-foreground/90" {...props} />
+                  <ul
+                    className="list-disc pl-6 text-foreground/90"
+                    {...props}
+                  />
                 ),
                 ol: ({ node, ...props }) => (
-                  <ol className="list-decimal pl-6 text-foreground/90" {...props} />
+                  <ol
+                    className="list-decimal pl-6 text-foreground/90"
+                    {...props}
+                  />
                 ),
-                li: ({ node, ...props }) => <li className="text-foreground/90" {...props} />,
+                li: ({ node, ...props }) => (
+                  <li className="text-foreground/90" {...props} />
+                ),
                 blockquote: ({ node, ...props }) => (
                   <blockquote
                     className="border-l-4 border-primary/40 pl-4 italic text-foreground/80"
@@ -264,10 +321,17 @@ export function AIReadingDisplay({
                   />
                 ),
                 strong: ({ node, ...props }) => (
-                  <strong className="font-semibold text-foreground" {...props} />
+                  <strong
+                    className="font-semibold text-foreground"
+                    {...props}
+                  />
                 ),
-                em: ({ node, ...props }) => <em className="italic text-foreground/80" {...props} />,
-                hr: ({ node, ...props }) => <hr className="my-4 border-border" {...props} />,
+                em: ({ node, ...props }) => (
+                  <em className="italic text-foreground/80" {...props} />
+                ),
+                hr: ({ node, ...props }) => (
+                  <hr className="my-4 border-border" {...props} />
+                ),
                 a: ({ node, ...props }: any) => (
                   <a
                     {...props}

@@ -113,29 +113,35 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
     "yes-no-maybe": {
       0: {
         label: "First Card",
-        meaning: "Contributes to the Yes/No count based on its positive or negative meaning",
+        meaning:
+          "Contributes to the Yes/No count based on its positive or negative meaning",
       },
       1: {
         label: "Center Card",
-        meaning: "Tie-breaker card if the count is equal between positive and negative cards",
+        meaning:
+          "Tie-breaker card if the count is equal between positive and negative cards",
       },
       2: {
         label: "Third Card",
-        meaning: "Contributes to the Yes/No count based on its positive or negative meaning",
+        meaning:
+          "Contributes to the Yes/No count based on its positive or negative meaning",
       },
     },
     "sentence-3": {
       0: {
         label: "Opening Element",
-        meaning: "Primary element - can represent past, mind, or situation depending on context",
+        meaning:
+          "Primary element - can represent past, mind, or situation depending on context",
       },
       1: {
         label: "Central Element",
-        meaning: "Core element - can represent present, body, or action depending on context",
+        meaning:
+          "Core element - can represent present, body, or action depending on context",
       },
       2: {
         label: "Closing Element",
-        meaning: "Final element - can represent future, spirit, or outcome; check mirror relationship with central element",
+        meaning:
+          "Final element - can represent future, spirit, or outcome; check mirror relationship with central element",
       },
     },
     "structured-reading": {
@@ -153,7 +159,8 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       },
       3: {
         label: "Modifier",
-        meaning: "The qualifier or condition—how, when, or under what circumstance",
+        meaning:
+          "The qualifier or condition—how, when, or under what circumstance",
       },
       4: {
         label: "Outcome",
@@ -185,7 +192,8 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
     "week-ahead": {
       0: {
         label: "Monday",
-        meaning: "New beginnings, fresh starts, and initial energy for the week",
+        meaning:
+          "New beginnings, fresh starts, and initial energy for the week",
       },
       1: {
         label: "Tuesday",
@@ -215,41 +223,50 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
     "relationship-double-significator": {
       0: {
         label: "Partner 1 - Past",
-        meaning: "Left partner's past experiences and history affecting the relationship",
+        meaning:
+          "Left partner's past experiences and history affecting the relationship",
       },
       1: {
         label: "Partner 1 - Present",
-        meaning: "Left partner's current feelings, thoughts, and situation in the relationship",
+        meaning:
+          "Left partner's current feelings, thoughts, and situation in the relationship",
       },
       2: {
         label: "Partner 1 - Future",
-        meaning: "Left partner's hopes, expectations, and vision for the relationship's future",
+        meaning:
+          "Left partner's hopes, expectations, and vision for the relationship's future",
       },
       3: {
         label: "Relationship Core",
-        meaning: "The central dynamic, challenge, or connection that sits between both partners",
+        meaning:
+          "The central dynamic, challenge, or connection that sits between both partners",
       },
       4: {
         label: "Partner 2 - Past",
-        meaning: "Right partner's past experiences and history affecting the relationship",
+        meaning:
+          "Right partner's past experiences and history affecting the relationship",
       },
       5: {
         label: "Partner 2 - Present",
-        meaning: "Right partner's current feelings, thoughts, and situation in the relationship",
+        meaning:
+          "Right partner's current feelings, thoughts, and situation in the relationship",
       },
       6: {
         label: "Partner 2 - Future",
-        meaning: "Right partner's hopes, expectations, and vision for the relationship's future",
+        meaning:
+          "Right partner's hopes, expectations, and vision for the relationship's future",
       },
     },
     comprehensive: {
       0: {
         label: "Recent Past - Inner World",
-        meaning: "Thoughts, feelings, and personal resources from your recent past that influence your current situation",
+        meaning:
+          "Thoughts, feelings, and personal resources from your recent past that influence your current situation",
       },
       1: {
         label: "Recent Past - Direct Actions",
-        meaning: "Actions you took recently that shaped your current circumstances",
+        meaning:
+          "Actions you took recently that shaped your current circumstances",
       },
       2: {
         label: "Recent Past - Outside World",
@@ -265,11 +282,13 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       },
       5: {
         label: "Present - Outside World",
-        meaning: "Current external influences, other people, and environmental factors",
+        meaning:
+          "Current external influences, other people, and environmental factors",
       },
       6: {
         label: "Near Future - Inner World",
-        meaning: "How your thoughts and feelings will evolve in the near future",
+        meaning:
+          "How your thoughts and feelings will evolve in the near future",
       },
       7: {
         label: "Near Future - Direct Actions",
@@ -277,16 +296,19 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
       },
       8: {
         label: "Near Future - Outside World",
-        meaning: "External events and influences approaching in the near future",
+        meaning:
+          "External events and influences approaching in the near future",
       },
     },
   };
 
   if (spreadId && spreadPositions[spreadId]) {
-    return spreadPositions[spreadId][position] || {
-      label: "Position " + (position + 1),
-      meaning: "",
-    };
+    return (
+      spreadPositions[spreadId][position] || {
+        label: "Position " + (position + 1),
+        meaning: "",
+      }
+    );
   }
   return {
     label: "Position " + (position + 1),
@@ -296,26 +318,44 @@ const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
 
 const getTopicIcon = (type: string) => {
   switch (type) {
-    case "health": return <TreeDeciduous className="h-3 w-3" />;
-    case "home": return <Home className="h-3 w-3" />;
-    case "love": return <Heart className="h-3 w-3" />;
-    case "job": return <Briefcase className="h-3 w-3" />;
-    case "boss": return <User className="h-3 w-3" />;
-    case "career": return <Anchor className="h-3 w-3" />;
-    case "money": return <Fish className="h-3 w-3" />;
-    case "travel": return <Ship className="h-3 w-3" />;
-    default: return <Sparkles className="h-3 w-3" />;
+    case "health":
+      return <TreeDeciduous className="h-3 w-3" />;
+    case "home":
+      return <Home className="h-3 w-3" />;
+    case "love":
+      return <Heart className="h-3 w-3" />;
+    case "job":
+      return <Briefcase className="h-3 w-3" />;
+    case "boss":
+      return <User className="h-3 w-3" />;
+    case "career":
+      return <Anchor className="h-3 w-3" />;
+    case "money":
+      return <Fish className="h-3 w-3" />;
+    case "travel":
+      return <Ship className="h-3 w-3" />;
+    default:
+      return <Sparkles className="h-3 w-3" />;
   }
 };
 
 const getZoneIcon = (zone: string) => {
   switch (zone) {
-    case "left": return <Clock className="h-4 w-4" />;
-    case "right": return <Target className="h-4 w-4" />;
-    case "above": return <Brain className="h-4 w-4" />;
-    case "below": return <Eye className="h-4 w-4" />;
-    case "top-left": case "top-right": case "bottom-left": case "bottom-right": return <Zap className="h-4 w-4" />;
-    default: return null;
+    case "left":
+      return <Clock className="h-4 w-4" />;
+    case "right":
+      return <Target className="h-4 w-4" />;
+    case "above":
+      return <Brain className="h-4 w-4" />;
+    case "below":
+      return <Eye className="h-4 w-4" />;
+    case "top-left":
+    case "top-right":
+    case "bottom-left":
+    case "bottom-right":
+      return <Zap className="h-4 w-4" />;
+    default:
+      return null;
   }
 };
 
@@ -329,19 +369,26 @@ export function ReadingViewer({
 }: ReadingViewerProps) {
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [shareClicked, setShareClicked] = useState(false);
-  const [significatorType, setSignificatorType] = useState<SignificatorType>("none");
+  const [significatorType, setSignificatorType] =
+    useState<SignificatorType>("none");
 
-  const significatorCardId = significatorType !== "none" ? SIGNIFICATOR_CARDS[significatorType] : -1;
-  const significatorIndex = reading.cards.findIndex(c => c.id === significatorCardId);
+  const significatorCardId =
+    significatorType !== "none" ? SIGNIFICATOR_CARDS[significatorType] : -1;
+  const significatorIndex = reading.cards.findIndex(
+    (c) => c.id === significatorCardId,
+  );
 
   const topicCards = useMemo(() => {
     if (reading.layoutType !== 36) return [];
-    return getTopicCardsInSpread(reading.cards.map(c => c.id));
+    return getTopicCardsInSpread(reading.cards.map((c) => c.id));
   }, [reading]);
 
   const diagonals = useMemo(() => {
     if (reading.layoutType !== 36 || significatorIndex === -1) return null;
-    return getDiagonalCards(significatorIndex, reading.cards.map(c => c.id));
+    return getDiagonalCards(
+      significatorIndex,
+      reading.cards.map((c) => c.id),
+    );
   }, [reading, significatorIndex]);
 
   const getAdjacentCards = (currentCard: ReadingCard): ReadingCard[] => {
@@ -366,7 +413,11 @@ export function ReadingViewer({
             const positionInfo = getPositionInfo(index, spreadId);
 
             return (
-              <AnimatedCard key={index} delay={0} className="flex flex-col items-center space-y-lg">
+              <AnimatedCard
+                key={index}
+                delay={0}
+                className="flex flex-col items-center space-y-lg"
+              >
                 <div className="flex flex-col items-center space-y-md">
                   <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                     {positionInfo.label}
@@ -405,12 +456,17 @@ export function ReadingViewer({
               </div>
               <div className="flex items-center gap-2">
                 <Eye className="h-4 w-4 text-emerald-600" />
-                <span className="text-muted-foreground">Below = Unconscious</span>
+                <span className="text-muted-foreground">
+                  Below = Unconscious
+                </span>
               </div>
             </div>
           )}
 
-          <div className="grid gap-sm" style={{ gridTemplateColumns: "repeat(9, minmax(0, 1fr))" }}>
+          <div
+            className="grid gap-sm"
+            style={{ gridTemplateColumns: "repeat(9, minmax(0, 1fr))" }}
+          >
             {reading.cards.map((readingCard, index) => {
               const card = getCardById(allCards, readingCard.id);
               if (!card) return null;
@@ -421,11 +477,12 @@ export function ReadingViewer({
               const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
               const isCardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
               const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card.id];
-              
-              const zoneInfo = significatorIndex !== -1 
-                ? getPositionZone(significatorIndex, index)
-                : { zone: "general", distance: 0, direction: "" };
-              
+
+              const zoneInfo =
+                significatorIndex !== -1
+                  ? getPositionZone(significatorIndex, index)
+                  : { zone: "general", distance: 0, direction: "" };
+
               const zone = DIRECTIONAL_ZONES[zoneInfo.zone];
 
               let borderClass = "border-border";
@@ -453,22 +510,34 @@ export function ReadingViewer({
                       {pos.row + 1}-{pos.col + 1}
                     </span>
                     {isSignificator && (
-                      <Badge variant="default" className="bg-amber-600 text-[10px]">
+                      <Badge
+                        variant="default"
+                        className="bg-amber-600 text-[10px]"
+                      >
                         YOU
                       </Badge>
                     )}
                     {isCorner && (
-                      <Badge variant="outline" className="text-[10px] border-purple-500/50 text-purple-600">
+                      <Badge
+                        variant="outline"
+                        className="border-purple-500/50 text-[10px] text-purple-600"
+                      >
                         Context
                       </Badge>
                     )}
                     {isCardsOfFate && (
-                      <Badge variant="outline" className="text-[10px] border-red-500/50 text-red-600">
+                      <Badge
+                        variant="outline"
+                        className="border-red-500/50 text-[10px] text-red-600"
+                      >
                         Fate
                       </Badge>
                     )}
                     {isCenter && (
-                      <Badge variant="outline" className="text-[10px] border-green-500/50 text-green-600">
+                      <Badge
+                        variant="outline"
+                        className="border-green-500/50 text-[10px] text-green-600"
+                      >
                         Heart
                       </Badge>
                     )}
@@ -476,10 +545,14 @@ export function ReadingViewer({
 
                   {/* Directional indicator */}
                   {zone && significatorIndex !== -1 && !isSignificator && (
-                    <div className={`flex items-center gap-1 text-[10px] ${zone.color}`}>
+                    <div
+                      className={`flex items-center gap-1 text-[10px] ${zone.color}`}
+                    >
                       {getZoneIcon(zoneInfo.zone)}
                       <span>{zone.name}</span>
-                      <span className="text-muted-foreground">({zoneInfo.distance})</span>
+                      <span className="text-muted-foreground">
+                        ({zoneInfo.distance})
+                      </span>
                     </div>
                   )}
 
@@ -488,11 +561,15 @@ export function ReadingViewer({
                     size="sm"
                     onClick={() => setSelectedCard(card)}
                     className="cursor-pointer"
-                    positionLabel={isSignificator ? "Significator (You)" : zone?.name || undefined}
+                    positionLabel={
+                      isSignificator
+                        ? "Significator (You)"
+                        : zone?.name || undefined
+                    }
                     positionDescription={
-                      isSignificator 
+                      isSignificator
                         ? "This card represents you in the reading"
-                        : zoneInfo.direction 
+                        : zoneInfo.direction
                           ? `${zone.description} - Distance: ${zoneInfo.distance}`
                           : undefined
                     }
@@ -526,14 +603,21 @@ export function ReadingViewer({
                       key={tc.cardId}
                       className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card/50 px-3 py-2 transition-colors hover:bg-muted"
                       onClick={() => {
-                        const cardElement = document.querySelector(`[data-card-index="${tc.index}"]`);
-                        cardElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+                        const cardElement = document.querySelector(
+                          `[data-card-index="${tc.index}"]`,
+                        );
+                        cardElement?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "center",
+                        });
                       }}
                     >
                       {getTopicIcon(tc.topic.type)}
                       <div>
                         <div className="text-xs font-medium">{card.name}</div>
-                        <div className="text-[10px] text-muted-foreground">{tc.topic.label}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {tc.topic.label}
+                        </div>
                       </div>
                     </div>
                   );
@@ -546,13 +630,38 @@ export function ReadingViewer({
           {diagonals && (
             <div className="mt-lg grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {[
-                { key: "topLeft", label: "Conscious Influences", cards: diagonals.topLeft, color: "text-violet-600" },
-                { key: "bottomLeft", label: "Unconscious Influences", cards: diagonals.bottomLeft, color: "text-teal-600" },
-                { key: "topRight", label: "Conscious Possibilities", cards: diagonals.topRight, color: "text-indigo-600" },
-                { key: "bottomRight", label: "Unconscious Possibilities", cards: diagonals.bottomRight, color: "text-cyan-600" },
+                {
+                  key: "topLeft",
+                  label: "Conscious Influences",
+                  cards: diagonals.topLeft,
+                  color: "text-violet-600",
+                },
+                {
+                  key: "bottomLeft",
+                  label: "Unconscious Influences",
+                  cards: diagonals.bottomLeft,
+                  color: "text-teal-600",
+                },
+                {
+                  key: "topRight",
+                  label: "Conscious Possibilities",
+                  cards: diagonals.topRight,
+                  color: "text-indigo-600",
+                },
+                {
+                  key: "bottomRight",
+                  label: "Unconscious Possibilities",
+                  cards: diagonals.bottomRight,
+                  color: "text-cyan-600",
+                },
               ].map((diag) => (
-                <div key={diag.key} className="rounded-lg border border-border bg-card p-md">
-                  <div className={`mb-2 flex items-center gap-2 text-sm font-medium ${diag.color}`}>
+                <div
+                  key={diag.key}
+                  className="rounded-lg border border-border bg-card p-md"
+                >
+                  <div
+                    className={`mb-2 flex items-center gap-2 text-sm font-medium ${diag.color}`}
+                  >
                     <Zap className="h-4 w-4" />
                     {diag.label}
                   </div>
@@ -566,7 +675,14 @@ export function ReadingViewer({
         </div>
       );
     } else {
-      const columns = reading.layoutType === 3 ? 3 : reading.layoutType === 5 ? 5 : reading.layoutType === 7 ? 7 : 4;
+      const columns =
+        reading.layoutType === 3
+          ? 3
+          : reading.layoutType === 5
+            ? 5
+            : reading.layoutType === 7
+              ? 7
+              : 4;
       return (
         <div className="flex flex-wrap justify-center gap-md py-lg">
           {reading.cards.map((readingCard, index) => {
@@ -608,14 +724,16 @@ export function ReadingViewer({
         <div className="relative">
           <div className="mb-lg flex flex-wrap items-center justify-center gap-lg text-sm text-muted-foreground">
             <Badge variant="secondary">{reading.layoutType} Cards</Badge>
-            
+
             {/* Significator selector for Grand Tableau */}
             {reading.layoutType === 36 && (
               <div className="flex items-center gap-2">
                 <span className="text-xs">Significator:</span>
                 <Select
                   value={significatorType}
-                  onValueChange={(value) => setSignificatorType(value as SignificatorType)}
+                  onValueChange={(value) =>
+                    setSignificatorType(value as SignificatorType)
+                  }
                 >
                   <SelectTrigger className="h-8 w-[120px] border-border text-xs">
                     <SelectValue placeholder="None" />
@@ -638,7 +756,7 @@ export function ReadingViewer({
                 </Select>
               </div>
             )}
-            
+
             {showShareButton && onShare && (
               <Button
                 onClick={async () => {
@@ -660,17 +778,23 @@ export function ReadingViewer({
 
       <div className="animate-in fade-in slide-in-from-bottom-8 overflow-visible delay-150 duration-500">
         <div className="overflow-visible rounded-lg border border-border bg-card p-xl shadow-elevation-1">
-          <h3 className="mb-lg text-xl font-semibold text-foreground">Your Cards</h3>
+          <h3 className="mb-lg text-xl font-semibold text-foreground">
+            Your Cards
+          </h3>
           {renderLayout()}
         </div>
       </div>
 
       {selectedCard && (
         <div className="animate-in fade-in slide-in-from-bottom-8 rounded-lg border border-border bg-card p-xl shadow-elevation-1 duration-500">
-          <h3 className="mb-lg text-xl font-semibold text-foreground">Card Combinations</h3>
+          <h3 className="mb-lg text-xl font-semibold text-foreground">
+            Card Combinations
+          </h3>
           <div className="space-y-md">
             {(() => {
-              const readingCard = reading.cards.find((c) => c.id === selectedCard.id);
+              const readingCard = reading.cards.find(
+                (c) => c.id === selectedCard.id,
+              );
               if (!readingCard) return null;
 
               const adjacentCards = getAdjacentCards(readingCard);
@@ -678,9 +802,12 @@ export function ReadingViewer({
               if (adjacentCards.length === 0) {
                 return (
                   <div className="py-xl text-center text-muted-foreground/60">
-                    <p className="mb-md italic">No adjacent cards in this layout</p>
+                    <p className="mb-md italic">
+                      No adjacent cards in this layout
+                    </p>
                     <p className="text-sm">
-                      In larger spreads, this card would interact with nearby cards
+                      In larger spreads, this card would interact with nearby
+                      cards
                     </p>
                   </div>
                 );
@@ -704,7 +831,9 @@ export function ReadingViewer({
                   >
                     <div className="flex items-center gap-md">
                       <Card card={selectedCard} size="sm" />
-                      <span className="text-lg font-medium text-primary">+</span>
+                      <span className="text-lg font-medium text-primary">
+                        +
+                      </span>
                       <Card card={card} size="sm" />
                     </div>
                     <div className="flex-1">

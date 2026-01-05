@@ -31,7 +31,7 @@ export function Header() {
           </Link>
         </div>
         <nav
-          className="ml-auto hidden md:flex items-center gap-2"
+          className="ml-auto hidden items-center gap-2 md:flex"
           role="navigation"
         >
           <Link
@@ -103,10 +103,7 @@ export function Header() {
           role="navigation"
           aria-label="Mobile navigation"
         >
-          <nav
-            className="container space-y-2 px-4 py-3"
-            role="navigation"
-          >
+          <nav className="container space-y-2 px-4 py-3" role="navigation">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}

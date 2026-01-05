@@ -8,15 +8,50 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Search, XCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { getCards, getCardById } from "@/lib/data";
 
 const CARD_CATEGORIES = {
-  people: ["Rider", "Gentleman", "Lady", "Lily", "Child", "Bear", "Fox", "Dog", "Stork", "Snake"],
-  emotions: ["Heart", "Bouquet", "Sun", "Clouds", "Stars", "Mice", "Coffin", "Ring"],
-  objects: ["Clover", "Ship", "House", "Tree", "Mountain", "Paths", "Garden", "Bouquet", "Key"],
+  people: [
+    "Rider",
+    "Gentleman",
+    "Lady",
+    "Lily",
+    "Child",
+    "Bear",
+    "Fox",
+    "Dog",
+    "Stork",
+    "Snake",
+  ],
+  emotions: [
+    "Heart",
+    "Bouquet",
+    "Sun",
+    "Clouds",
+    "Stars",
+    "Mice",
+    "Coffin",
+    "Ring",
+  ],
+  objects: [
+    "Clover",
+    "Ship",
+    "House",
+    "Tree",
+    "Mountain",
+    "Paths",
+    "Garden",
+    "Bouquet",
+    "Key",
+  ],
   events: ["Ship", "Mountain", "Paths", "Rider", "Letter", "Whip", "Birds"],
   nature: ["Tree", "Clover", "House", "Mountain", "Stork", "Dog"],
 };
@@ -39,8 +74,8 @@ export default function CardsPage() {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter((card) => {
         const nameMatch = card.name.toLowerCase().includes(searchLower);
-        const keywordMatch = card.keywords.some(
-          (keyword) => keyword.toLowerCase().includes(searchLower),
+        const keywordMatch = card.keywords.some((keyword) =>
+          keyword.toLowerCase().includes(searchLower),
         );
         const meaningMatch = card.uprightMeaning
           .toLowerCase()
@@ -50,7 +85,8 @@ export default function CardsPage() {
     }
 
     if (selectedCategory !== "all") {
-      const categoryCards = CARD_CATEGORIES[selectedCategory as keyof typeof CARD_CATEGORIES] || [];
+      const categoryCards =
+        CARD_CATEGORIES[selectedCategory as keyof typeof CARD_CATEGORIES] || [];
       filtered = filtered.filter((card) => categoryCards.includes(card.name));
     }
 
@@ -98,7 +134,9 @@ export default function CardsPage() {
 
   const navigateCard = (direction: "prev" | "next") => {
     if (!selectedCard) return;
-    const currentIndex = filteredCards.findIndex((c) => c.id === selectedCard.id);
+    const currentIndex = filteredCards.findIndex(
+      (c) => c.id === selectedCard.id,
+    );
     let newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
     if (newIndex < 0) newIndex = filteredCards.length - 1;
     if (newIndex >= filteredCards.length) newIndex = 0;
@@ -203,7 +241,7 @@ export default function CardsPage() {
         {filteredCards.map((card) => (
           <div
             key={card.id}
-            className="cursor-pointer group"
+            className="group cursor-pointer"
             onClick={() => openCardModal(card)}
           >
             <Card
@@ -212,7 +250,7 @@ export default function CardsPage() {
               className="mx-auto transition-transform group-hover:scale-105"
             />
             <div className="mt-2 text-center">
-              <div className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">
+              <div className="text-sm font-medium text-foreground transition-colors group-hover:text-primary">
                 {card.name}
               </div>
               <div className="text-xs text-muted-foreground">#{card.id}</div>
@@ -235,7 +273,9 @@ export default function CardsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Badge variant="outline">#{selectedCard.id}</Badge>
-                    <DialogTitle className="text-xl">{selectedCard.name}</DialogTitle>
+                    <DialogTitle className="text-xl">
+                      {selectedCard.name}
+                    </DialogTitle>
                   </div>
                 </div>
               </DialogHeader>
@@ -252,7 +292,9 @@ export default function CardsPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Keywords</h4>
+                    <h4 className="mb-2 text-sm font-medium text-muted-foreground">
+                      Keywords
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedCard.keywords.map((keyword) => (
                         <Badge key={keyword} variant="secondary">
@@ -263,22 +305,36 @@ export default function CardsPage() {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Meaning</h4>
-                    <p className="text-sm leading-relaxed">{selectedCard.uprightMeaning}</p>
+                    <h4 className="mb-2 text-sm font-medium text-muted-foreground">
+                      Meaning
+                    </h4>
+                    <p className="text-sm leading-relaxed">
+                      {selectedCard.uprightMeaning}
+                    </p>
                   </div>
 
                   {selectedCard.combos && selectedCard.combos.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                      <h4 className="mb-2 text-sm font-medium text-muted-foreground">
                         Common Combinations
                       </h4>
                       <div className="space-y-2">
                         {selectedCard.combos.slice(0, 3).map((combo) => {
-                          const relatedCard = getCardById(cards, combo.withCardId);
+                          const relatedCard = getCardById(
+                            cards,
+                            combo.withCardId,
+                          );
                           return (
                             <div key={combo.withCardId} className="text-sm">
-                              <span className="font-medium">{selectedCard.name} + {relatedCard?.name || `Card ${combo.withCardId}`}:</span>{" "}
-                              <span className="text-muted-foreground">{combo.meaning}</span>
+                              <span className="font-medium">
+                                {selectedCard.name} +{" "}
+                                {relatedCard?.name ||
+                                  `Card ${combo.withCardId}`}
+                                :
+                              </span>{" "}
+                              <span className="text-muted-foreground">
+                                {combo.meaning}
+                              </span>
                             </div>
                           );
                         })}
@@ -288,9 +344,13 @@ export default function CardsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t">
-                <Button variant="outline" size="sm" onClick={() => navigateCard("prev")}>
-                  <ArrowLeft className="h-4 w-4 mr-1" />
+              <div className="flex items-center justify-between border-t pt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigateCard("prev")}
+                >
+                  <ArrowLeft className="mr-1 h-4 w-4" />
                   Previous
                 </Button>
                 <Button
@@ -301,9 +361,13 @@ export default function CardsPage() {
                 >
                   Close
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => navigateCard("next")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigateCard("next")}
+                >
                   Next
-                  <ArrowRight className="h-4 w-4 ml-1" />
+                  <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </>

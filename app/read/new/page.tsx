@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  Suspense,
+  useMemo,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Deck } from "@/components/Deck";
@@ -38,10 +45,10 @@ import { AIReadingResponse } from "@/lib/ai-config";
 
 function LoadingFallback() {
   return (
-    <div className="space-y-4 animate-pulse">
-      <div className="h-40 bg-muted/50 rounded-xl" />
-      <div className="h-20 bg-muted/50 rounded-xl" />
-      <div className="h-12 bg-muted/50 rounded-lg" />
+    <div className="animate-pulse space-y-4">
+      <div className="h-40 rounded-xl bg-muted/50" />
+      <div className="h-20 rounded-xl bg-muted/50" />
+      <div className="h-12 rounded-lg bg-muted/50" />
     </div>
   );
 }
@@ -184,7 +191,8 @@ function NewReadingPageContent() {
 
     try {
       const aiRequest = {
-        question: question.trim() || "What guidance do these cards have for me?",
+        question:
+          question.trim() || "What guidance do these cards have for me?",
         cards: drawnCards.map((card) => ({
           id: card.id,
           name: getCardById(allCards, card.id)?.name || "Unknown",
@@ -242,7 +250,10 @@ function NewReadingPageContent() {
             }
           }
         } catch (streamError) {
-          if (streamError instanceof Error && streamError.name === "AbortError") {
+          if (
+            streamError instanceof Error &&
+            streamError.name === "AbortError"
+          ) {
             break;
           }
           setAiError("Connection interrupted");
@@ -291,7 +302,11 @@ function NewReadingPageContent() {
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
-    if (step === "results" && drawnCards.length > 0 && !aiAnalysisStartedRef.current) {
+    if (
+      step === "results" &&
+      drawnCards.length > 0 &&
+      !aiAnalysisStartedRef.current
+    ) {
       aiAnalysisStartedRef.current = true;
       addLog("Auto-starting AI analysis");
       performStreamingAnalysis();
@@ -344,54 +359,57 @@ function NewReadingPageContent() {
     [physicalCards],
   );
 
-  const handleDraw = useCallback(async (cards: ReadingCard[] | CardType[]) => {
-    try {
-      let readingCards: ReadingCard[];
+  const handleDraw = useCallback(
+    async (cards: ReadingCard[] | CardType[]) => {
+      try {
+        let readingCards: ReadingCard[];
 
-      // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
-      if (Array.isArray(cards) && cards.length > 0) {
-        if ("position" in cards[0]) {
-          // It's ReadingCard[]
-          readingCards = cards as ReadingCard[];
+        // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
+        if (Array.isArray(cards) && cards.length > 0) {
+          if ("position" in cards[0]) {
+            // It's ReadingCard[]
+            readingCards = cards as ReadingCard[];
+          } else {
+            // It's CardType[], convert to ReadingCard[]
+            readingCards = (cards as CardType[]).map((card, index) => ({
+              id: card.id,
+              position: index,
+            }));
+          }
         } else {
-          // It's CardType[], convert to ReadingCard[]
-          readingCards = (cards as CardType[]).map((card, index) => ({
-            id: card.id,
-            position: index,
-          }));
+          readingCards = [];
         }
-      } else {
-        readingCards = [];
-      }
 
-      if (readingCards.length === 0) {
-        setError(
-          `No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`,
-        );
-        return;
-      }
+        if (readingCards.length === 0) {
+          setError(
+            `No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`,
+          );
+          return;
+        }
 
-      console.log(
-        "Setting state: drawnCards =",
-        readingCards.length,
-        ", step = results",
-      );
-      setDrawnCards(readingCards);
-      setStep("results");
-      console.log("State update complete");
-    } catch (error) {
-      console.error("Error in handleDraw:", error);
-      if (mountedRef.current) {
-        const errorMsg =
-          error instanceof Error
-            ? error.message
-            : "An error occurred while processing your cards";
-        setError(
-          `Unable to process cards: ${errorMsg}. Try refreshing the page.`,
+        console.log(
+          "Setting state: drawnCards =",
+          readingCards.length,
+          ", step = results",
         );
+        setDrawnCards(readingCards);
+        setStep("results");
+        console.log("State update complete");
+      } catch (error) {
+        console.error("Error in handleDraw:", error);
+        if (mountedRef.current) {
+          const errorMsg =
+            error instanceof Error
+              ? error.message
+              : "An error occurred while processing your cards";
+          setError(
+            `Unable to process cards: ${errorMsg}. Try refreshing the page.`,
+          );
+        }
       }
-    }
-  }, [selectedSpread.cards]);
+    },
+    [selectedSpread.cards],
+  );
   // Parse physical cards when input changes
   useEffect(() => {
     if (path === "physical" && physicalCards) {
@@ -873,7 +891,7 @@ function NewReadingPageContent() {
           {step === "results" && drawnCards.length > 0 && (
             <div
               key="results"
-              className="animate-in fade-in slide-in-from-bottom-4 duration-300 space-y-6"
+              className="animate-in fade-in slide-in-from-bottom-4 space-y-6 duration-300"
             >
               {/* Show the drawn cards */}
               {allCards.length > 0 ? (
@@ -919,8 +937,8 @@ function NewReadingPageContent() {
                   streamedContent={streamedContent}
                 />
               </div>
-              </div>
-            )}
+            </div>
+          )}
 
           {/* Start Over Confirmation Dialog */}
           <Dialog
