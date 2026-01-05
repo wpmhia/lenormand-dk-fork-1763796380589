@@ -154,7 +154,7 @@ function NewReadingPageContent() {
     if (data === "[DONE]") return null;
     try {
       const parsed = JSON.parse(data);
-      return parsed.content || parsed.choices?.[0]?.delta?.content || "";
+      return parsed.choices?.[0]?.delta?.content || "";
     } catch {
       return null;
     }
@@ -225,13 +225,6 @@ function NewReadingPageContent() {
           const { done, value } = await reader.read();
           if (done) {
             console.log("Stream done, total chunks:", chunksReceived, "content length:", content.length);
-            if (buffer.trim()) {
-              const text = parseSSEChunk(buffer);
-              if (text) {
-                content += text;
-                console.log("Final buffer content:", text.substring(0, 100));
-              }
-            }
             break;
           }
 
@@ -244,14 +237,19 @@ function NewReadingPageContent() {
 
           for (const line of lines) {
             if (line.startsWith("data: ")) {
-              const text = parseSSEChunk(line.slice(6));
+              const data = line.slice(6);
+              if (data === "[DONE]") {
+                console.log("Received [DONE]");
+                break;
+              }
+              const text = parseSSEChunk(data);
               if (text) {
                 content += text;
-                if (chunksReceived <= 5) {
-                  console.log(`Chunk ${chunksReceived}:`, text.substring(0, 50));
-                }
                 setStreamedContent(content);
                 setAiReading({ reading: content });
+                if (chunksReceived <= 3) {
+                  console.log(`Chunk ${chunksReceived}:`, JSON.stringify(text).substring(0, 50));
+                }
               }
             }
           }
