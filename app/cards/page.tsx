@@ -1,22 +1,36 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Card as CardType } from "@/lib/types";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Search, XCircle } from "lucide-react";
-import { getCards } from "@/lib/data";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Search, XCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { getCards, getCardById } from "@/lib/data";
+
+const CARD_CATEGORIES = {
+  people: ["Rider", "Gentleman", "Lady", "Lily", "Child", "Bear", "Fox", "Dog", "Stork", "Snake"],
+  emotions: ["Heart", "Bouquet", "Sun", "Clouds", "Stars", "Mice", "Coffin", "Ring"],
+  objects: ["Clover", "Ship", "House", "Tree", "Mountain", "Paths", "Garden", "Bouquet", "Key"],
+  events: ["Ship", "Mountain", "Paths", "Rider", "Letter", "Whip", "Birds"],
+  nature: ["Tree", "Clover", "House", "Mountain", "Stork", "Dog"],
+};
 
 export default function CardsPage() {
   const [cards, setCards] = useState<CardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filterAndSortCards = useCallback(() => {
     let filtered = cards;
@@ -24,21 +38,20 @@ export default function CardsPage() {
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter((card) => {
-        // Exact name match
-        const nameMatch = card.name.toLowerCase() === searchLower;
-
-        // Exact keyword match
+        const nameMatch = card.name.toLowerCase().includes(searchLower);
         const keywordMatch = card.keywords.some(
-          (keyword) => keyword.toLowerCase() === searchLower,
+          (keyword) => keyword.toLowerCase().includes(searchLower),
         );
-
-        // Substring match in meaning (allow partial matches in meaning)
         const meaningMatch = card.uprightMeaning
           .toLowerCase()
           .includes(searchLower);
-
         return nameMatch || keywordMatch || meaningMatch;
       });
+    }
+
+    if (selectedCategory !== "all") {
+      const categoryCards = CARD_CATEGORIES[selectedCategory as keyof typeof CARD_CATEGORIES] || [];
+      filtered = filtered.filter((card) => categoryCards.includes(card.name));
     }
 
     filtered = [...filtered].sort((a, b) => {
@@ -50,7 +63,7 @@ export default function CardsPage() {
     });
 
     setFilteredCards(filtered);
-  }, [cards, searchTerm, sortBy]);
+  }, [cards, searchTerm, sortBy, selectedCategory]);
 
   useEffect(() => {
     fetchCards();
@@ -63,17 +76,6 @@ export default function CardsPage() {
   const fetchCards = async () => {
     try {
       const cardsData = await getCards();
-      console.log("CardsPage - loaded cards:", cardsData.length);
-      console.log(
-        "CardsPage - first card has meaning:",
-        !!cardsData[0]?.meaning,
-      );
-      if (cardsData[0]?.meaning) {
-        console.log(
-          "CardsPage - first card meaning keys:",
-          Object.keys(cardsData[0].meaning),
-        );
-      }
       setCards(cardsData);
       setFilteredCards(cardsData);
       setLoading(false);
@@ -84,13 +86,29 @@ export default function CardsPage() {
     }
   };
 
+  const openCardModal = (card: CardType) => {
+    setSelectedCard(card);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedCard(null);
+  };
+
+  const navigateCard = (direction: "prev" | "next") => {
+    if (!selectedCard) return;
+    const currentIndex = filteredCards.findIndex((c) => c.id === selectedCard.id);
+    let newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0) newIndex = filteredCards.length - 1;
+    if (newIndex >= filteredCards.length) newIndex = 0;
+    setSelectedCard(filteredCards[newIndex]);
+  };
+
   const skeletonCards = Array.from({ length: 12 }).map((_, i) => (
-    <div key={`skeleton-${i}`} className="space-component">
+    <div key={`skeleton-${i}`} className="space-y-2">
       <Skeleton className="aspect-[2.5/3.5] w-full rounded-lg" />
-      <div className="mt-2 space-y-2">
-        <Skeleton className="mx-auto h-4 w-24" />
-        <Skeleton className="mx-auto h-3 w-16" />
-      </div>
+      <Skeleton className="mx-auto h-4 w-20" />
     </div>
   ));
 
@@ -98,22 +116,21 @@ export default function CardsPage() {
     return (
       <div className="container-section">
         <div className="mb-8">
-          <h1>The Sacred Deck</h1>
+          <h1>The Deck</h1>
           <p className="ethereal-glow mt-2">
-            Journey through the 36 archetypes that hold the keys to
-            understanding
+            All 36 Lenormand cards with meanings and keywords
           </p>
         </div>
 
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <Skeleton className="h-10 flex-1" />
-          <div className="flex w-full gap-2 sm:w-auto sm:gap-3">
-            <Skeleton className="h-9 flex-1 sm:w-32" />
-            <Skeleton className="h-9 flex-1 sm:w-32" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-24" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
           {skeletonCards}
         </div>
       </div>
@@ -123,9 +140,9 @@ export default function CardsPage() {
   return (
     <div className="container-section">
       <div className="mb-8">
-        <h1>The Sacred Deck</h1>
+        <h1>The Deck</h1>
         <p className="ethereal-glow mt-2">
-          Journey through the 36 archetypes that hold the keys to understanding
+          All 36 Lenormand cards with meanings and keywords
         </p>
       </div>
 
@@ -140,50 +157,159 @@ export default function CardsPage() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search cards by name, keyword, or meaning..."
+            placeholder="Search cards..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
-        <div className="flex w-full gap-2 sm:w-auto sm:gap-3">
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="h-10 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+        >
+          <option value="all">All Categories</option>
+          <option value="people">People</option>
+          <option value="emotions">Emotions</option>
+          <option value="objects">Objects</option>
+          <option value="events">Events</option>
+          <option value="nature">Nature</option>
+        </select>
+        <div className="flex gap-2">
           <Button
             variant={sortBy === "number" ? "default" : "outline"}
             onClick={() => setSortBy("number")}
             size="sm"
-            className="flex-1 sm:flex-none"
           >
-            Sort by Number
+            Number
           </Button>
           <Button
             variant={sortBy === "name" ? "default" : "outline"}
             onClick={() => setSortBy("name")}
             size="sm"
-            className="flex-1 sm:flex-none"
           >
-            Sort by Name
+            Name
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {filteredCards.length > 0 && (
+        <div className="mb-6 text-sm text-muted-foreground">
+          Showing {filteredCards.length} of {cards.length} cards
+        </div>
+      )}
+
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {filteredCards.map((card) => (
-          <div key={card.id} className="space-component">
+          <div
+            key={card.id}
+            className="cursor-pointer group"
+            onClick={() => openCardModal(card)}
+          >
             <Card
               card={card}
-              size="md"
-              className="mystical-float group mx-auto group-hover:scale-105"
+              size="sm"
+              className="mx-auto transition-transform group-hover:scale-105"
             />
+            <div className="mt-2 text-center">
+              <div className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">
+                {card.name}
+              </div>
+              <div className="text-xs text-muted-foreground">#{card.id}</div>
+            </div>
           </div>
         ))}
       </div>
 
       {filteredCards.length === 0 && (
-        <div className="text-center text-muted-foreground">
-          No cards found matching your search. Try different keywords or browse
-          all cards.
+        <div className="py-12 text-center text-muted-foreground">
+          No cards found. Try a different search or category.
         </div>
       )}
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-2xl">
+          {selectedCard && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline">#{selectedCard.id}</Badge>
+                    <DialogTitle className="text-xl">{selectedCard.name}</DialogTitle>
+                  </div>
+                </div>
+              </DialogHeader>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="relative aspect-[2.5/3.5] overflow-hidden rounded-lg">
+                  <Image
+                    src={selectedCard.imageUrl || ""}
+                    alt={selectedCard.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Keywords</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedCard.keywords.map((keyword) => (
+                        <Badge key={keyword} variant="secondary">
+                          {keyword}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Meaning</h4>
+                    <p className="text-sm leading-relaxed">{selectedCard.uprightMeaning}</p>
+                  </div>
+
+                  {selectedCard.combos && selectedCard.combos.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        Common Combinations
+                      </h4>
+                      <div className="space-y-2">
+                        {selectedCard.combos.slice(0, 3).map((combo) => {
+                          const relatedCard = getCardById(cards, combo.withCardId);
+                          return (
+                            <div key={combo.withCardId} className="text-sm">
+                              <span className="font-medium">{selectedCard.name} + {relatedCard?.name || `Card ${combo.withCardId}`}:</span>{" "}
+                              <span className="text-muted-foreground">{combo.meaning}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t">
+                <Button variant="outline" size="sm" onClick={() => navigateCard("prev")}>
+                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={closeModal}
+                  className="text-muted-foreground"
+                >
+                  Close
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigateCard("next")}>
+                  Next
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
