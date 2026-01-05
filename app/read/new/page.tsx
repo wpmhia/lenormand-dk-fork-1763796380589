@@ -169,13 +169,12 @@ function NewReadingPageContent() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    // Timeout after 60 seconds
     const timeoutId = setTimeout(() => {
       controller.abort();
       setAiError("Request timed out");
       setAiLoading(false);
       setIsStreaming(false);
-    }, 60000);
+    }, 90000);
 
     setAiLoading(true);
     setAiError(null);
@@ -221,36 +220,63 @@ function NewReadingPageContent() {
       let buffer = "";
 
       while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-          if (buffer.trim()) {
-            const text = parseSSEChunk(buffer);
-            if (text) {
-              content += text;
+        try {
+          const { done, value } = await reader.read();
+          if (done) {
+            if (buffer.trim()) {
+              const text = parseSSEChunk(buffer);
+              if (text) {
+                content += text;
+              }
+            }
+            break;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const text = parseSSEChunk(line.slice(6));
+              if (text) {
+                content += text;
+                setStreamedContent(content);
+                setAiReading({ reading: content });
+              }
             }
           }
+        } catch (streamError) {
+          if (streamError instanceof Error && streamError.name === "AbortError") {
+            break;
+          }
+          console.warn("Stream read error, falling back to waiting:", streamError);
           break;
-        }
-
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const text = parseSSEChunk(line.slice(6));
-            if (text) {
-              content += text;
-              setStreamedContent(content);
-              setAiReading({ reading: content });
-            }
-          }
         }
       }
 
-      setAiReading({ reading: content });
-      setStreamedContent(content);
+      if (content.length > 0) {
+        setAiReading({ reading: content });
+        setStreamedContent(content);
+      } else {
+        console.log("Stream was empty, waiting for full response...");
+        setIsStreaming(false);
+        setAiLoading(true);
+        const fullResponse = await fetch("/api/readings/interpret", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...aiRequest, _fallback: true }),
+        });
+
+        if (fullResponse.ok) {
+          const data = await fullResponse.json();
+          if (data.reading) {
+            setAiReading({ reading: data.reading });
+            setStreamedContent(data.reading);
+          }
+        }
+      }
     } catch (error) {
       if (error instanceof Error && error.name !== "AbortError") {
         console.error("Streaming error:", error);

@@ -80,18 +80,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const { question, cards, spreadId } = body;
+    const { question, cards, spreadId, _fallback } = body;
 
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
     const maxTokens = getMaxTokens(cards.length);
 
-    logger.info(`[${requestId}] Streaming response`, {
+    logger.info(`[${requestId}] ${_fallback ? "Non-streaming" : "Streaming"} response`, {
       cardCount: cards.length,
       spreadId: spreadId || "sentence-3",
       maxTokens,
     });
 
-    // Direct fetch to DeepSeek, bypassing AI SDK
     const deepseekResponse = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
@@ -106,7 +105,7 @@ export async function POST(request: Request) {
         ],
         temperature: 0.4,
         max_tokens: maxTokens,
-        stream: true,
+        stream: !_fallback,
       }),
     });
 
@@ -123,6 +122,15 @@ export async function POST(request: Request) {
       return new Response(
         JSON.stringify({ error: "No response body from DeepSeek" }),
         { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (_fallback) {
+      const data = await deepseekResponse.json();
+      const content = data.choices?.[0]?.message?.content || "";
+      return new Response(
+        JSON.stringify({ reading: content }),
+        { headers: { "Content-Type": "application/json" } }
       );
     }
 
