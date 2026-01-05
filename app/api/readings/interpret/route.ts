@@ -39,7 +39,7 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
   }
 
   if (!body.question || typeof body.question !== "string") {
-    return { valid: false, error: "Question must be a non-empty string" };
+    return { valid: false, error: "Question is required" };
   }
 
   return { valid: true };
