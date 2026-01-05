@@ -279,7 +279,7 @@
   }
 
   .btn-group-hero-item {
-    @apply h-16 flex-1 rounded-lg;
+    @apply h-16 flex-1 rounded-lg cursor-pointer;
   }
 
   /* Touch target spacing - Accessibility standard 44x44px */
