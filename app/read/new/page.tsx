@@ -77,6 +77,15 @@ function NewReadingPageContent() {
   const mountedRef = useRef(true);
   const aiAnalysisStartedRef = useRef(false);
 
+  // Debug state changes and initial render
+  useEffect(() => {
+    console.log("State changed: step=", step, ", path=", path);
+  }, [step, path]);
+
+  useEffect(() => {
+    console.log("Initial render - step:", step, ", path:", path);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const addLog = useCallback((msg: string) => {
     setDebugLog((prev) => [
       ...prev,
@@ -672,7 +681,9 @@ function NewReadingPageContent() {
                       </Label>
                       <div className="btn-group-hero">
                         <Button
+                          id="btn-draw-cards"
                           onClick={() => {
+                            console.log("Button clicked: Draw cards for me");
                             setPath("virtual");
                             setStep("drawing");
                           }}
@@ -683,7 +694,9 @@ function NewReadingPageContent() {
                           ✨ Draw cards for me
                         </Button>
                         <Button
+                          id="btn-have-cards"
                           onClick={() => {
+                            console.log("Button clicked: I already have cards");
                             setPath("physical");
                             setStep("drawing");
                           }}
