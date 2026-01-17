@@ -97,7 +97,9 @@ export function AIReadingDisplay({
         await navigator.clipboard.writeText(fullContent);
         setCopyClicked(true);
         setTimeout(() => setCopyClicked(false), 2000);
-      } catch (fallbackErr) {}
+      } catch (fallbackErr) {
+        console.error("Copy to clipboard failed:", fallbackErr);
+      }
     }
   };
 

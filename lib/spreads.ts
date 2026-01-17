@@ -102,6 +102,7 @@ export const MODERN_SPREADS: Spread[] = [
 ];
 
 // All spreads combined - Authentic first, then Modern
+// sentence-3 is intentionally NOT duplicated in MODERN_SPREADS to avoid confusion
 export const COMPREHENSIVE_SPREADS: Spread[] = [
   ...AUTHENTIC_SPREADS,
   ...MODERN_SPREADS,
