@@ -39,12 +39,15 @@ export function CookieConsent() {
 
   useEffect(() => {
     setMounted(true);
+    console.log("CookieConsent: mounted");
     
     // Check for test mode via URL
     const urlParams = new URLSearchParams(window.location.search);
     const testMode = urlParams.get("test-cookies");
+    console.log("CookieConsent: testMode =", testMode);
     
     if (testMode === "true") {
+      console.log("CookieConsent: showing banner (test mode)");
       setShowBanner(true);
       return;
     }
@@ -52,9 +55,11 @@ export function CookieConsent() {
     // Check if user has already made a choice
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
     const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
+    console.log("CookieConsent: consent =", consent);
 
     if (!consent) {
       // First visit - show banner
+      console.log("CookieConsent: showing banner (no consent)");
       setShowBanner(true);
     } else if (savedPreferences) {
       try {
