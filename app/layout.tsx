@@ -61,21 +61,21 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://lenormand-intelligence.com",
+    url: "https://lenormand.dk",
     siteName: "Lenormand Intelligence",
     title: "Lenormand Intelligence | AI-Powered Lenormand Card Readings",
     description:
       "Get personalized Lenormand card readings powered by AI. Explore card meanings, learn divination techniques, and discover guidance from the 36-card deck.",
     images: [
       {
-        url: "https://lenormand-intelligence.com/favicon-512.png",
+        url: "https://lenormand.dk/favicon-512.png",
         width: 512,
         height: 512,
         alt: "Lenormand Intelligence - AI-Powered Card Readings",
         type: "image/png",
       },
       {
-        url: "https://lenormand-intelligence.com/images/hero-image.jpg",
+        url: "https://lenormand.dk/images/hero-image.jpg",
         width: 1200,
         height: 800,
         alt: "Lenormand Intelligence - AI-Powered Card Readings",
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     title: "Lenormand Intelligence | AI-Powered Lenormand Card Readings",
     description:
       "Get personalized Lenormand card readings powered by AI. Explore card meanings and discover guidance.",
-    images: ["https://lenormand-intelligence.com/favicon-512.png"],
+    images: ["https://lenormand.dk/favicon-512.png"],
     creator: "@LenormandAI",
   },
   icons: {
@@ -127,7 +127,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://lenormand-intelligence.com",
+    canonical: "https://lenormand.dk",
   },
 };
 
