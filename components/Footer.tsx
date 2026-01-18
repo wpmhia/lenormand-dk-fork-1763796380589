@@ -90,20 +90,12 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/faq"
+                  href="/learn/history-basics"
                   className="text-muted-foreground transition-colors hover:text-primary"
                 >
-                  FAQ
+                  History
                 </Link>
               </li>
-                <li>
-                  <Link
-                    href="/learn/history-basics"
-                    className="text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    History
-                  </Link>
-                </li>
               <li>
                 <Link
                   href="/about"
