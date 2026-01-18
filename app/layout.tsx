@@ -183,26 +183,7 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://storage.ko-fi.com" />
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8"
-          strategy="lazyOnload"
-        />
-        <Script
-          id="google-analytics"
-          strategy="lazyOnload"
-          dangerouslySetInnerHTML={{
-            __html: `
-               window.dataLayer = window.dataLayer || [];
-               function gtag(){dataLayer.push(arguments);}
-               gtag('js', new Date());
-               gtag('config', 'G-WDLWCCJCY8');
-              `,
-          }}
-        />
         <Script
           id="schema-org"
           type="application/ld+json"
