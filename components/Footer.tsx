@@ -88,14 +88,14 @@ export function Footer() {
                   Spreads
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/learn/history"
-                  className="text-muted-foreground transition-colors hover:text-primary"
-                >
-                  History
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      href="/learn/history-basics"
+                      className="text-muted-foreground transition-colors hover:text-primary"
+                    >
+                      History
+                    </Link>
+                  </li>
               <li>
                 <Link
                   href="/about"
