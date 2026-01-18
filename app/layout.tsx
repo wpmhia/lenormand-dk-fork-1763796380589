@@ -181,10 +181,6 @@ export default function RootLayout({
             <CookieConsent />
           </ThemeProvider>
         </TooltipProvider>
-        <StructuredData />
-        <FAQSchema />
-        <HowToSchema />
-        <LearningCourseSchema />
       </body>
     </html>
   );
