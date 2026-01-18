@@ -11,6 +11,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import {
   StructuredData,
   FAQSchema,
+  HowToSchema,
   LearningCourseSchema,
 } from "@/lib/structured-data";
 
@@ -182,6 +183,7 @@ export default function RootLayout({
         </TooltipProvider>
         <StructuredData />
         <FAQSchema />
+        <HowToSchema />
         <LearningCourseSchema />
       </body>
     </html>
