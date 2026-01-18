@@ -8,12 +8,6 @@ import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/providers";
 import { Header } from "@/components/header";
 import { CookieConsent } from "@/components/CookieConsent";
-import {
-  StructuredData,
-  FAQSchema,
-  HowToSchema,
-  LearningCourseSchema,
-} from "@/lib/structured-data";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -132,6 +126,47 @@ export const metadata: Metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Lenormand Intelligence",
+  description: "AI-powered Lenormand card readings and divination guidance platform",
+  url: "https://lenormand.dk",
+  applicationCategory: "Lifestyle",
+  isAccessibleForFree: true,
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is Lenormand?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Lenormand is a 36-card cartomancy system named after Marie-Anne Lenormand. It uses everyday symbolism read in combinations to tell stories.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How many cards are in a Lenormand deck?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A traditional Lenormand deck has exactly 36 cards, from the Rider (card 1) to the Key (card 36).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do Lenormand cards differ from tarot?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Lenormand uses 36 concrete cards read as sentences for direct guidance, while Tarot uses 78 archetypal cards for psychological insight.",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -168,6 +203,16 @@ export default function RootLayout({
               `,
           }}
         />
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
       </head>
       <body className={`${inter.className} antialiased`}>
         <TooltipProvider>
@@ -181,10 +226,6 @@ export default function RootLayout({
             <CookieConsent />
           </ThemeProvider>
         </TooltipProvider>
-        <StructuredData />
-        <FAQSchema />
-        <HowToSchema />
-        <LearningCourseSchema />
       </body>
     </html>
   );
