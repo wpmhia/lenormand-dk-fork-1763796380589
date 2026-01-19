@@ -636,24 +636,42 @@ export default function SpreadsPage() {
                   </div>
                 );
               })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Advanced Techniques */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle
-              id="reading-techniques"
-              className="flex items-center text-2xl text-foreground"
-            >
-              <Target className="mr-3 h-6 w-6 text-primary" />
-              Advanced Reading Techniques
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 md:grid-cols-2">
-              {techniques.map((technique, index) => (
+             </div>
+           </CardContent>
+         </Card>
+       
+         {/* Advanced Techniques */}
+         <Card className="mb-8 border-border bg-card">
+           <CardHeader>
+             <CardTitle className="flex items-center text-2xl text-foreground">
+               <Target className="mr-3 h-6 w-6 text-primary" />
+               Advanced Reading Techniques
+             </CardTitle>
+           </CardHeader>
+           <CardContent>
+             <div className="grid gap-6 md:grid-cols-2">
+               {techniques.map((technique, index) => (
+                 <Card key={index} className="border border-border bg-muted">
+                   <CardContent className="p-6">
+                     <div className="flex items-start gap-3">
+                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                         <technique.icon className="h-5 w-5 text-white" />
+                       </div>
+                       <div>
+                         <h4 className="text-sm font-semibold text-foreground">
+                           {technique.name}
+                         </h4>
+                         <p className="text-sm text-muted-foreground">
+                           {technique.description}
+                         </p>
+                       </div>
+                     </div>
+                   </CardContent>
+                 </Card>
+               ))}
+             </div>
+           </CardContent>
+         </Card>
                 <Card key={index} className="border border-border bg-muted">
                   <CardContent className="p-6">
                     <div className="mb-4 flex items-center space-x-3">
