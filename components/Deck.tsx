@@ -11,7 +11,6 @@ interface DeckProps {
   cards: CardType[];
   onDraw?: (cards: CardType[]) => void;
   drawCount?: number;
-  showAnimation?: boolean;
   isProcessing?: boolean;
 }
 
@@ -19,7 +18,6 @@ export function Deck({
   cards,
   onDraw,
   drawCount = 3,
-  showAnimation = true,
   isProcessing = false,
 }: DeckProps) {
   const [deck, setDeck] = useState<CardType[]>(cards || []);
