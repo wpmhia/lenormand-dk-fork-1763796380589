@@ -112,14 +112,22 @@ export function Footer() {
                     Privacy
                   </Link>
                 </li>
-                <li>
-                  <button
-                    onClick={resetCookieConsent}
-                    className="text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    Cookie Preferences
-                  </button>
-                </li>
+                 <li>
+                   <button
+                     onClick={resetCookieConsent}
+                     className="text-muted-foreground transition-colors hover:text-primary"
+                   >
+                     Cookie Preferences
+                   </button>
+                 </li>
+                 <li>
+                   <Link
+                     href="/privacy#cookie-management"
+                     className="text-muted-foreground transition-colors hover:text-primary"
+                   >
+                     Cookie Help
+                   </Link>
+                 </li>
             </ul>
           </div>
 

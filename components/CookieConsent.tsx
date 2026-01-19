@@ -40,16 +40,30 @@ export function CookieConsent() {
   useEffect(() => {
     setMounted(true);
 
-    // Check for test mode via URL
     const urlParams = new URLSearchParams(window.location.search);
     const testMode = urlParams.get("test-cookies");
+    const forceShow = urlParams.get("show-cookies");
 
-    if (testMode === "true") {
+    if (testMode === "true" || forceShow === "true") {
       setShowBanner(true);
       return;
     }
 
-    // Check if user has already made a choice
+    // DEBUG: Log cookie state for troubleshooting
+    if (typeof window !== 'undefined') {
+      const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+      const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
+      console.log('[Cookie Banner Debug]', {
+        testMode,
+        forceShow,
+        consent,
+        savedPreferences,
+        shouldShow: !consent && !savedPreferences,
+      });
+    }
+
+
+  // Check if user has already made a choice
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
     const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
 
@@ -65,8 +79,13 @@ export function CookieConsent() {
             necessary: parsed.necessary ?? true,
           });
         }
-      } catch {
-        localStorage.removeItem(COOKIE_PREFERENCES_KEY);
+      } catch (error) {
+        console.error('[Cookie Banner] Failed to parse saved preferences:', error);
+        // Don't delete preferences on parse error - keep them and use defaults
+        setPreferences({
+          analytics: false,
+          necessary: true,
+        });
       }
     }
   }, []);

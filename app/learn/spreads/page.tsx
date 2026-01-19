@@ -334,7 +334,7 @@ const spreads = [
         description:
           "The most comprehensive Lenormand reading using all 36 cards",
         layout:
-          "6x6 grid with traditional house positions and significator placement",
+          "4 rows of 9 cards (traditional French 'salon' method)",
         useCase:
           "Major life decisions, year-ahead readings, complex relationship issues",
         difficulty: "Expert",
@@ -928,6 +928,200 @@ export default function SpreadsPage() {
                 description of how Lenormand actually worked. No houses, no
                 knighting, no clutter—just the raw 36-card map she spread on the
                 table in Paris in 1809.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cards of Fate Section */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <Star className="mr-3 h-6 w-6 text-amber-500" />
+              The Cards of Fate (Destiny Zone)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-muted-foreground">
+              In traditional Lenormand, four cards carry special weight as
+              <strong className="text-amber-600">"Cards of Fate"</strong>. When
+              multiple appear together in a reading, they create a powerful
+              <strong>destiny zone</strong> that indicates the ultimate
+              trajectory or outcome of the matter at hand.
+            </p>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="border border-amber-500/30 bg-amber-500/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Sun className="h-5 w-5 text-amber-500" />
+                    <h4 className="text-sm font-semibold text-foreground">32. The Sun</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Success, happiness, clarity, vitality
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Provides illumination, positive outcome, certainty
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-primary/30 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Moon className="h-5 w-5 text-primary" />
+                    <h4 className="text-sm font-semibold text-foreground">33. The Moon</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Emotions, intuition, dreams, cycles
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Influences timing, adds emotional depth
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-primary/30 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Key className="h-5 w-5 text-primary" />
+                    <h4 className="text-sm font-semibold text-foreground">33. The Key</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Solutions, answers, unlocking, access
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Opens doors, provides answers, breakthroughs
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-primary/30 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Fish className="h-5 w-5 text-primary" />
+                    <h4 className="text-sm font-semibold text-foreground">34. The Fish</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Abundance, wealth, business, multiplication
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Financial matters, prosperity indicators
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 mt-4">
+              <p className="text-sm italic text-foreground">
+                When multiple Cards of Fate appear together in a reading, they create
+                a powerful <strong>destiny zone</strong> that indicates the ultimate
+                trajectory or outcome of the matter at hand.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cards of Fate Section */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <Star className="mr-3 h-6 w-6 text-amber-500" />
+              The Cards of Fate (Destiny Zone)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="leading-relaxed text-muted-foreground">
+              In traditional Lenormand, four cards carry special weight as
+              <strong className="text-amber-600">"Cards of Fate"</strong>. When
+              multiple appear together in a reading, they create a powerful
+              <strong>destiny zone</strong> that indicates the ultimate
+              trajectory or outcome of the matter at hand.
+            </p>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="border border-amber-500/30 bg-amber-500/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Sun className="h-5 w-5 text-amber-500" />
+                    <h4 className="text-sm font-semibold text-foreground">32. The Sun</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Success, happiness, clarity, vitality
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Provides illumination, positive outcome, certainty
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-primary/30 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Moon className="h-5 w-5 text-primary" />
+                    <h4 className="text-sm font-semibold text-foreground">33. The Moon</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Emotions, intuition, dreams, cycles
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Influences timing, adds emotional depth
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-primary/30 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Key className="h-5 w-5 text-primary" />
+                    <h4 className="text-sm font-semibold text-foreground">33. The Key</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Solutions, answers, unlocking, access
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Opens doors, provides answers, breakthroughs
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border border-primary/30 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-2">
+                    <Fish className="h-5 w-5 text-primary" />
+                    <h4 className="text-sm font-semibold text-foreground">34. The Fish</h4>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    Abundance, wealth, business, multiplication
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Role:</strong> Financial matters, prosperity indicators
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 mt-4">
+              <p className="text-sm italic text-foreground">
+                When multiple Cards of Fate appear together in a reading, they create
+                a powerful <strong>destiny zone</strong> that indicates the ultimate
+                trajectory or outcome of the matter at hand.
               </p>
             </div>
           </CardContent>

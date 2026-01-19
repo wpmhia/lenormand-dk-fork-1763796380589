@@ -25,16 +25,22 @@ export const LEARNING_MODULES = [
     order: 4,
   },
   {
+    id: "grand-tableau-techniques",
+    title: "Grand Tableau Techniques",
+    path: "/learn/grand-tableau-techniques",
+    order: 5,
+  },
+  {
     id: "advanced",
     title: "Advanced Concepts",
     path: "/learn/advanced",
-    order: 5,
+    order: 6,
   },
   {
     id: "marie-annes-system",
     title: "Marie-Anne's System",
     path: "/learn/marie-annes-system",
-    order: 6,
+    order: 7,
   },
 ];
 
