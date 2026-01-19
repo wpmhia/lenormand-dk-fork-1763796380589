@@ -3,11 +3,12 @@
 // Format: "1-2" or "card1-card2" (both formats supported)
 
 export interface CardCombination {
-  cards: string[]; // e.g., ["1", "2"] or ["Rider", "Clover"]
+  cards: (string | number)[]; // e.g., ["1", "2"] or ["Rider", "Clover"] or [1, 2]
   meaning: string;
   context?: string;
   examples?: string[];
   strength?: 'positive' | 'negative' | 'neutral' | 'mixed';
+  category?: string;
 }
 
 export interface CombinationCategory {
@@ -17,7 +18,10 @@ export interface CombinationCategory {
 }
 
 // Format key for consistent storage: "cardA-cardB" (lowercase, hyphens)
-function formatKey(card1: number | string, card2: number | string): string {
+function formatKey(card1: number | string | undefined, card2: number | string | undefined): string {
+  if (card1 === undefined || card2 === undefined) {
+    return '';
+  }
   const id1 = typeof card1 === 'number' ? card1 : card1.toLowerCase();
   const id2 = typeof card2 === 'number' ? card2 : card2.toLowerCase();
   return `${id1}-${id2}`;
@@ -28,7 +32,67 @@ function formatKey(card1: number | string, card2: number | string): string {
 // Based on traditional Lenormand meanings + practical modern interpretations
 // ============================================================================
 
+// Card name to number mapping for lookups
+const CARD_NAME_TO_NUMBER: Record<string, number> = {
+  'rider': 1, 'the rider': 1,
+  'clover': 2, 'the clover': 2,
+  'ship': 3, 'the ship': 3,
+  'house': 4, 'the house': 4,
+  'tree': 5, 'the tree': 5,
+  'clouds': 6, 'the clouds': 6,
+  'snake': 7, 'the snake': 7,
+  'coffin': 8, 'the coffin': 8,
+  'bouquet': 9, 'the bouquet': 9,
+  'scythe': 10, 'the scythe': 10,
+  'whip': 11, 'the whip': 11,
+  'birds': 12, 'the birds': 12,
+  'child': 13, 'the child': 13,
+  'fox': 14, 'the fox': 14,
+  'bear': 15, 'the bear': 15,
+  'stars': 16, 'the stars': 16, 'star': 16,
+  'stork': 17, 'the stork': 17,
+  'dog': 18, 'the dog': 18,
+  'tower': 19, 'the tower': 19,
+  'garden': 20, 'the garden': 20,
+  'mountain': 21, 'the mountain': 21,
+  'road': 22, 'the road': 22,
+  'mice': 23, 'the mice': 23,
+  'heart': 24, 'the heart': 24,
+  'ring': 25, 'the ring': 25,
+  'book': 26, 'the book': 26,
+  'letter': 27, 'the letter': 27,
+  'man': 28, 'the man': 28,
+  'woman': 29, 'the woman': 29,
+  'lily': 30, 'the lily': 30,
+  'fish': 31, 'the fish': 31,
+  'anchor': 32, 'the anchor': 32,
+  'cross': 33, 'the cross': 33,
+};
+
+const CARD_NUMBER_TO_NAME: Record<number, string> = {
+  1: 'rider', 2: 'clover', 3: 'ship', 4: 'house', 5: 'tree',
+  6: 'clouds', 7: 'snake', 8: 'coffin', 9: 'bouquet', 10: 'scythe',
+  11: 'whip', 12: 'birds', 13: 'child', 14: 'fox', 15: 'bear',
+  16: 'stars', 17: 'stork', 18: 'dog', 19: 'tower', 20: 'garden',
+  21: 'mountain', 22: 'road', 23: 'mice', 24: 'heart', 25: 'ring',
+  26: 'book', 27: 'letter', 28: 'man', 29: 'woman', 30: 'lily',
+  31: 'fish', 32: 'anchor', 33: 'cross',
+};
+
 export const COMBINATION_DATABASE: Record<string, CardCombination> = {};
+
+// Helper to convert card name to number
+function nameToNumber(card: number | string): number | string {
+  if (typeof card === 'number') return card;
+  return CARD_NAME_TO_NUMBER[card.toLowerCase()] || card;
+}
+
+// Helper to check if card matches (handles both number and string formats)
+function cardMatches(card: number | string, comboCard: number | string): boolean {
+  const c1 = nameToNumber(card);
+  const c2 = nameToNumber(comboCard);
+  return c1 === c2;
+}
 
 // ============================================================================
 // LOVE & RELATIONSHIPS
@@ -669,8 +733,20 @@ COMBINATION_DATABASE[formatKey(23, 33)] = {
  * Supports both number IDs and card names
  */
 export function getCombination(card1: number | string, card2: number | string): CardCombination | null {
-  const key = formatKey(card1, card2);
-  return COMBINATION_DATABASE[key] || null;
+  if (card1 === undefined || card2 === undefined) {
+    return null;
+  }
+  const num1 = nameToNumber(card1);
+  const num2 = nameToNumber(card2);
+  const key = formatKey(num1, num2);
+  if (COMBINATION_DATABASE[key]) {
+    return COMBINATION_DATABASE[key];
+  }
+  const key2 = formatKey(num2, num1);
+  if (key2 && COMBINATION_DATABASE[key2]) {
+    return COMBINATION_DATABASE[key2];
+  }
+  return null;
 }
 
 /**
@@ -686,11 +762,10 @@ export function getOrderedCombination(card1: number | string, card2: number | st
  * Get all combinations for a specific card
  */
 export function getCardCombinations(card: number | string): CardCombination[] {
-  const target = typeof card === 'number' ? card : card.toLowerCase();
   const results: CardCombination[] = [];
   
-  for (const [key, combo] of Object.entries(COMBINATION_DATABASE)) {
-    if (combo.cards.includes(target)) {
+  for (const combo of Object.values(COMBINATION_DATABASE)) {
+    if (combo.cards.some(c => cardMatches(card, c))) {
       results.push(combo);
     }
   }
@@ -713,8 +788,9 @@ export function getCombinationsByCategory(category: string): CardCombination[] {
   };
   
   for (const combo of Object.values(COMBINATION_DATABASE)) {
-    if (categories[combo.category]) {
-      categories[combo.category].push(combo);
+    const categoryKey = combo.category || 'universal';
+    if (categories[categoryKey]) {
+      categories[categoryKey].push(combo);
     }
   }
   

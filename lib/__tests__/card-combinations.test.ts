@@ -518,20 +518,20 @@ describe('Card Combinations Database', () => {
       
       expect(result1).not.toBeNull();
       expect(result2).not.toBeNull();
-      expect(result1?.cards).toEqual([1, 'clover']);
-      expect(result2?.cards).toEqual(['rider', 2]);
+      expect(result1?.cards).toEqual([1, 2]);
+      expect(result2?.cards).toEqual([1, 2]);
     });
 
     it('should handle uppercase card names', () => {
       const result = getCombination('RIDER', 'HEART');
       expect(result).not.toBeNull();
-      expect(result?.cards).toEqual(['rider', 'heart']);
+      expect(result?.cards).toEqual([1, 24]);
     });
 
     it('should handle mixed case card names', () => {
       const result = getCombination('RiDeR', 'HeArT');
       expect(result).not.toBeNull();
-      expect(result?.cards).toEqual(['rider', 'heart']);
+      expect(result?.cards).toEqual([1, 24]);
     });
 
     it('should return null for undefined inputs', () => {

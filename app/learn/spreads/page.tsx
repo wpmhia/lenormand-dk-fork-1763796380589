@@ -16,6 +16,11 @@ import {
   TrendingUp,
   Clock,
   MapPin,
+  Star,
+  Sun,
+  Moon,
+  Key,
+  Fish,
 } from "lucide-react";
 
 const spreads = [
@@ -671,46 +676,9 @@ export default function SpreadsPage() {
                ))}
              </div>
            </CardContent>
-         </Card>
-                <Card key={index} className="border border-border bg-muted">
-                  <CardContent className="p-6">
-                    <div className="mb-4 flex items-center space-x-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                        <technique.icon className="h-5 w-5 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-foreground">
-                        {technique.name}
-                      </h3>
-                    </div>
+          </Card>
 
-                    <p className="mb-4 text-sm text-muted-foreground">
-                      {technique.description}
-                    </p>
-
-                    <div>
-                      <h4 className="mb-3 text-sm font-semibold text-foreground">
-                        Examples:
-                      </h4>
-                      <ul className="space-y-1">
-                        {technique.examples.map((example, exIndex) => (
-                          <li
-                            key={exIndex}
-                            className="flex items-start text-sm text-muted-foreground"
-                          >
-                            <span className="mr-2 text-primary">•</span>
-                            {example}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Grand Tableau - Historical Salon Method */}
+          {/* Grand Tableau - Historical Salon Method */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
@@ -763,8 +731,7 @@ export default function SpreadsPage() {
                     ))}
                   </div>
                   <p className="mt-3 text-xs text-primary dark:text-primary/80">
-                    4 rows × 9 columns (historical
-                    &quot;salon&quot;quot;salon&quot;salon&quot;quot; formation)
+                    4 rows × 9 columns (historical &quot;salon&quot; formation)
                   </p>
                 </div>
               </div>
@@ -781,8 +748,7 @@ export default function SpreadsPage() {
                 </li>
                 <li>
                   • Cut toward yourself with the left hand
-                  ((&quot;feminine&quot;quot;feminine(&quot;feminine&quot;quot;
-                  cut—Lenormand&apos;s requirement)
+                  (&quot;feminine&quot; cut—Lenormand&apos;s requirement)
                 </li>
                 <li>
                   • Turn face-up and deal left-to-right in four rows of nine,{" "}
@@ -944,7 +910,7 @@ export default function SpreadsPage() {
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-muted-foreground">
               In traditional Lenormand, four cards carry special weight as
-              <strong className="text-amber-600">"Cards of Fate"</strong>. When
+              <strong className="text-amber-600">&quot;Cards of Fate&quot;</strong>. When
               multiple appear together in a reading, they create a powerful
               <strong>destiny zone</strong> that indicates the ultimate
               trajectory or outcome of the matter at hand.
@@ -1041,7 +1007,7 @@ export default function SpreadsPage() {
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-muted-foreground">
               In traditional Lenormand, four cards carry special weight as
-              <strong className="text-amber-600">"Cards of Fate"</strong>. When
+              <strong className="text-amber-600">&quot;Cards of Fate&quot;</strong>. When
               multiple appear together in a reading, they create a powerful
               <strong>destiny zone</strong> that indicates the ultimate
               trajectory or outcome of the matter at hand.

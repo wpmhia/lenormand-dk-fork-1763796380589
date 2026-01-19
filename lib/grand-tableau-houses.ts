@@ -299,7 +299,7 @@ export function getCardInHouseMeaning(cardNumber: number, position: number): {
   const cardMeaning = house?.name || "Unknown";
   
   return {
-    card: cardNumber,
+    card: cardNumber.toString(),
     cardName: cardMeaning,
     position: position,
     positionName: house?.name || "Unknown",
