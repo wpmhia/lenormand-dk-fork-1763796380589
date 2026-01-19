@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Calendar, User, Share2, Sparkles, XCircle } from "lucide-react";
 import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
 import { getCards, decodeReadingFromUrl, getCardById } from "@/lib/data";
-import { AIReadingResponse } from "@/lib/deepseek";
+import { AIReadingResponse } from "@/lib/ai-config";
 
 interface PageProps {
   params: {

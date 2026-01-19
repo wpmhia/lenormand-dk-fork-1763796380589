@@ -66,34 +66,15 @@ function NewReadingPageContent() {
     null,
   );
   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([]);
-  const [cardSuggestions, setCardSuggestions] = useState<string[]>([]);
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([]);
   const [error, setError] = useState("");
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
   const [questionCharCount, setQuestionCharCount] = useState(0);
-  const [debugLog, setDebugLog] = useState<string[]>([]);
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
+  const canProceed = true;
 
   const mountedRef = useRef(true);
   const aiAnalysisStartedRef = useRef(false);
-
-  // Debug state changes and initial render
-  useEffect(() => {
-    console.log("State changed: step=", step, ", path=", path);
-  }, [step, path]);
-
-  useEffect(() => {
-    console.log("Initial render - step:", step, ", path:", path);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const addLog = useCallback((msg: string) => {
-    setDebugLog((prev) => [
-      ...prev,
-      `${new Date().toISOString().split("T")[1].split(".")[0]} ${msg}`,
-    ]);
-  }, []);
-
-  const canProceed = true;
 
   const performReset = useCallback(
     (keepUrlParams = false) => {
@@ -153,10 +134,9 @@ function NewReadingPageContent() {
     async function loadCards() {
       const cards = await getCards();
       setAllCards(cards);
-      addLog("Cards loaded: " + cards.length);
     }
     loadCards();
-  }, [addLog]);
+  }, []);
 
   // AI streaming state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
@@ -317,12 +297,11 @@ function NewReadingPageContent() {
       !aiAnalysisStartedRef.current
     ) {
       aiAnalysisStartedRef.current = true;
-      addLog("Auto-starting AI analysis");
       performStreamingAnalysis();
     } else if (step !== "results") {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, performStreamingAnalysis, addLog]);
+  }, [step, drawnCards, performStreamingAnalysis]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): ReadingCard[] => {
@@ -396,16 +375,9 @@ function NewReadingPageContent() {
           return;
         }
 
-        console.log(
-          "Setting state: drawnCards =",
-          readingCards.length,
-          ", step = results",
-        );
         setDrawnCards(readingCards);
         setStep("results");
-        console.log("State update complete");
       } catch (error) {
-        console.error("Error in handleDraw:", error);
         if (mountedRef.current) {
           const errorMsg =
             error instanceof Error
@@ -432,9 +404,7 @@ function NewReadingPageContent() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        if (canProceed) {
-          handleDraw(parsedCards);
-        }
+        handleDraw(parsedCards);
       }
     };
 
@@ -442,7 +412,7 @@ function NewReadingPageContent() {
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
-  }, [path, parsedCards, selectedSpread.cards, canProceed, handleDraw]);
+  }, [path, parsedCards, handleDraw]);
 
   // Clear AI error when loading starts
   useEffect(() => {
@@ -683,7 +653,6 @@ function NewReadingPageContent() {
                         <Button
                           id="btn-draw-cards"
                           onClick={() => {
-                            console.log("Button clicked: Draw cards for me");
                             setPath("virtual");
                             setStep("drawing");
                           }}
@@ -696,7 +665,6 @@ function NewReadingPageContent() {
                         <Button
                           id="btn-have-cards"
                           onClick={() => {
-                            console.log("Button clicked: I already have cards");
                             setPath("physical");
                             setStep("drawing");
                           }}
@@ -846,20 +814,10 @@ function NewReadingPageContent() {
                                 </div>
                               );
                             })}
-                          </div>
-                        )}
+                            </div>
+                          )}
 
-                        {/* Suggestions */}
-                        {cardSuggestions.length > 0 && (
-                          <div className="space-y-1">
-                            <p className="text-xs text-amber-600 dark:text-amber-400">
-                              Did you mean:{" "}
-                              {cardSuggestions.slice(0, 3).join(", ")}?
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Error and Help Text */}
+                          {/* Error and Help Text */}
                         <div className="space-y-1">
                           {physicalCardsError && (
                             <p

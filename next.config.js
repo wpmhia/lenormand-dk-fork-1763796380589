@@ -37,7 +37,7 @@ const nextConfig = {
           },
           {
             key: "X-Frame-Options",
-            value: "ALLOWALL",
+            value: "SAMEORIGIN",
           },
           {
             key: "X-XSS-Protection",
