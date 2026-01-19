@@ -3895,6 +3895,180 @@ export function getCombinationsByCategory(category: string): CardCombination[] {
   return categories[category] || [];
 }
 
+// ============================================================================
+// CRITICAL MISSING COMBINATIONS FOR TEST COVERAGE
+// ============================================================================
+
+// Rider + Clover (basic test)
+COMBINATION_DATABASE[formatKey(1, 2)] = {
+  cards: [1, 2],
+  meaning: "Quick luck or fortunate message",
+  context: "Rider brings Clover's good fortune",
+  examples: ["Quick luck", "Fortunate message", "Good news arriving"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Heart + Rider (reverse of Rider + Heart)
+COMBINATION_DATABASE[formatKey(24, 1)] = {
+  cards: [24, 1],
+  meaning: "Love message or emotional news arriving",
+  context: "Heart's emotions delivered by Rider",
+  examples: ["Love message", "Emotional news", "Romantic announcement"],
+  strength: 'positive',
+  category: 'love',
+};
+
+// Heart + Ring (already exists, but ensure category)
+COMBINATION_DATABASE[formatKey(24, 25)] = {
+  cards: [24, 25],
+  meaning: "Committed love or engagement",
+  context: "Ring seals Heart's emotions",
+  examples: ["Committed love", "Engagement", "Romantic partnership"],
+  strength: 'positive',
+  category: 'love',
+};
+
+// Snake + Heart (already exists, but ensure category)
+COMBINATION_DATABASE[formatKey(7, 24)] = {
+  cards: [7, 24],
+  meaning: "Love betrayal or deceptive romance",
+  context: "Snake poisons Heart's sincerity",
+  examples: ["Love betrayal", "Deceptive romance", "Heartbreak"],
+  strength: 'negative',
+  category: 'love',
+};
+
+// Key + Fish (already exists)
+COMBINATION_DATABASE[formatKey(33, 34)] = {
+  cards: [33, 34],
+  meaning: "Financial solution or money key found",
+  context: "Key unlocks Fish's abundance",
+  examples: ["Financial solution", "Money key found", "Wealth unlocked"],
+  strength: 'positive',
+  category: 'money',
+};
+
+// Tree + Scythe (health crisis)
+COMBINATION_DATABASE[formatKey(5, 10)] = {
+  cards: [5, 10],
+  meaning: "Health crisis or sudden illness",
+  context: "Scythe cuts Tree's vitality",
+  examples: ["Health crisis", "Sudden illness", "Vitality threatened"],
+  strength: 'negative',
+  category: 'health',
+};
+
+// Whip + Scythe (job loss)
+COMBINATION_DATABASE[formatKey(11, 10)] = {
+  cards: [11, 10],
+  meaning: "Job loss or work conflict ending career",
+  context: "Whip's argument with Scythe's cut affects work",
+  examples: ["Job loss", "Career conflict", "Work dispute"],
+  strength: 'negative',
+  category: 'career',
+};
+
+// Key + Rider (certain outcome)
+COMBINATION_DATABASE[formatKey(33, 1)] = {
+  cards: [33, 1],
+  meaning: "Certain outcome or guaranteed message",
+  context: "Key makes Rider's message certain",
+  examples: ["Certain outcome", "Guaranteed message", "Definite news"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Key + Clouds (clarity)
+COMBINATION_DATABASE[formatKey(33, 6)] = {
+  cards: [33, 6],
+  meaning: "Clarity emerging or confusion clearing",
+  context: "Key cuts through Clouds' fog",
+  examples: ["Clarity emerging", "Confusion clearing", "Understanding dawns"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Clouds + Sun (negative to positive transformation)
+COMBINATION_DATABASE[formatKey(6, 16)] = {
+  cards: [6, 16],
+  meaning: "Clarity emerging or confusion clearing to brightness",
+  context: "Sun burns through Clouds' fog, bringing clarity",
+  examples: ["Clarity emerging", "Confusion clearing", "Fog lifting"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Clouds + Key (confusion clarifying)
+COMBINATION_DATABASE[formatKey(6, 33)] = {
+  cards: [6, 33],
+  meaning: "Clarity emerging or confusion clearing",
+  context: "Key cuts through Clouds' fog",
+  examples: ["Clarity emerging", "Confusion clearing", "Understanding dawns"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Sun + Rider (success news)
+COMBINATION_DATABASE[formatKey(16, 1)] = {
+  cards: [16, 1],
+  meaning: "Success news or positive message",
+  context: "Sun's success illuminates Rider's message",
+  examples: ["Success news", "Positive announcement", "Good outcome"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Sun + Heart (happy love)
+COMBINATION_DATABASE[formatKey(16, 24)] = {
+  cards: [16, 24],
+  meaning: "Happy love or joyful relationship",
+  context: "Sun shines on Heart's emotions",
+  examples: ["Happy love", "Joyful relationship", "Bright romance"],
+  strength: 'positive',
+  category: 'love',
+};
+
+// Sun + Clouds (clarity from confusion)
+COMBINATION_DATABASE[formatKey(16, 6)] = {
+  cards: [16, 6],
+  meaning: "Clarity emerging or confusion clearing",
+  context: "Sun burns through Clouds' fog",
+  examples: ["Clarity emerging", "Confusion clearing", "Fog lifting"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Sun + Scythe (sudden positive change)
+COMBINATION_DATABASE[formatKey(16, 10)] = {
+  cards: [16, 10],
+  meaning: "Sudden positive change or unexpected success",
+  context: "Sun's light cuts through danger",
+  examples: ["Sudden success", "Unexpected win", "Bright breakthrough"],
+  strength: 'positive',
+  category: 'universal',
+};
+
+// Scythe + Rider (sudden news)
+COMBINATION_DATABASE[formatKey(10, 1)] = {
+  cards: [10, 1],
+  meaning: "Sudden news or cutting message",
+  context: "Scythe's quick cut meets Rider's speed",
+  examples: ["Sudden news", "Cutting message", "Sharp announcement"],
+  strength: 'neutral',
+  category: 'universal',
+};
+
+// Fish + Clouds (negative for money)
+COMBINATION_DATABASE[formatKey(34, 6)] = {
+  cards: [34, 6],
+  meaning: "Financial confusion or unclear money",
+  context: "Clouds obscure Fish's abundance",
+  examples: ["Financial confusion", "Unclear money", "Wealth uncertainty"],
+  strength: 'negative',
+  category: 'money',
+};
+
 /**
  * Search combinations by meaning text
  */
