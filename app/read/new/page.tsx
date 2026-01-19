@@ -91,7 +91,6 @@ function NewReadingPageContent() {
       setPhysicalCards("");
       setPhysicalCardsError(null);
       setParsedCards([]);
-      setCardSuggestions([]);
       setPath(null);
       aiAnalysisStartedRef.current = false;
 
