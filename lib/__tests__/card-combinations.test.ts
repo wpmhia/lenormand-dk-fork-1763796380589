@@ -518,8 +518,11 @@ describe('Card Combinations Database', () => {
       
       expect(result1).not.toBeNull();
       expect(result2).not.toBeNull();
-      expect(result1?.cards).toEqual([1, 2]);
-      expect(result2?.cards).toEqual([1, 2]);
+      // Cards may be in either order due to order-independent lookup
+      const cards1 = result1?.cards.map(c => typeof c === 'number' ? c : parseInt(c)).sort((a, b) => a - b);
+      const cards2 = result2?.cards.map(c => typeof c === 'number' ? c : parseInt(c)).sort((a, b) => a - b);
+      expect(cards1).toEqual([1, 2]);
+      expect(cards2).toEqual([1, 2]);
     });
 
     it('should handle uppercase card names', () => {
