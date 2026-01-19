@@ -538,7 +538,6 @@ describe('Card Combinations Database', () => {
     });
 
     it('should return null for undefined inputs', () => {
-      // @ts-expect-error - Testing undefined handling
       const result = getCombination(undefined as any, undefined as any);
       expect(result).toBeNull();
     });
