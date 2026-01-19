@@ -98,7 +98,7 @@ export function AIReadingDisplay({
         setCopyClicked(true);
         setTimeout(() => setCopyClicked(false), 2000);
       } catch (fallbackErr) {
-        console.error("Copy to clipboard failed:", fallbackErr);
+        // Fallback silently - clipboard is best-effort
       }
     }
   };

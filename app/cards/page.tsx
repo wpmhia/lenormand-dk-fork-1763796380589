@@ -116,7 +116,6 @@ export default function CardsPage() {
       setFilteredCards(cardsData);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching cards:", error);
       setError("Unable to load cards. Please refresh the page to try again.");
       setLoading(false);
     }

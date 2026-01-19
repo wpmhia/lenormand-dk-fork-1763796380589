@@ -72,7 +72,6 @@ export default function CardDetailPage({ params }: PageProps) {
         setAllCards(cardsData);
         setCard(cardData);
       } catch (error) {
-        console.error("Error loading card:", error);
         notFound();
         return;
       } finally {

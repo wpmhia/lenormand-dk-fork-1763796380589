@@ -87,8 +87,7 @@ export default function SharedReadingPage({ params }: PageProps) {
 
         setAllCards(cardsData);
         setReading(reading);
-      } catch (error) {
-        console.error("Error loading shared reading:", error);
+        } catch (error) {
         notFound();
         return;
       } finally {
@@ -151,7 +150,6 @@ export default function SharedReadingPage({ params }: PageProps) {
         try {
           aiResult = JSON.parse(responseText);
         } catch (parseError) {
-          console.error("Frontend JSON parse error:", parseError);
           throw new Error("Invalid response format from server");
         }
 
@@ -165,8 +163,6 @@ export default function SharedReadingPage({ params }: PageProps) {
           }
         }
       } catch (error) {
-        console.error("AI analysis failed:", error);
-
         if (mountedRef.current) {
           const errorMessage =
             error instanceof Error ? error.message : "AI analysis failed";
@@ -225,7 +221,7 @@ export default function SharedReadingPage({ params }: PageProps) {
       try {
         await navigator.clipboard.writeText(window.location.href);
       } catch (err) {
-        console.error("Failed to copy:", err);
+        // Clipboard is best-effort - silently fail
       }
     }
   };
