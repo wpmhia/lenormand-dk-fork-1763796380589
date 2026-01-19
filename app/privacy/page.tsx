@@ -253,7 +253,8 @@ export default function PrivacyPage() {
             </CardContent>
           </Card>
 
-          <Card id="cookie-management" className="border-border bg-muted scroll-mt-4">
+                    {/* eslint-disable-next-line tailwindcss/classnames-order */}
+          <Card id="cookie-management" className="mt-4 scroll-mt-4 border-border bg-muted">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-foreground">
                 <Cookie className="h-5 w-5 text-primary/80" />

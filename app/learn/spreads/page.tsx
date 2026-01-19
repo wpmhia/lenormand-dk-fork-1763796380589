@@ -925,7 +925,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Success, happiness, clarity, vitality
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -942,7 +942,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Emotions, intuition, dreams, cycles
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -959,7 +959,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Solutions, answers, unlocking, access
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -976,7 +976,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Abundance, wealth, business, multiplication
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -986,7 +986,7 @@ export default function SpreadsPage() {
               </Card>
             </div>
 
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 mt-4">
+            <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
               <p className="text-sm italic text-foreground">
                 When multiple Cards of Fate appear together in a reading, they create
                 a powerful <strong>destiny zone</strong> that indicates the ultimate
@@ -1022,7 +1022,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Success, happiness, clarity, vitality
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -1039,7 +1039,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Emotions, intuition, dreams, cycles
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -1056,7 +1056,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Solutions, answers, unlocking, access
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -1073,7 +1073,7 @@ export default function SpreadsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium text-foreground mb-2">
+                  <p className="mb-2 text-sm font-medium text-foreground">
                     Abundance, wealth, business, multiplication
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -1083,7 +1083,7 @@ export default function SpreadsPage() {
               </Card>
             </div>
 
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 mt-4">
+            <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
               <p className="text-sm italic text-foreground">
                 When multiple Cards of Fate appear together in a reading, they create
                 a powerful <strong>destiny zone</strong> that indicates the ultimate

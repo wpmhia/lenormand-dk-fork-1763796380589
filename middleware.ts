@@ -4,11 +4,28 @@ import type { NextRequest } from "next/server";
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS = 100;
+const CLEANUP_INTERVAL = 60 * 1000;
+
+let lastCleanup = Date.now();
+
+function cleanupOldEntries() {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL) {
+    return;
+  }
+  lastCleanup = now;
+  for (const [ip, record] of rateLimitMap.entries()) {
+    if (record.resetTime < now) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}
 
 export function middleware(request: NextRequest) {
   const ip = request.ip || "unknown";
   const now = Date.now();
-  const windowStart = now - WINDOW_MS;
+
+  cleanupOldEntries();
 
   const record = rateLimitMap.get(ip);
 
