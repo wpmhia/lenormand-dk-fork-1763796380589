@@ -64,9 +64,9 @@ const CARD_NAME_TO_NUMBER: Record<string, number> = {
   'man': 28, 'the man': 28,
   'woman': 29, 'the woman': 29,
   'lily': 30, 'the lily': 30,
-  'fish': 31, 'the fish': 31,
-  'anchor': 32, 'the anchor': 32,
-  'cross': 33, 'the cross': 33,
+  'fish': 34, 'the fish': 34,
+  'anchor': 35, 'the anchor': 35,
+  'cross': 36, 'the cross': 36,
 };
 
 const CARD_NUMBER_TO_NAME: Record<number, string> = {
@@ -76,7 +76,7 @@ const CARD_NUMBER_TO_NAME: Record<number, string> = {
   16: 'stars', 17: 'stork', 18: 'dog', 19: 'tower', 20: 'garden',
   21: 'mountain', 22: 'road', 23: 'mice', 24: 'heart', 25: 'ring',
   26: 'book', 27: 'letter', 28: 'man', 29: 'woman', 30: 'lily',
-  31: 'fish', 32: 'anchor', 33: 'cross',
+  34: 'fish', 35: 'anchor', 36: 'cross',
 };
 
 export const COMBINATION_DATABASE: Record<string, CardCombination> = {};
@@ -528,8 +528,8 @@ COMBINATION_DATABASE[formatKey(6, 24)] = {
 // ============================================================================
 
 // KEY (33) - Certainty and unlocking
-COMBINATION_DATABASE[formatKey(33, 1)] = {
-  cards: [33, 1],
+COMBINATION_DATABASE[formatKey(36, 1)] = {
+  cards: [36, 1],
   meaning: "Certain outcome, confirmed news, definite answer or guaranteed message",
   context: "Key's unlocking power makes Rider's message certain",
   examples: ["Definite news", "Confirmed outcome", "Certain message"],
@@ -542,38 +542,38 @@ COMBINATION_DATABASE[formatKey(1, 33)] = {
   examples: ["Quick answer", "Solution arrives", "Key result incoming"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 24)] = {
-  cards: [33, 24],
+COMBINATION_DATABASE[formatKey(36, 24)] = {
+  cards: [36, 24],
   meaning: "Love matter resolved, emotional clarity certain or heart issue unlocked",
   context: "Key provides certainty to Heart's love energy",
   examples: ["Love solved", "Emotional certainty", "Heart issue resolved"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 28)] = {
-  cards: [33, 28],
+COMBINATION_DATABASE[formatKey(36, 28)] = {
+  cards: [36, 28],
   meaning: "Second person's path clear, their situation resolved or their destiny unlocked",
   context: "Key provides certainty for Woman's journey",
   examples: ["Her path clear", "Her situation resolved", "Her destiny unlocked"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 29)] = {
-  cards: [33, 29],
+COMBINATION_DATABASE[formatKey(36, 29)] = {
+  cards: [36, 29],
   meaning: "Relationship matter certain, partnership locked in or second person's future confirmed",
   context: "Key's binding nature confirms Woman's involvement",
   examples: ["Partnership certain", "Relationship confirmed", "Commitment locked in"],
   strength: 'positive',
 };
 
-COMBINATION_DATABASE[formatKey(33, 34)] = {
-  cards: [33, 34],
+COMBINATION_DATABASE[formatKey(36, 34)] = {
+  cards: [36, 34],
   meaning: "Financial certainty, wealth access granted or money matter resolved",
   context: "Key unlocks Fish's abundance",
   examples: ["Wealth access", "Financial solution", "Money matter certain"],
   strength: 'positive',
 };
 
-COMBINATION_DATABASE[formatKey(33, 4)] = {
-  cards: [33, 4],
+COMBINATION_DATABASE[formatKey(36, 4)] = {
+  cards: [36, 4],
   meaning: "Home situation certain, family matter resolved or stability confirmed",
   context: "Key locks down House's security",
   examples: ["Home matter solved", "Family resolved", "Housing certain"],
@@ -658,43 +658,43 @@ COMBINATION_DATABASE[formatKey(35, 25)] = {
 };
 
 // SUN (31) - Success, happiness, clarity, vitality
-COMBINATION_DATABASE[formatKey(31, 1)] = {
-  cards: [31, 1],
+COMBINATION_DATABASE[formatKey(34, 1)] = {
+  cards: [34, 1],
   meaning: "Successful news, positive message or happy communication",
   context: "Sun's illumination brightens Rider's message",
   examples: ["Happy news", "Positive message", "Successful communication"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 24)] = {
-  cards: [31, 24],
+COMBINATION_DATABASE[formatKey(34, 24)] = {
+  cards: [34, 24],
   meaning: "Happy love, successful relationship or joyous romance",
   context: "Sun's success warms Heart's love energy",
   examples: ["Happy love", "Joyful romance", "Successful relationship"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 6)] = {
-  cards: [31, 6],
+COMBINATION_DATABASE[formatKey(34, 6)] = {
+  cards: [34, 6],
   meaning: "Clarity from confusion, uncertainty resolved or obstacle overcome",
   context: "Sun's radiance burns away Clouds' fog",
   examples: ["Confusion cleared", "Obstacles overcome", "Clarity arrives"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 33)] = {
-  cards: [31, 33],
+COMBINATION_DATABASE[formatKey(34, 33)] = {
+  cards: [34, 33],
   meaning: "Success guaranteed, outcome certain, key to any matter found",
   context: "Sun's brilliance and Key's unlocking power combined",
   examples: ["Definite success", "Guaranteed outcome", "Certain answer"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 35)] = {
-  cards: [31, 35],
+COMBINATION_DATABASE[formatKey(34, 35)] = {
+  cards: [34, 35],
   meaning: "Lasting success, secure achievement or stable prosperity",
   context: "Sun's success anchored in long-term foundation",
   examples: ["Lasting success", "Secure achievement", "Stable prosperity"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 10)] = {
-  cards: [31, 10],
+COMBINATION_DATABASE[formatKey(34, 10)] = {
+  cards: [34, 10],
   meaning: "Sudden positive change, quick success or rapid improvement",
   context: "Sun's success harvested by Scythe's swift action",
   examples: ["Rapid success", "Quick improvement", "Sudden positive change"],
@@ -702,225 +702,225 @@ COMBINATION_DATABASE[formatKey(31, 10)] = {
 };
 
 // KEY (33) + Various
-COMBINATION_DATABASE[formatKey(33, 1)] = {
-  cards: [33, 1],
+COMBINATION_DATABASE[formatKey(36, 1)] = {
+  cards: [36, 1],
   meaning: "Solution to news, answer to message or clarity arriving",
   context: "Key unlocks meaning in Rider's communication",
   examples: ["News clarified", "Message understood", "Answer received"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 2)] = {
-  cards: [33, 2],
+COMBINATION_DATABASE[formatKey(36, 2)] = {
+  cards: [36, 2],
   meaning: "Lucky opportunity found, fortunate discovery or chance solution",
   context: "Key reveals Clover's hidden luck",
   examples: ["Lucky break", "Opportunity discovered", "Fortune's key"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 3)] = {
-  cards: [33, 3],
+COMBINATION_DATABASE[formatKey(36, 3)] = {
+  cards: [36, 3],
   meaning: "Journey solution, trip resolved or travel key found",
   context: "Key unlocks Ship's path forward",
   examples: ["Travel solved", "Journey clarified", "Trip resolved"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 4)] = {
-  cards: [33, 4],
+COMBINATION_DATABASE[formatKey(36, 4)] = {
+  cards: [36, 4],
   meaning: "Home solution found, property key or family answer",
   context: "Key unlocks House's security",
   examples: ["Home solved", "Property resolved", "Family matter clarified"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 5)] = {
-  cards: [33, 5],
+COMBINATION_DATABASE[formatKey(36, 5)] = {
+  cards: [36, 5],
   meaning: "Health solution found, healing key or wellness breakthrough",
   context: "Key reveals Tree's healing path",
   examples: ["Health solution", "Healing discovered", "Wellness breakthrough"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 6)] = {
-  cards: [33, 6],
+COMBINATION_DATABASE[formatKey(36, 6)] = {
+  cards: [36, 6],
   meaning: "Clarity after confusion, understanding emerges from fog",
   context: "Key cuts through Clouds' uncertainty",
   examples: ["Clarity emerges", "Confusion clears", "Understanding found"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 7)] = {
-  cards: [33, 7],
+COMBINATION_DATABASE[formatKey(36, 7)] = {
+  cards: [36, 7],
   meaning: "Deception revealed, truth exposed or hidden agenda uncovered",
   context: "Key uncovers Snake's deception",
   examples: ["Truth revealed", "Deception exposed", "Hidden motives uncovered"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 8)] = {
-  cards: [33, 8],
+COMBINATION_DATABASE[formatKey(36, 8)] = {
+  cards: [36, 8],
   meaning: "Transformation key, end of old and new beginning unlocked",
   context: "Key opens Coffin's new chapter",
   examples: ["New beginning unlocked", "Transformation key", "Cycle renewed"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 9)] = {
-  cards: [33, 9],
+COMBINATION_DATABASE[formatKey(36, 9)] = {
+  cards: [36, 9],
   meaning: "Gift received or key to joy and celebration",
   context: "Key unlocks Bouquet's rewards",
   examples: ["Gift received", "Joy unlocked", "Reward granted"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 10)] = {
-  cards: [33, 10],
+COMBINATION_DATABASE[formatKey(36, 10)] = {
+  cards: [36, 10],
   meaning: "Danger avoided, warning heeded or sharp decision made",
   context: "Key warns of Scythe's danger",
   examples: ["Danger avoided", "Warning heeded", "Sharp decision"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 11)] = {
-  cards: [33, 11],
+COMBINATION_DATABASE[formatKey(36, 11)] = {
+  cards: [36, 11],
   meaning: "Conflict resolved, argument settled or dispute ended",
   context: "Key ends Whip's argument",
   examples: ["Conflict resolved", "Argument settled", "Dispute ended"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 12)] = {
-  cards: [33, 12],
+COMBINATION_DATABASE[formatKey(36, 12)] = {
+  cards: [36, 12],
   meaning: "Communication breakthrough, news understood or message clarity",
   context: "Key clarifies Birds' chatter",
   examples: ["Communication clear", "News understood", "Message received"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 13)] = {
-  cards: [33, 13],
+COMBINATION_DATABASE[formatKey(36, 13)] = {
+  cards: [36, 13],
   meaning: "New beginning or fresh start unlocked",
   context: "Key opens Child's new possibilities",
   examples: ["New beginning", "Fresh start", "Opportunity unlocked"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 14)] = {
-  cards: [33, 14],
+COMBINATION_DATABASE[formatKey(36, 14)] = {
+  cards: [36, 14],
   meaning: "Danger avoided or cunning plan backfires",
   context: "Key sees through Fox's tricks",
   examples: ["Trap avoided", "Cunning exposed", "Danger sidestepped"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 15)] = {
-  cards: [33, 15],
+COMBINATION_DATABASE[formatKey(36, 15)] = {
+  cards: [36, 15],
   meaning: "Power gained or strength discovered",
   context: "Key reveals Bear's strength",
   examples: ["Power gained", "Strength discovered", "Authority unlocked"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 16)] = {
-  cards: [33, 16],
+COMBINATION_DATABASE[formatKey(36, 16)] = {
+  cards: [36, 16],
   meaning: "Wish granted or hope realized",
   context: "Key unlocks Stars' wishes",
   examples: ["Wish granted", "Hope realized", "Dream fulfilled"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 17)] = {
-  cards: [33, 17],
+COMBINATION_DATABASE[formatKey(36, 17)] = {
+  cards: [36, 17],
   meaning: "Change resolved or new direction found",
   context: "Key guides Stork's transition",
   examples: ["Change resolved", "New direction found", "Transition complete"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 18)] = {
-  cards: [33, 18],
+COMBINATION_DATABASE[formatKey(36, 18)] = {
+  cards: [36, 18],
   meaning: "Trust confirmed or loyalty proven",
   context: "Key verifies Dog's loyalty",
   examples: ["Trust confirmed", "Loyalty proven", "Friendship key"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 19)] = {
-  cards: [33, 19],
+COMBINATION_DATABASE[formatKey(36, 19)] = {
+  cards: [36, 19],
   meaning: "Authority accessed or institutional solution",
   context: "Key opens Tower's doors",
   examples: ["Authority accessed", "Official solution", "Institution helps"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 20)] = {
-  cards: [33, 20],
+COMBINATION_DATABASE[formatKey(36, 20)] = {
+  cards: [36, 20],
   meaning: "Social solution or community key found",
   context: "Key unlocks Garden's social network",
   examples: ["Social connection", "Community key", "Network accessed"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 21)] = {
-  cards: [33, 21],
+COMBINATION_DATABASE[formatKey(36, 21)] = {
+  cards: [36, 21],
   meaning: "Obstacle overcome or mountain scaled",
   context: "Key finds path over Mountain",
   examples: ["Obstacle overcome", "Challenge resolved", "Mountain climbed"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 22)] = {
-  cards: [33, 22],
+COMBINATION_DATABASE[formatKey(36, 22)] = {
+  cards: [36, 22],
   meaning: "Right path found or journey direction clear",
   context: "Key shows the Way forward",
   examples: ["Right path found", "Direction clear", "Journey purpose"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 23)] = {
-  cards: [33, 23],
+COMBINATION_DATABASE[formatKey(36, 23)] = {
+  cards: [36, 23],
   meaning: "Problem solved or stress relieved",
   context: "Key stops Mice's destruction",
   examples: ["Problem solved", "Stress relieved", "Worry ended"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 24)] = {
-  cards: [33, 24],
+COMBINATION_DATABASE[formatKey(36, 24)] = {
+  cards: [36, 24],
   meaning: "Love solution or relationship key found",
   context: "Key unlocks Heart's desires",
   examples: ["Love solution", "Relationship key", "Heart's desire granted"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 25)] = {
-  cards: [33, 25],
+COMBINATION_DATABASE[formatKey(36, 25)] = {
+  cards: [36, 25],
   meaning: "Commitment key or binding agreement reached",
   context: "Key seals Ring's promise",
   examples: ["Commitment made", "Agreement sealed", "Promise granted"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 26)] = {
-  cards: [33, 26],
+COMBINATION_DATABASE[formatKey(36, 26)] = {
+  cards: [36, 26],
   meaning: "Knowledge revealed or secret uncovered",
   context: "Key opens Book's wisdom",
   examples: ["Knowledge revealed", "Secret uncovered", "Truth discovered"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 27)] = {
-  cards: [33, 27],
+COMBINATION_DATABASE[formatKey(36, 27)] = {
+  cards: [36, 27],
   meaning: "Letter solution or message understood",
   context: "Key unlocks Letter's meaning",
   examples: ["Letter understood", "Message decoded", "Communication resolved"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 28)] = {
-  cards: [33, 28],
+COMBINATION_DATABASE[formatKey(36, 28)] = {
+  cards: [36, 28],
   meaning: "First person's solution or key to their situation",
   context: "Key reveals Man's resolution",
   examples: ["My solution", "First person resolved", "Personal key found"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 29)] = {
-  cards: [33, 29],
+COMBINATION_DATABASE[formatKey(36, 29)] = {
+  cards: [36, 29],
   meaning: "Second person's answer or key to their situation",
   context: "Key reveals Woman's resolution",
   examples: ["Her answer", "Second person resolved", "Their key found"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 30)] = {
-  cards: [33, 30],
+COMBINATION_DATABASE[formatKey(36, 30)] = {
+  cards: [36, 30],
   meaning: "Peace found or calm restored",
   context: "Key brings Lily's serenity",
   examples: ["Peace found", "Calm restored", "Harmony restored"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 31)] = {
-  cards: [33, 31],
+COMBINATION_DATABASE[formatKey(36, 31)] = {
+  cards: [36, 31],
   meaning: "Financial solution or abundance unlocked",
   context: "Key reveals Fish's prosperity",
   examples: ["Money solution", "Abundance unlocked", "Financial key"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 32)] = {
-  cards: [33, 32],
+COMBINATION_DATABASE[formatKey(36, 32)] = {
+  cards: [36, 32],
   meaning: "Hope secured or anchor of hope",
   context: "Key secures Anchor's stability",
   examples: ["Hope secured", "Stability found", "Anchor of hope"],
@@ -1985,120 +1985,120 @@ COMBINATION_DATABASE[formatKey(30, 33)] = {
 };
 
 // FISH (31) + Various
-COMBINATION_DATABASE[formatKey(31, 1)] = {
-  cards: [31, 1],
+COMBINATION_DATABASE[formatKey(34, 1)] = {
+  cards: [34, 1],
   meaning: "Financial news or money message",
   context: "Fish's abundance meets Rider's speed",
   examples: ["Financial news", "Money message", "Wealth update"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 2)] = {
-  cards: [31, 2],
+COMBINATION_DATABASE[formatKey(34, 2)] = {
+  cards: [34, 2],
   meaning: "Lucky money or financial opportunity",
   context: "Clover attracts Fish's abundance",
   examples: ["Lucky money", "Financial opportunity", "Wealth blessing"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 3)] = {
-  cards: [31, 3],
+COMBINATION_DATABASE[formatKey(34, 3)] = {
+  cards: [34, 3],
   meaning: "Business travel or commercial journey",
   context: "Ship carries Fish's commerce",
   examples: ["Business travel", "Commercial journey", "Trade voyage"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 4)] = {
-  cards: [31, 4],
+COMBINATION_DATABASE[formatKey(34, 4)] = {
+  cards: [34, 4],
   meaning: "Property money or home wealth",
   context: "Fish swims in House's waters",
   examples: ["Property money", "Home wealth", "Domestic abundance"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 5)] = {
-  cards: [31, 5],
+COMBINATION_DATABASE[formatKey(34, 5)] = {
+  cards: [34, 5],
   meaning: "Health investment or wellness prosperity",
   context: "Fish nourishes Tree's growth",
   examples: ["Health investment", "Wellness prosperity", "Vital wealth"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 6)] = {
-  cards: [31, 6],
+COMBINATION_DATABASE[formatKey(34, 6)] = {
+  cards: [34, 6],
   meaning: "Financial confusion or unclear money",
   context: "Clouds obscure Fish's abundance",
   examples: ["Financial confusion", "Unclear money", "Wealth uncertainty"],
   strength: 'negative',
 };
-COMBINATION_DATABASE[formatKey(31, 7)] = {
-  cards: [31, 7],
+COMBINATION_DATABASE[formatKey(34, 7)] = {
+  cards: [34, 7],
   meaning: "Financial danger or money trap",
   context: "Snake hunts Fish's wealth",
   examples: ["Financial danger", "Money trap", "Wealth threat"],
   strength: 'negative',
 };
-COMBINATION_DATABASE[formatKey(31, 8)] = {
-  cards: [31, 8],
+COMBINATION_DATABASE[formatKey(34, 8)] = {
+  cards: [34, 8],
   meaning: "Financial ending or money loss",
   context: "Coffin closes on Fish's abundance",
   examples: ["Financial ending", "Money loss", "Wealth change"],
   strength: 'negative',
 };
-COMBINATION_DATABASE[formatKey(31, 9)] = {
-  cards: [31, 9],
+COMBINATION_DATABASE[formatKey(34, 9)] = {
+  cards: [34, 9],
   meaning: "Generous gift or wealthy present",
   context: "Fish gives Bouquet's generosity",
   examples: ["Generous gift", "Wealthy present", "Abundant reward"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 10)] = {
-  cards: [31, 10],
+COMBINATION_DATABASE[formatKey(34, 10)] = {
+  cards: [34, 10],
   meaning: "Financial danger or wealth at risk",
   context: "Scythe threatens Fish's abundance",
   examples: ["Financial danger", "Wealth at risk", "Money threatened"],
   strength: 'negative',
 };
-COMBINATION_DATABASE[formatKey(31, 11)] = {
-  cards: [31, 11],
+COMBINATION_DATABASE[formatKey(34, 11)] = {
+  cards: [34, 11],
   meaning: "Financial conflict or money dispute",
   context: "Whip's argument over Fish's wealth",
   examples: ["Financial conflict", "Money dispute", "Wealth argument"],
   strength: 'negative',
 };
-COMBINATION_DATABASE[formatKey(31, 12)] = {
-  cards: [31, 12],
+COMBINATION_DATABASE[formatKey(34, 12)] = {
+  cards: [34, 12],
   meaning: "Financial news or business communication",
   context: "Birds carry Fish's updates",
   examples: ["Financial news", "Business communication", "Wealth updates"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 16)] = {
-  cards: [31, 16],
+COMBINATION_DATABASE[formatKey(34, 16)] = {
+  cards: [34, 16],
   meaning: "Financial dreams or abundance hopes",
   context: "Stars reflect Fish's abundance",
   examples: ["Financial dreams", "Abundance hopes", "Wealth aspirations"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 24)] = {
-  cards: [31, 24],
+COMBINATION_DATABASE[formatKey(34, 24)] = {
+  cards: [34, 24],
   meaning: "Financial love or romantic wealth",
   context: "Fish nourishes Heart's desires",
   examples: ["Financial love", "Romantic wealth", "Abundant romance"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 25)] = {
-  cards: [31, 25],
+COMBINATION_DATABASE[formatKey(34, 25)] = {
+  cards: [34, 25],
   meaning: "Financial commitment or business partnership",
   context: "Ring seals Fish's wealth",
   examples: ["Financial commitment", "Business partnership", "Wealth bond"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 32)] = {
-  cards: [31, 32],
+COMBINATION_DATABASE[formatKey(34, 32)] = {
+  cards: [34, 32],
   meaning: "Stable finances or secure wealth",
   context: "Anchor secures Fish's abundance",
   examples: ["Stable finances", "Secure wealth", "Anchored money"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(31, 33)] = {
-  cards: [31, 33],
+COMBINATION_DATABASE[formatKey(34, 33)] = {
+  cards: [34, 33],
   meaning: "Financial trial or money test",
   context: "Cross tests Fish's abundance",
   examples: ["Financial trial", "Money test", "Wealth challenge"],
@@ -2106,99 +2106,99 @@ COMBINATION_DATABASE[formatKey(31, 33)] = {
 };
 
 // ANCHOR (32) + Various
-COMBINATION_DATABASE[formatKey(32, 1)] = {
-  cards: [32, 1],
+COMBINATION_DATABASE[formatKey(35, 1)] = {
+  cards: [35, 1],
   meaning: "Secure news or stable message",
   context: "Anchor secures Rider's message",
   examples: ["Secure news", "Stable message", "Reliable communication"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 2)] = {
-  cards: [32, 2],
+COMBINATION_DATABASE[formatKey(35, 2)] = {
+  cards: [35, 2],
   meaning: "Stable luck or secure opportunity",
   context: "Anchor secures Clover's luck",
   examples: ["Stable luck", "Secure opportunity", "Reliable fortune"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 3)] = {
-  cards: [32, 3],
+COMBINATION_DATABASE[formatKey(35, 3)] = {
+  cards: [35, 3],
   meaning: "Journey to stability or travel toward security",
   context: "Ship seeks Anchor's harbor",
   examples: ["Journey to stability", "Travel toward security", "Voyage to safety"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 4)] = {
-  cards: [32, 4],
+COMBINATION_DATABASE[formatKey(35, 4)] = {
+  cards: [35, 4],
   meaning: "Secure home or stable domestic situation",
   context: "Anchor secures House's foundation",
   examples: ["Secure home", "Stable domestic", "Safe household"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 5)] = {
-  cards: [32, 5],
+COMBINATION_DATABASE[formatKey(35, 5)] = {
+  cards: [35, 5],
   meaning: "Stable health or anchored wellness",
   context: "Anchor secures Tree's growth",
   examples: ["Stable health", "Anchored wellness", "Rooted recovery"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 6)] = {
-  cards: [32, 6],
+COMBINATION_DATABASE[formatKey(35, 6)] = {
+  cards: [35, 6],
   meaning: "Stable confusion or secure uncertainty",
   context: "Anchor meets Clouds' fog",
   examples: ["Stable confusion", "Secure uncertainty", "Anchored fog"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(32, 7)] = {
-  cards: [32, 7],
+COMBINATION_DATABASE[formatKey(35, 7)] = {
+  cards: [35, 7],
   meaning: "Hidden stability or concealed danger",
   context: "Anchor hides Snake's threat",
   examples: ["Hidden stability", "Concealed danger", "Secure threat"],
   strength: 'mixed',
 };
-COMBINATION_DATABASE[formatKey(32, 8)] = {
-  cards: [32, 8],
+COMBINATION_DATABASE[formatKey(35, 8)] = {
+  cards: [35, 8],
   meaning: "Stable ending or secure transformation",
   context: "Anchor before Coffin's change",
   examples: ["Stable ending", "Secure transformation", "Final anchor"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(32, 9)] = {
-  cards: [32, 9],
+COMBINATION_DATABASE[formatKey(35, 9)] = {
+  cards: [35, 9],
   meaning: "Secure gift or stable celebration",
   context: "Anchor secures Bouquet's gift",
   examples: ["Secure gift", "Stable celebration", "Safe reward"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 10)] = {
-  cards: [32, 10],
+COMBINATION_DATABASE[formatKey(35, 10)] = {
+  cards: [35, 10],
   meaning: "Secure danger or stable warning",
   context: "Anchor before Scythe's cut",
   examples: ["Secure danger", "Stable warning", "Safe threat"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(32, 16)] = {
-  cards: [32, 16],
+COMBINATION_DATABASE[formatKey(35, 16)] = {
+  cards: [35, 16],
   meaning: "Hopeful stability or anchored dreams",
   context: "Stars reflect Anchor's stability",
   examples: ["Hopeful stability", "Anchored dreams", "Secure aspirations"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 24)] = {
-  cards: [32, 24],
+COMBINATION_DATABASE[formatKey(35, 24)] = {
+  cards: [35, 24],
   meaning: "Stable love or secure relationship",
   context: "Anchor secures Heart's emotions",
   examples: ["Stable love", "Secure relationship", "Anchored romance"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 25)] = {
-  cards: [32, 25],
+COMBINATION_DATABASE[formatKey(35, 25)] = {
+  cards: [35, 25],
   meaning: "Secure commitment or stable partnership",
   context: "Anchor seals Ring's promise",
   examples: ["Secure commitment", "Stable partnership", "Anchored bond"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(32, 31)] = {
-  cards: [32, 31],
+COMBINATION_DATABASE[formatKey(35, 31)] = {
+  cards: [35, 31],
   meaning: "Stable finances or secure wealth",
   context: "Anchor secures Fish's abundance",
   examples: ["Stable finances", "Secure wealth", "Anchored money"],
@@ -2206,78 +2206,78 @@ COMBINATION_DATABASE[formatKey(32, 31)] = {
 };
 
 // CROSS (33) + Various
-COMBINATION_DATABASE[formatKey(33, 1)] = {
-  cards: [33, 1],
+COMBINATION_DATABASE[formatKey(36, 1)] = {
+  cards: [36, 1],
   meaning: "Trial of news or burden of message",
   context: "Cross weighs Rider's message",
   examples: ["Trial of news", "Burden of message", "Test of communication"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 2)] = {
-  cards: [33, 2],
+COMBINATION_DATABASE[formatKey(36, 2)] = {
+  cards: [36, 2],
   meaning: "Trial of luck or test of fortune",
   context: "Cross tests Clover's blessing",
   examples: ["Trial of luck", "Test of fortune", "Burden of blessing"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 3)] = {
-  cards: [33, 3],
+COMBINATION_DATABASE[formatKey(36, 3)] = {
+  cards: [36, 3],
   meaning: "Spiritual journey or pilgrimage",
   context: "Cross guides Ship's voyage",
   examples: ["Spiritual journey", "Pilgrimage", "Faith travel"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 4)] = {
-  cards: [33, 4],
+COMBINATION_DATABASE[formatKey(36, 4)] = {
+  cards: [36, 4],
   meaning: "Family trial or domestic burden",
   context: "Cross weighs on House",
   examples: ["Family trial", "Domestic burden", "Household challenge"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 5)] = {
-  cards: [33, 5],
+COMBINATION_DATABASE[formatKey(36, 5)] = {
+  cards: [36, 5],
   meaning: "Health trial or spiritual wellness",
   context: "Cross tests Tree's resilience",
   examples: ["Health trial", "Spiritual wellness", "Healing faith"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 16)] = {
-  cards: [33, 16],
+COMBINATION_DATABASE[formatKey(36, 16)] = {
+  cards: [36, 16],
   meaning: "Spiritual hopes or faith's dreams",
   context: "Cross meets Stars' aspirations",
   examples: ["Spiritual hopes", "Faith's dreams", "Divine aspirations"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 24)] = {
-  cards: [33, 24],
+COMBINATION_DATABASE[formatKey(36, 24)] = {
+  cards: [36, 24],
   meaning: "Trial of love or burden of emotion",
   context: "Cross tests Heart's feelings",
   examples: ["Trial of love", "Burden of emotion", "Test of feelings"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 25)] = {
-  cards: [33, 25],
+COMBINATION_DATABASE[formatKey(36, 25)] = {
+  cards: [36, 25],
   meaning: "Trial of commitment or test of partnership",
   context: "Cross tests Ring's promise",
   examples: ["Trial of commitment", "Test of partnership", "Burden of bond"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 30)] = {
-  cards: [33, 30],
+COMBINATION_DATABASE[formatKey(36, 30)] = {
+  cards: [36, 30],
   meaning: "Spiritual peace or faith's calm",
   context: "Cross meets Lily's serenity",
   examples: ["Spiritual peace", "Faith's calm", "Divine serenity"],
   strength: 'positive',
 };
-COMBINATION_DATABASE[formatKey(33, 31)] = {
-  cards: [33, 31],
+COMBINATION_DATABASE[formatKey(36, 31)] = {
+  cards: [36, 31],
   meaning: "Financial trial or money test",
   context: "Cross tests Fish's abundance",
   examples: ["Financial trial", "Money test", "Wealth challenge"],
   strength: 'neutral',
 };
-COMBINATION_DATABASE[formatKey(33, 32)] = {
-  cards: [33, 32],
+COMBINATION_DATABASE[formatKey(36, 32)] = {
+  cards: [36, 32],
   meaning: "Heavy burden or spiritual test",
   context: "Cross weighs on Anchor",
   examples: ["Heavy burden", "Spiritual test", "Divine trial"],

@@ -292,7 +292,7 @@ describe('Card Combinations Database', () => {
 
   describe('Key Combinations (Universal Modifiers)', () => {
     it('should have Key + Rider certain outcome combination', () => {
-      const combo = getCombination(33, 1);
+      const combo = getCombination(36, 1);
       expect(combo).not.toBeNull();
       expect(combo?.meaning.toLowerCase()).toContain('cert');
       expect(combo?.strength).toBe('positive');
@@ -379,19 +379,19 @@ describe('Card Combinations Database', () => {
     });
 
     it('should have Sun + Key guaranteed success combination', () => {
-      const combo = getCombination(31, 33);
+      const combo = getCombination(34, 36);
       expect(combo).not.toBeNull();
       expect(combo?.strength).toBe('positive');
     });
 
     it('should have Sun + Anchor lasting success combination', () => {
-      const combo = getCombination(31, 35);
+      const combo = getCombination(34, 35);
       expect(combo).not.toBeNull();
       expect(combo?.strength).toBe('positive');
     });
 
     it('should have Sun + Scythe sudden positive change combination', () => {
-      const combo = getCombination(31, 10);
+      const combo = getCombination(34, 10);
       expect(combo).not.toBeNull();
       expect(combo?.strength).toBe('positive');
     });
