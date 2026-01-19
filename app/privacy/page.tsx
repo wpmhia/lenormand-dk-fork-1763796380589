@@ -253,6 +253,48 @@ export default function PrivacyPage() {
             </CardContent>
           </Card>
 
+          <Card id="cookie-management" className="border-border bg-muted scroll-mt-4">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Cookie className="h-5 w-5 text-primary/80" />
+                Cookie Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-foreground">
+              <p>
+                We use cookies to enhance your browsing experience and analyze site traffic. 
+                You have full control over cookie preferences.
+              </p>
+              <ul className="ml-4 list-inside list-disc space-y-2">
+                <li>
+                  <strong>Essential Cookies:</strong> Required for basic site functionality. 
+                  These cannot be disabled as they are necessary for the site to work properly.
+                </li>
+                <li>
+                  <strong>Analytics Cookies:</strong> Help us understand how visitors interact 
+                  with our website. You can enable or disable these at any time.
+                </li>
+                <li>
+                  <strong>Managing Preferences:</strong> Click &quot;Cookie Preferences&quot; 
+                  in the footer to reset your consent choices. This will show the consent banner 
+                  again on your next visit.
+                </li>
+                <li>
+                  <strong>Testing Mode:</strong> Add <code>?test-cookies=true</code> or 
+                  <code>?show-cookies=true</code> to the URL to force the cookie banner to display 
+                  for testing purposes.
+                </li>
+                <li>
+                  <strong>Browser Settings:</strong> You can also manage cookies through your 
+                  browser settings at any time.
+                </li>
+              </ul>
+              <p className="mt-4 text-sm text-muted-foreground">
+                <strong>Note:</strong> Clearing your browser cache may also remove stored cookie preferences.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card className="border-border bg-muted">
             <CardHeader>
               <CardTitle className="text-foreground">Contact Us</CardTitle>
