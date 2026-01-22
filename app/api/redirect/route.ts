@@ -30,7 +30,10 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({ url: destination });
+  return NextResponse.json(
+    { url: destination },
+    { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } }
+  );
 }
 
 export async function POST(request: NextRequest) {

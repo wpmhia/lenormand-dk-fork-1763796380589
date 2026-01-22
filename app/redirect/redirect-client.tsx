@@ -13,6 +13,16 @@ interface RedirectClientProps {
   }>;
 }
 
+const redirectMap: Record<string, string> = {
+  reading: "/read/new",
+  cards: "/cards",
+  learn: "/learn",
+  about: "/about",
+  privacy: "/privacy",
+  terms: "/terms",
+  home: "/",
+};
+
 function RedirectContent({ searchParams }: RedirectClientProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -33,15 +43,12 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
       let url: string;
 
       if (redirectCode) {
-        const response = await fetch(
-          `/api/redirect?code=${encodeURIComponent(redirectCode)}`,
-        );
-        if (!response.ok) {
+        const resolvedUrl = redirectMap[redirectCode];
+        if (!resolvedUrl) {
           setError("Invalid redirect code");
           return;
         }
-        const data = await response.json();
-        url = data.url;
+        url = resolvedUrl;
       } else if (destination) {
         try {
           url = new URL(destination).toString();
