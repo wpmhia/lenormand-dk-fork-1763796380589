@@ -22,6 +22,22 @@ function cleanupOldEntries() {
 }
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/images') ||
+    pathname.startsWith('/data') ||
+    pathname.startsWith('/favicon') ||
+    pathname.endsWith('.ico') ||
+    pathname.endsWith('.png') ||
+    pathname.endsWith('.jpg') ||
+    pathname.endsWith('.svg') ||
+    pathname.endsWith('.webp')
+  ) {
+    return NextResponse.next();
+  }
+
   const ip = request.ip || "unknown";
   const now = Date.now();
 
