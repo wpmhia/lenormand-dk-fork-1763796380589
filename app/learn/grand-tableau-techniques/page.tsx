@@ -144,7 +144,7 @@ export default function GrandTableauTechniquesPage() {
                         <div className="flex h-8 items-center justify-center rounded bg-primary/20">→</div>
                         <div className="flex h-8 items-center justify-center rounded bg-muted">.</div>
                         <div className="flex h-8 items-center justify-center rounded bg-primary/20">↑</div>
-                        <div className="flex h-8 w-8 items-center justify-center rounded bg-card border-2 border-primary">1</div>
+                        <div className="flex h-8 w-8 items-center justify-center rounded border-2 border-primary bg-card">1</div>
                         <div className="flex h-8 items-center justify-center rounded bg-primary/20">↑</div>
                         <div className="flex h-8 items-center justify-center rounded bg-muted">.</div>
                         <div className="flex h-8 items-center justify-center rounded bg-primary/20">→</div>
