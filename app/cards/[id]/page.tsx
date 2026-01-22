@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
-import { getCards, getCardById } from "@/lib/data";
+import { getCardById } from "@/lib/data";
+import staticCardsData from "@/public/data/cards.json";
 import CardDetailClient from "./CardDetailClient";
+import { Card } from "@/lib/types";
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const cards = await getCards();
+  const cards = staticCardsData as Card[];
   return cards.map((card) => ({
     id: card.id.toString(),
   }));
@@ -25,7 +27,7 @@ export default async function CardDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const cards = await getCards();
+  const cards = staticCardsData as Card[];
   const card = getCardById(cards, cardId);
 
   if (!card) {

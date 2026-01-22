@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Eye, AlertTriangle } from "lucide-react";
-import { getCards, getCardById } from "@/lib/data";
+import { getCardById } from "@/lib/data";
+import staticCardsData from "@/public/data/cards.json";
 import {
   AUTHENTIC_SPREADS,
   MODERN_SPREADS,
@@ -128,13 +129,9 @@ function NewReadingPageContent() {
     }
   }, [searchParams]);
 
-  // Load cards on mount
+  // Load cards on mount (from bundled static data)
   useEffect(() => {
-    async function loadCards() {
-      const cards = await getCards();
-      setAllCards(cards);
-    }
-    loadCards();
+    setAllCards(staticCardsData as CardType[]);
   }, []);
 
   // AI streaming state

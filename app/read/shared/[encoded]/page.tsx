@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Calendar, User, Share2, Sparkles, XCircle } from "lucide-react";
 import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
-import { getCards, decodeReadingFromUrl, getCardById } from "@/lib/data";
+import { decodeReadingFromUrl, getCardById } from "@/lib/data";
+import staticCardsData from "@/public/data/cards.json";
 import { AIReadingResponse } from "@/lib/ai-config";
 
 interface PageProps {
@@ -60,12 +61,10 @@ export default function SharedReadingPage({ params }: PageProps) {
   const [aiAttempted, setAiAttempted] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadData = () => {
       try {
-        const [cardsData, decodedData] = await Promise.all([
-          getCards(),
-          Promise.resolve(decodeReadingFromUrl(params.encoded)),
-        ]);
+        const cardsData = staticCardsData as CardType[];
+        const decodedData = decodeReadingFromUrl(params.encoded);
 
         if (!decodedData || !decodedData.cards || !decodedData.layoutType) {
           notFound();

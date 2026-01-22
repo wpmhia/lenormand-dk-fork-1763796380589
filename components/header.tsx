@@ -66,11 +66,11 @@ export function Header() {
             href="https://ko-fi.com/Y8Y81NVDEK"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded transition-transform hover:scale-105 active:scale-95"
+            className="inline-flex h-11 items-center justify-center rounded transition-transform hover:scale-105 active:scale-95"
           >
             <Image
               height={36}
-              style={{ border: "0px", height: "36px" }}
+              style={{ border: "0px", height: "36px", width: "auto" }}
               loading="lazy"
               src="https://storage.ko-fi.com/cdn/kofi1.png?v=6"
               alt="Buy Me a Coffee at ko-fi.com"
