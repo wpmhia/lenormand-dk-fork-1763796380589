@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { Card as CardType } from "@/lib/types";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +14,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Search, XCircle, ArrowLeft, ArrowRight } from "lucide-react";
-import { getCards, getCardById } from "@/lib/data";
+import { Search, ArrowLeft, ArrowRight } from "lucide-react";
+import { getCardById } from "@/lib/data";
+import staticCardsData from "@/public/data/cards.json";
 
 const CARD_CATEGORIES = {
   people: [
@@ -57,13 +57,11 @@ const CARD_CATEGORIES = {
 };
 
 export default function CardsPage() {
-  const [cards, setCards] = useState<CardType[]>([]);
+  const cards = useMemo(() => staticCardsData as CardType[], []);
   const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -102,24 +100,8 @@ export default function CardsPage() {
   }, [cards, searchTerm, sortBy, selectedCategory]);
 
   useEffect(() => {
-    fetchCards();
-  }, []);
-
-  useEffect(() => {
     filterAndSortCards();
   }, [filterAndSortCards]);
-
-  const fetchCards = async () => {
-    try {
-      const cardsData = await getCards();
-      setCards(cardsData);
-      setFilteredCards(cardsData);
-      setLoading(false);
-    } catch (error) {
-      setError("Unable to load cards. Please refresh the page to try again.");
-      setLoading(false);
-    }
-  };
 
   const openCardModal = (card: CardType) => {
     setSelectedCard(card);
@@ -149,7 +131,11 @@ export default function CardsPage() {
     </div>
   ));
 
-  if (loading) {
+  useEffect(() => {
+    filterAndSortCards();
+  }, [filterAndSortCards]);
+
+  if (cards.length === 0) {
     return (
       <div className="container-section">
         <div className="mb-8">
@@ -182,13 +168,6 @@ export default function CardsPage() {
           All 36 Lenormand cards with meanings and keywords
         </p>
       </div>
-
-      {error && (
-        <Alert variant="destructive" className="mb-6">
-          <XCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
 
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="relative flex-1">
