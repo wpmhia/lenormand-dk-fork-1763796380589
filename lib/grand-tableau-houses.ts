@@ -360,3 +360,319 @@ export const HOUSE_SYSTEM_EXPLANATION = {
     "Cards of Fate (Sun, Moon, Key, Fish) in houses carry extra weight",
   ],
 };
+
+// ============================================================================
+// KNIGHT'S MOVE (CAVALIER'S MOVE) READING SYSTEM
+// ============================================================================
+// Traditional Lenormand technique where cards influence each other
+// in an L-shaped pattern (2+1 or 1+2 positions), like a chess knight
+
+export interface KnightMoveConnection {
+  sourcePosition: number;
+  targetPosition: number;
+  sourceCard: number;
+  targetCard: number;
+  interpretation: string;
+  strength: 'strong' | 'moderate' | 'subtle';
+}
+
+export interface KnightMovePath {
+  cards: number[];
+  interpretations: string[];
+  startPosition: number;
+  endPosition: number;
+}
+
+/**
+ * Get row and column for a position (0-indexed, 0-35)
+ * Grid is 4 rows x 9 columns
+ */
+export function getPositionCoords(position: number): { row: number; col: number } {
+  return {
+    row: Math.floor(position / 9),
+    col: position % 9,
+  };
+}
+
+/**
+ * Get position from row and column (0-indexed)
+ */
+export function getPositionFromCoords(row: number, col: number): number | null {
+  if (row < 0 || row > 3 || col < 0 || col > 8) {
+    return null;
+  }
+  return row * 9 + col;
+}
+
+/**
+ * Calculate all valid knight move targets from a position
+ * Knight moves: 2 in one direction, 1 perpendicular
+ * Returns positions (0-indexed)
+ */
+export function getKnightTargets(position: number): number[] {
+  const { row, col } = getPositionCoords(position);
+  const moves = [
+    { row: row - 2, col: col - 1 },
+    { row: row - 2, col: col + 1 },
+    { row: row - 1, col: col - 2 },
+    { row: row - 1, col: col + 2 },
+    { row: row + 1, col: col - 2 },
+    { row: row + 1, col: col + 2 },
+    { row: row + 2, col: col - 1 },
+    { row: row + 2, col: col + 1 },
+  ];
+
+  const validTargets: number[] = [];
+  for (const move of moves) {
+    const target = getPositionFromCoords(move.row, move.col);
+    if (target !== null) {
+      validTargets.push(target);
+    }
+  }
+  return validTargets;
+}
+
+/**
+ * Check if position A can influence position B via knight's move
+ */
+export function isKnightMove(source: number, target: number): boolean {
+  const targets = getKnightTargets(source);
+  return targets.includes(target);
+}
+
+/**
+ * Get all knight move connections for a specific card in the tableau
+ */
+export function getCardKnightConnections(
+  cardNumber: number,
+  cardPosition: number,
+  allCards: Map<number, number>
+): KnightMoveConnection[] {
+  const connections: KnightMoveConnection[] = [];
+  const targets = getKnightTargets(cardPosition);
+
+  for (const targetPos of targets) {
+    const targetCard = allCards.get(targetPos);
+    if (targetCard !== undefined) {
+      const interpretation = interpretKnightMove(cardNumber, targetCard, cardPosition, targetPos);
+      connections.push({
+        sourcePosition: cardPosition,
+        targetPosition: targetPos,
+        sourceCard: cardNumber,
+        targetCard,
+        interpretation,
+        strength: 'moderate',
+      });
+    }
+  }
+
+  return connections;
+}
+
+/**
+ * Interpret a knight move between two cards
+ */
+export function interpretKnightMove(
+  sourceCard: number,
+  targetCard: number,
+  sourcePosition: number,
+  targetPosition: number
+): string {
+  const sourceCoords = getPositionCoords(sourcePosition);
+  const targetCoords = getPositionCoords(targetPosition);
+
+  const direction = getDirectionDescription(sourceCoords, targetCoords);
+
+  return `Card ${sourceCard} influences Card ${targetCard} via knight's move ${direction}`;
+}
+
+function getDirectionDescription(source: { row: number; col: number }, target: { row: number; col: number }): string {
+  const rowDiff = target.row - source.row;
+  const colDiff = target.col - source.col;
+
+  const rowDesc = rowDiff < 0 ? 'upward' : rowDiff > 0 ? 'downward' : '';
+  const colDesc = colDiff < 0 ? 'leftward' : colDiff > 0 ? 'rightward' : '';
+
+  if (rowDesc && colDesc) {
+    return `(${rowDesc}, ${colDesc})`;
+  } else if (rowDesc) {
+    return `(${rowDesc})`;
+  } else if (colDesc) {
+    return `(${colDesc})`;
+  }
+  return '';
+}
+
+/**
+ * Find knight move paths through the tableau
+ * Starting from a position, follow knight moves to create interpretation chains
+ */
+export function findKnightMovePaths(
+  startPosition: number,
+  maxDepth: number,
+  allCards: Map<number, number>
+): KnightMovePath[] {
+  const paths: KnightMovePath[] = [];
+  const visited = new Set<number>();
+
+  function explore(currentPos: number, depth: number, path: number[], interpretations: string[]) {
+    if (depth > maxDepth) {
+      paths.push({
+        cards: [...path],
+        interpretations: [...interpretations],
+        startPosition: startPosition,
+        endPosition: currentPos,
+      });
+      return;
+    }
+
+    const targets = getKnightTargets(currentPos);
+    for (const targetPos of targets) {
+      if (visited.has(targetPos)) continue;
+
+      const targetCard = allCards.get(targetPos);
+      if (targetCard === undefined) continue;
+
+      visited.add(targetPos);
+      path.push(targetCard);
+
+      const interp = interpretKnightMove(
+        path[path.length - 2],
+        targetCard,
+        currentPos,
+        targetPos
+      );
+      interpretations.push(interp);
+
+      explore(targetPos, depth + 1, path, interpretations);
+
+      path.pop();
+      interpretations.pop();
+      visited.delete(targetPos);
+    }
+  }
+
+  visited.add(startPosition);
+  const startCard = allCards.get(startPosition);
+  if (startCard !== undefined) {
+    explore(startPosition, 1, [startCard], []);
+  }
+
+  return paths;
+}
+
+/**
+ * Get all knight move connections in the entire tableau
+ */
+export function getAllKnightConnections(
+  allCards: Map<number, number>
+): KnightMoveConnection[] {
+  const allConnections: KnightMoveConnection[] = [];
+
+  for (let pos = 0; pos < 36; pos++) {
+    const card = allCards.get(pos);
+    if (card !== undefined) {
+      const connections = getCardKnightConnections(card, pos, allCards);
+      allConnections.push(...connections);
+    }
+  }
+
+  return allConnections;
+}
+
+/**
+ * Get key knight move connections (most significant)
+ * Filters for cards of fate, topic cards, and significators
+ */
+export function getKeyKnightConnections(
+  allCards: Map<number, number>
+): KnightMoveConnection[] {
+  const allConnections = getAllKnightConnections(allCards);
+  const keyCards = [31, 32, 33, 34, 35, 24, 5, 28, 29]; // Cards of Fate + Topics + Significators
+
+  return allConnections.filter(conn =>
+    keyCards.includes(conn.sourceCard) || keyCards.includes(conn.targetCard)
+  );
+}
+
+/**
+ * Traditional knight's move explanation for educational purposes
+ */
+export const KNIGHT_MOVE_EXPLANATION = {
+  title: "The Knight's Move (Cavalier's Move)",
+  description: `
+    The Knight's Move is a traditional Lenormand reading technique used primarily
+    in Grand Tableau readings. Named after the chess knight's L-shaped movement,
+    this technique reveals how cards influence each other across the tableau.
+
+    When a card "knights" another, it means the source card affects, modifies,
+    or colors the meaning of the target card. This creates a dynamic, interconnected
+    reading rather than isolated card meanings.
+  `,
+  howItWorks: [
+    "A knight's move is 2 positions in one direction + 1 position perpendicular",
+    "From any position, there are 2-8 possible knight move targets",
+    "Cards influence their knight-move neighbors significantly",
+    "Multiple knight moves create chains of influence through the tableau",
+    "Cards of Fate (Sun, Moon, Key, Fish) carry extra weight when knighting",
+  ],
+  interpretationGuidelines: [
+    "Source card's energy flows into target card's meaning",
+    "Strong knight moves often indicate hidden connections",
+    "Chain of knight moves shows how situations evolve",
+    "Knight move from past zone to future zone shows timeline progression",
+    "Knight move to/from topic card focuses on that life area",
+  ],
+  example: `
+    Example: If The Rider (1) knights The Heart (24), read:
+    "The news brings emotional impact" or "A message affects love matters"
+
+    The Rider's swift, incoming energy flows into the Heart's emotional domain,
+    suggesting the news will have personal/emotional consequences.
+  `,
+};
+
+// Pre-calculated knight move targets for each position (0-indexed)
+export const KNIGHT_MOVE_TABLE: number[][] = [
+  [10, 12],      // Position 0
+  [11, 13],      // Position 1
+  [8, 14],       // Position 2
+  [9, 15],       // Position 3
+  [1, 7, 11, 13, 17, 19, 21, 23], // Position 4
+  [2, 6, 12, 14, 18, 20, 22, 24], // Position 5
+  [1, 5, 11, 13, 15, 21, 23, 25], // Position 6
+  [0, 4, 12, 14, 16, 22, 24, 26], // Position 7
+  [2, 4, 14, 16, 18, 24, 26, 28], // Position 8
+  [3, 5, 15, 17, 19, 25, 27, 29], // Position 9
+  [0, 2, 8, 16, 18, 20, 26, 28, 30], // Position 10
+  [1, 3, 9, 17, 19, 21, 27, 29, 31], // Position 11
+  [0, 4, 6, 10, 18, 20, 22, 28, 30, 32], // Position 12
+  [1, 5, 7, 11, 19, 21, 23, 29, 31, 33], // Position 13
+  [2, 4, 8, 12, 20, 22, 24, 30, 32, 34], // Position 14
+  [3, 5, 9, 13, 21, 23, 25, 31, 33, 35], // Position 15
+  [4, 6, 10, 22, 24, 26, 32, 34],       // Position 16
+  [5, 7, 11, 23, 25, 27, 33, 35],       // Position 17
+  [2, 8, 10, 14, 24, 26, 28, 34],       // Position 18
+  [3, 9, 11, 15, 25, 27, 29, 35],       // Position 19
+  [4, 8, 10, 12, 16, 26, 28, 30],       // Position 20
+  [5, 9, 11, 13, 17, 27, 29, 31],       // Position 21
+  [6, 10, 12, 14, 18, 28, 30, 32],      // Position 22
+  [7, 11, 13, 15, 19, 29, 31, 33],      // Position 23
+  [4, 8, 12, 14, 16, 20, 30, 32, 34],   // Position 24
+  [5, 9, 13, 15, 17, 21, 31, 33, 35],   // Position 25
+  [6, 10, 14, 16, 18, 22, 32, 34],      // Position 26
+  [7, 11, 15, 17, 19, 23, 33, 35],      // Position 27
+  [8, 12, 16, 18, 20, 24, 34],          // Position 28
+  [9, 13, 17, 19, 21, 25, 35],          // Position 29
+  [10, 14, 20, 22, 26, 28, 32],         // Position 30
+  [11, 15, 21, 23, 27, 29, 33],         // Position 31
+  [12, 16, 22, 24, 26, 30, 34],         // Position 32
+  [13, 17, 23, 25, 27, 31, 35],         // Position 33
+  [14, 18, 24, 26, 28, 32],             // Position 34
+  [15, 19, 25, 27, 29, 33],             // Position 35
+];
+
+export function getKnightTargetsFromTable(position: number): number[] {
+  if (position < 0 || position > 35) return [];
+  return KNIGHT_MOVE_TABLE[position];
+}

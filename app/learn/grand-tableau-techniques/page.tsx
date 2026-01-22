@@ -20,17 +20,32 @@ import {
   Zap,
   Star,
   Moon,
+  ChevronUp,
+  ChevronDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  ArrowUpLeft,
+  ArrowDownLeft,
 } from "lucide-react";
 
 const knightDirections = [
-  { name: "Up-Left", description: "Move 1 card left, then 1 card up" },
-  { name: "Up-Right", description: "Move 1 card right, then 1 card up" },
-  { name: "Down-Left", description: "Move 1 card left, then 1 card down" },
-  { name: "Down-Right", description: "Move 1 card right, then 1 card down" },
-  { name: "Left-Up", description: "Move 1 card up, then 1 card left" },
-  { name: "Left-Down", description: "Move 1 card down, then 1 card left" },
-  { name: "Right-Up", description: "Move 1 card up, then 1 card right" },
-  { name: "Right-Down", description: "Move 1 card down, then 1 card right" },
+  { name: "Up-Left", icon: ArrowUpLeft, description: "2 up, 1 left" },
+  { name: "Up-Right", icon: ArrowUpRight, description: "2 up, 1 right" },
+  { name: "Down-Left", icon: ArrowDownLeft, description: "2 down, 1 left" },
+  { name: "Down-Right", icon: ArrowDownRight, description: "2 down, 1 right" },
+  { name: "Left-Up", icon: ChevronUp, description: "1 up, 2 left" },
+  { name: "Left-Down", icon: ChevronDown, description: "1 down, 2 left" },
+  { name: "Right-Up", icon: ChevronUp, description: "1 up, 2 right" },
+  { name: "Right-Down", icon: ChevronDown, description: "1 down, 2 right" },
+];
+
+const knightMoveExamples = [
+  { source: "Rider (1)", target: "Coffin (8)", reading: "News of ending or transformation" },
+  { source: "Sun (31)", target: "Heart (24)", reading: "Happy love, romantic success" },
+  { source: "Key (33)", target: "Mountain (21)", reading: "Solution to obstacle found" },
+  { source: "Moon (32)", target: "Tree (5)", reading: "Health connected to emotions/dreams" },
+  { source: "Mice (23)", target: "Coffin (8)", reading: "Stress period coming to an end" },
+  { source: "Crossroads (22)", target: "Key (33)", reading: "Right choice opens door" },
 ];
 
 export default function GrandTableauTechniquesPage() {
@@ -103,36 +118,86 @@ export default function GrandTableauTechniquesPage() {
             <CardHeader>
               <CardTitle className="flex items-center text-2xl text-foreground">
                 <Target className="mr-3 h-6 w-6 text-primary" />
-                Knight Moves
+                Knight Moves (Cavalier&apos;s Move)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="leading-relaxed text-muted-foreground">
-                In the Grand Tableau, you can move like a chess knight: two cards in one
-                direction (up/down/left/right) from the significator card. These L-shaped
-                patterns reveal <strong>hidden influences</strong> and unseen
-                connections that are not obvious from the surface reading.
+                The Knight&apos;s Move is a traditional Lenormand reading technique used primarily
+                in Grand Tableau readings. Named after the chess knight&apos;s L-shaped movement,
+                this technique reveals how cards influence each other across the tableau.
               </p>
 
               <div className="rounded-lg bg-muted p-4">
-                <p className="mb-3 font-semibold text-foreground">The 8 Knight Directions</p>
-                <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">
-                  {knightDirections.map((direction, index) => (
-                    <div key={index}>
-                      <ChevronRight className="mb-1 h-4 w-4" />
-                      <span className="block font-bold text-foreground">{direction.name}</span>
-                      <span className="text-xs">{direction.description}</span>
+                <p className="mb-3 font-semibold text-foreground">How Knight Moves Work</p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      A knight moves <strong>2 positions in one direction + 1 position perpendicular</strong>,
+                      forming an L-shape. In the 4×9 Grand Tableau grid, each card can influence
+                      2-8 other cards via knight&apos;s move.
+                    </p>
+                    <div className="rounded-lg bg-card p-3">
+                      <p className="mb-2 text-xs font-medium text-muted-foreground">Example: From position 1</p>
+                      <div className="grid grid-cols-3 gap-1 text-xs">
+                        <div className="flex h-8 items-center justify-center rounded bg-muted">.</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-primary/20">→</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-muted">.</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-primary/20">↑</div>
+                        <div className="flex h-8 w-8 items-center justify-center rounded bg-card border-2 border-primary">1</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-primary/20">↑</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-muted">.</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-primary/20">→</div>
+                        <div className="flex h-8 items-center justify-center rounded bg-muted/50">11</div>
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Position 1 can knight to position 11 (2 right, 1 down)
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-sm font-medium text-foreground">The 8 Knight Directions</p>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      {knightDirections.map((direction, index) => (
+                        <div key={index} className="flex items-center gap-2 rounded bg-card p-2">
+                          <direction.icon className="h-4 w-4 text-primary" />
+                          <span className="font-medium text-foreground">{direction.name}</span>
+                          <span className="text-xs text-muted-foreground">{direction.description}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-primary/5 p-4">
+                <p className="mb-3 font-semibold text-foreground">Interpretation Guidelines</p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li><strong>Source → Target:</strong> The source card&apos;s energy flows into the target</li>
+                  <li><strong>Cards of Fate (31-35)</strong> carry extra weight when knighting</li>
+                  <li><strong>Chain reactions:</strong> Multiple knight moves create reading paths</li>
+                  <li><strong>Key indicators:</strong> Knight moves involving topic cards (5, 24, 34) focus on those areas</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border-primary/20 bg-primary/5 p-4">
+                <p className="mb-3 font-semibold text-foreground">Common Knight Move Interpretations</p>
+                <div className="grid gap-2 text-sm md:grid-cols-2">
+                  {knightMoveExamples.map((example, index) => (
+                    <div key={index} className="rounded bg-card p-3">
+                      <p className="font-medium text-foreground">{example.source} → {example.target}</p>
+                      <p className="text-xs text-muted-foreground">{example.reading}</p>
                     </div>
                   ))}
                 </div>
+              </div>
 
-                <div className="mt-4 rounded-lg bg-muted/50 p-4">
-                  <p className="text-sm text-card-foreground">
-                    <strong>How to Use:</strong> Knights reveal what is happening outside the immediate
-                    significator is influence zone. They are especially valuable when corners look ominous
-                    or when you need to understand hidden patterns.
-                  </p>
-                </div>
+              <div className="rounded-lg border-amber-500/20 bg-amber-500/5 p-4">
+                <p className="text-sm italic text-foreground">
+                  <strong>Practice:</strong> In your next Grand Tableau, identify all knight move
+                  connections involving Cards of Fate (Sun, Moon, Key, Fish, Anchor). These often
+                  reveal the most significant influences in the reading.
+                </p>
               </div>
             </CardContent>
           </Card>

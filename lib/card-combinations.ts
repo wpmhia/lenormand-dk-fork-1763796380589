@@ -4185,6 +4185,214 @@ COMBINATION_DATABASE[formatKey(33, 1)] = {
 };
 
 // ============================================================================
+// KNIGHT'S MOVE SPECIFIC INTERPRETATIONS
+// These meanings apply when cards influence each other via knight's move
+// ============================================================================
+
+export interface KnightMoveInterpretation {
+  cards: [number, number];
+  sourceInfluence: string;
+  targetEffect: string;
+  overallReading: string;
+}
+
+export const KNIGHT_MOVE_INTERPRETATIONS: KnightMoveInterpretation[] = [
+  // Cards of Fate knighting others (especially powerful)
+  {
+    cards: [31, 24], // Sun -> Heart
+    sourceInfluence: "Sun's success and clarity flows into Heart's emotions",
+    targetEffect: "Love situation becomes brighter and more successful",
+    overallReading: "Happiness in love, joyful relationship news, romantic success",
+  },
+  {
+    cards: [31, 34], // Sun -> Fish
+    sourceInfluence: "Sun's success illuminates Fish's abundance",
+    targetEffect: "Financial situation becomes very positive",
+    overallReading: "Financial success, monetary breakthrough, prosperity through success",
+  },
+  {
+    cards: [31, 5], // Sun -> Tree
+    sourceInfluence: "Sun's vitality flows into Tree's health",
+    targetEffect: "Health improves significantly",
+    overallReading: "Health recovery, vitality returns, healing through optimism",
+  },
+  {
+    cards: [32, 24], // Moon -> Heart
+    sourceInfluence: "Moon's intuition and emotions flow into Heart",
+    targetEffect: "Emotional awareness deepens",
+    overallReading: "Emotional intuition in love, feelings become clearer through dreams",
+  },
+  {
+    cards: [32, 5], // Moon -> Tree
+    sourceInfluence: "Moon's subconscious flows into Tree's health",
+    targetEffect: "Health matters connected to emotions/dreams",
+    overallReading: "Emotional health connection, mind-body healing, dream-guided recovery",
+  },
+  {
+    cards: [33, 24], // Key -> Heart
+    sourceInfluence: "Key's solution flows into Heart's emotions",
+    targetEffect: "Love problem finds answer",
+    overallReading: "Love solution found, emotional clarity, relationship breakthrough",
+  },
+  {
+    cards: [33, 5], // Key -> Tree
+    sourceInfluence: "Key's unlocking flows into Tree's health",
+    targetEffect: "Health solution discovered",
+    overallReading: "Health solution found, medical breakthrough, healing path opens",
+  },
+  {
+    cards: [33, 21], // Key -> Mountain
+    sourceInfluence: "Key opens path through Mountain's obstacles",
+    targetEffect: "Obstacle suddenly overcome",
+    overallReading: "Obstacle removed, path clears, solution to blocking problem",
+  },
+  {
+    cards: [34, 24], // Fish -> Heart
+    sourceInfluence: "Fish's abundance flows into Heart's emotions",
+    targetEffect: "Love becomes more materially comfortable",
+    overallReading: "Wealthy romance, comfortable love, financially stable relationship",
+  },
+  {
+    cards: [34, 15], // Fish -> Bear
+    sourceInfluence: "Fish's abundance flows into Bear's power",
+    targetEffect: "Financial power and strength",
+    overallReading: "Financial strength, money power, wealthy influence",
+  },
+  {
+    cards: [35, 24], // Anchor -> Heart
+    sourceInfluence: "Anchor's stability flows into Heart's emotions",
+    targetEffect: "Love becomes stable and committed",
+    overallReading: "Stable love, committed relationship, lasting emotional security",
+  },
+  {
+    cards: [35, 5], // Anchor -> Tree
+    sourceInfluence: "Anchor's grounding flows into Tree's health",
+    targetEffect: "Health becomes stable and long-term",
+    overallReading: "Stable health recovery, grounded healing, lasting wellness",
+  },
+  // Significators knighting topic cards
+  {
+    cards: [28, 24], // Man -> Heart
+    sourceInfluence: "First person's energy flows into love matters",
+    targetEffect: "Love is central focus for this person",
+    overallReading: "Your love situation, matters of the heart for the main person",
+  },
+  {
+    cards: [29, 24], // Woman -> Heart
+    sourceInfluence: "Second person's energy flows into love matters",
+    targetEffect: "Love is central focus for this person",
+    overallReading: "Her love situation, matters of the heart for the other person",
+  },
+  {
+    cards: [28, 34], // Man -> Fish
+    sourceInfluence: "First person's energy flows into money",
+    targetEffect: "Money matters central to this person",
+    overallReading: "Your financial situation, money matters involving the main person",
+  },
+  {
+    cards: [29, 34], // Woman -> Fish
+    sourceInfluence: "Second person's energy flows into money",
+    targetEffect: "Money matters central to this person",
+    overallReading: "Her financial situation, money matters involving the other person",
+  },
+  // Common knight move patterns
+  {
+    cards: [1, 10], // Rider -> Scythe
+    sourceInfluence: "Rider's swift news approaches Scythe's decision point",
+    targetEffect: "Sudden decision about news",
+    overallReading: "Quick decision needed about incoming news, sudden announcement",
+  },
+  {
+    cards: [1, 8], // Rider -> Coffin
+    sourceInfluence: "Rider's message approaches ending",
+    targetEffect: "News of conclusion or transformation",
+    overallReading: "Message about ending, news of major change, transformative announcement",
+  },
+  {
+    cards: [24, 10], // Heart -> Scythe
+    sourceInfluence: "Heart's emotions approach Scythe's cutting",
+    targetEffect: "Painful romantic decision",
+    overallReading: "Heartbreak decision, romantic breakup, emotional cutting away",
+  },
+  {
+    cards: [24, 8], // Heart -> Coffin
+    sourceInfluence: "Heart's emotions approach ending",
+    targetEffect: "Relationship ending or transformation",
+    overallReading: "Love ending, emotional transformation, relationship conclusion",
+  },
+  {
+    cards: [5, 10], // Tree -> Scythe
+    sourceInfluence: "Tree's health approaches Scythe's cutting",
+    targetEffect: "Health crisis or surgery",
+    overallReading: "Health intervention needed, medical procedure, cutting away illness",
+  },
+  {
+    cards: [5, 12], // Tree -> Birds
+    sourceInfluence: "Tree's health approaches Birds' communication",
+    targetEffect: "Health news or medical communication",
+    overallReading: "Health information exchanged, doctor consultation, medical news",
+  },
+  {
+    cards: [21, 33], // Mountain -> Key
+    sourceInfluence: "Mountain's obstacle approaches Key's solution",
+    targetEffect: "Solution to obstacle found",
+    overallReading: "Way through difficulty found, obstacle overcome, path opens",
+  },
+  {
+    cards: [21, 10], // Mountain -> Scythe
+    sourceInfluence: "Mountain's obstacle meets Scythe's cutting",
+    targetEffect: "Obstacle suddenly removed",
+    overallReading: "Sudden removal of obstacle, barrier cut away, quick breakthrough",
+  },
+  {
+    cards: [22, 33], // Crossroads -> Key
+    sourceInfluence: "Crossroads' choice meets Key's solution",
+    targetEffect: "Right choice leads to answer",
+    overallReading: "Choosing correctly opens door, right path provides answer",
+  },
+  {
+    cards: [22, 12], // Crossroads -> Birds
+    sourceInfluence: "Crossroads' choice meets Birds' communication",
+    targetEffect: "Discussion about options",
+    overallReading: "Talking through choices, communication about decisions",
+  },
+  {
+    cards: [23, 33], // Mice -> Key
+    sourceInfluence: "Mice's problems meet Key's solution",
+    targetEffect: "Solution to stress found",
+    overallReading: "Problem solved, stress resolved, relief from worry",
+  },
+  {
+    cards: [23, 8], // Mice -> Coffin
+    sourceInfluence: "Mice's stress meets Coffin's ending",
+    targetEffect: "Stress comes to an end",
+    overallReading: "Period of stress ends, worry concludes, relief arrives",
+  },
+];
+
+/**
+ * Get knight move interpretation for two cards
+ */
+export function getKnightMoveInterpretation(card1: number, card2: number): KnightMoveInterpretation | null {
+  const normalized = [card1, card2].sort((a, b) => a - b) as [number, number];
+  return KNIGHT_MOVE_INTERPRETATIONS.find(
+    interp => interp.cards[0] === normalized[0] && interp.cards[1] === normalized[1]
+  ) || null;
+}
+
+/**
+ * Search knight move interpretations by keyword
+ */
+export function searchKnightMoveInterpretations(query: string): KnightMoveInterpretation[] {
+  const searchLower = query.toLowerCase();
+  return KNIGHT_MOVE_INTERPRETATIONS.filter(interp =>
+    interp.overallReading.toLowerCase().includes(searchLower) ||
+    interp.sourceInfluence.toLowerCase().includes(searchLower) ||
+    interp.targetEffect.toLowerCase().includes(searchLower)
+  );
+}
+
+// ============================================================================
 // STRING FORMAT KEYS FOR getCombinationByKey() TEST SUPPORT
 // ============================================================================
 
