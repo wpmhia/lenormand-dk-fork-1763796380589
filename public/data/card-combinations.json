@@ -1,0 +1,42 @@
+{
+  "1-24": {
+    "cards": [1, 24],
+    "meaning": "Romantic feelings, deep emotional connection, love between two people",
+    "context": "Heart's energy enhances Rider's message - love news arriving",
+    "examples": ["Love message received", "Emotional news about someone", "Romantic announcement"],
+    "category": "love",
+    "strength": "positive"
+  },
+  "1-9": {
+    "cards": [1, 9],
+    "meaning": "Good news bringing love and celebration, joyful romantic surprise",
+    "context": "Bouquet adds gift of love to Rider's swift news", 
+    "examples": ["Romantic gift arrives", "Love celebration", "Happy romantic news"],
+    "category": "love",
+    "strength": "positive"
+  },
+  "1-25": {
+    "cards": [1, 25],
+    "meaning": "Love commitment confirmed, engagement or marriage announcement",
+    "context": "Ring's binding nature applied to Rider's incoming news",
+    "examples": ["Engagement news", "Wedding announcement", "Commitment confirmed"],
+    "category": "love", 
+    "strength": "positive"
+  },
+  "24-1": {
+    "cards": [24, 1],
+    "meaning": "Love message or romantic news arriving",
+    "context": "Rider brings Heart's emotional news",
+    "examples": ["Love message", "Romantic news", "Heartfelt announcement"],
+    "category": "love",
+    "strength": "positive"
+  },
+  "24-9": {
+    "cards": [24, 9],
+    "meaning": "Gift of love, romantic celebration, relationship happiness",
+    "context": "Bouquet's beauty and gifts enhance Heart's love energy",
+    "examples": ["Romantic gift", "Love celebration", "Relationship milestone"],
+    "category": "love",
+    "strength": "positive"
+  }
+}

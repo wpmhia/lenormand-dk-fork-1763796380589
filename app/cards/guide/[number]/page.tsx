@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { BackToTop } from "@/components/BackToTop";
-import { LENORMAND_CARDS, getCardByNumber } from "@/lib/lenormand-cards-data";
+import { getCards, getCardById } from "@/lib/data";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface CardGuidePageProps {
@@ -14,13 +14,15 @@ interface CardGuidePageProps {
 }
 
 export async function generateStaticParams() {
-  return LENORMAND_CARDS.map((card) => ({
-    number: card.number.toString(),
+  const cards = await getCards();
+  return cards.map((card) => ({
+    number: card.id.toString(),
   }));
 }
 
 export async function generateMetadata({ params }: CardGuidePageProps) {
-  const card = getCardByNumber(parseInt(params.number));
+  const cards = await getCards();
+  const card = getCardById(cards, parseInt(params.number));
 
   if (!card) {
     return {
@@ -30,8 +32,8 @@ export async function generateMetadata({ params }: CardGuidePageProps) {
   }
 
   return {
-    title: `${card.name} (Card #${card.number}) - Lenormand Meanings & Combinations`,
-    description: `Learn the meaning of the ${card.name} card in Lenormand. Keywords: ${card.keywords.join(", ")}. Playing Card: ${card.playingCard}. Timing, location, and card combinations.`,
+    title: `${card.name} (Card #${card.id}) - Lenormand Meanings & Combinations`,
+    description: `Learn meaning of ${card.name} card in Lenormand. Keywords: ${card.keywords.join(", ")}.`,
     keywords: [
       `${card.name} card`,
       "lenormand",
@@ -41,14 +43,14 @@ export async function generateMetadata({ params }: CardGuidePageProps) {
     ],
     openGraph: {
       title: `${card.name} Lenormand Card`,
-      description: `Master the meaning of the ${card.name} Lenormand card with keywords, combinations, and interpretations.`,
+      description: `Master the meaning of ${card.name} Lenormand card with keywords, combinations, and interpretations.`,
     },
   };
 }
 
-export default function CardGuidePage({ params }: CardGuidePageProps) {
-  const cardNumber = parseInt(params.number);
-  const card = getCardByNumber(cardNumber);
+export default async function CardGuidePage({ params }: CardGuidePageProps) {
+  const cards = await getCards();
+  const card = getCardById(cards, parseInt(params.number));
 
   if (!card) {
     return (
@@ -66,8 +68,8 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
     );
   }
 
-  const previousCard = cardNumber > 1 ? getCardByNumber(cardNumber - 1) : null;
-  const nextCard = cardNumber < 36 ? getCardByNumber(cardNumber + 1) : null;
+  const previousCard = card.id > 1 ? getCardById(cards, card.id - 1) : null;
+  const nextCard = card.id < 36 ? getCardById(cards, card.id + 1) : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +80,7 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
             items={[
               { name: "Home", url: "/" },
               { name: "Cards", url: "/cards" },
-              { name: card.name, url: `/cards/guide/${card.number}` },
+              { name: card.name, url: `/cards/guide/${card.id}` },
             ]}
           />
         </div>
@@ -88,87 +90,41 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
         {/* Card Header */}
         <div className="mb-8">
           <div className="mb-4 flex items-center justify-between">
-            <Badge className="px-3 py-1 text-lg">Card #{card.number}</Badge>
-            <Badge variant="secondary">{card.playingCard}</Badge>
+            <Badge className="px-3 py-1 text-lg">Card #{card.id}</Badge>
+            <Badge variant="secondary">Lenormand Card</Badge>
           </div>
           <h1 className="mb-4 text-4xl font-bold text-foreground">
             {card.name}
           </h1>
-          <p className="text-lg text-muted-foreground">{card.description}</p>
+          <p className="text-lg text-muted-foreground">{card.uprightMeaning}</p>
         </div>
 
-        {/* Quick Reference Grid */}
-        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {/* Keywords Grid */}
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-muted-foreground">
-                Timing
+                Keywords
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-medium text-foreground">{card.timing}</p>
+              <p className="font-medium text-foreground">
+                {card.keywords.join(", ")}
+              </p>
             </CardContent>
           </Card>
 
           <Card className="border-border bg-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold text-muted-foreground">
-                Location
+                Card Number
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-medium text-foreground">{card.location}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border bg-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-muted-foreground">
-                Playing Card
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium text-foreground">{card.playingCard}</p>
+              <p className="font-medium text-foreground">#{card.id} in the deck</p>
             </CardContent>
           </Card>
         </div>
-
-        {/* Keywords */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle id="keywords">Keywords</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {card.keywords.map((keyword, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="px-3 py-1 text-sm"
-                >
-                  {keyword}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Associations */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle id="associations">Symbolic Associations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {card.associations.map((assoc, index) => (
-                <li key={index} className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-primary" />
-                  <span className="text-muted-foreground">{assoc}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
 
         {/* Card Combinations */}
         <Card className="mb-8 border-border bg-card">
@@ -176,26 +132,30 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
             <CardTitle id="combinations">Common Combinations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {Object.entries(card.combinations).map(([key, value]) => (
-              <div key={key} className="flex flex-col gap-1">
-                <dt className="font-semibold text-foreground">
-                  {key
-                    .replace(/([A-Z])/g, " $1")
-                    .trim()
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ")}
-                </dt>
-                <dd className="text-sm text-muted-foreground">{value}</dd>
+            {card.combos && card.combos.length > 0 ? (
+              card.combos.slice(0, 5).map((combo) => {
+                const relatedCard = getCardById(cards, combo.withCardId);
+                return (
+                  <div key={combo.withCardId} className="flex flex-col gap-1">
+                    <dt className="font-semibold text-foreground">
+                      {card.name} + {relatedCard?.name || `Card ${combo.withCardId}`}
+                    </dt>
+                    <dd className="text-sm text-muted-foreground">{combo.meaning}</dd>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                No combinations available for this card.
               </div>
-            ))}
+            )}
           </CardContent>
         </Card>
 
         {/* Navigation */}
         <div className="flex items-center justify-between gap-4 border-t border-border pt-8">
           {previousCard ? (
-            <Link href={`/cards/guide/${previousCard.number}`}>
+            <Link href={`/cards/guide/${previousCard.id}`}>
               <Button variant="outline" className="flex items-center gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 {previousCard.name}
@@ -210,7 +170,7 @@ export default function CardGuidePage({ params }: CardGuidePageProps) {
           </Link>
 
           {nextCard ? (
-            <Link href={`/cards/guide/${nextCard.number}`}>
+            <Link href={`/cards/guide/${nextCard.id}`}>
               <Button className="flex items-center gap-2">
                 {nextCard.name}
                 <ArrowRight className="h-4 w-4" />

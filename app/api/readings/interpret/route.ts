@@ -12,8 +12,8 @@ const requestCache = new Map<string, {
   promise?: Promise<Response>;
 }>();
 
-// Cache duration: 5 minutes
-const CACHE_DURATION = 5 * 60 * 1000;
+// Cache duration: 30 minutes (extended from 5 minutes for better performance)
+const CACHE_DURATION = 30 * 60 * 1000;
 
 function getCacheKey(cards: any[], question: string, spreadId?: string): string {
   const cardIds = cards.map(c => `${c.id}-${c.name}`).sort().join('|');
