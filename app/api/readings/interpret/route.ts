@@ -5,6 +5,30 @@ import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config"
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
+// Simple in-memory cache for request deduplication
+const requestCache = new Map<string, {
+  response: Response;
+  timestamp: number;
+  promise?: Promise<Response>;
+}>();
+
+// Cache duration: 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
+
+function getCacheKey(cards: any[], question: string, spreadId?: string): string {
+  const cardIds = cards.map(c => `${c.id}-${c.name}`).sort().join('|');
+  return `${cardIds}:${question}:${spreadId || 'sentence-3'}`;
+}
+
+function cleanCache() {
+  const now = Date.now();
+  for (const [key, value] of requestCache.entries()) {
+    if (now - value.timestamp > CACHE_DURATION) {
+      requestCache.delete(key);
+    }
+  }
+}
+
 const logger = {
   info: (msg: string, data?: any) =>
     console.log(`[INFO] ${msg}`, data ? JSON.stringify(data, null, 2) : ""),
@@ -51,6 +75,9 @@ export async function POST(request: Request) {
 
   logger.info(`[${requestId}] POST /api/readings/interpret - Request received`);
 
+  // Clean expired cache entries
+  cleanCache();
+
   try {
     let body: any;
     try {
@@ -82,6 +109,27 @@ export async function POST(request: Request) {
 
     const { question, cards, spreadId, _fallback } = body;
 
+    // Check cache for identical requests
+    const cacheKey = getCacheKey(cards, question, spreadId);
+    const cached = requestCache.get(cacheKey);
+    
+    if (cached && !cached.promise) {
+      logger.info(`[${requestId}] Cache hit for request`, { cacheKey });
+      return cached.response.clone();
+    }
+
+    // If there's an ongoing request for the same cache key, wait for it
+    if (cached?.promise) {
+      logger.info(`[${requestId}] Waiting for existing request`, { cacheKey });
+      try {
+        const response = await cached.promise;
+        return response.clone();
+      } catch (error) {
+        // If the cached request failed, remove it and proceed
+        requestCache.delete(cacheKey);
+      }
+    }
+
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
     const maxTokens = getMaxTokens(cards.length);
 
@@ -91,7 +139,9 @@ export async function POST(request: Request) {
       maxTokens,
     });
 
-    const deepseekResponse = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+    // Create and cache the request for deduplication
+    const requestPromise = (async () => {
+      const deepseekResponse = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -109,40 +159,58 @@ export async function POST(request: Request) {
       }),
     });
 
-    if (!deepseekResponse.ok) {
+      if (!deepseekResponse.ok) {
       const errorText = await deepseekResponse.text();
       logger.error(`[${requestId}] DeepSeek API error`, { status: deepseekResponse.status, error: errorText });
-      return new Response(
-        JSON.stringify({ error: `DeepSeek API error: ${deepseekResponse.status}` }),
-        { status: 502, headers: { "Content-Type": "application/json" } }
-      );
-    }
+        throw new Error(`DeepSeek API error: ${deepseekResponse.status}`);
+      }
 
-    if (!deepseekResponse.body) {
-      return new Response(
-        JSON.stringify({ error: "No response body from DeepSeek" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
+      if (!deepseekResponse.body) {
+        throw new Error("No response body from DeepSeek");
+      }
 
-    if (_fallback) {
-      const data = await deepseekResponse.json();
-      const content = data.choices?.[0]?.message?.content || "";
-      return new Response(
-        JSON.stringify({ reading: content }),
-        { headers: { "Content-Type": "application/json" } }
-      );
-    }
+      if (_fallback) {
+        const data = await deepseekResponse.json();
+        const content = data.choices?.[0]?.message?.content || "";
+        return new Response(
+          JSON.stringify({ reading: content }),
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
 
-    logger.info(`[${requestId}] Passing through raw stream`);
+      logger.info(`[${requestId}] Passing through raw stream`);
 
-    return new Response(deepseekResponse.body, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
+      return new Response(deepseekResponse.body, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+        },
+      });
+    })();
+
+    // Cache the promise for deduplication
+    requestCache.set(cacheKey, {
+      response: new Response(new ReadableStream(), {
+        headers: { "Content-Type": "text/event-stream" },
+      }),
+      timestamp: Date.now(),
+      promise: requestPromise,
     });
+
+    try {
+      const response = await requestPromise;
+      // Update cache with actual response
+      requestCache.set(cacheKey, {
+        response,
+        timestamp: Date.now(),
+      });
+      return response;
+    } catch (error) {
+      // Remove failed request from cache
+      requestCache.delete(cacheKey);
+      throw error;
+    }
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMsg = error instanceof Error ? error.message : String(error);

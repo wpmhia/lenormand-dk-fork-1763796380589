@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Image from "next/image";
 import { Card as CardType } from "@/lib/types";
 import { Card } from "@/components/Card";
@@ -58,18 +58,46 @@ const CARD_CATEGORIES = {
 
 export default function CardsPage() {
   const cards = useMemo(() => staticCardsData as CardType[], []);
+  
+  // Create a Map for O(1) card lookups
+  const cardsMap = useMemo(() => {
+    const map = new Map<number, CardType>();
+    cards.forEach(card => map.set(card.id, card));
+    return map;
+  }, [cards]);
+  
   const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
+  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filterAndSortCards = useCallback(() => {
+  // Debounce search input to prevent filtering on every keystroke
+  useEffect(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // 300ms delay
+
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [searchTerm]);
+
+  // Memoize filtered results to prevent excessive re-renders
+  const filteredCardsMemo = useMemo(() => {
     let filtered = cards;
 
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
+    if (debouncedSearchTerm) {
+      const searchLower = debouncedSearchTerm.toLowerCase();
       filtered = filtered.filter((card) => {
         const nameMatch = card.name.toLowerCase().includes(searchLower);
         const keywordMatch = card.keywords.some((keyword) =>
@@ -96,12 +124,13 @@ export default function CardsPage() {
       }
     });
 
-    setFilteredCards(filtered);
-  }, [cards, searchTerm, sortBy, selectedCategory]);
-
+    return filtered;
+  }, [cards, debouncedSearchTerm, sortBy, selectedCategory]);
+  
+  // Update state when memoized result changes
   useEffect(() => {
-    filterAndSortCards();
-  }, [filterAndSortCards]);
+    setFilteredCards(filteredCardsMemo);
+  }, [filteredCardsMemo]);
 
   const openCardModal = (card: CardType) => {
     setSelectedCard(card);
@@ -130,10 +159,6 @@ export default function CardsPage() {
       <Skeleton className="mx-auto h-4 w-20" />
     </div>
   ));
-
-  useEffect(() => {
-    filterAndSortCards();
-  }, [filterAndSortCards]);
 
   if (cards.length === 0) {
     return (
@@ -260,12 +285,13 @@ export default function CardsPage() {
 
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="relative aspect-[2.5/3.5] overflow-hidden rounded-lg">
-                  <Image
-                    src={selectedCard.imageUrl || ""}
-                    alt={selectedCard.name}
-                    fill
-                    className="object-cover"
-                  />
+                   <Image
+                     src={selectedCard.imageUrl || ""}
+                     alt={selectedCard.name}
+                     fill
+                     className="object-cover"
+                     priority={selectedCard.id <= 6} // Prioritize first 6 cards
+                   />
                 </div>
 
                 <div className="space-y-4">
@@ -297,11 +323,8 @@ export default function CardsPage() {
                         Common Combinations
                       </h4>
                       <div className="space-y-2">
-                        {selectedCard.combos.slice(0, 3).map((combo) => {
-                          const relatedCard = getCardById(
-                            cards,
-                            combo.withCardId,
-                          );
+                         {selectedCard.combos.slice(0, 3).map((combo) => {
+                           const relatedCard = cardsMap.get(combo.withCardId);
                           return (
                             <div key={combo.withCardId} className="text-sm">
                               <span className="font-medium">
