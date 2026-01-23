@@ -107,16 +107,16 @@ const nextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "no-cache, no-store, must-revalidate",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
-        source: "/cards/:path*",
+        source: "/images/cards/:path*",
         headers: [
           {
             key: "Cache-Control",
-            value: "no-cache, no-store, must-revalidate, private",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

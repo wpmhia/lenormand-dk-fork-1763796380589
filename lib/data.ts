@@ -1,29 +1,16 @@
 import { Card, Reading, ReadingCard } from "./types";
-
-let cachedCards: Card[] | null = null;
+import staticCardsData from "@/public/data/cards.json";
 
 export async function getCards(): Promise<Card[]> {
-  if (cachedCards) {
-    return cachedCards;
-  }
-  try {
-    const response = await fetch("/data/cards.json");
-    if (!response.ok) {
-      throw new Error("Failed to load cards data");
-    }
-    const data = await response.json();
+  // Static import eliminates network requests and JSON parsing overhead
+  const data = staticCardsData as Card[];
 
-    if (!Array.isArray(data) || data.length === 0) {
-      console.error("Invalid or empty cards data");
-      return [];
-    }
-
-    cachedCards = data;
-    return data;
-  } catch (error) {
-    console.error("Failed to load cards data:", error);
+  if (!Array.isArray(data) || data.length === 0) {
+    console.error("Invalid or empty cards data");
     return [];
   }
+
+  return data;
 }
 
 export function getCardById(cards: Card[], id: number): Card | undefined {
