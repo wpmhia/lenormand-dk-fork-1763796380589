@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { getCardById, getCards } from "@/lib/data";
+import { getStaticCombination } from "@/lib/static-data";
 
 interface CardMeaningPageProps {
   params: { id: string };
@@ -30,8 +31,6 @@ export async function generateStaticParams() {
 export const revalidate = 86400; // Revalidate daily
 
 // Import static combinations for faster lookup
-import { getStaticCombination } from "@/lib/static-data";
-
 export default async function CardMeaningPage({ params }: CardMeaningPageProps) {
   const allCards = await getCards();
   const card = getCardById(allCards, parseInt(params.id));
@@ -153,17 +152,6 @@ export default async function CardMeaningPage({ params }: CardMeaningPageProps) 
               </Card>
 
             </div>
-          </div>
-
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Learning Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LearningProgressTracker cardId={card.id} />
-              </CardContent>
-            </Card>
           </div>
         </div>
 
