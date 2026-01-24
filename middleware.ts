@@ -6,13 +6,10 @@ const WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS = 100;
 
 function cleanupOldEntries() {
-  const now = Date.now();
-  // Clean up expired entries on every request to prevent unbounded map growth
-  // This is O(n) per request but spread across all traffic = negligible impact
-  for (const [ip, record] of rateLimitMap.entries()) {
-    if (record.resetTime < now) {
-      rateLimitMap.delete(ip);
-    }
+  // Simple optimization: only clear if map gets too large
+  // This avoids the O(n) iteration on every request
+  if (rateLimitMap.size > 10000) {
+    rateLimitMap.clear();
   }
 }
 
