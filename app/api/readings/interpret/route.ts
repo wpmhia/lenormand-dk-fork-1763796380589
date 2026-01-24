@@ -1,31 +1,9 @@
 export const dynamic = "force-dynamic";
 
 import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config";
-import { deepseek } from '@ai-sdk/deepseek';
-import { streamText } from 'ai';
 
-function createDataStreamResponse(textStream: ReadableStream) {
-  const encoder = new TextEncoder();
-  
-  const transformStream = new TransformStream({
-    async transform(chunk, controller) {
-      const text = new TextDecoder().decode(chunk);
-      // Format as SSE with data: prefix
-      const sseData = `data: ${JSON.stringify({ content: text })}\n\n`;
-      controller.enqueue(encoder.encode(sseData));
-    }
-  });
-
-  textStream.pipeThrough(transformStream);
-
-  return new Response(transformStream.readable, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-    },
-  });
-}
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
 function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body) {
@@ -81,36 +59,96 @@ export async function POST(request: Request) {
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
     const maxTokens = getMaxTokens(cards.length);
 
-    if (_fallback) {
-      // Non-streaming fallback for compatibility
-      const result = await streamText({
-        model: deepseek('deepseek-chat'),
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
         messages: [
           { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
           { role: "user", content: prompt },
         ],
         temperature: 0.4,
-      });
+        max_tokens: maxTokens,
+        stream: !_fallback,
+      }),
+    });
 
-      const text = await result.text;
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("DeepSeek API error:", response.status, errorText);
+      throw new Error(`DeepSeek API error: ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error("No response body from DeepSeek");
+    }
+
+    if (_fallback) {
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || "";
       return new Response(
-        JSON.stringify({ reading: text }),
+        JSON.stringify({ reading: content }),
         { headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Streaming response using AI SDK
-    const result = await streamText({
-      model: deepseek('deepseek-chat'),
-      messages: [
-        { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.4,
+    // Transform DeepSeek SSE to match expected client format
+    const encoder = new TextEncoder();
+    const reader = response.body.getReader();
+    
+    const transformedStream = new ReadableStream({
+      async start(controller) {
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            const chunk = new TextDecoder().decode(value);
+            const lines = chunk.split('\n');
+            
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const data = line.slice(6);
+                if (data === '[DONE]') {
+                  controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+                  break;
+                }
+                
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content || '';
+                  if (content) {
+                    // Re-emit in the exact format the client expects
+                    const transformedData = JSON.stringify({
+                      choices: [{ delta: { content } }]
+                    });
+                    controller.enqueue(encoder.encode(`data: ${transformedData}\n\n`));
+                  }
+                } catch (e) {
+                  // Skip invalid JSON
+                }
+              }
+            }
+          }
+        } catch (error) {
+          controller.error(error);
+        } finally {
+          controller.close();
+        }
+      }
     });
 
-    const textStream = result.toTextStreamResponse();
-    return createDataStreamResponse(textStream.body!);
+    return new Response(transformedStream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
+    });
 
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
