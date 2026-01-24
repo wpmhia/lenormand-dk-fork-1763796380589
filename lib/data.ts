@@ -148,6 +148,9 @@ export function getGrandTableauAdjacentCards(
   const row = Math.floor(currentIndex / 9);
   const col = currentIndex % 9;
 
+  // Create position-indexed map for O(1) lookup instead of O(n) search
+  const cardByPosition = new Map(cards.map(card => [card.position, card]));
+
   // Adjacent positions in grid (top, bottom, left, right)
   const adjacentPositions = [
     { r: row - 1, c: col }, // top
@@ -158,7 +161,7 @@ export function getGrandTableauAdjacentCards(
 
   adjacentPositions.forEach((pos) => {
     const adjIndex = pos.r * 9 + pos.c;
-    const adjCard = cards.find((card) => card.position === adjIndex);
+    const adjCard = cardByPosition.get(adjIndex);
     if (adjCard) adjacent.push(adjCard);
   });
 

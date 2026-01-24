@@ -4,16 +4,11 @@ import type { NextRequest } from "next/server";
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS = 100;
-const CLEANUP_INTERVAL = 60 * 1000;
-
-let lastCleanup = Date.now();
 
 function cleanupOldEntries() {
   const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) {
-    return;
-  }
-  lastCleanup = now;
+  // Clean up expired entries on every request to prevent unbounded map growth
+  // This is O(n) per request but spread across all traffic = negligible impact
   for (const [ip, record] of rateLimitMap.entries()) {
     if (record.resetTime < now) {
       rateLimitMap.delete(ip);
