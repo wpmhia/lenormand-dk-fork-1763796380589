@@ -29,6 +29,9 @@ export async function generateStaticParams() {
 
 export const revalidate = 86400; // Revalidate daily
 
+// Import static combinations for faster lookup
+import { getStaticCombination } from "@/lib/static-data";
+
 export default async function CardMeaningPage({ params }: CardMeaningPageProps) {
   const allCards = await getCards();
   const card = getCardById(allCards, parseInt(params.id));

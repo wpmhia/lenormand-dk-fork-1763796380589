@@ -4,10 +4,10 @@ import { useState, useMemo } from "react";
 import { Reading, ReadingCard, Card as CardType } from "@/lib/types";
 import {
   getCardById,
-  getCombinationMeaning,
   getLinearAdjacentCards,
   getGrandTableauAdjacentCards,
 } from "@/lib/data";
+import { getStaticCombination } from "@/lib/static-data";
 import {
   GrandTableauPosition,
   getGrandTableauPosition,
@@ -820,7 +820,10 @@ export function ReadingViewer({
                 const card = getCardById(allCards, adjCard.id);
                 if (!card) return null;
 
-                const combination = getCombinationMeaning(
+                const combination = getStaticCombination(
+                  selectedCard.id,
+                  card.id,
+                ) || getCombinationMeaning(
                   selectedCard,
                   card,
                   readingCard.position,
