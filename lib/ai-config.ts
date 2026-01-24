@@ -16,22 +16,22 @@ export function getSpreadById(spreadId: string) {
 }
 
 export function getMaxTokens(spreadCards: number): number {
-  if (spreadCards <= 3) return 1000;
-  if (spreadCards <= 5) return 1500;
-  if (spreadCards < 9) return 2500;
-  return 3000;
+  if (spreadCards <= 3) return 800;
+  if (spreadCards <= 5) return 1200;
+  if (spreadCards < 9) return 1800;
+  return 2000;
 }
 
 const POSITION_LABELS: Record<string, string[]> = {
-  "single-card": ["The Card"],
-  "sentence-3": ["Opening Card", "Central Card", "Closing Card"],
+  "single-card": ["Card"],
+  "sentence-3": ["1", "2", "3"],
   "past-present-future": ["Past", "Present", "Future"],
-  "yes-no-maybe": ["First Card", "Center Card", "Third Card"],
+  "yes-no-maybe": ["1", "2", "3"],
   "situation-challenge-advice": ["Situation", "Challenge", "Advice"],
   "mind-body-spirit": ["Mind", "Body", "Spirit"],
-  "sentence-5": ["Element 1", "Element 2", "Element 3", "Element 4", "Element 5"],
+  "sentence-5": ["1", "2", "3", "4", "5"],
   "structured-reading": ["Subject", "Verb", "Object", "Modifier", "Outcome"],
-  "week-ahead": ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+  "week-ahead": ["1", "2", "3", "4", "5", "6", "7"],
   "relationship-double-significator": [
     "Your Past",
     "Your Present",
@@ -42,32 +42,32 @@ const POSITION_LABELS: Record<string, string[]> = {
     "Their Future",
   ],
   "comprehensive": [
-    "Recent Past - Inner World",
-    "Recent Past - Direct Actions",
-    "Recent Past - Outside World",
-    "Present - Inner World",
-    "Present - Direct Actions",
-    "Present - Outside World",
-    "Near Future - Inner World",
-    "Near Future - Direct Actions",
-    "Near Future - Outside World",
+    "Past-Inner",
+    "Past-Action",
+    "Past-Outer",
+    "Present-Inner",
+    "Present-Action",
+    "Present-Outer",
+    "Future-Inner",
+    "Future-Action",
+    "Future-Outer",
   ],
-  "grand-tableau": Array.from({ length: 36 }, (_, i) => `Position ${i + 1}`),
+  "grand-tableau": Array.from({ length: 36 }, (_, i) => `${i + 1}`),
 };
 
 const SPREAD_GUIDANCE: Record<string, string> = {
-  "single-card": "One card for immediate, direct guidance. Focus on its core message and how it applies to the question.",
-  "sentence-3": "Classic 3-card sentence: Opening (situation) → Central (turning point) → Closing (outcome).",
-  "past-present-future": "Time-based: Past influences → Current situation → Likely outcome.",
-  "yes-no-maybe": "YES or NO answer. Count positive vs negative cards. More positive = YES. More negative = NO. Equal = CONDITIONAL/TIE.",
-  "situation-challenge-advice": "Diagnostic: What's happening → What's blocking you → What to do about it.",
-  "mind-body-spirit": "Holistic: Mental state → Physical/reality → Spiritual/emotional guidance.",
-  "sentence-5": "Extended narrative flow: 5 cards creating a complete story arc.",
-  "structured-reading": "Analytical: Subject → Action → Impact → Conditions → Result.",
-  "week-ahead": "Daily structure with action model for each day of the week.",
-  "relationship-double-significator": "Two-person reading with central relationship dynamic.",
-  "comprehensive": "9-card Petit Grand Tableau: 3 rows of 3 - Past, Present, Future (each with inner/action/external).",
-  "grand-tableau": "Full 36-card Grand Tableau: Center = core energy, diagonals, 9-card rows, card interactions.",
+  "single-card": "Direct guidance on the question.",
+  "sentence-3": "3-card narrative: Opening → Central → Closing.",
+  "past-present-future": "Time: Past → Present → Future.",
+  "yes-no-maybe": "YES/NO answer based on card energies. Equal = CONDITIONAL.",
+  "situation-challenge-advice": "Situation → Obstacle → Action.",
+  "mind-body-spirit": "Mind → Body → Spirit.",
+  "sentence-5": "5-card story arc.",
+  "structured-reading": "Subject → Action → Impact → Conditions → Result.",
+  "week-ahead": "7-day reading with action for each day.",
+  "relationship-double-significator": "Two-person reading with relationship focus.",
+  "comprehensive": "9-card Petit Grand: Past/Present/Future × Inner/Action/Outer.",
+  "grand-tableau": "36-card layout: Center energy, card interactions, directional flow.",
 };
 
 export function buildPrompt(
@@ -92,29 +92,26 @@ export function buildPrompt(
 
   const structure = isYesNo
     ? `STRUCTURE:
-1. VERDICT: YES | NO | CONDITIONAL (first line, bold)
-2. Cards: Brief meaning of each card (1-2 sentences)
-3. Reasoning: Why the verdict based on card energies`
+1. VERDICT: YES | NO | CONDITIONAL
+2. Cards: 1-2 sentences per card
+3. Why: Based on card energies`
     : `STRUCTURE:
-1. Cards: 2-3 sentences per card with meaning and position
-2. Summary: One sentence connecting all cards
-3. Story: 2-3 paragraphs on the journey and outcome
-4. Action: Clear advice—what to do, warnings, timing if relevant`;
+1. Cards: 2-3 sentences per card
+2. Summary: Connect all cards in one sentence
+3. Story: 2-3 paragraphs on outcome
+4. Action: Clear advice`;
 
-  return `You are Marie-Anne Lenormand, a practical French fortune teller (1761-1840). Be direct and specific—never vague or mystical.
+  return `You are Marie-Anne Lenormand. Be direct and practical.
 
-CRITICAL SIGNIFICATOR ROLES:
-- The Man card (28) represents the FIRST PERSON (primary subject/querent)
-- The Woman card (29) represents the SECOND PERSON (related person/secondary focus)
-- These are POSITIONAL roles, not gender identities. Use they/them pronouns.
-- When querent asks about "he" specifically, interpret Man as the person asking
-- When two people in reading, Man = querent's perspective, Woman = other person's perspective
+SIGNIFICATORS:
+- Man (28) = querent or first person
+- Woman (29) = other person
+Use they/them pronouns.
 
-COMBINATION METHODOLOGY:
-- Read cards in pairs and flowing sentences, not isolated meanings
-- First card modifies second card (left-to-right directional flow)
-- Cards closer to querent carry more weight than distant cards
-- In Grand Tableau: Use directional zones (left=past, right=future, above=unconscious, below=conscious)
+READ:
+- Cards in pairs, flowing narrative
+- Left-to-right directional flow
+- Proximity = weight
 
 QUESTION: "${question}"
 
@@ -127,7 +124,7 @@ ${cardList}
 
 ${structure}
 
-Be practical and helpful.`;
+Be practical.`;
 }
 
 export interface AIReadingRequest {

@@ -95,12 +95,13 @@ function NewReadingPageContent() {
       setPath(null);
       aiAnalysisStartedRef.current = false;
 
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-        abortControllerRef.current = null;
-      }
+       if (abortControllerRef.current) {
+         abortControllerRef.current.abort();
+         abortControllerRef.current = null;
+       }
+       requestInProgressRef.current = false; // Reset deduplication flag
 
-      if (!keepUrlParams) {
+       if (!keepUrlParams) {
         const newUrl = new URL(window.location.href);
         newUrl.search = "";
         router.replace(newUrl.toString(), { scroll: false });
@@ -141,6 +142,7 @@ function NewReadingPageContent() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamedContent, setStreamedContent] = useState("");
   const abortControllerRef = useRef<AbortController | null>(null);
+  const requestInProgressRef = useRef(false);
 
   function parseSSEChunk(data: string): string | null {
     if (data === "[DONE]") return null;
@@ -154,12 +156,19 @@ function NewReadingPageContent() {
 
   // Streaming function
   const performStreamingAnalysis = useCallback(async () => {
+    // Deduplication: prevent duplicate in-flight requests
+    if (requestInProgressRef.current) {
+      console.warn('AI request already in progress, skipping duplicate request');
+      return;
+    }
+    
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    requestInProgressRef.current = true;
 
     const timeoutId = setTimeout(() => {
       controller.abort();
@@ -297,6 +306,7 @@ function NewReadingPageContent() {
       clearTimeout(timeoutId);
       setAiLoading(false);
       setIsStreaming(false);
+      requestInProgressRef.current = false; // Mark request as complete
     }
   }, [question, drawnCards, allCards, selectedSpread.id]);
 
