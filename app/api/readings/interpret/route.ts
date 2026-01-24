@@ -1,4 +1,6 @@
 export const dynamic = "force-dynamic";
+export const runtime = 'edge';
+export const maxDuration = 30;
 
 import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config";
 
