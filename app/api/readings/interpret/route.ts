@@ -97,23 +97,40 @@ export async function POST(request: Request) {
     }
 
     // Transform DeepSeek SSE to match expected client format
+    // Optimized: Create encoder/decoder once, batch encode chunks, reduce I/O overhead
     const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
     const reader = response.body.getReader();
     
     const transformedStream = new ReadableStream({
       async start(controller) {
         try {
+          let buffer = '';
+          let encodedChunks: Uint8Array[] = [];
+          const BATCH_SIZE = 50; // Batch encode every 50 chunks to reduce TextEncoder calls
+          
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
             
-            const chunk = new TextDecoder().decode(value);
-            const lines = chunk.split('\n');
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+            
+            // Process complete lines from buffer
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || ''; // Keep incomplete line in buffer
             
             for (const line of lines) {
               if (line.startsWith('data: ')) {
                 const data = line.slice(6);
                 if (data === '[DONE]') {
+                  // Flush any batched chunks before sending DONE
+                  if (encodedChunks.length > 0) {
+                    for (const chunk of encodedChunks) {
+                      controller.enqueue(chunk);
+                    }
+                    encodedChunks = [];
+                  }
                   controller.enqueue(encoder.encode('data: [DONE]\n\n'));
                   break;
                 }
@@ -126,11 +143,46 @@ export async function POST(request: Request) {
                     const transformedData = JSON.stringify({
                       choices: [{ delta: { content } }]
                     });
-                    controller.enqueue(encoder.encode(`data: ${transformedData}\n\n`));
+                    const encoded = encoder.encode(`data: ${transformedData}\n\n`);
+                    
+                    // Batch encode: collect chunks and enqueue when batch size reached
+                    encodedChunks.push(encoded);
+                    if (encodedChunks.length >= BATCH_SIZE) {
+                      for (const chunk of encodedChunks) {
+                        controller.enqueue(chunk);
+                      }
+                      encodedChunks = [];
+                    }
                   }
                 } catch (e) {
                   // Skip invalid JSON
                 }
+              }
+            }
+          }
+          
+          // Flush remaining batched chunks
+          if (encodedChunks.length > 0) {
+            for (const chunk of encodedChunks) {
+              controller.enqueue(chunk);
+            }
+          }
+          
+          // Process any remaining buffer data
+          if (buffer && buffer.startsWith('data: ')) {
+            const data = buffer.slice(6);
+            if (data !== '[DONE]') {
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content || '';
+                if (content) {
+                  const transformedData = JSON.stringify({
+                    choices: [{ delta: { content } }]
+                  });
+                  controller.enqueue(encoder.encode(`data: ${transformedData}\n\n`));
+                }
+              } catch (e) {
+                // Skip invalid JSON
               }
             }
           }
