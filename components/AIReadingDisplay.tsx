@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
+import dynamic from "next/dynamic";
+
+const ReactMarkdown = dynamic(() => import('react-markdown'), {
+  loading: () => <div className="animate-pulse">Loading...</div>,
+  ssr: false
+});
 import { AIReadingResponse } from "@/lib/ai-config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

@@ -621,6 +621,7 @@ export default function CardMeaningsPage() {
                     alt={card.name}
                     width={128}
                     height={128}
+                    sizes="(max-width: 640px) 80px, 128px"
                     className="mb-3 h-32 w-full rounded-lg object-cover"
                   />
                   <div className="space-y-3">
@@ -681,6 +682,7 @@ export default function CardMeaningsPage() {
                         alt={card.name}
                         width={64}
                         height={64}
+                        sizes="(max-width: 640px) 40px, 64px"
                         className="h-16 w-16 rounded-lg object-cover"
                       />
                       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
