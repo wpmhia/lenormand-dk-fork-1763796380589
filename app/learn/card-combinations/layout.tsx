@@ -1,22 +1,31 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Card Combinations & Meanings | Lenormand Learning Course",
+  title: "Card Combinations | Lenormand Pair Meanings by Context",
   description:
-    "Master Lenormand card combinations and pair meanings. Learn how to interpret card interactions across love, finance, health, and career contexts.",
+    "Master Lenormand card combinations across 6 life contexts: love & relationships, money & finance, health & wellbeing, career & work, personal growth, and social connections. Learn how card pairs modify and enhance meanings.",
   keywords: [
-    "Lenormand card combinations",
+    "Lenormand combinations",
     "card pairs",
-    "card meanings",
     "combination meanings",
-    "Lenormand reading",
     "card interactions",
     "pair interpretations",
+    "Lenormand pairs",
   ],
   openGraph: {
-    title: "Card Combinations & Meanings | Learning Module",
+    title: "Card Combinations | Learning Module",
     description:
-      "Master card combinations and interpret how pairs of Lenormand cards interact to reveal deeper meanings.",
+      "Master powerful Lenormand card combinations and how pairs modify meaning across different life contexts.",
+    type: "website",
+    url: "https://lenormand.dk/learn/card-combinations",
+    siteName: "Lenormand Intelligence",
+  },
+  twitter: {
+    card: "summary",
+    title: "Card Combinations",
+    description:
+      "Learn how Lenormand card pairs combine to create powerful interpretations.",
   },
 };
 
@@ -25,5 +34,28 @@ export default function CardCombinationsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "EducationalContent",
+    name: "Card Combinations",
+    description:
+      "Master Lenormand card combinations across 6 life contexts: love & relationships, money & finance, health & wellbeing, career & work, personal growth, and social connections. Learn how card pairs modify and enhance meanings.",
+    educationalLevel: "Intermediate",
+    inLanguage: "en",
+    author: {
+      "@type": "Organization",
+      name: "Lenormand Intelligence",
+    },
+  };
+
+  return (
+    <>
+      <Script
+        id="card-combinations-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
+      {children}
+    </>
+  );
 }

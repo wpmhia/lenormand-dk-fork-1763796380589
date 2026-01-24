@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     title: "How to Read Lenormand | Learning Module",
     description:
       "Learn the fundamentals of Lenormand reading with our comprehensive guide to card combinations and interpretations.",
+    type: "website",
+    url: "https://lenormand.dk/learn/reading-basics",
   },
 };
 

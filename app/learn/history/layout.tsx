@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     title: "History & Origins of Lenormand | Learning Module",
     description:
       "Discover the rich history of Lenormand divination and Marie-Anne Lenormand's legacy.",
+    type: "website",
+    url: "https://lenormand.dk/learn/history",
   },
 };
 
