@@ -83,7 +83,7 @@ export async function POST(request: Request) {
           { role: "user", content: prompt },
         ],
         temperature: 0.4,
-        maxTokens: maxTokens,
+        maxOutputTokens: maxTokens,
         abortSignal: abortController.signal,
       });
 
