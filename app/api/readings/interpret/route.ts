@@ -4,6 +4,29 @@ import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config"
 import { deepseek } from '@ai-sdk/deepseek';
 import { streamText } from 'ai';
 
+function createDataStreamResponse(textStream: ReadableStream) {
+  const encoder = new TextEncoder();
+  
+  const transformStream = new TransformStream({
+    async transform(chunk, controller) {
+      const text = new TextDecoder().decode(chunk);
+      // Format as SSE with data: prefix
+      const sseData = `data: ${JSON.stringify({ content: text })}\n\n`;
+      controller.enqueue(encoder.encode(sseData));
+    }
+  });
+
+  textStream.pipeThrough(transformStream);
+
+  return new Response(transformStream.readable, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
+}
+
 function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body) {
     return { valid: false, error: "Request body is empty" };
@@ -86,7 +109,8 @@ export async function POST(request: Request) {
       temperature: 0.4,
     });
 
-    return result.toTextStreamResponse();
+    const textStream = result.toTextStreamResponse();
+    return createDataStreamResponse(textStream.body!);
 
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
