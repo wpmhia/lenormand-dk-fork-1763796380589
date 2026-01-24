@@ -6,6 +6,7 @@ import {
   getCardById,
   getLinearAdjacentCards,
   getGrandTableauAdjacentCards,
+  getCombinationMeaning,
 } from "@/lib/data";
 import { getStaticCombination } from "@/lib/static-data";
 import {

@@ -17,7 +17,7 @@ import {
   Grid3X3,
   List,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 
 const cardMeanings = [
   {
@@ -462,14 +462,29 @@ const cardMeanings = [
 
 export default function CardMeaningsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const filteredCards = cardMeanings.filter(
-    (card) =>
-      card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.keywords.some((keyword) =>
-        keyword.toLowerCase().includes(searchTerm.toLowerCase()),
+  // Debounce search input with 300ms delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Memoize filtered cards to prevent unnecessary recalculations
+  const filteredCards = useMemo(
+    () =>
+      cardMeanings.filter(
+        (card) =>
+          card.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+          card.keywords.some((keyword) =>
+            keyword.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+          ),
       ),
+    [debouncedSearchTerm],
   );
 
   return (
@@ -596,105 +611,38 @@ export default function CardMeaningsPage() {
         {viewMode === "grid" ? (
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredCards.map((card) => (
-              <Card
-                key={card.number}
-                className="cursor-pointer border border-border bg-card"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <Badge className="bg-muted text-xs text-muted-foreground">
-                      #{card.number}
-                    </Badge>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                      <span className="text-xs font-bold text-white">
-                        {card.number}
-                      </span>
-                    </div>
-                  </div>
-                  <CardTitle className="text-lg text-foreground">
-                    {card.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <Image
-                    src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
-                    alt={card.name}
-                    width={128}
-                    height={128}
-                    sizes="(max-width: 640px) 80px, 128px"
-                    className="mb-3 h-32 w-full rounded-lg object-cover"
-                  />
-                  <div className="space-y-3">
-                    <div>
-                      <h4 className="mb-2 text-sm font-semibold text-foreground">
-                        Keywords:
-                      </h4>
-                      <div className="flex flex-wrap gap-1">
-                        {card.keywords.map((keyword, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="bg-muted text-xs text-muted-foreground"
-                          >
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="mb-2 text-sm font-semibold text-foreground">
-                        Timing:
-                      </h4>
-                      <p className="text-xs text-muted-foreground">
-                        {card.timing}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="mb-2 text-sm font-semibold text-foreground">
-                        Where to Watch:
-                      </h4>
-                      <p className="text-xs text-muted-foreground">
-                        {card.location}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="mb-2 text-sm font-semibold text-foreground">
-                        Associations:
-                      </h4>
-                      <p className="text-xs leading-relaxed text-primary">
-                        {card.associations.join(", ")}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="mb-8 space-y-3">
-            {filteredCards.map((card) => (
-              <Card key={card.number} className="border border-border bg-card">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <Image
-                        src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
-                        alt={card.name}
-                        width={64}
-                        height={64}
-                        sizes="(max-width: 640px) 40px, 64px"
-                        className="h-16 w-16 rounded-lg object-cover"
-                      />
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                        <span className="text-sm font-bold text-white">
+              <Link key={card.number} href={`/learn/card-meanings/${card.number}`}>
+                <Card className="cursor-pointer border border-border bg-card transition-shadow hover:shadow-md">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <Badge className="bg-muted text-xs text-muted-foreground">
+                        #{card.number}
+                      </Badge>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                        <span className="text-xs font-bold text-white">
                           {card.number}
                         </span>
                       </div>
+                    </div>
+                    <CardTitle className="text-lg text-foreground">
+                      {card.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <Image
+                      src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
+                      alt={card.name}
+                      width={128}
+                      height={128}
+                      sizes="(max-width: 640px) 80px, 128px"
+                      className="mb-3 h-32 w-full rounded-lg object-cover"
+                    />
+                    <div className="space-y-3">
                       <div>
-                        <h3 className="font-semibold text-foreground">
-                          {card.name}
-                        </h3>
-                        <div className="mt-1 flex flex-wrap gap-1">
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">
+                          Keywords:
+                        </h4>
+                        <div className="flex flex-wrap gap-1">
                           {card.keywords.map((keyword, index) => (
                             <Badge
                               key={index}
@@ -705,22 +653,90 @@ export default function CardMeaningsPage() {
                             </Badge>
                           ))}
                         </div>
-                        <p className="mt-2 text-xs text-muted-foreground">
-                          <strong>Timing:</strong> {card.timing}
-                        </p>
+                      </div>
+                      <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">
+                          Timing:
+                        </h4>
                         <p className="text-xs text-muted-foreground">
-                          <strong>Location:</strong> {card.location}
+                          {card.timing}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">
+                          Where to Watch:
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          {card.location}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="mb-2 text-sm font-semibold text-foreground">
+                          Associations:
+                        </h4>
+                        <p className="text-xs leading-relaxed text-primary">
+                          {card.associations.join(", ")}
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-primary">
-                        {card.associations.join(", ")}
-                      </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="mb-8 space-y-3">
+            {filteredCards.map((card) => (
+              <Link key={card.number} href={`/learn/card-meanings/${card.number}`}>
+                <Card className="cursor-pointer border border-border bg-card transition-shadow hover:shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Image
+                          src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
+                          alt={card.name}
+                          width={64}
+                          height={64}
+                          sizes="(max-width: 640px) 40px, 64px"
+                          className="h-16 w-16 rounded-lg object-cover"
+                        />
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                          <span className="text-sm font-bold text-white">
+                            {card.number}
+                          </span>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">
+                            {card.name}
+                          </h3>
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {card.keywords.map((keyword, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="bg-muted text-xs text-muted-foreground"
+                              >
+                                {keyword}
+                              </Badge>
+                            ))}
+                          </div>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            <strong>Timing:</strong> {card.timing}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            <strong>Location:</strong> {card.location}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-primary">
+                          {card.associations.join(", ")}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}

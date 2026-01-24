@@ -1,62 +1,103 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
-import { LearningProgressTracker } from "@/components/LearningProgressTracker";
 import { BackToTop } from "@/components/BackToTop";
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
-  Search,
-  Filter,
-  Grid3X3,
-  List,
 } from "lucide-react";
-import { useState } from "react";
-import { getCardById, getCards } from "@/lib/data";
-import { getStaticCombination } from "@/lib/static-data";
+import { useState, useEffect } from "react";
+
+interface CardData {
+  id: number;
+  number: number;
+  name: string;
+  keywords: string[];
+  description: string;
+  traditionalMeaning?: string;
+  reversedMeaning?: string;
+}
 
 interface CardMeaningPageProps {
   params: { id: string };
 }
 
-export async function generateStaticParams() {
-  const cards = await getCards();
-  return cards.map(card => ({ id: card.id.toString() }));
-}
+export default function CardMeaningPage({ params }: CardMeaningPageProps) {
+  const [card, setCard] = useState<CardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-export const revalidate = 86400; // Revalidate daily
-
-// Import static combinations for faster lookup
-export default async function CardMeaningPage({ params }: CardMeaningPageProps) {
-  const allCards = await getCards();
-  const card = getCardById(allCards, parseInt(params.id));
-
-  if (!card) {
-    return {
-      notFound: true,
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await fetch("/api/cards");
+        if (!response.ok) throw new Error("Failed to fetch cards");
+        const cardsData = await response.json();
+        const cardData = cardsData.find((c: CardData) => c.id === parseInt(params.id));
+        setCard(cardData || null);
+      } catch (error) {
+        console.error("Error fetching card:", error);
+        setCard(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
+
+    fetchCards();
+  }, [params.id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 w-48 rounded bg-muted" />
+            <div className="h-64 w-full rounded bg-muted" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  if (!card) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-2xl font-bold">Card not found</h1>
+          <Link href="/learn/card-meanings">
+            <Button variant="outline" className="mt-4">
+              Back to Card Meanings
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const previousCardId = Math.max(1, card.id - 1);
+  const nextCardId = Math.min(36, card.id + 1);
+  const cardImageName = card.number === 22
+    ? "paths"
+    : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8">
         <BreadcrumbNav
           items={[
-            { label: "Learn", href: "/learn" },
-            { label: "Card Meanings", href: "/learn/card-meanings" },
-            { label: card.name, href: `/learn/card-meanings/${card.id}` },
+            { name: "Learn", url: "/learn" },
+            { name: "Card Meanings", url: "/learn/card-meanings" },
+            { name: card.name, url: `/learn/card-meanings/${card.id}` },
           ]}
         />
 
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center sm:justify-between">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <Link href={`/learn/card-meanings/${Math.max(1, card.id - 1)}`}>
+            <Link href={`/learn/card-meanings/${previousCardId}`}>
               <Button variant="outline" size="sm">
                 <ArrowLeft className="h-4 w-4" />
                 Previous
@@ -67,29 +108,12 @@ export default async function CardMeaningPage({ params }: CardMeaningPageProps) 
               {card.number.toString().padStart(2, "0")}: {card.name}
             </h1>
 
-            <Link href={`/learn/card-meanings/${Math.min(36, card.id + 1)}`}>
+            <Link href={`/learn/card-meanings/${nextCardId}`}>
               <Button variant="outline" size="sm">
                 Next
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              variant={viewMode === "grid" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setViewMode("grid")}
-            >
-              <Grid3X3 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewMode === "list" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setViewMode("list")}
-            >
-              <List className="h-4 w-4" />
-            </Button>
           </div>
         </div>
 
@@ -100,9 +124,9 @@ export default async function CardMeaningPage({ params }: CardMeaningPageProps) 
                 <CardTitle>{card.name} Card</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <div className="mb-6 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <Image
-                    src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
+                    src={`/images/cards/${card.number.toString().padStart(2, "0")}-${cardImageName}.png`}
                     alt={card.name}
                     width={128}
                     height={128}
@@ -111,7 +135,7 @@ export default async function CardMeaningPage({ params }: CardMeaningPageProps) 
                   />
 
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Key Attributes</h3>
+                    <h3 className="mb-2 text-lg font-semibold">Key Attributes</h3>
                     <div className="space-y-2 text-sm">
                       {card.keywords.slice(0, 4).map((keyword) => (
                         <Badge key={keyword} variant="secondary">
@@ -125,15 +149,15 @@ export default async function CardMeaningPage({ params }: CardMeaningPageProps) 
                       )}
                     </div>
 
-                    <h3 className="text-lg font-semibold mb-2">Description</h3>
-                    <p className="text-muted-foreground leading-relaxed mb-4">
+                    <h3 className="mb-2 mt-4 text-lg font-semibold">Description</h3>
+                    <p className="mb-4 leading-relaxed text-muted-foreground">
                       {card.description}
                     </p>
 
                     {card.traditionalMeaning && (
                       <>
-                        <h3 className="text-lg font-semibold mb-2">Traditional Meaning</h3>
-                        <p className="text-muted-foreground leading-relaxed">
+                        <h3 className="mb-2 text-lg font-semibold">Traditional Meaning</h3>
+                        <p className="leading-relaxed text-muted-foreground">
                           {card.traditionalMeaning}
                         </p>
                       </>
@@ -141,16 +165,39 @@ export default async function CardMeaningPage({ params }: CardMeaningPageProps) 
 
                     {card.reversedMeaning && (
                       <>
-                        <h3 className="text-lg font-semibold mb-2">Reversed Meaning</h3>
-                        <p className="text-muted-foreground leading-relaxed">
+                        <h3 className="mb-2 mt-4 text-lg font-semibold">Reversed Meaning</h3>
+                        <p className="leading-relaxed text-muted-foreground">
                           {card.reversedMeaning}
                         </p>
                       </>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CardContent>
+            </Card>
 
+            {/* Navigation */}
+            <div className="mt-8 flex items-center justify-between border-t border-border pt-8">
+              <Link href={`/learn/card-meanings/${previousCardId}`}>
+                <Button
+                  variant="outline"
+                  className="border-border hover:bg-muted"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Previous Card
+                </Button>
+              </Link>
+              <Link href="/learn/card-meanings">
+                <Button variant="outline">
+                  Back to All Cards
+                </Button>
+              </Link>
+              <Link href={`/learn/card-meanings/${nextCardId}`}>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  Next Card
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

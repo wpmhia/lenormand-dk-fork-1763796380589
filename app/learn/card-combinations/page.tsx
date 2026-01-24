@@ -7,8 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { LearningProgressTracker } from "@/components/LearningProgressTracker";
 import { BackToTop } from "@/components/BackToTop";
-import { Heart, Coins, Stethoscope, Briefcase, Zap, Users, ArrowLeft, ArrowRight } from "lucide-react";
+import { Heart, Coins, Stethoscope, Briefcase, Zap, Users, ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
 import { useHeadingIds } from "@/hooks/use-heading-ids";
+import { useState, useMemo } from "react";
 
 interface CardCombination {
   cards: string;
@@ -23,7 +24,8 @@ interface CombinationContext {
   combinations: CardCombination[];
 }
 
-const combinationContexts: CombinationContext[] = [
+// Memoize combination contexts - moved outside component to prevent re-creation
+const getCombinationContexts = (): CombinationContext[] => [
   {
     title: "Love & Relationships",
     icon: <Heart className="h-6 w-6 text-red-500" />,
@@ -453,8 +455,65 @@ const combinationContexts: CombinationContext[] = [
   },
 ];
 
+// Accordion Section Component
+function AccordionSection({ context, index }: { context: CombinationContext; index: number }) {
+  const [isOpen, setIsOpen] = useState(index === 0); // First section open by default
+
+  return (
+    <Card key={index} className="mb-8 border-border bg-card">
+      <CardHeader>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex w-full items-center gap-3 transition-opacity hover:opacity-80"
+        >
+          <div className="flex items-center gap-3 flex-1">
+            {context.icon}
+            <CardTitle id={context.title.toLowerCase().replace(/\s+/g, "-")}>
+              {context.title}
+            </CardTitle>
+          </div>
+          <ChevronDown
+            className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+        <p className="text-sm text-muted-foreground mt-2">
+          {context.description}
+        </p>
+      </CardHeader>
+      {isOpen && (
+        <CardContent>
+          <div className="space-y-4">
+            {context.combinations.map((combo, comboIndex) => (
+              <div
+                key={comboIndex}
+                className="border-l-2 border-primary/50 py-2 pl-4"
+              >
+                <div className="mb-2 flex items-start justify-between">
+                  <h4 className="font-semibold text-foreground">
+                    {combo.cards}
+                  </h4>
+                  <Badge className="ml-2">{context.title}</Badge>
+                </div>
+                <p className="mb-2 text-foreground">{combo.meaning}</p>
+                {combo.context && (
+                  <p className="text-sm italic text-muted-foreground">
+                    Context: {combo.context}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      )}
+    </Card>
+  );
+}
+
 export default function CardCombinationsPage() {
   useHeadingIds();
+  
+  // Memoize combination contexts
+  const combinationContexts = useMemo(() => getCombinationContexts(), []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -474,8 +533,8 @@ export default function CardCombinationsPage() {
       {/* Navigation */}
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-             <Link href="/learn/reading-fundamentals">
+          <div className="flex items-center justify-between">
+            <Link href="/learn/reading-fundamentals">
               <Button
                 variant="ghost"
                 size="sm"
@@ -580,46 +639,9 @@ export default function CardCombinationsPage() {
           </CardContent>
         </Card>
 
-        {/* Combination Contexts */}
+        {/* Combination Contexts with Accordion */}
         {combinationContexts.map((context, index) => (
-          <Card key={index} className="mb-8 border-border bg-card">
-            <CardHeader>
-              <div className="mb-2 flex items-center gap-3">
-                {context.icon}
-                <CardTitle
-                  id={context.title.toLowerCase().replace(/\s+/g, "-")}
-                >
-                  {context.title}
-                </CardTitle>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {context.description}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {context.combinations.map((combo, comboIndex) => (
-                  <div
-                    key={comboIndex}
-                    className="border-l-2 border-primary/50 py-2 pl-4"
-                  >
-                    <div className="mb-2 flex items-start justify-between">
-                      <h4 className="font-semibold text-foreground">
-                        {combo.cards}
-                      </h4>
-                      <Badge className="ml-2">{context.title}</Badge>
-                    </div>
-                    <p className="mb-2 text-foreground">{combo.meaning}</p>
-                    {combo.context && (
-                      <p className="text-sm italic text-muted-foreground">
-                        Context: {combo.context}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <AccordionSection key={index} context={context} index={index} />
         ))}
 
         {/* Practice Tips Section */}
