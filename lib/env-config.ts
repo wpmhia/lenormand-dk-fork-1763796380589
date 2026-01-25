@@ -1,6 +1,14 @@
 // IMPORTANT: When adding new env variables to the codebase, update this array
 export const ENV_VARIABLES: EnvVariable[] = [
   {
+    name: "DATABASE_URL",
+    description:
+      "PostgreSQL connection string for Neon database analytics",
+    required: true,
+    instructions:
+      "Get your DATABASE_URL from your Neon dashboard. This is required for reading analytics and metrics.",
+  },
+  {
     name: "DEEPSEEK_API_KEY",
     description:
       "API key for DeepSeek AI service for Lenormand reading interpretations",

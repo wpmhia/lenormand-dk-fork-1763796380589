@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ReadingAnalytics {
+  id            String   @id @default(cuid())
+  sessionId     String?
+  spreadType    String
+  cardCount     Int
+  questionCategory String
+  interpretationSource String // 'unique-static' | 'ai' | 'static'
+  readingDuration Int    // milliseconds
+  cards         Json     // Store card data for analytics
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model CardPopularity {
+  id          String @id @default(cuid())
+  cardId      Int
+  cardName    String
+  usageCount  Int @default(1)
+  questionCategories String[] // Array of categories this card appears in
+  lastUsed    DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PerformanceMetrics {
+  id        String @id @default(cuid())
+  metricType String // 'response_time' | 'interpretation_source' | 'cache_hit_rate' | 'daily_volume'
+  value      Float
+  metadata   Json? // Additional context
+  date       DateTime @default(now())
+  createdAt  DateTime @default(now())
+}
+
+model UserInteraction {
+  id            String @id @default(cuid())
+  sessionId     String?
+  interactionType String // 'reading_completed' | 'card_favorited' | 'question_asked'
+  metadata      Json? // Reading details, ratings, etc.
+  createdAt      DateTime @default(now())
+}
