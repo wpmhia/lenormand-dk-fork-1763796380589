@@ -222,7 +222,7 @@ export function middleware(request: NextRequest) {
     `font-src 'self' https://fonts.gstatic.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     "img-src 'self' data: https: blob:",
     `connect-src 'self' https: wss: ${isVercel ? 'https://*.vercel.app https://*.e2b.app wss://*.vercel.app wss://*.e2b.app' : ''}`, // Allow all Vercel/e2b connections
-    "frame-ancestors 'none'", // Prevent clickjacking
+    isVercel ? "frame-ancestors 'self' https://*.e2b.app https://ideavo.ai https://server.ideavo.ai" : "frame-ancestors 'none'", // Allow framing for development
     "base-uri 'self'",
     "form-action 'self'"
   ].join('; ');
@@ -253,6 +253,11 @@ export function middleware(request: NextRequest) {
     response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
     response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
     response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  } else {
+    // For e2b/vercel deployments, use more permissive CORS policies
+    response.headers.set("Access-Control-Allow-Origin", "*");
+    response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
   }
   
   // Remove server signature for security
