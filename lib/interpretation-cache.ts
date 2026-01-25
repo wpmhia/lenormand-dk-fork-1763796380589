@@ -1,6 +1,9 @@
 import cardsData from './data/cards.json';
 import cardCombinationsData from './data/card-combinations.json';
 
+// Create a map for O(1) card lookups instead of O(n) find() calls
+const cardDataMap = new Map(cardsData.map((card: any) => [card.id, card]));
+
 // Question categories for better matching
 export const QUESTION_CATEGORIES = {
   LOVE: ['love', 'relationship', 'partner', 'romance', 'heart', 'feelings', 'emotion', 'dating'],
@@ -84,12 +87,15 @@ function generateDivinatorySeed(
   question: string
 ): number {
   // Create unique seed based on precise moment (millisecond precision)
-  const preciseTime = Date.now() + Math.random() * 1000;
+  const preciseTime = Date.now();
   
   // Include card energies, question essence, and divinatory intention
+  // Optimized: avoid character-by-character iteration
   const cardEnergies = cards.reduce((sum, card) => sum + card.id * 7, 0);
-  const questionHash = question.split('').reduce((hash, char) => hash + char.charCodeAt(0) * 3, 0);
-  const spreadHash = spreadId.split('').reduce((hash, char) => hash + char.charCodeAt(0) * 5, 0);
+  
+  // Use string length and first/last char for hash instead of iterating all chars
+  const questionHash = question.length * 3 + (question.charCodeAt(0) || 0) + (question.charCodeAt(question.length - 1) || 0);
+  const spreadHash = spreadId.length * 5 + (spreadId.charCodeAt(0) || 0);
   
   // Combine with current cosmic energy
   const cosmicFactor = (preciseTime % 86400000) / 86400000; // Daily position
@@ -102,7 +108,7 @@ function generateSingleCardReading(
   category: string,
   seed: number
 ): StaticInterpretation {
-  const cardData = cardsData.find((c: any) => c.id === card.id);
+  const cardData = cardDataMap.get(card.id);
   if (!cardData) {
     return {
       meaning: 'Unknown card energy',
@@ -166,8 +172,8 @@ function generateTwoCardReading(
   }
   
   // Add card-specific energies
-  const card1Data = cardsData.find((c: any) => c.id === card1.id);
-  const card2Data = cardsData.find((c: any) => c.id === card2.id);
+  const card1Data = cardDataMap.get(card1.id);
+  const card2Data = cardDataMap.get(card2.id);
   
   if (card1Data?.uprightMeaning) {
     interpretations.push(card1Data.uprightMeaning);
@@ -210,7 +216,7 @@ function generateMultiCardReading(
   
   // Get individual card energies
   const cardMeanings = cards.map((card, index) => {
-    const cardData = cardsData.find((c: any) => c.id === card.id);
+    const cardData = cardDataMap.get(card.id);
     if (!cardData) return '';
     
     const meaningOptions = [
