@@ -56,6 +56,10 @@ const nextConfig = {
             key: "X-Permitted-Cross-Domain-Policies",
             value: "none",
           },
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors *",
+          },
         ],
       },
       {
