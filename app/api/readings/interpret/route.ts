@@ -10,6 +10,7 @@ import {
   getCachedReading,
   setCachedReading
 } from "@/lib/interpretation-cache";
+import { getInterpretationWithCache } from "@/lib/response-cache";
 
 // Timeout configuration (milliseconds)
 const TIMEOUT_MS = 14000; // 14 seconds timeout
@@ -113,25 +114,35 @@ export async function POST(request: Request) {
     const timeoutId = setTimeout(() => abortController.abort(), TIMEOUT_MS);
 
     try {
-      const result = await streamText({
-        model: deepseek.chat("deepseek-chat"),
-        messages: [
-          { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-          { role: "user", content: buildPrompt(cards, spreadId || "sentence-3", question) },
-        ],
-        temperature: 0.4,
-        maxOutputTokens: getMaxTokens(cards.length),
-        abortSignal: abortController.signal,
-      });
+      // Use caching layer to get interpretation (handles deduplication + cache)
+      const responseText = await getInterpretationWithCache(
+        {
+          question,
+          cardIds: cards.map((c: any) => c.id),
+          spreadId: spreadId || 'sentence-3'
+        },
+        async () => {
+          // This function only runs on cache miss
+          const result = await streamText({
+            model: deepseek.chat("deepseek-chat"),
+            messages: [
+              { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+              { role: "user", content: buildPrompt(cards, spreadId || "sentence-3", question) },
+            ],
+            temperature: 0.4,
+            maxOutputTokens: getMaxTokens(cards.length),
+            abortSignal: abortController.signal,
+          });
 
-      // If fallback is requested, await the full text and return JSON
+          return await result.text;
+        }
+      );
+
+      // If fallback is requested, return JSON
       if (_fallback) {
         clearTimeout(timeoutId);
-        const text = await result.text;
-        // Cache the AI response
-        setCachedReading('ai-response', text, 'ai');
         return new Response(
-          JSON.stringify({ reading: text, source: 'ai' }),
+          JSON.stringify({ reading: responseText, source: 'ai', cached: true }),
           { headers: { "Content-Type": "application/json" } }
         );
       }
@@ -141,16 +152,14 @@ export async function POST(request: Request) {
         async start(controller) {
           const encoder = new TextEncoder();
           try {
-            for await (const chunk of result.textStream) {
-              const data = JSON.stringify({
-                choices: [{ delta: { content: chunk } }]
-              });
-              controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-            }
+            // Stream the cached/fresh response
+            const data = JSON.stringify({
+              choices: [{ delta: { content: responseText } }]
+            });
+            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
             controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           } catch (error) {
-             // Handle timeout gracefully - return partial response or fallback message
-             // Note: result.textStream throws on abort
+             // Handle errors gracefully
              if (error instanceof Error && error.name === 'AbortError') {
                console.warn('DeepSeek request timeout after 14s');
                const fallbackMessage = `\n\n${TIMEOUT_MESSAGE}Consider the key themes, energy, and message of each card in relation to your question.`;
