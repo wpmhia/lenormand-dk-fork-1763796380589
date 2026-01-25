@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 
     try {
       const result = await streamText({
-        model: deepseek("deepseek-chat"),
+        model: deepseek.chat("deepseek-chat"),
         messages: [
           { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
           { role: "user", content: prompt },
