@@ -6,8 +6,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import {
   categorizeQuestion,
-  generateCacheKey,
-  getStaticInterpretation,
+  generateUniqueInterpretation,
   getCachedReading,
   setCachedReading
 } from "@/lib/interpretation-cache";
@@ -24,40 +23,34 @@ const deepseek = createOpenAI({
   apiKey: DEEPSEEK_API_KEY,
 });
 
-function formatStaticInterpretation(
-  staticInterpretation: any,
+function formatUniqueInterpretation(
+  uniqueInterpretation: any,
   cards: Array<{ id: number; name: string }>,
   spreadId: string,
   question: string
 ): string {
   const cardNames = cards.map(c => c.name).join(', ');
   
-  let interpretation = `Question: "${question}"\\n\\nCards: ${cardNames}\\n\\n`;
+  let interpretation = `🔮 Fortune Telling Reading 🔮\n\n`;
+  interpretation += `Question: "${question}"\n\n`;
+  interpretation += `Cards: ${cardNames}\n\n`;
   
-  if (staticInterpretation.meaning) {
-    interpretation += `Interpretation: ${staticInterpretation.meaning}\\n\\n`;
+  if (uniqueInterpretation.meaning) {
+    interpretation += `🌟 Divine Message: ${uniqueInterpretation.meaning}\n\n`;
   }
   
-  if (staticInterpretation.context) {
-    interpretation += `Context: ${staticInterpretation.context}\\n\\n`;
+  if (uniqueInterpretation.context) {
+    interpretation += `🎭 Cards' Dance: ${uniqueInterpretation.context}\n\n`;
   }
   
-  if (staticInterpretation.examples && staticInterpretation.examples.length > 0) {
-    interpretation += `Examples: ${staticInterpretation.examples.slice(0, 2).join('; ')}\\n\\n`;
+  if (uniqueInterpretation.examples && uniqueInterpretation.examples.length > 0) {
+    interpretation += `💫 Whispers: ${uniqueInterpretation.examples.slice(0, 2).join('; ')}\n\n`;
   }
   
-  // Add practical guidance based on category
-  const guidance = {
-    'love': 'Focus on emotional connections and relationship dynamics.',
-    'career': 'Consider professional opportunities and financial growth.',
-    'health': 'Pay attention to physical and emotional wellness.',
-    'general': 'Look for broader life patterns and opportunities.'
-  };
+  // Add mystical guidance
+  interpretation += `🌙 Energy: ${uniqueInterpretation.strength} | Fate: ${uniqueInterpretation.category}\n\n`;
   
-  const category = (staticInterpretation.category || 'GENERAL').toLowerCase();
-  interpretation += `Guidance: ${guidance[category as keyof typeof guidance] || guidance.general}\\n\\n`;
-  
-  interpretation += '*(Static interpretation - cached for faster response)*';
+  interpretation += '✨ Unique moment captured ✨';
   
   return interpretation;
 }
@@ -114,50 +107,31 @@ export async function POST(request: Request) {
 
     const { question, cards, spreadId, _fallback } = body;
     const questionCategory = categorizeQuestion(question);
-    const cacheKey = generateCacheKey(cards, spreadId || "sentence-3", questionCategory);
     
-    // Check cache first
-    const cachedReading = getCachedReading(cacheKey);
-    if (cachedReading && !_fallback) {
-      // Return cached reading as stream for consistency
-      const stream = new ReadableStream({
-        async start(controller) {
-          const encoder = new TextEncoder();
-          const data = JSON.stringify({
-            choices: [{ delta: { content: cachedReading.interpretation } }]
-          });
-          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-          controller.close();
-        },
-      });
-
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "X-Cache-Source": cachedReading.source,
-        },
-      });
-    }
-
-    // Try static interpretation first
-    const staticInterpretation = getStaticInterpretation(cards, spreadId || "sentence-3", questionCategory);
-    if (staticInterpretation) {
-      const interpretationText = formatStaticInterpretation(staticInterpretation, cards, spreadId || "sentence-3", question);
-      
-      // Cache the static interpretation
-      setCachedReading(cacheKey, interpretationText, 'static');
+    // Generate UNIQUE reading for true fortune telling
+    const uniqueInterpretation = generateUniqueInterpretation(
+      cards, 
+      spreadId || "sentence-3", 
+      questionCategory,
+      question
+    );
+    
+    if (uniqueInterpretation) {
+      const interpretationText = formatUniqueInterpretation(uniqueInterpretation, cards, spreadId || "sentence-3", question);
       
       if (_fallback) {
         return new Response(
-          JSON.stringify({ reading: interpretationText, source: 'static' }),
+          JSON.stringify({ 
+            reading: interpretationText, 
+            source: 'unique-static',
+            fortuneTelling: 'true',
+            randomGeneration: 'millisecond-precision'
+          }),
           { headers: { "Content-Type": "application/json" } }
         );
       }
 
-      // Return static interpretation as stream
+      // Return unique interpretation as stream
       const stream = new ReadableStream({
         async start(controller) {
           const encoder = new TextEncoder();
@@ -175,14 +149,12 @@ export async function POST(request: Request) {
           "Content-Type": "text/event-stream",
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "X-Cache-Source": "static",
+          "X-Cache-Source": "unique-static",
+          "X-Fortune-Telling": "true",
+          "X-Randomness": "millisecond-precision",
         },
       });
     }
-
-    // Fall back to AI for unique combinations
-    const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
-    const maxTokens = getMaxTokens(cards.length);
 
     // Create AbortController for timeout
     const abortController = new AbortController();
@@ -193,24 +165,24 @@ export async function POST(request: Request) {
         model: deepseek.chat("deepseek-chat"),
         messages: [
           { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-          { role: "user", content: prompt },
+          { role: "user", content: buildPrompt(cards, spreadId || "sentence-3", question) },
         ],
         temperature: 0.4,
-        maxOutputTokens: maxTokens,
+        maxOutputTokens: getMaxTokens(cards.length),
         abortSignal: abortController.signal,
       });
 
-       // If fallback is requested, await the full text and return JSON
-       if (_fallback) {
-         clearTimeout(timeoutId);
-         const text = await result.text;
-         // Cache the AI response
-         setCachedReading(cacheKey, text, 'ai');
-         return new Response(
-           JSON.stringify({ reading: text, source: 'ai' }),
-           { headers: { "Content-Type": "application/json" } }
-         );
-       }
+      // If fallback is requested, await the full text and return JSON
+      if (_fallback) {
+        clearTimeout(timeoutId);
+        const text = await result.text;
+        // Cache the AI response
+        setCachedReading('ai-response', text, 'ai');
+        return new Response(
+          JSON.stringify({ reading: text, source: 'ai' }),
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
 
       // Stream response in OpenAI-compatible SSE format for frontend compatibility
       const stream = new ReadableStream({
@@ -250,6 +222,7 @@ export async function POST(request: Request) {
           "Content-Type": "text/event-stream",
           "Cache-Control": "no-cache",
           "Connection": "keep-alive",
+          "X-Cache-Source": "ai",
         },
       });
 

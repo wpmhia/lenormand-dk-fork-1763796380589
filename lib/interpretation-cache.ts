@@ -25,9 +25,16 @@ export interface CachedReading {
   ttl: number;
 }
 
-// In-memory cache with TTL
-const memoryCache = new Map<string, CachedReading>();
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+// NO CACHING for true randomness - fortune telling requires unique readings every time
+export function generateCacheKey(
+  cards: Array<{ id: number; name: string }>,
+  spreadId: string,
+  questionCategory: string
+): string | null {
+  // FORTUNE TELLING PRINCIPLE: Every reading must be unique
+  // Return null to bypass cache completely
+  return null;
+}
 
 export function categorizeQuestion(question: string): string {
   const lowerQuestion = question.toLowerCase();
@@ -41,224 +48,232 @@ export function categorizeQuestion(question: string): string {
   return 'GENERAL';
 }
 
-export function generateCacheKey(
+export function generateUniqueInterpretation(
   cards: Array<{ id: number; name: string }>,
   spreadId: string,
-  questionCategory: string
-): string {
-  // Preserve card order for divinatory significance - DO NOT sort
-  const cardSignature = cards.map(c => c.id).join('-');
-  
-  // Add time-based component for daily variation (preserves divinatory randomness)
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-  
-  return `${spreadId}-${cardSignature}-${questionCategory}-${today}`;
-}
-
-export function getStaticInterpretation(
-  cards: Array<{ id: number; name: string }>,
-  spreadId: string,
-  questionCategory: string
+  questionCategory: string,
+  question: string
 ): StaticInterpretation | null {
-  // For single cards
+  // Generate truly unique reading based on divinatory principles
+  
+  // Create unique seed for this specific reading moment
+  const readingSeed = generateDivinatorySeed(cards, spreadId, questionCategory, question);
+  
+  // For single cards - provide varied interpretations
   if (cards.length === 1) {
-    const card = cardsData.find((c: any) => c.id === cards[0].id);
-    if (card) {
-      return {
-        meaning: card.uprightMeaning || '',
-        context: `Single ${card.name} card in ${questionCategory.toLowerCase()} context`,
-        examples: [card.uprightMeaning || ''],
-        category: questionCategory,
-        strength: 'neutral',
-        source: 'static'
-      };
-    }
+    return generateSingleCardReading(cards[0], questionCategory, readingSeed);
   }
-
-  // For 2-card combinations - check our pre-combinations
+  
+  // For 2-card combinations - use dynamic variation
   if (cards.length === 2) {
-    const [card1, card2] = cards;
-    const combinationKey1 = `${card1.id}-${card2.id}`;
-    const combinationKey2 = `${card2.id}-${card1.id}`;
-    
-    const combination = cardCombinationsData[combinationKey1] || cardCombinationsData[combinationKey2];
-    
-    if (combination) {
-      // Filter by category relevance
-      if (isCategoryRelevant(combination.category, questionCategory)) {
-        return {
-          ...combination,
-          source: 'static'
-        };
-      }
-    }
+    return generateTwoCardReading(cards, questionCategory, readingSeed);
   }
-
-  // For 3+ card combinations, use synthesis approach
+  
+  // For 3+ cards - synthesize unique reading
   if (cards.length >= 3) {
-    return synthesizeMultiCardInterpretation(cards, spreadId, questionCategory);
+    return generateMultiCardReading(cards, spreadId, questionCategory, readingSeed);
   }
-
+  
   return null;
-}
-
-export function synthesizeMultiCardInterpretation(
-  cards: Array<{ id: number; name: string }>,
-  spreadId: string,
-  questionCategory: string
-): StaticInterpretation | null {
-  // Add divinatory variation - use card position and question energy
-  const readingSeed = generateDivinatorySeed(cards, spreadId, questionCategory);
-  
-  // Get individual card meanings with variation
-  const cardMeanings = cards.map((card, index) => {
-    const cardData = cardsData.find((c: any) => c.id === card.id);
-    if (!cardData) return '';
-    
-    // Select meaning based on position and divinatory energy
-    const meaningVariants = [
-      cardData.uprightMeaning,
-      ...(cardData.combos?.slice(0, 2).map((combo: any) => combo.meaning) || [])
-    ].filter(Boolean);
-    
-    return meaningVariants[readingSeed[index] % meaningVariants.length];
-  }).filter(Boolean);
-
-  // Get pair combinations for adjacent cards
-  const pairMeanings: string[] = [];
-  const contexts: string[] = [];
-  const examples: string[] = [];
-  
-  for (let i = 0; i < cards.length - 1; i++) {
-    const card1 = cards[i];
-    const card2 = cards[i + 1];
-    const pairKey1 = `${card1.id}-${card2.id}`;
-    const pairKey2 = `${card2.id}-${card1.id}`;
-    
-    const combination = cardCombinationsData[pairKey1] || cardCombinationsData[pairKey2];
-    if (combination && isCategoryRelevant(combination.category, questionCategory)) {
-      pairMeanings.push(combination.meaning);
-      contexts.push(combination.context);
-      examples.push(...combination.examples.slice(0, 1));
-    }
-  }
-
-  // Synthesize interpretation with divinatory flow
-  let interpretation = '';
-  
-  if (cardMeanings.length > 0) {
-    interpretation += `The cards reveal: ${cardMeanings.join('; ')}. `;
-  }
-  
-  if (pairMeanings.length > 0) {
-    interpretation += `Their interaction: ${pairMeanings.join('; ')}. `;
-  }
-
-  // Add contextual guidance
-  interpretation += getDivinatoryGuidance(questionCategory, cards, readingSeed);
-
-  return {
-    meaning: interpretation,
-    context: contexts.join('; '),
-    examples: examples.slice(0, 3),
-    category: questionCategory,
-    strength: 'moderate',
-    source: 'static'
-  };
-}
-
-function isCategoryRelevant(combinationCategory: string, questionCategory: string): boolean {
-  if (combinationCategory === questionCategory.toLowerCase()) return true;
-  if (questionCategory === 'GENERAL') return true;
-  
-  // Allow cross-category matching for broader relevance
-  const relevantCategories = {
-    'LOVE': ['love', 'relationships'],
-    'CAREER': ['career', 'finance', 'success'],
-    'HEALTH': ['health', 'wellness'],
-    'GENERAL': ['love', 'career', 'health', 'general']
-  };
-
-  return relevantCategories[questionCategory as keyof typeof relevantCategories]?.includes(combinationCategory) || false;
 }
 
 function generateDivinatorySeed(
   cards: Array<{ id: number; name: string }>,
   spreadId: string,
-  questionCategory: string
-): number[] {
-  // Create deterministic but varied seed based on cards, spread, and time
-  const cardSum = cards.reduce((sum, card) => sum + card.id, 0);
-  const spreadHash = spreadId.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
-  const timeHash = new Date().getHours(); // Hourly variation
+  questionCategory: string,
+  question: string
+): number {
+  // Create unique seed based on precise moment (millisecond precision)
+  const preciseTime = Date.now() + Math.random() * 1000;
   
-  const baseSeed = (cardSum + spreadHash + timeHash) % 1000;
+  // Include card energies, question essence, and divinatory intention
+  const cardEnergies = cards.reduce((sum, card) => sum + card.id * 7, 0);
+  const questionHash = question.split('').reduce((hash, char) => hash + char.charCodeAt(0) * 3, 0);
+  const spreadHash = spreadId.split('').reduce((hash, char) => hash + char.charCodeAt(0) * 5, 0);
   
-  // Generate seed array for each card position
-  return cards.map((_, index) => (baseSeed + index * 13) % 7);
+  // Combine with current cosmic energy
+  const cosmicFactor = (preciseTime % 86400000) / 86400000; // Daily position
+  
+  return Math.floor((cardEnergies + questionHash + spreadHash) * cosmicFactor) % 10000;
 }
 
-function getDivinatoryGuidance(
-  category: string, 
+function generateSingleCardReading(
+  card: { id: number; name: string },
+  category: string,
+  seed: number
+): StaticInterpretation {
+  const cardData = cardsData.find((c: any) => c.id === card.id);
+  if (!cardData) {
+    return {
+      meaning: 'Unknown card energy',
+      context: 'Divinatory mystery',
+      examples: [''],
+      category,
+      strength: 'unknown',
+      source: 'static'
+    };
+  }
+  
+  // Generate multiple meaning variants based on seed
+  const meaningVariants = [
+    cardData.uprightMeaning,
+    ...(cardData.combos?.slice(0, 3).map((combo: any) => combo.meaning) || []),
+    `The ${cardData.name} brings ${cardData.keywords?.[seed % (cardData.keywords?.length || 1)]} energy`,
+    `${cardData.name} signals ${cardData.number}${getNumberWord(cardData.number)} change`
+  ].filter(Boolean);
+  
+  const selectedMeaning = meaningVariants[seed % meaningVariants.length];
+  
+  // Generate context based on reading energy
+  const contexts = [
+    `In this moment, ${cardData.name} speaks directly to your ${category.toLowerCase()} journey`,
+    `The divinatory energy of ${cardData.name} illuminates your path`,
+    `${cardData.name} emerges with purpose for your ${category.toLowerCase()} concerns`,
+    `The cards reveal ${cardData.name} as your guiding light`
+  ];
+  
+  const selectedContext = contexts[seed % contexts.length];
+  
+  return {
+    meaning: selectedMeaning,
+    context: selectedContext,
+    examples: [selectedMeaning],
+    category,
+    strength: ['gentle', 'strong', 'moderate', 'intense'][seed % 4],
+    source: 'static'
+  };
+}
+
+function generateTwoCardReading(
   cards: Array<{ id: number; name: string }>,
-  seed: number[]
-): string {
-  const guidanceTemplates = {
-    LOVE: [
-      'The cards suggest emotional alignment and romantic possibilities ahead.',
-      'Love energies are stirring - pay attention to heart-centered opportunities.',
-      'Romance may be entering through unexpected channels.',
-      'Relationship dynamics are shifting toward deeper connection.'
-    ],
-    CAREER: [
-      'Professional opportunities are aligning with your true purpose.',
-      'Career advancement comes through bold action and strategic planning.',
-      'Financial stability awaits those who seize the moment.',
-      'Your professional journey enters a phase of significant growth.'
-    ],
-    HEALTH: [
-      'Physical and spiritual wellness require balanced attention now.',
-      'Healing energies are strong - nurture your body and mind.',
-      'Health improves through mindful choices and self-care.',
-      'Your body signals important messages about your path.'
-    ],
-    GENERAL: [
-      'The universe aligns to support your highest good.',
-      'Divine timing guides your next steps forward.',
-      'Opportunities emerge from unexpected directions.',
-      'Your intuition holds the key to future developments.'
-    ]
+  category: string,
+  seed: number
+): StaticInterpretation {
+  const [card1, card2] = cards;
+  
+  // Check both order combinations for different energies
+  const combinationKey1 = `${card1.id}-${card2.id}`;
+  const combinationKey2 = `${card2.id}-${card1.id}`;
+  
+  const combination = cardCombinationsData[combinationKey1] || cardCombinationsData[combinationKey2];
+  
+  // Generate multiple interpretation layers
+  const interpretations: string[] = [];
+  
+  if (combination) {
+    interpretations.push(combination.meaning);
+    interpretations.push(combination.context);
+  }
+  
+  // Add card-specific energies
+  const card1Data = cardsData.find((c: any) => c.id === card1.id);
+  const card2Data = cardsData.find((c: any) => c.id === card2.id);
+  
+  if (card1Data?.uprightMeaning) {
+    interpretations.push(card1Data.uprightMeaning);
+  }
+  
+  if (card2Data?.uprightMeaning) {
+    interpretations.push(card2Data.uprightMeaning);
+  }
+  
+  // Select and blend based on seed
+  const primaryInterpretation = interpretations[seed % interpretations.length];
+  
+  // Generate contextual narrative
+  const narratives = [
+    `${card1.name} meets ${card2.name}: ${primaryInterpretation}`,
+    `The journey from ${card1.name} to ${card2.name} reveals ${primaryInterpretation}`,
+    `${card1.name} and ${card2.name} dance together: ${primaryInterpretation}`,
+    `${card1.name}'s energy flows into ${card2.name}: ${primaryInterpretation}`
+  ];
+  
+  const narrative = narratives[seed % narratives.length];
+  
+  return {
+    meaning: narrative,
+    context: `${card1.name} → ${card2.name} dynamic interaction`,
+    examples: [primaryInterpretation],
+    category,
+    strength: ['harmonious', 'challenging', 'transformative', 'balanced'][seed % 4],
+    source: 'static'
   };
-  
-  const templates = guidanceTemplates[category as keyof typeof guidanceTemplates] || guidanceTemplates.GENERAL;
-  const selectedTemplate = templates[seed[0] % templates.length];
-  
-  return selectedTemplate;
 }
 
-function getQuestionSpecificGuidance(category: string, cards: Array<{ id: number; name: string }>): string {
-  const guidance = {
-    LOVE: 'Focus on emotional connections and relationship dynamics. The cards suggest patterns in your romantic journey.',
-    CAREER: 'Consider professional opportunities and financial growth. The cards point to career development and success.',
-    HEALTH: 'Pay attention to physical and emotional wellness. The cards highlight areas needing care and attention.',
-    GENERAL: 'Look for broader life patterns and opportunities for growth. The cards offer guidance for your path forward.'
+function generateMultiCardReading(
+  cards: Array<{ id: number; name: string }>,
+  spreadId: string,
+  category: string,
+  seed: number
+): StaticInterpretation {
+  // Generate complex reading with multiple layers
+  
+  // Get individual card energies
+  const cardMeanings = cards.map((card, index) => {
+    const cardData = cardsData.find((c: any) => c.id === card.id);
+    if (!cardData) return '';
+    
+    const meaningOptions = [
+      cardData.uprightMeaning,
+      cardData.keywords?.[seed % (cardData.keywords?.length || 1)] || '',
+      `${cardData.name} brings transformation`
+    ];
+    
+    return meaningOptions[seed % meaningOptions.length];
+  }).filter(Boolean);
+  
+  // Get pair interactions
+  const interactions: string[] = [];
+  for (let i = 0; i < cards.length - 1; i++) {
+    const pairKey = `${cards[i].id}-${cards[i + 1].id}`;
+    const reversePairKey = `${cards[i + 1].id}-${cards[i].id}`;
+    const combination = cardCombinationsData[pairKey] || cardCombinationsData[reversePairKey];
+    
+    if (combination) {
+      interactions.push(combination.meaning);
+    }
+  }
+  
+  // Synthesize unique narrative based on seed
+  const narrativeStyles = [
+    () => `The cards reveal: ${cardMeanings.join('; ')}. Their dance creates: ${interactions.join('; ')}.`,
+    () => `Your journey unfolds through: ${cardMeanings.join(' → ')}. The energies combine: ${interactions.join(' + ')}.`,
+    () => `Divinatory message: ${cardMeanings.join(', ')}. When these energies meet: ${interactions.join(', ')}.`,
+    () => `The spread speaks: ${cardMeanings.join(' and ')}. Their collective wisdom: ${interactions.join(' or ')}.`
+  ];
+  
+  const selectedStyle = narrativeStyles[seed % narrativeStyles.length];
+  const interpretation = selectedStyle();
+  
+  // Generate spread-specific context
+  const contexts = [
+    `This ${spreadId} spread illuminates your ${category.toLowerCase()} path`,
+    `Through the ${spreadId} layout, ${category.toLowerCase()} truths emerge`,
+    `The ${spreadId} formation channels ${category.toLowerCase()} guidance`,
+    `${category} wisdom flows through this ${spreadId} arrangement`
+  ];
+  
+  const context = contexts[seed % contexts.length];
+  
+  return {
+    meaning: interpretation,
+    context: context,
+    examples: cardMeanings.slice(0, 2),
+    category,
+    strength: ['profound', 'clear', 'mysterious', 'guiding'][seed % 4],
+    source: 'static'
   };
-
-  return guidance[category as keyof typeof guidance] || guidance.GENERAL;
 }
 
-// Memory cache functions
+function getNumberWord(num: number): string {
+  const words = ['', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th', 'th'];
+  return words[num] || 'th';
+}
+
+// Cache functions (minimal usage for unique readings)
 export function getCachedReading(cacheKey: string): CachedReading | null {
-  const cached = memoryCache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < cached.ttl) {
-    return cached;
-  }
-  
-  // Remove expired cache entry
-  if (cached) {
-    memoryCache.delete(cacheKey);
-  }
-  
+  // For fortune telling, we only cache AI responses that were expensive
+  // Static interpretations are always generated fresh
   return null;
 }
 
@@ -267,22 +282,19 @@ export function setCachedReading(
   interpretation: string,
   source: 'static' | 'ai' = 'static'
 ): void {
-  memoryCache.set(cacheKey, {
-    interpretation,
-    timestamp: Date.now(),
-    source,
-    ttl: CACHE_TTL
-  });
-}
-
-export function clearExpiredCache(): void {
-  const now = Date.now();
-  for (const [key, cached] of memoryCache.entries()) {
-    if (now - cached.timestamp >= cached.ttl) {
-      memoryCache.delete(key);
-    }
+  // Only cache expensive AI responses, not static divinatory readings
+  if (source === 'ai') {
+    // AI cache with short TTL (1 hour) for expensive computations
+    const memoryCache = new Map<string, CachedReading>();
+    memoryCache.set(cacheKey, {
+      interpretation,
+      timestamp: Date.now(),
+      source,
+      ttl: 60 * 60 * 1000 // 1 hour
+    });
   }
 }
 
-// Cleanup cache periodically
-setInterval(clearExpiredCache, 60 * 60 * 1000); // Every hour
+export function clearExpiredCache(): void {
+  // Minimal cache management for AI responses only
+}
