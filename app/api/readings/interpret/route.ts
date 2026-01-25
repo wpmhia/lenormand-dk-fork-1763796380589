@@ -4,6 +4,13 @@ export const dynamic = "force-dynamic";
 import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config";
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import {
+  categorizeQuestion,
+  generateCacheKey,
+  getStaticInterpretation,
+  getCachedReading,
+  setCachedReading
+} from "@/lib/interpretation-cache";
 
 // Timeout configuration (milliseconds)
 const TIMEOUT_MS = 14000; // 14 seconds timeout
@@ -16,6 +23,44 @@ const deepseek = createOpenAI({
   baseURL: DEEPSEEK_BASE_URL,
   apiKey: DEEPSEEK_API_KEY,
 });
+
+function formatStaticInterpretation(
+  staticInterpretation: any,
+  cards: Array<{ id: number; name: string }>,
+  spreadId: string,
+  question: string
+): string {
+  const cardNames = cards.map(c => c.name).join(', ');
+  
+  let interpretation = `Question: "${question}"\\n\\nCards: ${cardNames}\\n\\n`;
+  
+  if (staticInterpretation.meaning) {
+    interpretation += `Interpretation: ${staticInterpretation.meaning}\\n\\n`;
+  }
+  
+  if (staticInterpretation.context) {
+    interpretation += `Context: ${staticInterpretation.context}\\n\\n`;
+  }
+  
+  if (staticInterpretation.examples && staticInterpretation.examples.length > 0) {
+    interpretation += `Examples: ${staticInterpretation.examples.slice(0, 2).join('; ')}\\n\\n`;
+  }
+  
+  // Add practical guidance based on category
+  const guidance = {
+    'love': 'Focus on emotional connections and relationship dynamics.',
+    'career': 'Consider professional opportunities and financial growth.',
+    'health': 'Pay attention to physical and emotional wellness.',
+    'general': 'Look for broader life patterns and opportunities.'
+  };
+  
+  const category = (staticInterpretation.category || 'GENERAL').toLowerCase();
+  interpretation += `Guidance: ${guidance[category as keyof typeof guidance] || guidance.general}\\n\\n`;
+  
+  interpretation += '*(Static interpretation - cached for faster response)*';
+  
+  return interpretation;
+}
 
 function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body) {
@@ -68,6 +113,74 @@ export async function POST(request: Request) {
     }
 
     const { question, cards, spreadId, _fallback } = body;
+    const questionCategory = categorizeQuestion(question);
+    const cacheKey = generateCacheKey(cards, spreadId || "sentence-3", questionCategory);
+    
+    // Check cache first
+    const cachedReading = getCachedReading(cacheKey);
+    if (cachedReading && !_fallback) {
+      // Return cached reading as stream for consistency
+      const stream = new ReadableStream({
+        async start(controller) {
+          const encoder = new TextEncoder();
+          const data = JSON.stringify({
+            choices: [{ delta: { content: cachedReading.interpretation } }]
+          });
+          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "X-Cache-Source": cachedReading.source,
+        },
+      });
+    }
+
+    // Try static interpretation first
+    const staticInterpretation = getStaticInterpretation(cards, spreadId || "sentence-3", questionCategory);
+    if (staticInterpretation) {
+      const interpretationText = formatStaticInterpretation(staticInterpretation, cards, spreadId || "sentence-3", question);
+      
+      // Cache the static interpretation
+      setCachedReading(cacheKey, interpretationText, 'static');
+      
+      if (_fallback) {
+        return new Response(
+          JSON.stringify({ reading: interpretationText, source: 'static' }),
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      // Return static interpretation as stream
+      const stream = new ReadableStream({
+        async start(controller) {
+          const encoder = new TextEncoder();
+          const data = JSON.stringify({
+            choices: [{ delta: { content: interpretationText } }]
+          });
+          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        },
+      });
+
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "X-Cache-Source": "static",
+        },
+      });
+    }
+
+    // Fall back to AI for unique combinations
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
     const maxTokens = getMaxTokens(cards.length);
 
@@ -87,15 +200,17 @@ export async function POST(request: Request) {
         abortSignal: abortController.signal,
       });
 
-      // If fallback is requested, await the full text and return JSON
-      if (_fallback) {
-        clearTimeout(timeoutId);
-        const text = await result.text;
-        return new Response(
-          JSON.stringify({ reading: text }),
-          { headers: { "Content-Type": "application/json" } }
-        );
-      }
+       // If fallback is requested, await the full text and return JSON
+       if (_fallback) {
+         clearTimeout(timeoutId);
+         const text = await result.text;
+         // Cache the AI response
+         setCachedReading(cacheKey, text, 'ai');
+         return new Response(
+           JSON.stringify({ reading: text, source: 'ai' }),
+           { headers: { "Content-Type": "application/json" } }
+         );
+       }
 
       // Stream response in OpenAI-compatible SSE format for frontend compatibility
       const stream = new ReadableStream({
