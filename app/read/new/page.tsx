@@ -33,8 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Eye, AlertTriangle } from "lucide-react";
-import { getCardById } from "@/lib/data";
-import staticCardsData from "@/public/data/cards.json";
+import { getCardById, getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
   MODERN_SPREADS,
@@ -58,6 +57,7 @@ function NewReadingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [allCards, setAllCards] = useState<CardType[]>([]);
+  const [loadingCards, setLoadingCards] = useState(true);
   const [step, setStep] = useState<"setup" | "drawing" | "results">("setup");
   const [question, setQuestion] = useState("");
   const [selectedSpread, setSelectedSpread] = useState(AUTHENTIC_SPREADS[1]);
@@ -130,9 +130,24 @@ function NewReadingPageContent() {
     }
   }, [searchParams]);
 
-  // Load cards on mount (from bundled static data)
+  // Load cards on mount (using shared data loader)
   useEffect(() => {
-    setAllCards(staticCardsData as CardType[]);
+    async function loadData() {
+      try {
+        const cards = await getCards();
+        if (cards.length > 0) {
+          setAllCards(cards);
+        } else {
+          setError("Failed to load cards. Please try refreshing the page.");
+        }
+      } catch (err) {
+        console.error("Error loading cards:", err);
+        setError("An error occurred while loading the deck.");
+      } finally {
+        setLoadingCards(false);
+      }
+    }
+    loadData();
   }, []);
 
   // AI streaming state
@@ -737,12 +752,18 @@ function NewReadingPageContent() {
 
                   {/* Virtual Draw */}
                   {path === "virtual" && (
+                    loadingCards ? (
+                      <div className="flex justify-center p-8">
+                        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+                      </div>
+                    ) : (
                     <Deck
                       cards={allCards}
                       drawCount={selectedSpread.cards}
                       onDraw={handleDraw}
                       isProcessing={step !== "drawing"}
                     />
+                    )
                   )}
 
                   {/* Physical Cards Input */}
