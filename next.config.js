@@ -1,22 +1,15 @@
 /** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
 const nextConfig = {
   reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  experimental: {
-    forceSwcTransforms: true,
-  },
   redirects: async () => {
     return [
       {
         source: "/read",
         destination: "/read/new",
-        permanent: true, // 301 redirect - tells search engines to index destination
+        permanent: true,
       },
     ];
   },
@@ -34,10 +27,8 @@ const nextConfig = {
   },
   swcMinify: true,
   headers: async () => {
-    return [
-
-    ];
+    return [];
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = nextConfig;

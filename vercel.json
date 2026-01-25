@@ -1,9 +1,26 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "devCommand": "next dev",
-  "installCommand": "npm install",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci",
   "env": {
-    "DEEPSEEK_BASE_URL": "@deepseek_base_url"
+    "DEEPSEEK_API_KEY": {
+      "description": "DeepSeek API key for AI interpretation"
+    },
+    "DEEPSEEK_BASE_URL": {
+      "description": "DeepSeek API base URL (optional, defaults to https://api.deepseek.com)",
+      "default": "https://api.deepseek.com"
+    }
+  },
+  "functions": {
+    "app/api/**": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "regions": ["auto"],
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
   }
 }
