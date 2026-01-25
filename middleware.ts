@@ -211,14 +211,17 @@ export function middleware(request: NextRequest) {
   );
   response.headers.set("X-Permitted-Cross-Domain-Policies", "none");
   
-  // Content Security Policy (CSP) - Industry standard
+  // Content Security Policy (CSP) - Industry standard with Vercel/e2b deployment support
+  const hostname = request.nextUrl.hostname;
+  const isVercel = hostname.includes('vercel.app') || hostname.includes('.e2b.app');
+  
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live", // Allow inline scripts for Next.js
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
+    `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
+    `font-src 'self' https://fonts.gstatic.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     "img-src 'self' data: https: blob:",
-    "connect-src 'self' https: wss:", // Allow WebSocket connections for SSE
+    `connect-src 'self' https: wss: ${isVercel ? 'https://*.vercel.app https://*.e2b.app wss://*.vercel.app wss://*.e2b.app' : ''}`, // Allow all Vercel/e2b connections
     "frame-ancestors 'none'", // Prevent clickjacking
     "base-uri 'self'",
     "form-action 'self'"
@@ -245,10 +248,12 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // Additional industry standard headers
-  response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
-  response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
-  response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  // Additional industry standard headers (relaxed for deployment environments)
+  if (!isVercel) {
+    response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+    response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  }
   
   // Remove server signature for security
   response.headers.delete("server");

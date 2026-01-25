@@ -234,14 +234,25 @@ function NewReadingPageContent() {
 
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache"
+        },
         body: JSON.stringify(aiRequest),
         signal: controller.signal,
+        // Add connection timeout and retry logic
+        keepalive: true,
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Stream failed: ${response.status}`);
+        console.error('Stream failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText: errorText.substring(0, 200),
+          url: response.url
+        });
+        throw new Error(`Stream failed: ${response.status} - ${response.statusText}`);
       }
 
       if (!response.body) {
