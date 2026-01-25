@@ -46,10 +46,13 @@ export function generateCacheKey(
   spreadId: string,
   questionCategory: string
 ): string {
-  // Sort card IDs for deterministic key
-  const sortedCardIds = cards.map(c => c.id).sort((a, b) => a - b);
-  const cardSignature = sortedCardIds.join('-');
-  return `${spreadId}-${cardSignature}-${questionCategory}`;
+  // Preserve card order for divinatory significance - DO NOT sort
+  const cardSignature = cards.map(c => c.id).join('-');
+  
+  // Add time-based component for daily variation (preserves divinatory randomness)
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  
+  return `${spreadId}-${cardSignature}-${questionCategory}-${today}`;
 }
 
 export function getStaticInterpretation(
@@ -104,19 +107,28 @@ export function synthesizeMultiCardInterpretation(
   spreadId: string,
   questionCategory: string
 ): StaticInterpretation | null {
-  // Build interpretation from individual card meanings and pair combinations
-  let interpretation = '';
-  let contexts: string[] = [];
-  let examples: string[] = [];
-
-  // Get individual card meanings
-  const cardMeanings = cards.map(card => {
+  // Add divinatory variation - use card position and question energy
+  const readingSeed = generateDivinatorySeed(cards, spreadId, questionCategory);
+  
+  // Get individual card meanings with variation
+  const cardMeanings = cards.map((card, index) => {
     const cardData = cardsData.find((c: any) => c.id === card.id);
-    return cardData ? cardData.uprightMeaning : '';
+    if (!cardData) return '';
+    
+    // Select meaning based on position and divinatory energy
+    const meaningVariants = [
+      cardData.uprightMeaning,
+      ...(cardData.combos?.slice(0, 2).map((combo: any) => combo.meaning) || [])
+    ].filter(Boolean);
+    
+    return meaningVariants[readingSeed[index] % meaningVariants.length];
   }).filter(Boolean);
 
   // Get pair combinations for adjacent cards
   const pairMeanings: string[] = [];
+  const contexts: string[] = [];
+  const examples: string[] = [];
+  
   for (let i = 0; i < cards.length - 1; i++) {
     const card1 = cards[i];
     const card2 = cards[i + 1];
@@ -127,21 +139,23 @@ export function synthesizeMultiCardInterpretation(
     if (combination && isCategoryRelevant(combination.category, questionCategory)) {
       pairMeanings.push(combination.meaning);
       contexts.push(combination.context);
-      examples.push(...combination.examples.slice(0, 1)); // Take first example
+      examples.push(...combination.examples.slice(0, 1));
     }
   }
 
-  // Synthesize interpretation
+  // Synthesize interpretation with divinatory flow
+  let interpretation = '';
+  
   if (cardMeanings.length > 0) {
-    interpretation += `Key cards: ${cardMeanings.join('; ')}. `;
+    interpretation += `The cards reveal: ${cardMeanings.join('; ')}. `;
   }
   
   if (pairMeanings.length > 0) {
-    interpretation += `Card interactions: ${pairMeanings.join('; ')}. `;
+    interpretation += `Their interaction: ${pairMeanings.join('; ')}. `;
   }
 
-  // Add context-specific guidance
-  interpretation += getQuestionSpecificGuidance(questionCategory, cards);
+  // Add contextual guidance
+  interpretation += getDivinatoryGuidance(questionCategory, cards, readingSeed);
 
   return {
     meaning: interpretation,
@@ -166,6 +180,60 @@ function isCategoryRelevant(combinationCategory: string, questionCategory: strin
   };
 
   return relevantCategories[questionCategory as keyof typeof relevantCategories]?.includes(combinationCategory) || false;
+}
+
+function generateDivinatorySeed(
+  cards: Array<{ id: number; name: string }>,
+  spreadId: string,
+  questionCategory: string
+): number[] {
+  // Create deterministic but varied seed based on cards, spread, and time
+  const cardSum = cards.reduce((sum, card) => sum + card.id, 0);
+  const spreadHash = spreadId.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
+  const timeHash = new Date().getHours(); // Hourly variation
+  
+  const baseSeed = (cardSum + spreadHash + timeHash) % 1000;
+  
+  // Generate seed array for each card position
+  return cards.map((_, index) => (baseSeed + index * 13) % 7);
+}
+
+function getDivinatoryGuidance(
+  category: string, 
+  cards: Array<{ id: number; name: string }>,
+  seed: number[]
+): string {
+  const guidanceTemplates = {
+    LOVE: [
+      'The cards suggest emotional alignment and romantic possibilities ahead.',
+      'Love energies are stirring - pay attention to heart-centered opportunities.',
+      'Romance may be entering through unexpected channels.',
+      'Relationship dynamics are shifting toward deeper connection.'
+    ],
+    CAREER: [
+      'Professional opportunities are aligning with your true purpose.',
+      'Career advancement comes through bold action and strategic planning.',
+      'Financial stability awaits those who seize the moment.',
+      'Your professional journey enters a phase of significant growth.'
+    ],
+    HEALTH: [
+      'Physical and spiritual wellness require balanced attention now.',
+      'Healing energies are strong - nurture your body and mind.',
+      'Health improves through mindful choices and self-care.',
+      'Your body signals important messages about your path.'
+    ],
+    GENERAL: [
+      'The universe aligns to support your highest good.',
+      'Divine timing guides your next steps forward.',
+      'Opportunities emerge from unexpected directions.',
+      'Your intuition holds the key to future developments.'
+    ]
+  };
+  
+  const templates = guidanceTemplates[category as keyof typeof guidanceTemplates] || guidanceTemplates.GENERAL;
+  const selectedTemplate = templates[seed[0] % templates.length];
+  
+  return selectedTemplate;
 }
 
 function getQuestionSpecificGuidance(category: string, cards: Array<{ id: number; name: string }>): string {
