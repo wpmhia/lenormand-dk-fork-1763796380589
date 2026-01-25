@@ -1,5 +1,4 @@
 export const runtime = "edge";
-export const dynamic = "force-dynamic";
 
 import { buildPrompt, getMaxTokens, isDeepSeekAvailable } from "@/lib/ai-config";
 import { createOpenAI } from "@ai-sdk/openai";
