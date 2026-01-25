@@ -87,74 +87,26 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 }
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
+   let body: any;
+   try {
+     body = await request.json();
 
-    if (!isDeepSeekAvailable()) {
-      return new Response(
-        JSON.stringify({ error: "AI interpretation is not configured" }),
-        { status: 503, headers: { "Content-Type": "application/json" } }
-      );
-    }
+     if (!isDeepSeekAvailable()) {
+       return new Response(
+         JSON.stringify({ error: "AI interpretation is not configured" }),
+         { status: 503, headers: { "Content-Type": "application/json" } }
+       );
+     }
 
-    const validation = validateRequest(body);
-    if (!validation.valid) {
-      return new Response(
-        JSON.stringify({ error: validation.error || "Invalid request" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+     const validation = validateRequest(body);
+     if (!validation.valid) {
+       return new Response(
+         JSON.stringify({ error: validation.error || "Invalid request" }),
+         { status: 400, headers: { "Content-Type": "application/json" } }
+       );
+     }
 
-    const { question, cards, spreadId, _fallback } = body;
-    const questionCategory = categorizeQuestion(question);
-    
-    // Generate UNIQUE reading for true fortune telling
-    const uniqueInterpretation = generateUniqueInterpretation(
-      cards, 
-      spreadId || "sentence-3", 
-      questionCategory,
-      question
-    );
-    
-    if (uniqueInterpretation) {
-      const interpretationText = formatUniqueInterpretation(uniqueInterpretation, cards, spreadId || "sentence-3", question);
-      
-      if (_fallback) {
-        return new Response(
-          JSON.stringify({ 
-            reading: interpretationText, 
-            source: 'unique-static',
-            fortuneTelling: 'true',
-            randomGeneration: 'millisecond-precision'
-          }),
-          { headers: { "Content-Type": "application/json" } }
-        );
-      }
-
-      // Return unique interpretation as stream
-      const stream = new ReadableStream({
-        async start(controller) {
-          const encoder = new TextEncoder();
-          const data = JSON.stringify({
-            choices: [{ delta: { content: interpretationText } }]
-          });
-          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-          controller.close();
-        },
-      });
-
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "X-Cache-Source": "unique-static",
-          "X-Fortune-Telling": "true",
-          "X-Randomness": "millisecond-precision",
-        },
-      });
-    }
+     const { question, cards, spreadId, _fallback } = body;
 
     // Create AbortController for timeout
     const abortController = new AbortController();
@@ -229,41 +181,51 @@ export async function POST(request: Request) {
     } catch (error) {
        clearTimeout(timeoutId);
        throw error;
-    }
+     }
 
-  } catch (error) {
-    // Handle timeout with graceful fallback (top-level catch)
-    if (error instanceof Error && error.name === 'AbortError') {
-      console.warn('API timeout: returning fallback response');
-      const fallbackReading = `${TIMEOUT_MESSAGE}Consider the key themes, energy, and message of each card in relation to your question.`;
-      return new Response(
-        JSON.stringify({
-          reading: fallbackReading,
-          wasContinued: true,
-          timedOut: true,
-        }),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-    
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    
-    return new Response(
-      JSON.stringify({
-        error: "An unexpected error occurred while generating the reading",
-        details: errorMsg,
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
-}
+   } catch (error) {
+     // Handle timeout or API errors with graceful fallback to static interpretation
+     const questionCategory = categorizeQuestion(body?.question || '');
+     const uniqueInterpretation = generateUniqueInterpretation(
+       body?.cards || [], 
+       body?.spreadId || "sentence-3", 
+       questionCategory,
+       body?.question || ''
+     );
+     
+     if (uniqueInterpretation) {
+       console.warn('DeepSeek API failed, using static interpretation:', error instanceof Error ? error.message : String(error));
+       const interpretationText = formatUniqueInterpretation(uniqueInterpretation, body?.cards || [], body?.spreadId || "sentence-3", body?.question || '');
+       
+       return new Response(
+         JSON.stringify({
+           reading: interpretationText,
+           source: 'static-fallback',
+           apiError: error instanceof Error ? error.message : String(error),
+         }),
+         {
+           status: 200,
+           headers: {
+             "Content-Type": "application/json",
+           },
+         }
+       );
+     }
+     
+     // Final fallback if everything fails
+     const errorMsg = error instanceof Error ? error.message : String(error);
+     
+     return new Response(
+       JSON.stringify({
+         error: "An unexpected error occurred while generating the reading",
+         details: errorMsg,
+       }),
+       {
+         status: 500,
+         headers: {
+           "Content-Type": "application/json",
+         },
+       }
+     );
+   }
+ }

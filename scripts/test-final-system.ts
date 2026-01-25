@@ -1,7 +1,7 @@
 import { 
   categorizeQuestion, 
   generateCacheKey, 
-  getStaticInterpretation,
+  generateUniqueInterpretation,
   getCachedReading,
   setCachedReading 
 } from '../lib/interpretation-cache';
@@ -18,7 +18,7 @@ function testFinalSystem() {
     const randomQuestion = generateRandomQuestion();
     const category = categorizeQuestion(randomQuestion);
     const cacheKey = generateCacheKey(randomCards, 'sentence-3', category);
-    const interpretation = getStaticInterpretation(randomCards, 'sentence-3', category);
+    const interpretation = generateUniqueInterpretation(randomCards, 'sentence-3', category, randomQuestion);
     
     console.log(`\\nReading ${i + 1}:`);
     console.log(`  Cards: ${randomCards.map(c => c.name).join(', ')}`);
@@ -27,12 +27,12 @@ function testFinalSystem() {
     console.log(`  Cache Key: ${cacheKey}`);
     console.log(`  Interpretation: ${interpretation?.meaning.substring(0, 100)}...`);
     
-    // Test memory caching
-    if (interpretation) {
-      setCachedReading(cacheKey, interpretation.meaning, 'static');
-      const cached = getCachedReading(cacheKey);
-      console.log(`  Cached: ${cached ? 'Yes' : 'No'}`);
-    }
+     // Test memory caching
+     if (interpretation && cacheKey) {
+       setCachedReading(cacheKey, interpretation.meaning, 'static');
+       const cached = getCachedReading(cacheKey);
+       console.log(`  Cached: ${cached ? 'Yes' : 'No'}`);
+     }
   }
   
   console.log('\\n📊 Final Results:');

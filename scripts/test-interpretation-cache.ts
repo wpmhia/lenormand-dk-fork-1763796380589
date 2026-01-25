@@ -1,7 +1,7 @@
 import { 
   categorizeQuestion, 
   generateCacheKey, 
-  getStaticInterpretation,
+  generateUniqueInterpretation,
   getCachedReading,
   setCachedReading 
 } from '../lib/interpretation-cache';
@@ -70,10 +70,11 @@ function runTests() {
     console.log(`Cache Key: ${cacheKey}`);
     
     // Test static interpretation
-    const staticInterpretation = getStaticInterpretation(
+    const staticInterpretation = generateUniqueInterpretation(
       testCase.cards, 
       testCase.spreadId, 
-      category
+      category,
+      testCase.question
     );
     
     if (staticInterpretation) {
@@ -82,13 +83,15 @@ function runTests() {
       console.log(`Meaning: ${staticInterpretation.meaning.substring(0, 100)}...`);
       
       // Cache it
-      setCachedReading(cacheKey, staticInterpretation.meaning, 'static');
+      if (cacheKey) {
+        setCachedReading(cacheKey, staticInterpretation.meaning, 'static');
+      }
     } else {
       console.log(`❌ No Static Interpretation - would use AI`);
     }
     
     // Test memory cache retrieval
-    const cached = getCachedReading(cacheKey);
+    const cached = cacheKey ? getCachedReading(cacheKey) : null;
     if (cached) {
       cacheHits++;
       console.log(`✅ Cache Retrieval: ${cached.source}`);
