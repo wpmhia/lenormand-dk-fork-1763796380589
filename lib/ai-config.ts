@@ -3,16 +3,22 @@ import { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS } from "@/lib/
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
+// Cache all spreads in a single array at module load time
+const ALL_SPREADS = [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
+
+// Create a Map for O(1) spread lookups instead of O(n) find()
+const SPREAD_MAP = new Map(ALL_SPREADS.map((s) => [s.id, s]));
+
 export function isDeepSeekAvailable(): boolean {
   return !!DEEPSEEK_API_KEY;
 }
 
 export function getAllSpreads() {
-  return [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
+  return ALL_SPREADS;
 }
 
 export function getSpreadById(spreadId: string) {
-  return getAllSpreads().find((s) => s.id === spreadId);
+  return SPREAD_MAP.get(spreadId);
 }
 
 export function getMaxTokens(spreadCards: number): number {
@@ -21,6 +27,9 @@ export function getMaxTokens(spreadCards: number): number {
   if (spreadCards < 9) return 1800;
   return 2000;
 }
+
+// Pre-build grand-tableau position labels once at module load
+const GRAND_TABLEAU_POSITIONS = Array.from({ length: 36 }, (_, i) => `${i + 1}`);
 
 const POSITION_LABELS: Record<string, string[]> = {
   "single-card": ["Card"],
@@ -52,7 +61,7 @@ const POSITION_LABELS: Record<string, string[]> = {
     "Future-Action",
     "Future-Outer",
   ],
-  "grand-tableau": Array.from({ length: 36 }, (_, i) => `${i + 1}`),
+  "grand-tableau": GRAND_TABLEAU_POSITIONS,
 };
 
 const SPREAD_GUIDANCE: Record<string, string> = {
@@ -75,7 +84,8 @@ export function buildPrompt(
   spreadId: string,
   question: string
 ): string {
-  const spread = getSpreadById(spreadId) || getSpreadById("sentence-3");
+  // Single O(1) lookup - try requested spreadId, fall back to default
+  const spread = SPREAD_MAP.get(spreadId) || SPREAD_MAP.get("sentence-3");
 
   if (!spread) {
     throw new Error("Invalid spread ID and default spread not found");
