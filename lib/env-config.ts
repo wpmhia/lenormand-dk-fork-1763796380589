@@ -3,10 +3,10 @@ export const ENV_VARIABLES: EnvVariable[] = [
   {
     name: "DATABASE_URL",
     description:
-      "PostgreSQL connection string for Neon database analytics",
-    required: true,
+      "PostgreSQL connection string for Neon database analytics (not currently used)",
+    required: false,
     instructions:
-      "Get your DATABASE_URL from your Neon dashboard. This is required for reading analytics and metrics.",
+      "Get your DATABASE_URL from your Neon dashboard if you want to add analytics features in the future.",
   },
   {
     name: "DEEPSEEK_API_KEY",
