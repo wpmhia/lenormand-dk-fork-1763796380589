@@ -213,7 +213,7 @@ export function middleware(request: NextRequest) {
   
   // Content Security Policy (CSP) - Industry standard with Vercel/e2b deployment support
   const hostname = request.nextUrl.hostname;
-  const isVercel = hostname.includes('vercel.app') || hostname.includes('.e2b.app');
+  const isVercel = hostname.includes('vercel.app') || hostname.includes('e2b.app');
   
   const csp = [
     "default-src 'self'",
@@ -222,7 +222,7 @@ export function middleware(request: NextRequest) {
     `font-src 'self' https://fonts.gstatic.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     "img-src 'self' data: https: blob:",
     `connect-src 'self' https: wss: ${isVercel ? 'https://*.vercel.app https://*.e2b.app wss://*.vercel.app wss://*.e2b.app' : ''}`, // Allow all Vercel/e2b connections
-    isVercel ? "frame-ancestors 'self' https://*.e2b.app https://ideavo.ai https://server.ideavo.ai" : "frame-ancestors 'none'", // Allow framing for development
+    isVercel ? "frame-ancestors 'self' https://*.e2b.app https://ideavo.ai https://server.ideavo.ai https://4000-*.e2b.app https://38473-*.e2b.app" : "frame-ancestors 'none'", // Allow framing for development
     "base-uri 'self'",
     "form-action 'self'"
   ].join('; ');
