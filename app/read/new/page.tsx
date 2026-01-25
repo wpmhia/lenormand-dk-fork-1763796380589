@@ -161,10 +161,32 @@ function NewReadingPageContent() {
 
   function parseSSEChunk(data: string): string | null {
     if (data === "[DONE]") return null;
+    
+    // Skip empty data
+    if (!data || data.trim() === "") return null;
+    
     try {
       const parsed = JSON.parse(data);
-      return parsed.choices?.[0]?.delta?.content || "";
-    } catch {
+      
+      // Validate structure
+      if (!parsed || typeof parsed !== 'object') {
+        console.warn('Invalid SSE data structure:', data);
+        return null;
+      }
+      
+      const content = parsed.choices?.[0]?.delta?.content;
+      if (typeof content !== 'string') {
+        // content might be undefined or not a string, which is valid
+        return "";
+      }
+      
+      return content;
+    } catch (error) {
+      // Log parse failures for debugging but don't expose to users
+      console.warn('JSON parse error in SSE chunk:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        data: data.substring(0, 100) + (data.length > 100 ? '...' : '')
+      });
       return null;
     }
   }
@@ -232,6 +254,8 @@ function NewReadingPageContent() {
        let buffer = "";
        let lastUpdateTime = Date.now();
        const UPDATE_INTERVAL = 50; // Batch updates every 50ms instead of per-character
+       const MAX_BUFFER_SIZE = 50000; // Maximum buffer size to prevent memory exhaustion
+       const MAX_CONTENT_LENGTH = 100000; // Maximum total content length
 
        while (true) {
          try {
@@ -241,7 +265,21 @@ function NewReadingPageContent() {
            }
 
            const chunk = decoder.decode(value, { stream: true });
+           
+           // Prevent buffer from growing too large
+           if (buffer.length > MAX_BUFFER_SIZE) {
+             console.warn('SSE buffer exceeding maximum size, truncating');
+             buffer = buffer.slice(-MAX_BUFFER_SIZE / 2); // Keep last half
+           }
+           
            buffer += chunk;
+           
+           // Prevent content from growing too large
+           if (content.length > MAX_CONTENT_LENGTH) {
+             console.warn('Content exceeding maximum length, stopping stream');
+             setAiError('Reading too long, stopped processing');
+             break;
+           }
 
            const lines = buffer.split("\n");
            buffer = lines.pop() || "";
@@ -279,11 +317,14 @@ function NewReadingPageContent() {
          }
        }
        
-       // Final update to ensure all content is displayed
-       if (content.length > 0) {
-         setStreamedContent(content);
-         setAiReading({ reading: content });
-       }
+        // Final update to ensure all content is displayed
+        if (content.length > 0 && content.length <= MAX_CONTENT_LENGTH) {
+          setStreamedContent(content);
+          setAiReading({ reading: content });
+        } else if (content.length > MAX_CONTENT_LENGTH) {
+          setStreamedContent(content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]');
+          setAiReading({ reading: content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]' });
+        }
 
       if (content.length > 0) {
         setAiReading({ reading: content });
@@ -493,6 +534,13 @@ function NewReadingPageContent() {
   useEffect(() => {
     return () => {
       mountedRef.current = false;
+      
+      // Cleanup any pending requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      requestInProgressRef.current = false;
     };
   }, []);
 
