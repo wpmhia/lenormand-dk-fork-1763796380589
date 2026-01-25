@@ -9,39 +9,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Card {
-  id               Int     @id
-  name             String  @unique
-  number           Int
-  keywords         String[] // JSON array stored as text[]
-  uprightMeaning   String
-  combinations     CardCombination[] @relation("cardCombinations")
-  combinedWithCard CardCombination[] @relation("combinedCardCombinations")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  @@index([name])
-}
-
-model CardCombination {
-  id            String   @id @default(cuid())
-  cardId        Int
-  card          Card     @relation("cardCombinations", fields: [cardId], references: [id], onDelete: Cascade)
-  withCardId    Int
-  withCard      Card     @relation("combinedCardCombinations", fields: [withCardId], references: [id], onDelete: Cascade)
-  meaning       String
-  context       String?
-  examples      String[]
-  category      String?
-  strength      String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@unique([cardId, withCardId])
-  @@index([cardId])
-  @@index([withCardId])
-}
-
 model ReadingAnalytics {
   id            String   @id @default(cuid())
   sessionId     String?
