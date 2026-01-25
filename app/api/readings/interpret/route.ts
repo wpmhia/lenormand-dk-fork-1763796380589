@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     const { question, cards, spreadId } = body;
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
 
-    const result = await streamText({
+    const result = streamText({
       model: deepseek.chat("deepseek-chat"),
       messages: [
         { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
@@ -56,16 +56,17 @@ export async function POST(request: Request) {
       maxOutputTokens: 2000,
     });
 
-    // Stream response
+    // Stream response chunks as SSE
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();
         try {
-          const text = await result.text;
-          const data = JSON.stringify({
-            choices: [{ delta: { content: text } }]
-          });
-          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          for await (const chunk of result.textStream) {
+            const data = JSON.stringify({
+              choices: [{ delta: { content: chunk } }]
+            });
+            controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+          }
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         } catch (error) {
           controller.error(error);
