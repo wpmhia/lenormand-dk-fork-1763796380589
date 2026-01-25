@@ -1,6 +1,10 @@
-import { prisma } from '@/lib/prisma'
-import cardsData from '@/lib/data/cards.json'
-import cardCombinationsData from '@/lib/data/card-combinations.json'
+import { PrismaClient } from '@prisma/client'
+
+// Use require for JSON to avoid path resolution issues in scripts
+const cardsData = require('../lib/data/cards.json')
+const cardCombinationsData = require('../lib/data/card-combinations.json')
+
+const prisma = new PrismaClient()
 
 async function seedCards() {
   console.log('🌱 Starting card data seeding...\n')
