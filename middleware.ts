@@ -202,7 +202,7 @@ export function middleware(request: NextRequest) {
 
   // Industry standard security headers
   response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
+  // response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-XSS-Protection", "1; mode=block");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
@@ -222,7 +222,7 @@ export function middleware(request: NextRequest) {
     `font-src 'self' https://fonts.gstatic.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     "img-src 'self' data: https: blob:",
     `connect-src 'self' https: wss: ${isVercel ? 'https://*.vercel.app https://*.e2b.app wss://*.vercel.app wss://*.e2b.app' : ''}`, // Allow all Vercel/e2b connections
-    isVercel ? "frame-ancestors 'self' https://*.e2b.app https://ideavo.ai https://server.ideavo.ai https://4000-*.e2b.app https://38473-*.e2b.app" : "frame-ancestors 'none'", // Allow framing for development
+    isVercel ? "frame-ancestors 'self' https://*.e2b.app https://ideavo.ai https://server.ideavo.ai https://4000-*.e2b.app https://38473-*.e2b.app" : "frame-ancestors *", // Allow framing for development
     "base-uri 'self'",
     "form-action 'self'"
   ].join('; ');
