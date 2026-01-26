@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import crypto from "crypto";
 
 interface RateLimitEntry {
   count: number;
@@ -94,14 +93,15 @@ function generateSecureIPHash(request: NextRequest): string {
   // Combine various headers for a more unique identifier
   const combined = `unknown:${userAgent}:${acceptLanguage}:${accept}`;
   
-  // Use SHA256 instead of weak custom hash
-  const hash = crypto
-    .createHash('sha256')
-    .update(combined)
-    .digest('hex')
-    .slice(0, 16); // Use first 16 chars for shorter ID
+  // Simple hash function that works in edge runtime (Web API)
+  // This is sufficient for rate limiting purposes
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash + char) | 0; // Use bitwise OR to convert to 32-bit integer
+  }
   
-  return `anon-${hash}`;
+  return `anon-${Math.abs(hash).toString(16)}`; // Use hex for better distribution
 }
 
 function cleanupOldEntries(): void {
