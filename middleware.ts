@@ -132,28 +132,42 @@ function cleanupOldEntries(): void {
 }
 
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+   const pathname = request.nextUrl.pathname;
 
-  // Skip rate limiting for static assets and internal routes
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/images') ||
-    pathname.startsWith('/data') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/api/health') ||
-    pathname.endsWith('.ico') ||
-    pathname.endsWith('.png') ||
-    pathname.endsWith('.jpg') ||
-    pathname.endsWith('.jpeg') ||
-    pathname.endsWith('.svg') ||
-    pathname.endsWith('.webp') ||
-    pathname.endsWith('.css') ||
-    pathname.endsWith('.js') ||
-    pathname.endsWith('.woff') ||
-    pathname.endsWith('.woff2')
-  ) {
-    return NextResponse.next();
-  }
+   // Skip rate limiting for static assets and internal routes
+   if (
+     pathname.startsWith('/_next') ||
+     pathname.startsWith('/images') ||
+     pathname.startsWith('/data') ||
+     pathname.startsWith('/favicon') ||
+     pathname.startsWith('/api/health') ||
+     pathname.endsWith('.ico') ||
+     pathname.endsWith('.png') ||
+     pathname.endsWith('.jpg') ||
+     pathname.endsWith('.jpeg') ||
+     pathname.endsWith('.svg') ||
+     pathname.endsWith('.webp') ||
+     pathname.endsWith('.css') ||
+     pathname.endsWith('.js') ||
+     pathname.endsWith('.woff') ||
+     pathname.endsWith('.woff2')
+   ) {
+     const staticResponse = NextResponse.next();
+     
+     // Add Cache-Control headers for static assets
+     if (pathname.startsWith('/_next') || pathname.endsWith('.js') || pathname.endsWith('.css') || pathname.endsWith('.woff') || pathname.endsWith('.woff2')) {
+       // Cache Next.js and font assets for 1 year (immutable)
+       staticResponse.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+     } else if (pathname.startsWith('/images') || pathname.endsWith('.png') || pathname.endsWith('.jpg') || pathname.endsWith('.jpeg') || pathname.endsWith('.svg') || pathname.endsWith('.webp')) {
+       // Cache images for 30 days
+       staticResponse.headers.set('Cache-Control', 'public, max-age=2592000, stale-while-revalidate=86400');
+     } else {
+       // Cache other static assets for 7 days
+       staticResponse.headers.set('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+     }
+     
+     return staticResponse;
+   }
 
   const ip = getClientIP(request);
   const now = Date.now();

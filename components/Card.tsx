@@ -79,14 +79,14 @@ export function Card({
         aria-label={`${card.name} card. Click to ${onClick ? "select" : "view details"}`}
       >
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
-          <Image
-            src={card.imageUrl || ""}
-            alt={card.name}
-            width={200}
-            height={300}
-            className="h-full w-full object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+         <Image
+           src={card.imageUrl || ""}
+           alt={card.name}
+           fill
+           className="h-full w-full object-cover"
+           sizes={`${size === "sm" ? "80px" : size === "md" ? "112px" : "144px"}`}
+           loading="lazy"
+         />
         </div>
       </div>
 
