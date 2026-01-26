@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import crypto from "crypto";
 
 interface RateLimitEntry {
   count: number;
@@ -93,14 +94,14 @@ function generateSecureIPHash(request: NextRequest): string {
   // Combine various headers for a more unique identifier
   const combined = `unknown:${userAgent}:${acceptLanguage}:${accept}`;
   
-  // Simple but effective hash for rate limiting
-  let hash = 0;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) - hash + char) & 0xffffffff;
-  }
+  // Use SHA256 instead of weak custom hash
+  const hash = crypto
+    .createHash('sha256')
+    .update(combined)
+    .digest('hex')
+    .slice(0, 16); // Use first 16 chars for shorter ID
   
-  return `anon-${Math.abs(hash)}`;
+  return `anon-${hash}`;
 }
 
 function cleanupOldEntries(): void {
@@ -262,17 +263,25 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // Additional industry standard headers (relaxed for deployment environments)
-  if (!isVercel) {
-    response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
-    response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
-    response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
-  } else {
-    // For e2b/vercel deployments, use more permissive CORS policies
-    response.headers.set("Access-Control-Allow-Origin", "*");
-    response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  }
+   // Additional industry standard headers (relaxed for deployment environments)
+   if (!isVercel) {
+     response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+     response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+     response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+   } else {
+     // For e2b/vercel deployments, use restricted CORS policies
+     const ALLOWED_ORIGINS = [
+       "https://lenormand.dk",
+       "https://www.lenormand.dk",
+       "https://lenormand-intelligence.vercel.app",
+     ];
+     const origin = request.headers.get('origin');
+     if (origin && ALLOWED_ORIGINS.includes(origin)) {
+       response.headers.set("Access-Control-Allow-Origin", origin);
+     }
+     response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+     response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+   }
   
   // Remove server signature for security
   response.headers.delete("server");

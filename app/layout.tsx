@@ -184,16 +184,18 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link rel="dns-prefetch" href="https://storage.ko-fi.com" />
-        <Script
-          id="schema-org"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <Script
-          id="faq-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+         <Script
+           id="schema-org"
+           type="application/ld+json"
+           suppressHydrationWarning
+           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+         />
+         <Script
+           id="faq-schema"
+           type="application/ld+json"
+           suppressHydrationWarning
+           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+         />
       </head>
       <body className={`${inter.className} antialiased`}>
         <TooltipProvider>

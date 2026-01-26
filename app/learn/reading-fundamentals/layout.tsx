@@ -53,6 +53,7 @@ export default function ReadingFundamentalsLayout({
       <Script
         id="reading-fundamentals-schema"
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       {children}

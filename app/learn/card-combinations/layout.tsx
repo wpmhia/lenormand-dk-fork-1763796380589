@@ -53,6 +53,7 @@ export default function CardCombinationsLayout({
       <Script
         id="card-combinations-schema"
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       {children}

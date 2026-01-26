@@ -260,82 +260,91 @@ function NewReadingPageContent() {
       }
 
        const reader = response.body.getReader();
-       const decoder = new TextDecoder();
-       let content = "";
-       let buffer = "";
-       let lastUpdateTime = Date.now();
-       const UPDATE_INTERVAL = 50; // Batch updates every 50ms instead of per-character
-       const MAX_BUFFER_SIZE = 50000; // Maximum buffer size to prevent memory exhaustion
-       const MAX_CONTENT_LENGTH = 100000; // Maximum total content length
+        const decoder = new TextDecoder();
+        let content = "";
+        let buffer = "";
+        let lastUpdateTime = Date.now();
+        const UPDATE_INTERVAL = 50; // Batch updates every 50ms instead of per-character
+        const MAX_BUFFER_SIZE = 50000; // Maximum buffer size to prevent memory exhaustion
+        const MAX_CONTENT_LENGTH = 100000; // Maximum total content length
 
-       while (true) {
-         try {
-           const { done, value } = await reader.read();
-           if (done) {
-             break;
-           }
+        try {
+          while (true) {
+            try {
+              const { done, value } = await reader.read();
+              if (done) {
+                break;
+              }
 
-           const chunk = decoder.decode(value, { stream: true });
-           
-           // Prevent buffer from growing too large
-           if (buffer.length > MAX_BUFFER_SIZE) {
-             console.warn('SSE buffer exceeding maximum size, truncating');
-             buffer = buffer.slice(-MAX_BUFFER_SIZE / 2); // Keep last half
-           }
-           
-           buffer += chunk;
-           
-           // Prevent content from growing too large
-           if (content.length > MAX_CONTENT_LENGTH) {
-             console.warn('Content exceeding maximum length, stopping stream');
-             setAiError('Reading too long, stopped processing');
-             break;
-           }
+              const chunk = decoder.decode(value, { stream: true });
+              
+              // Prevent buffer from growing too large
+              if (buffer.length > MAX_BUFFER_SIZE) {
+                console.warn('SSE buffer exceeding maximum size, truncating');
+                buffer = buffer.slice(-MAX_BUFFER_SIZE / 2); // Keep last half
+              }
+              
+              buffer += chunk;
+              
+              // Prevent content from growing too large
+              if (content.length > MAX_CONTENT_LENGTH) {
+                console.warn('Content exceeding maximum length, stopping stream');
+                setAiError('Reading too long, stopped processing');
+                break;
+              }
 
-           const lines = buffer.split("\n");
-           buffer = lines.pop() || "";
+              const lines = buffer.split("\n");
+              buffer = lines.pop() || "";
 
-           for (const line of lines) {
-             if (line.startsWith("data: ")) {
-               const data = line.slice(6);
-               if (data === "[DONE]") {
-                 break;
-               }
-               const text = parseSSEChunk(data);
-               if (text) {
-                 content += text;
-                 
-                 // Batch state updates: only update UI every 50ms to reduce re-renders
-                 // This reduces 1000+ re-renders to ~20 for typical streaming responses
-                 const now = Date.now();
-                 if (now - lastUpdateTime > UPDATE_INTERVAL) {
-                   setStreamedContent(content);
-                   setAiReading({ reading: content });
-                   lastUpdateTime = now;
-                 }
-               }
-             }
-           }
-         } catch (streamError) {
-           if (
-             streamError instanceof Error &&
-             streamError.name === "AbortError"
-           ) {
-             break;
-           }
-           setAiError("Connection interrupted");
-           break;
-         }
-       }
-       
-        // Final update to ensure all content is displayed
-        if (content.length > 0 && content.length <= MAX_CONTENT_LENGTH) {
-          setStreamedContent(content);
-          setAiReading({ reading: content });
-        } else if (content.length > MAX_CONTENT_LENGTH) {
-          setStreamedContent(content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]');
-          setAiReading({ reading: content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]' });
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
+                  if (data === "[DONE]") {
+                    break;
+                  }
+                  const text = parseSSEChunk(data);
+                  if (text) {
+                    content += text;
+                    
+                    // Batch state updates: only update UI every 50ms to reduce re-renders
+                    // This reduces 1000+ re-renders to ~20 for typical streaming responses
+                    const now = Date.now();
+                    if (now - lastUpdateTime > UPDATE_INTERVAL) {
+                      setStreamedContent(content);
+                      setAiReading({ reading: content });
+                      lastUpdateTime = now;
+                    }
+                  }
+                }
+              }
+            } catch (streamError) {
+              if (
+                streamError instanceof Error &&
+                streamError.name === "AbortError"
+              ) {
+                break;
+              }
+              setAiError("Connection interrupted");
+              break;
+            }
+          }
+        } finally {
+          // SECURITY FIX: Always cleanup reader to prevent memory leaks
+          try {
+            await reader.cancel();
+          } catch (cancelError) {
+            console.error('Error canceling reader:', cancelError);
+          }
         }
+        
+         // Final update to ensure all content is displayed
+         if (content.length > 0 && content.length <= MAX_CONTENT_LENGTH) {
+           setStreamedContent(content);
+           setAiReading({ reading: content });
+         } else if (content.length > MAX_CONTENT_LENGTH) {
+           setStreamedContent(content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]');
+           setAiReading({ reading: content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]' });
+         }
 
       if (content.length > 0) {
         setAiReading({ reading: content });

@@ -1,6 +1,41 @@
 import { Card, Reading, ReadingCard } from "./types";
 import staticCardsData from "@/public/data/cards.json";
 
+// HMAC signing for URL-shared readings (security fix)
+const READING_HMAC_SECRET = process.env.READING_HMAC_SECRET || "default-dev-key-change-in-production";
+
+async function generateHMAC(data: string): Promise<string> {
+  if (typeof window === "undefined") {
+    // Node.js (server-side)
+    const crypto = await import("crypto");
+    return crypto
+      .createHmac("sha256", READING_HMAC_SECRET)
+      .update(data)
+      .digest("hex")
+      .slice(0, 16); // Use first 16 chars for URL shortness
+  } else {
+    // Browser (client-side) - use SubtleCrypto
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(READING_HMAC_SECRET),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    const signature = await crypto.subtle.sign(
+      "HMAC",
+      key,
+      encoder.encode(data)
+    );
+    const hashArray = Array.from(new Uint8Array(signature));
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    return hashHex.slice(0, 16);
+  }
+}
+
 export async function getCards(): Promise<Card[]> {
   // Static import eliminates network requests and JSON parsing overhead
   const data = staticCardsData as Card[];
@@ -17,8 +52,8 @@ export function getCardById(cards: Card[], id: number): Card | undefined {
   return cards.find((card) => card.id === id);
 }
 
-// Encode reading data for URL sharing
-export function encodeReadingForUrl(reading: Reading): string {
+// Encode reading data for URL sharing with HMAC signature
+export async function encodeReadingForUrl(reading: Reading): Promise<string> {
   const data = {
     t: reading.title,
     q: reading.question,
@@ -28,7 +63,8 @@ export function encodeReadingForUrl(reading: Reading): string {
       p: card.position,
     })),
   };
-  return btoa(JSON.stringify(data)).replace(
+  const json = JSON.stringify(data);
+  const base64 = btoa(json).replace(
     /[+/=]/g,
     (c) =>
       ({
@@ -37,12 +73,30 @@ export function encodeReadingForUrl(reading: Reading): string {
         "=": "",
       })[c] || c,
   );
+  
+  // Add HMAC signature for verification
+  const hmac = await generateHMAC(base64);
+  return `${base64}.${hmac}`;
 }
 
-// Decode reading data from URL
-export function decodeReadingFromUrl(encoded: string): Partial<Reading> | null {
+// Decode reading data from URL with HMAC validation
+export async function decodeReadingFromUrl(encoded: string): Promise<Partial<Reading> | null> {
   try {
-    const base64 = encoded.replace(
+    // Split signature from data
+    const [base64WithPad, providedHmac] = encoded.split(".");
+    
+    if (!base64WithPad || !providedHmac) {
+      return null; // Invalid format
+    }
+    
+    // Verify HMAC signature
+    const computedHmac = await generateHMAC(base64WithPad);
+    if (computedHmac !== providedHmac) {
+      console.warn("HMAC signature validation failed - URL may have been tampered with");
+      return null;
+    }
+    
+    const base64 = base64WithPad.replace(
       /[-_]/g,
       (c) => ({ "-": "+", _: "/" })[c] || c,
     );
@@ -51,16 +105,22 @@ export function decodeReadingFromUrl(encoded: string): Partial<Reading> | null {
     const json = atob(paddedBase64);
     const data = JSON.parse(json);
 
+    // Validate data structure to prevent XSS
+    if (!Array.isArray(data.c) || typeof data.l !== "number") {
+      return null;
+    }
+
     return {
-      title: data.t,
-      question: data.q,
+      title: String(data.t || ""),
+      question: String(data.q || ""),
       layoutType: data.l,
       cards: data.c.map((card: any) => ({
-        id: card.i,
-        position: card.p,
+        id: Number(card.i) || 0,
+        position: Number(card.p) || 0,
       })),
     };
-  } catch {
+  } catch (error) {
+    console.warn("Error decoding reading from URL:", error);
     return null;
   }
 }

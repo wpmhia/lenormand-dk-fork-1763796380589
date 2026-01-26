@@ -1,11 +1,18 @@
 export const runtime = "edge";
 
+import { headers } from "next/headers";
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
+const ALLOWED_ORIGINS = [
+  "https://lenormand.dk",
+  "https://www.lenormand.dk",
+  "https://lenormand-intelligence.vercel.app",
+  process.env.NEXT_PUBLIC_APP_URL || "",
+].filter(Boolean);
 
 const deepseek = createOpenAI({
   baseURL: DEEPSEEK_BASE_URL,
@@ -26,6 +33,21 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 
 export async function POST(request: Request) {
   try {
+    const headersList = headers();
+    
+    // Security: Validate origin
+    const origin = headersList.get("origin") || headersList.get("referer");
+    const isValidOrigin = ALLOWED_ORIGINS.some(allowed => 
+      origin?.includes(allowed.replace(/https?:\/\//, ""))
+    );
+    
+    if (!isValidOrigin) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized origin" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const body = await request.json();
 
     if (!isDeepSeekAvailable()) {
@@ -69,6 +91,7 @@ export async function POST(request: Request) {
           }
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         } catch (error) {
+          // Don't expose error details in stream
           controller.error(error);
         } finally {
           controller.close();
@@ -84,7 +107,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    // Simple fallback on error
+    // Don't expose error details - use fallback
     const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
 
     return new Response(

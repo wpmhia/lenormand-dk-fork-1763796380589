@@ -53,6 +53,7 @@ export default function MarieAnnesSystemLayout({
       <Script
         id="marie-annes-system-schema"
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       {children}

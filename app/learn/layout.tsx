@@ -58,6 +58,7 @@ export default function LearnLayout({
       <Script
         id="learn-course-schema"
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(learningSchema) }}
       />
       {children}

@@ -53,6 +53,7 @@ export default function CardMeaningsLayout({
       <Script
         id="card-meanings-schema"
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       {children}
