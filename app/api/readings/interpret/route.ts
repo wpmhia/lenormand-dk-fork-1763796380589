@@ -7,12 +7,6 @@ import { streamText } from "ai";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
-const ALLOWED_ORIGINS = [
-  "https://lenormand.dk",
-  "https://www.lenormand.dk",
-  "https://lenormand-intelligence.vercel.app",
-  process.env.NEXT_PUBLIC_APP_URL || "",
-].filter(Boolean);
 
 const deepseek = createOpenAI({
   baseURL: DEEPSEEK_BASE_URL,
@@ -33,21 +27,6 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 
 export async function POST(request: Request) {
   try {
-    const headersList = headers();
-    
-    // Security: Validate origin
-    const origin = headersList.get("origin") || headersList.get("referer");
-    const isValidOrigin = ALLOWED_ORIGINS.some(allowed => 
-      origin?.includes(allowed.replace(/https?:\/\//, ""))
-    );
-    
-    if (!isValidOrigin) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized origin" }),
-        { status: 403, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
     const body = await request.json();
 
     if (!isDeepSeekAvailable()) {
