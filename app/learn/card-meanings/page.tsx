@@ -610,7 +610,7 @@ export default function CardMeaningsPage() {
         {/* Cards Display */}
         {viewMode === "grid" ? (
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredCards.map((card) => (
+            {filteredCards.map((card, cardIndex) => (
               <Link key={card.number} href={`/learn/card-meanings/${card.number}`}>
                 <Card className="cursor-pointer border border-border bg-card transition-shadow hover:shadow-md">
                   <CardHeader className="pb-3">
@@ -636,6 +636,7 @@ export default function CardMeaningsPage() {
                       height={128}
                       sizes="(max-width: 640px) 80px, 128px"
                       className="mb-3 h-32 w-full rounded-lg object-cover"
+                      priority={cardIndex < 4}
                     />
                     <div className="space-y-3">
                       <div>
@@ -699,6 +700,7 @@ export default function CardMeaningsPage() {
                           height={64}
                           sizes="(max-width: 640px) 40px, 64px"
                           className="h-16 w-16 rounded-lg object-cover"
+                          priority
                         />
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
                           <span className="text-sm font-bold text-white">

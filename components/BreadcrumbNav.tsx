@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { ChevronRight } from "lucide-react";
@@ -14,7 +15,18 @@ interface BreadcrumbNavProps {
 }
 
 export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
-  // JSON-LD BreadcrumbList schema
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
+  const getItemUrl = (url: string) => {
+    return origin ? `${origin}${url}` : url;
+  };
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -22,7 +34,7 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `https://lenormand-intelligence.com${item.url}`,
+      item: getItemUrl(item.url),
     })),
   };
 
