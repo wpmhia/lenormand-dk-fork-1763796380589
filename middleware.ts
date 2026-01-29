@@ -232,7 +232,7 @@ export function middleware(request: NextRequest) {
   
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://vercel.live${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
+    `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://vercel.live${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     `font-src 'self' https://fonts.gstatic.com${isVercel ? ' https://*.vercel.app https://*.e2b.app' : ''}`,
     "img-src 'self' data: https: blob:",

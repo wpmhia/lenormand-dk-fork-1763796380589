@@ -127,19 +127,23 @@ export function CookieConsent() {
   };
 
   const loadGoogleAnalytics = () => {
+    if (window.gtag) return;
+
     const script1 = document.createElement("script");
     script1.async = true;
     script1.src = "https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8";
-    document.head.appendChild(script1);
+    script1.crossOrigin = "anonymous";
 
-    const script2 = document.createElement("script");
-    script2.textContent = `
-       window.dataLayer = window.dataLayer || [];
-       function gtag(){dataLayer.push(arguments);}
-       gtag('js', new Date());
-       gtag('config', 'G-WDLWCCJCY8');
-      `;
-    document.head.appendChild(script2);
+    script1.onload = () => {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function() {
+        window.dataLayer.push(arguments);
+      };
+      window.gtag("js", new Date());
+      window.gtag("config", "G-WDLWCCJCY8");
+    };
+
+    document.head.appendChild(script1);
   };
 
   // Don't render until mounted to avoid hydration mismatch
