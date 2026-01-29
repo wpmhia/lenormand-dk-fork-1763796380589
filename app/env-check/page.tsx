@@ -46,7 +46,11 @@ function formatInstructions(text: string): string {
     .replace(/\n/g, "<br>")
     .replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">$1</a>',
+      (_, label, url) => {
+        const safeUrl = sanitizeHTML(url);
+        const safeLabel = sanitizeHTML(label);
+        return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 underline">${safeLabel}</a>`;
+      },
     );
 }
 

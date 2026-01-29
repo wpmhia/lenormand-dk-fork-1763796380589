@@ -38,14 +38,17 @@ export function LearningProgressTracker({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Load progress from localStorage
-    const savedProgress = localStorage.getItem(STORAGE_KEY);
-    if (savedProgress) {
-      try {
-        setProgress(JSON.parse(savedProgress));
-      } catch {
-        setProgress({});
+    try {
+      const savedProgress = localStorage.getItem(STORAGE_KEY);
+      if (savedProgress) {
+        try {
+          setProgress(JSON.parse(savedProgress));
+        } catch {
+          setProgress({});
+        }
       }
+    } catch {
+      setProgress({});
     }
     setMounted(true);
   }, []);
@@ -158,13 +161,17 @@ export function useLearningProgress() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const savedProgress = localStorage.getItem(STORAGE_KEY);
-    if (savedProgress) {
-      try {
-        setProgress(JSON.parse(savedProgress));
-      } catch {
-        setProgress({});
+    try {
+      const savedProgress = localStorage.getItem(STORAGE_KEY);
+      if (savedProgress) {
+        try {
+          setProgress(JSON.parse(savedProgress));
+        } catch {
+          setProgress({});
+        }
       }
+    } catch {
+      setProgress({});
     }
     setMounted(true);
   }, []);

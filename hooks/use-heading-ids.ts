@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Hook to automatically add IDs to headings in the DOM
@@ -8,6 +8,8 @@ export function useHeadingIds(
   selector: string = "h2, h3",
   containerSelector: string = "main, [data-content]",
 ) {
+  const anchorRefs = useRef<Map<Element, { enter: () => void; leave: () => void }>>(new Map());
+
   useEffect(() => {
     const container = document.querySelector(containerSelector);
     if (!container) return;
@@ -16,22 +18,20 @@ export function useHeadingIds(
 
     headings.forEach((heading) => {
       if (!heading.id) {
-        // Convert heading text to kebab-case ID
         const id =
           heading.textContent
             ?.toLowerCase()
             .trim()
-            .replace(/[^\w\s-]/g, "") // Remove special chars
-            .replace(/\s+/g, "-") // Replace spaces with dashes
-            .replace(/-+/g, "-") // Replace multiple dashes with single dash
-            .replace(/^-|-$/g, "") || ""; // Remove leading/trailing dashes
+            .replace(/[^\w\s-]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "") || "";
 
         if (id) {
           heading.id = id;
         }
       }
 
-      // Add a subtle anchor link visual indicator
       if (!heading.querySelector("a.heading-anchor")) {
         const anchor = document.createElement("a");
         anchor.href = `#${heading.id}`;
@@ -44,15 +44,22 @@ export function useHeadingIds(
         anchor.style.color = "currentColor";
         heading.appendChild(anchor);
 
-        // Show anchor on hover
-        heading.addEventListener("mouseenter", () => {
-          anchor.style.opacity = "0.5";
-        });
-        heading.addEventListener("mouseleave", () => {
-          anchor.style.opacity = "0";
-        });
+        const enterHandler = () => { anchor.style.opacity = "0.5"; };
+        const leaveHandler = () => { anchor.style.opacity = "0"; };
+
+        anchorRefs.current.set(heading, { enter: enterHandler, leave: leaveHandler });
+        heading.addEventListener("mouseenter", enterHandler);
+        heading.addEventListener("mouseleave", leaveHandler);
       }
     });
+
+    return () => {
+      anchorRefs.current.forEach((handlers, heading) => {
+        heading.removeEventListener("mouseenter", handlers.enter);
+        heading.removeEventListener("mouseleave", handlers.leave);
+      });
+      anchorRefs.current.clear();
+    };
   }, [selector, containerSelector]);
 }
 

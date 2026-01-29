@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
+  }
+}
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -49,44 +56,32 @@ export function CookieConsent() {
       return;
     }
 
-    // DEBUG: Log cookie state for troubleshooting
-    if (typeof window !== 'undefined') {
+    try {
       const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
       const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
-      console.log('[Cookie Banner Debug]', {
-        testMode,
-        forceShow,
-        consent,
-        savedPreferences,
-        shouldShow: !consent && !savedPreferences,
-      });
-    }
 
-
-  // Check if user has already made a choice
-    const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-    const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
-
-    if (!consent) {
-      // First visit - show banner
-      setShowBanner(true);
-    } else if (savedPreferences) {
-      try {
-        const parsed = JSON.parse(savedPreferences);
-        if (parsed && typeof parsed === "object") {
+      if (!consent) {
+        setShowBanner(true);
+      } else if (savedPreferences) {
+        try {
+          const parsed = JSON.parse(savedPreferences);
+          if (parsed && typeof parsed === "object") {
+            setPreferences({
+              analytics: parsed.analytics ?? false,
+              necessary: parsed.necessary ?? true,
+            });
+          }
+        } catch (error) {
+          console.error('[Cookie Banner] Failed to parse saved preferences:', error);
           setPreferences({
-            analytics: parsed.analytics ?? false,
-            necessary: parsed.necessary ?? true,
+            analytics: false,
+            necessary: true,
           });
         }
-      } catch (error) {
-        console.error('[Cookie Banner] Failed to parse saved preferences:', error);
-        // Don't delete preferences on parse error - keep them and use defaults
-        setPreferences({
-          analytics: false,
-          necessary: true,
-        });
       }
+    } catch (error) {
+      console.error('[Cookie Banner] Error accessing localStorage:', error);
+      setShowBanner(true);
     }
   }, []);
 
@@ -136,8 +131,9 @@ export function CookieConsent() {
 
     script1.onload = () => {
       window.dataLayer = window.dataLayer || [];
+      const dataLayer = window.dataLayer;
       window.gtag = function() {
-        window.dataLayer.push(arguments);
+        dataLayer.push(arguments);
       };
       window.gtag("js", new Date());
       window.gtag("config", "G-WDLWCCJCY8");
