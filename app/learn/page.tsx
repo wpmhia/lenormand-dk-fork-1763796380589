@@ -181,13 +181,21 @@ export default function LearnPage() {
                 for centuries.
               </p>
 
-              {mounted && completedCount > 0 && (
-                <div className="mx-auto flex w-fit items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
-                  <CheckCircle2 className="h-4 w-4" />
-                  You&apos;ve completed {completedCount} module
-                  {completedCount !== 1 ? "s" : ""}!
-                </div>
-              )}
+              <div className="mx-auto flex w-fit items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
+                <CheckCircle2 className="h-4 w-4" />
+                {mounted ? (
+                  completedCount > 0 ? (
+                    <>
+                      You&apos;ve completed {completedCount} module
+                      {completedCount !== 1 ? "s" : ""}!
+                    </>
+                  ) : (
+                    "Start your learning journey!"
+                  )
+                ) : (
+                  <span className="inline-block w-32 h-4 animate-pulse rounded bg-primary/20" />
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -210,28 +218,33 @@ export default function LearnPage() {
       </div>
 
       {/* Progress Tracker */}
-      {mounted && completedCount === 0 && (
-        <div className="via-primary/2 border-t border-border bg-gradient-to-r from-primary/5 to-primary/5 py-12">
-          <div className="container mx-auto max-w-6xl px-4">
-            <div className="rounded-2xl border border-primary/20 bg-card/50 p-8 backdrop-blur-sm">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">
-                    Track Your Learning
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Mark each module as complete to track your progress through
-                    the course. Your progress is saved automatically.
-                  </p>
-                </div>
+      <div className="via-primary/2 border-t border-border bg-gradient-to-r from-primary/5 to-primary/5 py-12">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="rounded-2xl border border-primary/20 bg-card/50 p-8 backdrop-blur-sm">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                <TrendingUp className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground">
+                  Track Your Learning
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {mounted ? (
+                    completedCount > 0 ? (
+                      `${completedCount} modules completed - keep going!`
+                    ) : (
+                      "Mark each module as complete to track your progress through the course. Your progress is saved automatically."
+                    )
+                  ) : (
+                    <span className="inline-block w-64 h-4 animate-pulse rounded bg-muted" />
+                  )}
+                </p>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Course Overview */}
       <div className="container mx-auto max-w-6xl px-4 py-16">
