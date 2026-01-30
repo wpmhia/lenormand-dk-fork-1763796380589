@@ -29,20 +29,20 @@ import { Cookie, Settings, X } from "lucide-react";
 
 interface CookiePreferences {
   analytics: boolean;
-  necessary: boolean; // Always true for essential cookies
+  necessary: boolean;
 }
 
 const COOKIE_CONSENT_KEY = "lenormand-cookie-consent";
 const COOKIE_PREFERENCES_KEY = "lenormand-cookie-preferences";
 
 export function CookieConsent() {
+  const [mounted, setMounted] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     analytics: false,
     necessary: true,
   });
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -72,15 +72,13 @@ export function CookieConsent() {
             });
           }
         } catch (error) {
-          console.error('[Cookie Banner] Failed to parse saved preferences:', error);
           setPreferences({
             analytics: false,
             necessary: true,
           });
         }
       }
-    } catch (error) {
-      console.error('[Cookie Banner] Error accessing localStorage:', error);
+    } catch {
       setShowBanner(true);
     }
   }, []);
@@ -144,9 +142,7 @@ export function CookieConsent() {
 
   // Don't render until mounted to avoid hydration mismatch
   if (!mounted) {
-    return (
-      <div suppressHydrationWarning />
-    );
+    return null;
   }
 
   if (!showBanner && !showSettings) return null;
