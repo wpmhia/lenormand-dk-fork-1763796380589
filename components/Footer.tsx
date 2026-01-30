@@ -99,11 +99,6 @@ export function Footer() {
                   Ko-fi
                 </a>
               </li>
-              <li>
-                <Link href="/env-check" className="text-muted-foreground hover:text-primary transition-colors">
-                  Status
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
