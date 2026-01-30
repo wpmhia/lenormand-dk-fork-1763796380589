@@ -3,6 +3,7 @@ export const runtime = "edge";
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import { getCached, setCached, getCacheKey, rateLimit } from "@/lib/cache";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
@@ -23,21 +24,6 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 
   return { valid: true };
 }
-
-function generateCacheKey(question: string, cards: any[], spreadId: string): string {
-  const key = `${spreadId}:${question}:${cards.map(c => c.id).sort().join(",")}`;
-  let hash = 0;
-  for (let i = 0; i < key.length; i++) {
-    const char = key.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return `reading:${Math.abs(hash)}`;
-}
-
-const responseCache = new Map<string, { reading: string; timestamp: number }>();
-const CACHE_TTL = 60 * 60 * 1000;
-const MAX_CACHE_SIZE = 100;
 
 async function fetchAIInterpretation(prompt: string, signal: AbortSignal): Promise<string> {
   const result = streamText({
@@ -63,6 +49,7 @@ export async function POST(request: Request) {
   
   try {
     const body = await request.json();
+    const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
 
     if (!isDeepSeekAvailable()) {
       return new Response(
@@ -79,24 +66,29 @@ export async function POST(request: Request) {
       );
     }
 
-    const { question, cards, spreadId } = body;
-    const cacheKey = generateCacheKey(question, cards, spreadId || "sentence-3");
+    const { success, remaining } = await rateLimit(ip);
+    if (!success) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded", remaining }),
+        { status: 429, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
-    const now = Date.now();
-    if (responseCache.has(cacheKey)) {
-      const cached = responseCache.get(cacheKey)!;
-      if (now - cached.timestamp < CACHE_TTL) {
-        return new Response(
-          JSON.stringify({ reading: cached.reading, source: "cache" }),
-          { 
-            status: 200, 
-            headers: { 
-              "Content-Type": "application/json",
-              "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
-            } 
-          }
-        );
-      }
+    const { question, cards, spreadId } = body;
+    const cacheKey = getCacheKey(question, cards, spreadId || "sentence-3");
+
+    const cached = await getCached(cacheKey);
+    if (cached) {
+      return new Response(
+        JSON.stringify({ reading: cached, source: "cache" }),
+        { 
+          status: 200, 
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+          } 
+        }
+      );
     }
 
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
@@ -107,22 +99,16 @@ export async function POST(request: Request) {
       const reading = await fetchAIInterpretation(prompt, controller.signal);
       clearTimeout(timeoutId);
 
-      if (responseCache.size >= MAX_CACHE_SIZE) {
-        const firstKey = responseCache.keys().next().value;
-        responseCache.delete(firstKey);
-      }
-      responseCache.set(cacheKey, { reading, timestamp: now });
+      const result = JSON.stringify({ reading, source: "ai" });
+      await setCached(cacheKey, result, cards.length);
 
-      const response = new Response(
-        JSON.stringify({ reading, source: "ai" }),
-        { 
-          status: 200, 
-          headers: { 
-            "Content-Type": "application/json",
-            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
-          } 
-        }
-      );
+      const response = new Response(result, { 
+        status: 200, 
+        headers: { 
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+        } 
+      });
 
       return response;
     } catch (error) {
@@ -130,6 +116,7 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error) {
+    const duration = Date.now() - startTime;
     const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
 
     return new Response(

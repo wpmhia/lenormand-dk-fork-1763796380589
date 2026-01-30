@@ -10,6 +10,12 @@
     "DEEPSEEK_BASE_URL": {
       "description": "DeepSeek API base URL (optional, defaults to https://api.deepseek.com)",
       "default": "https://api.deepseek.com"
+    },
+    "UPSTASH_REDIS_REST_URL": {
+      "description": "Upstash Redis for persistent caching"
+    },
+    "UPSTASH_REDIS_REST_TOKEN": {
+      "description": "Upstash Redis authentication token"
     }
   },
   "functions": {
