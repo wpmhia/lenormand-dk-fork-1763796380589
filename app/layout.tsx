@@ -174,7 +174,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
+       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -184,19 +184,37 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link rel="dns-prefetch" href="https://storage.ko-fi.com" />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX'}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
          <Script
-           id="schema-org"
-           type="application/ld+json"
-           suppressHydrationWarning
-           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-         />
+            id="schema-org"
+            type="application/ld+json"
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          />
          <Script
-           id="faq-schema"
-           type="application/ld+json"
-           suppressHydrationWarning
-           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-         />
-      </head>
+            id="faq-schema"
+            type="application/ld+json"
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX'}`}
+          strategy="afterInteractive"
+        />
+       </head>
       <body className={`${inter.className} antialiased`}>
         <TooltipProvider>
           <ThemeProvider>

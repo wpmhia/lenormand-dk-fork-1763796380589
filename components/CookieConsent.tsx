@@ -120,21 +120,25 @@ export function CookieConsent() {
   };
 
   const loadGoogleAnalytics = () => {
-    if (window.gtag) return;
+    if (typeof window === 'undefined') return;
+    
+    const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    if (!gaId || window.gtag) return;
 
     const script1 = document.createElement("script");
     script1.async = true;
-    script1.src = "https://www.googletagmanager.com/gtag/js?id=G-WDLWCCJCY8";
+    script1.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
     script1.crossOrigin = "anonymous";
 
     script1.onload = () => {
       window.dataLayer = window.dataLayer || [];
-      const dataLayer = window.dataLayer;
-      window.gtag = function() {
-        dataLayer.push(arguments);
+      window.gtag = function gtag(...args: unknown[]) {
+        if (window.dataLayer) {
+          window.dataLayer.push(args);
+        }
       };
       window.gtag("js", new Date());
-      window.gtag("config", "G-WDLWCCJCY8");
+      window.gtag("config", gaId);
     };
 
     document.head.appendChild(script1);
