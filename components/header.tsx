@@ -1,16 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Sparkles, Home, BookOpen, Plus } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 export function Header() {
-  const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(prev => !prev);
@@ -19,6 +16,17 @@ export function Header() {
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (menuRef.current) {
+      menuRef.current.style.display = mobileMenuOpen ? "block" : "none";
+    }
+    if (buttonRef.current) {
+      buttonRef.current.innerHTML = mobileMenuOpen
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>';
+    }
+  }, [mobileMenuOpen]);
 
   return (
     <header
@@ -84,30 +92,26 @@ export function Header() {
 
         <div className="ml-auto md:hidden">
           <button
+            ref={buttonRef}
             onClick={toggleMobileMenu}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label="Toggle mobile menu"
-            aria-expanded={mobileMenuOpen}
             aria-controls="mobile-menu"
             suppressHydrationWarning
           >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            <Menu className="h-6 w-6" />
           </button>
         </div>
       </div>
 
-      {mounted && mobileMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="border-t border-border bg-card/95 backdrop-blur md:hidden"
-          role="navigation"
-          aria-label="Mobile navigation"
-          suppressHydrationWarning
-        >
+      <div
+        ref={menuRef}
+        id="mobile-menu"
+        className="border-t border-border bg-card/95 backdrop-blur md:hidden hidden"
+        role="navigation"
+        aria-label="Mobile navigation"
+        suppressHydrationWarning
+      >
           <nav className="container space-y-2 px-4 py-3" role="navigation">
             <Link
               href="/"
@@ -143,7 +147,6 @@ export function Header() {
             </Link>
           </nav>
         </div>
-      )}
     </header>
   );
 }

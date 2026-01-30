@@ -5,7 +5,6 @@ import Script from "next/script";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from "@/components/Footer";
-import { ThemeProvider } from "@/components/providers";
 import { Header } from "@/components/header";
 import { CookieConsent } from "@/components/CookieConsent";
 
@@ -215,19 +214,17 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
        </head>
-      <body className={`${inter.className} antialiased`}>
-        <TooltipProvider>
-          <ThemeProvider>
-            <div className="flex min-h-screen flex-col bg-background text-foreground">
-              <Header />
-              <main className="flex-grow pt-14">{children}</main>
-              <Footer />
-            </div>
-            <Toaster />
-            <CookieConsent />
-          </ThemeProvider>
-        </TooltipProvider>
-      </body>
+        <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+         <TooltipProvider>
+           <div className="flex min-h-screen flex-col bg-background text-foreground" suppressHydrationWarning>
+             <Header />
+             <main className="flex-grow pt-14">{children}</main>
+             <Footer />
+           </div>
+           <Toaster />
+           <CookieConsent />
+         </TooltipProvider>
+       </body>
     </html>
   );
 }
