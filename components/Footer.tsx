@@ -14,13 +14,13 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-gradient-to-b from-background to-background/80">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         {/* Main Footer Content */}
-        <div className="mb-8 grid gap-8 md:grid-cols-12">
+        <div className="mb-6 grid gap-6 md:mb-8 md:grid-cols-12 md:gap-8">
           {/* Brand Section */}
           <div className="md:col-span-3">
-            <Link href="/" className="mb-4 inline-block">
-              <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-lg font-bold text-transparent">
+            <Link href="/" className="mb-3 inline-block">
+              <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-xl font-bold text-transparent">
                 Lenormand
               </h3>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -38,11 +38,11 @@ export function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-foreground/80">
               Explore
             </h4>
-            <ul className="space-y-1 text-xs">
+            <ul className="space-y-0.5 text-xs">
               <li>
                 <Link
                   href="/"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   Home
                 </Link>
@@ -50,7 +50,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/read/new"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   New Reading
                 </Link>
@@ -58,7 +58,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/cards"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   Card Guide
                 </Link>
@@ -66,7 +66,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/learn"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   Learn
                 </Link>
@@ -79,11 +79,11 @@ export function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-foreground/80">
               Resources
             </h4>
-            <ul className="space-y-1 text-xs">
+            <ul className="space-y-0.5 text-xs">
               <li>
                 <Link
                   href="/learn/spreads"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   Spreads
                 </Link>
@@ -91,7 +91,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/learn/history-basics"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   History
                 </Link>
@@ -99,7 +99,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-muted-foreground transition-colors hover:text-primary"
+                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   About
                 </Link>
@@ -107,24 +107,24 @@ export function Footer() {
                 <li>
                   <Link
                     href="/privacy"
-                    className="text-muted-foreground transition-colors hover:text-primary"
+                    className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
                   >
                     Privacy
                   </Link>
                 </li>
-                 <li>
-                   <button
-                     onClick={resetCookieConsent}
-                     className="text-muted-foreground transition-colors hover:text-primary"
-                   >
+                  <li>
+                    <button
+                      onClick={resetCookieConsent}
+                      className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
+                    >
                      Cookie Preferences
                    </button>
                  </li>
-                 <li>
-                   <Link
-                     href="/privacy#cookie-management"
-                     className="text-muted-foreground transition-colors hover:text-primary"
-                   >
+                  <li>
+                    <Link
+                      href="/privacy#cookie-management"
+                      className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
+                    >
                      Cookie Help
                    </Link>
                  </li>
@@ -143,7 +143,7 @@ export function Footer() {
               href="https://ko-fi.com/Y8Y81NVDEK"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs font-medium text-primary transition-colors hover:text-primary/80"
+              className="inline-flex items-center gap-2 py-1.5 text-xs font-medium text-primary transition-colors hover:text-primary/80"
             >
               <Heart className="h-3.5 w-3.5" />
               Support Us
@@ -155,14 +155,12 @@ export function Footer() {
         <div className="mb-6 h-px bg-gradient-to-r from-border via-border/50 to-border" />
 
         {/* Bottom Bar */}
-        <div className="flex flex-col items-center justify-between gap-4 text-xs text-muted-foreground/60 md:flex-row">
-          <div className="text-center md:text-left">
-            <p>
-              © {currentYear} Lenormand Intelligence. Entertainment & spiritual
-              guidance.
-            </p>
-          </div>
-          <div className="flex items-center gap-1">
+        <div className="flex flex-col items-center justify-center gap-3 py-4 text-xs text-muted-foreground/60 md:flex-row md:justify-between md:py-0">
+          <p className="text-center md:text-left">
+            © {currentYear} Lenormand Intelligence. Entertainment & spiritual
+            guidance.
+          </p>
+          <div className="flex items-center gap-1.5">
             <span>Made with</span>
             <Heart className="h-3 w-3 text-primary/60" aria-hidden="true" />
             <span>in Denmark</span>
