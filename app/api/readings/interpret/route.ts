@@ -1,21 +1,13 @@
 export const runtime = "edge";
 
-import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
-import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { buildPrompt, isDeepSeekAvailable, DEEPSEEK_BASE_URL } from "@/lib/ai-config";
 import { getCached, setCached, getCacheKey, rateLimit } from "@/lib/cache";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
 console.log("[Deepseek] API Key present:", !!DEEPSEEK_API_KEY);
 console.log("[Deepseek] Base URL:", DEEPSEEK_BASE_URL);
 console.log("[Deepseek] Available:", isDeepSeekAvailable());
-
-const deepseek = createOpenAI({
-  baseURL: DEEPSEEK_BASE_URL,
-  apiKey: DEEPSEEK_API_KEY,
-});
 
 function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
@@ -33,36 +25,38 @@ async function fetchAIInterpretation(prompt: string, signal: AbortSignal): Promi
   console.log("[Deepseek] Starting API call...");
   
   try {
-    const result = streamText({
-      model: deepseek.chat("deepseek-chat"),
-      messages: [
-        { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.3,
-      maxOutputTokens: 800,
-      abortSignal: signal,
+    const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.3,
+        max_tokens: 800,
+      }),
+      signal,
     });
 
-    console.log("[Deepseek] Stream started, waiting for chunks...");
-
-    let reading = "";
-    let chunkCount = 0;
-    try {
-      for await (const chunk of result.textStream) {
-        reading += chunk;
-        chunkCount++;
-      }
-    } catch (streamError: any) {
-      console.error("[Deepseek] Stream iteration error:", streamError.message);
-      throw new Error(`Stream failed: ${streamError.message || 'Unknown error'}`);
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("[Deepseek] API error:", response.status, errorData);
+      throw new Error(`API call failed: ${response.status}`);
     }
+
+    const data = await response.json();
+    console.log("[Deepseek] Response received, choices:", data.choices?.length);
     
-    console.log(`[Deepseek] Completed. Chunks received: ${chunkCount}, Total length: ${reading.length}`);
+    const reading = data.choices?.[0]?.message?.content || "";
     return reading;
   } catch (error: any) {
-    console.error("[Deepseek] Error during API call:", error.message);
-    throw error;
+    console.error("[Deepseek] Error:", error.message);
+    return "";
   }
 }
 
@@ -121,6 +115,12 @@ export async function POST(request: Request) {
       console.log("[Deepseek] Fetching interpretation...");
       const reading = await fetchAIInterpretation(prompt, controller.signal);
       clearTimeout(timeoutId);
+      
+      if (!reading || reading.trim() === "") {
+        console.log("[Deepseek] Empty response, triggering fallback...");
+        throw new Error("Empty AI response");
+      }
+      
       console.log("[Deepseek] Interpretation received, length:", reading.length);
 
       const result = JSON.stringify({ reading, source: "ai" });
@@ -138,14 +138,31 @@ export async function POST(request: Request) {
     } catch (error: any) {
       clearTimeout(timeoutId);
       console.error("[Deepseek] Fetch error:", error.message);
-      throw error;
+      
+      const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
+
+      return new Response(
+        JSON.stringify({
+          reading: fallbackMessage,
+          source: "fallback",
+          errorDetails: {
+            type: "ai_unavailable",
+            action: "The AI interpretation service is temporarily unavailable. Please try again.",
+            helpUrl: "https://lenormand.dk/about"
+          },
+        }),
+        {
+          status: 200,
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+          },
+        }
+      );
     }
   } catch (error: any) {
     const duration = Date.now() - startTime;
-    console.error("[Deepseek] Request error:", error.message);
-    
-    // Check if it's a stream error (500)
-    const isStreamError = error.message?.includes("Stream failed") || error.message?.includes("500");
+    console.error("[Deepseek] Unexpected error:", error.message);
     
     const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
 
@@ -153,11 +170,6 @@ export async function POST(request: Request) {
       JSON.stringify({
         reading: fallbackMessage,
         source: "fallback",
-        errorDetails: isStreamError ? {
-          type: "stream_error",
-          action: "The AI service encountered an error. Please try again.",
-          helpUrl: "https://lenormand.dk/about"
-        } : undefined,
       }),
       {
         status: 200,

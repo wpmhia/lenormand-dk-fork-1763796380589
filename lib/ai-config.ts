@@ -1,7 +1,7 @@
 import { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
+const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1";
 
 // Cache all spreads in a single array at module load time
 const ALL_SPREADS = [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
