@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense, useMemo, lazy } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense, useMemo, lazy, flushSync } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -263,14 +263,14 @@ function NewReadingPageContent() {
         throw new Error("No stream body");
       }
 
-       const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let content = "";
-        let buffer = "";
-        let lastUpdateTime = Date.now();
-        const UPDATE_INTERVAL = 50; // Batch updates every 50ms instead of per-character
-        const MAX_BUFFER_SIZE = 50000; // Maximum buffer size to prevent memory exhaustion
-        const MAX_CONTENT_LENGTH = 100000; // Maximum total content length
+    const reader = response.body.getReader();
+         const decoder = new TextDecoder();
+         let content = "";
+         let buffer = "";
+         let lastUpdateTime = Date.now();
+         const UPDATE_INTERVAL = 16; // ~60fps for smooth streaming
+         const MAX_BUFFER_SIZE = 50000;
+         const MAX_CONTENT_LENGTH = 100000;
 
         try {
           while (true) {
@@ -317,11 +317,13 @@ function NewReadingPageContent() {
                       content = parsed.reading;
                     }
                     
-                    // Batch state updates: only update UI every 50ms to reduce re-renders
+                    // Update UI every 16ms (~60fps) for smooth streaming
                     const now = Date.now();
                     if (now - lastUpdateTime > UPDATE_INTERVAL) {
-                      setStreamedContent(content);
-                      setAiReading({ reading: content });
+                      flushSync(() => {
+                        setStreamedContent(content);
+                        setAiReading({ reading: content });
+                      });
                       lastUpdateTime = now;
                     }
                   }
@@ -348,17 +350,21 @@ function NewReadingPageContent() {
         }
         
          // Final update to ensure all content is displayed
-         if (content.length > 0 && content.length <= MAX_CONTENT_LENGTH) {
-           setStreamedContent(content);
-           setAiReading({ reading: content });
-         } else if (content.length > MAX_CONTENT_LENGTH) {
-           setStreamedContent(content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]');
-           setAiReading({ reading: content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]' });
-         }
+         flushSync(() => {
+           if (content.length > 0 && content.length <= MAX_CONTENT_LENGTH) {
+             setStreamedContent(content);
+             setAiReading({ reading: content });
+           } else if (content.length > MAX_CONTENT_LENGTH) {
+             setStreamedContent(content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]');
+             setAiReading({ reading: content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]' });
+           }
+         });
 
       if (content.length > 0) {
-        setAiReading({ reading: content });
-        setStreamedContent(content);
+        flushSync(() => {
+          setAiReading({ reading: content });
+          setStreamedContent(content);
+        });
       } else {
         setIsStreaming(false);
         setAiLoading(true);
