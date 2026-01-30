@@ -62,11 +62,12 @@ function CardInner({
         aria-label="Lenormand card back. Click to draw or select card"
       >
         <Image
-          src="/images/card-back.png"
+          src="/images/card-back.webp"
           alt="Card back"
           fill
           className="object-cover"
           sizes={sizeToPixels[size]}
+          priority
         />
       </div>
     );
