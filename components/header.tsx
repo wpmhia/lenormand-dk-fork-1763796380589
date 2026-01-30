@@ -35,6 +35,15 @@ export function Header() {
           </Link>
 
         </nav>
+        <a
+          href="https://www.buymeacoffee.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2 hidden md:inline-flex h-9 items-center justify-center rounded bg-[#FFDD00] px-3 text-xs font-semibold text-black transition-transform hover:scale-105 active:scale-95"
+          suppressHydrationWarning
+        >
+          Buy Me a Coffee
+        </a>
         <div className="ml-auto md:hidden">
           <button className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95" aria-label="Toggle mobile menu" type="button">
             <Menu className="h-6 w-6" />
