@@ -33,8 +33,8 @@ export function Header() {
             <Sparkles className="h-5 w-5" />
             <span>Learn</span>
           </Link>
-          <a href="https://ko-fi.com/Y8Y81NVDEK" target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center justify-center rounded bg-[#13ADS5] px-3 py-1 text-white text-sm font-medium transition-transform hover:scale-105 active:scale-95">
-            Ko-fi
+          <a href="https://www.buymeacoffee.com" target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center justify-center rounded bg-[#FFDD00] px-3 py-1 text-black text-sm font-medium transition-transform hover:scale-105 active:scale-95">
+            Buy Me a Coffee
           </a>
         </nav>
         <div className="ml-auto md:hidden">

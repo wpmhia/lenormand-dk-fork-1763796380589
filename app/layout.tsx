@@ -182,7 +182,7 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-        <link rel="dns-prefetch" href="https://storage.ko-fi.com" />
+        <link rel="dns-prefetch" href="https://cdn.buymeacoffee.com" />
         <Script
           id="google-analytics"
           strategy="afterInteractive"

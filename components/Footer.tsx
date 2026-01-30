@@ -92,13 +92,13 @@ export function Footer() {
             <ul className="space-y-1 text-xs">
               <li>
                 <a
-                  href="https://ko-fi.com/Y8Y81NVDEK"
+                  href="https://www.buymeacoffee.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Heart className="h-3 w-3" />
-                  Ko-fi
+                  Buy Me a Coffee
                 </a>
               </li>
             </ul>
