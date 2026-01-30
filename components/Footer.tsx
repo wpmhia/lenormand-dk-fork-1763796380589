@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { useEffect, useState } from "react";
 
 export function Footer() {
-  const [mounted, setMounted] = useState(false);
   const currentYear = new Date().getFullYear();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const resetCookieConsent = () => {
     if (typeof window !== 'undefined') {
@@ -83,13 +77,11 @@ export function Footer() {
                   Terms
                 </Link>
               </li>
-              <li>
-                {mounted && (
+                <li>
                   <button onClick={resetCookieConsent} className="text-muted-foreground hover:text-primary transition-colors">
                     Cookies
                   </button>
-                )}
-              </li>
+                </li>
             </ul>
           </div>
 
