@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Home, BookOpen, Plus } from "lucide-react";
+import { Sparkles, Home, BookOpen, Plus, Menu } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 export function Header() {

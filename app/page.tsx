@@ -54,13 +54,14 @@ export default function Home() {
 
           {/* Image column */}
           <div className="relative z-10 flex justify-center">
-            <div className="hero-image-cell rounded-none bg-transparent p-0">
+            <div className="hero-image-cell rounded-none bg-transparent p-0 min-h-[300px] flex items-center">
               <Image
                 src="/images/hero-image.jpg"
                 alt="Mystical Lenormand cards arranged in a reading spread"
                 width={400}
                 height={300}
                 priority
+                unoptimized
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 className="block h-auto w-full max-w-xs rounded-md border-0 object-cover shadow-none lg:max-w-sm"
               />
