@@ -1,32 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Home, BookOpen, Plus, Menu } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { Sparkles, Home, BookOpen, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(prev => !prev);
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (menuRef.current) {
-      menuRef.current.style.display = mobileMenuOpen ? "block" : "none";
-    }
-    if (buttonRef.current) {
-      buttonRef.current.innerHTML = mobileMenuOpen
-        ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>';
-    }
-  }, [mobileMenuOpen]);
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-mobile-menu]')) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
   return (
     <header
@@ -92,22 +82,21 @@ export function Header() {
 
         <div className="ml-auto md:hidden">
           <button
-            ref={buttonRef}
-            onClick={toggleMobileMenu}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label="Toggle mobile menu"
-            aria-controls="mobile-menu"
             suppressHydrationWarning
           >
-            <Menu className="h-6 w-6" />
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
         </div>
       </div>
 
       <div
-        ref={menuRef}
-        id="mobile-menu"
-        className="border-t border-border bg-card/95 backdrop-blur md:hidden hidden"
+        data-mobile-menu
+        className={`border-t border-border bg-card/95 backdrop-blur md:hidden ${isMenuOpen ? "" : "hidden"}`}
         role="navigation"
         aria-label="Mobile navigation"
         suppressHydrationWarning
@@ -115,7 +104,7 @@ export function Header() {
           <nav className="container space-y-2 px-4 py-3" role="navigation">
             <Link
               href="/"
-              onClick={closeMobileMenu}
+              onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Home className="h-5 w-5" />
@@ -123,7 +112,7 @@ export function Header() {
             </Link>
             <Link
               href="/cards"
-              onClick={closeMobileMenu}
+              onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <BookOpen className="h-5 w-5" />
@@ -131,7 +120,7 @@ export function Header() {
             </Link>
             <Link
               href="/read/new"
-              onClick={closeMobileMenu}
+              onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Plus className="h-5 w-5" />
@@ -139,7 +128,7 @@ export function Header() {
             </Link>
             <Link
               href="/learn"
-              onClick={closeMobileMenu}
+              onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Sparkles className="h-5 w-5" />
