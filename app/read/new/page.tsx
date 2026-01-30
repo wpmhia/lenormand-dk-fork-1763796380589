@@ -286,6 +286,11 @@ function NewReadingPageContent() {
                   const text = parseSSEChunk(data);
                   if (text) {
                     content += text;
+                    // Instant update on every chunk for smooth streaming
+                    flushSync(() => {
+                      setStreamedContent(content);
+                      setAiReading({ reading: content });
+                    });
                   }
                 }
               }

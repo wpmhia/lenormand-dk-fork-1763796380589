@@ -1,7 +1,7 @@
 export const runtime = "edge";
 
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
-import { getCached, setCached, getCacheKey, rateLimit } from "@/lib/cache";
+import { rateLimit } from "@/lib/cache";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const BASE_URL = "https://api.deepseek.com";
@@ -45,19 +45,9 @@ export async function POST(request: Request) {
     }
 
     const { question, cards, spreadId } = body;
-    const cacheKey = getCacheKey(question, cards, spreadId || "sentence-3");
-
-    const cached = await getCached(cacheKey);
-    if (cached) {
-      return new Response(
-        JSON.stringify({ reading: cached, source: "cache" }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    setTimeout(() => controller.abort(), 30000);
 
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
@@ -79,37 +69,22 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("[Deepseek] API Error:", response.status, errorText);
-      throw new Error(`API call failed: ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
-    if (!response.body) {
-      throw new Error("No response body");
-    }
-
-    // Stream directly to client - no parsing/re-encoding
+    // Direct passthrough - zero processing
     return new Response(response.body, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
+      headers: { "Content-Type": "text/event-stream" },
     });
     
   } catch (error: any) {
-    console.error("[Deepseek] Request error:", error.message);
-    
     return new Response(
       JSON.stringify({
         error: "Stream failed",
         reading: "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.",
         source: "fallback",
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   }
 }
