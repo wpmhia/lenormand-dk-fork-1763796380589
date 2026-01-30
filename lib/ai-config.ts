@@ -106,19 +106,19 @@ export function buildPrompt(
 **VERDICT:** [YES / NO / CONDITIONAL]
 
 **The Cards:**
-[Card 1 name]: [1-2 sentences explaining meaning in position]
-[Card 2 name]: [1-2 sentences]
-[Card 3 name]: [1-2 sentences]
+- **[Card 1 name]:** As the [position], [2-3 sentences explaining meaning and role]
+- **[Card 2 name]:** As the [position], [2-3 sentences]
+- **[Card 3 name]:** As the [position], [2-3 sentences]
 
 **Why:**
 [2-3 sentences explaining reasoning based on card energies]`
     : `FORMAT YOUR RESPONSE EXACTLY LIKE THIS:
 
 **The Cards:**
-[Card 1 name]: [2-3 sentences explaining meaning and position]
-[Card 2 name]: [2-3 sentences]
-[Card 3 name]: [2-3 sentences]
-[Continue for all cards...]
+- **[Card 1 name]:** As the [opening/first/central/closing] card, [2-3 sentences explaining meaning and position role]
+- **[Card 2 name]:** As the [turning point/central/next] card, [2-3 sentences]
+- **[Card 3 name]:** As the [closing/final/outcome] card, [2-3 sentences]
+[Continue for all cards with position labels...]
 
 **Summary:**
 [One flowing sentence connecting all cards to the question]
