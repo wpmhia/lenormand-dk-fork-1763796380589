@@ -164,7 +164,6 @@ export function AIReadingDisplay({
   }
 
   if (isLoading && streamedContent) {
-    // Simple text rendering for fast streaming - no ReactMarkdown during stream
     return (
       <Card className="border-border bg-card shadow-lg">
         <CardContent className="p-6">
@@ -176,9 +175,17 @@ export function AIReadingDisplay({
             <span>Generating...</span>
           </div>
           <div className="reading-content space-y-4 opacity-80">
-            <pre className="font-sans text-base leading-relaxed text-foreground/90 whitespace-pre-wrap">
+            <ReactMarkdown
+              components={{
+                h1: ({ node, ...props }) => <h1 className="text-2xl font-semibold text-foreground" {...props} />,
+                h2: ({ node, ...props }) => <h2 className="text-xl font-semibold text-foreground" {...props} />,
+                h3: ({ node, ...props }) => <h3 className="text-lg font-semibold text-foreground" {...props} />,
+                p: ({ node, ...props }) => <div className="text-base leading-relaxed text-foreground/90" {...props} />,
+                strong: ({ node, ...props }) => <strong className="font-semibold text-foreground" {...props} />,
+              }}
+            >
               {streamedContent}
-            </pre>
+            </ReactMarkdown>
           </div>
         </CardContent>
       </Card>

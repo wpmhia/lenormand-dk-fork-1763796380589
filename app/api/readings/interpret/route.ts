@@ -10,11 +10,9 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
     return { valid: false, error: "Cards must be provided as an array" };
   }
-
   if (!body.question || typeof body.question !== "string") {
     return { valid: false, error: "Question is required" };
   }
-
   return { valid: true };
 }
 
@@ -51,23 +49,10 @@ export async function POST(request: Request) {
 
     const cached = await getCached(cacheKey);
     if (cached) {
-      // Return cached result as SSE stream for consistent frontend handling
-      const encoder = new TextEncoder();
-      const stream = new ReadableStream({
-        start(controller) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ reading: cached, source: "cache" })}\n\n`));
-          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-          controller.close();
-        }
-      });
-      
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-        },
-      });
+      return new Response(
+        JSON.stringify({ reading: cached, source: "cache" }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
@@ -103,70 +88,8 @@ export async function POST(request: Request) {
       throw new Error("No response body");
     }
 
-    // Create SSE stream that forwards DeepSeek chunks to client
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        const reader = response.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let fullReading = "";
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const dataStr = line.slice(6);
-                
-                if (dataStr === '[DONE]') {
-                  // Store in cache before finishing
-                  if (fullReading) {
-                    await setCached(cacheKey, fullReading, cards.length);
-                  }
-                  controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-                  controller.close();
-                  return;
-                }
-                
-                try {
-                  const data = JSON.parse(dataStr);
-                  const content = data.choices?.[0]?.delta?.content;
-                  if (content) {
-                    fullReading += content;
-                    // Forward chunk to client
-                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
-                  }
-                } catch {
-                  // Ignore malformed chunks
-                }
-              }
-            }
-          }
-          
-          // Handle any remaining buffer
-          if (fullReading) {
-            await setCached(cacheKey, fullReading, cards.length);
-          }
-          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-          controller.close();
-        } catch (error) {
-          console.error("[Deepseek] Stream error:", error);
-          controller.error(error);
-        } finally {
-          clearTimeout(timeoutId);
-          reader.releaseLock();
-        }
-      },
-    });
-
-    return new Response(stream, {
+    // Stream directly to client - no parsing/re-encoding
+    return new Response(response.body, {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",

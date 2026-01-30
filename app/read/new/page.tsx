@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense, useMemo, lazy, flushSync } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense, useMemo, lazy } from "react";
+import { flushSync } from "react-dom";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -153,44 +154,20 @@ function NewReadingPageContent() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const requestInProgressRef = useRef(false);
 
-  function parseSSEChunk(data: string): { content?: string; reading?: string; source?: string } | null {
+  function parseSSEChunk(data: string): string | null {
     if (data === "[DONE]") return null;
-    
-    // Skip empty data
     if (!data || data.trim() === "") return null;
     
     try {
       const parsed = JSON.parse(data);
+      if (!parsed || typeof parsed !== 'object') return null;
       
-      // Validate structure
-      if (!parsed || typeof parsed !== 'object') {
-        console.warn('Invalid SSE data structure:', data);
-        return null;
-      }
-      
-      // Handle streaming chunks from our API: { content: "..." }
-      if (parsed.content && typeof parsed.content === 'string') {
-        return { content: parsed.content };
-      }
-      
-      // Handle cached/final response: { reading: "...", source: "..." }
-      if (parsed.reading && typeof parsed.reading === 'string') {
-        return { reading: parsed.reading, source: parsed.source };
-      }
-      
-      // Legacy: Handle OpenAI format from direct API calls
-      const legacyContent = parsed.choices?.[0]?.delta?.content;
-      if (typeof legacyContent === 'string') {
-        return { content: legacyContent };
-      }
+      // OpenAI format: choices[0].delta.content
+      const content = parsed.choices?.[0]?.delta?.content;
+      if (typeof content === 'string') return content;
       
       return null;
-    } catch (error) {
-      // Log parse failures for debugging but don't expose to users
-      console.warn('JSON parse error in SSE chunk:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        data: data.substring(0, 100) + (data.length > 100 ? '...' : '')
-      });
+    } catch {
       return null;
     }
   }
@@ -306,16 +283,9 @@ function NewReadingPageContent() {
                   if (data === "[DONE]") {
                     break;
                   }
-                  const parsed = parseSSEChunk(data);
-                  if (parsed) {
-                    // Handle streaming content chunks
-                    if (parsed.content) {
-                      content += parsed.content;
-                    }
-                    // Handle cached/final response
-                    if (parsed.reading) {
-                      content = parsed.reading;
-                    }
+                  const text = parseSSEChunk(data);
+                  if (text) {
+                    content += text;
                     
                     // Update UI every 16ms (~60fps) for smooth streaming
                     const now = Date.now();
