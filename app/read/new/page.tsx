@@ -9,7 +9,7 @@ import {
   useMemo,
   lazy,
 } from "react";
-import { flushSync } from "react-dom";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -304,11 +304,13 @@ function NewReadingPageContent() {
                 const text = parseSSEChunk(data);
                 if (text) {
                   content += text;
-                  // Instant update on every chunk for smooth streaming
-                  flushSync(() => {
+                  // Throttle updates to ~30fps to reduce CPU usage
+                  const now = Date.now();
+                  if (now - lastUpdateTime >= 33) {
+                    lastUpdateTime = now;
                     setStreamedContent(content);
                     setAiReading({ reading: content });
-                  });
+                  }
                 }
               }
             }
