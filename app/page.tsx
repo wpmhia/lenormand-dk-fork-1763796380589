@@ -15,6 +15,9 @@ import {
   Lightbulb,
   Users,
   TrendingUp,
+  CheckCircle2,
+  Star,
+  Zap,
 } from "lucide-react";
 
 export default function Home() {

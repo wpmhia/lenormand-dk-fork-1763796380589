@@ -286,16 +286,6 @@ function NewReadingPageContent() {
                   const text = parseSSEChunk(data);
                   if (text) {
                     content += text;
-                    
-                    // Update UI every 16ms (~60fps) for smooth streaming
-                    const now = Date.now();
-                    if (now - lastUpdateTime > UPDATE_INTERVAL) {
-                      flushSync(() => {
-                        setStreamedContent(content);
-                        setAiReading({ reading: content });
-                      });
-                      lastUpdateTime = now;
-                    }
                   }
                 }
               }
@@ -319,23 +309,11 @@ function NewReadingPageContent() {
           }
         }
         
-         // Final update to ensure all content is displayed
-         flushSync(() => {
-           if (content.length > 0 && content.length <= MAX_CONTENT_LENGTH) {
-             setStreamedContent(content);
-             setAiReading({ reading: content });
-           } else if (content.length > MAX_CONTENT_LENGTH) {
-             setStreamedContent(content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]');
-             setAiReading({ reading: content.substring(0, MAX_CONTENT_LENGTH) + '\n\n[Reading truncated due to length]' });
-           }
-         });
-
-      if (content.length > 0) {
-        flushSync(() => {
-          setAiReading({ reading: content });
-          setStreamedContent(content);
-        });
-      } else {
+         // Show complete reading at once
+         if (content.length > 0) {
+           setAiReading({ reading: content });
+           setStreamedContent(content);
+         } else {
         setIsStreaming(false);
         setAiLoading(true);
         try {
