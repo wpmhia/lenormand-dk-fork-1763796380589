@@ -16,7 +16,7 @@ export function Footer() {
     <footer className="border-t border-border bg-gradient-to-b from-background to-background/80">
       <div className="container mx-auto px-4 py-8 md:py-12">
         {/* Main Footer Content */}
-        <div className="mb-6 grid gap-6 md:mb-8 md:grid-cols-12 md:gap-8">
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-4 md:mb-8 md:gap-8">
           {/* Brand Section */}
           <div className="md:col-span-3">
             <Link href="/" className="mb-3 inline-block">
