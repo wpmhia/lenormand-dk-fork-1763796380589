@@ -1,12 +1,39 @@
 export const runtime = "edge";
 
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const BASE_URL = "https://api.deepseek.com";
 
+// Rate limit: 5 requests per minute per IP
+const RATE_LIMIT = 5;
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+
 export async function POST(request: Request) {
   try {
+    // Rate limiting
+    const ip = getClientIP(request);
+    const rateLimitResult = rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
+
+    if (!rateLimitResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Rate limit exceeded",
+          retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000),
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "X-RateLimit-Limit": String(rateLimitResult.limit),
+            "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+            "X-RateLimit-Reset": String(rateLimitResult.reset),
+          },
+        },
+      );
+    }
+
     const body = await request.json();
 
     if (!isDeepSeekAvailable()) {
@@ -46,7 +73,7 @@ export async function POST(request: Request) {
           { role: "user", content: prompt },
         ],
         temperature: 0.3,
-        max_tokens: 2000,
+        max_tokens: 1500, // Reduced from 2000 to lower costs and latency
         stream: true,
       }),
     });
@@ -55,9 +82,14 @@ export async function POST(request: Request) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    // Zero-processing passthrough
+    // Zero-processing passthrough with rate limit headers
     return new Response(response.body, {
-      headers: { "Content-Type": "text/event-stream" },
+      headers: {
+        "Content-Type": "text/event-stream",
+        "X-RateLimit-Limit": String(rateLimitResult.limit),
+        "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+        "X-RateLimit-Reset": String(rateLimitResult.reset),
+      },
     });
   } catch (error: any) {
     return new Response(

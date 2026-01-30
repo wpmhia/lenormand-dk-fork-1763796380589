@@ -23,16 +23,12 @@
   },
   "functions": {
     "app/api/readings/interpret/**": {
-      "memory": 1024,
-      "maxDuration": 15
+      "memory": 512,
+      "maxDuration": 60
     },
     "app/api/**": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "app/cards/**": {
-      "memory": 1024,
-      "maxDuration": 5
+      "memory": 512,
+      "maxDuration": 10
     }
   },
   "regions": ["fra1", "ams1", "dub1", "lhr1"],
@@ -40,5 +36,25 @@
     "deploymentEnabled": {
       "main": true
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
 }

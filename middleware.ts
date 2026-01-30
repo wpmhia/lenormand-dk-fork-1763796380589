@@ -25,9 +25,18 @@ export async function middleware(request: NextRequest) {
   // Minimal security headers only
   response.headers.set("X-Content-Type-Options", "nosniff");
 
+  // Add caching for static pages (not API routes)
+  if (!pathname.startsWith("/api/")) {
+    // Cache static pages for 1 hour, stale-while-revalidate for 24 hours
+    response.headers.set(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate=86400"
+    );
+  }
+
   return response;
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/read/:path*"],
+  matcher: ["/api/:path*", "/read/:path*", "/cards/:path*", "/learn/:path*"],
 };
