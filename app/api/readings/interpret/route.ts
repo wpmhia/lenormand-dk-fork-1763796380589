@@ -48,9 +48,14 @@ async function fetchAIInterpretation(prompt: string, signal: AbortSignal): Promi
 
     let reading = "";
     let chunkCount = 0;
-    for await (const chunk of result.textStream) {
-      reading += chunk;
-      chunkCount++;
+    try {
+      for await (const chunk of result.textStream) {
+        reading += chunk;
+        chunkCount++;
+      }
+    } catch (streamError: any) {
+      console.error("[Deepseek] Stream iteration error:", streamError.message);
+      throw new Error(`Stream failed: ${streamError.message || 'Unknown error'}`);
     }
     
     console.log(`[Deepseek] Completed. Chunks received: ${chunkCount}, Total length: ${reading.length}`);
@@ -138,12 +143,21 @@ export async function POST(request: Request) {
   } catch (error: any) {
     const duration = Date.now() - startTime;
     console.error("[Deepseek] Request error:", error.message);
+    
+    // Check if it's a stream error (500)
+    const isStreamError = error.message?.includes("Stream failed") || error.message?.includes("500");
+    
     const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
 
     return new Response(
       JSON.stringify({
         reading: fallbackMessage,
         source: "fallback",
+        errorDetails: isStreamError ? {
+          type: "stream_error",
+          action: "The AI service encountered an error. Please try again.",
+          helpUrl: "https://lenormand.dk/about"
+        } : undefined,
       }),
       {
         status: 200,

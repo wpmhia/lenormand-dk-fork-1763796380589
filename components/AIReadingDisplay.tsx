@@ -196,7 +196,7 @@ export function AIReadingDisplay({
                   />
                 ),
                 p: ({ node, ...props }) => (
-                  <p
+                  <div
                     className="text-base leading-relaxed text-foreground/90"
                     {...props}
                   />
@@ -266,11 +266,11 @@ export function AIReadingDisplay({
           </Badge>
         </div>
         <AlertDescription className="space-y-3">
-          <p>{error}</p>
+          <div className="text-sm">{error}</div>
           {errorDetails && (
             <div className="text-sm opacity-90">
               {errorDetails.action && (
-                <p className="font-medium">{errorDetails.action}</p>
+                <div className="font-medium">{errorDetails.action}</div>
               )}
               {errorDetails.helpUrl && (
                 <a
@@ -343,7 +343,7 @@ export function AIReadingDisplay({
                   />
                 ),
                 p: ({ node, ...props }) => (
-                  <p
+                  <div
                     className="text-base leading-relaxed text-foreground/90"
                     {...props}
                   />
