@@ -18,9 +18,7 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
   const [origin, setOrigin] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setOrigin(window.location.origin);
-    }
+    setOrigin(window.location.origin);
   }, []);
 
   const getItemUrl = (url: string) => {
@@ -50,6 +48,7 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
       <nav
         className="flex items-center gap-2 text-sm text-muted-foreground"
         aria-label="Breadcrumb"
+        suppressHydrationWarning
       >
         {items.map((item, index) => (
           <div key={item.url} className="flex items-center gap-2">

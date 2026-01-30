@@ -3,6 +3,13 @@
 import Link from "next/link";
 import { Sparkles, Home, BookOpen, Plus } from "lucide-react";
 
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  if (menu) {
+    menu.classList.toggle('hidden');
+  }
+}
+
 export function Header() {
   return (
     <header className="z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -67,12 +74,7 @@ export function Header() {
           <button
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label="Toggle mobile menu"
-            onClick={() => {
-              const menu = document.getElementById('mobile-menu');
-              if (menu) {
-                menu.classList.toggle('hidden');
-              }
-            }}
+            onClick={toggleMobileMenu}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
