@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, Mail, Sparkles } from "lucide-react";
+import { Heart } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -13,158 +13,94 @@ export function Footer() {
   };
 
   return (
-    <footer className="border-t border-border bg-gradient-to-b from-background to-background/80">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* Main Footer Content */}
-        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-4 md:mb-8 md:gap-8">
-          {/* Brand Section */}
-          <div className="md:col-span-3">
-            <Link href="/" className="mb-3 inline-block">
-              <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-xl font-bold text-transparent">
+    <footer className="border-t border-border bg-background/50">
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
+          <div>
+            <Link href="/" className="block">
+              <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-lg font-bold text-transparent">
                 Lenormand
               </h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                AI-Enhanced Divination
-              </p>
             </Link>
-            <p className="max-w-xs text-xs leading-relaxed text-muted-foreground/70">
-              Explore timeless card wisdom combined with modern AI insights for
-              meaningful readings.
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              AI-Enhanced Divination
             </p>
           </div>
 
-          {/* Navigation Links */}
-          <div className="md:col-span-3">
-            <h4 className="mb-3 text-sm font-semibold text-foreground/80">
+          <div>
+            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Explore
             </h4>
-            <ul className="space-y-0.5 text-xs">
+            <ul className="space-y-1 text-xs">
               <li>
-                <Link
-                  href="/"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
+                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/read/new"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
-                  New Reading
+                <Link href="/read/new" className="text-muted-foreground hover:text-primary transition-colors">
+                  Reading
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/cards"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Card Guide
+                <Link href="/cards" className="text-muted-foreground hover:text-primary transition-colors">
+                  Cards
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/learn"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
+                <Link href="/learn" className="text-muted-foreground hover:text-primary transition-colors">
                   Learn
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Resources */}
-          <div className="md:col-span-3">
-            <h4 className="mb-3 text-sm font-semibold text-foreground/80">
-              Resources
+          <div>
+            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              Links
             </h4>
-            <ul className="space-y-0.5 text-xs">
+            <ul className="space-y-1 text-xs">
               <li>
-                <Link
-                  href="/learn/spreads"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
-                  Spreads
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/learn/history-basics"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
-                  History
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                >
+                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
                   About
                 </Link>
               </li>
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    Privacy
-                  </Link>
-                </li>
-                  <li>
-                    <button
-                      onClick={resetCookieConsent}
-                      className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                    >
-                     Cookie Preferences
-                   </button>
-                 </li>
-                  <li>
-                    <Link
-                      href="/privacy#cookie-management"
-                      className="block py-1.5 text-muted-foreground transition-colors hover:text-primary"
-                    >
-                     Cookie Help
-                   </Link>
-                 </li>
+              <li>
+                <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <button onClick={resetCookieConsent} className="text-muted-foreground hover:text-primary transition-colors">
+                  Cookies
+                </button>
+              </li>
             </ul>
           </div>
 
-          {/* Support */}
-          <div className="md:col-span-3">
-            <h4 className="mb-3 text-sm font-semibold text-foreground/80">
+          <div className="text-right md:text-left">
+            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Support
             </h4>
-            <p className="mb-3 text-xs text-muted-foreground/70">
-              Enjoying Lenormand Intelligence?
-            </p>
             <a
               href="https://ko-fi.com/Y8Y81NVDEK"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 py-1.5 text-xs font-medium text-primary transition-colors hover:text-primary/80"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
             >
-              <Heart className="h-3.5 w-3.5" />
-              Support Us
+              <Heart className="h-3 w-3" />
+              Ko-fi
             </a>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="mb-6 h-px bg-gradient-to-r from-border via-border/50 to-border" />
-
-        {/* Bottom Bar */}
-        <div className="flex flex-col items-center justify-center gap-3 py-4 text-xs text-muted-foreground/60 md:flex-row md:justify-between md:py-0">
-          <p className="text-center md:text-left">
-            © {currentYear} Lenormand Intelligence. Entertainment & spiritual
-            guidance.
-          </p>
-          <div className="flex items-center gap-1.5">
-            <span>Made with</span>
-            <Heart className="h-3 w-3 text-primary/60" aria-hidden="true" />
-            <span>in Denmark</span>
-          </div>
+        <div className="mt-4 pt-4 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-2 text-[10px] text-muted-foreground">
+          <span>© {currentYear} Lenormand Intelligence</span>
+          <span className="flex items-center gap-1">
+            Made with
+            <Heart className="h-2.5 w-2.5 text-primary/60" />
+            in Denmark
+          </span>
         </div>
       </div>
     </footer>
