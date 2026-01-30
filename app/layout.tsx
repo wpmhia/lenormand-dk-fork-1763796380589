@@ -12,16 +12,16 @@ import { CookieConsent } from "@/components/CookieConsent";
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  preload: true,
   fallback: ["system-ui", "arial"],
+  variable: "--font-inter",
 });
 
 const crimsonPro = Crimson_Pro({
   subsets: ["latin"],
   display: "swap",
-  preload: true,
   fallback: ["serif"],
   weight: ["700"],
+  variable: "--font-crimson",
 });
 
 export const metadata: Metadata = {

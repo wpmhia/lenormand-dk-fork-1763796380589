@@ -4,14 +4,12 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  redirects: async () => {
-    return [
-      {
-        source: "/read",
-        destination: "/read/new",
-        permanent: true,
-      },
-    ];
+  swcMinify: true,
+  modularizeImports: {
+    "@/components/ui": {
+      transform: "use~/components/ui/{{member}}",
+      skipDefault: true,
+    },
   },
   images: {
     remotePatterns: [
@@ -21,13 +19,22 @@ const nextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
-    unoptimized: false,
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [640, 750, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128],
+    minimumCacheTTL: 31536000,
   },
-  swcMinify: true,
   headers: async () => {
-    return [];
+    return [
+      {
+        source: "/:all*(svg|jpg|png|webp|avif)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 
