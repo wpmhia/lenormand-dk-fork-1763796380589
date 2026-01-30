@@ -1,53 +1,30 @@
 export const runtime = "edge";
 
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
-import { rateLimit } from "@/lib/cache";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const BASE_URL = "https://api.deepseek.com";
 
-function validateRequest(body: any): { valid: boolean; error?: string } {
-  if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
-    return { valid: false, error: "Cards must be provided as an array" };
-  }
-  if (!body.question || typeof body.question !== "string") {
-    return { valid: false, error: "Question is required" };
-  }
-  return { valid: true };
-}
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
 
     if (!isDeepSeekAvailable()) {
       return new Response(
-        JSON.stringify({ error: "AI interpretation is not configured" }),
+        JSON.stringify({ error: "AI not configured" }),
         { status: 503, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const validation = validateRequest(body);
-    if (!validation.valid) {
+    if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
       return new Response(
-        JSON.stringify({ error: validation.error }),
+        JSON.stringify({ error: "Cards required" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const { success } = await rateLimit(ip);
-    if (!success) {
-      return new Response(
-        JSON.stringify({ error: "Rate limit exceeded" }),
-        { status: 429, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
     const { question, cards, spreadId } = body;
-    const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
-    const controller = new AbortController();
-    setTimeout(() => controller.abort(), 30000);
+    const prompt = buildPrompt(cards, spreadId || "sentence-3", question || "What do the cards show?");
 
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
@@ -65,14 +42,13 @@ export async function POST(request: Request) {
         max_tokens: 2000,
         stream: true,
       }),
-      signal: controller.signal,
     });
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    // Direct passthrough - zero processing
+    // Zero-processing passthrough
     return new Response(response.body, {
       headers: { "Content-Type": "text/event-stream" },
     });
@@ -81,7 +57,7 @@ export async function POST(request: Request) {
     return new Response(
       JSON.stringify({
         error: "Stream failed",
-        reading: "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.",
+        reading: "The cards whisper their message through the mist. Reflect on the cards' traditional meanings. The answer emerges from within.",
         source: "fallback",
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
