@@ -8,6 +8,10 @@ import { getCached, setCached, getCacheKey, rateLimit } from "@/lib/cache";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
+console.log("[Deepseek] API Key present:", !!DEEPSEEK_API_KEY);
+console.log("[Deepseek] Base URL:", DEEPSEEK_BASE_URL);
+console.log("[Deepseek] Available:", isDeepSeekAvailable());
+
 const deepseek = createOpenAI({
   baseURL: DEEPSEEK_BASE_URL,
   apiKey: DEEPSEEK_API_KEY,
@@ -26,22 +30,35 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 }
 
 async function fetchAIInterpretation(prompt: string, signal: AbortSignal): Promise<string> {
-  const result = streamText({
-    model: deepseek.chat("deepseek-chat"),
-    messages: [
-      { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-      { role: "user", content: prompt },
-    ],
-    temperature: 0.3,
-    maxOutputTokens: 800,
-    abortSignal: signal,
-  });
+  console.log("[Deepseek] Starting API call...");
+  
+  try {
+    const result = streamText({
+      model: deepseek.chat("deepseek-chat"),
+      messages: [
+        { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.3,
+      maxOutputTokens: 800,
+      abortSignal: signal,
+    });
 
-  let reading = "";
-  for await (const chunk of result.textStream) {
-    reading += chunk;
+    console.log("[Deepseek] Stream started, waiting for chunks...");
+
+    let reading = "";
+    let chunkCount = 0;
+    for await (const chunk of result.textStream) {
+      reading += chunk;
+      chunkCount++;
+    }
+    
+    console.log(`[Deepseek] Completed. Chunks received: ${chunkCount}, Total length: ${reading.length}`);
+    return reading;
+  } catch (error: any) {
+    console.error("[Deepseek] Error during API call:", error.message);
+    throw error;
   }
-  return reading;
 }
 
 export async function POST(request: Request) {
@@ -96,8 +113,10 @@ export async function POST(request: Request) {
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
+      console.log("[Deepseek] Fetching interpretation...");
       const reading = await fetchAIInterpretation(prompt, controller.signal);
       clearTimeout(timeoutId);
+      console.log("[Deepseek] Interpretation received, length:", reading.length);
 
       const result = JSON.stringify({ reading, source: "ai" });
       await setCached(cacheKey, result, cards.length);
@@ -111,12 +130,14 @@ export async function POST(request: Request) {
       });
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
       clearTimeout(timeoutId);
+      console.error("[Deepseek] Fetch error:", error.message);
       throw error;
     }
-  } catch (error) {
+  } catch (error: any) {
     const duration = Date.now() - startTime;
+    console.error("[Deepseek] Request error:", error.message);
     const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
 
     return new Response(
