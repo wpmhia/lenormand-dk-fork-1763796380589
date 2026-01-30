@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 
 interface CardProps {
   card: CardType;
@@ -33,6 +33,8 @@ function CardInner({
   size = "md",
   className,
 }: CardProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  
   const handleClick = useCallback(() => {
     onClick?.();
   }, [onClick]);
@@ -83,14 +85,22 @@ function CardInner({
         role={onClick ? "button" : undefined}
         aria-label={`${card.name} card. Click to ${onClick ? "select" : "view details"}`}
       >
-        <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
+        <div className="relative h-full w-full overflow-hidden rounded-lg bg-muted">
+          {/* Skeleton placeholder to prevent layout shift */}
+          {!isLoaded && (
+            <div className="absolute inset-0 animate-pulse bg-muted" />
+          )}
           <Image
             src={card.imageUrl || ""}
             alt={card.name}
             fill
-            className="h-full w-full object-cover"
+            className={cn(
+              "h-full w-full object-cover transition-opacity duration-300",
+              isLoaded ? "opacity-100" : "opacity-0"
+            )}
             sizes={sizeToPixels[size]}
             loading="lazy"
+            onLoad={() => setIsLoaded(true)}
           />
         </div>
       </div>

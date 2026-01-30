@@ -477,10 +477,13 @@ export function ReadingViewer({
             </div>
           )}
 
-          <div
-            className="grid gap-sm"
-            style={{ gridTemplateColumns: "repeat(9, minmax(0, 1fr))" }}
-          >
+          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div
+              className="grid gap-1 sm:gap-sm min-w-[600px]"
+              style={{ 
+                gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
+              }}
+            >
             {reading.cards
               .map((readingCard, index) => ({
                 card: getCardByIdMemo(readingCard.id),
@@ -603,6 +606,7 @@ export function ReadingViewer({
                   </MemoizedAnimatedCard>
                 );
               })}
+            </div>
           </div>
 
           {/* Topic cards summary */}

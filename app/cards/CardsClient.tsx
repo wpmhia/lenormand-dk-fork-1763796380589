@@ -137,7 +137,7 @@ export default function CardsClient({
     setSelectedCard(null);
   };
 
-  const navigateCard = (direction: "prev" | "next") => {
+  const navigateCard = useCallback((direction: "prev" | "next") => {
     if (!selectedCard) return;
     const currentIndex = filteredCardsMemo.findIndex(
       (c) => c.id === selectedCard.id,
@@ -146,7 +146,28 @@ export default function CardsClient({
     if (newIndex < 0) newIndex = filteredCardsMemo.length - 1;
     if (newIndex >= filteredCardsMemo.length) newIndex = 0;
     setSelectedCard(filteredCardsMemo[newIndex]);
-  };
+  }, [selectedCard, filteredCardsMemo]);
+
+  // Keyboard navigation for modal
+  useEffect(() => {
+    if (!isModalOpen) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        navigateCard("prev");
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        navigateCard("next");
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        closeModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isModalOpen, navigateCard]);
 
   const skeletonCards = Array.from({ length: 12 }).map((_, i) => (
     <div key={`skeleton-${i}`} className="space-y-2">
@@ -264,7 +285,7 @@ export default function CardsClient({
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl" aria-modal="true">
           {selectedCard && (
             <>
               <DialogHeader>
