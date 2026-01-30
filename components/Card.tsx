@@ -60,16 +60,12 @@ function CardInner({
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? "button" : undefined}
         aria-label="Lenormand card back. Click to draw or select card"
-      >
-        <Image
-          src="/images/card-back.webp"
-          alt="Card back"
-          fill
-          className="object-cover"
-          sizes={sizeToPixels[size]}
-          priority
-        />
-      </div>
+        style={{
+          backgroundImage: "url(/images/card-back.webp)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
     );
   }
 

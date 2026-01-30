@@ -184,7 +184,6 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link rel="dns-prefetch" href="https://cdn.buymeacoffee.com" />
-        <link rel="preload" href="/images/card-back.webp" as="image" type="image/webp" />
         <Script
           id="google-analytics"
           strategy="afterInteractive"
