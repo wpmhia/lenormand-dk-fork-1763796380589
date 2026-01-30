@@ -1,20 +1,13 @@
 export const runtime = "edge";
 
-import { buildPrompt, isDeepSeekAvailable, DEEPSEEK_BASE_URL } from "@/lib/ai-config";
-import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
 import { getCached, setCached, getCacheKey, rateLimit } from "@/lib/cache";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const BASE_URL = "https://api.deepseek.com";
 
 console.log("[Deepseek] API Key present:", !!DEEPSEEK_API_KEY);
-console.log("[Deepseek] Base URL:", DEEPSEEK_BASE_URL);
 console.log("[Deepseek] Available:", isDeepSeekAvailable());
-
-const deepseek = createOpenAI({
-  baseURL: DEEPSEEK_BASE_URL,
-  apiKey: DEEPSEEK_API_KEY,
-});
 
 function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
@@ -80,24 +73,50 @@ export async function POST(request: Request) {
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
-      console.log("[Deepseek] Streaming interpretation...");
+      console.log("[Deepseek] Starting request...");
       
-      const result = streamText({
-        model: deepseek.chat("deepseek-chat"),
-        messages: [
-          { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-          { role: "user", content: prompt },
-        ],
-        temperature: 0.3,
-        maxOutputTokens: 800,
-        abortSignal: controller.signal,
+      const response = await fetch(`${BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+            { role: "user", content: prompt },
+          ],
+          temperature: 0.3,
+          max_tokens: 800,
+          stream: true,
+        }),
+        signal: controller.signal,
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("[Deepseek] API Error:", response.status, errorText);
+        throw new Error(`API call failed: ${response.status}`);
+      }
+
+      console.log("[Deepseek] Response OK, processing stream...");
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("No response body");
+      }
+
+      const decoder = new TextDecoder();
       let reading = "";
       let chunkCount = 0;
-      
+
       try {
-        for await (const chunk of result.textStream) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
           reading += chunk;
           chunkCount++;
         }
@@ -105,7 +124,7 @@ export async function POST(request: Request) {
         console.error("[Deepseek] Stream error:", streamError);
         throw new Error("Stream failed");
       }
-      
+
       clearTimeout(timeoutId);
       console.log("[Deepseek] Complete. Chunks:", chunkCount, "Length:", reading.length);
 
