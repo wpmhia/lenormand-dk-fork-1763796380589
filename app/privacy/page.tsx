@@ -208,7 +208,7 @@ export default function PrivacyPage() {
                 <strong>Your Control:</strong> You can manage your cookie
                 preferences at any time using the cookie settings banner at the
                 bottom of the page. Declining analytics cookies does not affect
-                site functionality—you can use all features freely.
+                site functionality.
               </p>
             </CardContent>
           </Card>

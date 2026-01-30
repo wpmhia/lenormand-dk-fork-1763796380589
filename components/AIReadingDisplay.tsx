@@ -66,7 +66,7 @@ export function AIReadingDisplay({
     if (!aiReading?.reading) return;
 
     const attribution =
-      "\n\n---\nGet your free reading with Lenormand Intelligence (Lenormand.dk).";
+      "\n\n---\nGet your reading with Lenormand Intelligence (Lenormand.dk).";
     const fullContent = aiReading.reading + attribution;
 
     // Check if we're in a secure context and have user interaction

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Learn Lenormand | Free Online Divination Course & Card Meanings",
+  title: "Learn Lenormand | Online Divination Course & Card Meanings",
   description:
-    "Master Lenormand divination with our free comprehensive course. Learn card meanings, reading techniques, spreads, and advanced methods. From beginner to expert level.",
+    "Master Lenormand divination with our comprehensive course. Learn card meanings, reading techniques, spreads, and advanced methods. From beginner to expert level.",
   keywords: [
     "learn Lenormand",
     "Lenormand course",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "Lenormand history",
   ],
   openGraph: {
-    title: "Learn Lenormand | Free Online Divination Course",
+    title: "Learn Lenormand | Online Divination Course",
     description:
       "Master Lenormand divination from beginner to advanced. Learn 36-card deck meanings, reading methods, and professional techniques.",
     type: "website",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Learn Lenormand | Free Online Course",
+    title: "Learn Lenormand | Online Course",
     description:
-      "Comprehensive Lenormand learning from basics to advanced techniques. Free course with card meanings and reading guides.",
+      "Comprehensive Lenormand learning from basics to advanced techniques. Course with card meanings and reading guides."
   },
 };
 
@@ -43,7 +43,7 @@ export default function LearnLayout({
     "@type": "Course",
     name: "Lenormand Divination Mastery",
     description:
-      "Master Lenormand divination with our free comprehensive course. Learn card meanings, reading techniques, spreads, and advanced methods.",
+      "Master Lenormand divination with our comprehensive course. Learn card meanings, reading techniques, spreads, and advanced methods.",
     provider: {
       "@type": "Organization",
       name: "Lenormand Intelligence",

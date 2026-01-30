@@ -26,13 +26,13 @@ const crimsonPro = Crimson_Pro({
 export const metadata: Metadata = {
   title: "Lenormand Intelligence | AI-Powered Lenormand Card Readings",
   description:
-    "Get personalized Lenormand card readings powered by AI. Explore card meanings, learn Lenormand divination techniques, and discover guidance from the 36-card deck. Free online readings with historical accuracy.",
+    "Get personalized Lenormand card readings powered by AI. Explore card meanings, learn Lenormand divination techniques, and discover guidance from the 36-card deck.",
   keywords: [
     "Lenormand cards",
     "Lenormand readings",
     "Lenormand divination",
     "Lenormand card meanings",
-    "free Lenormand reading",
+    "Lenormand reading",
     "online Lenormand",
     "AI tarot",
     "card divination",
@@ -133,7 +133,7 @@ const structuredData = {
     "AI-powered Lenormand card readings and divination guidance platform",
   url: "https://lenormand.dk",
   applicationCategory: "Lifestyle",
-  isAccessibleForFree: true,
+  isAccessibleForFree: false,
 };
 
 const faqSchema = {

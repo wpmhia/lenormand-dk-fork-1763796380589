@@ -37,12 +37,12 @@ export default function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
-              Get your Lenormand reading in 30 seconds. No signup, no account,
-              completely free.
+              Get your Lenormand reading in 30 seconds. No signup, no account
+              required.
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
               <Link href="/read/new">
-                <Button size="lg">Get Your Free Reading</Button>
+                <Button size="lg">Get Your Reading</Button>
               </Link>
               <Link href="/learn">
                 <Button variant="outline" size="lg">
@@ -51,7 +51,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="text-sm text-muted-foreground">
-              No account required • Completely free • Takes 30 seconds
+              No account required • Community supported • Takes 30 seconds
             </p>
           </div>
 
@@ -223,8 +223,7 @@ export default function Home() {
               <span className="font-semibold text-foreground">
                 modern AI analysis
               </span>
-              . Completely free, no account required, and built by the
-              community.
+              . Built by the community, for the community.
             </p>
           </div>
         </div>
@@ -378,7 +377,7 @@ export default function Home() {
             </p>
             <Link href="/read/new">
               <Button size="lg">
-                Get Your Free Reading
+                Get Your Reading
                 <ArrowRight className="ml-3 h-5 w-5" />
               </Button>
             </Link>

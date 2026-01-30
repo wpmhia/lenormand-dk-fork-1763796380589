@@ -63,7 +63,7 @@ function CardInner({
         role={onClick ? "button" : undefined}
         aria-label="Lenormand card back. Click to draw or select card"
         style={{
-          backgroundImage: "url(/images/card-back.webp)",
+          backgroundImage: "url(/images/card-back.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
