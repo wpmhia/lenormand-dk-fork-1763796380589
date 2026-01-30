@@ -96,6 +96,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                  suppressHydrationWarning
                 >
                   <Heart className="h-3 w-3" />
                   Buy Me a Coffee
