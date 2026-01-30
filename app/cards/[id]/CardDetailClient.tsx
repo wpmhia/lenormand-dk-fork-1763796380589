@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -46,8 +47,7 @@ interface CardDetailClientProps {
 export default function CardDetailClient({ card, allCards }: CardDetailClientProps) {
   const combos = card.combos || [];
   
-  // Create a Map for O(1) card lookups instead of O(n) find
-  const cardsMap = new Map(allCards.map(c => [c.id, c]));
+  const cardsMap = useMemo(() => new Map(allCards.map(c => [c.id, c])), [allCards]);
   const getCardName = (id: number) =>
     cardsMap.get(id)?.name || `Card ${id}`;
 

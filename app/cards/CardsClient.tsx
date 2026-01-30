@@ -56,14 +56,7 @@ const CARD_CATEGORIES = {
 };
 
 export default function CardsClient({ initialCards }: { initialCards: CardType[] }) {
-  const cards = useMemo(() => initialCards, [initialCards]);
-  
-  // Create a Map for O(1) card lookups
-  const cardsMap = useMemo(() => {
-    const map = new Map<number, CardType>();
-    cards.forEach(card => map.set(card.id, card));
-    return map;
-  }, [cards]);
+  const cardsMap = useMemo(() => new Map(initialCards.map(c => [c.id, c])), [initialCards]);
   
    const [searchTerm, setSearchTerm] = useState("");
    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -92,7 +85,7 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
 
   // Memoize filtered results to prevent excessive re-renders
   const filteredCardsMemo = useMemo(() => {
-    let filtered = cards;
+    let filtered = initialCards;
 
     if (debouncedSearchTerm) {
       const searchLower = debouncedSearchTerm.toLowerCase();
@@ -123,7 +116,7 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
     });
 
     return filtered;
-   }, [cards, debouncedSearchTerm, sortBy, selectedCategory]);
+   }, [initialCards, debouncedSearchTerm, sortBy, selectedCategory]);
 
    // Rename for direct use without state duplication
 
@@ -155,7 +148,7 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
     </div>
   ));
 
-  if (cards.length === 0) {
+  if (initialCards.length === 0) {
     return (
       <div className="container-section">
         <div className="mb-8">
@@ -231,7 +224,7 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
 
        {filteredCardsMemo.length > 0 && (
          <div className="mb-6 text-sm text-muted-foreground">
-           Showing {filteredCardsMemo.length} of {cards.length} cards
+           Showing {filteredCardsMemo.length} of {initialCards.length} cards
          </div>
        )}
 

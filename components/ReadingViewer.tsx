@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Reading, ReadingCard, Card as CardType } from "@/lib/types";
 import {
   getCardById,
@@ -373,6 +373,9 @@ export function ReadingViewer({
   const [significatorType, setSignificatorType] =
     useState<SignificatorType>("none");
 
+  const cardIndex = useMemo(() => new Map(allCards.map(c => [c.id, c])), [allCards]);
+  const getCardByIdMemo = useCallback((id: number) => cardIndex.get(id), [cardIndex]);
+
   const significatorCardId =
     significatorType !== "none" ? SIGNIFICATOR_CARDS[significatorType] : -1;
   const significatorIndex = reading.cards.findIndex(
@@ -406,7 +409,7 @@ export function ReadingViewer({
   const renderLayout = () => {
     if (reading.layoutType === 1) {
       const validCards = reading.cards
-        .map((readingCard, index) => ({ card: getCardById(allCards, readingCard.id), index }))
+        .map((readingCard, index) => ({ card: getCardByIdMemo(readingCard.id), index }))
         .filter(item => item.card !== undefined);
 
       return (
@@ -470,7 +473,7 @@ export function ReadingViewer({
             style={{ gridTemplateColumns: "repeat(9, minmax(0, 1fr))" }}
           >
             {reading.cards
-              .map((readingCard, index) => ({ card: getCardById(allCards, readingCard.id), index }))
+              .map((readingCard, index) => ({ card: getCardByIdMemo(readingCard.id), index }))
               .filter(item => item.card !== undefined)
               .map(({ card, index }) => {
                 const pos = getGrandTableauPosition(index);
@@ -598,7 +601,7 @@ export function ReadingViewer({
               </h4>
               <div className="flex flex-wrap gap-md">
                 {topicCards.map((tc) => {
-                  const card = getCardById(allCards, tc.cardId);
+                  const card = getCardByIdMemo(tc.cardId);
                   if (!card) return null;
                   return (
                     <div
@@ -687,7 +690,7 @@ export function ReadingViewer({
                 : 4;
 
         const validCards = reading.cards
-          .map((readingCard, index) => ({ card: getCardById(allCards, readingCard.id), index }))
+          .map((readingCard, index) => ({ card: getCardByIdMemo(readingCard.id), index }))
           .filter(item => item.card !== undefined);
 
         return (
@@ -818,7 +821,7 @@ export function ReadingViewer({
               }
 
               return adjacentCards.map((adjCard, index) => {
-                const card = getCardById(allCards, adjCard.id);
+                const card = getCardByIdMemo(adjCard.id);
                 if (!card) return null;
 
                 const combination = getStaticCombination(
