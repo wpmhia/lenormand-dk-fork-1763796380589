@@ -3,12 +3,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const [resetKey, setResetKey] = useState(0);
+
+  const navigateToReading = useCallback(() => {
+    setResetKey(prev => prev + 1);
+    router.push(`/read/new?reset=${resetKey}`);
+  }, [router, resetKey]);
 
   return (
     <header
@@ -49,7 +55,7 @@ export function Header() {
             <span>Cards</span>
           </Link>
           <button
-            onClick={() => router.push("/read/new?reset=" + Date.now())}
+            onClick={navigateToReading}
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
           >
             <Plus className="h-5 w-5" />
@@ -123,7 +129,7 @@ export function Header() {
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                router.push("/read/new?reset=" + Date.now());
+                navigateToReading();
               }}
               className="flex min-h-11 w-full items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
