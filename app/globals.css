@@ -375,6 +375,22 @@
     @apply animate-pulse;
   }
 
+  /* Fade in animation - hydration safe */
+  .fade-in-animation {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   /* Safe Area Insets */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0);

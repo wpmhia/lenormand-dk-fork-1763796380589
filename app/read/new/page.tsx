@@ -45,11 +45,7 @@ import { AIReadingResponse } from "@/lib/ai-config";
 const Deck = lazy(() =>
   import("@/components/Deck").then((m) => ({ default: m.Deck })),
 );
-const ReadingViewer = lazy(() =>
-  import("@/components/ReadingViewer").then((m) => ({
-    default: m.ReadingViewer,
-  })),
-);
+import { ReadingViewer } from "@/components/ReadingViewer";
 const AIReadingDisplay = lazy(() =>
   import("@/components/AIReadingDisplay").then((m) => ({
     default: m.AIReadingDisplay,
@@ -789,8 +785,7 @@ function NewReadingPageContent() {
 
           {step === "drawing" && (
             <div
-              key="drawing"
-              className="animate-in fade-in slide-in-from-bottom-4 duration-300"
+              className="fade-in-animation"
             >
               <Card className="relative overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
@@ -961,8 +956,7 @@ function NewReadingPageContent() {
 
           {step === "results" && drawnCards.length > 0 && (
             <div
-              key="results"
-              className="animate-in fade-in slide-in-from-bottom-4 space-y-6 duration-300"
+              className="fade-in-animation space-y-6"
             >
               {/* Show the drawn cards */}
               {allCards.length > 0 ? (
