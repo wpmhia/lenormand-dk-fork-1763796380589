@@ -2,18 +2,26 @@
 
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function Footer() {
+  const [mounted, setMounted] = useState(false);
   const currentYear = new Date().getFullYear();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const resetCookieConsent = () => {
-    localStorage.removeItem("lenormand-cookie-consent");
-    localStorage.removeItem("lenormand-cookie-preferences");
-    window.location.reload();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("lenormand-cookie-consent");
+      localStorage.removeItem("lenormand-cookie-preferences");
+      window.location.reload();
+    }
   };
 
   return (
-    <footer className="border-t border-border bg-background/50">
+    <footer className="border-t border-border bg-background/50" suppressHydrationWarning>
       <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="grid grid-cols-4 gap-4 md:grid-cols-4 md:gap-8">
           <div className="col-span-1">
@@ -76,9 +84,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <button onClick={resetCookieConsent} className="text-muted-foreground hover:text-primary transition-colors">
-                  Cookies
-                </button>
+                {mounted && (
+                  <button onClick={resetCookieConsent} className="text-muted-foreground hover:text-primary transition-colors">
+                    Cookies
+                  </button>
+                )}
               </li>
             </ul>
           </div>

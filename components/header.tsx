@@ -1,12 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Header() {
+  const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(prev => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header
@@ -64,22 +76,15 @@ export function Header() {
             href="https://ko-fi.com/Y8Y81NVDEK"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-11 items-center justify-center rounded transition-transform hover:scale-105 active:scale-95"
+            className="inline-flex h-11 items-center justify-center rounded bg-[#13ADS5] px-3 py-1 text-white text-sm font-medium transition-transform hover:scale-105 active:scale-95"
           >
-            <Image
-              height={36}
-              style={{ border: "0px", height: "36px", width: "auto" }}
-              loading="lazy"
-              src="https://storage.ko-fi.com/cdn/kofi1.png?v=6"
-              alt="Buy Me a Coffee at ko-fi.com"
-              width={108}
-            />
+            Ko-fi
           </a>
         </nav>
 
         <div className="ml-auto md:hidden">
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={toggleMobileMenu}
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
@@ -94,7 +99,7 @@ export function Header() {
         </div>
       </div>
 
-      {mobileMenuOpen && (
+      {mounted && mobileMenuOpen && (
         <div
           id="mobile-menu"
           className="border-t border-border bg-card/95 backdrop-blur md:hidden"
@@ -104,7 +109,7 @@ export function Header() {
           <nav className="container space-y-2 px-4 py-3" role="navigation">
             <Link
               href="/"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Home className="h-5 w-5" />
@@ -112,7 +117,7 @@ export function Header() {
             </Link>
             <Link
               href="/cards"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <BookOpen className="h-5 w-5" />
@@ -120,7 +125,7 @@ export function Header() {
             </Link>
             <Link
               href="/read/new"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Plus className="h-5 w-5" />
@@ -128,7 +133,7 @@ export function Header() {
             </Link>
             <Link
               href="/learn"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Sparkles className="h-5 w-5" />

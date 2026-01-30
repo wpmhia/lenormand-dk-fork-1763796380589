@@ -59,10 +59,10 @@ export default function Home() {
                 src="/images/hero-image.jpg"
                 alt="Mystical Lenormand cards arranged in a reading spread"
                 width={400}
-                height={100}
+                height={300}
                 priority
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="block h-auto w-full max-w-xs rounded-md border-0 object-contain shadow-none lg:max-w-sm"
+                className="block h-auto w-full max-w-xs rounded-md border-0 object-cover shadow-none lg:max-w-sm"
               />
             </div>
           </div>

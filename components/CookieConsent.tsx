@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
-    dataLayer?: unknown[];
+    dataLayer: unknown[];
   }
 }
 import { Button } from "@/components/ui/button";
@@ -123,7 +123,9 @@ export function CookieConsent() {
     if (typeof window === 'undefined') return;
     
     const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-    if (!gaId || window.gtag) return;
+    if (!gaId) return;
+    
+    if (window.gtag) return;
 
     const script1 = document.createElement("script");
     script1.async = true;
@@ -133,9 +135,7 @@ export function CookieConsent() {
     script1.onload = () => {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function gtag(...args: unknown[]) {
-        if (window.dataLayer) {
-          window.dataLayer.push(args);
-        }
+        window.dataLayer!.push(args);
       };
       window.gtag("js", new Date());
       window.gtag("config", gaId);
