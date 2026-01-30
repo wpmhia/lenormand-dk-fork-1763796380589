@@ -3,18 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const router = useRouter();
-  const [resetKey, setResetKey] = useState(0);
-
-  const navigateToReading = useCallback(() => {
-    setResetKey(prev => prev + 1);
-    router.push(`/read/new?reset=${resetKey}`);
-  }, [router, resetKey]);
 
   return (
     <header
@@ -54,13 +46,13 @@ export function Header() {
             <BookOpen className="h-5 w-5" />
             <span>Cards</span>
           </Link>
-          <button
-            onClick={navigateToReading}
+          <Link
+            href="/read/new"
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
           >
             <Plus className="h-5 w-5" />
             <span>New Reading</span>
-          </button>
+          </Link>
           <Link
             href="/learn"
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
@@ -126,16 +118,14 @@ export function Header() {
               <BookOpen className="h-5 w-5" />
               <span>Cards</span>
             </Link>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                navigateToReading();
-              }}
-              className="flex min-h-11 w-full items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+            <Link
+              href="/read/new"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex min-h-11 min-w-11 items-center gap-2 rounded px-3 py-2.5 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
             >
               <Plus className="h-5 w-5" />
               <span>New Reading</span>
-            </button>
+            </Link>
             <Link
               href="/learn"
               onClick={() => setMobileMenuOpen(false)}
