@@ -3,15 +3,17 @@ import type { NextRequest } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
-});
+const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+const isRedisConfigured = !!redisUrl && !!redisToken;
 
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(10, "1 m"),
-});
+const redis = isRedisConfigured
+  ? new Redis({ url: redisUrl, token: redisToken })
+  : null;
+
+const ratelimit = redis
+  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, "1 m") })
+  : null;
 
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get("forwarded");
@@ -66,7 +68,7 @@ export async function middleware(request: NextRequest) {
   const ip = getClientIP(request);
   const response = NextResponse.next();
 
-  if (pathname.startsWith("/api/")) {
+  if (pathname.startsWith("/api/") && ratelimit) {
     const { success } = await ratelimit.limit(ip);
     
     if (!success) {
