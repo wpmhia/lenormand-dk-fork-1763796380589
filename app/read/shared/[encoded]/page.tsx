@@ -46,6 +46,7 @@ export default function SharedReadingPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // AI-related state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
@@ -107,11 +108,17 @@ export default function SharedReadingPage({ params }: PageProps) {
       setAiErrorDetails(null);
       setAiAttempted(true);
 
-      const loadingTimeout = setTimeout(() => {
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      
+      timeoutRef.current = setTimeout(() => {
         if (mountedRef.current) {
           setAiLoading(false);
           setAiError("AI analysis timed out. The reading is still available.");
         }
+        timeoutRef.current = null;
       }, 35000);
 
       try {
@@ -192,7 +199,10 @@ export default function SharedReadingPage({ params }: PageProps) {
           }
         }
       } finally {
-        clearTimeout(loadingTimeout);
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
         if (mountedRef.current) {
           setAiLoading(false);
         }
@@ -212,6 +222,9 @@ export default function SharedReadingPage({ params }: PageProps) {
   useEffect(() => {
     return () => {
       mountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, []);
 

@@ -11,20 +11,29 @@ const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_RE
 interface RateLimitEntry {
   count: number;
   resetTime: number;
+  lastAccess: number; // For LRU eviction
 }
 
 const ipCache = new Map<string, RateLimitEntry>();
 const CLEANUP_INTERVAL = 60 * 1000;
+const MAX_CACHE_SIZE = 10000; // Maximum entries to prevent memory exhaustion
 
-if (typeof setInterval !== "undefined") {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [ip, entry] of ipCache.entries()) {
-      if (entry.resetTime < now) {
-        ipCache.delete(ip);
-      }
-    }
-  }, CLEANUP_INTERVAL);
+// Note: In serverless/Edge environments, setInterval persists across requests
+// and can cause memory issues. The LRU eviction in evictOldestEntries() handles
+// cleanup when the cache gets too large, so we don't need periodic cleanup.
+
+// LRU eviction: remove oldest entries when cache exceeds max size
+function evictOldestEntries(): void {
+  if (ipCache.size <= MAX_CACHE_SIZE) return;
+  
+  const entries = Array.from(ipCache.entries());
+  entries.sort((a, b) => a[1].lastAccess - b[1].lastAccess);
+  
+  // Remove oldest 20% of entries
+  const entriesToRemove = Math.floor(MAX_CACHE_SIZE * 0.2);
+  for (let i = 0; i < entriesToRemove && i < entries.length; i++) {
+    ipCache.delete(entries[i][0]);
+  }
 }
 
 export interface RateLimitResult {
@@ -84,9 +93,13 @@ export async function rateLimit(
   const entry = ipCache.get(ip);
 
   if (!entry || entry.resetTime < now) {
+    // Evict old entries if cache is too large
+    evictOldestEntries();
+    
     const newEntry: RateLimitEntry = {
       count: 1,
       resetTime: now + windowMs,
+      lastAccess: now,
     };
     ipCache.set(ip, newEntry);
     return {
@@ -98,6 +111,7 @@ export async function rateLimit(
   }
 
   if (entry.count >= limit) {
+    entry.lastAccess = now; // Update access time even for blocked requests
     return {
       success: false,
       limit,
@@ -107,6 +121,7 @@ export async function rateLimit(
   }
 
   entry.count++;
+  entry.lastAccess = now;
   return {
     success: true,
     limit,

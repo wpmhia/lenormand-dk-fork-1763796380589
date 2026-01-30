@@ -8,6 +8,39 @@ const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_BASE_URL =
   process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
+// Maximum lengths for input sanitization
+const MAX_QUESTION_LENGTH = 500;
+const MAX_CARD_NAME_LENGTH = 100;
+
+/**
+ * Sanitize user input to prevent prompt injection attacks
+ * - Removes control characters
+ * - Escapes quotes
+ * - Truncates to max length
+ * - Removes newlines that could break prompt structure
+ */
+function sanitizeInput(input: string, maxLength: number): string {
+  if (!input || typeof input !== "string") return "";
+  
+  return input
+    .slice(0, maxLength)
+    .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control characters
+    .replace(/["]/g, '"') // Escape double quotes
+    .replace(/\\/g, "\\") // Escape backslashes
+    .replace(/\n|\r/g, " "); // Replace newlines with spaces
+}
+
+/**
+ * Validate and sanitize card data
+ */
+function sanitizeCardData(cards: Array<{ id: number; name: string; position: number }>): Array<{ id: number; name: string; position: number }> {
+  return cards.map(card => ({
+    id: typeof card.id === "number" ? card.id : 0,
+    name: sanitizeInput(card.name, MAX_CARD_NAME_LENGTH),
+    position: typeof card.position === "number" ? card.position : 0,
+  }));
+}
+
 // Cache all spreads in a single array at module load time
 const ALL_SPREADS = [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
 
@@ -95,6 +128,13 @@ export function buildPrompt(
   spreadId: string,
   question: string,
 ): string {
+  // Sanitize inputs to prevent prompt injection
+  const sanitizedQuestion = sanitizeInput(question, MAX_QUESTION_LENGTH);
+  const sanitizedCards = cards.map(c => ({
+    id: c.id,
+    name: sanitizeInput(c.name, MAX_CARD_NAME_LENGTH),
+  }));
+  
   // Single O(1) lookup - try requested spreadId, fall back to default
   const spread = SPREAD_MAP.get(spreadId) || SPREAD_MAP.get("sentence-3");
 
@@ -102,7 +142,7 @@ export function buildPrompt(
     throw new Error("Invalid spread ID and default spread not found");
   }
 
-  const cardList = cards.map((c, i) => `Card ${i + 1}: ${c.name}`).join("\n");
+  const cardList = sanitizedCards.map((c, i) => `Card ${i + 1}: ${c.name}`).join("\n");
 
   const positionLabels = POSITION_LABELS[spread.id] || [];
   const spreadGuidance = SPREAD_GUIDANCE[spread.id] || "";
@@ -148,7 +188,7 @@ RULES:
 - Proximity = weight/importance
 - Be specific, not vague
 
-QUESTION: "${question}"
+QUESTION: "${sanitizedQuestion}"
 
 SPREAD: ${spread.label}
 ${spread.description ? `- ${spread.description}` : ""}

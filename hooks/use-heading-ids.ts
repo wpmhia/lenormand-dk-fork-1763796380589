@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 /**
  * Hook to automatically add IDs to headings in the DOM
@@ -8,15 +8,13 @@ export function useHeadingIds(
   selector: string = "h2, h3",
   containerSelector: string = "main, [data-content]",
 ) {
-  const anchorRefs = useRef<
-    Map<Element, { enter: () => void; leave: () => void }>
-  >(new Map());
 
   useEffect(() => {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
     const headings = container.querySelectorAll(selector);
+    const trackedElements: Array<{ element: Element; enter: () => void; leave: () => void }> = [];
 
     headings.forEach((heading) => {
       if (!heading.id) {
@@ -53,21 +51,18 @@ export function useHeadingIds(
           anchor.style.opacity = "0";
         };
 
-        anchorRefs.current.set(heading, {
-          enter: enterHandler,
-          leave: leaveHandler,
-        });
         heading.addEventListener("mouseenter", enterHandler);
         heading.addEventListener("mouseleave", leaveHandler);
+        
+        trackedElements.push({ element: heading, enter: enterHandler, leave: leaveHandler });
       }
     });
 
     return () => {
-      anchorRefs.current.forEach((handlers, heading) => {
-        heading.removeEventListener("mouseenter", handlers.enter);
-        heading.removeEventListener("mouseleave", handlers.leave);
+      trackedElements.forEach(({ element, enter, leave }) => {
+        element.removeEventListener("mouseenter", enter);
+        element.removeEventListener("mouseleave", leave);
       });
-      anchorRefs.current.clear();
     };
   }, [selector, containerSelector]);
 }
