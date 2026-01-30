@@ -17,7 +17,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-background/50" suppressHydrationWarning>
       <div className="container mx-auto px-4 py-6 md:py-8">
-        <div className="grid grid-cols-4 gap-4 md:grid-cols-4 md:gap-8">
+        <div className="grid grid-cols-3 gap-4 md:grid-cols-3 md:gap-8">
           <div className="col-span-1">
             <Link href="/" className="block">
               <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-lg font-bold text-transparent">
@@ -85,22 +85,7 @@ export function Footer() {
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-              Support
-            </h4>
-            <ul className="space-y-1 text-xs">
-              <li>
-                <a
-                  href="https://www.buymeacoffee.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                  dangerouslySetInnerHTML={{ __html: '<span>Buy Me a Coffee</span>' }}
-                ></a>
-              </li>
-            </ul>
-          </div>
+
         </div>
 
         <div className="mt-4 pt-4 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-2 text-[10px] text-muted-foreground">
