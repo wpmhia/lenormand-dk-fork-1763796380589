@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Card as CardType } from "@/lib/types";
 import { MemoizedCard } from "./Card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ interface DeckProps {
   isProcessing?: boolean;
 }
 
-export function Deck({
+function DeckComponent({
   cards,
   onDraw,
   drawCount = 3,
@@ -247,3 +247,5 @@ export function Deck({
     </div>
   );
 }
+
+export const Deck = memo(DeckComponent);

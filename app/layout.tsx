@@ -186,7 +186,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdn.buymeacoffee.com" />
         <Script
           id="google-analytics"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -212,7 +212,7 @@ export default function RootLayout({
         />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX"}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </head>
       <body
