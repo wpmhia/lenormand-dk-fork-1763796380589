@@ -10,10 +10,6 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
   return (
     <NextThemes
       attribute="class"
@@ -22,7 +18,9 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       disableTransitionOnChange
       {...props}
     >
-      {children}
+      <div className={mounted ? "" : ""} suppressHydrationWarning>
+        {children}
+      </div>
     </NextThemes>
   );
 }
