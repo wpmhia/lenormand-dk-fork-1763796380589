@@ -7,7 +7,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   const resetCookieConsent = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem("lenormand-cookie-consent");
       localStorage.removeItem("lenormand-cookie-preferences");
       window.location.reload();
@@ -15,7 +15,10 @@ export function Footer() {
   };
 
   return (
-    <footer className="border-t border-border bg-background/50" suppressHydrationWarning>
+    <footer
+      className="border-t border-border bg-background/50"
+      suppressHydrationWarning
+    >
       <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="grid grid-cols-3 gap-4 md:grid-cols-3 md:gap-8">
           <div className="col-span-1">
@@ -30,27 +33,39 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Explore
             </h4>
             <ul className="space-y-1 text-xs">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/read/new" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/read/new"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Reading
                 </Link>
               </li>
               <li>
-                <Link href="/cards" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/cards"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Cards
                 </Link>
               </li>
               <li>
-                <Link href="/learn" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/learn"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Learn
                 </Link>
               </li>
@@ -58,37 +73,47 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Links
             </h4>
             <ul className="space-y-1 text-xs">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/about"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/privacy"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Privacy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link
+                  href="/terms"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   Terms
                 </Link>
               </li>
-                <li>
-                  <button onClick={resetCookieConsent} className="text-muted-foreground hover:text-primary transition-colors">
-                    Cookies
-                  </button>
-                </li>
+              <li>
+                <button
+                  onClick={resetCookieConsent}
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  Cookies
+                </button>
+              </li>
             </ul>
           </div>
-
-
         </div>
 
-        <div className="mt-4 pt-4 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-2 text-[10px] text-muted-foreground">
+        <div className="mt-4 flex flex-col items-center justify-between gap-2 border-t border-border/50 pt-4 text-[10px] text-muted-foreground md:flex-row">
           <span>© {currentYear} Lenormand Intelligence</span>
           <span className="flex items-center gap-1">
             Made with

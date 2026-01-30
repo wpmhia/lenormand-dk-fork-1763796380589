@@ -34,10 +34,7 @@ export default function Error({
           >
             Try again
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => router.push("/")}
-          >
+          <Button variant="outline" onClick={() => router.push("/")}>
             Go home
           </Button>
         </div>

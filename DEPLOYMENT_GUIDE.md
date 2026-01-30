@@ -1,9 +1,11 @@
 # 🚀 Deployment Guide - Lenormand Tarot Reading App
 
 ## Overview
+
 This guide covers deploying the Lenormand Tarot Reading Application to Vercel, a modern serverless platform optimized for Next.js applications.
 
 ## Prerequisites
+
 - GitHub account (for version control)
 - Vercel account (free tier available at https://vercel.com)
 - DeepSeek API key (get it from https://api.deepseek.com)
@@ -40,6 +42,7 @@ vercel
 ```
 
 Follow the prompts:
+
 - Select your GitHub account when asked
 - Choose the project name
 - Framework preset: `Next.js`
@@ -62,12 +65,14 @@ After deployment, go to your Vercel project dashboard and add environment variab
 ### Required Environment Variables
 
 **DEEPSEEK_API_KEY**
+
 - Get from: https://api.deepseek.com/account/api-keys
 - Paste your API key
 
 ### Optional Environment Variables
 
 **DEEPSEEK_BASE_URL**
+
 - Default: `https://api.deepseek.com`
 - Only set if using a custom DeepSeek endpoint
 
@@ -84,6 +89,7 @@ Or use the Vercel dashboard "Redeploy" button.
 ## Architecture on Vercel
 
 ### How It Works
+
 ```
 User Request
     ↓
@@ -97,6 +103,7 @@ Stream Response to Client
 ```
 
 ### Key Features
+
 - **Edge Caching**: Identical requests cached globally (70% CPU reduction)
 - **Streaming**: Real-time response chunks via SSE
 - **Serverless**: No servers to manage, scales automatically
@@ -105,13 +112,17 @@ Stream Response to Client
 ## Monitoring
 
 ### Logs
+
 View application logs in Vercel dashboard:
+
 1. Project → Deployments
 2. Select the latest deployment
 3. Click "View Function Logs" for API errors
 
 ### Performance
+
 Monitor in Vercel dashboard:
+
 - Response times
 - Error rates
 - Bandwidth usage
@@ -119,21 +130,25 @@ Monitor in Vercel dashboard:
 ## Troubleshooting
 
 ### Build Fails
+
 - Check build logs in Vercel dashboard
 - Ensure all environment variables are set
 - Verify `.env.example` is not in `.gitignore`
 
 ### API Returns 503
+
 - Check if `DEEPSEEK_API_KEY` environment variable is set
 - Verify the API key is valid and not expired
 - Check DeepSeek API status
 
 ### Slow Responses
+
 - First request takes ~14s (DeepSeek processing time)
 - Subsequent identical requests should be instant (edge cache)
 - Use `/api/readings/interpret` metrics to monitor
 
 ### Edge Runtime Issues
+
 - Ensure you're using Node.js 18.17+
 - Avoid Node.js APIs not supported in edge runtime
 - Check Vercel documentation for edge runtime limitations
@@ -141,14 +156,17 @@ Monitor in Vercel dashboard:
 ## Updating Deployments
 
 ### For Code Changes
+
 ```bash
 git add .
 git commit -m "Your changes"
 git push origin main
 ```
+
 Vercel auto-deploys on every push to main.
 
 ### For Environment Variable Changes
+
 1. Update in Vercel dashboard
 2. Redeploy using dashboard or `vercel --prod`
 
@@ -173,6 +191,7 @@ Vercel auto-deploys on every push to main.
   - For production apps
 
 DeepSeek API costs depend on your usage:
+
 - Check your DeepSeek billing dashboard
 - Each reading uses ~500-2000 tokens
 
@@ -192,14 +211,17 @@ DeepSeek API costs depend on your usage:
 ## Support
 
 ### Vercel Support
+
 - Documentation: https://vercel.com/docs
 - Status: https://www.vercelstatus.com/
 
 ### DeepSeek Support
+
 - API Docs: https://api-docs.deepseek.com/
 - Status: Check your dashboard
 
 ### Application Issues
+
 - Check application logs in Vercel dashboard
 - Review error messages for specifics
 - Test locally first: `npm run dev`

@@ -30,7 +30,7 @@ export function BackToTop() {
   return (
     <div
       className={`fixed bottom-24 right-8 z-40 transition-opacity duration-300 ${
-        isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+        isVisible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
       <Button

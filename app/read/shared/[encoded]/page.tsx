@@ -60,42 +60,42 @@ export default function SharedReadingPage({ params }: PageProps) {
   } | null>(null);
   const [aiAttempted, setAiAttempted] = useState(false);
 
-   useEffect(() => {
-     const loadData = async () => {
-       try {
-         const cardsData = staticCardsData as CardType[];
-         const decodedData = await decodeReadingFromUrl(params.encoded);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const cardsData = staticCardsData as CardType[];
+        const decodedData = await decodeReadingFromUrl(params.encoded);
 
-         if (!decodedData || !decodedData.cards || !decodedData.layoutType) {
-           notFound();
-           return;
-         }
+        if (!decodedData || !decodedData.cards || !decodedData.layoutType) {
+          notFound();
+          return;
+        }
 
-         // Create a complete reading object
-         const reading: Reading = {
-           id: "shared",
-           title: decodedData.title || "Shared Reading",
-           question: decodedData.question,
-           layoutType: decodedData.layoutType,
-           cards: decodedData.cards,
-           slug: "shared",
-           isPublic: true,
-           createdAt: new Date(),
-           updatedAt: new Date(),
-         };
+        // Create a complete reading object
+        const reading: Reading = {
+          id: "shared",
+          title: decodedData.title || "Shared Reading",
+          question: decodedData.question,
+          layoutType: decodedData.layoutType,
+          cards: decodedData.cards,
+          slug: "shared",
+          isPublic: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
-         setAllCards(cardsData);
-         setReading(reading);
-         } catch (error) {
-         notFound();
-         return;
-       } finally {
-         setLoading(false);
-       }
-     };
+        setAllCards(cardsData);
+        setReading(reading);
+      } catch (error) {
+        notFound();
+        return;
+      } finally {
+        setLoading(false);
+      }
+    };
 
-     loadData();
-   }, [params.encoded]);
+    loadData();
+  }, [params.encoded]);
 
   // AI analysis function
   const performAIAnalysis = useCallback(

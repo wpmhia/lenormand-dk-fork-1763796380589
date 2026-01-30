@@ -8,7 +8,9 @@ export function useHeadingIds(
   selector: string = "h2, h3",
   containerSelector: string = "main, [data-content]",
 ) {
-  const anchorRefs = useRef<Map<Element, { enter: () => void; leave: () => void }>>(new Map());
+  const anchorRefs = useRef<
+    Map<Element, { enter: () => void; leave: () => void }>
+  >(new Map());
 
   useEffect(() => {
     const container = document.querySelector(containerSelector);
@@ -44,10 +46,17 @@ export function useHeadingIds(
         anchor.style.color = "currentColor";
         heading.appendChild(anchor);
 
-        const enterHandler = () => { anchor.style.opacity = "0.5"; };
-        const leaveHandler = () => { anchor.style.opacity = "0"; };
+        const enterHandler = () => {
+          anchor.style.opacity = "0.5";
+        };
+        const leaveHandler = () => {
+          anchor.style.opacity = "0";
+        };
 
-        anchorRefs.current.set(heading, { enter: enterHandler, leave: leaveHandler });
+        anchorRefs.current.set(heading, {
+          enter: enterHandler,
+          leave: leaveHandler,
+        });
         heading.addEventListener("mouseenter", enterHandler);
         heading.addEventListener("mouseleave", leaveHandler);
       }

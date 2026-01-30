@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense, useMemo, lazy } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  Suspense,
+  useMemo,
+  lazy,
+} from "react";
 import { flushSync } from "react-dom";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
@@ -34,9 +42,19 @@ import {
 } from "@/lib/spreads";
 import { AIReadingResponse } from "@/lib/ai-config";
 
-const Deck = lazy(() => import("@/components/Deck").then(m => ({ default: m.Deck })));
-const ReadingViewer = lazy(() => import("@/components/ReadingViewer").then(m => ({ default: m.ReadingViewer })));
-const AIReadingDisplay = lazy(() => import("@/components/AIReadingDisplay").then(m => ({ default: m.AIReadingDisplay })));
+const Deck = lazy(() =>
+  import("@/components/Deck").then((m) => ({ default: m.Deck })),
+);
+const ReadingViewer = lazy(() =>
+  import("@/components/ReadingViewer").then((m) => ({
+    default: m.ReadingViewer,
+  })),
+);
+const AIReadingDisplay = lazy(() =>
+  import("@/components/AIReadingDisplay").then((m) => ({
+    default: m.AIReadingDisplay,
+  })),
+);
 
 function LoadingFallback() {
   return (
@@ -90,13 +108,13 @@ function NewReadingPageContent() {
       setPath(null);
       aiAnalysisStartedRef.current = false;
 
-       if (abortControllerRef.current) {
-         abortControllerRef.current.abort();
-         abortControllerRef.current = null;
-       }
-       requestInProgressRef.current = false; // Reset deduplication flag
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      requestInProgressRef.current = false; // Reset deduplication flag
 
-       if (!keepUrlParams) {
+      if (!keepUrlParams) {
         const newUrl = new URL(window.location.href);
         newUrl.search = "";
         router.replace(newUrl.toString(), { scroll: false });
@@ -157,15 +175,15 @@ function NewReadingPageContent() {
   function parseSSEChunk(data: string): string | null {
     if (data === "[DONE]") return null;
     if (!data || data.trim() === "") return null;
-    
+
     try {
       const parsed = JSON.parse(data);
-      if (!parsed || typeof parsed !== 'object') return null;
-      
+      if (!parsed || typeof parsed !== "object") return null;
+
       // OpenAI format: choices[0].delta.content
       const content = parsed.choices?.[0]?.delta?.content;
-      if (typeof content === 'string') return content;
-      
+      if (typeof content === "string") return content;
+
       return null;
     } catch {
       return null;
@@ -176,10 +194,12 @@ function NewReadingPageContent() {
   const performStreamingAnalysis = useCallback(async () => {
     // Deduplication: prevent duplicate in-flight requests
     if (requestInProgressRef.current) {
-      console.warn('AI request already in progress, skipping duplicate request');
+      console.warn(
+        "AI request already in progress, skipping duplicate request",
+      );
       return;
     }
-    
+
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -215,9 +235,9 @@ function NewReadingPageContent() {
 
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache"
+          "Cache-Control": "no-cache",
         },
         body: JSON.stringify(aiRequest),
         signal: controller.signal,
@@ -227,98 +247,100 @@ function NewReadingPageContent() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Stream failed:', {
+        console.error("Stream failed:", {
           status: response.status,
           statusText: response.statusText,
           errorText: errorText.substring(0, 200),
-          url: response.url
+          url: response.url,
         });
-        throw new Error(`Stream failed: ${response.status} - ${response.statusText}`);
+        throw new Error(
+          `Stream failed: ${response.status} - ${response.statusText}`,
+        );
       }
 
       if (!response.body) {
         throw new Error("No stream body");
       }
 
-    const reader = response.body.getReader();
-         const decoder = new TextDecoder();
-         let content = "";
-         let buffer = "";
-         let lastUpdateTime = Date.now();
-         const UPDATE_INTERVAL = 16; // ~60fps for smooth streaming
-         const MAX_BUFFER_SIZE = 50000;
-         const MAX_CONTENT_LENGTH = 100000;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let content = "";
+      let buffer = "";
+      let lastUpdateTime = Date.now();
+      const UPDATE_INTERVAL = 16; // ~60fps for smooth streaming
+      const MAX_BUFFER_SIZE = 50000;
+      const MAX_CONTENT_LENGTH = 100000;
 
-        try {
-          while (true) {
-            try {
-              const { done, value } = await reader.read();
-              if (done) {
-                break;
-              }
-
-              const chunk = decoder.decode(value, { stream: true });
-              
-              // Prevent buffer from growing too large
-              if (buffer.length > MAX_BUFFER_SIZE) {
-                console.warn('SSE buffer exceeding maximum size, truncating');
-                buffer = buffer.slice(-MAX_BUFFER_SIZE / 2); // Keep last half
-              }
-              
-              buffer += chunk;
-              
-              // Prevent content from growing too large
-              if (content.length > MAX_CONTENT_LENGTH) {
-                console.warn('Content exceeding maximum length, stopping stream');
-                setAiError('Reading too long, stopped processing');
-                break;
-              }
-
-              const lines = buffer.split("\n");
-              buffer = lines.pop() || "";
-
-              for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                  const data = line.slice(6);
-                  if (data === "[DONE]") {
-                    break;
-                  }
-                  const text = parseSSEChunk(data);
-                  if (text) {
-                    content += text;
-                    // Instant update on every chunk for smooth streaming
-                    flushSync(() => {
-                      setStreamedContent(content);
-                      setAiReading({ reading: content });
-                    });
-                  }
-                }
-              }
-            } catch (streamError) {
-              if (
-                streamError instanceof Error &&
-                streamError.name === "AbortError"
-              ) {
-                break;
-              }
-              setAiError("Connection interrupted");
+      try {
+        while (true) {
+          try {
+            const { done, value } = await reader.read();
+            if (done) {
               break;
             }
-          }
-        } finally {
-          // SECURITY FIX: Always cleanup reader to prevent memory leaks
-          try {
-            await reader.cancel();
-          } catch (cancelError) {
-            console.error('Error canceling reader:', cancelError);
+
+            const chunk = decoder.decode(value, { stream: true });
+
+            // Prevent buffer from growing too large
+            if (buffer.length > MAX_BUFFER_SIZE) {
+              console.warn("SSE buffer exceeding maximum size, truncating");
+              buffer = buffer.slice(-MAX_BUFFER_SIZE / 2); // Keep last half
+            }
+
+            buffer += chunk;
+
+            // Prevent content from growing too large
+            if (content.length > MAX_CONTENT_LENGTH) {
+              console.warn("Content exceeding maximum length, stopping stream");
+              setAiError("Reading too long, stopped processing");
+              break;
+            }
+
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+                if (data === "[DONE]") {
+                  break;
+                }
+                const text = parseSSEChunk(data);
+                if (text) {
+                  content += text;
+                  // Instant update on every chunk for smooth streaming
+                  flushSync(() => {
+                    setStreamedContent(content);
+                    setAiReading({ reading: content });
+                  });
+                }
+              }
+            }
+          } catch (streamError) {
+            if (
+              streamError instanceof Error &&
+              streamError.name === "AbortError"
+            ) {
+              break;
+            }
+            setAiError("Connection interrupted");
+            break;
           }
         }
-        
-         // Show complete reading at once
-         if (content.length > 0) {
-           setAiReading({ reading: content });
-           setStreamedContent(content);
-         } else {
+      } finally {
+        // SECURITY FIX: Always cleanup reader to prevent memory leaks
+        try {
+          await reader.cancel();
+        } catch (cancelError) {
+          console.error("Error canceling reader:", cancelError);
+        }
+      }
+
+      // Show complete reading at once
+      if (content.length > 0) {
+        setAiReading({ reading: content });
+        setStreamedContent(content);
+      } else {
         setIsStreaming(false);
         setAiLoading(true);
         try {
@@ -523,7 +545,7 @@ function NewReadingPageContent() {
   useEffect(() => {
     return () => {
       mountedRef.current = false;
-      
+
       // Cleanup any pending requests
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -788,20 +810,19 @@ function NewReadingPageContent() {
                   </div>
 
                   {/* Virtual Draw */}
-                  {path === "virtual" && (
-                    loadingCards ? (
+                  {path === "virtual" &&
+                    (loadingCards ? (
                       <div className="flex justify-center p-8">
                         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
                       </div>
                     ) : (
-                    <Deck
-                      cards={allCards}
-                      drawCount={selectedSpread.cards}
-                      onDraw={handleDraw}
-                      isProcessing={step !== "drawing"}
-                    />
-                    )
-                  )}
+                      <Deck
+                        cards={allCards}
+                        drawCount={selectedSpread.cards}
+                        onDraw={handleDraw}
+                        isProcessing={step !== "drawing"}
+                      />
+                    ))}
 
                   {/* Physical Cards Input */}
                   {path === "physical" && selectedSpread && (
@@ -893,10 +914,10 @@ function NewReadingPageContent() {
                                 </div>
                               );
                             })}
-                            </div>
-                          )}
+                          </div>
+                        )}
 
-                          {/* Error and Help Text */}
+                        {/* Error and Help Text */}
                         <div className="space-y-1">
                           {physicalCardsError && (
                             <p

@@ -9,12 +9,15 @@ The application has been fully optimized, simplified, and tested. It is ready fo
 ## 📊 Optimization Summary
 
 ### Phase 1: Fix Root CPU Issue ✅
+
 **Problem**: `force-dynamic` export blocking Vercel edge caching  
 **Solution**: Removed the directive  
-**Result**: ~70% CPU reduction (49.8% → ~15% at P75)  
+**Result**: ~70% CPU reduction (49.8% → ~15% at P75)
 
 ### Phase 2: Remove Unnecessary Complexity ✅
+
 **Deleted**:
+
 - `lib/interpretation-cache.ts` (306 lines)
 - `lib/response-cache.ts` (161 lines)
 - `app/api/cache/metrics/route.ts`
@@ -25,7 +28,9 @@ The application has been fully optimized, simplified, and tested. It is ready fo
 **Result**: 528 lines of code removed, zero breaking changes
 
 ### Phase 3: Optimize Remaining Code ✅
+
 **Optimizations**:
+
 - Spread array creation: Per-request → Module load
 - Spread lookup: O(n) → O(1) with Map
 - Grand Tableau labels: Pre-built at startup
@@ -66,6 +71,7 @@ vercel.json                               (deployment config)
 ## 🚀 How It Works
 
 ### Request Flow
+
 ```
 1. User submits question + cards + spread
 2. Request → API route (/api/readings/interpret)
@@ -78,6 +84,7 @@ vercel.json                               (deployment config)
 ```
 
 ### Performance
+
 - **Edge Caching**: Vercel caches identical requests globally
 - **Streaming**: Chunks arrive in real-time via SSE
 - **Cold Start**: <50ms (optimized function size)
@@ -96,13 +103,14 @@ vercel.json                               (deployment config)
 ✅ **Scalable**: Vercel handles auto-scaling globally  
 ✅ **Reliable**: 99.95% uptime SLA with Vercel  
 ✅ **Secure**: No database for card data, JSON files only  
-✅ **Modern**: Next.js 14 with App Router  
+✅ **Modern**: Next.js 14 with App Router
 
 ---
 
 ## 📋 Build & Deployment Status
 
 ### Local Build
+
 ```
 ✅ npm run build - Succeeds with no errors
 ✅ npm run start - Runs successfully
@@ -113,6 +121,7 @@ vercel.json                               (deployment config)
 ```
 
 ### Configuration Files
+
 - ✅ `vercel.json` - Deployment configuration
 - ✅ `next.config.js` - Next.js configuration
 - ✅ `.env.example` - Environment template
@@ -123,11 +132,13 @@ vercel.json                               (deployment config)
 ## 🔐 Environment Variables Required
 
 ### Production
+
 ```bash
 DEEPSEEK_API_KEY=sk_live_xxxxxxxxxxxx
 ```
 
 ### Optional
+
 ```bash
 DEEPSEEK_BASE_URL=https://api.deepseek.com  # Default
 ```
@@ -141,6 +152,7 @@ Get your DeepSeek API key from: https://api.deepseek.com/account/api-keys
 ### Quick Start (5 minutes)
 
 1. **Ensure your git is up to date:**
+
    ```bash
    git add .
    git commit -m "Ready for deployment"
@@ -166,30 +178,33 @@ For detailed instructions, see `DEPLOYMENT_GUIDE.md`
 
 ## 📊 Performance Metrics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| API Route Size | 102 lines | Was 240 lines |
-| Prompt Builder | O(1) | Was O(n) |
-| Per-Request Allocations | 0 | Previously high |
-| Edge Cache TTL | 6 hours | Vercel default |
-| CPU Reduction | 70% | From edge caching |
-| Build Time | ~1-2 min | Vercel standard |
-| Cold Start | <50ms | Function size optimized |
-| Warm Start | <1ms | Edge cached |
+| Metric                  | Value     | Notes                   |
+| ----------------------- | --------- | ----------------------- |
+| API Route Size          | 102 lines | Was 240 lines           |
+| Prompt Builder          | O(1)      | Was O(n)                |
+| Per-Request Allocations | 0         | Previously high         |
+| Edge Cache TTL          | 6 hours   | Vercel default          |
+| CPU Reduction           | 70%       | From edge caching       |
+| Build Time              | ~1-2 min  | Vercel standard         |
+| Cold Start              | <50ms     | Function size optimized |
+| Warm Start              | <1ms      | Edge cached             |
 
 ---
 
 ## 🔄 Update Workflow
 
 ### Deploy Code Changes
+
 ```bash
 git add .
 git commit -m "Your changes"
 git push origin main
 ```
+
 Vercel auto-deploys on every push to main.
 
 ### Update Environment Variables
+
 1. Go to Vercel dashboard
 2. Project Settings → Environment Variables
 3. Update or add variables
@@ -201,6 +216,7 @@ Vercel auto-deploys on every push to main.
 ## 🧪 Testing Checklist
 
 Before going live:
+
 - [ ] Visit your deployment URL
 - [ ] Load the home page
 - [ ] Try creating a reading with a question
@@ -215,10 +231,12 @@ Before going live:
 ## 💰 Cost Estimates
 
 ### Vercel (Free Tier)
+
 - $0/month with limitations
 - $20/month for Pro (unlimited)
 
 ### DeepSeek API
+
 - Usage-based pricing
 - Monitor your account dashboard
 
@@ -262,8 +280,8 @@ Before going live:
 **Last Updated**: January 25, 2026  
 **Next.js Version**: 14.2.31  
 **Runtime**: Edge (Vercel)  
-**Framework**: Next.js with App Router  
+**Framework**: Next.js with App Router
 
 ---
 
-*The application is optimized, simplified, tested, and ready to go live. No further changes needed before deployment.*
+_The application is optimized, simplified, tested, and ready to go live. No further changes needed before deployment._

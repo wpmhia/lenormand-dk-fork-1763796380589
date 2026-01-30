@@ -44,12 +44,17 @@ interface CardDetailClientProps {
   allCards: CardType[];
 }
 
-export default function CardDetailClient({ card, allCards }: CardDetailClientProps) {
+export default function CardDetailClient({
+  card,
+  allCards,
+}: CardDetailClientProps) {
   const combos = card.combos || [];
-  
-  const cardsMap = useMemo(() => new Map(allCards.map(c => [c.id, c])), [allCards]);
-  const getCardName = (id: number) =>
-    cardsMap.get(id)?.name || `Card ${id}`;
+
+  const cardsMap = useMemo(
+    () => new Map(allCards.map((c) => [c.id, c])),
+    [allCards],
+  );
+  const getCardName = (id: number) => cardsMap.get(id)?.name || `Card ${id}`;
 
   const previousCardId = card.id > 1 ? card.id - 1 : 36;
   const nextCardId = card.id < 36 ? card.id + 1 : 1;
@@ -281,12 +286,17 @@ export default function CardDetailClient({ card, allCards }: CardDetailClientPro
                       <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
                         <div className="mb-2 flex items-center gap-2">
                           <Crown className="h-5 w-5 text-amber-600" />
-                          <h4 className="font-semibold text-foreground">Significator (Anima)</h4>
+                          <h4 className="font-semibold text-foreground">
+                            Significator (Anima)
+                          </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          This card represents the <strong>female querent</strong> in the Grand Tableau.
-                          All reading flows from this card - cards to the left represent the past,
-                          cards above represent conscious thoughts, and diagonals show influences and possibilities.
+                          This card represents the{" "}
+                          <strong>female querent</strong> in the Grand Tableau.
+                          All reading flows from this card - cards to the left
+                          represent the past, cards above represent conscious
+                          thoughts, and diagonals show influences and
+                          possibilities.
                         </p>
                       </div>
                     )}
@@ -294,12 +304,16 @@ export default function CardDetailClient({ card, allCards }: CardDetailClientPro
                       <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
                         <div className="mb-2 flex items-center gap-2">
                           <Crown className="h-5 w-5 text-amber-600" />
-                          <h4 className="font-semibold text-foreground">Significator (Animus)</h4>
+                          <h4 className="font-semibold text-foreground">
+                            Significator (Animus)
+                          </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          This card represents the <strong>male querent</strong> in the Grand Tableau.
-                          All reading flows from this card - cards to the left represent the past,
-                          cards above represent conscious thoughts, and diagonals show influences and possibilities.
+                          This card represents the <strong>male querent</strong>{" "}
+                          in the Grand Tableau. All reading flows from this card
+                          - cards to the left represent the past, cards above
+                          represent conscious thoughts, and diagonals show
+                          influences and possibilities.
                         </p>
                       </div>
                     )}
@@ -308,11 +322,16 @@ export default function CardDetailClient({ card, allCards }: CardDetailClientPro
                       <div className="rounded-lg bg-primary/10 p-4">
                         <div className="mb-2 flex items-center gap-2">
                           <Zap className="h-5 w-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">Topic Card: {GRAND_TABLEAU_TOPIC_CARDS[card.id].label}</h4>
+                          <h4 className="font-semibold text-foreground">
+                            Topic Card:{" "}
+                            {GRAND_TABLEAU_TOPIC_CARDS[card.id].label}
+                          </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          When this card appears in the Grand Tableau, it acts as a <strong>focus point</strong> for that life area.
-                          Read the surrounding 8 cards as a mini 9-card spread to understand this aspect of life.
+                          When this card appears in the Grand Tableau, it acts
+                          as a <strong>focus point</strong> for that life area.
+                          Read the surrounding 8 cards as a mini 9-card spread
+                          to understand this aspect of life.
                         </p>
                       </div>
                     )}
@@ -321,12 +340,15 @@ export default function CardDetailClient({ card, allCards }: CardDetailClientPro
                       <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-950/30">
                         <div className="mb-2 flex items-center gap-2">
                           <Sparkles className="h-5 w-5 text-purple-600" />
-                          <h4 className="font-semibold text-foreground">Corner Card</h4>
+                          <h4 className="font-semibold text-foreground">
+                            Corner Card
+                          </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          This card sits at a <strong>corner position</strong> (positions 1, 8, 25, or 32)
-                          providing context and framing the overall reading. It represents the external environment
-                          and surrounding circumstances.
+                          This card sits at a <strong>corner position</strong>{" "}
+                          (positions 1, 8, 25, or 32) providing context and
+                          framing the overall reading. It represents the
+                          external environment and surrounding circumstances.
                         </p>
                       </div>
                     )}
@@ -335,11 +357,15 @@ export default function CardDetailClient({ card, allCards }: CardDetailClientPro
                       <div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/30">
                         <div className="mb-2 flex items-center gap-2">
                           <MessageSquare className="h-5 w-5 text-red-600" />
-                          <h4 className="font-semibold text-foreground">Card of Fate</h4>
+                          <h4 className="font-semibold text-foreground">
+                            Card of Fate
+                          </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          This card is among the final 4 cards (positions 32-35), known as the <strong>Cards of Fate</strong>.
-                          These cards provide predictive insight for approximately 8-12 weeks from the present.
+                          This card is among the final 4 cards (positions
+                          32-35), known as the <strong>Cards of Fate</strong>.
+                          These cards provide predictive insight for
+                          approximately 8-12 weeks from the present.
                         </p>
                       </div>
                     )}
@@ -347,14 +373,23 @@ export default function CardDetailClient({ card, allCards }: CardDetailClientPro
                     <div className="rounded-lg bg-muted/50 p-4">
                       <div className="mb-2 flex items-center gap-2">
                         <Grid3X3 className="h-5 w-5 text-muted-foreground" />
-                        <h4 className="font-semibold text-foreground">Grid Position</h4>
+                        <h4 className="font-semibold text-foreground">
+                          Grid Position
+                        </h4>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Card #{card.id} appears at position {card.id} in the 4×9 Grand Tableau grid.
-                        {card.id <= 9 && " In the first row, it relates to recent past and immediate concerns."}
-                        {card.id >= 10 && card.id <= 18 && " In the second row, it connects to present circumstances."}
-                        {card.id >= 19 && card.id <= 27 && " In the third row, it bridges present and future."}
-                        {card.id >= 28 && " In the fourth row, it relates to future outcomes and longer-term trends."}
+                        Card #{card.id} appears at position {card.id} in the 4×9
+                        Grand Tableau grid.
+                        {card.id <= 9 &&
+                          " In the first row, it relates to recent past and immediate concerns."}
+                        {card.id >= 10 &&
+                          card.id <= 18 &&
+                          " In the second row, it connects to present circumstances."}
+                        {card.id >= 19 &&
+                          card.id <= 27 &&
+                          " In the third row, it bridges present and future."}
+                        {card.id >= 28 &&
+                          " In the fourth row, it relates to future outcomes and longer-term trends."}
                       </p>
                     </div>
                   </div>

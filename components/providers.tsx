@@ -11,9 +11,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       disableTransitionOnChange
       {...props}
     >
-      <div suppressHydrationWarning>
-        {children}
-      </div>
+      <div suppressHydrationWarning>{children}</div>
     </NextThemes>
   );
 }

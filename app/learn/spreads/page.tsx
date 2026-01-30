@@ -338,8 +338,7 @@ const spreads = [
         name: "Grand Tableau (36-Card Reading)",
         description:
           "The most comprehensive Lenormand reading using all 36 cards",
-        layout:
-          "4 rows of 9 cards (traditional French 'salon' method)",
+        layout: "4 rows of 9 cards (traditional French 'salon' method)",
         useCase:
           "Major life decisions, year-ahead readings, complex relationship issues",
         difficulty: "Expert",
@@ -641,44 +640,44 @@ export default function SpreadsPage() {
                   </div>
                 );
               })}
-             </div>
-           </CardContent>
-         </Card>
-       
-         {/* Advanced Techniques */}
-         <Card className="mb-8 border-border bg-card">
-           <CardHeader>
-             <CardTitle className="flex items-center text-2xl text-foreground">
-               <Target className="mr-3 h-6 w-6 text-primary" />
-               Advanced Reading Techniques
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className="grid gap-6 md:grid-cols-2">
-               {techniques.map((technique, index) => (
-                 <Card key={index} className="border border-border bg-muted">
-                   <CardContent className="p-6">
-                     <div className="flex items-start gap-3">
-                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                         <technique.icon className="h-5 w-5 text-white" />
-                       </div>
-                       <div>
-                         <h4 className="text-sm font-semibold text-foreground">
-                           {technique.name}
-                         </h4>
-                         <p className="text-sm text-muted-foreground">
-                           {technique.description}
-                         </p>
-                       </div>
-                     </div>
-                   </CardContent>
-                 </Card>
-               ))}
-             </div>
-           </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Grand Tableau - Historical Salon Method */}
+        {/* Advanced Techniques */}
+        <Card className="mb-8 border-border bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-foreground">
+              <Target className="mr-3 h-6 w-6 text-primary" />
+              Advanced Reading Techniques
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6 md:grid-cols-2">
+              {techniques.map((technique, index) => (
+                <Card key={index} className="border border-border bg-muted">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                        <technique.icon className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-foreground">
+                          {technique.name}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {technique.description}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Grand Tableau - Historical Salon Method */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
             <CardTitle className="flex items-center text-2xl text-foreground">
@@ -747,8 +746,8 @@ export default function SpreadsPage() {
                   (concentrated intent)
                 </li>
                 <li>
-                  • Cut toward yourself with the left hand
-                  (&quot;feminine&quot; cut—Lenormand&apos;s requirement)
+                  • Cut toward yourself with the left hand (&quot;feminine&quot;
+                  cut—Lenormand&apos;s requirement)
                 </li>
                 <li>
                   • Turn face-up and deal left-to-right in four rows of nine,{" "}
@@ -910,8 +909,11 @@ export default function SpreadsPage() {
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-muted-foreground">
               In traditional Lenormand, four cards carry special weight as
-              <strong className="text-amber-600">&quot;Cards of Fate&quot;</strong>. When
-              multiple appear together in a reading, they create a powerful
+              <strong className="text-amber-600">
+                &quot;Cards of Fate&quot;
+              </strong>
+              . When multiple appear together in a reading, they create a
+              powerful
               <strong>destiny zone</strong> that indicates the ultimate
               trajectory or outcome of the matter at hand.
             </p>
@@ -921,7 +923,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Sun className="h-5 w-5 text-amber-500" />
-                    <h4 className="text-sm font-semibold text-foreground">32. The Sun</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      32. The Sun
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -929,7 +933,8 @@ export default function SpreadsPage() {
                     Success, happiness, clarity, vitality
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Provides illumination, positive outcome, certainty
+                    <strong>Role:</strong> Provides illumination, positive
+                    outcome, certainty
                   </p>
                 </CardContent>
               </Card>
@@ -938,7 +943,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Moon className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">33. The Moon</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      33. The Moon
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -946,7 +953,8 @@ export default function SpreadsPage() {
                     Emotions, intuition, dreams, cycles
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Influences timing, adds emotional depth
+                    <strong>Role:</strong> Influences timing, adds emotional
+                    depth
                   </p>
                 </CardContent>
               </Card>
@@ -955,7 +963,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Key className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">33. The Key</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      33. The Key
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -963,7 +973,8 @@ export default function SpreadsPage() {
                     Solutions, answers, unlocking, access
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Opens doors, provides answers, breakthroughs
+                    <strong>Role:</strong> Opens doors, provides answers,
+                    breakthroughs
                   </p>
                 </CardContent>
               </Card>
@@ -972,7 +983,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Fish className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">34. The Fish</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      34. The Fish
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -980,7 +993,8 @@ export default function SpreadsPage() {
                     Abundance, wealth, business, multiplication
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Financial matters, prosperity indicators
+                    <strong>Role:</strong> Financial matters, prosperity
+                    indicators
                   </p>
                 </CardContent>
               </Card>
@@ -988,9 +1002,9 @@ export default function SpreadsPage() {
 
             <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
               <p className="text-sm italic text-foreground">
-                When multiple Cards of Fate appear together in a reading, they create
-                a powerful <strong>destiny zone</strong> that indicates the ultimate
-                trajectory or outcome of the matter at hand.
+                When multiple Cards of Fate appear together in a reading, they
+                create a powerful <strong>destiny zone</strong> that indicates
+                the ultimate trajectory or outcome of the matter at hand.
               </p>
             </div>
           </CardContent>
@@ -1007,8 +1021,11 @@ export default function SpreadsPage() {
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-muted-foreground">
               In traditional Lenormand, four cards carry special weight as
-              <strong className="text-amber-600">&quot;Cards of Fate&quot;</strong>. When
-              multiple appear together in a reading, they create a powerful
+              <strong className="text-amber-600">
+                &quot;Cards of Fate&quot;
+              </strong>
+              . When multiple appear together in a reading, they create a
+              powerful
               <strong>destiny zone</strong> that indicates the ultimate
               trajectory or outcome of the matter at hand.
             </p>
@@ -1018,7 +1035,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Sun className="h-5 w-5 text-amber-500" />
-                    <h4 className="text-sm font-semibold text-foreground">32. The Sun</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      32. The Sun
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1026,7 +1045,8 @@ export default function SpreadsPage() {
                     Success, happiness, clarity, vitality
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Provides illumination, positive outcome, certainty
+                    <strong>Role:</strong> Provides illumination, positive
+                    outcome, certainty
                   </p>
                 </CardContent>
               </Card>
@@ -1035,7 +1055,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Moon className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">33. The Moon</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      33. The Moon
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1043,7 +1065,8 @@ export default function SpreadsPage() {
                     Emotions, intuition, dreams, cycles
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Influences timing, adds emotional depth
+                    <strong>Role:</strong> Influences timing, adds emotional
+                    depth
                   </p>
                 </CardContent>
               </Card>
@@ -1052,7 +1075,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Key className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">33. The Key</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      33. The Key
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1060,7 +1085,8 @@ export default function SpreadsPage() {
                     Solutions, answers, unlocking, access
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Opens doors, provides answers, breakthroughs
+                    <strong>Role:</strong> Opens doors, provides answers,
+                    breakthroughs
                   </p>
                 </CardContent>
               </Card>
@@ -1069,7 +1095,9 @@ export default function SpreadsPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Fish className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">34. The Fish</h4>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      34. The Fish
+                    </h4>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1077,7 +1105,8 @@ export default function SpreadsPage() {
                     Abundance, wealth, business, multiplication
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Financial matters, prosperity indicators
+                    <strong>Role:</strong> Financial matters, prosperity
+                    indicators
                   </p>
                 </CardContent>
               </Card>
@@ -1085,9 +1114,9 @@ export default function SpreadsPage() {
 
             <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
               <p className="text-sm italic text-foreground">
-                When multiple Cards of Fate appear together in a reading, they create
-                a powerful <strong>destiny zone</strong> that indicates the ultimate
-                trajectory or outcome of the matter at hand.
+                When multiple Cards of Fate appear together in a reading, they
+                create a powerful <strong>destiny zone</strong> that indicates
+                the ultimate trajectory or outcome of the matter at hand.
               </p>
             </div>
           </CardContent>

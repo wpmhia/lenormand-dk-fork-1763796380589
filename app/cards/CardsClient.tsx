@@ -55,23 +55,30 @@ const CARD_CATEGORIES = {
   nature: ["Tree", "Clover", "House", "Mountain", "Stork", "Dog"],
 };
 
-export default function CardsClient({ initialCards }: { initialCards: CardType[] }) {
-  const cardsMap = useMemo(() => new Map(initialCards.map(c => [c.id, c])), [initialCards]);
-  
-   const [searchTerm, setSearchTerm] = useState("");
-   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-   const [sortBy, setSortBy] = useState<"number" | "name">("number");
-   const [selectedCategory, setSelectedCategory] = useState("all");
-   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
-   const [isModalOpen, setIsModalOpen] = useState(false);
-   const debounceTimeoutRef = useRef<NodeJS.Timeout>();
+export default function CardsClient({
+  initialCards,
+}: {
+  initialCards: CardType[];
+}) {
+  const cardsMap = useMemo(
+    () => new Map(initialCards.map((c) => [c.id, c])),
+    [initialCards],
+  );
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<"number" | "name">("number");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Debounce search input to prevent filtering on every keystroke
   useEffect(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
     }
-    
+
     debounceTimeoutRef.current = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
     }, 300); // 300ms delay
@@ -116,9 +123,9 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
     });
 
     return filtered;
-   }, [initialCards, debouncedSearchTerm, sortBy, selectedCategory]);
+  }, [initialCards, debouncedSearchTerm, sortBy, selectedCategory]);
 
-   // Rename for direct use without state duplication
+  // Rename for direct use without state duplication
 
   const openCardModal = (card: CardType) => {
     setSelectedCard(card);
@@ -130,16 +137,16 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
     setSelectedCard(null);
   };
 
-   const navigateCard = (direction: "prev" | "next") => {
-     if (!selectedCard) return;
-     const currentIndex = filteredCardsMemo.findIndex(
-       (c) => c.id === selectedCard.id,
-     );
-     let newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
-     if (newIndex < 0) newIndex = filteredCardsMemo.length - 1;
-     if (newIndex >= filteredCardsMemo.length) newIndex = 0;
-     setSelectedCard(filteredCardsMemo[newIndex]);
-   };
+  const navigateCard = (direction: "prev" | "next") => {
+    if (!selectedCard) return;
+    const currentIndex = filteredCardsMemo.findIndex(
+      (c) => c.id === selectedCard.id,
+    );
+    let newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0) newIndex = filteredCardsMemo.length - 1;
+    if (newIndex >= filteredCardsMemo.length) newIndex = 0;
+    setSelectedCard(filteredCardsMemo[newIndex]);
+  };
 
   const skeletonCards = Array.from({ length: 12 }).map((_, i) => (
     <div key={`skeleton-${i}`} className="space-y-2">
@@ -222,14 +229,14 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
         </div>
       </div>
 
-       {filteredCardsMemo.length > 0 && (
-         <div className="mb-6 text-sm text-muted-foreground">
-           Showing {filteredCardsMemo.length} of {initialCards.length} cards
-         </div>
-       )}
+      {filteredCardsMemo.length > 0 && (
+        <div className="mb-6 text-sm text-muted-foreground">
+          Showing {filteredCardsMemo.length} of {initialCards.length} cards
+        </div>
+      )}
 
-       <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-         {filteredCardsMemo.map((card) => (
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+        {filteredCardsMemo.map((card) => (
           <div
             key={card.id}
             className="group cursor-pointer"
@@ -250,7 +257,7 @@ export default function CardsClient({ initialCards }: { initialCards: CardType[]
         ))}
       </div>
 
-       {filteredCardsMemo.length === 0 && (
+      {filteredCardsMemo.length === 0 && (
         <div className="py-12 text-center text-muted-foreground">
           No cards found. Try a different search or category.
         </div>

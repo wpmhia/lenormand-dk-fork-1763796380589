@@ -1,9 +1,8 @@
+import { test, expect } from "@playwright/test";
 
-import { test, expect } from '@playwright/test';
-
-test('Draw cards flow', async ({ page }) => {
+test("Draw cards flow", async ({ page }) => {
   // Go to the new reading page
-  await page.goto('/read/new');
+  await page.goto("/read/new");
 
   // Check if "Draw cards for me" button exists
   const drawButton = page.locator('button:has-text("Draw cards for me")');
@@ -23,10 +22,12 @@ test('Draw cards flow', async ({ page }) => {
   // Wait for drawing animation/process
   // After drawing, it should go to results
   // Check for "Your Reading" or similar text in results
-  await expect(page.locator('text=Your Reading')).toBeVisible({ timeout: 10000 });
-  
+  await expect(page.locator("text=Your Reading")).toBeVisible({
+    timeout: 10000,
+  });
+
   // Check if cards are displayed
-  const cards = page.locator('.reading-card'); // Assuming class name or similar structure, need to verify
+  const cards = page.locator(".reading-card"); // Assuming class name or similar structure, need to verify
   // Or check for card images
   await expect(page.locator('img[alt*="Card"]')).toHaveCount(3);
 });

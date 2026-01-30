@@ -78,8 +78,13 @@ export function LearningProgressTracker({
   moduleId,
   isOnlyTracking = false,
 }: LearningProgressTrackerProps) {
-  const { progress, mounted, markComplete, completedCount, progressPercentage } =
-    useLearningProgress();
+  const {
+    progress,
+    mounted,
+    markComplete,
+    completedCount,
+    progressPercentage,
+  } = useLearningProgress();
 
   const handleMarkComplete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -97,7 +102,7 @@ export function LearningProgressTracker({
             {mounted ? (
               `${completedCount} of ${MODULES.length} modules completed`
             ) : (
-              <span className="inline-block w-20 animate-pulse rounded bg-muted h-4" />
+              <span className="inline-block h-4 w-20 animate-pulse rounded bg-muted" />
             )}
           </p>
         </div>
@@ -105,7 +110,7 @@ export function LearningProgressTracker({
           {mounted ? (
             `${Math.round(progressPercentage)}%`
           ) : (
-            <span className="inline-block w-8 animate-pulse rounded bg-muted h-4" />
+            <span className="inline-block h-4 w-8 animate-pulse rounded bg-muted" />
           )}
         </Badge>
       </div>

@@ -19,7 +19,8 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   1: {
     position: 1,
     name: "The Rider",
-    meaning: "News arriving quickly, messages from afar, swift movement approaching",
+    meaning:
+      "News arriving quickly, messages from afar, swift movement approaching",
     timing: "Days or weeks (Rider's speed)",
     special: "Speed and initiative - sets tempo of reading",
   },
@@ -61,14 +62,16 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   7: {
     position: 7,
     name: "The Snake",
-    meaning: "Betrayal, complication, deception, wisdom through adversity, winding path",
+    meaning:
+      "Betrayal, complication, deception, wisdom through adversity, winding path",
     timing: "Delayed (Snake's twisting nature)",
     special: "Warning card - often negative but can show transformation",
   },
   8: {
     position: 8,
     name: "The Coffin",
-    meaning: "Endings, transformation, closure, death of old situation, release",
+    meaning:
+      "Endings, transformation, closure, death of old situation, release",
     timing: "End of current cycle",
     special: "Definitive marker - signals major change is complete",
   },
@@ -82,7 +85,8 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   10: {
     position: 10,
     name: "The Scythe",
-    meaning: "Sudden change, cutting ties, harvesting results, decisions, endings",
+    meaning:
+      "Sudden change, cutting ties, harvesting results, decisions, endings",
     timing: "Immediate (Scythe's sudden action)",
     special: "Card of action - requires immediate attention",
   },
@@ -96,14 +100,16 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   12: {
     position: 12,
     name: "The Birds",
-    meaning: "Communication, gossip, conversation, pairs, anxiety, multiple messages",
+    meaning:
+      "Communication, gossip, conversation, pairs, anxiety, multiple messages",
     timing: "Quick conversations",
     special: "Nervousness and information overload indicator",
   },
   13: {
     position: 13,
     name: "The Child",
-    meaning: "New beginnings, innocence, youth, small things, potential, creativity",
+    meaning:
+      "New beginnings, innocence, youth, small things, potential, creativity",
     timing: "Beginning of new cycle",
     special: "Fresh start and creative potential",
   },
@@ -138,21 +144,25 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   18: {
     position: 18,
     name: "The Dog",
-    meaning: "Loyalty, friendship, trust, faithful companion, protection, devotion",
+    meaning:
+      "Loyalty, friendship, trust, faithful companion, protection, devotion",
     timing: "Loyal and steadfast",
     special: "Reliability and support indicator",
   },
   19: {
     position: 19,
     name: "The Tower",
-    meaning: "Authority, government, institutions, isolation, structure, rules, official matters",
+    meaning:
+      "Authority, government, institutions, isolation, structure, rules, official matters",
     timing: "Institutional pace",
-    special: "Hierarchical and distancing - often indicates separation or formal matters",
+    special:
+      "Hierarchical and distancing - often indicates separation or formal matters",
   },
   20: {
     position: 20,
     name: "The Garden",
-    meaning: "Public life, community, social events, gatherings, public recognition",
+    meaning:
+      "Public life, community, social events, gatherings, public recognition",
     timing: "Social timing (depends on event)",
     special: "Outward-facing and social indicator",
   },
@@ -166,7 +176,8 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   22: {
     position: 22,
     name: "The Crossroads",
-    meaning: "Choices, decisions, alternatives, multiple paths, options, uncertainty",
+    meaning:
+      "Choices, decisions, alternatives, multiple paths, options, uncertainty",
     timing: "Decision point (imminent)",
     special: "Fork in the road - requires clear choice",
   },
@@ -180,42 +191,48 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   24: {
     position: 24,
     name: "The Heart",
-    meaning: "Love, emotions, relationships, feelings, romantic matters, passions",
+    meaning:
+      "Love, emotions, relationships, feelings, romantic matters, passions",
     timing: "Emotional reality",
     special: "Heart of the reading - central emotional core",
   },
   25: {
     position: 25,
     name: "The Ring",
-    meaning: "Commitment, contracts, cycles, partnership, marriage, binding agreements",
+    meaning:
+      "Commitment, contracts, cycles, partnership, marriage, binding agreements",
     timing: "Cyclical or contracted",
     special: "Binding and commitment indicator",
   },
   26: {
     position: 26,
     name: "The Book",
-    meaning: "Secrets, knowledge, learning, hidden information, education, documents",
+    meaning:
+      "Secrets, knowledge, learning, hidden information, education, documents",
     timing: "Hidden until revealed",
     special: "Mystery card - information waiting to be discovered",
   },
   27: {
     position: 27,
     name: "The Letter",
-    meaning: "Communication, documents, news in writing, official correspondence",
+    meaning:
+      "Communication, documents, news in writing, official correspondence",
     timing: "Written or formal",
     special: "Concrete information and documentation",
   },
   28: {
     position: 28,
     name: "The Man",
-    meaning: "First Person, primary subject, querent, central figure (not gender-specific)",
+    meaning:
+      "First Person, primary subject, querent, central figure (not gender-specific)",
     timing: "Present moment (the here and now)",
     special: "Central significator - the reading revolves around this position",
   },
   29: {
     position: 29,
     name: "The Woman",
-    meaning: "Second Person, other key figure, related person, secondary perspective",
+    meaning:
+      "Second Person, other key figure, related person, secondary perspective",
     timing: "Present moment (her perspective)",
     special: "Secondary significator - the other key person in the reading",
   },
@@ -229,42 +246,48 @@ export const GRAND_TABLEAU_HOUSES: Record<number, HouseMeaning> = {
   31: {
     position: 31,
     name: "The Sun",
-    meaning: "Success, happiness, clarity, vitality, victory, achievement, illumination",
+    meaning:
+      "Success, happiness, clarity, vitality, victory, achievement, illumination",
     timing: "Daytime and soon (Sun's radiance)",
     special: "Most positive card - brings light to darkness",
   },
   32: {
     position: 32,
     name: "The Moon",
-    meaning: "Emotions, intuition, imagination, dreams, cycles, psychic matters",
+    meaning:
+      "Emotions, intuition, imagination, dreams, cycles, psychic matters",
     timing: "Evenings and cycles (Moon's nocturnal nature)",
     special: "Emotional and subconscious indicator",
   },
   33: {
     position: 33,
     name: "The Key",
-    meaning: "Solutions, answers, unlocking, access, important discoveries, breakthrough",
+    meaning:
+      "Solutions, answers, unlocking, access, important discoveries, breakthrough",
     timing: "Immediate solution",
     special: "Card of access - opens doors and provides answers",
   },
   34: {
     position: 34,
     name: "The Fish",
-    meaning: "Abundance, wealth, money, business, fertility, multiplication of resources",
+    meaning:
+      "Abundance, wealth, money, business, fertility, multiplication of resources",
     timing: "Flowing and ongoing",
     special: "Prosperity indicator - often shows financial matters",
   },
   35: {
     position: 35,
     name: "The Anchor",
-    meaning: "Stability, security, long-term, grounding, safety, patience, permanence",
+    meaning:
+      "Stability, security, long-term, grounding, safety, patience, permanence",
     timing: "Long-term (Anchor's staying power)",
     special: "Foundation card - provides stability to entire reading",
   },
   36: {
     position: 36,
     name: "The Cross",
-    meaning: "Burden, sacrifice, faith, destiny, karma, spiritual weight, life lessons",
+    meaning:
+      "Burden, sacrifice, faith, destiny, karma, spiritual weight, life lessons",
     timing: "Burden and karmic",
     special: "Final card - the weight carried through the journey",
   },
@@ -287,7 +310,10 @@ export function getHouseMeaning(position: number): HouseMeaning | null {
  * Get combined interpretation of card in a house position
  * Combines card's inherent meaning with house overlay meaning
  */
-export function getCardInHouseMeaning(cardNumber: number, position: number): {
+export function getCardInHouseMeaning(
+  cardNumber: number,
+  position: number,
+): {
   card: string;
   cardName: string;
   position: number;
@@ -297,7 +323,7 @@ export function getCardInHouseMeaning(cardNumber: number, position: number): {
 } {
   const house = getHouseMeaning(position);
   const cardMeaning = house?.name || "Unknown";
-  
+
   return {
     card: cardNumber.toString(),
     cardName: cardMeaning,
@@ -328,7 +354,7 @@ export function getHouseTiming(position: number): string {
  * Get cards in specific house positions
  */
 export function getCardsInHouses(positions: number[]): number[] {
-  return positions.map(pos => pos + 1);
+  return positions.map((pos) => pos + 1);
 }
 
 /**
@@ -373,7 +399,7 @@ export interface KnightMoveConnection {
   sourceCard: number;
   targetCard: number;
   interpretation: string;
-  strength: 'strong' | 'moderate' | 'subtle';
+  strength: "strong" | "moderate" | "subtle";
 }
 
 export interface KnightMovePath {
@@ -387,7 +413,10 @@ export interface KnightMovePath {
  * Get row and column for a position (0-indexed, 0-35)
  * Grid is 4 rows x 9 columns
  */
-export function getPositionCoords(position: number): { row: number; col: number } {
+export function getPositionCoords(position: number): {
+  row: number;
+  col: number;
+} {
   return {
     row: Math.floor(position / 9),
     col: position % 9,
@@ -446,7 +475,7 @@ export function isKnightMove(source: number, target: number): boolean {
 export function getCardKnightConnections(
   cardNumber: number,
   cardPosition: number,
-  allCards: Map<number, number>
+  allCards: Map<number, number>,
 ): KnightMoveConnection[] {
   const connections: KnightMoveConnection[] = [];
   const targets = getKnightTargets(cardPosition);
@@ -454,14 +483,19 @@ export function getCardKnightConnections(
   for (const targetPos of targets) {
     const targetCard = allCards.get(targetPos);
     if (targetCard !== undefined) {
-      const interpretation = interpretKnightMove(cardNumber, targetCard, cardPosition, targetPos);
+      const interpretation = interpretKnightMove(
+        cardNumber,
+        targetCard,
+        cardPosition,
+        targetPos,
+      );
       connections.push({
         sourcePosition: cardPosition,
         targetPosition: targetPos,
         sourceCard: cardNumber,
         targetCard,
         interpretation,
-        strength: 'moderate',
+        strength: "moderate",
       });
     }
   }
@@ -476,7 +510,7 @@ export function interpretKnightMove(
   sourceCard: number,
   targetCard: number,
   sourcePosition: number,
-  targetPosition: number
+  targetPosition: number,
 ): string {
   const sourceCoords = getPositionCoords(sourcePosition);
   const targetCoords = getPositionCoords(targetPosition);
@@ -486,12 +520,15 @@ export function interpretKnightMove(
   return `Card ${sourceCard} influences Card ${targetCard} via knight's move ${direction}`;
 }
 
-function getDirectionDescription(source: { row: number; col: number }, target: { row: number; col: number }): string {
+function getDirectionDescription(
+  source: { row: number; col: number },
+  target: { row: number; col: number },
+): string {
   const rowDiff = target.row - source.row;
   const colDiff = target.col - source.col;
 
-  const rowDesc = rowDiff < 0 ? 'upward' : rowDiff > 0 ? 'downward' : '';
-  const colDesc = colDiff < 0 ? 'leftward' : colDiff > 0 ? 'rightward' : '';
+  const rowDesc = rowDiff < 0 ? "upward" : rowDiff > 0 ? "downward" : "";
+  const colDesc = colDiff < 0 ? "leftward" : colDiff > 0 ? "rightward" : "";
 
   if (rowDesc && colDesc) {
     return `(${rowDesc}, ${colDesc})`;
@@ -500,7 +537,7 @@ function getDirectionDescription(source: { row: number; col: number }, target: {
   } else if (colDesc) {
     return `(${colDesc})`;
   }
-  return '';
+  return "";
 }
 
 /**
@@ -510,12 +547,17 @@ function getDirectionDescription(source: { row: number; col: number }, target: {
 export function findKnightMovePaths(
   startPosition: number,
   maxDepth: number,
-  allCards: Map<number, number>
+  allCards: Map<number, number>,
 ): KnightMovePath[] {
   const paths: KnightMovePath[] = [];
   const visited = new Set<number>();
 
-  function explore(currentPos: number, depth: number, path: number[], interpretations: string[]) {
+  function explore(
+    currentPos: number,
+    depth: number,
+    path: number[],
+    interpretations: string[],
+  ) {
     if (depth > maxDepth) {
       paths.push({
         cards: [...path],
@@ -540,7 +582,7 @@ export function findKnightMovePaths(
         path[path.length - 2],
         targetCard,
         currentPos,
-        targetPos
+        targetPos,
       );
       interpretations.push(interp);
 
@@ -565,7 +607,7 @@ export function findKnightMovePaths(
  * Get all knight move connections in the entire tableau
  */
 export function getAllKnightConnections(
-  allCards: Map<number, number>
+  allCards: Map<number, number>,
 ): KnightMoveConnection[] {
   const allConnections: KnightMoveConnection[] = [];
 
@@ -585,13 +627,14 @@ export function getAllKnightConnections(
  * Filters for cards of fate, topic cards, and significators
  */
 export function getKeyKnightConnections(
-  allCards: Map<number, number>
+  allCards: Map<number, number>,
 ): KnightMoveConnection[] {
   const allConnections = getAllKnightConnections(allCards);
   const keyCards = [31, 32, 33, 34, 35, 24, 5, 28, 29]; // Cards of Fate + Topics + Significators
 
-  return allConnections.filter(conn =>
-    keyCards.includes(conn.sourceCard) || keyCards.includes(conn.targetCard)
+  return allConnections.filter(
+    (conn) =>
+      keyCards.includes(conn.sourceCard) || keyCards.includes(conn.targetCard),
   );
 }
 
@@ -634,10 +677,10 @@ export const KNIGHT_MOVE_EXPLANATION = {
 
 // Pre-calculated knight move targets for each position (0-indexed)
 export const KNIGHT_MOVE_TABLE: number[][] = [
-  [10, 12],      // Position 0
-  [11, 13],      // Position 1
-  [8, 14],       // Position 2
-  [9, 15],       // Position 3
+  [10, 12], // Position 0
+  [11, 13], // Position 1
+  [8, 14], // Position 2
+  [9, 15], // Position 3
   [1, 7, 11, 13, 17, 19, 21, 23], // Position 4
   [2, 6, 12, 14, 18, 20, 22, 24], // Position 5
   [1, 5, 11, 13, 15, 21, 23, 25], // Position 6
@@ -650,26 +693,26 @@ export const KNIGHT_MOVE_TABLE: number[][] = [
   [1, 5, 7, 11, 19, 21, 23, 29, 31, 33], // Position 13
   [2, 4, 8, 12, 20, 22, 24, 30, 32, 34], // Position 14
   [3, 5, 9, 13, 21, 23, 25, 31, 33, 35], // Position 15
-  [4, 6, 10, 22, 24, 26, 32, 34],       // Position 16
-  [5, 7, 11, 23, 25, 27, 33, 35],       // Position 17
-  [2, 8, 10, 14, 24, 26, 28, 34],       // Position 18
-  [3, 9, 11, 15, 25, 27, 29, 35],       // Position 19
-  [4, 8, 10, 12, 16, 26, 28, 30],       // Position 20
-  [5, 9, 11, 13, 17, 27, 29, 31],       // Position 21
-  [6, 10, 12, 14, 18, 28, 30, 32],      // Position 22
-  [7, 11, 13, 15, 19, 29, 31, 33],      // Position 23
-  [4, 8, 12, 14, 16, 20, 30, 32, 34],   // Position 24
-  [5, 9, 13, 15, 17, 21, 31, 33, 35],   // Position 25
-  [6, 10, 14, 16, 18, 22, 32, 34],      // Position 26
-  [7, 11, 15, 17, 19, 23, 33, 35],      // Position 27
-  [8, 12, 16, 18, 20, 24, 34],          // Position 28
-  [9, 13, 17, 19, 21, 25, 35],          // Position 29
-  [10, 14, 20, 22, 26, 28, 32],         // Position 30
-  [11, 15, 21, 23, 27, 29, 33],         // Position 31
-  [12, 16, 22, 24, 26, 30, 34],         // Position 32
-  [13, 17, 23, 25, 27, 31, 35],         // Position 33
-  [14, 18, 24, 26, 28, 32],             // Position 34
-  [15, 19, 25, 27, 29, 33],             // Position 35
+  [4, 6, 10, 22, 24, 26, 32, 34], // Position 16
+  [5, 7, 11, 23, 25, 27, 33, 35], // Position 17
+  [2, 8, 10, 14, 24, 26, 28, 34], // Position 18
+  [3, 9, 11, 15, 25, 27, 29, 35], // Position 19
+  [4, 8, 10, 12, 16, 26, 28, 30], // Position 20
+  [5, 9, 11, 13, 17, 27, 29, 31], // Position 21
+  [6, 10, 12, 14, 18, 28, 30, 32], // Position 22
+  [7, 11, 13, 15, 19, 29, 31, 33], // Position 23
+  [4, 8, 12, 14, 16, 20, 30, 32, 34], // Position 24
+  [5, 9, 13, 15, 17, 21, 31, 33, 35], // Position 25
+  [6, 10, 14, 16, 18, 22, 32, 34], // Position 26
+  [7, 11, 15, 17, 19, 23, 33, 35], // Position 27
+  [8, 12, 16, 18, 20, 24, 34], // Position 28
+  [9, 13, 17, 19, 21, 25, 35], // Position 29
+  [10, 14, 20, 22, 26, 28, 32], // Position 30
+  [11, 15, 21, 23, 27, 29, 33], // Position 31
+  [12, 16, 22, 24, 26, 30, 34], // Position 32
+  [13, 17, 23, 25, 27, 31, 35], // Position 33
+  [14, 18, 24, 26, 28, 32], // Position 34
+  [15, 19, 25, 27, 29, 33], // Position 35
 ];
 
 export function getKnightTargetsFromTable(position: number): number[] {

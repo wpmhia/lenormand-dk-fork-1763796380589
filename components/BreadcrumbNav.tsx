@@ -38,13 +38,13 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
 
   return (
     <>
-       <Script
-         id={`breadcrumb-schema-${items.length}`}
-         type="application/ld+json"
-         suppressHydrationWarning
-         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-         strategy="afterInteractive"
-       />
+      <Script
+        id={`breadcrumb-schema-${items.length}`}
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        strategy="afterInteractive"
+      />
       <nav
         className="flex items-center gap-2 text-sm text-muted-foreground"
         aria-label="Breadcrumb"

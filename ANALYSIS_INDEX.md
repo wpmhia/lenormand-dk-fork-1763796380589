@@ -11,6 +11,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 ## Document Guide
 
 ### 1. PERFORMANCE_SUMMARY.txt (Executive Summary)
+
 - **Who should read:** Project managers, stakeholders, team leads
 - **Time to read:** 5-10 minutes
 - **What you'll find:**
@@ -22,6 +23,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
   - Testing recommendations
 
 ### 2. BOTTLENECK_DETAILS.md (Technical Deep Dive)
+
 - **Who should read:** Backend/frontend engineers, performance specialists
 - **Time to read:** 20-30 minutes
 - **What you'll find:**
@@ -33,6 +35,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
   - Component-by-component breakdown
 
 ### 3. PERFORMANCE_ANALYSIS.md (Strategic Overview)
+
 - **Who should read:** Architects, tech leads, performance consultants
 - **Time to read:** 15-20 minutes
 - **What you'll find:**
@@ -45,6 +48,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
   - Estimated impact of fixes
 
 ### 4. BOTTLENECK_MAP.md (Visual Reference)
+
 - **Who should read:** Everyone - visual learners especially
 - **Time to read:** 10-15 minutes
 - **What you'll find:**
@@ -60,26 +64,24 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 ### Overall Performance Grade: B+
 
 **Critical Issues (2):**
+
 1. Missing lazy loading on card images (HIGH) - 250KB+ unnecessary transfer
 2. Multiple state updates per keystroke (HIGH) - Sluggish search experience
 
-**High Priority Issues (4):**
-3. O(n) card lookup in combo section (MEDIUM) - 15-30 searches per render
-4. Redundant state syncing (MEDIUM) - Extra renders
-5. Missing Cache-Control headers (MEDIUM) - Browser caching not optimized
-6. Image sizing mismatch (MEDIUM) - Sub-optimal image generation
+**High Priority Issues (4):** 3. O(n) card lookup in combo section (MEDIUM) - 15-30 searches per render 4. Redundant state syncing (MEDIUM) - Extra renders 5. Missing Cache-Control headers (MEDIUM) - Browser caching not optimized 6. Image sizing mismatch (MEDIUM) - Sub-optimal image generation
 
-**Low Priority Issues (1):**
-7. Inefficient modal navigation (LOW) - Negligible impact with 36 items
+**Low Priority Issues (1):** 7. Inefficient modal navigation (LOW) - Negligible impact with 36 items
 
 ### Affected Files (Priority)
 
 **Highest Impact:**
+
 - `/app/cards/CardsClient.tsx` (385 lines) - 4 issues
 - `/app/cards/[id]/CardDetailClient.tsx` (450 lines) - 1 major issue
 - `/components/Card.tsx` (106 lines) - 2 issues
 
 **Secondary:**
+
 - `/components/CardDetailSections.tsx` (367 lines) - Uses O(n) lookups
 - `/lib/data.ts` - Data utilities
 - `/middleware.ts` - Cache headers missing
@@ -87,6 +89,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 ## Implementation Roadmap
 
 ### Tier 1: Quick Wins (1-2 hours)
+
 1. Add `loading="lazy"` to card images
 2. Implement cardsMap in CardDetailClient
 3. Remove redundant useEffect in CardsClient
@@ -95,6 +98,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 **Estimated improvement: 20-30% across metrics**
 
 ### Tier 2: Medium Effort (2-3 hours)
+
 1. Optimize search state management
 2. Fix image sizing in Card component
 3. Split JSON data loading
@@ -102,6 +106,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 **Estimated improvement: Additional 10-15%**
 
 ### Tier 3: Long-term (3+ hours)
+
 1. Virtual scrolling for card grid
 2. Preload next/previous cards
 3. Image CDN optimization
@@ -111,6 +116,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 ## Metrics to Track
 
 ### Before Optimization
+
 - LCP: ~2-2.5s
 - TTI: ~3-4s
 - FID during search: ~100-150ms
@@ -118,6 +124,7 @@ This directory contains a comprehensive performance bottleneck analysis for the 
 - Page size: ~500KB
 
 ### After Tier 1 Fixes
+
 - LCP: ~1.5-1.8s (20-30% improvement)
 - TTI: ~2.5-3s (15-25% improvement)
 - FID during search: ~50-75ms (40-50% improvement)
@@ -136,24 +143,26 @@ ANALYSIS_INDEX.md                 ← You are here
 
 ## Issue Legend
 
-| Symbol | Meaning |
-|--------|---------|
-| ✓ | Good practice already in place |
-| ✗ | Issue identified |
-| ⚠️ | Warning/caution required |
-| HIGH | Affects user experience significantly |
-| MEDIUM | Notable impact, worth fixing |
-| LOW | Minimal practical impact |
+| Symbol | Meaning                               |
+| ------ | ------------------------------------- |
+| ✓      | Good practice already in place        |
+| ✗      | Issue identified                      |
+| ⚠️     | Warning/caution required              |
+| HIGH   | Affects user experience significantly |
+| MEDIUM | Notable impact, worth fixing          |
+| LOW    | Minimal practical impact              |
 
 ## How to Use This Analysis
 
 ### For Project Managers
+
 1. Read PERFORMANCE_SUMMARY.txt sections 1-3
 2. Review timeline estimates in section 8
 3. Plan Tier 1 implementation for next sprint
 4. Expected ROI: 20-30% performance improvement
 
 ### For Engineers
+
 1. Read BOTTLENECK_DETAILS.md to understand each issue
 2. Focus on Tier 1 quick wins first (1-2 hours to implement)
 3. Use code samples provided for reference
@@ -161,6 +170,7 @@ ANALYSIS_INDEX.md                 ← You are here
 5. Implement Tier 2 optimizations in following sprints
 
 ### For Tech Leads
+
 1. Review BOTTLENECK_MAP.md diagrams
 2. Understand root causes in PERFORMANCE_ANALYSIS.md
 3. Plan refactoring work with team
@@ -168,6 +178,7 @@ ANALYSIS_INDEX.md                 ← You are here
 5. Consider impact on other routes before changes
 
 ### For Architects
+
 1. Review PERFORMANCE_ANALYSIS.md section 7
 2. Assess impact on overall system design
 3. Consider standardizing fixes across similar components
@@ -184,6 +195,7 @@ ANALYSIS_INDEX.md                 ← You are here
 ## Questions?
 
 Each document includes:
+
 - Specific line numbers and file paths
 - Code samples showing the issue
 - Explanations of why it's a problem

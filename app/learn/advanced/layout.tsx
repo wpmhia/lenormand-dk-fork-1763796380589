@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Advanced Lenormand Concepts | Expert Methods & Professional Techniques",
+  title:
+    "Advanced Lenormand Concepts | Expert Methods & Professional Techniques",
   description:
     "Explore advanced Lenormand concepts including time associations, playing card meanings, cultural interpretations, and professional reading methods. Take your practice to the next level.",
   keywords: [

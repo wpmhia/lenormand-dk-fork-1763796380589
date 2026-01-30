@@ -120,11 +120,11 @@ export function CookieConsent() {
   };
 
   const loadGoogleAnalytics = () => {
-    if (typeof window === 'undefined') return;
-    
+    if (typeof window === "undefined") return;
+
     const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
     if (!gaId) return;
-    
+
     if (window.gtag) return;
 
     const script1 = document.createElement("script");

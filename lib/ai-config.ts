@@ -1,7 +1,12 @@
-import { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS } from "@/lib/spreads";
+import {
+  AUTHENTIC_SPREADS,
+  MODERN_SPREADS,
+  COMPREHENSIVE_SPREADS,
+} from "@/lib/spreads";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-const DEEPSEEK_BASE_URL = process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
+const DEEPSEEK_BASE_URL =
+  process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
 
 // Cache all spreads in a single array at module load time
 const ALL_SPREADS = [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
@@ -29,7 +34,10 @@ export function getMaxTokens(spreadCards: number): number {
 }
 
 // Pre-build grand-tableau position labels once at module load
-const GRAND_TABLEAU_POSITIONS = Array.from({ length: 36 }, (_, i) => `${i + 1}`);
+const GRAND_TABLEAU_POSITIONS = Array.from(
+  { length: 36 },
+  (_, i) => `${i + 1}`,
+);
 
 const POSITION_LABELS: Record<string, string[]> = {
   "single-card": ["Card"],
@@ -50,7 +58,7 @@ const POSITION_LABELS: Record<string, string[]> = {
     "Their Present",
     "Their Future",
   ],
-  "comprehensive": [
+  comprehensive: [
     "Past-Inner",
     "Past-Action",
     "Past-Outer",
@@ -74,15 +82,18 @@ const SPREAD_GUIDANCE: Record<string, string> = {
   "sentence-5": "5-card story arc.",
   "structured-reading": "Subject → Action → Impact → Conditions → Result.",
   "week-ahead": "7-day reading with action for each day.",
-  "relationship-double-significator": "Two-person reading with relationship focus.",
-  "comprehensive": "9-card Petit Grand: Past/Present/Future × Inner/Action/Outer.",
-  "grand-tableau": "36-card layout: Center energy, card interactions, directional flow.",
+  "relationship-double-significator":
+    "Two-person reading with relationship focus.",
+  comprehensive:
+    "9-card Petit Grand: Past/Present/Future × Inner/Action/Outer.",
+  "grand-tableau":
+    "36-card layout: Center energy, card interactions, directional flow.",
 };
 
 export function buildPrompt(
   cards: Array<{ id: number; name: string }>,
   spreadId: string,
-  question: string
+  question: string,
 ): string {
   // Single O(1) lookup - try requested spreadId, fall back to default
   const spread = SPREAD_MAP.get(spreadId) || SPREAD_MAP.get("sentence-3");
@@ -91,9 +102,7 @@ export function buildPrompt(
     throw new Error("Invalid spread ID and default spread not found");
   }
 
-  const cardList = cards
-    .map((c, i) => `Card ${i + 1}: ${c.name}`)
-    .join("\n");
+  const cardList = cards.map((c, i) => `Card ${i + 1}: ${c.name}`).join("\n");
 
   const positionLabels = POSITION_LABELS[spread.id] || [];
   const spreadGuidance = SPREAD_GUIDANCE[spread.id] || "";

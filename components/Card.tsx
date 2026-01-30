@@ -37,12 +37,15 @@ function CardInner({
     onClick?.();
   }, [onClick]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (onClick && (e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
-      onClick();
-    }
-  }, [onClick]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (onClick && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        onClick();
+      }
+    },
+    [onClick],
+  );
 
   if (showBack) {
     return (
@@ -84,14 +87,14 @@ function CardInner({
         aria-label={`${card.name} card. Click to ${onClick ? "select" : "view details"}`}
       >
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
-         <Image
-           src={card.imageUrl || ""}
-           alt={card.name}
-           fill
-           className="h-full w-full object-cover"
-           sizes={sizeToPixels[size]}
-           loading="lazy"
-         />
+          <Image
+            src={card.imageUrl || ""}
+            alt={card.name}
+            fill
+            className="h-full w-full object-cover"
+            sizes={sizeToPixels[size]}
+            loading="lazy"
+          />
         </div>
       </div>
 

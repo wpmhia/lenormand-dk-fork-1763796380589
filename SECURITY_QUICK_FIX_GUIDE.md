@@ -3,6 +3,7 @@
 ## 🚨 CRITICAL - Fix These First (Priority Order)
 
 ### Fix #1: Base64 Decoding Validation (20 mins)
+
 **File:** `/lib/data.ts`
 **Problem:** Unvalidated data from shared URLs can cause XSS
 **Status:** ⚠️ MUST FIX BEFORE DEPLOYMENT
@@ -21,6 +22,7 @@ npm run dev  # Verify /read/shared/* routes work
 ---
 
 ### Fix #2: XSS in Schema Markup (15 mins)
+
 **File:** `/app/layout.tsx` and 8 other files
 **Problem:** dangerouslySetInnerHTML could execute injected scripts
 **Status:** ⚠️ MUST FIX BEFORE DEPLOYMENT
@@ -42,6 +44,7 @@ import Script from 'next/script';
 ```
 
 **Files to update:**
+
 - `/app/layout.tsx` (lines 190, 195)
 - `/app/learn/layout.tsx` (line 61)
 - `/app/learn/advanced/layout.tsx` (line 56)
@@ -57,6 +60,7 @@ import Script from 'next/script';
 ---
 
 ### Fix #3: API Key Management (45 mins)
+
 **File:** `/app/api/readings/interpret/route.ts`
 **Problem:** API key exposed to error logs and potential attacks
 **Status:** ⚠️ MUST FIX BEFORE DEPLOYMENT
@@ -74,6 +78,7 @@ import Script from 'next/script';
 ## 🔴 HIGH - Fix Next (Priority Order)
 
 ### High Fix #1: CORS Configuration (10 mins)
+
 **File:** `/middleware.ts` (lines 271-275)
 
 ```typescript
@@ -81,11 +86,8 @@ import Script from 'next/script';
 response.headers.set("Access-Control-Allow-Origin", "*");
 
 // After: SAFE
-const ALLOWED_ORIGINS = [
-  'https://lenormand.dk',
-  'https://www.lenormand.dk',
-];
-const origin = request.headers.get('origin');
+const ALLOWED_ORIGINS = ["https://lenormand.dk", "https://www.lenormand.dk"];
+const origin = request.headers.get("origin");
 if (origin && ALLOWED_ORIGINS.includes(origin)) {
   response.headers.set("Access-Control-Allow-Origin", origin);
 }
@@ -94,6 +96,7 @@ if (origin && ALLOWED_ORIGINS.includes(origin)) {
 ---
 
 ### High Fix #2: Rate Limiting Hash (10 mins)
+
 **File:** `/middleware.ts` (lines 88-104)
 
 ```typescript
@@ -104,17 +107,18 @@ for (let i = 0; i < combined.length; i++) {
 }
 
 // After: STRONG HASH
-import crypto from 'crypto';
+import crypto from "crypto";
 const hash = crypto
-  .createHash('sha256')
+  .createHash("sha256")
   .update(combined)
-  .digest('hex')
+  .digest("hex")
   .slice(0, 16);
 ```
 
 ---
 
 ### High Fix #3: Stream Error Handling (15 mins)
+
 **File:** `/app/read/new/page.tsx` (lines 262-330)
 
 ```typescript
@@ -126,7 +130,7 @@ try {
     try {
       await reader.cancel();
     } catch (e) {
-      console.error('Reader cancel error:', e);
+      console.error("Reader cancel error:", e);
     }
   }
 }
@@ -135,42 +139,42 @@ try {
 ---
 
 ### High Fix #4: Input Validation (20 mins)
+
 **File:** `/app/read/new/page.tsx` (lines 394-436)
 
 ```typescript
 // Add size limit
 const MAX_INPUT_SIZE = 1000;
 if (input.length > MAX_INPUT_SIZE) {
-  setPhysicalCardsError('Input too long');
+  setPhysicalCardsError("Input too long");
   return [];
 }
 
 // Create lookup maps for O(1) instead of O(n)
-const cardByNumber = new Map(allCards.map(c => [c.id, c]));
+const cardByNumber = new Map(allCards.map((c) => [c.id, c]));
 ```
 
 ---
 
 ### High Fix #5: CSRF Protection (30 mins)
+
 **File:** `/app/api/readings/interpret/route.ts`
 
 ```typescript
 // Check origin header
-const origin = headersList.get('origin');
+const origin = headersList.get("origin");
 if (!origin?.includes(allowedOrigin)) {
-  return new Response(
-    JSON.stringify({ error: 'Invalid origin' }),
-    { status: 403 }
-  );
+  return new Response(JSON.stringify({ error: "Invalid origin" }), {
+    status: 403,
+  });
 }
 
 // TODO: Add CSRF token verification
-const csrfToken = headersList.get('x-csrf-token');
+const csrfToken = headersList.get("x-csrf-token");
 if (!csrfToken) {
-  return new Response(
-    JSON.stringify({ error: 'Missing CSRF token' }),
-    { status: 403 }
-  );
+  return new Response(JSON.stringify({ error: "Missing CSRF token" }), {
+    status: 403,
+  });
 }
 ```
 
@@ -179,6 +183,7 @@ if (!csrfToken) {
 ## 🟠 MEDIUM - Fix After Critical/High
 
 ### Medium Fix #1: CSP Headers (5 mins)
+
 **File:** `/middleware.ts` (lines 232-242)
 
 ```typescript
@@ -188,7 +193,9 @@ if (!csrfToken) {
 ```
 
 ### Medium Fix #2: Dependencies (10 mins)
+
 **Command:**
+
 ```bash
 npm audit fix --force
 npm install lodash@latest prisma@latest
@@ -196,6 +203,7 @@ npm audit  # Verify no remaining vulnerabilities
 ```
 
 ### Medium Fix #3: TypeScript Strict Mode (5 mins)
+
 **File:** `/tsconfig.json`
 
 ```json
@@ -213,12 +221,14 @@ npm audit  # Verify no remaining vulnerabilities
 ## ✅ EXECUTION CHECKLIST
 
 ### Day 1 - Critical Fixes (2-3 hours)
+
 - [ ] Fix #1: Base64 validation (20 min)
 - [ ] Fix #2: XSS in schemas (15 min)
 - [ ] Fix #3: API key handling (45 min)
 - [ ] Test all features work
 
 ### Day 2 - High Priority Fixes (1.5-2 hours)
+
 - [ ] High #1: CORS configuration (10 min)
 - [ ] High #2: Rate limiting hash (10 min)
 - [ ] High #3: Stream cleanup (15 min)
@@ -227,12 +237,14 @@ npm audit  # Verify no remaining vulnerabilities
 - [ ] Run full test suite
 
 ### Day 3 - Medium Fixes (30 mins)
+
 - [ ] Medium #1: CSP headers (5 min)
 - [ ] Medium #2: Update dependencies (10 min)
 - [ ] Medium #3: TypeScript strict mode (5 min)
 - [ ] Fix any TypeScript errors
 
 ### Day 4 - Testing & Verification
+
 - [ ] Run `npm run build` - verify no errors
 - [ ] Run unit tests - verify all pass
 - [ ] Manual security testing
@@ -281,14 +293,14 @@ Before deploying to production:
 
 ## ⚡ QUICK WINS SUMMARY
 
-| Priority | Issue | File | Time |
-|----------|-------|------|------|
-| 1 | Base64 validation | `/lib/data.ts` | 20 min |
-| 2 | XSS in schemas | 11 files | 15 min |
-| 3 | API key handling | `/app/api/*` | 45 min |
-| 4 | CORS config | `/middleware.ts` | 10 min |
-| 5 | Hash function | `/middleware.ts` | 10 min |
-| 6 | Stream cleanup | `/app/read/new` | 15 min |
+| Priority | Issue             | File             | Time   |
+| -------- | ----------------- | ---------------- | ------ |
+| 1        | Base64 validation | `/lib/data.ts`   | 20 min |
+| 2        | XSS in schemas    | 11 files         | 15 min |
+| 3        | API key handling  | `/app/api/*`     | 45 min |
+| 4        | CORS config       | `/middleware.ts` | 10 min |
+| 5        | Hash function     | `/middleware.ts` | 10 min |
+| 6        | Stream cleanup    | `/app/read/new`  | 15 min |
 
 **Total Time: ~2 hours for most critical issues**
 
@@ -315,4 +327,3 @@ Before deploying to production:
 **Status:** Ready to fix  
 **Estimated Total Time:** 4-5 hours  
 **Expected Outcome:** Production-ready security posture
-

@@ -5,15 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedCard } from "@/components/AnimatedCard";
-import {
-  useLearningProgress,
-} from "@/components/LearningProgressTracker";
+import { useLearningProgress } from "@/components/LearningProgressTracker";
 import {
   BookOpen,
   Clock,
   ArrowRight,
   Sparkles,
   TrendingUp,
+  CheckCircle2,
+  Target,
+  Heart,
+  Users,
+  Star,
+  Zap,
+  Compass,
+  Lightbulb,
 } from "lucide-react";
 
 export default function LearnPage() {
@@ -74,7 +80,11 @@ export default function LearnPage() {
       duration: "35 min",
       difficulty: "Intermediate",
       color: "from-primary to-primary/80",
-      learningPoints: ["Popular spreads", "Grand Tableau", "Advanced techniques"],
+      learningPoints: [
+        "Popular spreads",
+        "Grand Tableau",
+        "Advanced techniques",
+      ],
     },
     {
       id: "advanced",

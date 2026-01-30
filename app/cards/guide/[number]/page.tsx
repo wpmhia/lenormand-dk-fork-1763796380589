@@ -121,7 +121,9 @@ export default async function CardGuidePage({ params }: CardGuidePageProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-medium text-foreground">#{card.id} in the deck</p>
+              <p className="font-medium text-foreground">
+                #{card.id} in the deck
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -138,9 +140,12 @@ export default async function CardGuidePage({ params }: CardGuidePageProps) {
                 return (
                   <div key={combo.withCardId} className="flex flex-col gap-1">
                     <dt className="font-semibold text-foreground">
-                      {card.name} + {relatedCard?.name || `Card ${combo.withCardId}`}
+                      {card.name} +{" "}
+                      {relatedCard?.name || `Card ${combo.withCardId}`}
                     </dt>
-                    <dd className="text-sm text-muted-foreground">{combo.meaning}</dd>
+                    <dd className="text-sm text-muted-foreground">
+                      {combo.meaning}
+                    </dd>
                   </div>
                 );
               })

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export function useScrollToFocus() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -8,11 +8,11 @@ export function useScrollToFocus() {
     if (!input) return;
 
     const handleFocus = () => {
-      input.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      input.scrollIntoView({ block: "nearest", behavior: "smooth" });
     };
 
-    input.addEventListener('focus', handleFocus);
-    return () => input.removeEventListener('focus', handleFocus);
+    input.addEventListener("focus", handleFocus);
+    return () => input.removeEventListener("focus", handleFocus);
   }, []);
 
   return inputRef;

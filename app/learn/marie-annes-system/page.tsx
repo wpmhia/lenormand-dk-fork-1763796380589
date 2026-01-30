@@ -227,9 +227,9 @@ export default function MarieAnnesSystemPage() {
                 <div className="rounded-lg bg-muted p-4">
                   <h4 className="font-semibold">36-Card Grand Tableau</h4>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    The complete 4x9 grid. Her reading. The entire
-                    situation visible at once. She read by rows, diagonals, and
-                    the significator&apos;s position.
+                    The complete 4x9 grid. Her reading. The entire situation
+                    visible at once. She read by rows, diagonals, and the
+                    significator&apos;s position.
                   </p>
                 </div>
               </div>

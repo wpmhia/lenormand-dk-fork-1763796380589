@@ -938,34 +938,34 @@ export default function AdvancedPage() {
 
         {/* Navigation */}
         <div className="flex items-center justify-between border-t border-border pt-8">
-            <Link href="/learn/spreads">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-primary hover:text-primary/80"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Spreads & Techniques
-              </Button>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 5 of 6
-              </Badge>
-              <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Intermediate
-              </Badge>
-            </div>
-            <Link href="/learn/marie-annes-system">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-primary hover:text-primary/80"
-              >
-                Next Module
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+          <Link href="/learn/spreads">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:text-primary/80"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Spreads & Techniques
+            </Button>
+          </Link>
+          <div className="flex items-center space-x-2">
+            <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
+              Module 5 of 6
+            </Badge>
+            <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
+              Intermediate
+            </Badge>
+          </div>
+          <Link href="/learn/marie-annes-system">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:text-primary/80"
+            >
+              Next Module
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
           <Link href="/read/new">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               Start Reading Now

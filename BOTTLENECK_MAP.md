@@ -169,7 +169,7 @@ Request arrives
 │  │
 │  └─ Paths skipped:
 │     ├─ /_next/* ✓
-│     ├─ /images/* 
+│     ├─ /images/*
 │     ├─ /data/*
 │     ├─ *.png, *.jpg, *.webp
 │     └─ [Issue #8] ⚠️ NO Cache-Control headers set
@@ -430,4 +430,3 @@ CACHING ─────────┼──────────┼───
                  │          │ Cache-     │
                  │          │ Control    │
 ```
-

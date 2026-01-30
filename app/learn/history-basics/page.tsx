@@ -84,8 +84,9 @@ export default function HistoryBasicsPage() {
             History & Basics
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Discover the origins of Lenormand divination and learn the fundamental
-            concepts that make this 36-card oracle unique and powerful.
+            Discover the origins of Lenormand divination and learn the
+            fundamental concepts that make this 36-card oracle unique and
+            powerful.
           </p>
           <div className="mt-4 flex items-center justify-center space-x-4 text-sm text-primary">
             <div className="flex items-center">
@@ -151,9 +152,10 @@ export default function HistoryBasicsPage() {
                 Marie Anne Adelaide Lenormand (1772-1843)
               </h3>
               <p className="leading-relaxed text-muted-foreground">
-                The legendary French fortune teller who gained fame for her readings
-                and high-profile clientele including Napoleon and Josephine. She became one
-                of the most celebrated diviners of her time.
+                The legendary French fortune teller who gained fame for her
+                readings and high-profile clientele including Napoleon and
+                Josephine. She became one of the most celebrated diviners of her
+                time.
               </p>
             </div>
 
@@ -163,9 +165,9 @@ export default function HistoryBasicsPage() {
               </h3>
               <p className="leading-relaxed text-muted-foreground">
                 The 36-card deck actually evolved from a German board game
-                published around 1799 by Johann Kaspar Hechtel. Originally designed as a game of
-                chance, the cards&apos; symbolic meanings naturally lent themselves to
-                divination.
+                published around 1799 by Johann Kaspar Hechtel. Originally
+                designed as a game of chance, the cards&apos; symbolic meanings
+                naturally lent themselves to divination.
               </p>
             </div>
 
@@ -176,17 +178,17 @@ export default function HistoryBasicsPage() {
               <p className="leading-relaxed text-muted-foreground">
                 After Lenormand&apos;s death in 1843, the 36-card deck became
                 widely marketed under her name as the &quot;Petit
-                Lenormand.&quot; The deck&apos;s association with her name enhanced its
-                mystique and helped popularize it across Europe.
+                Lenormand.&quot; The deck&apos;s association with her name
+                enhanced its mystique and helped popularize it across Europe.
               </p>
             </div>
 
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
               <p className="text-sm text-foreground">
-                <strong>Historical Note:</strong> While Lenormand was a legendary
-                diviner, she did not leave behind a documented system specifically
-                for the 36-card deck. The modern Lenormand system and
-                interpretations were developed and popularized{" "}
+                <strong>Historical Note:</strong> While Lenormand was a
+                legendary diviner, she did not leave behind a documented system
+                specifically for the 36-card deck. The modern Lenormand system
+                and interpretations were developed and popularized{" "}
                 <em>after her death</em> by publishers and readers who honored
                 her legacy by associating the deck with her name.
               </p>
@@ -302,14 +304,16 @@ export default function HistoryBasicsPage() {
           </CardHeader>
           <CardContent>
             <p className="mb-6 text-muted-foreground">
-              Lenormand excels at providing practical, everyday guidance. The cards
-              answer specific questions about real-life situations. Here are common
-              applications:
+              Lenormand excels at providing practical, everyday guidance. The
+              cards answer specific questions about real-life situations. Here
+              are common applications:
             </p>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-3">
                 <div className="mb-2">
-                  <h3 className="font-semibold text-foreground">Daily Guidance</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Daily Guidance
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Single card for the day ahead - themes, energy, and focus
@@ -318,7 +322,9 @@ export default function HistoryBasicsPage() {
               </div>
               <div className="space-y-3">
                 <div className="mb-2">
-                  <h3 className="font-semibold text-foreground">Decision Making</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Decision Making
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Weigh options, see potential outcomes, find clarity on choices
@@ -326,7 +332,9 @@ export default function HistoryBasicsPage() {
               </div>
               <div className="space-y-3">
                 <div className="mb-2">
-                  <h3 className="font-semibold text-foreground">Relationships</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Relationships
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Understand dynamics, connections, and emotions between people
@@ -334,15 +342,20 @@ export default function HistoryBasicsPage() {
               </div>
               <div className="space-y-3">
                 <div className="mb-2">
-                  <h3 className="font-semibold text-foreground">Career & Work</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Career & Work
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Job decisions, project outcomes, timing, and workplace dynamics
+                  Job decisions, project outcomes, timing, and workplace
+                  dynamics
                 </p>
               </div>
               <div className="space-y-3">
                 <div className="mb-2">
-                  <h3 className="font-semibold text-foreground">Problem Solving</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Problem Solving
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   View situations from multiple angles, find hidden factors
@@ -350,7 +363,9 @@ export default function HistoryBasicsPage() {
               </div>
               <div className="space-y-3">
                 <div className="mb-2">
-                  <h3 className="font-semibold text-foreground">Self-Reflection</h3>
+                  <h3 className="font-semibold text-foreground">
+                    Self-Reflection
+                  </h3>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Gain objective perspective on personal matters and situations
@@ -362,9 +377,10 @@ export default function HistoryBasicsPage() {
                 Key Principle: The cards answer specifically what you ask.
               </p>
               <p className="mt-1">
-                Be clear and specific in your questions. Vague questions lead to vague
-                answers. For best results, frame questions like: &quot;Should I accept
-                this job offer?&quot; rather than &quot;What about my career?&quot;
+                Be clear and specific in your questions. Vague questions lead to
+                vague answers. For best results, frame questions like:
+                &quot;Should I accept this job offer?&quot; rather than
+                &quot;What about my career?&quot;
               </p>
             </div>
           </CardContent>

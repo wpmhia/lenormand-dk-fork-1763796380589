@@ -2,14 +2,14 @@
 
 ## Quick Reference Table
 
-| Issue | Severity | File | Lines | Type | Impact |
-|-------|----------|------|-------|------|--------|
-| Missing lazy loading on images | HIGH | app/cards/CardsClient.tsx | 249-267 | Image Loading | 250KB+ transfer |
-| Multiple state updates per keystroke | HIGH | app/cards/CardsClient.tsx | 69-92 | State Mgmt | Sluggish search |
-| O(n) card lookup function | MEDIUM | app/cards/[id]/CardDetailClient.tsx | 48-49 | Algorithm | 15-30 searches per render |
-| Redundant useEffect state sync | MEDIUM | app/cards/CardsClient.tsx | 130-138 | React Pattern | Extra renders |
-| Missing Cache-Control headers | MEDIUM | middleware.ts | 138-155 | Caching | Browser may re-fetch |
-| Inefficient modal navigation | LOW | app/cards/CardsClient.tsx | 150-159 | Algorithm | O(n) search per direction |
+| Issue                                | Severity | File                                | Lines   | Type          | Impact                    |
+| ------------------------------------ | -------- | ----------------------------------- | ------- | ------------- | ------------------------- |
+| Missing lazy loading on images       | HIGH     | app/cards/CardsClient.tsx           | 249-267 | Image Loading | 250KB+ transfer           |
+| Multiple state updates per keystroke | HIGH     | app/cards/CardsClient.tsx           | 69-92   | State Mgmt    | Sluggish search           |
+| O(n) card lookup function            | MEDIUM   | app/cards/[id]/CardDetailClient.tsx | 48-49   | Algorithm     | 15-30 searches per render |
+| Redundant useEffect state sync       | MEDIUM   | app/cards/CardsClient.tsx           | 130-138 | React Pattern | Extra renders             |
+| Missing Cache-Control headers        | MEDIUM   | middleware.ts                       | 138-155 | Caching       | Browser may re-fetch      |
+| Inefficient modal navigation         | LOW      | app/cards/CardsClient.tsx           | 150-159 | Algorithm     | O(n) search per direction |
 
 ---
 
@@ -49,11 +49,13 @@
 ```
 
 **Related File:** `/home/user/project/components/Card.tsx` (Lines 82-89)
+
 - Card component receives `loading` prop but doesn't use it in `<Image>` tag
 - Current: `<Image src={card.imageUrl} alt={card.name} width={200} height={300} />`
 - Missing: `loading="lazy"` attribute
 
 **Impact:**
+
 - 36 images × ~7KB = 250KB unnecessary transfer on page load
 - Network waterfall prevents lazy rendering
 - Mobile users see slower TTI (Time To Interactive)
@@ -94,7 +96,7 @@ useEffect(() => {
   if (debounceTimeoutRef.current) {
     clearTimeout(debounceTimeoutRef.current);
   }
-  
+
   debounceTimeoutRef.current = setTimeout(() => {
     setDebouncedSearchTerm(searchTerm);  // ⚠️ Second state update
   }, 300);
@@ -140,6 +142,7 @@ useEffect(() => {
 ```
 
 **Render Waterfall on Single Keystroke:**
+
 1. User types 1 character
 2. `setSearchTerm()` → Component renders
 3. `setDebouncedSearchTerm()` fires after 300ms → Component renders again
@@ -147,6 +150,7 @@ useEffect(() => {
 5. Grid re-renders with filtered results
 
 **Impact:**
+
 - 3+ state updates per keystroke
 - Grid re-renders multiple times for single user input
 - Feels sluggish/unresponsive on slower devices
@@ -206,21 +210,24 @@ export function ComboGrid({
 ```
 
 **The Waterfall:**
+
 - Card detail page has 15-20+ combos
 - Each combo calls `getCardName(cardId)` which searches through 36 cards
 - Total searches per render: 20 × 36 = 720 array iterations
 - Search filtering adds another layer of lookups
 
 **Impact:**
+
 - Combo section rendering is slower than necessary
 - Multiple re-renders compound the O(n) lookups
 - Doesn't affect page load (combos loaded after initial render) but affects interactions
 
 **Good Pattern Exists:** `/home/user/project/app/cards/CardsClient.tsx` (Lines 62-66) already creates a Map
+
 ```typescript
 const cardsMap = useMemo(() => {
   const map = new Map<number, CardType>();
-  cards.forEach(card => map.set(card.id, card));
+  cards.forEach((card) => map.set(card.id, card));
   return map;
 }, [cards]);
 ```
@@ -246,27 +253,30 @@ const filteredCardsMemo = useMemo(() => {
 const [filteredCards, setFilteredCards] = useState<CardType[]>([]);
 
 useEffect(() => {
-  setFilteredCards(filteredCardsMemo);  // ⚠️ Syncs memo to state
+  setFilteredCards(filteredCardsMemo); // ⚠️ Syncs memo to state
 }, [filteredCardsMemo]);
 
 useEffect(() => {
-  setFilteredCards(filteredCardsMemo);  // ⚠️ Duplicate initialization
+  setFilteredCards(filteredCardsMemo); // ⚠️ Duplicate initialization
   // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);  // ⚠️ Empty deps = stale closure
+}, []); // ⚠️ Empty deps = stale closure
 ```
 
 **Why This Is Bad:**
+
 - State and memoized value do same thing
 - Creates extra render on every dependency change
 - Initialization effect has stale closure (references old `filteredCardsMemo`)
 - Component could just use `filteredCardsMemo` directly instead of state
 
 **Correct Pattern:**
+
 ```typescript
-const filteredCards = filteredCardsMemo;  // Direct assignment, no state needed
+const filteredCards = filteredCardsMemo; // Direct assignment, no state needed
 ```
 
 **Impact:**
+
 - Extra re-render on mount and every filter change
 - Violates React optimization patterns
 - Makes code harder to trace/debug
@@ -287,27 +297,27 @@ export function middleware(request: NextRequest) {
 
   // Skip rate limiting but still should set cache headers
   if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/images') ||
-    pathname.startsWith('/data') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/api/health') ||
-    pathname.endsWith('.ico') ||
-    pathname.endsWith('.png') ||
-    pathname.endsWith('.jpg') ||
-    pathname.endsWith('.jpeg') ||
-    pathname.endsWith('.svg') ||
-    pathname.endsWith('.webp') ||
-    pathname.endsWith('.css') ||
-    pathname.endsWith('.js') ||
-    pathname.endsWith('.woff') ||
-    pathname.endsWith('.woff2')
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/data") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/api/health") ||
+    pathname.endsWith(".ico") ||
+    pathname.endsWith(".png") ||
+    pathname.endsWith(".jpg") ||
+    pathname.endsWith(".jpeg") ||
+    pathname.endsWith(".svg") ||
+    pathname.endsWith(".webp") ||
+    pathname.endsWith(".css") ||
+    pathname.endsWith(".js") ||
+    pathname.endsWith(".woff") ||
+    pathname.endsWith(".woff2")
   ) {
-    return NextResponse.next();  // ⚠️ No cache headers set!
+    return NextResponse.next(); // ⚠️ No cache headers set!
   }
 
   // ... rest of middleware
-  
+
   // Line 200+: Only headers set are security headers, not cache headers
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-XSS-Protection", "1; mode=block");
@@ -316,6 +326,7 @@ export function middleware(request: NextRequest) {
 ```
 
 **Missing Headers:**
+
 ```
 Cache-Control: public, max-age=31536000, immutable  // For hashed assets
 Cache-Control: public, max-age=3600                 // For images
@@ -323,11 +334,13 @@ Cache-Control: public, max-age=86400                // For JSON data
 ```
 
 **Data Files Not Optimized:**
+
 - `/public/data/cards.json` (220KB) - No explicit cache header
 - `/public/images/cards/*.png` (36 × 7KB) - No explicit cache header
 - Pages generated by ISR - No Cache-Control headers
 
 **Impact:**
+
 - Browser may re-validate cache on every request
 - CDN may not cache aggressively
 - Repeat visitors may re-download static assets
@@ -345,29 +358,32 @@ Cache-Control: public, max-age=86400                // For JSON data
 ```typescript
 const navigateCard = (direction: "prev" | "next") => {
   if (!selectedCard) return;
-  
-  const currentIndex = filteredCards.findIndex(  // ⚠️ O(n) search
+
+  const currentIndex = filteredCards.findIndex(
+    // ⚠️ O(n) search
     (c) => c.id === selectedCard.id,
   );
-  
+
   let newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
   if (newIndex < 0) newIndex = filteredCards.length - 1;
   if (newIndex >= filteredCards.length) newIndex = 0;
-  
+
   setSelectedCard(filteredCards[newIndex]);
 };
 ```
 
 **Impact:**
+
 - Called when user clicks Previous/Next in modal
 - 36 cards max, so only 36 iterations max
 - Negligible performance impact
 - Only when modal is open (not on initial page load)
 
 **Could be optimized by:**
+
 ```typescript
 const filteredCardsMap = useMemo(() => {
-  const map = new Map<number, number>();  // Card ID -> Index
+  const map = new Map<number, number>(); // Card ID -> Index
   filteredCards.forEach((card, index) => map.set(card.id, index));
   return map;
 }, [filteredCards]);
@@ -407,12 +423,14 @@ const sizeClasses = {
 ```
 
 **Issue:**
+
 - Next.js Image component generates multiple sizes based on `width`/`height`
 - But actual rendered sizes are `80px`, `112px`, or `144px`
 - `sizes` prop doesn't match the actual responsive breakpoints
 - Next.js may generate wrong-sized images
 
 **Correct Approach:**
+
 ```typescript
 <Image
   src={card.imageUrl || ""}
@@ -430,12 +448,14 @@ const sizeClasses = {
 ## Summary By Component
 
 ### `/app/cards/page.tsx`
+
 - **Issue:** Full JSON data load
 - **Severity:** Medium
 - **Fix:** Lazy load combo data separately
 
 ### `/app/cards/CardsClient.tsx` ⚠️ HIGHEST IMPACT
-- **Issues:** 
+
+- **Issues:**
   - Missing lazy loading (HIGH)
   - Multiple state updates (HIGH)
   - Redundant useEffect (MEDIUM)
@@ -444,16 +464,19 @@ const sizeClasses = {
 - **Affected Users:** Every card list visitor
 
 ### `/app/cards/[id]/page.tsx`
+
 - **Issue:** Linear search in getCardById
 - **Severity:** Low (only 36 cards)
 - **Fix:** Already cached via SSG
 
 ### `/app/cards/[id]/CardDetailClient.tsx` ⚠️ HIGH IMPACT
+
 - **Issue:** O(n) card lookup function
 - **Severity:** Medium
 - **Fix:** Implement Map-based lookup
 
 ### `/components/Card.tsx`
+
 - **Issues:**
   - Missing loading="lazy" support (HIGH)
   - Image sizing mismatch (MEDIUM)
@@ -461,16 +484,19 @@ const sizeClasses = {
 - **Used by:** Both CardsClient and CardDetailClient
 
 ### `/components/CardDetailSections.tsx`
+
 - **Issue:** Uses inefficient getCardName function
 - **Severity:** Medium
 - **Fix:** Pass cardsMap instead of function
 
 ### `/lib/data.ts`
+
 - **Issue:** No optimizations for card data
 - **Severity:** Low
 - **Used by:** Page.tsx and [id]/page.tsx
 
 ### `/middleware.ts`
+
 - **Issue:** No Cache-Control headers
 - **Severity:** Low-Medium
 - **Total Lines:** 271
@@ -480,14 +506,15 @@ const sizeClasses = {
 ## Performance Testing Recommendations
 
 Run lighthouse with:
+
 ```bash
 npm run build && npm start
 # Then test at http://localhost:3000/cards
 ```
 
 Key metrics to measure:
+
 - **LCP (Largest Contentful Paint)** - Should be <2.5s
 - **FID (First Input Delay)** - Should be <100ms
 - **CLS (Cumulative Layout Shift)** - Should be <0.1
 - **TTI (Time To Interactive)** - Should be <3.8s
-

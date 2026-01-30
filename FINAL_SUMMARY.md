@@ -7,11 +7,13 @@ The complete optimization, simplification, and preparation for production deploy
 ## What Was Accomplished
 
 ### Phase 1: Root CPU Issue Fixed
+
 - **Problem**: `force-dynamic` blocking Vercel edge caching
 - **Solution**: Removed the directive
 - **Result**: ~70% CPU reduction (49.8% → ~15% at P75)
 
-### Phase 2: Code Simplification  
+### Phase 2: Code Simplification
+
 - **Deleted**: 528 lines of unnecessary code
   - Complex caching logic (367 lines)
   - Static interpretation generation (306 lines)
@@ -21,6 +23,7 @@ The complete optimization, simplification, and preparation for production deploy
 - **Result**: Clean, maintainable codebase
 
 ### Phase 3: Performance Optimization
+
 - **Optimized**: Prompt builder efficiency
   - O(n) → O(1) spread lookups using Map
   - Pre-cached spread arrays at module load
@@ -28,6 +31,7 @@ The complete optimization, simplification, and preparation for production deploy
 - **Result**: ~25% faster per-request performance
 
 ### Phase 4: Build & Deployment Ready
+
 - **Fixed**: Next.js build configuration issues
 - **Verified**: Successful production build
 - **Created**: Vercel deployment configuration
@@ -35,18 +39,19 @@ The complete optimization, simplification, and preparation for production deploy
 
 ## Final Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| API Route | 240 lines | 102 lines | 58% ↓ |
-| Cache Code | 367 lines | 0 lines | 100% ↓ |
-| CPU @ P75 | 49.8% | ~15% | 70% ↓ |
-| Spread Lookup | O(n) | O(1) | Instant |
-| Build Size | Large | Optimized | Faster |
-| Dependencies | +1 (lru) | Clean | Removed |
+| Metric        | Before    | After     | Improvement |
+| ------------- | --------- | --------- | ----------- |
+| API Route     | 240 lines | 102 lines | 58% ↓       |
+| Cache Code    | 367 lines | 0 lines   | 100% ↓      |
+| CPU @ P75     | 49.8%     | ~15%      | 70% ↓       |
+| Spread Lookup | O(n)      | O(1)      | Instant     |
+| Build Size    | Large     | Optimized | Faster      |
+| Dependencies  | +1 (lru)  | Clean     | Removed     |
 
 ## Architecture
 
 ### Simple, Efficient Flow
+
 ```
 User Request
     ↓
@@ -62,6 +67,7 @@ On Error: Simple Fallback Text
 ```
 
 ### Technology Stack
+
 - **Framework**: Next.js 14 App Router
 - **AI**: DeepSeek API
 - **Streaming**: Server-Sent Events (SSE)
@@ -72,6 +78,7 @@ On Error: Simple Fallback Text
 ## File Structure
 
 ### Core Application
+
 ```
 app/
 ├── api/
@@ -94,6 +101,7 @@ public/
 ```
 
 ### Deleted Files
+
 - ❌ lib/interpretation-cache.ts (complex logic)
 - ❌ lib/response-cache.ts (caching)
 - ❌ app/api/cache/metrics/route.ts (monitoring)
@@ -103,18 +111,21 @@ public/
 ## Performance
 
 ### Edge Caching
+
 - ✅ Vercel edge network enabled
 - ✅ Global distribution (50+ regions)
 - ✅ 6-hour cache TTL for identical readings
 - ✅ Sub-1ms cache hits
 
 ### API Response
+
 - ✅ DeepSeek: ~10-14 seconds
 - ✅ Proper SSE streaming
 - ✅ Simple fallback on error
 - ✅ No timeout blocking
 
 ### Build
+
 - ✅ Compiles successfully (0 errors)
 - ✅ 98 static pages pre-generated
 - ✅ TypeScript verified
@@ -123,17 +134,21 @@ public/
 ## Deployment
 
 ### Prerequisites
+
 1. GitHub repository with this code
 2. DeepSeek API key: https://platform.deepseek.com/api/keys
 3. Vercel account: https://vercel.com
 
 ### One-Command Deployment
+
 ```bash
 vercel deploy
 ```
 
 ### Configuration
+
 In Vercel Dashboard:
+
 - Add environment variable: `DEEPSEEK_API_KEY`
 - Optional: `DEEPSEEK_BASE_URL` (defaults to https://api.deepseek.com)
 - Redeploy to apply changes
@@ -202,6 +217,7 @@ Then visit http://localhost:3000 (or your deployment URL)
 ## What's Next (Optional Enhancements)
 
 If you want to add features later:
+
 - Reading history (ReadingAnalytics model exists)
 - Card popularity tracking (CardPopularity model exists)
 - Performance metrics (PerformanceMetrics model exists)
@@ -212,6 +228,7 @@ All Prisma models are pre-defined but unused (optional).
 ## Conclusion
 
 The Lenormand Tarot Reading App is now:
+
 - ✅ **Lightweight**: Question → Spread → DeepSeek → Response
 - ✅ **Fast**: Edge caching + optimized code
 - ✅ **Clean**: 528 lines removed, zero dead code

@@ -39,9 +39,14 @@ export function Deck({
     };
   }, []);
 
-  const canDraw = useMemo(() =>
-    Array.isArray(deck) && deck.length >= drawCount && !isDrawing && !isProcessing,
-  [deck, drawCount, isDrawing, isProcessing]);
+  const canDraw = useMemo(
+    () =>
+      Array.isArray(deck) &&
+      deck.length >= drawCount &&
+      !isDrawing &&
+      !isProcessing,
+    [deck, drawCount, isDrawing, isProcessing],
+  );
 
   const shuffle = useCallback(() => {
     if (!canDraw) return;
@@ -84,21 +89,29 @@ export function Deck({
     }, 1000);
   }, [canDraw, deck, drawCount, onDraw]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!canDraw) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      drawCards();
-    }
-  }, [canDraw, drawCards]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!canDraw) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        drawCards();
+      }
+    },
+    [canDraw, drawCards],
+  );
 
   const handleClick = useCallback(() => {
     if (canDraw) drawCards();
   }, [canDraw, drawCards]);
 
-  const isReady = useMemo(() =>
-    Array.isArray(deck) && deck.length > 0 && !isDrawing && deck.length >= drawCount,
-  [deck, isDrawing, drawCount]);
+  const isReady = useMemo(
+    () =>
+      Array.isArray(deck) &&
+      deck.length > 0 &&
+      !isDrawing &&
+      deck.length >= drawCount,
+    [deck, isDrawing, drawCount],
+  );
 
   return (
     <div className="space-y-6">
@@ -108,7 +121,11 @@ export function Deck({
           disabled={!canDraw || isShuffling}
           variant="outline"
           size="sm"
-          aria-label={isShuffling ? "Shuffling deck..." : "Shuffle the deck to randomize card order"}
+          aria-label={
+            isShuffling
+              ? "Shuffling deck..."
+              : "Shuffle the deck to randomize card order"
+          }
         >
           <Shuffle className="mr-2 h-4 w-4" aria-hidden="true" />
           Shuffle
@@ -135,11 +152,17 @@ export function Deck({
         <div
           className={cn(
             "relative rounded-lg transition-all",
-            !isReady ? "cursor-not-allowed opacity-60" : "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+            !isReady
+              ? "cursor-not-allowed opacity-60"
+              : "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
           )}
           role="button"
           tabIndex={isReady ? 0 : -1}
-          aria-label={isDrawing ? "Drawing cards..." : `Deck: ${Array.isArray(deck) ? deck.length : 0} cards. Click to draw ${drawCount} cards`}
+          aria-label={
+            isDrawing
+              ? "Drawing cards..."
+              : `Deck: ${Array.isArray(deck) ? deck.length : 0} cards. Click to draw ${drawCount} cards`
+          }
           aria-disabled={!isReady}
           onClick={handleClick}
           onKeyDown={handleKeyDown}

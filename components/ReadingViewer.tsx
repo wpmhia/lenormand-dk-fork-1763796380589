@@ -373,8 +373,14 @@ export function ReadingViewer({
   const [significatorType, setSignificatorType] =
     useState<SignificatorType>("none");
 
-  const cardIndex = useMemo(() => new Map(allCards.map(c => [c.id, c])), [allCards]);
-  const getCardByIdMemo = useCallback((id: number) => cardIndex.get(id), [cardIndex]);
+  const cardIndex = useMemo(
+    () => new Map(allCards.map((c) => [c.id, c])),
+    [allCards],
+  );
+  const getCardByIdMemo = useCallback(
+    (id: number) => cardIndex.get(id),
+    [cardIndex],
+  );
 
   const significatorCardId =
     significatorType !== "none" ? SIGNIFICATOR_CARDS[significatorType] : -1;
@@ -409,8 +415,11 @@ export function ReadingViewer({
   const renderLayout = () => {
     if (reading.layoutType === 1) {
       const validCards = reading.cards
-        .map((readingCard, index) => ({ card: getCardByIdMemo(readingCard.id), index }))
-        .filter(item => item.card !== undefined);
+        .map((readingCard, index) => ({
+          card: getCardByIdMemo(readingCard.id),
+          index,
+        }))
+        .filter((item) => item.card !== undefined);
 
       return (
         <div className="flex justify-center py-lg">
@@ -473,14 +482,18 @@ export function ReadingViewer({
             style={{ gridTemplateColumns: "repeat(9, minmax(0, 1fr))" }}
           >
             {reading.cards
-              .map((readingCard, index) => ({ card: getCardByIdMemo(readingCard.id), index }))
-              .filter(item => item.card !== undefined)
+              .map((readingCard, index) => ({
+                card: getCardByIdMemo(readingCard.id),
+                index,
+              }))
+              .filter((item) => item.card !== undefined)
               .map(({ card, index }) => {
                 const pos = getGrandTableauPosition(index);
                 const isSignificator = index === significatorIndex;
                 const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
                 const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
-                const isCardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
+                const isCardsOfFate =
+                  GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
                 const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card!.id];
 
                 const zoneInfo =
@@ -679,50 +692,53 @@ export function ReadingViewer({
           )}
         </div>
       );
-      } else {
-        const columns =
-          reading.layoutType === 3
-            ? 3
-            : reading.layoutType === 5
-              ? 5
-              : reading.layoutType === 7
-                ? 7
-                : 4;
+    } else {
+      const columns =
+        reading.layoutType === 3
+          ? 3
+          : reading.layoutType === 5
+            ? 5
+            : reading.layoutType === 7
+              ? 7
+              : 4;
 
-        const validCards = reading.cards
-          .map((readingCard, index) => ({ card: getCardByIdMemo(readingCard.id), index }))
-          .filter(item => item.card !== undefined);
+      const validCards = reading.cards
+        .map((readingCard, index) => ({
+          card: getCardByIdMemo(readingCard.id),
+          index,
+        }))
+        .filter((item) => item.card !== undefined);
 
-        return (
-          <div className="flex flex-wrap justify-center gap-md py-lg">
-            {validCards.map(({ card, index }) => {
-              const positionInfo = getPositionInfo(index, spreadId);
+      return (
+        <div className="flex flex-wrap justify-center gap-md py-lg">
+          {validCards.map(({ card, index }) => {
+            const positionInfo = getPositionInfo(index, spreadId);
 
-              return (
-                <MemoizedAnimatedCard
-                  key={index}
-                  delay={index * 0.15}
-                  className="flex flex-col items-center space-y-md"
-                >
-                  <div className="flex flex-col items-center space-y-md">
-                    <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
-                      {positionInfo.label}
-                    </div>
-                    <MemoizedCardWithTooltip
-                      card={card!}
-                      size="lg"
-                      onClick={() => setSelectedCard(card!)}
-                      className="cursor-pointer"
-                      positionLabel={positionInfo.label}
-                      positionDescription={positionInfo.meaning}
-                    />
+            return (
+              <MemoizedAnimatedCard
+                key={index}
+                delay={index * 0.15}
+                className="flex flex-col items-center space-y-md"
+              >
+                <div className="flex flex-col items-center space-y-md">
+                  <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
+                    {positionInfo.label}
                   </div>
-                </MemoizedAnimatedCard>
-              );
-            })}
-          </div>
-        );
-      }
+                  <MemoizedCardWithTooltip
+                    card={card!}
+                    size="lg"
+                    onClick={() => setSelectedCard(card!)}
+                    className="cursor-pointer"
+                    positionLabel={positionInfo.label}
+                    positionDescription={positionInfo.meaning}
+                  />
+                </div>
+              </MemoizedAnimatedCard>
+            );
+          })}
+        </div>
+      );
+    }
   };
 
   return (
@@ -824,15 +840,14 @@ export function ReadingViewer({
                 const card = getCardByIdMemo(adjCard.id);
                 if (!card) return null;
 
-                const combination = getStaticCombination(
-                  selectedCard.id,
-                  card.id,
-                ) || getCombinationMeaning(
-                  selectedCard,
-                  card,
-                  readingCard.position,
-                  adjCard.position,
-                );
+                const combination =
+                  getStaticCombination(selectedCard.id, card.id) ||
+                  getCombinationMeaning(
+                    selectedCard,
+                    card,
+                    readingCard.position,
+                    adjCard.position,
+                  );
 
                 return (
                   <div

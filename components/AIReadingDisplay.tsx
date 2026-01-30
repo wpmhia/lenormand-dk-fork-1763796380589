@@ -3,9 +3,9 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 
-const ReactMarkdown = dynamic(() => import('react-markdown'), {
+const ReactMarkdown = dynamic(() => import("react-markdown"), {
   loading: () => <div className="animate-pulse">Loading...</div>,
-  ssr: false
+  ssr: false,
 });
 import { AIReadingResponse } from "@/lib/ai-config";
 import { Button } from "@/components/ui/button";
@@ -71,19 +71,19 @@ export function AIReadingDisplay({
 
     // Check if we're in a secure context and have user interaction
     if (!window.isSecureContext) {
-      console.warn('Clipboard access requires secure context (HTTPS)');
+      console.warn("Clipboard access requires secure context (HTTPS)");
       return;
     }
 
     try {
       // Check if Clipboard API is available
       if (!navigator.clipboard) {
-        throw new Error('Clipboard API not available');
+        throw new Error("Clipboard API not available");
       }
 
       // Validate content length to prevent excessive clipboard usage
       if (fullContent.length > 50000) {
-        console.warn('Content too long for clipboard');
+        console.warn("Content too long for clipboard");
         return;
       }
 
@@ -116,8 +116,11 @@ export function AIReadingDisplay({
       setTimeout(() => setCopyClicked(false), 2000);
     } catch (err) {
       // Log specific error for debugging
-      console.warn('Rich clipboard failed:', err instanceof Error ? err.message : 'Unknown error');
-      
+      console.warn(
+        "Rich clipboard failed:",
+        err instanceof Error ? err.message : "Unknown error",
+      );
+
       try {
         // Fallback to text-only copy
         await navigator.clipboard.writeText(fullContent);
@@ -125,24 +128,27 @@ export function AIReadingDisplay({
         setTimeout(() => setCopyClicked(false), 2000);
       } catch (fallbackErr) {
         // Log fallback error for debugging but don't expose to user
-        console.warn('Text clipboard failed:', fallbackErr instanceof Error ? fallbackErr.message : 'Unknown error');
-        
+        console.warn(
+          "Text clipboard failed:",
+          fallbackErr instanceof Error ? fallbackErr.message : "Unknown error",
+        );
+
         // Final fallback: show user can copy manually
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.value = fullContent;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        
+
         try {
-          document.execCommand('copy');
+          document.execCommand("copy");
           setCopyClicked(true);
           setTimeout(() => setCopyClicked(false), 2000);
         } catch (execErr) {
-          console.warn('Fallback copy also failed');
+          console.warn("Fallback copy also failed");
         } finally {
           document.body.removeChild(textArea);
         }
@@ -177,11 +183,36 @@ export function AIReadingDisplay({
           <div className="reading-content space-y-4 opacity-80">
             <ReactMarkdown
               components={{
-                h1: ({ node, ...props }) => <h1 className="text-2xl font-semibold text-foreground" {...props} />,
-                h2: ({ node, ...props }) => <h2 className="text-xl font-semibold text-foreground" {...props} />,
-                h3: ({ node, ...props }) => <h3 className="text-lg font-semibold text-foreground" {...props} />,
-                p: ({ node, ...props }) => <div className="text-base leading-relaxed text-foreground/90" {...props} />,
-                strong: ({ node, ...props }) => <strong className="font-semibold text-foreground" {...props} />,
+                h1: ({ node, ...props }) => (
+                  <h1
+                    className="text-2xl font-semibold text-foreground"
+                    {...props}
+                  />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2
+                    className="text-xl font-semibold text-foreground"
+                    {...props}
+                  />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3
+                    className="text-lg font-semibold text-foreground"
+                    {...props}
+                  />
+                ),
+                p: ({ node, ...props }) => (
+                  <div
+                    className="text-base leading-relaxed text-foreground/90"
+                    {...props}
+                  />
+                ),
+                strong: ({ node, ...props }) => (
+                  <strong
+                    className="font-semibold text-foreground"
+                    {...props}
+                  />
+                ),
               }}
             >
               {streamedContent}

@@ -61,7 +61,10 @@ export default function ReadingFundamentalsPage() {
             items={[
               { name: "Home", url: "/" },
               { name: "Learn", url: "/learn" },
-              { name: "Reading Fundamentals", url: "/learn/reading-fundamentals" },
+              {
+                name: "Reading Fundamentals",
+                url: "/learn/reading-fundamentals",
+              },
             ]}
           />
         </div>
@@ -203,7 +206,9 @@ export default function ReadingFundamentalsPage() {
                       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
                         <span className="font-bold text-white">1</span>
                       </div>
-                      <p className="text-sm font-medium text-foreground">The Rider</p>
+                      <p className="text-sm font-medium text-foreground">
+                        The Rider
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         News, Messages
                       </p>
@@ -212,7 +217,9 @@ export default function ReadingFundamentalsPage() {
                       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
                         <span className="font-bold text-white">2</span>
                       </div>
-                      <p className="text-sm font-medium text-foreground">The Snake</p>
+                      <p className="text-sm font-medium text-foreground">
+                        The Snake
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Deception, Wisdom
                       </p>
@@ -221,7 +228,9 @@ export default function ReadingFundamentalsPage() {
                       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-r from-primary to-primary/80">
                         <span className="font-bold text-white">3</span>
                       </div>
-                      <p className="text-sm font-medium text-foreground">The Bouquet</p>
+                      <p className="text-sm font-medium text-foreground">
+                        The Bouquet
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Gift, Celebration
                       </p>
@@ -235,15 +244,16 @@ export default function ReadingFundamentalsPage() {
                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>
                       • &ldquo;News about deception brings a gift&rdquo; -
-                      Warning about deceptive news that leads to something positive
+                      Warning about deceptive news that leads to something
+                      positive
                     </li>
                     <li>
-                      • &ldquo;A message reveals hidden wisdom as a gift&rdquo; -
-                      Learning something valuable from a communication
+                      • &ldquo;A message reveals hidden wisdom as a gift&rdquo;
+                      - Learning something valuable from a communication
                     </li>
                     <li>
-                      • &ldquo;Quick changes bring celebration&rdquo; -
-                      Positive changes happening soon
+                      • &ldquo;Quick changes bring celebration&rdquo; - Positive
+                      changes happening soon
                     </li>
                   </ul>
                 </div>
@@ -285,13 +295,13 @@ export default function ReadingFundamentalsPage() {
                     (3) + Modifier (4) + Outcome (5)
                   </p>
                   <p>
-                    <strong>Best for:</strong> Daily draws, quick questions, when you
-                    only need the headline
+                    <strong>Best for:</strong> Daily draws, quick questions,
+                    when you only need the headline
                   </p>
                   <p>
-                    <strong>Example:</strong> &quot;The Rider (subject) brings an
-                    invitation (object) to the family (modifier) and leads to money
-                    (outcome).&quot;
+                    <strong>Example:</strong> &quot;The Rider (subject) brings
+                    an invitation (object) to the family (modifier) and leads to
+                    money (outcome).&quot;
                   </p>
                 </div>
               </div>
@@ -305,9 +315,9 @@ export default function ReadingFundamentalsPage() {
                     <strong>Time:</strong> 60–90 seconds
                   </p>
                   <p>
-                    <strong>Method:</strong> Start with the sentence, then layer three
-                    optional interpretive lenses, analyze adjacent pairs, and add timing if
-                    needed.
+                    <strong>Method:</strong> Start with the sentence, then layer
+                    three optional interpretive lenses, analyze adjacent pairs,
+                    and add timing if needed.
                   </p>
                   <p>
                     <strong>Layers:</strong>
@@ -318,8 +328,8 @@ export default function ReadingFundamentalsPage() {
                       Problem-Advice-Outcome OR Situation-Action-Result
                     </li>
                     <li>
-                      • Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as
-                      micro-story beats
+                      • Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as micro-story
+                      beats
                     </li>
                     <li>
                       • Optional timing: Add pips of card 5 (≤10=days,
@@ -332,8 +342,9 @@ export default function ReadingFundamentalsPage() {
                     </li>
                   </ul>
                   <p>
-                    <strong>Best for:</strong> Important questions, relationship issues,
-                    decisions where you need to know <em>when, why, and who</em>
+                    <strong>Best for:</strong> Important questions, relationship
+                    issues, decisions where you need to know{" "}
+                    <em>when, why, and who</em>
                   </p>
                 </div>
               </div>
@@ -341,8 +352,8 @@ export default function ReadingFundamentalsPage() {
 
             <div className="rounded-lg bg-muted p-4">
               <p className="text-sm font-medium text-foreground">
-                💡 Think of Sentence mode as the <strong>headline</strong>; Structured
-                mode is the <strong>full article</strong>.
+                💡 Think of Sentence mode as the <strong>headline</strong>;
+                Structured mode is the <strong>full article</strong>.
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
                 Use the light version when you&apos;re in a hurry. Run the full
@@ -481,10 +492,12 @@ export default function ReadingFundamentalsPage() {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Read cards 1-2-3-4-5 as ONE grammatical sentence
-                  (subject-verb-object-modifier-outcome). Stop. Fast headline reading.
+                  (subject-verb-object-modifier-outcome). Stop. Fast headline
+                  reading.
                 </p>
                 <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Daily draws, quick questions, when you only need the headline
+                  Best for: Daily draws, quick questions, when you only need the
+                  headline
                 </div>
               </div>
 
@@ -494,12 +507,12 @@ export default function ReadingFundamentalsPage() {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Start with the same sentence, then layer three optional
-                  interpretive lenses, analyze four adjacent pairs, add timing if needed,
-                  identify significators. Complete deep analysis.
+                  interpretive lenses, analyze four adjacent pairs, add timing
+                  if needed, identify significators. Complete deep analysis.
                 </p>
                 <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: Important questions, relationship issues, decisions that need
-                  clarity on **when, why, and who**
+                  Best for: Important questions, relationship issues, decisions
+                  that need clarity on **when, why, and who**
                 </div>
               </div>
 
@@ -548,7 +561,8 @@ export default function ReadingFundamentalsPage() {
                   positions in the reading, not gender
                 </strong>
                 . These terms date back to Marie-Anne&apos;s original system and
-                represent structural roles rather than the gender of people involved.
+                represent structural roles rather than the gender of people
+                involved.
               </p>
             </div>
 
@@ -562,12 +576,14 @@ export default function ReadingFundamentalsPage() {
                 </h3>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    <strong className="text-card-foreground">Meaning:</strong> The first
-                    person in the reading
+                    <strong className="text-card-foreground">Meaning:</strong>{" "}
+                    The first person in the reading
                   </p>
                   <p>
-                    <strong className="text-card-foreground">Also called:</strong> Primary
-                    subject, the querent, central figure
+                    <strong className="text-card-foreground">
+                      Also called:
+                    </strong>{" "}
+                    Primary subject, the querent, central figure
                   </p>
                   <p>
                     <strong className="text-card-foreground">
@@ -577,9 +593,10 @@ export default function ReadingFundamentalsPage() {
                     woman, or any person)
                   </p>
                   <p>
-                    <strong className="text-card-foreground">Example:</strong> In a reading
-                    about two people meeting, if you shuffle and get The Man in position 1, it
-                    represents the first person&apos;s perspective, regardless of their actual
+                    <strong className="text-card-foreground">Example:</strong>{" "}
+                    In a reading about two people meeting, if you shuffle and
+                    get The Man in position 1, it represents the first
+                    person&apos;s perspective, regardless of their actual
                     gender.
                   </p>
                 </div>
@@ -594,25 +611,28 @@ export default function ReadingFundamentalsPage() {
                 </h3>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    <strong className="text-card-foreground">Meaning:</strong> The second
-                    person in the reading
+                    <strong className="text-card-foreground">Meaning:</strong>{" "}
+                    The second person in the reading
                   </p>
                   <p>
-                    <strong className="text-card-foreground">Also called:</strong> Secondary
-                    subject, another figure, related person
+                    <strong className="text-card-foreground">
+                      Also called:
+                    </strong>{" "}
+                    Secondary subject, another figure, related person
                   </p>
                   <p>
                     <strong className="text-card-foreground">
                       In a relationship reading:
                     </strong>{" "}
-                    The secondary perspective or the other person involved (could be
-                    anyone—woman, man, or any person)
+                    The secondary perspective or the other person involved
+                    (could be anyone—woman, man, or any person)
                   </p>
                   <p>
-                    <strong className="text-card-foreground">Example:</strong> If you&apos;re reading
-                    about a meeting between two people and The Woman appears, it represents
-                    the second person&apos;s perspective or role, regardless of their actual
-                    gender.
+                    <strong className="text-card-foreground">Example:</strong>{" "}
+                    If you&apos;re reading about a meeting between two people
+                    and The Woman appears, it represents the second
+                    person&apos;s perspective or role, regardless of their
+                    actual gender.
                   </p>
                 </div>
               </div>
@@ -623,10 +643,11 @@ export default function ReadingFundamentalsPage() {
                 <strong className="text-card-foreground">
                   How to Interpret:
                 </strong>{" "}
-                Rather than thinking &ldquo;male&rdquo; or &ldquo;female,&rdquo; think
-                &ldquo;first person&rdquo; and &ldquo;second person.&rdquo; This allows for
-                accurate reading of any situation—gender-neutral, same-gender
-                relationships, or any dynamic where perspective matters.
+                Rather than thinking &ldquo;male&rdquo; or &ldquo;female,&rdquo;
+                think &ldquo;first person&rdquo; and &ldquo;second
+                person.&rdquo; This allows for accurate reading of any
+                situation—gender-neutral, same-gender relationships, or any
+                dynamic where perspective matters.
               </p>
             </div>
           </CardContent>
@@ -642,9 +663,9 @@ export default function ReadingFundamentalsPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <p className="leading-relaxed text-muted-foreground">
-              Lenormand excels at practical, everyday questions. Unlike Tarot focus on
-              psychological depth, Lenormand answers &quot;how&quot; and
-              &quot;when&quot; about real-world situations.
+              Lenormand excels at practical, everyday questions. Unlike Tarot
+              focus on psychological depth, Lenormand answers &quot;how&quot;
+              and &quot;when&quot; about real-world situations.
             </p>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -657,7 +678,9 @@ export default function ReadingFundamentalsPage() {
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>• &quot;Will they contact me soon?&quot;</li>
-                  <li>• &quot;What is the future of this relationship?&quot;</li>
+                  <li>
+                    • &quot;What is the future of this relationship?&quot;
+                  </li>
                   <li>• &quot;How do they feel about me?&quot;</li>
                   <li>• &quot;Will my ex come back?&quot;</li>
                   <li>• &quot;Is a new relationship coming?&quot;</li>
@@ -672,10 +695,14 @@ export default function ReadingFundamentalsPage() {
                   </h3>
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• &quot;What is the outcome of my job interview?&quot;</li>
+                  <li>
+                    • &quot;What is the outcome of my job interview?&quot;
+                  </li>
                   <li>• &quot;Should I change jobs?&quot;</li>
                   <li>• &quot;What will happen at work this week?&quot;</li>
-                  <li>• &quot;Is this a good time to start a business?&quot;</li>
+                  <li>
+                    • &quot;Is this a good time to start a business?&quot;
+                  </li>
                   <li>• &quot;What do I need to know about my career?&quot;</li>
                 </ul>
               </div>
@@ -719,14 +746,17 @@ export default function ReadingFundamentalsPage() {
               </h3>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
-                  <strong className="text-card-foreground">Be specific:</strong> Lenormand
-                  works best with concrete questions. &quot;Will I get the job?&quot; is
-                  better than &quot;What about my career?&quot;
+                  <strong className="text-card-foreground">Be specific:</strong>{" "}
+                  Lenormand works best with concrete questions. &quot;Will I get
+                  the job?&quot; is better than &quot;What about my
+                  career?&quot;
                 </p>
                 <p>
-                  <strong className="text-card-foreground">Include timeframe:</strong> &quot;What
-                  should I focus on this week?&quot; gets better answers than
-                  open-ended &quot;What about my future?&quot;
+                  <strong className="text-card-foreground">
+                    Include timeframe:
+                  </strong>{" "}
+                  &quot;What should I focus on this week?&quot; gets better
+                  answers than open-ended &quot;What about my future?&quot;
                 </p>
                 <p>
                   <strong className="text-card-foreground">
@@ -736,9 +766,9 @@ export default function ReadingFundamentalsPage() {
                   questions that try to control or predict others&apos; internal
                   states.
                 </p>
-                </div>
               </div>
-            </CardContent>
+            </div>
+          </CardContent>
         </Card>
 
         {/* Progress Tracker */}

@@ -7,7 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { LearningProgressTracker } from "@/components/LearningProgressTracker";
 import { BackToTop } from "@/components/BackToTop";
-import { Heart, Coins, Stethoscope, Briefcase, Zap, Users, ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
+import {
+  Heart,
+  Coins,
+  Stethoscope,
+  Briefcase,
+  Zap,
+  Users,
+  ArrowLeft,
+  ArrowRight,
+  ChevronDown,
+} from "lucide-react";
 import { useHeadingIds } from "@/hooks/use-heading-ids";
 import { useState, useMemo } from "react";
 
@@ -456,7 +466,13 @@ const getCombinationContexts = (): CombinationContext[] => [
 ];
 
 // Accordion Section Component
-function AccordionSection({ context, index }: { context: CombinationContext; index: number }) {
+function AccordionSection({
+  context,
+  index,
+}: {
+  context: CombinationContext;
+  index: number;
+}) {
   const [isOpen, setIsOpen] = useState(index === 0); // First section open by default
 
   return (
@@ -466,7 +482,7 @@ function AccordionSection({ context, index }: { context: CombinationContext; ind
           onClick={() => setIsOpen(!isOpen)}
           className="flex w-full items-center gap-3 transition-opacity hover:opacity-80"
         >
-          <div className="flex items-center gap-3 flex-1">
+          <div className="flex flex-1 items-center gap-3">
             {context.icon}
             <CardTitle id={context.title.toLowerCase().replace(/\s+/g, "-")}>
               {context.title}
@@ -476,7 +492,7 @@ function AccordionSection({ context, index }: { context: CombinationContext; ind
             className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
           />
         </button>
-        <p className="text-sm text-muted-foreground mt-2">
+        <p className="mt-2 text-sm text-muted-foreground">
           {context.description}
         </p>
       </CardHeader>
@@ -511,7 +527,7 @@ function AccordionSection({ context, index }: { context: CombinationContext; ind
 
 export default function CardCombinationsPage() {
   useHeadingIds();
-  
+
   // Memoize combination contexts
   const combinationContexts = useMemo(() => getCombinationContexts(), []);
 

@@ -611,7 +611,10 @@ export default function CardMeaningsPage() {
         {viewMode === "grid" ? (
           <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredCards.map((card, cardIndex) => (
-              <Link key={card.number} href={`/learn/card-meanings/${card.number}`}>
+              <Link
+                key={card.number}
+                href={`/learn/card-meanings/${card.number}`}
+              >
                 <Card className="cursor-pointer border border-border bg-card transition-shadow hover:shadow-md">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
@@ -688,7 +691,10 @@ export default function CardMeaningsPage() {
         ) : (
           <div className="mb-8 space-y-3">
             {filteredCards.map((card) => (
-              <Link key={card.number} href={`/learn/card-meanings/${card.number}`}>
+              <Link
+                key={card.number}
+                href={`/learn/card-meanings/${card.number}`}
+              >
                 <Card className="cursor-pointer border border-border bg-card transition-shadow hover:shadow-md">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">

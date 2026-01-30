@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const redirectMap: Record<string, string> = {
-  "reading": "/read/new",
-  "cards": "/cards",
-  "learn": "/learn",
-  "about": "/about",
-  "privacy": "/privacy",
-  "terms": "/terms",
-  "home": "/",
+  reading: "/read/new",
+  cards: "/cards",
+  learn: "/learn",
+  about: "/about",
+  privacy: "/privacy",
+  terms: "/terms",
+  home: "/",
 };
 
 export async function GET(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   if (!code) {
     return NextResponse.json(
       { error: "No redirect code provided" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -26,13 +26,13 @@ export async function GET(request: NextRequest) {
   if (!destination) {
     return NextResponse.json(
       { error: "Invalid redirect code" },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
   return NextResponse.json(
     { url: destination },
-    { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } }
+    { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } },
   );
 }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       } catch {
         return NextResponse.json(
           { error: "Invalid URL provided" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     if (!destination) {
       return NextResponse.json(
         { error: "No valid destination found" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,12 +68,12 @@ export async function POST(request: NextRequest) {
         url: destination,
         permanent: permanent === true || permanent === "true",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch {
     return NextResponse.json(
       { error: "Invalid request body" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

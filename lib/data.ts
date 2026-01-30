@@ -2,7 +2,8 @@ import { Card, Reading, ReadingCard } from "./types";
 import staticCardsData from "@/public/data/cards.json";
 
 // HMAC signing for URL-shared readings (security fix)
-const READING_HMAC_SECRET = process.env.READING_HMAC_SECRET || "default-dev-key-change-in-production";
+const READING_HMAC_SECRET =
+  process.env.READING_HMAC_SECRET || "default-dev-key-change-in-production";
 
 async function generateHMAC(data: string): Promise<string> {
   if (typeof window === "undefined") {
@@ -21,12 +22,12 @@ async function generateHMAC(data: string): Promise<string> {
       encoder.encode(READING_HMAC_SECRET),
       { name: "HMAC", hash: "SHA-256" },
       false,
-      ["sign"]
+      ["sign"],
     );
     const signature = await crypto.subtle.sign(
       "HMAC",
       key,
-      encoder.encode(data)
+      encoder.encode(data),
     );
     const hashArray = Array.from(new Uint8Array(signature));
     const hashHex = hashArray
@@ -63,7 +64,7 @@ export async function getCardSummaries(): Promise<CardSummary[]> {
     return [];
   }
 
-  return data.map(card => ({
+  return data.map((card) => ({
     id: card.id,
     name: card.name,
     number: card.number,
@@ -86,13 +87,13 @@ export async function getCardLookupData(): Promise<CardLookup[]> {
     return [];
   }
 
-  return data.map(card => ({
+  return data.map((card) => ({
     id: card.id,
     name: card.name,
-    combos: card.combos?.slice(0, 10).map(c => ({
+    combos: card.combos?.slice(0, 10).map((c) => ({
       withCardId: c.withCardId,
-      meaning: c.meaning
-    }))
+      meaning: c.meaning,
+    })),
   }));
 }
 
@@ -121,29 +122,33 @@ export async function encodeReadingForUrl(reading: Reading): Promise<string> {
         "=": "",
       })[c] || c,
   );
-  
+
   // Add HMAC signature for verification
   const hmac = await generateHMAC(base64);
   return `${base64}.${hmac}`;
 }
 
 // Decode reading data from URL with HMAC validation
-export async function decodeReadingFromUrl(encoded: string): Promise<Partial<Reading> | null> {
+export async function decodeReadingFromUrl(
+  encoded: string,
+): Promise<Partial<Reading> | null> {
   try {
     // Split signature from data
     const [base64WithPad, providedHmac] = encoded.split(".");
-    
+
     if (!base64WithPad || !providedHmac) {
       return null; // Invalid format
     }
-    
+
     // Verify HMAC signature
     const computedHmac = await generateHMAC(base64WithPad);
     if (computedHmac !== providedHmac) {
-      console.warn("HMAC signature validation failed - URL may have been tampered with");
+      console.warn(
+        "HMAC signature validation failed - URL may have been tampered with",
+      );
       return null;
     }
-    
+
     const base64 = base64WithPad.replace(
       /[-_]/g,
       (c) => ({ "-": "+", _: "/" })[c] || c,
@@ -257,7 +262,7 @@ export function getGrandTableauAdjacentCards(
   const col = currentIndex % 9;
 
   // Create position-indexed map for O(1) lookup instead of O(n) search
-  const cardByPosition = new Map(cards.map(card => [card.position, card]));
+  const cardByPosition = new Map(cards.map((card) => [card.position, card]));
 
   // Adjacent positions in grid (top, bottom, left, right)
   const adjacentPositions = [

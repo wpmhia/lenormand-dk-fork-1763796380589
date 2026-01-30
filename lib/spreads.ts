@@ -82,7 +82,8 @@ export const MODERN_SPREADS: Spread[] = [
     id: "structured-reading",
     cards: 5,
     label: "5-Card Reading: Structured",
-    description: "Grammar-based analysis: Subject → Verb → Object → Modifier → Outcome",
+    description:
+      "Grammar-based analysis: Subject → Verb → Object → Modifier → Outcome",
     isAuthentic: false,
   },
   {
@@ -124,7 +125,15 @@ export interface GrandTableauPosition {
   isCenter: boolean;
   isCardsOfFate: boolean;
   isTopicCard: boolean;
-  topicType?: "health" | "home" | "love" | "job" | "boss" | "career" | "money" | "travel";
+  topicType?:
+    | "health"
+    | "home"
+    | "love"
+    | "job"
+    | "boss"
+    | "career"
+    | "money"
+    | "travel";
 }
 
 export interface DirectionalZone {
@@ -133,7 +142,10 @@ export interface DirectionalZone {
   color: string;
 }
 
-export const GRAND_TABLEAU_TOPIC_CARDS: Record<number, { type: string; label: string }> = {
+export const GRAND_TABLEAU_TOPIC_CARDS: Record<
+  number,
+  { type: string; label: string }
+> = {
   5: { type: "health", label: "Health" },
   4: { type: "home", label: "Home & Family" },
   24: { type: "love", label: "Love" },
@@ -153,12 +165,14 @@ export const GRAND_TABLEAU_CENTER_CARDS = [13, 14, 22, 23];
 export const DIRECTIONAL_ZONES: Record<string, DirectionalZone> = {
   left: {
     name: "Past",
-    description: "Cards to the left of the significator represent influences from the past",
+    description:
+      "Cards to the left of the significator represent influences from the past",
     color: "text-amber-600",
   },
   right: {
     name: "Future",
-    description: "Cards to the right of the significator represent potential outcomes",
+    description:
+      "Cards to the right of the significator represent potential outcomes",
     color: "text-blue-600",
   },
   above: {
@@ -173,7 +187,8 @@ export const DIRECTIONAL_ZONES: Record<string, DirectionalZone> = {
   },
   "top-left": {
     name: "Conscious Influences",
-    description: "Top-left diagonal - conscious forces influencing the situation",
+    description:
+      "Top-left diagonal - conscious forces influencing the situation",
     color: "text-violet-600",
   },
   "bottom-left": {
@@ -214,13 +229,22 @@ export function getGrandTableauPosition(index: number): GrandTableauPosition {
     isCenter,
     isCardsOfFate,
     isTopicCard: !!topicInfo,
-    topicType: topicInfo?.type as "health" | "home" | "love" | "job" | "boss" | "career" | "money" | "travel" | undefined,
+    topicType: topicInfo?.type as
+      | "health"
+      | "home"
+      | "love"
+      | "job"
+      | "boss"
+      | "career"
+      | "money"
+      | "travel"
+      | undefined,
   };
 }
 
 export function getPositionZone(
   significatorIndex: number,
-  cardIndex: number
+  cardIndex: number,
 ): { zone: string; distance: number; direction: string } {
   if (significatorIndex === -1) {
     return { zone: "general", distance: 0, direction: "" };
@@ -254,20 +278,29 @@ export function getPositionZone(
     zone = "below";
   }
 
-  return { zone, distance: Math.round(distance * 10) / 10, direction: direction.replace("-", " ") };
+  return {
+    zone,
+    distance: Math.round(distance * 10) / 10,
+    direction: direction.replace("-", " "),
+  };
 }
 
-export function getTopicCardsInSpread(cards: number[]): { index: number; cardId: number; topic: { type: string; label: string } }[] {
+export function getTopicCardsInSpread(
+  cards: number[],
+): { index: number; cardId: number; topic: { type: string; label: string } }[] {
   return cards
-    .filter(id => GRAND_TABLEAU_TOPIC_CARDS[id])
-    .map(id => ({
+    .filter((id) => GRAND_TABLEAU_TOPIC_CARDS[id])
+    .map((id) => ({
       index: cards.indexOf(id),
       cardId: id,
       topic: GRAND_TABLEAU_TOPIC_CARDS[id],
     }));
 }
 
-export function getDiagonalCards(significatorIndex: number, cards: number[]): {
+export function getDiagonalCards(
+  significatorIndex: number,
+  cards: number[],
+): {
   topLeft: number[];
   bottomLeft: number[];
   topRight: number[];

@@ -50,9 +50,11 @@ In the Vercel dashboard:
 2. Add the following variables:
 
 **Required:**
+
 - `DEEPSEEK_API_KEY`: Your DeepSeek API key from https://platform.deepseek.com/api/keys
 
 **Optional:**
+
 - `DEEPSEEK_BASE_URL`: Leave empty (defaults to https://api.deepseek.com)
 
 3. Deploy again to apply environment variables
@@ -94,22 +96,28 @@ DEEPSEEK_BASE_URL=https://api.deepseek.com
 ### Common Issues & Solutions
 
 #### Issue: "AI interpretation is not configured"
+
 **Solution**: Check that `DEEPSEEK_API_KEY` environment variable is set in Vercel dashboard
 
 #### Issue: Slow responses
-**Solution**: 
+
+**Solution**:
+
 - DeepSeek API responses are naturally slow (~10-14s)
 - Subsequent identical requests should be cached by Vercel edge network
 - Check cache-control headers are being sent
 
 #### Issue: Build fails
+
 **Solution**:
+
 - Clear Vercel cache: Dashboard → Settings → Git → Redeploy
 - Ensure Node.js 18+ is selected: Dashboard → Settings → Node.js Version
 
 ## Architecture
 
 The app uses:
+
 - **Next.js 14** - App Router with Edge Runtime
 - **Vercel Edge Network** - For caching and global distribution
 - **DeepSeek API** - For AI-powered tarot interpretations
@@ -118,17 +126,18 @@ The app uses:
 
 ## Performance Expectations
 
-| Metric | Value |
-|--------|-------|
-| First Load | <1s (edge cached) |
-| API Response | ~10-14s (DeepSeek) |
-| Edge Cache TTL | 6 hours |
-| Regions | Global (50+ regions) |
-| Uptime SLA | 99.95% |
+| Metric         | Value                |
+| -------------- | -------------------- |
+| First Load     | <1s (edge cached)    |
+| API Response   | ~10-14s (DeepSeek)   |
+| Edge Cache TTL | 6 hours              |
+| Regions        | Global (50+ regions) |
+| Uptime SLA     | 99.95%               |
 
 ## Scaling
 
 The app automatically scales with Vercel:
+
 - ✅ Automatic load balancing
 - ✅ DDoS protection
 - ✅ Auto-scaling API routes

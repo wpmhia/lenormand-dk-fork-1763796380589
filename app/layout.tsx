@@ -129,7 +129,8 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Lenormand Intelligence",
-  description: "AI-powered Lenormand card readings and divination guidance platform",
+  description:
+    "AI-powered Lenormand card readings and divination guidance platform",
   url: "https://lenormand.dk",
   applicationCategory: "Lifestyle",
   isAccessibleForFree: true,
@@ -173,7 +174,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-       <head>
+      <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -191,40 +192,46 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX'}', {
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX"}', {
                 page_path: window.location.pathname,
               });
             `,
           }}
         />
-         <Script
-            id="schema-org"
-            type="application/ld+json"
-            suppressHydrationWarning
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-          />
-         <Script
-            id="faq-schema"
-            type="application/ld+json"
-            suppressHydrationWarning
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-          />
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX'}`}
+          id="schema-org"
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX"}`}
           strategy="afterInteractive"
         />
-       </head>
-          <body className={`${inter.className} antialiased`} suppressHydrationWarning>
-           <TooltipProvider>
-             <div className="flex min-h-screen flex-col bg-background text-foreground" suppressHydrationWarning>
-               <Header />
-               <main className="flex-grow pt-14">{children}</main>
-               <Footer />
-             </div>
-             <Toaster />
-             <CookieConsent />
-           </TooltipProvider>
-         </body>
+      </head>
+      <body
+        className={`${inter.className} antialiased`}
+        suppressHydrationWarning
+      >
+        <TooltipProvider>
+          <div
+            className="flex min-h-screen flex-col bg-background text-foreground"
+            suppressHydrationWarning
+          >
+            <Header />
+            <main className="flex-grow pt-14">{children}</main>
+            <Footer />
+          </div>
+          <Toaster />
+          <CookieConsent />
+        </TooltipProvider>
+      </body>
     </html>
   );
 }

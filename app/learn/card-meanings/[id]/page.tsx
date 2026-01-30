@@ -7,10 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { BackToTop } from "@/components/BackToTop";
-import {
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface CardData {
@@ -37,7 +34,9 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
         const response = await fetch("/api/cards");
         if (!response.ok) throw new Error("Failed to fetch cards");
         const cardsData = await response.json();
-        const cardData = cardsData.find((c: CardData) => c.id === parseInt(params.id));
+        const cardData = cardsData.find(
+          (c: CardData) => c.id === parseInt(params.id),
+        );
         setCard(cardData || null);
       } catch (error) {
         console.error("Error fetching card:", error);
@@ -80,9 +79,10 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
 
   const previousCardId = Math.max(1, card.id - 1);
   const nextCardId = Math.min(36, card.id + 1);
-  const cardImageName = card.number === 22
-    ? "paths"
-    : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-");
+  const cardImageName =
+    card.number === 22
+      ? "paths"
+      : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -124,7 +124,7 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
                 <CardTitle>{card.name} Card</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="mb-6 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                   <Image
                     src={`/images/cards/${card.number.toString().padStart(2, "0")}-${cardImageName}.png`}
                     alt={card.name}
@@ -135,7 +135,9 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
                   />
 
                   <div>
-                    <h3 className="mb-2 text-lg font-semibold">Key Attributes</h3>
+                    <h3 className="mb-2 text-lg font-semibold">
+                      Key Attributes
+                    </h3>
                     <div className="space-y-2 text-sm">
                       {card.keywords.slice(0, 4).map((keyword) => (
                         <Badge key={keyword} variant="secondary">
@@ -149,14 +151,18 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
                       )}
                     </div>
 
-                    <h3 className="mb-2 mt-4 text-lg font-semibold">Description</h3>
+                    <h3 className="mb-2 mt-4 text-lg font-semibold">
+                      Description
+                    </h3>
                     <p className="mb-4 leading-relaxed text-muted-foreground">
                       {card.description}
                     </p>
 
                     {card.traditionalMeaning && (
                       <>
-                        <h3 className="mb-2 text-lg font-semibold">Traditional Meaning</h3>
+                        <h3 className="mb-2 text-lg font-semibold">
+                          Traditional Meaning
+                        </h3>
                         <p className="leading-relaxed text-muted-foreground">
                           {card.traditionalMeaning}
                         </p>
@@ -165,7 +171,9 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
 
                     {card.reversedMeaning && (
                       <>
-                        <h3 className="mb-2 mt-4 text-lg font-semibold">Reversed Meaning</h3>
+                        <h3 className="mb-2 mt-4 text-lg font-semibold">
+                          Reversed Meaning
+                        </h3>
                         <p className="leading-relaxed text-muted-foreground">
                           {card.reversedMeaning}
                         </p>
@@ -188,9 +196,7 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
                 </Button>
               </Link>
               <Link href="/learn/card-meanings">
-                <Button variant="outline">
-                  Back to All Cards
-                </Button>
+                <Button variant="outline">Back to All Cards</Button>
               </Link>
               <Link href={`/learn/card-meanings/${nextCardId}`}>
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
