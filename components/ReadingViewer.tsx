@@ -23,8 +23,8 @@ import {
   SignificatorType,
   SIGNIFICATOR_CARDS,
 } from "@/lib/spreads";
-import { Card } from "./Card";
-import { CardWithTooltip } from "./CardWithTooltip";
+import { MemoizedCard } from "./Card";
+import { MemoizedCardWithTooltip } from "./CardWithTooltip";
 import { MemoizedAnimatedCard } from "./AnimatedCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -427,7 +427,7 @@ export function ReadingViewer({
                   <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                     {positionInfo.label}
                   </div>
-                  <CardWithTooltip
+                  <MemoizedCardWithTooltip
                     card={card!}
                     size="lg"
                     onClick={() => setSelectedCard(card!)}
@@ -561,7 +561,7 @@ export function ReadingViewer({
                       </div>
                     )}
 
-                    <CardWithTooltip
+                    <MemoizedCardWithTooltip
                       card={card!}
                       size="sm"
                       onClick={() => setSelectedCard(card!)}
@@ -708,7 +708,7 @@ export function ReadingViewer({
                     <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                       {positionInfo.label}
                     </div>
-                    <CardWithTooltip
+                    <MemoizedCardWithTooltip
                       card={card!}
                       size="lg"
                       onClick={() => setSelectedCard(card!)}
@@ -840,11 +840,11 @@ export function ReadingViewer({
                     className="flex items-center gap-md rounded-lg border border-border bg-card/50 p-md"
                   >
                     <div className="flex items-center gap-md">
-                      <Card card={selectedCard} size="sm" />
+                      <MemoizedCard card={selectedCard} size="sm" />
                       <span className="text-lg font-medium text-primary">
                         +
                       </span>
-                      <Card card={card} size="sm" />
+                      <MemoizedCard card={card} size="sm" />
                     </div>
                     <div className="flex-1">
                       <div className="mb-sm font-medium text-muted-foreground">

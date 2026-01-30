@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { memo, useCallback } from "react";
 
 interface CardProps {
   card: CardType;
@@ -13,31 +14,35 @@ interface CardProps {
   className?: string;
 }
 
-export function Card({
+const sizeClasses: Record<string, string> = {
+  sm: "w-20 h-32 text-xs",
+  md: "w-28 h-40 text-sm sm:text-base",
+  lg: "w-36 h-52 text-base",
+};
+
+const sizeToPixels: Record<string, string> = {
+  sm: "80px",
+  md: "112px",
+  lg: "144px",
+};
+
+function CardInner({
   card,
   onClick,
   showBack = false,
   size = "md",
   className,
 }: CardProps) {
-  const handleCardClick = () => {
-    if (onClick) {
-      onClick();
-    }
-  };
+  const handleClick = useCallback(() => {
+    onClick?.();
+  }, [onClick]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (onClick && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
       onClick();
     }
-  };
-
-  const sizeClasses = {
-    sm: "w-20 h-32 text-xs",
-    md: "w-28 h-40 text-sm sm:text-base",
-    lg: "w-36 h-52 text-base",
-  };
+  }, [onClick]);
 
   if (showBack) {
     return (
@@ -47,7 +52,7 @@ export function Card({
           sizeClasses[size],
           className,
         )}
-        onClick={handleCardClick}
+        onClick={handleClick}
         onKeyDown={onClick ? handleKeyDown : undefined}
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? "button" : undefined}
@@ -58,7 +63,7 @@ export function Card({
           alt="Card back"
           fill
           className="object-cover"
-          sizes={`${size === "sm" ? "80px" : size === "md" ? "112px" : "144px"}`}
+          sizes={sizeToPixels[size]}
         />
       </div>
     );
@@ -72,7 +77,7 @@ export function Card({
           sizeClasses[size],
           className,
         )}
-        onClick={handleCardClick}
+        onClick={handleClick}
         onKeyDown={onClick ? handleKeyDown : undefined}
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? "button" : undefined}
@@ -84,7 +89,7 @@ export function Card({
            alt={card.name}
            fill
            className="h-full w-full object-cover"
-           sizes={`${size === "sm" ? "80px" : size === "md" ? "112px" : "144px"}`}
+           sizes={sizeToPixels[size]}
            loading="lazy"
          />
         </div>
@@ -103,3 +108,6 @@ export function Card({
 
   return <Link href={`/cards/${card.id}`}>{cardContent}</Link>;
 }
+
+export const Card = CardInner;
+export const MemoizedCard = memo(CardInner);

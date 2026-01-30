@@ -1,12 +1,13 @@
 "use client";
 
 import { Card as CardType } from "@/lib/types";
-import { Card } from "./Card";
+import { MemoizedCard } from "./Card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { memo } from "react";
 
 interface CardWithTooltipProps {
   card: CardType;
@@ -18,7 +19,7 @@ interface CardWithTooltipProps {
   positionDescription?: string;
 }
 
-export function CardWithTooltip({
+function CardWithTooltipInner({
   card,
   onClick,
   showBack = false,
@@ -31,7 +32,7 @@ export function CardWithTooltip({
     <Tooltip>
       <TooltipTrigger asChild>
         <div className="overflow-visible">
-          <Card
+          <MemoizedCard
             card={card}
             onClick={onClick}
             showBack={showBack}
@@ -42,7 +43,6 @@ export function CardWithTooltip({
       </TooltipTrigger>
       <TooltipContent className="z-50 max-w-xs overflow-visible border-border bg-card p-4 shadow-lg">
         <div className="space-y-3">
-          {/* Card Name */}
           <div>
             <h4 className="font-semibold text-foreground">{card.name}</h4>
             {positionLabel && (
@@ -57,14 +57,12 @@ export function CardWithTooltip({
             )}
           </div>
 
-          {/* Card Meaning */}
           <div>
             <p className="text-sm leading-relaxed text-foreground">
               {card.uprightMeaning}
             </p>
           </div>
 
-          {/* Keywords - clearly labeled and styled */}
           {card.keywords && card.keywords.length > 0 && (
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -87,3 +85,5 @@ export function CardWithTooltip({
     </Tooltip>
   );
 }
+
+export const MemoizedCardWithTooltip = memo(CardWithTooltipInner);

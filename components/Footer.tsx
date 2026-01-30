@@ -15,8 +15,8 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-background/50">
       <div className="container mx-auto px-4 py-6 md:py-8">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
-          <div>
+        <div className="grid grid-cols-4 gap-4 md:grid-cols-4 md:gap-8">
+          <div className="col-span-1">
             <Link href="/" className="block">
               <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-lg font-bold text-transparent">
                 Lenormand
@@ -71,6 +71,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                  Terms
+                </Link>
+              </li>
+              <li>
                 <button onClick={resetCookieConsent} className="text-muted-foreground hover:text-primary transition-colors">
                   Cookies
                 </button>
@@ -78,19 +83,28 @@ export function Footer() {
             </ul>
           </div>
 
-          <div className="text-right md:text-left">
+          <div>
             <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Support
             </h4>
-            <a
-              href="https://ko-fi.com/Y8Y81NVDEK"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
-            >
-              <Heart className="h-3 w-3" />
-              Ko-fi
-            </a>
+            <ul className="space-y-1 text-xs">
+              <li>
+                <a
+                  href="https://ko-fi.com/Y8Y81NVDEK"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Heart className="h-3 w-3" />
+                  Ko-fi
+                </a>
+              </li>
+              <li>
+                <Link href="/env-check" className="text-muted-foreground hover:text-primary transition-colors">
+                  Status
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 

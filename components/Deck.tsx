@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Card as CardType } from "@/lib/types";
-import { Card } from "./Card";
+import { MemoizedCard } from "./Card";
 import { Button } from "@/components/ui/button";
 import { Shuffle, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,7 @@ export function Deck({
   drawCount = 3,
   isProcessing = false,
 }: DeckProps) {
-  const [deck, setDeck] = useState<CardType[]>(cards || []);
+  const [deck, setDeck] = useState<CardType[]>([]);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnCards, setDrawnCards] = useState<CardType[]>([]);
@@ -39,12 +39,15 @@ export function Deck({
     };
   }, []);
 
-  const shuffle = () => {
-    if (!Array.isArray(deck)) return;
+  const canDraw = useMemo(() =>
+    Array.isArray(deck) && deck.length >= drawCount && !isDrawing && !isProcessing,
+  [deck, drawCount, isDrawing, isProcessing]);
+
+  const shuffle = useCallback(() => {
+    if (!canDraw) return;
 
     setIsShuffling(true);
 
-    // Fisher-Yates shuffle algorithm
     const shuffled = [...deck];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -56,14 +59,10 @@ export function Deck({
     shuffleTimeoutRef.current = window.setTimeout(() => {
       setIsShuffling(false);
     }, 500);
-  };
+  }, [canDraw, deck]);
 
-  const drawCards = () => {
-    if (!Array.isArray(deck)) return;
-
-    if (deck.length < drawCount) {
-      return;
-    }
+  const drawCards = useCallback(() => {
+    if (!canDraw) return;
 
     setIsDrawing(true);
 
@@ -73,7 +72,6 @@ export function Deck({
     for (let i = 0; i < drawCount; i++) {
       const randomIndex = Math.floor(Math.random() * remainingDeck.length);
       const drawnCard = remainingDeck.splice(randomIndex, 1)[0];
-
       newDrawnCards.push(drawnCard);
     }
 
@@ -82,33 +80,35 @@ export function Deck({
 
     drawTimeoutRef.current = window.setTimeout(() => {
       setIsDrawing(false);
-      if (onDraw) {
-        onDraw(newDrawnCards);
-      }
+      onDraw?.(newDrawnCards);
     }, 1000);
-  };
+  }, [canDraw, deck, drawCount, onDraw]);
 
-  const reset = () => {
-    setDeck(cards || []);
-    setDrawnCards([]);
-  };
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!canDraw) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      drawCards();
+    }
+  }, [canDraw, drawCards]);
+
+  const handleClick = useCallback(() => {
+    if (canDraw) drawCards();
+  }, [canDraw, drawCards]);
+
+  const isReady = useMemo(() =>
+    Array.isArray(deck) && deck.length > 0 && !isDrawing && deck.length >= drawCount,
+  [deck, isDrawing, drawCount]);
 
   return (
     <div className="space-y-6">
-      {/* Controls */}
       <div className="slide-in-up flex justify-center gap-3">
         <Button
           onClick={shuffle}
-          disabled={
-            isShuffling || !Array.isArray(deck) || deck.length < drawCount
-          }
+          disabled={!canDraw || isShuffling}
           variant="outline"
           size="sm"
-          aria-label={
-            isShuffling
-              ? "Shuffling deck..."
-              : "Shuffle the deck to randomize card order"
-          }
+          aria-label={isShuffling ? "Shuffling deck..." : "Shuffle the deck to randomize card order"}
         >
           <Shuffle className="mr-2 h-4 w-4" aria-hidden="true" />
           Shuffle
@@ -116,12 +116,7 @@ export function Deck({
 
         <Button
           onClick={drawCards}
-          disabled={
-            isDrawing ||
-            isProcessing ||
-            !Array.isArray(deck) ||
-            deck.length < drawCount
-          }
+          disabled={!canDraw}
           size="sm"
           aria-label={
             isDrawing
@@ -136,45 +131,20 @@ export function Deck({
         </Button>
       </div>
 
-      {/* Deck Display */}
       <div className="fade-in-scale flex justify-center">
-        {/* Make this container a clickable, keyboard-accessible control */}
         <div
           className={cn(
             "relative rounded-lg transition-all",
-            isDrawing || !Array.isArray(deck) || deck.length < drawCount
-              ? "cursor-not-allowed opacity-60"
-              : "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+            !isReady ? "cursor-not-allowed opacity-60" : "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
           )}
           role="button"
-          tabIndex={
-            isDrawing || !Array.isArray(deck) || deck.length < drawCount
-              ? -1
-              : 0
-          }
-          aria-label={
-            isDrawing
-              ? "Drawing cards..."
-              : `Deck: ${Array.isArray(deck) ? deck.length : 0} cards. Click to draw ${drawCount} cards`
-          }
-          aria-disabled={
-            isDrawing || !Array.isArray(deck) || deck.length < drawCount
-          }
-          onClick={() => {
-            if (!isDrawing && Array.isArray(deck) && deck.length >= drawCount)
-              drawCards();
-          }}
-          onKeyDown={(e) => {
-            if (isDrawing || !Array.isArray(deck) || deck.length < drawCount)
-              return;
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              drawCards();
-            }
-          }}
+          tabIndex={isReady ? 0 : -1}
+          aria-label={isDrawing ? "Drawing cards..." : `Deck: ${Array.isArray(deck) ? deck.length : 0} cards. Click to draw ${drawCount} cards`}
+          aria-disabled={!isReady}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
         >
           <div>
-            {/* Stack effect for remaining cards */}
             {Array.isArray(deck) && deck.length > 0 && (
               <div className="relative">
                 {deck.slice(-3).map((card, index) => (
@@ -188,7 +158,7 @@ export function Deck({
                       transform: `rotate(${index === 0 ? -2 : index === 1 ? 1 : 3}deg)`,
                     }}
                   >
-                    <Card
+                    <MemoizedCard
                       card={card}
                       showBack={true}
                       size="md"
@@ -198,15 +168,12 @@ export function Deck({
                 ))}
                 {Array.isArray(deck) && deck.length > 0 && (
                   <div className="relative">
-                    <Card
+                    <MemoizedCard
                       card={deck[deck.length - 1]}
                       showBack={true}
                       size="md"
-                      className={
-                        isDrawing || deck.length < drawCount ? "opacity-75" : ""
-                      }
+                      className={isDrawing ? "opacity-75" : ""}
                     />
-                    {/* removed the separate absolute inset overlay in favor of the container handler above */}
                     <div className="pointer-events-none absolute right-2 top-2">
                       <span className="rounded bg-card/90 px-2 py-1 text-sm font-bold">
                         {deck.length}
@@ -220,7 +187,6 @@ export function Deck({
         </div>
       </div>
 
-      {/* Drawn Cards */}
       {drawnCards.length > 0 && (
         <div className="slide-in-up space-y-4">
           <h3 className="text-center text-lg font-semibold">Drawn Cards</h3>
@@ -233,14 +199,13 @@ export function Deck({
                   animationDelay: `${index * 100}ms`,
                 }}
               >
-                <Card card={item} size="lg" />
+                <MemoizedCard card={item} size="lg" />
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Status */}
       <div className="slide-in-left text-center text-sm text-muted-foreground">
         {deck.length === 0 && drawnCards.length === 0 && (
           <p>No cards in deck</p>
