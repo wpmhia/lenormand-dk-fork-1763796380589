@@ -373,19 +373,30 @@ function NewReadingPageContent() {
     }
   }, [question, drawnCards, allCards, selectedSpread.id]);
 
-  // Auto-start AI analysis when entering results step
+  // Determine if this is a simple spread (1-3 cards) or complex spread (9+)
+  const isSimpleSpread = useMemo(
+    () => selectedSpread.cards <= 3,
+    [selectedSpread.cards]
+  );
+
+  // Auto-start AI analysis when cards are drawn
+  // For simple spreads (1-3 cards): trigger in drawing step
+  // For complex spreads (9+ cards): trigger in results step
   useEffect(() => {
-    if (
-      step === "results" &&
-      drawnCards.length > 0 &&
-      !aiAnalysisStartedRef.current
-    ) {
+    const shouldAnalyze = isSimpleSpread
+      ? step === "drawing" && drawnCards.length > 0
+      : step === "results" && drawnCards.length > 0;
+
+    if (shouldAnalyze && !aiAnalysisStartedRef.current) {
       aiAnalysisStartedRef.current = true;
       performStreamingAnalysis();
-    } else if (step !== "results") {
+    } else if (
+      (isSimpleSpread && step !== "drawing") ||
+      (!isSimpleSpread && step !== "results")
+    ) {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, performStreamingAnalysis]);
+  }, [step, drawnCards, performStreamingAnalysis, isSimpleSpread]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): ReadingCard[] => {
@@ -460,7 +471,11 @@ function NewReadingPageContent() {
         }
 
         setDrawnCards(readingCards);
-        setStep("results");
+        // For simple spreads (1-3 cards), stay in drawing step for inline viewing
+        // For complex spreads (9+ cards), transition to results for spread layout
+        if (!isSimpleSpread) {
+          setStep("results");
+        }
       } catch (error) {
         if (mountedRef.current) {
           const errorMsg =
@@ -473,7 +488,7 @@ function NewReadingPageContent() {
         }
       }
     },
-    [selectedSpread.cards],
+    [selectedSpread.cards, isSimpleSpread],
   );
   // Parse physical cards when input changes
   useEffect(() => {
@@ -948,13 +963,61 @@ function NewReadingPageContent() {
                     </Button>
                   )}
 
+                  {/* Inline Reading for Simple Spreads (1-3 cards) - no transition needed */}
+                  {isSimpleSpread && drawnCards.length > 0 && (
+                    <div className="fade-in-animation mt-8 space-y-6 border-t border-border pt-8">
+                      {allCards.length > 0 ? (
+                        <ReadingViewer
+                          reading={{
+                            id: "temp",
+                            title: "Your Reading",
+                            question,
+                            layoutType: selectedSpread.cards,
+                            cards: drawnCards,
+                            slug: "temp",
+                            isPublic: false,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                          }}
+                          allCards={allCards}
+                          spreadId={selectedSpread.id}
+                        />
+                      ) : (
+                        <div className="p-4 text-center text-muted-foreground">
+                          Loading cards...
+                        </div>
+                      )}
+
+                      {/* AI Analysis Section */}
+                      <div className="mt-6">
+                        <AIReadingDisplay
+                          aiReading={aiReading}
+                          isLoading={aiLoading}
+                          error={aiError}
+                          onRetry={retryAIAnalysis}
+                          spreadId={selectedSpread.id}
+                          cards={drawnCards.map((card) => ({
+                            id: card.id,
+                            name: getCardById(allCards, card.id)?.name || "Unknown",
+                            position: card.position,
+                          }))}
+                          allCards={allCards}
+                          question={question}
+                          isStreaming={isStreaming}
+                          streamedContent={streamedContent}
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div className="text-center"></div>
                 </CardContent>
               </Card>
             </div>
           )}
 
-          {step === "results" && drawnCards.length > 0 && (
+          {/* Complex Spreads (9+ cards) - separate results step with spread layout */}
+          {step === "results" && drawnCards.length > 0 && !isSimpleSpread && (
             <div
               className="fade-in-animation space-y-6"
             >
