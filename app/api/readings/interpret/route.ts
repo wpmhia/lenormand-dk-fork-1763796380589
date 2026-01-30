@@ -108,6 +108,7 @@ export async function POST(request: Request) {
       }
 
       const decoder = new TextDecoder();
+      let buffer = "";
       let reading = "";
       let chunkCount = 0;
 
@@ -116,9 +117,33 @@ export async function POST(request: Request) {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value, { stream: true });
-          reading += chunk;
-          chunkCount++;
+          buffer += decoder.decode(value, { stream: true });
+          
+          // Process complete lines
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataStr = line.slice(6);
+              
+              if (dataStr === '[DONE]') {
+                console.log("[Deepseek] Stream done");
+                continue;
+              }
+              
+              try {
+                const data = JSON.parse(dataStr);
+                const content = data.choices?.[0]?.delta?.content;
+                if (content) {
+                  reading += content;
+                  chunkCount++;
+                }
+              } catch (parseError) {
+                // Ignore parse errors for malformed chunks
+              }
+            }
+          }
         }
       } catch (streamError) {
         console.error("[Deepseek] Stream error:", streamError);
