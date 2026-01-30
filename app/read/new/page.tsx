@@ -153,7 +153,7 @@ function NewReadingPageContent() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const requestInProgressRef = useRef(false);
 
-  function parseSSEChunk(data: string): string | null {
+  function parseSSEChunk(data: string): { content?: string; reading?: string; source?: string } | null {
     if (data === "[DONE]") return null;
     
     // Skip empty data
@@ -168,13 +168,23 @@ function NewReadingPageContent() {
         return null;
       }
       
-      const content = parsed.choices?.[0]?.delta?.content;
-      if (typeof content !== 'string') {
-        // content might be undefined or not a string, which is valid
-        return "";
+      // Handle streaming chunks from our API: { content: "..." }
+      if (parsed.content && typeof parsed.content === 'string') {
+        return { content: parsed.content };
       }
       
-      return content;
+      // Handle cached/final response: { reading: "...", source: "..." }
+      if (parsed.reading && typeof parsed.reading === 'string') {
+        return { reading: parsed.reading, source: parsed.source };
+      }
+      
+      // Legacy: Handle OpenAI format from direct API calls
+      const legacyContent = parsed.choices?.[0]?.delta?.content;
+      if (typeof legacyContent === 'string') {
+        return { content: legacyContent };
+      }
+      
+      return null;
     } catch (error) {
       // Log parse failures for debugging but don't expose to users
       console.warn('JSON parse error in SSE chunk:', {
@@ -296,12 +306,18 @@ function NewReadingPageContent() {
                   if (data === "[DONE]") {
                     break;
                   }
-                  const text = parseSSEChunk(data);
-                  if (text) {
-                    content += text;
+                  const parsed = parseSSEChunk(data);
+                  if (parsed) {
+                    // Handle streaming content chunks
+                    if (parsed.content) {
+                      content += parsed.content;
+                    }
+                    // Handle cached/final response
+                    if (parsed.reading) {
+                      content = parsed.reading;
+                    }
                     
                     // Batch state updates: only update UI every 50ms to reduce re-renders
-                    // This reduces 1000+ re-renders to ~20 for typical streaming responses
                     const now = Date.now();
                     if (now - lastUpdateTime > UPDATE_INTERVAL) {
                       setStreamedContent(content);

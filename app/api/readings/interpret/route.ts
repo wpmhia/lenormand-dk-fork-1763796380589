@@ -6,9 +6,6 @@ import { getCached, setCached, getCacheKey, rateLimit } from "@/lib/cache";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const BASE_URL = "https://api.deepseek.com";
 
-console.log("[Deepseek] API Key present:", !!DEEPSEEK_API_KEY);
-console.log("[Deepseek] Available:", isDeepSeekAvailable());
-
 function validateRequest(body: any): { valid: boolean; error?: string } {
   if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
     return { valid: false, error: "Cards must be provided as an array" };
@@ -22,8 +19,6 @@ function validateRequest(body: any): { valid: boolean; error?: string } {
 }
 
 export async function POST(request: Request) {
-  const startTime = Date.now();
-  
   try {
     const body = await request.json();
     const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
@@ -43,10 +38,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const { success, remaining } = await rateLimit(ip);
+    const { success } = await rateLimit(ip);
     if (!success) {
       return new Response(
-        JSON.stringify({ error: "Rate limit exceeded", remaining }),
+        JSON.stringify({ error: "Rate limit exceeded" }),
         { status: 429, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -56,153 +51,141 @@ export async function POST(request: Request) {
 
     const cached = await getCached(cacheKey);
     if (cached) {
-      return new Response(
-        JSON.stringify({ reading: cached, source: "cache" }),
-        { 
-          status: 200, 
-          headers: { 
-            "Content-Type": "application/json",
-            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
-          } 
+      // Return cached result as SSE stream for consistent frontend handling
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ reading: cached, source: "cache" })}\n\n`));
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
         }
-      );
+      });
+      
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+        },
+      });
     }
 
     const prompt = buildPrompt(cards, spreadId || "sentence-3", question);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    try {
-      console.log("[Deepseek] Starting request...");
-      
-      const response = await fetch(`${BASE_URL}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [
-            { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
-            { role: "user", content: prompt },
-          ],
-          temperature: 0.3,
-          max_tokens: 800,
-          stream: true,
-        }),
-        signal: controller.signal,
-      });
+    const response = await fetch(`${BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.3,
+        max_tokens: 2000,
+        stream: true,
+      }),
+      signal: controller.signal,
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("[Deepseek] API Error:", response.status, errorText);
-        throw new Error(`API call failed: ${response.status}`);
-      }
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("[Deepseek] API Error:", response.status, errorText);
+      throw new Error(`API call failed: ${response.status}`);
+    }
 
-      console.log("[Deepseek] Response OK, processing stream...");
+    if (!response.body) {
+      throw new Error("No response body");
+    }
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error("No response body");
-      }
+    // Create SSE stream that forwards DeepSeek chunks to client
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let fullReading = "";
 
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let reading = "";
-      let chunkCount = 0;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
 
-          buffer += decoder.decode(value, { stream: true });
-          
-          // Process complete lines
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const dataStr = line.slice(6);
-              
-              if (dataStr === '[DONE]') {
-                console.log("[Deepseek] Stream done");
-                continue;
-              }
-              
-              try {
-                const data = JSON.parse(dataStr);
-                const content = data.choices?.[0]?.delta?.content;
-                if (content) {
-                  reading += content;
-                  chunkCount++;
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const dataStr = line.slice(6);
+                
+                if (dataStr === '[DONE]') {
+                  // Store in cache before finishing
+                  if (fullReading) {
+                    await setCached(cacheKey, fullReading, cards.length);
+                  }
+                  controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+                  controller.close();
+                  return;
                 }
-              } catch (parseError) {
-                // Ignore parse errors for malformed chunks
+                
+                try {
+                  const data = JSON.parse(dataStr);
+                  const content = data.choices?.[0]?.delta?.content;
+                  if (content) {
+                    fullReading += content;
+                    // Forward chunk to client
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+                  }
+                } catch {
+                  // Ignore malformed chunks
+                }
               }
             }
           }
+          
+          // Handle any remaining buffer
+          if (fullReading) {
+            await setCached(cacheKey, fullReading, cards.length);
+          }
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        } catch (error) {
+          console.error("[Deepseek] Stream error:", error);
+          controller.error(error);
+        } finally {
+          clearTimeout(timeoutId);
+          reader.releaseLock();
         }
-      } catch (streamError) {
-        console.error("[Deepseek] Stream error:", streamError);
-        throw new Error("Stream failed");
-      }
+      },
+    });
 
-      clearTimeout(timeoutId);
-      console.log("[Deepseek] Complete. Chunks:", chunkCount, "Length:", reading.length);
-
-      if (!reading || reading.trim() === "") {
-        throw new Error("Empty response");
-      }
-
-      const resultJson = JSON.stringify({ reading, source: "ai" });
-      await setCached(cacheKey, resultJson, cards.length);
-
-      return new Response(resultJson, { 
-        status: 200, 
-        headers: { 
-          "Content-Type": "application/json",
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
-        } 
-      });
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      console.error("[Deepseek] Error:", error.message);
-      
-      const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
-
-      return new Response(
-        JSON.stringify({
-          reading: fallbackMessage,
-          source: "fallback",
-        }),
-        {
-          status: 200,
-          headers: { 
-            "Content-Type": "application/json",
-            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
-          },
-        }
-      );
-    }
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
+    });
+    
   } catch (error: any) {
     console.error("[Deepseek] Request error:", error.message);
     
-    const fallbackMessage = "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.";
-
     return new Response(
       JSON.stringify({
-        reading: fallbackMessage,
+        error: "Stream failed",
+        reading: "The cards whisper their message through the mist.\n\nReflect on the cards' traditional meanings and how they speak to your question.\n\nThe answer emerges from within your own intuition.",
         source: "fallback",
       }),
       {
         status: 200,
-        headers: { 
-          "Content-Type": "application/json",
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
-        },
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

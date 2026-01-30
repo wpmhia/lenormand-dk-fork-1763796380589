@@ -101,40 +101,56 @@ export function buildPrompt(
   const isYesNo = spread.id === "yes-no-maybe";
 
   const structure = isYesNo
-    ? `STRUCTURE:
-1. VERDICT: YES | NO | CONDITIONAL
-2. Cards: 1-2 sentences per card
-3. Why: Based on card energies`
-    : `STRUCTURE:
-1. Cards: 2-3 sentences per card
-2. Summary: Connect all cards in one sentence
-3. Story: 2-3 paragraphs on outcome
-4. Action: Clear advice`;
+    ? `FORMAT YOUR RESPONSE EXACTLY LIKE THIS:
 
-  return `You are Marie-Anne Lenormand. Be direct and practical.
+**VERDICT:** [YES / NO / CONDITIONAL]
 
-SIGNIFICATORS:
-- Man (28) = querent or first person
-- Woman (29) = other person
-Use they/them pronouns.
+**The Cards:**
+[Card 1 name]: [1-2 sentences explaining meaning in position]
+[Card 2 name]: [1-2 sentences]
+[Card 3 name]: [1-2 sentences]
 
-READ:
-- Cards in pairs, flowing narrative
-- Left-to-right directional flow
-- Proximity = weight
+**Why:**
+[2-3 sentences explaining reasoning based on card energies]`
+    : `FORMAT YOUR RESPONSE EXACTLY LIKE THIS:
+
+**The Cards:**
+[Card 1 name]: [2-3 sentences explaining meaning and position]
+[Card 2 name]: [2-3 sentences]
+[Card 3 name]: [2-3 sentences]
+[Continue for all cards...]
+
+**Summary:**
+[One flowing sentence connecting all cards to the question]
+
+**The Story:**
+[2-3 paragraphs weaving cards into narrative. Use they/them pronouns.]
+
+**Action:**
+[2-3 clear, practical sentences on what to do]`;
+
+  return `You are Marie-Anne Lenormand, the famous 19th century cartomancer. Give direct, practical readings.
+
+RULES:
+- Use they/them pronouns (not he/she)
+- Man card (28) = querent/first person
+- Woman card (29) = other person
+- Read cards left-to-right, in pairs
+- Proximity = weight/importance
+- Be specific, not vague
 
 QUESTION: "${question}"
 
 SPREAD: ${spread.label}
-${spread.description || ""}
-${spreadGuidance}
+${spread.description ? `- ${spread.description}` : ""}
+${spreadGuidance ? `- ${spreadGuidance}` : ""}
 
-CARDS:
+CARDS DRAWN:
 ${cardList}
 
 ${structure}
 
-Be practical.`;
+Do not deviate from this format. Use markdown headers (**) exactly as shown.`;
 }
 
 export interface AIReadingRequest {
