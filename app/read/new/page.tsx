@@ -42,9 +42,7 @@ import {
 } from "@/lib/spreads";
 import { AIReadingResponse } from "@/lib/ai-config";
 
-const Deck = lazy(() =>
-  import("@/components/Deck").then((m) => ({ default: m.Deck })),
-);
+import { Deck } from "@/components/Deck";
 import { ReadingViewer } from "@/components/ReadingViewer";
 const AIReadingDisplay = lazy(() =>
   import("@/components/AIReadingDisplay").then((m) => ({

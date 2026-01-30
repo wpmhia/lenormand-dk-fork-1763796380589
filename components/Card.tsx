@@ -66,6 +66,7 @@ function CardInner({
           backgroundImage: "url(/images/card-back.png)",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundColor: "#1a1a1a", // Fallback color
         }}
       />
     );
