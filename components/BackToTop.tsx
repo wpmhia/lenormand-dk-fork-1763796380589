@@ -27,10 +27,12 @@ export function BackToTop() {
     });
   };
 
-  if (!isVisible) return null;
-
   return (
-    <div className="fixed bottom-24 right-8 z-40">
+    <div
+      className={`fixed bottom-24 right-8 z-40 transition-opacity duration-300 ${
+        isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
       <Button
         onClick={scrollToTop}
         size="icon"

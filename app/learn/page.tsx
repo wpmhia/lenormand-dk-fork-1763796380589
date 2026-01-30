@@ -6,27 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedCard } from "@/components/AnimatedCard";
 import {
-  LearningProgressTracker,
   useLearningProgress,
 } from "@/components/LearningProgressTracker";
 import {
   BookOpen,
   Clock,
-  Star,
   ArrowRight,
   Sparkles,
-  Heart,
-  Users,
-  Lightbulb,
-  Target,
-  Compass,
   TrendingUp,
-  Zap,
-  CheckCircle2,
 } from "lucide-react";
 
 export default function LearnPage() {
-  const { completedCount, mounted } = useLearningProgress();
+  const { completedCount } = useLearningProgress();
 
   const modules = [
     {
@@ -183,18 +174,7 @@ export default function LearnPage() {
 
               <div className="mx-auto flex w-fit items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
                 <CheckCircle2 className="h-4 w-4" />
-                {mounted ? (
-                  completedCount > 0 ? (
-                    <>
-                      You&apos;ve completed {completedCount} module
-                      {completedCount !== 1 ? "s" : ""}!
-                    </>
-                  ) : (
-                    "Start your learning journey!"
-                  )
-                ) : (
-                  <span className="inline-block w-32 h-4 animate-pulse rounded bg-primary/20" />
-                )}
+                <span>Start your learning journey!</span>
               </div>
             </div>
 
@@ -230,15 +210,8 @@ export default function LearnPage() {
                   Track Your Learning
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  {mounted ? (
-                    completedCount > 0 ? (
-                      `${completedCount} modules completed - keep going!`
-                    ) : (
-                      "Mark each module as complete to track your progress through the course. Your progress is saved automatically."
-                    )
-                  ) : (
-                    <span className="inline-block w-64 h-4 animate-pulse rounded bg-muted" />
-                  )}
+                  Mark each module as complete to track your progress through
+                  the course. Your progress is saved automatically.
                 </p>
               </div>
             </div>
