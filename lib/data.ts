@@ -73,6 +73,29 @@ export async function getCardSummaries(): Promise<CardSummary[]> {
   }));
 }
 
+export interface CardLookup {
+  id: number;
+  name: string;
+  combos?: { withCardId: number; meaning: string }[];
+}
+
+export async function getCardLookupData(): Promise<CardLookup[]> {
+  const data = staticCardsData as Card[];
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return [];
+  }
+
+  return data.map(card => ({
+    id: card.id,
+    name: card.name,
+    combos: card.combos?.slice(0, 10).map(c => ({
+      withCardId: c.withCardId,
+      meaning: c.meaning
+    }))
+  }));
+}
+
 export function getCardById(cards: Card[], id: number): Card | undefined {
   return cards.find((card) => card.id === id);
 }

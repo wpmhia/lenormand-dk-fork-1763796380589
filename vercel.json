@@ -13,12 +13,20 @@
     }
   },
   "functions": {
+    "app/api/readings/interpret/**": {
+      "memory": 1024,
+      "maxDuration": 15
+    },
     "app/api/**": {
       "memory": 1024,
       "maxDuration": 30
+    },
+    "app/cards/**": {
+      "memory": 1024,
+      "maxDuration": 5
     }
   },
-  "regions": ["auto"],
+  "regions": ["fra1", "ams1", "dub1", "lhr1"],
   "git": {
     "deploymentEnabled": {
       "main": true

@@ -59,6 +59,8 @@ async function fetchAIInterpretation(prompt: string, signal: AbortSignal): Promi
 }
 
 export async function POST(request: Request) {
+  const startTime = Date.now();
+  
   try {
     const body = await request.json();
 
@@ -86,7 +88,13 @@ export async function POST(request: Request) {
       if (now - cached.timestamp < CACHE_TTL) {
         return new Response(
           JSON.stringify({ reading: cached.reading, source: "cache" }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
+          { 
+            status: 200, 
+            headers: { 
+              "Content-Type": "application/json",
+              "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+            } 
+          }
         );
       }
     }
@@ -105,10 +113,18 @@ export async function POST(request: Request) {
       }
       responseCache.set(cacheKey, { reading, timestamp: now });
 
-      return new Response(
+      const response = new Response(
         JSON.stringify({ reading, source: "ai" }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
+        { 
+          status: 200, 
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+          } 
+        }
       );
+
+      return response;
     } catch (error) {
       clearTimeout(timeoutId);
       throw error;
@@ -123,7 +139,10 @@ export async function POST(request: Request) {
       }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400"
+        },
       }
     );
   }

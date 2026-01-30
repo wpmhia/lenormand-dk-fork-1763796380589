@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCardById } from "@/lib/data";
+import { getCardById, getCardLookupData } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
 import CardDetailClient from "./CardDetailClient";
 import { Card } from "@/lib/types";
@@ -29,10 +29,11 @@ export default async function CardDetailPage({ params }: PageProps) {
 
   const cards = staticCardsData as Card[];
   const card = getCardById(cards, cardId);
+  const allCards = await getCardLookupData();
 
   if (!card) {
     notFound();
   }
 
-  return <CardDetailClient card={card} allCards={cards} />;
+  return <CardDetailClient card={card} allCards={allCards as any} />;
 }
