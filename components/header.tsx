@@ -33,9 +33,7 @@ export function Header() {
             <Sparkles className="h-5 w-5" />
             <span>Learn</span>
           </Link>
-          <a href="https://www.buymeacoffee.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center transition-transform hover:scale-105 active:scale-95" suppressHydrationWarning>
-            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" className="h-10 w-auto" />
-          </a>
+
         </nav>
         <div className="ml-auto md:hidden">
           <button className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95" aria-label="Toggle mobile menu" type="button">
