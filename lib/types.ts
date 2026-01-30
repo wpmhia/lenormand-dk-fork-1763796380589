@@ -66,3 +66,12 @@ export interface Locale {
 }
 
 export type Language = "en" | "da";
+
+export interface CardSummary {
+  id: number;
+  name: string;
+  number: number;
+  keywords: string[];
+  imageUrl: string | null;
+  uprightMeaning: string;
+}

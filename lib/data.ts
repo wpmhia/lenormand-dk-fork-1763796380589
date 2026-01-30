@@ -37,7 +37,6 @@ async function generateHMAC(data: string): Promise<string> {
 }
 
 export async function getCards(): Promise<Card[]> {
-  // Static import eliminates network requests and JSON parsing overhead
   const data = staticCardsData as Card[];
 
   if (!Array.isArray(data) || data.length === 0) {
@@ -46,6 +45,32 @@ export async function getCards(): Promise<Card[]> {
   }
 
   return data;
+}
+
+export interface CardSummary {
+  id: number;
+  name: string;
+  number: number;
+  keywords: string[];
+  imageUrl: string | null;
+  uprightMeaning: string;
+}
+
+export async function getCardSummaries(): Promise<CardSummary[]> {
+  const data = staticCardsData as Card[];
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return [];
+  }
+
+  return data.map(card => ({
+    id: card.id,
+    name: card.name,
+    number: card.number,
+    keywords: card.keywords,
+    imageUrl: card.imageUrl,
+    uprightMeaning: card.uprightMeaning,
+  }));
 }
 
 export function getCardById(cards: Card[], id: number): Card | undefined {

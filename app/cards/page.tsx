@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import CardsClient from "./CardsClient";
-import { getCards } from "@/lib/data";
-import { Card } from "@/lib/types";
+import { getCardSummaries } from "@/lib/data";
+import { CardSummary } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "The Lenormand Deck - All 36 Cards with Meanings",
@@ -14,9 +14,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Pre-load cards data on server for better performance
 export default async function CardsPage() {
-  const cards = await getCards();
+  const cards = await getCardSummaries();
   
-  return <CardsClient initialCards={cards} />;
+  return <CardsClient initialCards={cards as any} />;
 }
