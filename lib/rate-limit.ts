@@ -1,5 +1,12 @@
-// Simple in-memory rate limiter for Edge runtime
-// In production, use Upstash Redis for distributed rate limiting
+// Rate limiter with Redis support (falls back to in-memory)
+import { Redis } from "@upstash/redis";
+
+const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    })
+  : null;
 
 interface RateLimitEntry {
   count: number;
@@ -7,9 +14,8 @@ interface RateLimitEntry {
 }
 
 const ipCache = new Map<string, RateLimitEntry>();
-const CLEANUP_INTERVAL = 60 * 1000; // 1 minute
+const CLEANUP_INTERVAL = 60 * 1000;
 
-// Cleanup old entries periodically
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();
@@ -28,16 +34,56 @@ export interface RateLimitResult {
   reset: number;
 }
 
-export function rateLimit(
+export async function rateLimit(
   ip: string,
-  limit: number = 10,
-  windowMs: number = 60 * 1000, // 1 minute
-): RateLimitResult {
+  limit: number = 5,
+  windowMs: number = 60 * 1000,
+): Promise<RateLimitResult> {
   const now = Date.now();
+  const key = `rate_limit:${ip}`;
+
+  // Use Redis if available
+  if (redis) {
+    try {
+      const data = await redis.get<{ count: number; resetTime: number }>(key);
+      
+      if (!data || data.resetTime < now) {
+        // New window
+        const resetTime = now + windowMs;
+        await redis.set(key, { count: 1, resetTime }, { ex: Math.ceil(windowMs / 1000) });
+        return {
+          success: true,
+          limit,
+          remaining: limit - 1,
+          reset: resetTime,
+        };
+      }
+
+      if (data.count >= limit) {
+        return {
+          success: false,
+          limit,
+          remaining: 0,
+          reset: data.resetTime,
+        };
+      }
+
+      await redis.set(key, { count: data.count + 1, resetTime: data.resetTime }, { ex: Math.ceil((data.resetTime - now) / 1000) });
+      return {
+        success: true,
+        limit,
+        remaining: limit - data.count - 1,
+        reset: data.resetTime,
+      };
+    } catch {
+      // Fall back to in-memory on Redis error
+    }
+  }
+
+  // In-memory fallback
   const entry = ipCache.get(ip);
 
   if (!entry || entry.resetTime < now) {
-    // New window
     const newEntry: RateLimitEntry = {
       count: 1,
       resetTime: now + windowMs,
@@ -51,7 +97,6 @@ export function rateLimit(
     };
   }
 
-  // Existing window
   if (entry.count >= limit) {
     return {
       success: false,
@@ -71,7 +116,6 @@ export function rateLimit(
 }
 
 export function getClientIP(request: Request): string {
-  // Try to get IP from headers
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     return forwarded.split(",")[0].trim();
@@ -82,6 +126,5 @@ export function getClientIP(request: Request): string {
     return realIP;
   }
 
-  // Fallback to a default (for local development)
   return "unknown";
 }

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   try {
     // Rate limiting
     const ip = getClientIP(request);
-    const rateLimitResult = rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
+    const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
     if (!rateLimitResult.success) {
       return new Response(
