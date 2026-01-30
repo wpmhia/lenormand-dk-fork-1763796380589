@@ -25,7 +25,7 @@ import {
 } from "@/lib/spreads";
 import { Card } from "./Card";
 import { CardWithTooltip } from "./CardWithTooltip";
-import { AnimatedCard } from "./AnimatedCard";
+import { MemoizedAnimatedCard } from "./AnimatedCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -418,7 +418,7 @@ export function ReadingViewer({
             const positionInfo = getPositionInfo(index, spreadId);
 
             return (
-              <AnimatedCard
+              <MemoizedAnimatedCard
                 key={index}
                 delay={0}
                 className="flex flex-col items-center space-y-lg"
@@ -436,7 +436,7 @@ export function ReadingViewer({
                     positionDescription={positionInfo.meaning}
                   />
                 </div>
-              </AnimatedCard>
+              </MemoizedAnimatedCard>
             );
           })}
         </div>
@@ -502,7 +502,7 @@ export function ReadingViewer({
                 }
 
                 return (
-                  <AnimatedCard
+                  <MemoizedAnimatedCard
                     key={index}
                     delay={index * 0.03}
                     className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
@@ -587,7 +587,7 @@ export function ReadingViewer({
                         <span>{topicInfo.label}</span>
                       </div>
                     )}
-                  </AnimatedCard>
+                  </MemoizedAnimatedCard>
                 );
               })}
           </div>
@@ -699,7 +699,7 @@ export function ReadingViewer({
               const positionInfo = getPositionInfo(index, spreadId);
 
               return (
-                <AnimatedCard
+                <MemoizedAnimatedCard
                   key={index}
                   delay={index * 0.15}
                   className="flex flex-col items-center space-y-md"
@@ -717,7 +717,7 @@ export function ReadingViewer({
                       positionDescription={positionInfo.meaning}
                     />
                   </div>
-                </AnimatedCard>
+                </MemoizedAnimatedCard>
               );
             })}
           </div>

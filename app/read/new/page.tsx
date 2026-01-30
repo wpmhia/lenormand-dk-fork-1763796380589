@@ -1,16 +1,8 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  Suspense,
-  useMemo,
-} from "react";
+import { useState, useEffect, useCallback, useRef, Suspense, useMemo, lazy } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
-import { Deck } from "@/components/Deck";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -39,9 +31,11 @@ import {
   MODERN_SPREADS,
   COMPREHENSIVE_SPREADS,
 } from "@/lib/spreads";
-import { ReadingViewer } from "@/components/ReadingViewer";
-import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 import { AIReadingResponse } from "@/lib/ai-config";
+
+const Deck = lazy(() => import("@/components/Deck").then(m => ({ default: m.Deck })));
+const ReadingViewer = lazy(() => import("@/components/ReadingViewer").then(m => ({ default: m.ReadingViewer })));
+const AIReadingDisplay = lazy(() => import("@/components/AIReadingDisplay").then(m => ({ default: m.AIReadingDisplay })));
 
 function LoadingFallback() {
   return (
