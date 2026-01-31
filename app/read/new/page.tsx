@@ -136,8 +136,7 @@ function NewReadingPageContent() {
       setAiReading(null);
       setAiLoading(false);
       setAiError(null);
-      setIsStreaming(false);
-      setStreamedContent("");
+      setJobStatus("");
       setPhysicalCards("");
       setPhysicalCardsError(null);
       setParsedCards([]);
@@ -149,11 +148,11 @@ function NewReadingPageContent() {
       readingCardRefs.current.clear();
       aiAnalysisStartedRef.current = false;
 
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-        abortControllerRef.current = null;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
-      requestInProgressRef.current = false;
+      currentJobIdRef.current = null;
       if (transitionTimeoutRef.current) {
         clearTimeout(transitionTimeoutRef.current);
         transitionTimeoutRef.current = null;
@@ -208,68 +207,70 @@ function NewReadingPageContent() {
     loadData();
   }, []);
 
-  // AI streaming state
+  // AI async job state (replaces streaming)
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [streamedContent, setStreamedContent] = useState("");
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const requestInProgressRef = useRef(false);
+  const [jobStatus, setJobStatus] = useState<string>("");
+  const pollingIntervalRef = useRef<number | null>(null);
+  const currentJobIdRef = useRef<string | null>(null);
 
-  function parseSSEChunk(data: string): string | null {
-    if (data === "[DONE]") return null;
-    if (!data || data.trim() === "") return null;
+  // Generate unique job ID
+  const generateJobId = useCallback(() => {
+    return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }, []);
 
+  // Poll for job status
+  const pollJobStatus = useCallback(async (jobId: string) => {
     try {
-      const parsed = JSON.parse(data);
-      if (!parsed || typeof parsed !== "object") return null;
-
-      // OpenAI format: choices[0].delta.content
-      const content = parsed.choices?.[0]?.delta?.content;
-      if (typeof content === "string") return content;
-
-      return null;
-    } catch {
-      return null;
+      const response = await fetch(`/api/readings/status?jobId=${jobId}`);
+      if (!response.ok) return;
+      
+      const job = await response.json();
+      
+      if (job.status === "completed") {
+        setAiReading({ reading: job.result });
+        setAiLoading(false);
+        setJobStatus("");
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        currentJobIdRef.current = null;
+      } else if (job.status === "failed") {
+        setAiError(job.error || "Reading failed");
+        setAiLoading(false);
+        setJobStatus("");
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        currentJobIdRef.current = null;
+      } else {
+        // Still processing
+        setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");
+      }
+    } catch (err) {
+      console.error("Polling error:", err);
     }
-  }
+  }, []);
 
-  // Streaming function
-  const performStreamingAnalysis = useCallback(async () => {
-    // Deduplication: prevent duplicate in-flight requests
-    if (requestInProgressRef.current) {
-      console.warn(
-        "AI request already in progress, skipping duplicate request",
-      );
-      return;
-    }
+  // Start async AI analysis
+  const performAsyncAnalysis = useCallback(async () => {
+    if (currentJobIdRef.current) return; // Already in progress
 
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    requestInProgressRef.current = true;
-
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-      setAiError("Request timed out");
-      setAiLoading(false);
-      setIsStreaming(false);
-    }, 90000);
+    const jobId = generateJobId();
+    currentJobIdRef.current = jobId;
 
     setAiLoading(true);
     setAiError(null);
-    setIsStreaming(true);
-    setStreamedContent("");
-    setAiReading({ reading: "" });
+    setAiReading(null);
+    setJobStatus("Preparing your reading...");
 
     try {
       const aiRequest = {
-        question:
-          question.trim() || "What guidance do these cards have for me?",
+        jobId,
+        question: question.trim() || "What guidance do these cards have for me?",
         cards: drawnCards.map((card) => ({
           id: card.id,
           name: getCardById(allCards, card.id)?.name || "Unknown",
@@ -278,151 +279,35 @@ function NewReadingPageContent() {
         spreadId: selectedSpread.id,
       };
 
-      const response = await fetch("/api/readings/interpret", {
+      // Start the job
+      const response = await fetch("/api/readings/start", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(aiRequest),
-        signal: controller.signal,
-        // Add connection timeout and retry logic
-        keepalive: true,
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Stream failed:", {
-          status: response.status,
-          statusText: response.statusText,
-          errorText: errorText.substring(0, 200),
-          url: response.url,
-        });
-        throw new Error(
-          `Stream failed: ${response.status} - ${response.statusText}`,
-        );
+        const error = await response.json();
+        throw new Error(error.error || "Failed to start reading");
       }
 
-      if (!response.body) {
-        throw new Error("No stream body");
-      }
+      // Start polling every 2 seconds
+      pollingIntervalRef.current = window.setInterval(() => {
+        pollJobStatus(jobId);
+      }, 2000);
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let content = "";
-      let buffer = "";
-      let lastUpdateTime = Date.now();
-      const UPDATE_INTERVAL = 16; // ~60fps for smooth streaming
-      const MAX_BUFFER_SIZE = 50000;
-      const MAX_CONTENT_LENGTH = 100000;
+      // Initial poll
+      pollJobStatus(jobId);
 
-      try {
-        while (true) {
-          try {
-            const { done, value } = await reader.read();
-            if (done) {
-              break;
-            }
-
-            const chunk = decoder.decode(value, { stream: true });
-
-            // Prevent buffer from growing too large
-            if (buffer.length > MAX_BUFFER_SIZE) {
-              console.warn("SSE buffer exceeding maximum size, truncating");
-              buffer = buffer.slice(-MAX_BUFFER_SIZE / 2); // Keep last half
-            }
-
-            buffer += chunk;
-
-            // Prevent content from growing too large
-            if (content.length > MAX_CONTENT_LENGTH) {
-              console.warn("Content exceeding maximum length, stopping stream");
-              setAiError("Reading too long, stopped processing");
-              break;
-            }
-
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || "";
-
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
-                if (data === "[DONE]") {
-                  break;
-                }
-                const text = parseSSEChunk(data);
-                if (text) {
-                  content += text;
-                  // Throttle updates to ~30fps to reduce CPU usage
-                  const now = Date.now();
-                  if (now - lastUpdateTime >= 33) {
-                    lastUpdateTime = now;
-                    setStreamedContent(content);
-                    setAiReading({ reading: content });
-                  }
-                }
-              }
-            }
-          } catch (streamError) {
-            if (
-              streamError instanceof Error &&
-              streamError.name === "AbortError"
-            ) {
-              break;
-            }
-            setAiError("Connection interrupted");
-            break;
-          }
-        }
-      } finally {
-        // SECURITY FIX: Always cleanup reader to prevent memory leaks
-        try {
-          await reader.cancel();
-        } catch (cancelError) {
-          console.error("Error canceling reader:", cancelError);
-        }
-      }
-
-      // Show complete reading at once
-      if (content.length > 0) {
-        setAiReading({ reading: content });
-        setStreamedContent(content);
-      } else {
-        setIsStreaming(false);
-        setAiLoading(true);
-        try {
-          const fullResponse = await fetch("/api/readings/interpret", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...aiRequest, _fallback: true }),
-          });
-
-          if (fullResponse.ok) {
-            const data = await fullResponse.json();
-            if (data.reading) {
-              setAiReading({ reading: data.reading });
-              setStreamedContent(data.reading);
-            } else {
-              setAiError("No reading received from API");
-            }
-          } else {
-            setAiError(`API error: ${fullResponse.status}`);
-          }
-        } catch {
-          setAiError("Failed to get reading");
-        }
-      }
     } catch (error) {
-      if (error instanceof Error && error.name !== "AbortError") {
+      if (error instanceof Error) {
         setAiError(error.message);
       }
-    } finally {
-      clearTimeout(timeoutId);
       setAiLoading(false);
-      setIsStreaming(false);
-      requestInProgressRef.current = false; // Mark request as complete
+      setJobStatus("");
+      currentJobIdRef.current = null;
     }
-  }, [question, drawnCards, allCards, selectedSpread.id]);
+  }, [question, drawnCards, allCards, selectedSpread.id, generateJobId, pollJobStatus]);
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
@@ -432,11 +317,11 @@ function NewReadingPageContent() {
       !aiAnalysisStartedRef.current
     ) {
       aiAnalysisStartedRef.current = true;
-      performStreamingAnalysis();
+      performAsyncAnalysis();
     } else if (step !== "results") {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, performStreamingAnalysis]);
+  }, [step, drawnCards, performAsyncAnalysis]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): ReadingCard[] => {
@@ -647,21 +532,21 @@ function NewReadingPageContent() {
   const retryAIAnalysis = useCallback(() => {
     if (drawnCards.length > 0) {
       aiAnalysisStartedRef.current = false;
-      performStreamingAnalysis();
+      performAsyncAnalysis();
     }
-  }, [drawnCards, performStreamingAnalysis]);
+  }, [drawnCards, performAsyncAnalysis]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       mountedRef.current = false;
 
-      // Cleanup any pending requests
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-        abortControllerRef.current = null;
+      // Cleanup polling
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
-      requestInProgressRef.current = false;
+      currentJobIdRef.current = null;
       
       // Cleanup transition timeout
       if (transitionTimeoutRef.current) {
@@ -1119,7 +1004,7 @@ function NewReadingPageContent() {
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">
                 {/* Consulting the cards moment - Phase 2.3: Enhanced AI loading ritual */}
-                {aiLoading && !streamedContent && (
+                {aiLoading && (
                   <div className="consulting-glow animate-in fade-in duration-700 rounded-xl border border-primary/20 bg-card/80 p-10 text-center backdrop-blur-sm">
                     <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center">
                       <div className="consulting-pulse absolute h-16 w-16 rounded-full bg-primary/20" />
@@ -1127,7 +1012,7 @@ function NewReadingPageContent() {
                       <Sparkles className="relative h-8 w-8 text-primary" />
                     </div>
                     <p className="text-shimmer text-xl font-medium text-foreground">
-                      Consulting the cards...
+                      {jobStatus || "Consulting the cards..."}
                     </p>
                     <p className="mt-3 text-sm italic text-muted-foreground">
                       The ancient symbols align to reveal your path
@@ -1159,8 +1044,8 @@ function NewReadingPageContent() {
                   }))}
                   allCards={allCards}
                   question={question}
-                  isStreaming={isStreaming}
-                  streamedContent={streamedContent}
+                  isStreaming={false}
+                  streamedContent={aiReading?.reading || ""}
                 />
               </div>
 
