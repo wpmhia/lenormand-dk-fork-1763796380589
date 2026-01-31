@@ -12,6 +12,7 @@ interface DeckProps {
   onDraw?: (cards: CardType[]) => void;
   drawCount?: number;
   isProcessing?: boolean;
+  hideDrawnCards?: boolean;
 }
 
 function DeckComponent({
@@ -19,6 +20,7 @@ function DeckComponent({
   onDraw,
   drawCount = 3,
   isProcessing = false,
+  hideDrawnCards = false,
 }: DeckProps) {
   const [deck, setDeck] = useState<CardType[]>([]);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -210,7 +212,7 @@ function DeckComponent({
         </div>
       </div>
 
-      {drawnCards.length > 0 && (
+      {drawnCards.length > 0 && !hideDrawnCards && (
         <div className="slide-in-up space-y-4">
           <h3 className="text-center text-lg font-semibold">Drawn Cards</h3>
           <div className="flex flex-wrap justify-center gap-6 sm:gap-4">

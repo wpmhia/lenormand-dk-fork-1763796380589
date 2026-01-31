@@ -831,6 +831,7 @@ function NewReadingPageContent() {
                         drawCount={selectedSpread.cards}
                         onDraw={handleDraw}
                         isProcessing={step !== "drawing"}
+                        hideDrawnCards={isSimpleSpread}
                       />
                     ))}
 
