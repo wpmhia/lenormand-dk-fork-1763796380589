@@ -1015,7 +1015,7 @@ function NewReadingPageContent() {
                       {jobStatus || "Consulting the cards..."}
                     </p>
                     <p className="mt-3 text-sm italic text-muted-foreground">
-                      The ancient symbols align to reveal your path
+                      Reading the cards for clear, practical guidance
                     </p>
                     <div className="mt-6 flex justify-center gap-1">
                       {[0, 1, 2].map((i) => (
