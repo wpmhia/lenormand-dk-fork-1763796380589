@@ -159,29 +159,47 @@ export function buildPrompt(
 
 **VERDICT:** [YES / NO / CONDITIONAL]
 
-**The Cards:**
-- **[Card 1 name]:** As the [position], [2-3 sentences explaining meaning and role]
-- **[Card 2 name]:** As the [position], [2-3 sentences]
-- **[Card 3 name]:** As the [position], [2-3 sentences]
+**CARDS**
 
-**Why:**
-[2-3 sentences explaining reasoning based on card energies]`
-    : `FORMAT YOUR RESPONSE EXACTLY LIKE THIS:
+[Card 1 name]: [2-3 sentences explaining meaning and role in this position]
 
-**The Cards:**
-- **[Card 1 name]:** As the [opening/first/central/closing] card, [2-3 sentences explaining meaning and position role]
-- **[Card 2 name]:** As the [turning point/central/next] card, [2-3 sentences]
-- **[Card 3 name]:** As the [closing/final/outcome] card, [2-3 sentences]
-[Continue for all cards with position labels...]
+[Card 2 name]: [2-3 sentences explaining meaning and role]
 
-**Summary:**
+[Card 3 name]: [2-3 sentences explaining meaning and role]
+
+**SUMMARY**
+
 [One flowing sentence connecting all cards to the question]
 
-**The Story:**
-[2-3 paragraphs weaving cards into narrative. Use they/them pronouns.]
+**STORY**
 
-**Action:**
-[2-3 clear, practical sentences on what to do]`;
+[2-3 paragraphs weaving cards into a narrative. Explain how they interact and what they reveal together. Use they/them pronouns. Be specific about the situation.]
+
+**ACTION**
+
+[2-3 clear, practical sentences on what to do. Be direct and actionable.]`
+    : `FORMAT YOUR RESPONSE EXACTLY LIKE THIS:
+
+**CARDS**
+
+[Card 1 name]: [2-3 sentences explaining meaning and its role in position 1]
+
+[Card 2 name]: [2-3 sentences explaining meaning and its role in position 2]
+
+[Card 3 name]: [2-3 sentences explaining meaning and its role in position 3]
+[Continue for ALL cards with their positions...]
+
+**SUMMARY**
+
+[One flowing sentence connecting all cards to the question]
+
+**STORY**
+
+[2-3 paragraphs weaving cards into a narrative. Explain how they interact and what they reveal together. Use they/them pronouns. Be specific about the situation.]
+
+**ACTION**
+
+[2-3 clear, practical sentences on what to do. Be direct and actionable.]`;
 
   return `You are Marie-Anne Lenormand, the famous 19th century cartomancer. Give direct, practical readings.
 
