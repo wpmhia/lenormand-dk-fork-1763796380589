@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 const ReactMarkdown = dynamic(() => import("react-markdown"), {
@@ -13,12 +13,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
+import { useTypewriter } from "@/lib/typewriter";
 import {
   RefreshCw,
   Copy,
   Check,
   AlertCircle,
   ExternalLink,
+  Zap,
 } from "lucide-react";
 
 interface AIReadingDisplayProps {
@@ -61,6 +63,19 @@ export function AIReadingDisplay({
   streamedContent,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
+  const [enableTypewriter, setEnableTypewriter] = useState(true);
+
+  const readingText = aiReading?.reading || streamedContent || "";
+  const { displayedText, isComplete, skip, progress } = useTypewriter({
+    text: readingText,
+    speed: 25,
+    enabled: enableTypewriter && !!readingText,
+  });
+
+  // Reset typewriter when reading changes
+  useEffect(() => {
+    setEnableTypewriter(true);
+  }, [readingText]);
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
@@ -209,10 +224,27 @@ export function AIReadingDisplay({
                     {...props}
                   />
                 ),
+                em: ({ node, ...props }) => (
+                  <em className="italic text-foreground/80" {...props} />
+                ),
+                hr: ({ node, ...props }) => (
+                  <hr className="my-4 border-border" {...props} />
+                ),
+                a: ({ node, ...props }: any) => (
+                  <a
+                    {...props}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  />
+                ),
               }}
             >
-              {streamedContent}
+              {enableTypewriter ? displayedText : readingText}
             </ReactMarkdown>
+            {!isComplete && (
+              <span className="animate-pulse text-primary">|</span>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -362,15 +394,40 @@ export function AIReadingDisplay({
             </ReactMarkdown>
           </div>
 
-          {/* Completion indicator - Phase 3.2: Completion pulse */}
-          {!isStreaming && aiReading.reading && (
-            <div className="completion-pulse mt-6 flex items-center justify-center gap-2 border-t border-border pt-4 text-sm text-muted-foreground animate-in fade-in duration-500">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
-                <Check className="h-4 w-4 text-green-500" />
-              </div>
-              <span>Reading complete</span>
+          {/* Typewriter progress & controls */}
+          <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {!isComplete ? (
+                <>
+                  <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all duration-300"
+                      style={{ width: `${progress * 100}%` }}
+                    />
+                  </div>
+                  <span>{Math.round(progress * 100)}%</span>
+                </>
+              ) : (
+                <>
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
+                    <Check className="h-4 w-4 text-green-500" />
+                  </div>
+                  <span>Reading complete</span>
+                </>
+              )}
             </div>
-          )}
+            {!isComplete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={skip}
+                className="gap-1 text-xs"
+              >
+                <Zap className="h-3 w-3" />
+                Skip animation
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
