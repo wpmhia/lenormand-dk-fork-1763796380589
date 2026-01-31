@@ -4,8 +4,9 @@ import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Card as CardType } from "@/lib/types";
 import { MemoizedCard } from "./Card";
 import { Button } from "@/components/ui/button";
-import { Shuffle, Play } from "lucide-react";
+import { Shuffle, Play, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface DeckProps {
   cards: CardType[];
@@ -25,20 +26,22 @@ function DeckComponent({
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnCards, setDrawnCards] = useState<CardType[]>([]);
   const [revealedCount, setRevealedCount] = useState(0);
+  const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   const shuffleTimeoutRef = useRef<number | null>(null);
-  const drawTimeoutRef = useRef<number | null>(null);
   const revealIntervalRef = useRef<number | null>(null);
+  const flipTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setDeck(cards || []);
     setDrawnCards([]);
+    setFlippedCards(new Set());
   }, [cards]);
 
   useEffect(() => {
     return () => {
       if (shuffleTimeoutRef.current) clearTimeout(shuffleTimeoutRef.current);
-      if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
       if (revealIntervalRef.current) clearInterval(revealIntervalRef.current);
+      if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current);
     };
   }, []);
 
@@ -48,7 +51,7 @@ function DeckComponent({
       deck.length >= drawCount &&
       !isDrawing &&
       !isProcessing,
-    [deck, drawCount, isDrawing, isProcessing],
+    [deck, drawCount, isDrawing, isProcessing]
   );
 
   const shuffle = useCallback(() => {
@@ -74,6 +77,7 @@ function DeckComponent({
 
     setIsDrawing(true);
     setRevealedCount(0);
+    setFlippedCards(new Set());
 
     const newDrawnCards: CardType[] = [];
     const remainingDeck = [...deck];
@@ -87,13 +91,20 @@ function DeckComponent({
     setDeck(remainingDeck);
     setDrawnCards(newDrawnCards);
 
-    // Staggered reveal: show cards one by one with 400ms delay
+    // Staggered reveal with 400ms delays (Phase 2.2)
     let currentIndex = 0;
     revealIntervalRef.current = window.setInterval(() => {
       currentIndex++;
       setRevealedCount(currentIndex);
+
+      // Flip each card after it's revealed (Phase 3.1)
+      flipTimeoutRef.current = window.setTimeout(() => {
+        setFlippedCards((prev) => new Set([...prev, currentIndex - 1]));
+      }, 300);
+
       if (currentIndex >= drawCount) {
-        if (revealIntervalRef.current) clearInterval(revealIntervalRef.current);
+        if (revealIntervalRef.current)
+          clearInterval(revealIntervalRef.current);
         setIsDrawing(false);
         onDraw?.(newDrawnCards);
       }
@@ -108,7 +119,7 @@ function DeckComponent({
         drawCards();
       }
     },
-    [canDraw, drawCards],
+    [canDraw, drawCards]
   );
 
   const handleClick = useCallback(() => {
@@ -121,24 +132,31 @@ function DeckComponent({
       deck.length > 0 &&
       !isDrawing &&
       deck.length >= drawCount,
-    [deck, isDrawing, drawCount],
+    [deck, isDrawing, drawCount]
   );
 
   return (
     <div className="space-y-6">
-      <div className="slide-in-up flex justify-center gap-3">
+      <div className="flex justify-center gap-3">
         <Button
           onClick={shuffle}
           disabled={!canDraw || isShuffling}
           variant="outline"
           size="sm"
+          className={cn(
+            "transition-all duration-300",
+            isShuffling && "scale-95"
+          )}
           aria-label={
             isShuffling
               ? "Shuffling deck..."
               : "Shuffle the deck to randomize card order"
           }
         >
-          <Shuffle className="mr-2 h-4 w-4" aria-hidden="true" />
+          <Shuffle
+            className={cn("mr-2 h-4 w-4", isShuffling && "animate-spin")}
+            aria-hidden="true"
+          />
           Shuffle
         </Button>
 
@@ -146,6 +164,7 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           size="sm"
+          className="transition-all duration-300"
           aria-label={
             isDrawing
               ? `Drawing ${drawCount} cards...`
@@ -159,13 +178,13 @@ function DeckComponent({
         </Button>
       </div>
 
-      <div className="fade-in-scale flex justify-center">
+      <div className="flex justify-center">
         <div
           className={cn(
-            "relative rounded-lg transition-all",
+            "relative rounded-lg transition-all duration-300",
             !isReady
               ? "cursor-not-allowed opacity-60"
-              : "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+              : "cursor-pointer hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
           )}
           role="button"
           tabIndex={isReady ? 0 : -1}
@@ -184,7 +203,10 @@ function DeckComponent({
                 {deck.slice(-3).map((card, index) => (
                   <div
                     key={card.id}
-                    className="absolute"
+                    className={cn(
+                      "absolute transition-transform duration-300",
+                      isShuffling && "animate-pulse"
+                    )}
                     style={{
                       top: `${index * 6}px`,
                       left: `${index * 6}px`,
@@ -206,10 +228,13 @@ function DeckComponent({
                       card={deck[deck.length - 1]}
                       showBack={true}
                       size="md"
-                      className={isDrawing ? "opacity-75" : ""}
+                      className={cn(
+                        "transition-opacity duration-300",
+                        isDrawing ? "opacity-75" : ""
+                      )}
                     />
                     <div className="pointer-events-none absolute right-2 top-2">
-                      <span className="rounded bg-card/90 px-2 py-1 text-sm font-bold">
+                      <span className="rounded bg-card/90 px-2 py-1 text-sm font-bold shadow-lg">
                         {deck.length}
                       </span>
                     </div>
@@ -224,34 +249,70 @@ function DeckComponent({
       {drawnCards.length > 0 && (
         <div className="space-y-4">
           <h3 className="text-center text-lg font-semibold">
-            {revealedCount < drawnCards.length
-              ? `Revealing cards... (${revealedCount}/${drawnCards.length})`
-              : "Your Cards"}
+            {revealedCount < drawnCards.length ? (
+              <span className="text-shimmer flex items-center justify-center gap-2">
+                <Sparkles className="h-4 w-4 sparkle" />
+                Revealing cards... ({revealedCount}/{drawnCards.length})
+                <Sparkles className="h-4 w-4 sparkle" style={{ animationDelay: "1s" }} />
+              </span>
+            ) : (
+              <span className="animate-in fade-in duration-500">Your Cards</span>
+            )}
           </h3>
           <div className="flex flex-wrap justify-center gap-6 sm:gap-4">
             {drawnCards.slice(0, revealedCount).map((item, index) => (
               <div
                 key={`${item.id}-${index}`}
-                className="animate-in zoom-in-95 fade-in duration-500"
+                className="stagger-reveal"
                 style={{
-                  animationDelay: `${index * 50}ms`,
+                  animationDelay: `${index * 0.1}s`,
                 }}
               >
-                <MemoizedCard card={item} size="lg" />
+                {/* Card with Flip Animation */}
+                <div
+                  className={cn(
+                    "card-flip-container float-gentle",
+                    flippedCards.has(index) && "flipped"
+                  )}
+                  style={{ animationDelay: `${index * 0.5}s` }}
+                >
+                  <div className="card-flip-inner">
+                    {/* Card Back (shown initially) */}
+                    <div className="card-flip-front">
+                      <div
+                        className="card-mystical flex items-center justify-center overflow-hidden rounded-xl"
+                        style={{
+                          width: "112px",
+                          height: "160px",
+                          backgroundImage: "url(/images/card-back.png)",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundColor: "#1a1a1a",
+                        }}
+                      />
+                    </div>
+                    {/* Card Face (shown after flip) */}
+                    <div className="card-flip-back">
+                      <MemoizedCard card={item} size="md" />
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
             {/* Placeholder slots for unrevealed cards */}
-            {Array.from({ length: Math.max(0, drawnCards.length - revealedCount) }).map((_, index) => (
+            {Array.from({
+              length: Math.max(0, drawnCards.length - revealedCount),
+            }).map((_, index) => (
               <div
                 key={`placeholder-${index}`}
-                className="h-[180px] w-[120px] rounded-xl bg-muted/50 animate-pulse"
+                className="h-[160px] w-[112px] rounded-xl bg-muted/50 animate-pulse"
               />
             ))}
           </div>
         </div>
       )}
 
-      <div className="slide-in-left text-center text-sm text-muted-foreground">
+      <div className="text-center text-sm text-muted-foreground">
         {deck.length === 0 && drawnCards.length === 0 && (
           <p>No cards in deck</p>
         )}

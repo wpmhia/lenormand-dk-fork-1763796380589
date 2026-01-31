@@ -646,7 +646,7 @@ function NewReadingPageContent() {
           )}
 
           {step === "setup" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="step-enter">
             <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
@@ -786,7 +786,7 @@ function NewReadingPageContent() {
           )}
 
           {step === "drawing" && (
-            <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+            <div className="step-enter">
               <Card className="relative overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
                 <CardContent className="relative z-10 space-y-8 p-8">
@@ -956,7 +956,7 @@ function NewReadingPageContent() {
 
           {/* Results Step - All spreads show here */}
           {step === "results" && drawnCards.length > 0 && (
-            <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-6">
+            <div className="step-enter space-y-6">
               {/* Show the drawn cards */}
               {allCards.length > 0 ? (
                 <ReadingViewer
@@ -984,18 +984,32 @@ function NewReadingPageContent() {
 
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">
-                {/* Consulting the cards moment */}
+                {/* Consulting the cards moment - Phase 2.3: Enhanced AI loading ritual */}
                 {aiLoading && !streamedContent && (
-                  <div className="animate-in fade-in duration-500 rounded-lg border border-border bg-card p-8 text-center">
-                    <div className="mx-auto mb-4 h-12 w-12 animate-pulse rounded-full bg-primary/20">
-                      <Sparkles className="h-12 w-12 p-2.5 text-primary animate-pulse" />
+                  <div className="consulting-glow animate-in fade-in duration-700 rounded-xl border border-primary/20 bg-card/80 p-10 text-center backdrop-blur-sm">
+                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center">
+                      <div className="consulting-pulse absolute h-16 w-16 rounded-full bg-primary/20" />
+                      <div className="consulting-pulse absolute h-12 w-12 rounded-full bg-primary/30" style={{ animationDelay: "0.5s" }} />
+                      <Sparkles className="relative h-8 w-8 text-primary" />
                     </div>
-                    <p className="text-lg font-medium text-foreground">
-                      The cards are whispering their secrets...
+                    <p className="text-shimmer text-xl font-medium text-foreground">
+                      Consulting the cards...
                     </p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Consulting the ancient wisdom
+                    <p className="mt-3 text-sm italic text-muted-foreground">
+                      The ancient symbols align to reveal your path
                     </p>
+                    <div className="mt-6 flex justify-center gap-1">
+                      {[0, 1, 2].map((i) => (
+                        <div
+                          key={i}
+                          className="h-2 w-2 rounded-full bg-primary/60"
+                          style={{
+                            animation: "consultingPulse 1.4s ease-in-out infinite",
+                            animationDelay: `${i * 0.2}s`,
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
                 <AIReadingDisplay
