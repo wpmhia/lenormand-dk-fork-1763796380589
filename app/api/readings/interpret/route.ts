@@ -1,4 +1,5 @@
 export const runtime = "edge";
+export const maxDuration = 30; // Vercel max duration for edge
 
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
@@ -57,6 +58,10 @@ export async function POST(request: Request) {
       question || "What do the cards show?",
     );
 
+    // Abort controller for timeout - fail fast if API is slow
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), 25000);
+
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
@@ -73,10 +78,13 @@ export async function POST(request: Request) {
           { role: "user", content: prompt },
         ],
         temperature: 0.3,
-        max_tokens: 1500, // Reduced from 2000 to lower costs and latency
+        max_tokens: 1000, // Further reduced for faster response
         stream: true,
       }),
+      signal: abortController.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -92,12 +100,19 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
+    // Check if it's a timeout
+    const isTimeout = error.name === "AbortError" || 
+                      error.message?.includes("abort") ||
+                      error.message?.includes("timeout");
+    
     return new Response(
       JSON.stringify({
-        error: "Stream failed",
-        reading:
-          "The cards whisper their message through the mist. Reflect on the cards' traditional meanings. The answer emerges from within.",
+        error: isTimeout ? "AI response timed out" : "Stream failed",
+        reading: isTimeout 
+          ? "The cards have been drawn, but the spirits are taking time to whisper their message. Please try again in a moment, or reflect on the traditional meanings of your cards while you wait."
+          : "The cards whisper their message through the mist. Reflect on the cards' traditional meanings. The answer emerges from within.",
         source: "fallback",
+        timedOut: isTimeout,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
