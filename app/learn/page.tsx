@@ -21,6 +21,8 @@ import {
   Compass,
   Lightbulb,
   LayoutGrid,
+  Brain,
+  Shield,
 } from "lucide-react";
 
 export default function LearnPage() {
@@ -353,6 +355,51 @@ export default function LearnPage() {
                   <span className="font-medium">Practice Now</span>
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        {/* Practice & Resources Grid */}
+        <div className="mb-12 grid gap-6 md:grid-cols-3">
+          <Link href="/learn/practice">
+            <Card className="group h-full transition-all hover:border-primary/40 hover:shadow-lg">
+              <CardContent className="flex h-full flex-col items-center p-6 text-center">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10">
+                  <BookOpen className="h-6 w-6 text-blue-500" />
+                </div>
+                <h3 className="mb-2 font-bold">Practice Readings</h3>
+                <p className="text-sm text-muted-foreground">
+                  5 guided exercises with sample interpretations to build your skills
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/learn/case-studies">
+            <Card className="group h-full transition-all hover:border-primary/40 hover:shadow-lg">
+              <CardContent className="flex h-full flex-col items-center p-6 text-center">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10">
+                  <Users className="h-6 w-6 text-purple-500" />
+                </div>
+                <h3 className="mb-2 font-bold">Case Studies</h3>
+                <p className="text-sm text-muted-foreground">
+                  Real-world readings with step-by-step analysis and synthesis
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/learn/ethics">
+            <Card className="group h-full transition-all hover:border-primary/40 hover:shadow-lg">
+              <CardContent className="flex h-full flex-col items-center p-6 text-center">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
+                  <Shield className="h-6 w-6 text-green-500" />
+                </div>
+                <h3 className="mb-2 font-bold">Ethics & Guidelines</h3>
+                <p className="text-sm text-muted-foreground">
+                  Essential reading on responsible practices and important disclaimers
+                </p>
               </CardContent>
             </Card>
           </Link>
