@@ -65,38 +65,10 @@ export const MODERN_SPREADS: Spread[] = [
     isAuthentic: false,
   },
   {
-    id: "mind-body-spirit",
-    cards: 3,
-    label: "3-Card: Mind-Body-Spirit",
-    description: "Holistic wellness reading - balance across three dimensions",
-    isAuthentic: false,
-  },
-  {
     id: "sentence-5",
     cards: 5,
     label: "5-Card: Sentence Reading",
     description: "Extended narrative - more context without complexity",
-    isAuthentic: false,
-  },
-  {
-    id: "structured-reading",
-    cards: 5,
-    label: "5-Card: Structured Reading",
-    description: "Grammar-based analysis: Subject → Verb → Object → Modifier → Outcome",
-    isAuthentic: false,
-  },
-  {
-    id: "week-ahead",
-    cards: 7,
-    label: "7-Card: Week Ahead",
-    description: "Daily guidance for the week - day-by-day insights",
-    isAuthentic: false,
-  },
-  {
-    id: "relationship-double-significator",
-    cards: 7,
-    label: "7-Card: Relationship",
-    description: "Dual focus reading - understanding dynamics between two people",
     isAuthentic: false,
   },
 ];
