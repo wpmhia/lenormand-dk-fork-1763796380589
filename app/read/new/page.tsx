@@ -982,6 +982,7 @@ function NewReadingPageContent() {
                           }}
                           allCards={allCards}
                           spreadId={selectedSpread.id}
+                          disableAnimations={true}
                         />
                       ) : (
                         <div className="p-4 text-center text-muted-foreground">

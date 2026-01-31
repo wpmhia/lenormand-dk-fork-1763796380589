@@ -60,6 +60,7 @@ interface ReadingViewerProps {
   onShare?: () => void;
   showReadingHeader?: boolean;
   spreadId?: string;
+  disableAnimations?: boolean;
 }
 
 interface PositionInfo {
@@ -367,6 +368,7 @@ export function ReadingViewer({
   onShare,
   showReadingHeader = true,
   spreadId,
+  disableAnimations = false,
 }: ReadingViewerProps) {
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [shareClicked, setShareClicked] = useState(false);
@@ -803,7 +805,7 @@ export function ReadingViewer({
         </div>
       )}
 
-      <div className="animate-in fade-in slide-in-from-bottom-8 overflow-visible delay-150 duration-500">
+      <div className={`${disableAnimations ? '' : 'animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500'} overflow-visible`}>
         <div className="overflow-visible rounded-lg border border-border bg-card p-xl shadow-elevation-1">
           <h3 className="mb-lg text-xl font-semibold text-foreground">
             Your Cards
@@ -813,7 +815,7 @@ export function ReadingViewer({
       </div>
 
       {selectedCard && (
-        <div className="animate-in fade-in slide-in-from-bottom-8 rounded-lg border border-border bg-card p-xl shadow-elevation-1 duration-500">
+        <div className={`${disableAnimations ? '' : 'animate-in fade-in slide-in-from-bottom-8 duration-500'} rounded-lg border border-border bg-card p-xl shadow-elevation-1`}>
           <h3 className="mb-lg text-xl font-semibold text-foreground">
             Card Combinations
           </h3>
