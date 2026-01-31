@@ -365,6 +365,14 @@ export function AIReadingDisplay({
               {streamedContent || aiReading.reading}
             </ReactMarkdown>
           </div>
+
+          {/* Completion indicator */}
+          {!isStreaming && aiReading.reading && (
+            <div className="mt-6 flex items-center justify-center gap-2 border-t border-border pt-4 text-sm text-muted-foreground animate-in fade-in duration-500">
+              <Check className="h-4 w-4 text-green-500" />
+              <span>Reading complete</span>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -646,6 +646,7 @@ function NewReadingPageContent() {
           )}
 
           {step === "setup" && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
@@ -784,9 +785,7 @@ function NewReadingPageContent() {
           )}
 
           {step === "drawing" && (
-            <div
-              className="fade-in-animation"
-            >
+            <div className="animate-in fade-in slide-in-from-right-8 duration-500">
               <Card className="relative overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50"></div>
                 <CardContent className="relative z-10 space-y-8 p-8">
@@ -956,9 +955,7 @@ function NewReadingPageContent() {
 
           {/* Results Step - All spreads show here */}
           {step === "results" && drawnCards.length > 0 && (
-            <div
-              className="fade-in-animation space-y-6"
-            >
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-6">
               {/* Show the drawn cards */}
               {allCards.length > 0 ? (
                 <ReadingViewer
@@ -986,6 +983,20 @@ function NewReadingPageContent() {
 
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">
+                {/* Consulting the cards moment */}
+                {aiLoading && !streamedContent && (
+                  <div className="animate-in fade-in duration-500 rounded-lg border border-border bg-card p-8 text-center">
+                    <div className="mx-auto mb-4 h-12 w-12 animate-pulse rounded-full bg-primary/20">
+                      <Sparkles className="h-12 w-12 p-2.5 text-primary animate-pulse" />
+                    </div>
+                    <p className="text-lg font-medium text-foreground">
+                      The cards are whispering their secrets...
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Consulting the ancient wisdom
+                    </p>
+                  </div>
+                )}
                 <AIReadingDisplay
                   aiReading={aiReading}
                   isLoading={aiLoading}

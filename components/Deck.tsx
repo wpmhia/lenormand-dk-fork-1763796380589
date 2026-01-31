@@ -24,8 +24,10 @@ function DeckComponent({
   const [isShuffling, setIsShuffling] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawnCards, setDrawnCards] = useState<CardType[]>([]);
+  const [revealedCount, setRevealedCount] = useState(0);
   const shuffleTimeoutRef = useRef<number | null>(null);
   const drawTimeoutRef = useRef<number | null>(null);
+  const revealIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     setDeck(cards || []);
@@ -36,6 +38,7 @@ function DeckComponent({
     return () => {
       if (shuffleTimeoutRef.current) clearTimeout(shuffleTimeoutRef.current);
       if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
+      if (revealIntervalRef.current) clearInterval(revealIntervalRef.current);
     };
   }, []);
 
@@ -70,6 +73,7 @@ function DeckComponent({
     if (!canDraw) return;
 
     setIsDrawing(true);
+    setRevealedCount(0);
 
     const newDrawnCards: CardType[] = [];
     const remainingDeck = [...deck];
@@ -83,10 +87,17 @@ function DeckComponent({
     setDeck(remainingDeck);
     setDrawnCards(newDrawnCards);
 
-    drawTimeoutRef.current = window.setTimeout(() => {
-      setIsDrawing(false);
-      onDraw?.(newDrawnCards);
-    }, 1000);
+    // Staggered reveal: show cards one by one with 400ms delay
+    let currentIndex = 0;
+    revealIntervalRef.current = window.setInterval(() => {
+      currentIndex++;
+      setRevealedCount(currentIndex);
+      if (currentIndex >= drawCount) {
+        if (revealIntervalRef.current) clearInterval(revealIntervalRef.current);
+        setIsDrawing(false);
+        onDraw?.(newDrawnCards);
+      }
+    }, 400);
   }, [canDraw, deck, drawCount, onDraw]);
 
   const handleKeyDown = useCallback(
@@ -211,19 +222,30 @@ function DeckComponent({
       </div>
 
       {drawnCards.length > 0 && (
-        <div className="slide-in-up space-y-4">
-          <h3 className="text-center text-lg font-semibold">Drawn Cards</h3>
+        <div className="space-y-4">
+          <h3 className="text-center text-lg font-semibold">
+            {revealedCount < drawnCards.length
+              ? `Revealing cards... (${revealedCount}/${drawnCards.length})`
+              : "Your Cards"}
+          </h3>
           <div className="flex flex-wrap justify-center gap-6 sm:gap-4">
-            {drawnCards.map((item, index) => (
+            {drawnCards.slice(0, revealedCount).map((item, index) => (
               <div
                 key={`${item.id}-${index}`}
-                className=""
+                className="animate-in zoom-in-95 fade-in duration-500"
                 style={{
-                  animationDelay: `${index * 100}ms`,
+                  animationDelay: `${index * 50}ms`,
                 }}
               >
                 <MemoizedCard card={item} size="lg" />
               </div>
+            ))}
+            {/* Placeholder slots for unrevealed cards */}
+            {Array.from({ length: Math.max(0, drawnCards.length - revealedCount) }).map((_, index) => (
+              <div
+                key={`placeholder-${index}`}
+                className="h-[180px] w-[120px] rounded-xl bg-muted/50 animate-pulse"
+              />
             ))}
           </div>
         </div>
