@@ -553,7 +553,7 @@ function NewReadingPageContent() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="bg-ambience min-h-screen text-foreground">
         <div className="container relative z-10 mx-auto max-w-4xl px-4 py-8">
           <div className="mb-8 text-center">
             <h1 className="relative mb-4 text-4xl font-bold text-foreground">

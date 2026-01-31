@@ -366,10 +366,12 @@ export function AIReadingDisplay({
             </ReactMarkdown>
           </div>
 
-          {/* Completion indicator */}
+          {/* Completion indicator - Phase 3.2: Completion pulse */}
           {!isStreaming && aiReading.reading && (
-            <div className="mt-6 flex items-center justify-center gap-2 border-t border-border pt-4 text-sm text-muted-foreground animate-in fade-in duration-500">
-              <Check className="h-4 w-4 text-green-500" />
+            <div className="completion-pulse mt-6 flex items-center justify-center gap-2 border-t border-border pt-4 text-sm text-muted-foreground animate-in fade-in duration-500">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
+                <Check className="h-4 w-4 text-green-500" />
+              </div>
               <span>Reading complete</span>
             </div>
           )}

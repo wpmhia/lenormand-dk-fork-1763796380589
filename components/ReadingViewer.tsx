@@ -723,7 +723,7 @@ export function ReadingViewer({
             return (
               <MemoizedAnimatedCard
                 key={index}
-                delay={index * 0.15}
+                delay={index * 0.4}
                 className="flex flex-col items-center space-y-md"
               >
                 <div className="flex flex-col items-center space-y-md">
