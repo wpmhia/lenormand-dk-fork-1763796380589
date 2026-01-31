@@ -256,6 +256,10 @@ function NewReadingPageContent() {
         setJobStatus("");
         cleanupPolling();
         currentJobIdRef.current = null;
+      } else if (job.status === "processing" && job.result) {
+        // Progressive chunk delivery - show partial results immediately
+        setAiReading({ reading: job.result });
+        setJobStatus(`Receiving... ${job.chunkIndex !== undefined ? Math.round(((job.chunkIndex + 1) / job.totalChunks) * 100) : 50}%`);
       } else {
         // Still processing
         setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");

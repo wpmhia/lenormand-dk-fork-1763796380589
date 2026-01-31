@@ -28,6 +28,8 @@ export interface Job {
   error?: string;
   createdAt: number;
   updatedAt: number;
+  chunkIndex?: number;
+  totalChunks?: number;
 }
 
 // In-memory fallback for when Redis is unavailable

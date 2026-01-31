@@ -68,14 +68,12 @@ export function AIReadingDisplay({
   const readingText = aiReading?.reading || streamedContent || "";
   const { displayedText, isComplete, skip, progress } = useTypewriter({
     text: readingText,
-    speed: 25,
+    speed: 20,
     enabled: enableTypewriter && !!readingText,
   });
 
-  // Reset typewriter when reading changes
-  useEffect(() => {
-    setEnableTypewriter(true);
-  }, [readingText]);
+  // Don't reset typewriter on text changes - let it continue for progressive chunks
+  // Only reset when reading is explicitly cleared or changed to a completely different reading
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;

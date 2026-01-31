@@ -321,6 +321,31 @@ async function processAISynchronously(prompt: string): Promise<string> {
   }
 }
 
+// Split text into natural chunks (sentences/paragraphs)
+function splitIntoChunks(text: string, minChunkSize: number = 80): string[] {
+  const chunks: string[] = [];
+  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+  
+  let currentChunk = "";
+  for (const sentence of sentences) {
+    if (currentChunk.length + sentence.length > minChunkSize * 2) {
+      if (currentChunk) chunks.push(currentChunk.trim());
+      currentChunk = sentence;
+    } else {
+      currentChunk += sentence;
+    }
+  }
+  if (currentChunk) chunks.push(currentChunk.trim());
+  
+  // Ensure at least 2 chunks for progressive effect
+  if (chunks.length === 1 && chunks[0].length > minChunkSize) {
+    const mid = Math.floor(chunks[0].length / 2);
+    return [chunks[0].slice(0, mid), chunks[0].slice(mid)];
+  }
+  
+  return chunks.length > 0 ? chunks : [text];
+}
+
 async function processAIWithCoalescing(
   jobId: string, 
   prompt: string,
@@ -328,7 +353,7 @@ async function processAIWithCoalescing(
   spreadId: string,
   question: string
 ) {
-  console.log(`[API] Starting background processing for job: ${jobId}`);
+  console.log(`[API] Starting progressive chunk processing for job: ${jobId}`);
   try {
     await updateJob(jobId, { status: "processing" });
 
@@ -389,14 +414,34 @@ async function processAIWithCoalescing(
       }
     );
 
-    // Cache the result
-    cacheReading(cards, spreadId, question, result);
-
-    await updateJob(jobId, { 
-      status: "completed", 
-      result,
-    });
-    console.log(`[API] Job ${jobId} completed successfully`);
+    // Split into chunks and deliver progressively
+    const chunks = splitIntoChunks(result, 100);
+    console.log(`[API] Splitting result into ${chunks.length} chunks for job ${jobId}`);
+    
+    // Deliver chunks progressively with 150ms delays
+    let accumulatedText = "";
+    for (let i = 0; i < chunks.length; i++) {
+      accumulatedText += chunks[i] + " ";
+      
+      await updateJob(jobId, { 
+        status: i === chunks.length - 1 ? "completed" : "processing",
+        result: accumulatedText.trim(),
+        chunkIndex: i,
+        totalChunks: chunks.length,
+      });
+      
+      console.log(`[API] Delivered chunk ${i + 1}/${chunks.length} for job ${jobId}`);
+      
+      // Small delay between chunks (150ms) for natural feel
+      if (i < chunks.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 150));
+      }
+    }
+    
+    // Cache the final result
+    cacheReading(cards, spreadId, question, accumulatedText.trim());
+    
+    console.log(`[API] Job ${jobId} completed successfully with progressive chunks`);
   } catch (error: any) {
     const isTimeout = error.name === "AbortError";
     console.error(`[API] Job ${jobId} failed:`, isTimeout ? "timeout" : error.message);

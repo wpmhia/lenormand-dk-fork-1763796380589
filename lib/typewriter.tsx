@@ -22,6 +22,7 @@ export function useTypewriter({
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
+  const [previousText, setPreviousText] = useState("");
 
   const words = text.split(/(\s+)/); // Split by whitespace but keep delimiters
 
@@ -32,10 +33,18 @@ export function useTypewriter({
       return;
     }
 
-    // Reset when text changes
-    setDisplayedText("");
-    setWordIndex(0);
-    setIsComplete(false);
+    // Check if this is new text or additional text (progressive chunks)
+    const isNewText = !previousText || !text.startsWith(previousText);
+    
+    if (isNewText) {
+      // Complete reset for completely new text
+      setDisplayedText("");
+      setWordIndex(0);
+      setIsComplete(false);
+    }
+    // If text is just growing (progressive chunks), continue from current position
+    
+    setPreviousText(text);
 
     const interval = setInterval(() => {
       setWordIndex((prev) => {
@@ -51,7 +60,7 @@ export function useTypewriter({
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed, enabled, onComplete]);
+  }, [text, speed, enabled, onComplete, previousText, words.length]);
 
   // Build displayed text from words
   useEffect(() => {
