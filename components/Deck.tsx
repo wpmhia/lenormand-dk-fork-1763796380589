@@ -95,16 +95,16 @@ function DeckComponent({
     setDeck(remainingDeck);
     setDrawnCards(newDrawnCards);
 
-    // Meditative reveal: slower, more contemplative timing
+    // Quick reveal: faster timing for better UX
     let currentIndex = 0;
     revealIntervalRef.current = window.setInterval(() => {
       currentIndex++;
       setRevealedCount(currentIndex);
 
-      // Gentle flip after reveal - slower for meditative feel
+      // Quick flip animation
       flipTimeoutRef.current = window.setTimeout(() => {
         setFlippedCards((prev) => new Set([...prev, currentIndex - 1]));
-      }, 600);
+      }, 250);
 
       if (currentIndex >= drawCount) {
         if (revealIntervalRef.current)
@@ -112,7 +112,7 @@ function DeckComponent({
         setIsDrawing(false);
         onDraw?.(newDrawnCards);
       }
-    }, 800);
+    }, 300);
   }, [canDraw, deck, drawCount, onDraw]);
 
   const handleKeyDown = useCallback(

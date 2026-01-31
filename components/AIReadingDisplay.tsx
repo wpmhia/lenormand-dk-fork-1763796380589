@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 
 const ReactMarkdown = dynamic(() => import("react-markdown"), {
@@ -13,14 +13,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
-import { useTypewriter } from "@/lib/typewriter";
 import {
   RefreshCw,
   Copy,
   Check,
   AlertCircle,
   ExternalLink,
-  Zap,
 } from "lucide-react";
 
 interface AIReadingDisplayProps {
@@ -63,17 +61,9 @@ export function AIReadingDisplay({
   streamedContent,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
-  const [enableTypewriter, setEnableTypewriter] = useState(true);
 
   const readingText = aiReading?.reading || streamedContent || "";
-  const { displayedText, isComplete, skip, progress } = useTypewriter({
-    text: readingText,
-    speed: 20,
-    enabled: enableTypewriter && !!readingText,
-  });
-
-  // Don't reset typewriter on text changes - let it continue for progressive chunks
-  // Only reset when reading is explicitly cleared or changed to a completely different reading
+  // Typewriter removed for instant text display - better UX
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
@@ -238,11 +228,8 @@ export function AIReadingDisplay({
                 ),
               }}
             >
-              {enableTypewriter ? displayedText : readingText}
+              {readingText}
             </ReactMarkdown>
-            {!isComplete && (
-              <span className="animate-pulse text-primary">|</span>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -388,46 +375,18 @@ export function AIReadingDisplay({
                 ),
               }}
             >
-              {enableTypewriter ? displayedText : readingText}
+              {readingText}
             </ReactMarkdown>
-            {!isComplete && enableTypewriter && (
-              <span className="animate-pulse text-primary">|</span>
-            )}
           </div>
 
-          {/* Typewriter progress & controls */}
-          <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+          {/* Reading complete indicator */}
+          <div className="mt-6 flex items-center justify-center border-t border-border pt-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {!isComplete ? (
-                <>
-                  <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all duration-300"
-                      style={{ width: `${progress * 100}%` }}
-                    />
-                  </div>
-                  <span>{Math.round(progress * 100)}%</span>
-                </>
-              ) : (
-                <>
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
-                    <Check className="h-4 w-4 text-green-500" />
-                  </div>
-                  <span>Reading complete</span>
-                </>
-              )}
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
+                <Check className="h-4 w-4 text-green-500" />
+              </div>
+              <span>Reading complete</span>
             </div>
-            {!isComplete && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={skip}
-                className="gap-1 text-xs"
-              >
-                <Zap className="h-3 w-3" />
-                Skip animation
-              </Button>
-            )}
           </div>
         </CardContent>
       </Card>

@@ -41,77 +41,13 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   },
 ];
 
-// Modern Spreads
-export const MODERN_SPREADS: Spread[] = [
-  {
-    id: "yes-no-maybe",
-    cards: 3,
-    label: "3-Card: Yes or No",
-    description: "Direct answer - her characteristic bluntness applied",
-    isAuthentic: false,
-  },
-  {
-    id: "past-present-future",
-    cards: 3,
-    label: "3-Card: Past-Present-Future",
-    description: "Time-based variation interpreted with her deadline system",
-    isAuthentic: false,
-  },
-  {
-    id: "situation-challenge-advice",
-    cards: 3,
-    label: "3-Card: Situation-Challenge-Advice",
-    description: "Problem-solving through her diagnostic method",
-    isAuthentic: false,
-  },
-  {
-    id: "mind-body-spirit",
-    cards: 3,
-    label: "3-Card: Mind-Body-Spirit",
-    description: "Holistic reading with practical application",
-    isAuthentic: false,
-  },
-  {
-    id: "sentence-5",
-    cards: 5,
-    label: "5-Card: Sentence Reading",
-    description: "Extended narrative using her flowing story structure",
-    isAuthentic: false,
-  },
-  {
-    id: "structured-reading",
-    cards: 5,
-    label: "5-Card Reading: Structured",
-    description:
-      "Grammar-based analysis: Subject → Verb → Object → Modifier → Outcome",
-    isAuthentic: false,
-  },
-  {
-    id: "week-ahead",
-    cards: 7,
-    label: "7-Card Reading: Week Ahead",
-    description: "Daily structure with her day-by-day action model",
-    isAuthentic: false,
-  },
-  {
-    id: "relationship-double-significator",
-    cards: 7,
-    label: "7-Card: Relationship",
-    description: "Her significator system with dual focus - power and flow",
-    isAuthentic: false,
-  },
-];
-
-// All spreads combined - Authentic first, then Modern
-// sentence-3 is intentionally NOT duplicated in MODERN_SPREADS to avoid confusion
-export const COMPREHENSIVE_SPREADS: Spread[] = [
-  ...AUTHENTIC_SPREADS,
-  ...MODERN_SPREADS,
-];
+// All available spreads - simplified to 4 core options
+export const COMPREHENSIVE_SPREADS: Spread[] = AUTHENTIC_SPREADS;
 
 // Legacy names for backward compatibility
-export const CORE_SPREADS: Spread[] = COMPREHENSIVE_SPREADS;
-export const ADVANCED_SPREADS: Spread[] = MODERN_SPREADS;
+export const CORE_SPREADS: Spread[] = AUTHENTIC_SPREADS;
+export const MODERN_SPREADS: Spread[] = []; // Deprecated - kept for compatibility
+export const ADVANCED_SPREADS: Spread[] = []; // Deprecated - kept for compatibility
 
 // Grand Tableau Specific Types and Data
 

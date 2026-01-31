@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -58,22 +57,6 @@ export function Header() {
             <span>Learn</span>
           </Link>
         </nav>
-        <a
-          href="https://ko-fi.com/Y8Y81NVDEK"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-2 hidden items-center justify-center md:inline-flex"
-          suppressHydrationWarning
-        >
-          <Image
-            width={144}
-            height={36}
-            style={{ border: 0, height: 36, width: "auto" }}
-            src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
-            alt="Buy Me a Coffee at ko-fi.com"
-            unoptimized
-          />
-        </a>
         <div className="ml-auto md:hidden">
           <button
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"

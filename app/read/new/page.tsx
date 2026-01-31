@@ -36,7 +36,6 @@ import { Eye, AlertTriangle, Sparkles } from "lucide-react";
 import { getCardById, getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
-  MODERN_SPREADS,
   COMPREHENSIVE_SPREADS,
 } from "@/lib/spreads";
 import { AIReadingResponse } from "@/lib/ai-config";
@@ -760,34 +759,16 @@ function NewReadingPageContent() {
                       <SelectValue>{selectedSpread.label}</SelectValue>
                     </SelectTrigger>
                     <SelectContent className="border-border bg-popover text-popover-foreground">
-                      {/* Authentic Spreads Header */}
-                      <div className="px-2 py-1.5 text-xs font-bold text-primary">
-                        ✨ AUTHENTIC SPREADS
-                      </div>
                       {AUTHENTIC_SPREADS.map((spread) => (
                         <SelectItem
                           key={spread.id}
                           value={spread.id}
                           className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
                         >
-                          {spread.label}
-                        </SelectItem>
-                      ))}
-
-                      {/* Divider */}
-                      <div className="my-2 border-t border-border" />
-
-                      {/* Modern Spreads Header */}
-                      <div className="px-2 py-1.5 text-xs font-bold text-primary">
-                        🔮 MODERN SPREADS
-                      </div>
-                      {MODERN_SPREADS.map((spread) => (
-                        <SelectItem
-                          key={spread.id}
-                          value={spread.id}
-                          className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
-                        >
-                          {spread.label}
+                          <div className="flex flex-col">
+                            <span>{spread.label}</span>
+                            <span className="text-xs text-muted-foreground">{spread.cards} cards</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
