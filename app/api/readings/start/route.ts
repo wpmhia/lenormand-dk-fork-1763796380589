@@ -289,7 +289,7 @@ async function processAISynchronously(prompt: string): Promise<string> {
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
-          { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+          { role: "system", content: "You are Marie-Anne Lenormand. Use markdown formatting with **bold headers** and bullet points for clarity." },
           { role: "user", content: prompt },
         ],
         temperature: 0.3,
@@ -381,7 +381,7 @@ async function processAIWithCoalescing(
             body: JSON.stringify({
               model: "deepseek-chat",
               messages: [
-                { role: "system", content: "You are Marie-Anne Lenormand. Reply in plain text only." },
+{ role: "system", content: "You are Marie-Anne Lenormand. Use markdown formatting with **bold headers** and bullet points for clarity." },
                 { role: "user", content: prompt },
               ],
               temperature: 0.3,
