@@ -390,8 +390,11 @@ export function AIReadingDisplay({
                 ),
               }}
             >
-              {streamedContent || aiReading.reading}
+              {enableTypewriter ? displayedText : readingText}
             </ReactMarkdown>
+            {!isComplete && enableTypewriter && (
+              <span className="animate-pulse text-primary">|</span>
+            )}
           </div>
 
           {/* Typewriter progress & controls */}
