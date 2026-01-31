@@ -36,6 +36,7 @@ import { Eye, AlertTriangle, Sparkles } from "lucide-react";
 import { getCardById, getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
+  MODERN_SPREADS,
   COMPREHENSIVE_SPREADS,
 } from "@/lib/spreads";
 import { AIReadingResponse } from "@/lib/ai-config";
@@ -758,7 +759,11 @@ function NewReadingPageContent() {
                     <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
                       <SelectValue>{selectedSpread.label}</SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="border-border bg-popover text-popover-foreground">
+                    <SelectContent className="border-border bg-popover text-popover-foreground max-h-[400px] overflow-y-auto">
+                      {/* Authentic Spreads Header */}
+                      <div className="px-2 py-1.5 text-xs font-bold text-primary sticky top-0 bg-popover">
+                        ✨ AUTHENTIC SPREADS
+                      </div>
                       {AUTHENTIC_SPREADS.map((spread) => (
                         <SelectItem
                           key={spread.id}
@@ -767,7 +772,27 @@ function NewReadingPageContent() {
                         >
                           <div className="flex flex-col">
                             <span>{spread.label}</span>
-                            <span className="text-xs text-muted-foreground">{spread.cards} cards</span>
+                            <span className="text-xs text-muted-foreground">{spread.cards} cards • {spread.description.slice(0, 40)}...</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+
+                      {/* Divider */}
+                      <div className="my-2 border-t border-border sticky top-0 bg-popover" />
+
+                      {/* Modern Spreads Header */}
+                      <div className="px-2 py-1.5 text-xs font-bold text-primary sticky top-0 bg-popover">
+                        🔮 MODERN SPREADS
+                      </div>
+                      {MODERN_SPREADS.map((spread) => (
+                        <SelectItem
+                          key={spread.id}
+                          value={spread.id}
+                          className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
+                        >
+                          <div className="flex flex-col">
+                            <span>{spread.label}</span>
+                            <span className="text-xs text-muted-foreground">{spread.cards} cards • {spread.description.slice(0, 40)}...</span>
                           </div>
                         </SelectItem>
                       ))}
