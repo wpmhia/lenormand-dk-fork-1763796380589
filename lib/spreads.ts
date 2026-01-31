@@ -44,17 +44,17 @@ export const AUTHENTIC_SPREADS: Spread[] = [
 // Modern Spreads
 export const MODERN_SPREADS: Spread[] = [
   {
-    id: "past-present-future",
-    cards: 3,
-    label: "3-Card: Past-Present-Future",
-    description: "Time-based variation interpreted with her deadline system",
-    isAuthentic: false,
-  },
-  {
     id: "yes-no-maybe",
     cards: 3,
     label: "3-Card: Yes or No",
     description: "Direct answer - her characteristic bluntness applied",
+    isAuthentic: false,
+  },
+  {
+    id: "past-present-future",
+    cards: 3,
+    label: "3-Card: Past-Present-Future",
+    description: "Time-based variation interpreted with her deadline system",
     isAuthentic: false,
   },
   {
