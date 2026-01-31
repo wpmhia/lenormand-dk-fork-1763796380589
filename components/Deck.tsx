@@ -187,10 +187,10 @@ function DeckComponent({
       <div className="flex justify-center">
         <div
           className={cn(
-            "relative rounded-lg transition-all duration-300",
+            "relative rounded-lg transition-all duration-300 touch-manipulation",
             !isReady
               ? "cursor-not-allowed opacity-60"
-              : "cursor-pointer hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+              : "cursor-pointer hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
           )}
           role="button"
           tabIndex={isReady ? 0 : -1}
@@ -201,6 +201,18 @@ function DeckComponent({
           }
           aria-disabled={!isReady}
           onClick={handleClick}
+          onTouchStart={(e) => {
+            // iOS touch handler to ensure click fires
+            if (isReady) {
+              e.currentTarget.style.transform = "scale(0.95)";
+            }
+          }}
+          onTouchEnd={(e) => {
+            e.currentTarget.style.transform = "";
+            if (isReady) {
+              handleClick();
+            }
+          }}
           onKeyDown={handleKeyDown}
         >
           <div>
@@ -239,7 +251,7 @@ function DeckComponent({
                         isDrawing ? "opacity-75" : ""
                       )}
                     />
-                    <div className="pointer-events-none absolute right-2 top-2">
+                    <div className="pointer-events-none absolute right-2 top-2 z-10">
                       <span className="rounded bg-card/90 px-2 py-1 text-sm font-bold shadow-lg">
                         {deck.length}
                       </span>

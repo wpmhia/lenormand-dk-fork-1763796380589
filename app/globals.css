@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS Touch Optimization */
+@layer base {
+  /* Eliminate 300ms tap delay on iOS */
+  button, a, [role="button"], input, textarea, select {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent text selection on interactive elements (iOS) */
+  .no-select {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
 @layer base {
   :root {
     /* Colors */
