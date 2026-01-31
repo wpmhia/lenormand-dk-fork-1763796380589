@@ -1,12 +1,6 @@
-"use client";
-
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { BreadcrumbNav } from "@/components/BreadcrumbNav";
-import { LearningProgressTracker } from "@/components/LearningProgressTracker";
-import { BackToTop } from "@/components/BackToTop";
+import { ModulePageClient } from "@/components/ModulePageClient";
+import { AccordionSection } from "@/components/CombinationAccordion";
 import {
   Heart,
   Coins,
@@ -16,26 +10,15 @@ import {
   Users,
   ArrowLeft,
   ArrowRight,
-  ChevronDown,
 } from "lucide-react";
-import { useHeadingIds } from "@/hooks/use-heading-ids";
-import { useState, useMemo } from "react";
 
-interface CardCombination {
-  cards: string;
-  meaning: string;
-  context?: string;
-}
+export const metadata = {
+  title: "Card Combinations | Lenormand Course",
+  description:
+    "Master the art of reading card combinations. Learn how two or more cards create new meanings through their interaction across different life contexts.",
+};
 
-interface CombinationContext {
-  title: string;
-  icon: React.ReactNode;
-  description: string;
-  combinations: CardCombination[];
-}
-
-// Memoize combination contexts - moved outside component to prevent re-creation
-const getCombinationContexts = (): CombinationContext[] => [
+const combinationContexts = [
   {
     title: "Love & Relationships",
     icon: <Heart className="h-6 w-6 text-red-500" />,
@@ -465,315 +448,141 @@ const getCombinationContexts = (): CombinationContext[] => [
   },
 ];
 
-// Accordion Section Component
-function AccordionSection({
-  context,
-  index,
-}: {
-  context: CombinationContext;
-  index: number;
-}) {
-  const [isOpen, setIsOpen] = useState(index === 0); // First section open by default
-
+export default function CardCombinationsPage() {
   return (
-    <Card key={index} className="mb-8 border-border bg-card">
-      <CardHeader>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full items-center gap-3 transition-opacity hover:opacity-80"
-        >
-          <div className="flex flex-1 items-center gap-3">
-            {context.icon}
-            <CardTitle id={context.title.toLowerCase().replace(/\s+/g, "-")}>
-              {context.title}
-            </CardTitle>
+    <ModulePageClient
+      moduleId="card-combinations"
+      moduleNumber={3}
+      totalModules={8}
+      title="Card Combinations"
+      description="Master how cards interact and create new meanings together. Learn key combinations across different life contexts."
+      duration="25 minutes"
+      difficulty="Intermediate"
+      icon={<Zap className="h-8 w-8 text-white" />}
+      prevModule={{ id: "reading-fundamentals", title: "Reading Fundamentals" }}
+      nextModule={{ id: "spreads", title: "Spreads & Techniques" }}
+      breadcrumbs={[
+        { name: "Home", url: "/" },
+        { name: "Learn", url: "/learn" },
+        { name: "Card Combinations", url: "/learn/card-combinations" },
+      ]}
+    >
+      {/* Core Concept Section */}
+      <Card className="mb-8 border-border bg-card">
+        <CardHeader>
+          <CardTitle id="core-concepts">
+            How Card Combinations Work
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h3 className="mb-3 font-semibold text-foreground">
+              The Principle of Interaction
+            </h3>
+            <p className="text-muted-foreground">
+              In Lenormand, cards don&apos;t exist in isolation. When two cards
+              appear together, they modify and enhance each other&apos;s
+              meanings. The combination creates a new, unified message that&apos;s
+              more specific than either card alone.
+            </p>
           </div>
-          <ChevronDown
-            className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
-        </button>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {context.description}
-        </p>
-      </CardHeader>
-      {isOpen && (
-        <CardContent>
-          <div className="space-y-4">
-            {context.combinations.map((combo, comboIndex) => (
-              <div
-                key={comboIndex}
-                className="border-l-2 border-primary/50 py-2 pl-4"
-              >
-                <div className="mb-2 flex items-start justify-between">
-                  <h4 className="font-semibold text-foreground">
-                    {combo.cards}
-                  </h4>
-                  <Badge className="ml-2">{context.title}</Badge>
-                </div>
-                <p className="mb-2 text-foreground">{combo.meaning}</p>
-                {combo.context && (
-                  <p className="text-sm italic text-muted-foreground">
-                    Context: {combo.context}
-                  </p>
-                )}
-              </div>
-            ))}
+          <div>
+            <h3 className="mb-3 font-semibold text-foreground">
+              Modifier Cards
+            </h3>
+            <p className="text-muted-foreground">
+              Certain cards act as &quot;modifiers&quot; - they change the meaning
+              of adjacent cards. The Key adds certainty, Clouds add confusion,
+              the Scythe adds suddenness. Learning to identify these modifiers
+              is crucial to accurate combination reading.
+            </p>
+          </div>
+          <div>
+            <h3 className="mb-3 font-semibold text-foreground">
+              Context Matters
+            </h3>
+            <p className="text-muted-foreground">
+              The same combination can have different meanings depending on the
+              context of the reading. A Lover + Tower in a love question might
+              mean relationship breakup, but in a career question it might
+              indicate conflict with a colleague.
+            </p>
+          </div>
+          <div>
+            <h3 className="mb-3 font-semibold text-foreground">
+              Reading Direction
+            </h3>
+            <p className="text-muted-foreground">
+              In most Lenormand spreads, cards are read left to right, creating
+              a narrative flow. The first card influences the second, and
+              together they tell a story. Pay attention to the order and
+              direction of your cards.
+            </p>
           </div>
         </CardContent>
-      )}
-    </Card>
-  );
-}
+      </Card>
 
-export default function CardCombinationsPage() {
-  useHeadingIds();
+      {/* Combination Contexts with Accordion */}
+      {combinationContexts.map((context, index) => (
+        <AccordionSection key={index} context={context} index={index} />
+      ))}
 
-  // Memoize combination contexts
-  const combinationContexts = useMemo(() => getCombinationContexts(), []);
-
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Breadcrumb */}
-      <div className="border-b border-border bg-card/50 backdrop-blur">
-        <div className="container mx-auto max-w-4xl px-4 py-4">
-          <BreadcrumbNav
-            items={[
-              { name: "Home", url: "/" },
-              { name: "Learn", url: "/learn" },
-              { name: "Card Combinations", url: "/learn/card-combinations" },
-            ]}
-          />
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="border-b border-border bg-card/80 backdrop-blur">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/learn/reading-fundamentals">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-primary hover:text-primary/80"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Reading Fundamentals
-              </Button>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 4 of 8
-              </Badge>
-              <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Intermediate
-              </Badge>
-            </div>
-            <Link href="/learn/spreads">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-primary hover:text-primary/80"
-              >
-                Next Module
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto max-w-4xl px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1
-            id="card-combinations"
-            className="mb-4 text-4xl font-bold text-foreground"
-          >
-            Card Combinations & Meanings
-          </h1>
-          <p className="mb-4 text-lg text-muted-foreground">
-            Master the art of reading card combinations. In Lenormand, two or
-            more cards create new meanings through their interaction. This
-            comprehensive guide breaks down combinations across different life
-            contexts.
-          </p>
-        </div>
-
-        {/* Learning Progress Tracker */}
-        <LearningProgressTracker moduleId="card-combinations" />
-
-        {/* Core Concept Section */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle id="core-concepts">How Card Combinations Work</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="mb-3 font-semibold text-foreground">
-                The Principle of Interaction
-              </h3>
-              <p className="text-muted-foreground">
-                In Lenormand, cards don&apos;t exist in isolation. When two
-                cards appear together, they modify and enhance each other&apos;s
-                meanings. The combination creates a new, unified message
-                that&apos;s more specific than either card alone.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-3 font-semibold text-foreground">
-                Modifier Cards
-              </h3>
-              <p className="text-muted-foreground">
-                Certain cards act as &quot;modifiers&quot; - they change the
-                meaning of adjacent cards. The Key adds certainty, Clouds add
-                confusion, the Scythe adds suddenness. Learning to identify
-                these modifiers is crucial to accurate combination reading.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-3 font-semibold text-foreground">
-                Context Matters
-              </h3>
-              <p className="text-muted-foreground">
-                The same combination can have different meanings depending on
-                the context of the reading. A Lover + Tower in a love question
-                might mean relationship breakup, but in a career question it
-                might indicate conflict with a colleague.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-3 font-semibold text-foreground">
-                Reading Direction
-              </h3>
-              <p className="text-muted-foreground">
-                In most Lenormand spreads, cards are read left to right,
-                creating a narrative flow. The first card influences the second,
-                and together they tell a story. Pay attention to the order and
-                direction of your cards.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Combination Contexts with Accordion */}
-        {combinationContexts.map((context, index) => (
-          <AccordionSection key={index} context={context} index={index} />
-        ))}
-
-        {/* Practice Tips Section */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle id="practice-tips">
-              Tips for Mastering Combinations
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex gap-3">
+      {/* Practice Tips Section */}
+      <Card className="mb-8 border-border bg-card">
+        <CardHeader>
+          <CardTitle id="practice-tips">
+            Tips for Mastering Combinations
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {[
+            {
+              num: 1,
+              title: "Start Simple",
+              description:
+                "Begin with 2-card combinations before progressing to complex spreads. Master the fundamentals first.",
+            },
+            {
+              num: 2,
+              title: "Identify Modifiers",
+              description:
+                "Look for Key, Clouds, Scythe, and Anchor cards first - these change the meaning of nearby cards.",
+            },
+            {
+              num: 3,
+              title: "Read the Flow",
+              description:
+                "Read combinations left to right as a narrative. What story do the cards tell together?",
+            },
+            {
+              num: 4,
+              title: "Consider Context",
+              description:
+                "Always consider the question and context of the reading. The same combination means different things in different situations.",
+            },
+            {
+              num: 5,
+              title: "Practice Consistently",
+              description:
+                "The best way to master combinations is through regular practice. Do daily 2-3 card readings to build muscle memory.",
+            },
+          ].map((tip) => (
+            <div key={tip.num} className="flex gap-3">
               <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-sm font-semibold text-primary">1</span>
+                <span className="text-sm font-semibold text-primary">
+                  {tip.num}
+                </span>
               </div>
               <div>
-                <h4 className="font-semibold text-foreground">Start Simple</h4>
+                <h4 className="font-semibold text-foreground">{tip.title}</h4>
                 <p className="text-sm text-muted-foreground">
-                  Begin with 2-card combinations before progressing to complex
-                  spreads. Master the fundamentals first.
+                  {tip.description}
                 </p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-sm font-semibold text-primary">2</span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground">
-                  Identify Modifiers
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  Look for Key, Clouds, Scythe, and Anchor cards first - these
-                  change the meaning of nearby cards.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-sm font-semibold text-primary">3</span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground">Read the Flow</h4>
-                <p className="text-sm text-muted-foreground">
-                  Read combinations left to right as a narrative. What story do
-                  the cards tell together?
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-sm font-semibold text-primary">4</span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground">
-                  Consider Context
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  Always consider the question and context of the reading. The
-                  same combination means different things in different
-                  situations.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-sm font-semibold text-primary">5</span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground">
-                  Practice Consistently
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  The best way to master combinations is through regular
-                  practice. Do daily 2-3 card readings to build muscle memory.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Cross-Reference Section */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle id="exploring-further">
-              Explore Individual Cards
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-muted-foreground">
-              To deepen your understanding of combinations, explore how each
-              individual card works with others:
-            </p>
-            <Link href="/cards/guide">
-              <Button variant="outline" className="w-full">
-                View All Card Meanings
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* Navigation to Other Modules */}
-        <div className="flex gap-4 border-t border-border pt-8">
-          <Link href="/learn/card-meanings" className="flex-1">
-            <Button variant="outline" className="w-full">
-              ← Card Meanings
-            </Button>
-          </Link>
-          <Link href="/learn/spreads" className="flex-1">
-            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-              Spreads & Techniques →
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      <BackToTop />
-    </div>
+          ))}
+        </CardContent>
+      </Card>
+    </ModulePageClient>
   );
 }
