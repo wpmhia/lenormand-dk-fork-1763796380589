@@ -12,6 +12,9 @@
 - [x] GA ID XSS sanitized
 - [x] X-Frame-Options removed (for preview compatibility)
 - [x] Other security headers active
+- [x] Physical cards validation (client & server-side)
+- [x] Duplicate card detection
+- [x] Card ID range validation (1-36)
 
 ## ✅ Scalability Features
 - [x] Async job processing (no long-running connections)
@@ -20,6 +23,8 @@
 - [x] Circuit breaker pattern (fails gracefully)
 - [x] Edge caching headers configured
 - [x] Rate limiting (5 req/min per IP)
+- [x] Redis fallback (in-memory when Redis unavailable)
+- [x] Synchronous mode (when no Redis configured)
 
 ## 📋 Required Environment Variables
 
