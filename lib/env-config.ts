@@ -1,28 +1,40 @@
 // IMPORTANT: When adding new env variables to the codebase, update this array
 export const ENV_VARIABLES: EnvVariable[] = [
   {
-    name: "DATABASE_URL",
-    description:
-      "PostgreSQL connection string for Neon database analytics (not currently used)",
-    required: false,
-    instructions:
-      "Get your DATABASE_URL from your Neon dashboard if you want to add analytics features in the future.",
+    name: "DEEPSEEK_API_KEY",
+    description: "API key for DeepSeek AI service for Lenormand reading interpretations",
+    required: true,
+    instructions: "Get your API key from https://platform.deepseek.com/api-keys",
   },
   {
-    name: "DEEPSEEK_API_KEY",
-    description:
-      "API key for DeepSeek AI service for Lenormand reading interpretations",
-    required: false,
-    instructions:
-      "Get your API key from https://platform.deepseek.com/api-keys. Optional - AI features will be disabled if not provided.",
+    name: "UPSTASH_REDIS_REST_URL",
+    description: "Upstash Redis REST URL for job queue and caching",
+    required: true,
+    instructions: "Create a Redis database at https://upstash.com and copy the REST URL",
+  },
+  {
+    name: "UPSTASH_REDIS_REST_TOKEN",
+    description: "Upstash Redis REST token for authentication",
+    required: true,
+    instructions: "From your Upstash Redis dashboard, copy the REST token",
   },
   {
     name: "DEEPSEEK_BASE_URL",
-    description:
-      "Base URL for DeepSeek API (optional, defaults to https://api.deepseek.com)",
+    description: "Base URL for DeepSeek API (optional)",
     required: false,
-    instructions:
-      "Only set if using a custom DeepSeek endpoint. Default is the official API endpoint without /v1 suffix.",
+    instructions: "Only set if using a custom endpoint. Default: https://api.deepseek.com",
+  },
+  {
+    name: "NEXT_PUBLIC_GA_MEASUREMENT_ID",
+    description: "Google Analytics measurement ID (optional)",
+    required: false,
+    instructions: "Get from Google Analytics dashboard if you want tracking",
+  },
+  {
+    name: "READING_HMAC_SECRET",
+    description: "Secret key for signing shared reading URLs (optional)",
+    required: false,
+    instructions: "Generate a random string. If not set, a default dev key is used (not secure for production)",
   },
 ];
 
