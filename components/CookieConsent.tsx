@@ -157,7 +157,7 @@ export function CookieConsent() {
       {showBanner && (
         <div
           id="cookie-banner"
-          className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 shadow-lg backdrop-blur-sm md:pb-6"
+          className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 pb-safe shadow-lg backdrop-blur-sm md:pb-6"
           role="dialog"
           aria-label="Cookie consent banner"
           aria-describedby="cookie-banner-description"

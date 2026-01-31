@@ -29,7 +29,7 @@ export function BackToTop() {
 
   return (
     <div
-      className={`fixed bottom-24 right-8 z-40 transition-opacity duration-300 ${
+      className={`fixed bottom-24 right-8 z-40 pb-safe pr-safe transition-opacity duration-300 ${
         isVisible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >

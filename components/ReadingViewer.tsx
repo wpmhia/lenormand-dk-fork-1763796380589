@@ -488,9 +488,9 @@ export function ReadingViewer({
             </div>
           )}
 
-          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 [-webkit-overflow-scrolling:touch]">
             <div
-              className="grid gap-1 sm:gap-sm min-w-[600px]"
+              className="grid gap-1 sm:gap-sm min-w-[320px] sm:min-w-[600px]"
               style={{ 
                 gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
               }}
