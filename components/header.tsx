@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -64,11 +65,13 @@ export function Header() {
           className="ml-2 hidden items-center justify-center md:inline-flex"
           suppressHydrationWarning
         >
-          <img
-            height="36"
-            style={{ border: 0, height: 36 }}
+          <Image
+            width={144}
+            height={36}
+            style={{ border: 0, height: 36, width: "auto" }}
             src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
             alt="Buy Me a Coffee at ko-fi.com"
+            unoptimized
           />
         </a>
         <div className="ml-auto md:hidden">

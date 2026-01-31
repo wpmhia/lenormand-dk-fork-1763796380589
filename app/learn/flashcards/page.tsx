@@ -87,23 +87,6 @@ export default function FlashcardsPage() {
     setIsFlipped(false);
   }, []);
 
-  // Mark card as known
-  const markKnown = useCallback(() => {
-    if (!knownCards.includes(currentCard.id)) {
-      setKnownCards((prev) => [...prev, currentCard.id]);
-      setLearningCards((prev) => prev.filter((id) => id !== currentCard.id));
-    }
-    nextCard();
-  }, [currentCard, knownCards]);
-
-  // Mark card as learning
-  const markLearning = useCallback(() => {
-    if (!learningCards.includes(currentCard.id)) {
-      setLearningCards((prev) => [...prev, currentCard.id]);
-    }
-    nextCard();
-  }, [currentCard, learningCards]);
-
   // Next card
   const nextCard = useCallback(() => {
     setIsFlipped(false);
@@ -113,6 +96,23 @@ export default function FlashcardsPage() {
       setShowComplete(true);
     }
   }, [currentIndex, cards.length]);
+
+  // Mark card as known
+  const markKnown = useCallback(() => {
+    if (!knownCards.includes(currentCard.id)) {
+      setKnownCards((prev) => [...prev, currentCard.id]);
+      setLearningCards((prev) => prev.filter((id) => id !== currentCard.id));
+    }
+    nextCard();
+  }, [currentCard, knownCards, nextCard]);
+
+  // Mark card as learning
+  const markLearning = useCallback(() => {
+    if (!learningCards.includes(currentCard.id)) {
+      setLearningCards((prev) => [...prev, currentCard.id]);
+    }
+    nextCard();
+  }, [currentCard, learningCards, nextCard]);
 
   // Previous card
   const prevCard = useCallback(() => {

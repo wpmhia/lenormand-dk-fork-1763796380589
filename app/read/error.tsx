@@ -21,8 +21,8 @@ export default function Error({
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-6 rounded-lg border border-border bg-card p-6 text-center shadow-lg">
         <div className="flex justify-center">
-          <div className="rounded-full bg-destructive/10 p-3">
-            <AlertCircle className="h-8 w-8 text-destructive" />
+          <div className="bg-destructive/10 rounded-full p-3">
+            <AlertCircle className="text-destructive h-8 w-8" />
           </div>
         </div>
         

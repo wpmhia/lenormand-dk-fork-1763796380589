@@ -23,6 +23,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "*.vercel.app",
       },
+      {
+        protocol: "https",
+        hostname: "storage.ko-fi.com",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 1080, 1200],
