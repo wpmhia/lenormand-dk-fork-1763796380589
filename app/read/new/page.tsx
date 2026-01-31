@@ -148,9 +148,9 @@ function NewReadingPageContent() {
       readingCardRefs.current.clear();
       aiAnalysisStartedRef.current = false;
 
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
       }
       currentJobIdRef.current = null;
       if (transitionTimeoutRef.current) {
@@ -212,7 +212,7 @@ function NewReadingPageContent() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<string>("");
-  const pollingIntervalRef = useRef<number | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
   const currentJobIdRef = useRef<string | null>(null);
 
   // Generate unique job ID
@@ -220,40 +220,76 @@ function NewReadingPageContent() {
     return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }, []);
 
-  // Poll for job status
-  const pollJobStatus = useCallback(async (jobId: string) => {
-    try {
-      const response = await fetch(`/api/readings/status?jobId=${jobId}`);
-      if (!response.ok) return;
-      
-      const job = await response.json();
-      
-      if (job.status === "completed") {
-        setAiReading({ reading: job.result });
-        setAiLoading(false);
-        setJobStatus("");
-        if (pollingIntervalRef.current) {
-          clearInterval(pollingIntervalRef.current);
-          pollingIntervalRef.current = null;
-        }
-        currentJobIdRef.current = null;
-      } else if (job.status === "failed") {
-        setAiError(job.error || "Reading failed");
-        setAiLoading(false);
-        setJobStatus("");
-        if (pollingIntervalRef.current) {
-          clearInterval(pollingIntervalRef.current);
-          pollingIntervalRef.current = null;
-        }
-        currentJobIdRef.current = null;
-      } else {
-        // Still processing
-        setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");
-      }
-    } catch (err) {
-      console.error("Polling error:", err);
+  // Cleanup SSE connection
+  const cleanupEventSource = useCallback(() => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
     }
   }, []);
+
+  // Connect to SSE for real-time updates
+  const connectToSSE = useCallback((jobId: string) => {
+    cleanupEventSource();
+    
+    const sse = new EventSource(`/api/readings/status?jobId=${jobId}`);
+    eventSourceRef.current = sse;
+    
+    sse.onmessage = (event) => {
+      try {
+        const job = JSON.parse(event.data);
+        
+        if (job.status === "completed") {
+          setAiReading({ reading: job.result });
+          setAiLoading(false);
+          setJobStatus("");
+          cleanupEventSource();
+          currentJobIdRef.current = null;
+        } else if (job.status === "failed") {
+          setAiError(job.error || "Reading failed");
+          setAiLoading(false);
+          setJobStatus("");
+          cleanupEventSource();
+          currentJobIdRef.current = null;
+        } else if (job.error) {
+          setAiError(job.error);
+          setAiLoading(false);
+          setJobStatus("");
+          cleanupEventSource();
+          currentJobIdRef.current = null;
+        } else {
+          // Still processing
+          setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");
+        }
+      } catch (err) {
+        console.error("SSE parse error:", err);
+      }
+    };
+    
+    sse.onerror = () => {
+      // Connection error - fallback to polling once
+      console.warn("SSE connection failed, falling back to fetch");
+      cleanupEventSource();
+      
+      // Single fetch as fallback
+      fetch(`/api/readings/status?jobId=${jobId}`)
+        .then(r => r.json())
+        .then(job => {
+          if (job.status === "completed") {
+            setAiReading({ reading: job.result });
+            setAiLoading(false);
+            setJobStatus("");
+            currentJobIdRef.current = null;
+          } else if (job.status === "failed") {
+            setAiError(job.error || "Reading failed");
+            setAiLoading(false);
+            setJobStatus("");
+            currentJobIdRef.current = null;
+          }
+        })
+        .catch(console.error);
+    };
+  }, [cleanupEventSource]);
 
   // Start async AI analysis
   const performAsyncAnalysis = useCallback(async () => {
@@ -291,13 +327,19 @@ function NewReadingPageContent() {
         throw new Error(error.error || "Failed to start reading");
       }
 
-      // Start polling every 2 seconds
-      pollingIntervalRef.current = window.setInterval(() => {
-        pollJobStatus(jobId);
-      }, 2000);
+      const data = await response.json();
+      
+      // If already cached/completed, show immediately
+      if (data.status === "completed" && data.cached) {
+        setAiReading({ reading: data.result });
+        setAiLoading(false);
+        setJobStatus("");
+        currentJobIdRef.current = null;
+        return;
+      }
 
-      // Initial poll
-      pollJobStatus(jobId);
+      // Connect to SSE for real-time updates
+      connectToSSE(jobId);
 
     } catch (error) {
       if (error instanceof Error) {
@@ -307,7 +349,7 @@ function NewReadingPageContent() {
       setJobStatus("");
       currentJobIdRef.current = null;
     }
-  }, [question, drawnCards, allCards, selectedSpread.id, generateJobId, pollJobStatus]);
+  }, [question, drawnCards, allCards, selectedSpread.id, generateJobId, connectToSSE]);
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
@@ -542,16 +584,11 @@ function NewReadingPageContent() {
       mountedRef.current = false;
 
       // Cleanup polling
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
       }
       currentJobIdRef.current = null;
-      
-      // Cleanup transition timeout
-      if (transitionTimeoutRef.current) {
-        clearTimeout(transitionTimeoutRef.current);
-      }
     };
   }, []);
 
