@@ -13,6 +13,8 @@ interface DeckProps {
   onDraw?: (cards: CardType[]) => void;
   drawCount?: number;
   isProcessing?: boolean;
+  setCardRef?: (index: number) => (el: HTMLElement | null) => void;
+  hideDrawnCards?: boolean;
 }
 
 function DeckComponent({
@@ -20,6 +22,8 @@ function DeckComponent({
   onDraw,
   drawCount = 3,
   isProcessing = false,
+  setCardRef,
+  hideDrawnCards = false,
 }: DeckProps) {
   const [deck, setDeck] = useState<CardType[]>([]);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -246,7 +250,7 @@ function DeckComponent({
         </div>
       </div>
 
-      {drawnCards.length > 0 && (
+      {drawnCards.length > 0 && !hideDrawnCards && (
         <div className="space-y-4">
           <h3 className="text-center text-lg font-semibold">
             {revealedCount < drawnCards.length ? (
@@ -263,6 +267,7 @@ function DeckComponent({
             {drawnCards.slice(0, revealedCount).map((item, index) => (
               <div
                 key={`${item.id}-${index}`}
+                ref={setCardRef ? setCardRef(index) : undefined}
                 className="stagger-reveal"
                 style={{
                   animationDelay: `${index * 0.1}s`,

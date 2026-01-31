@@ -43,6 +43,7 @@ import { AIReadingResponse } from "@/lib/ai-config";
 
 import { Deck } from "@/components/Deck";
 import { ReadingViewer } from "@/components/ReadingViewer";
+import { CardTransition } from "@/components/CardTransition";
 const AIReadingDisplay = lazy(() =>
   import("@/components/AIReadingDisplay").then((m) => ({
     default: m.AIReadingDisplay,
@@ -74,7 +75,17 @@ function NewReadingPageContent() {
   );
   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([]);
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([]);
+  const [drawnCardTypes, setDrawnCardTypes] = useState<CardType[]>([]);
   const [error, setError] = useState("");
+  
+  // FLIP animation state for seamless transitions
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showDeckOverlay, setShowDeckOverlay] = useState(false);
+  const [sourceRects, setSourceRects] = useState<Map<number, DOMRect>>(new Map());
+  const [targetRects, setTargetRects] = useState<Map<number, DOMRect>>(new Map());
+  const deckCardRefs = useRef<Map<number, HTMLElement>>(new Map());
+  const readingCardRefs = useRef<Map<number, HTMLElement>>(new Map());
+  const transitionTimeoutRef = useRef<number | null>(null);
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
   const [questionCharCount, setQuestionCharCount] = useState(0);
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
@@ -82,11 +93,44 @@ function NewReadingPageContent() {
 
   const mountedRef = useRef(true);
   const aiAnalysisStartedRef = useRef(false);
+  
+  // Measure deck card positions before transition
+  const measureDeckPositions = useCallback(() => {
+    const positions = new Map<number, DOMRect>();
+    deckCardRefs.current.forEach((el, index) => {
+      const rect = el.getBoundingClientRect();
+      positions.set(index, rect);
+    });
+    setSourceRects(positions);
+    return positions;
+  }, []);
+  
+  // Measure reading viewer card positions
+  const measureReadingPositions = useCallback(() => {
+    const positions = new Map<number, DOMRect>();
+    readingCardRefs.current.forEach((el, index) => {
+      const rect = el.getBoundingClientRect();
+      positions.set(index, rect);
+    });
+    setTargetRects(positions);
+    return positions;
+  }, []);
+  
+  // Set refs for deck cards
+  const setDeckCardRef = useCallback((index: number) => (el: HTMLElement | null) => {
+    if (el) deckCardRefs.current.set(index, el);
+  }, []);
+  
+  // Set refs for reading cards  
+  const setReadingCardRef = useCallback((index: number) => (el: HTMLElement | null) => {
+    if (el) readingCardRefs.current.set(index, el);
+  }, []);
 
   const performReset = useCallback(
     (keepUrlParams = false) => {
       setStep("setup");
       setDrawnCards([]);
+      setDrawnCardTypes([]);
       setQuestion("");
       setSelectedSpread(AUTHENTIC_SPREADS[1]);
       setError("");
@@ -99,13 +143,23 @@ function NewReadingPageContent() {
       setPhysicalCardsError(null);
       setParsedCards([]);
       setPath(null);
+      setIsTransitioning(false);
+      setShowDeckOverlay(false);
+      setSourceRects(new Map());
+      setTargetRects(new Map());
+      deckCardRefs.current.clear();
+      readingCardRefs.current.clear();
       aiAnalysisStartedRef.current = false;
 
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
         abortControllerRef.current = null;
       }
-      requestInProgressRef.current = false; // Reset deduplication flag
+      requestInProgressRef.current = false;
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+        transitionTimeoutRef.current = null;
+      }
 
       if (!keepUrlParams) {
         const newUrl = new URL(window.location.href);
@@ -430,37 +484,82 @@ function NewReadingPageContent() {
     [physicalCards],
   );
 
+  // Handle transition completion
+  const handleTransitionComplete = useCallback(() => {
+    setIsTransitioning(false);
+    setShowDeckOverlay(false);
+    setSourceRects(new Map());
+    setTargetRects(new Map());
+    deckCardRefs.current.clear();
+    readingCardRefs.current.clear();
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+  }, []);
+
+  // Start FLIP animation from deck to reading
+  const startCardTransition = useCallback((cards: CardType[]) => {
+    // Store the drawn cards for transition
+    setDrawnCardTypes(cards);
+    
+    // Measure deck positions
+    const deckPositions = measureDeckPositions();
+    if (deckPositions.size === 0) return;
+    
+    // Start transition mode
+    setIsTransitioning(true);
+    setShowDeckOverlay(true);
+    
+    // Convert to ReadingCards
+    const readingCards = cards.map((card, index) => ({
+      id: card.id,
+      position: index,
+    }));
+    setDrawnCards(readingCards);
+    
+    // Show results step (ReadingViewer will mount)
+    setStep("results");
+    
+    // Wait for ReadingViewer to render, then measure and animate
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      const readingPositions = measureReadingPositions();
+      setTargetRects(readingPositions);
+    }, 100);
+  }, [measureDeckPositions, measureReadingPositions]);
+
   const handleDraw = useCallback(
     async (cards: ReadingCard[] | CardType[]) => {
       try {
         let readingCards: ReadingCard[];
+        let cardTypes: CardType[] = [];
 
         // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
         if (Array.isArray(cards) && cards.length > 0) {
           if ("position" in cards[0]) {
-            // It's ReadingCard[]
+            // It's ReadingCard[] (physical path) - immediate transition
             readingCards = cards as ReadingCard[];
+            // Get full card types
+            cardTypes = readingCards.map(rc => getCardById(allCards, rc.id)).filter(Boolean) as CardType[];
+            setDrawnCardTypes(cardTypes);
+            setDrawnCards(readingCards);
+            setStep("results");
           } else {
-            // It's CardType[], convert to ReadingCard[]
-            readingCards = (cards as CardType[]).map((card, index) => ({
-              id: card.id,
-              position: index,
-            }));
+            // It's CardType[] (virtual deck path) - FLIP animation
+            cardTypes = cards as CardType[];
+            startCardTransition(cardTypes);
           }
         } else {
           readingCards = [];
+          setDrawnCards(readingCards);
+          setStep("results");
         }
 
-        if (readingCards.length === 0) {
+        if (readingCards.length === 0 && cardTypes.length === 0) {
           setError(
             `No cards found. Please enter ${selectedSpread.cards} valid card numbers (1-36) or names.`,
           );
           return;
         }
-
-        setDrawnCards(readingCards);
-        // Transition to results step for all spreads
-        setStep("results");
       } catch (error) {
         if (mountedRef.current) {
           const errorMsg =
@@ -473,7 +572,7 @@ function NewReadingPageContent() {
         }
       }
     },
-    [selectedSpread.cards],
+    [selectedSpread.cards, allCards, startCardTransition],
   );
   // Parse physical cards when input changes
   useEffect(() => {
@@ -548,6 +647,11 @@ function NewReadingPageContent() {
         abortControllerRef.current = null;
       }
       requestInProgressRef.current = false;
+      
+      // Cleanup transition timeout
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -816,6 +920,8 @@ function NewReadingPageContent() {
                         drawCount={selectedSpread.cards}
                         onDraw={handleDraw}
                         isProcessing={step !== "drawing"}
+                        setCardRef={setDeckCardRef}
+                        hideDrawnCards={isTransitioning}
                       />
                     ))}
 
@@ -954,6 +1060,22 @@ function NewReadingPageContent() {
             </div>
           )}
 
+          {/* Deck overlay during transition - keeps cards visible for FLIP animation */}
+          {showDeckOverlay && (
+            <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm transition-opacity duration-500" />
+          )}
+          
+          {/* FLIP Animation Layer */}
+          {isTransitioning && (
+            <CardTransition
+              cards={drawnCardTypes}
+              sourceRects={sourceRects}
+              targetRects={targetRects}
+              onComplete={handleTransitionComplete}
+              duration={800}
+            />
+          )}
+
           {/* Results Step - All spreads show here */}
           {step === "results" && drawnCards.length > 0 && (
             <div className="step-enter space-y-6">
@@ -973,6 +1095,8 @@ function NewReadingPageContent() {
                   }}
                   allCards={allCards}
                   spreadId={selectedSpread.id}
+                  setCardRef={setReadingCardRef}
+                  hideCardsDuringTransition={isTransitioning}
                 />
               ) : (
                 <div className="p-4 text-center text-muted-foreground">

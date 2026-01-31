@@ -61,6 +61,8 @@ interface ReadingViewerProps {
   showReadingHeader?: boolean;
   spreadId?: string;
   disableAnimations?: boolean;
+  setCardRef?: (index: number) => (el: HTMLElement | null) => void;
+  hideCardsDuringTransition?: boolean;
 }
 
 interface PositionInfo {
@@ -369,6 +371,8 @@ export function ReadingViewer({
   showReadingHeader = true,
   spreadId,
   disableAnimations = false,
+  setCardRef,
+  hideCardsDuringTransition = false,
 }: ReadingViewerProps) {
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [shareClicked, setShareClicked] = useState(false);
@@ -429,25 +433,30 @@ export function ReadingViewer({
             const positionInfo = getPositionInfo(index, spreadId);
 
             return (
-              <MemoizedAnimatedCard
+              <div
                 key={index}
-                delay={0}
-                className="flex flex-col items-center space-y-lg"
+                ref={setCardRef ? setCardRef(index) : undefined}
+                className={hideCardsDuringTransition ? "opacity-0" : undefined}
               >
-                <div className="flex flex-col items-center space-y-md">
-                  <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
-                    {positionInfo.label}
+                <MemoizedAnimatedCard
+                  delay={0}
+                  className="flex flex-col items-center space-y-lg"
+                >
+                  <div className="flex flex-col items-center space-y-md">
+                    <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
+                      {positionInfo.label}
+                    </div>
+                    <MemoizedCardWithTooltip
+                      card={card!}
+                      size="lg"
+                      onClick={() => setSelectedCard(card!)}
+                      className="cursor-pointer"
+                      positionLabel={positionInfo.label}
+                      positionDescription={positionInfo.meaning}
+                    />
                   </div>
-                  <MemoizedCardWithTooltip
-                    card={card!}
-                    size="lg"
-                    onClick={() => setSelectedCard(card!)}
-                    className="cursor-pointer"
-                    positionLabel={positionInfo.label}
-                    positionDescription={positionInfo.meaning}
-                  />
-                </div>
-              </MemoizedAnimatedCard>
+                </MemoizedAnimatedCard>
+              </div>
             );
           })}
         </div>
@@ -520,92 +529,97 @@ export function ReadingViewer({
                 }
 
                 return (
-                  <MemoizedAnimatedCard
+                  <div
                     key={index}
-                    delay={index * 0.08}
-                    className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
-                      isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
-                    } ${borderClass}`}
+                    ref={setCardRef ? setCardRef(index) : undefined}
+                    className={hideCardsDuringTransition ? "opacity-0" : undefined}
                   >
-                    {/* Position header */}
-                    <div className="flex w-full items-center justify-between text-xs">
-                      <span className="font-medium text-muted-foreground">
-                        {pos.row + 1}-{pos.col + 1}
-                      </span>
-                      {isSignificator && (
-                        <Badge
-                          variant="default"
-                          className="bg-amber-600 text-[10px]"
-                        >
-                          YOU
-                        </Badge>
-                      )}
-                      {isCorner && (
-                        <Badge
-                          variant="outline"
-                          className="border-purple-500/50 text-[10px] text-purple-600"
-                        >
-                          Context
-                        </Badge>
-                      )}
-                      {isCardsOfFate && (
-                        <Badge
-                          variant="outline"
-                          className="border-red-500/50 text-[10px] text-red-600"
-                        >
-                          Fate
-                        </Badge>
-                      )}
-                      {isCenter && (
-                        <Badge
-                          variant="outline"
-                          className="border-green-500/50 text-[10px] text-green-600"
-                        >
-                          Heart
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Directional indicator */}
-                    {zone && significatorIndex !== -1 && !isSignificator && (
-                      <div
-                        className={`flex items-center gap-1 text-[10px] ${zone.color}`}
-                      >
-                        {getZoneIcon(zoneInfo.zone)}
-                        <span>{zone.name}</span>
-                        <span className="text-muted-foreground">
-                          ({zoneInfo.distance})
+                    <MemoizedAnimatedCard
+                      delay={index * 0.08}
+                      className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
+                        isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
+                      } ${borderClass}`}
+                    >
+                      {/* Position header */}
+                      <div className="flex w-full items-center justify-between text-xs">
+                        <span className="font-medium text-muted-foreground">
+                          {pos.row + 1}-{pos.col + 1}
                         </span>
+                        {isSignificator && (
+                          <Badge
+                            variant="default"
+                            className="bg-amber-600 text-[10px]"
+                          >
+                            YOU
+                          </Badge>
+                        )}
+                        {isCorner && (
+                          <Badge
+                            variant="outline"
+                            className="border-purple-500/50 text-[10px] text-purple-600"
+                          >
+                            Context
+                          </Badge>
+                        )}
+                        {isCardsOfFate && (
+                          <Badge
+                            variant="outline"
+                            className="border-red-500/50 text-[10px] text-red-600"
+                          >
+                            Fate
+                          </Badge>
+                        )}
+                        {isCenter && (
+                          <Badge
+                            variant="outline"
+                            className="border-green-500/50 text-[10px] text-green-600"
+                          >
+                            Heart
+                          </Badge>
+                        )}
                       </div>
-                    )}
 
-                    <MemoizedCardWithTooltip
-                      card={card!}
-                      size="sm"
-                      onClick={() => setSelectedCard(card!)}
-                      className="cursor-pointer"
-                      positionLabel={
-                        isSignificator
-                          ? "Significator (You)"
-                          : zone?.name || undefined
-                      }
-                      positionDescription={
-                        isSignificator
-                          ? "This card represents you in the reading"
-                          : zoneInfo.direction
-                            ? `${zone.description} - Distance: ${zoneInfo.distance}`
-                            : undefined
-                      }
-                    />
+                      {/* Directional indicator */}
+                      {zone && significatorIndex !== -1 && !isSignificator && (
+                        <div
+                          className={`flex items-center gap-1 text-[10px] ${zone.color}`}
+                        >
+                          {getZoneIcon(zoneInfo.zone)}
+                          <span>{zone.name}</span>
+                          <span className="text-muted-foreground">
+                            ({zoneInfo.distance})
+                          </span>
+                        </div>
+                      )}
 
-                    {/* Topic card badge */}
-                    {topicInfo && (
-                      <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
-                        {getTopicIcon(topicInfo.type)}
-                        <span>{topicInfo.label}</span>
-                      </div>
-                    )}
-                  </MemoizedAnimatedCard>
+                      <MemoizedCardWithTooltip
+                        card={card!}
+                        size="sm"
+                        onClick={() => setSelectedCard(card!)}
+                        className="cursor-pointer"
+                        positionLabel={
+                          isSignificator
+                            ? "Significator (You)"
+                            : zone?.name || undefined
+                        }
+                        positionDescription={
+                          isSignificator
+                            ? "This card represents you in the reading"
+                            : zoneInfo.direction
+                              ? `${zone.description} - Distance: ${zoneInfo.distance}`
+                              : undefined
+                        }
+                      />
+
+                      {/* Topic card badge */}
+                      {topicInfo && (
+                        <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+                          {getTopicIcon(topicInfo.type)}
+                          <span>{topicInfo.label}</span>
+                        </div>
+                      )}
+                    </MemoizedAnimatedCard>
+                  </div>
                 );
               })}
             </div>
@@ -721,25 +735,30 @@ export function ReadingViewer({
             const positionInfo = getPositionInfo(index, spreadId);
 
             return (
-              <MemoizedAnimatedCard
+              <div
                 key={index}
-                delay={index * 0.6}
-                className="flex flex-col items-center space-y-md"
+                ref={setCardRef ? setCardRef(index) : undefined}
+                className={hideCardsDuringTransition ? "opacity-0" : undefined}
               >
-                <div className="flex flex-col items-center space-y-md">
-                  <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
-                    {positionInfo.label}
+                <MemoizedAnimatedCard
+                  delay={index * 0.6}
+                  className="flex flex-col items-center space-y-md"
+                >
+                  <div className="flex flex-col items-center space-y-md">
+                    <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
+                      {positionInfo.label}
+                    </div>
+                    <MemoizedCardWithTooltip
+                      card={card!}
+                      size="lg"
+                      onClick={() => setSelectedCard(card!)}
+                      className="cursor-pointer"
+                      positionLabel={positionInfo.label}
+                      positionDescription={positionInfo.meaning}
+                    />
                   </div>
-                  <MemoizedCardWithTooltip
-                    card={card!}
-                    size="lg"
-                    onClick={() => setSelectedCard(card!)}
-                    className="cursor-pointer"
-                    positionLabel={positionInfo.label}
-                    positionDescription={positionInfo.meaning}
-                  />
-                </div>
-              </MemoizedAnimatedCard>
+                </MemoizedAnimatedCard>
+              </div>
             );
           })}
         </div>
