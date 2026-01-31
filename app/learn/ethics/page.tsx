@@ -262,7 +262,7 @@ export default function EthicsPage() {
         <Card className="mb-8 border-primary/20 bg-primary/5">
           <CardContent className="p-6 text-center">
             <p className="mb-4 text-lg font-medium text-foreground">
-              "With knowledge comes responsibility."
+              &ldquo;With knowledge comes responsibility.&rdquo;
             </p>
             <p className="text-muted-foreground">
               Lenormand is a powerful tool for insight and guidance. Use it wisely, 
