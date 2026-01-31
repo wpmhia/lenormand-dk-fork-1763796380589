@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AIThinkingIndicator } from "@/components/ui/loading";
 import {
   RefreshCw,
-  Loader2,
   Copy,
   Check,
   AlertCircle,
@@ -158,14 +158,10 @@ export function AIReadingDisplay({
 
   if (isLoading && !streamedContent) {
     return (
-      <Card className="border-border bg-card shadow-lg">
-        <CardContent className="py-12">
-          <div className="flex flex-col items-center justify-center text-center">
-            <Loader2 className="mb-4 h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Generating your reading...</p>
-          </div>
-        </CardContent>
-      </Card>
+      <AIThinkingIndicator
+        message="Consulting the cards..."
+        subtext="Reading the cards for clear, practical guidance"
+      />
     );
   }
 

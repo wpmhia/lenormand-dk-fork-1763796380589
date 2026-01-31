@@ -213,6 +213,7 @@ function NewReadingPageContent() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const pollingIntervalRef = useRef<number | null>(null);
   const currentJobIdRef = useRef<string | null>(null);
 
@@ -469,6 +470,7 @@ function NewReadingPageContent() {
 
   const handleDraw = useCallback(
     async (cards: ReadingCard[] | CardType[]) => {
+      setIsSubmitting(true);
       try {
         let readingCards: ReadingCard[] = [];
         let cardTypes: CardType[] = [];
@@ -513,6 +515,8 @@ function NewReadingPageContent() {
             `Unable to process cards: ${errorMsg}. Try refreshing the page.`,
           );
         }
+      } finally {
+        setIsSubmitting(false);
       }
     },
     [selectedSpread.cards, allCards, startCardTransition],
@@ -1006,7 +1010,9 @@ function NewReadingPageContent() {
                   {path === "physical" && selectedSpread && (
                     <Button
                       onClick={() => handleDraw(parsedCards)}
-                      disabled={parsedCards.length !== selectedSpread.cards}
+                      disabled={parsedCards.length !== selectedSpread.cards || isSubmitting}
+                      loading={isSubmitting}
+                      loadingText="Starting..."
                       className="w-full"
                       size="lg"
                       variant="default"
@@ -1064,34 +1070,6 @@ function NewReadingPageContent() {
 
               {/* AI Analysis Section - Shows inline with cards */}
               <div className="mt-6">
-                {/* Consulting the cards moment - Phase 2.3: Enhanced AI loading ritual */}
-                {aiLoading && (
-                  <div className="consulting-glow animate-in fade-in duration-700 rounded-xl border border-primary/20 bg-card/80 p-10 text-center backdrop-blur-sm">
-                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center">
-                      <div className="consulting-pulse absolute h-16 w-16 rounded-full bg-primary/20" />
-                      <div className="consulting-pulse absolute h-12 w-12 rounded-full bg-primary/30" style={{ animationDelay: "0.5s" }} />
-                      <Sparkles className="relative h-8 w-8 text-primary" />
-                    </div>
-                    <p className="text-shimmer text-xl font-medium text-foreground">
-                      {jobStatus || "Consulting the cards..."}
-                    </p>
-                    <p className="mt-3 text-sm italic text-muted-foreground">
-                      Reading the cards for clear, practical guidance
-                    </p>
-                    <div className="mt-6 flex justify-center gap-1">
-                      {[0, 1, 2].map((i) => (
-                        <div
-                          key={i}
-                          className="h-2 w-2 rounded-full bg-primary/60"
-                          style={{
-                            animation: "consultingPulse 1.4s ease-in-out infinite",
-                            animationDelay: `${i * 0.2}s`,
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
                 <AIReadingDisplay
                   aiReading={aiReading}
                   isLoading={aiLoading}

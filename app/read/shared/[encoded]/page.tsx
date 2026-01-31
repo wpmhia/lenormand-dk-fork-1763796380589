@@ -13,6 +13,7 @@ import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
 import { decodeReadingFromUrl, getCardById } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
 import { AIReadingResponse } from "@/lib/ai-config";
+import { AIThinkingIndicator } from "@/components/ui/loading";
 
 interface PageProps {
   params: {
@@ -240,8 +241,8 @@ export default function SharedReadingPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-slate-300"></div>
+      <div className="flex min-h-screen items-center justify-center bg-background" aria-busy="true">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -274,17 +275,10 @@ export default function SharedReadingPage({ params }: PageProps) {
         {/* AI Analysis Section */}
         <div className="mt-6">
           {aiLoading && (
-            <div className="space-y-4 rounded-lg border bg-muted/30 p-6 text-center">
-              <div className="flex items-center justify-center gap-3">
-                <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary"></div>
-                <span className="text-muted-foreground">
-                  Consulting the ancient wisdom...
-                </span>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                The sibyl is weaving your cards&apos; deeper meanings
-              </div>
-            </div>
+            <AIThinkingIndicator
+              message="Consulting the cards..."
+              subtext="The sibyl is weaving your cards' deeper meanings"
+            />
           )}
 
           {aiReading && (
