@@ -6,7 +6,6 @@ import {
   useCallback,
   useRef,
   Suspense,
-  useMemo,
   lazy,
 } from "react";
 
@@ -33,7 +32,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Eye, AlertTriangle } from "lucide-react";
+import { Eye, AlertTriangle, Sparkles } from "lucide-react";
 import { getCardById, getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
@@ -373,30 +372,19 @@ function NewReadingPageContent() {
     }
   }, [question, drawnCards, allCards, selectedSpread.id]);
 
-  // Determine if this is a simple spread (1-3 cards) or complex spread (9+)
-  const isSimpleSpread = useMemo(
-    () => selectedSpread.cards <= 3,
-    [selectedSpread.cards]
-  );
-
-  // Auto-start AI analysis when cards are drawn
-  // For simple spreads (1-3 cards): trigger in drawing step
-  // For complex spreads (9+ cards): trigger in results step
+  // Auto-start AI analysis when entering results step
   useEffect(() => {
-    const shouldAnalyze = isSimpleSpread
-      ? step === "drawing" && drawnCards.length > 0
-      : step === "results" && drawnCards.length > 0;
-
-    if (shouldAnalyze && !aiAnalysisStartedRef.current) {
+    if (
+      step === "results" &&
+      drawnCards.length > 0 &&
+      !aiAnalysisStartedRef.current
+    ) {
       aiAnalysisStartedRef.current = true;
       performStreamingAnalysis();
-    } else if (
-      (isSimpleSpread && step !== "drawing") ||
-      (!isSimpleSpread && step !== "results")
-    ) {
+    } else if (step !== "results") {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, performStreamingAnalysis, isSimpleSpread]);
+  }, [step, drawnCards, performStreamingAnalysis]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): ReadingCard[] => {
@@ -471,11 +459,8 @@ function NewReadingPageContent() {
         }
 
         setDrawnCards(readingCards);
-        // For simple spreads (1-3 cards), stay in drawing step for inline viewing
-        // For complex spreads (9+ cards), transition to results for spread layout
-        if (!isSimpleSpread) {
-          setStep("results");
-        }
+        // Transition to results step for all spreads
+        setStep("results");
       } catch (error) {
         if (mountedRef.current) {
           const errorMsg =
@@ -488,7 +473,7 @@ function NewReadingPageContent() {
         }
       }
     },
-    [selectedSpread.cards, isSimpleSpread],
+    [selectedSpread.cards],
   );
   // Parse physical cards when input changes
   useEffect(() => {
@@ -831,7 +816,6 @@ function NewReadingPageContent() {
                         drawCount={selectedSpread.cards}
                         onDraw={handleDraw}
                         isProcessing={step !== "drawing"}
-                        hideDrawnCards={isSimpleSpread}
                       />
                     ))}
 
@@ -964,62 +948,14 @@ function NewReadingPageContent() {
                     </Button>
                   )}
 
-                  {/* Inline Reading for Simple Spreads (1-3 cards) - no transition needed */}
-                  {isSimpleSpread && drawnCards.length > 0 && (
-                    <div className="fade-in-animation mt-8 space-y-6 border-t border-border pt-8">
-                      {allCards.length > 0 ? (
-                        <ReadingViewer
-                          reading={{
-                            id: "temp",
-                            title: "Your Reading",
-                            question,
-                            layoutType: selectedSpread.cards,
-                            cards: drawnCards,
-                            slug: "temp",
-                            isPublic: false,
-                            createdAt: new Date(),
-                            updatedAt: new Date(),
-                          }}
-                          allCards={allCards}
-                          spreadId={selectedSpread.id}
-                          disableAnimations={true}
-                        />
-                      ) : (
-                        <div className="p-4 text-center text-muted-foreground">
-                          Loading cards...
-                        </div>
-                      )}
-
-                      {/* AI Analysis Section */}
-                      <div className="mt-6">
-                        <AIReadingDisplay
-                          aiReading={aiReading}
-                          isLoading={aiLoading}
-                          error={aiError}
-                          onRetry={retryAIAnalysis}
-                          spreadId={selectedSpread.id}
-                          cards={drawnCards.map((card) => ({
-                            id: card.id,
-                            name: getCardById(allCards, card.id)?.name || "Unknown",
-                            position: card.position,
-                          }))}
-                          allCards={allCards}
-                          question={question}
-                          isStreaming={isStreaming}
-                          streamedContent={streamedContent}
-                        />
-                      </div>
-                    </div>
-                  )}
-
                   <div className="text-center"></div>
                 </CardContent>
               </Card>
             </div>
           )}
 
-          {/* Complex Spreads (9+ cards) - separate results step with spread layout */}
-          {step === "results" && drawnCards.length > 0 && !isSimpleSpread && (
+          {/* Results Step - All spreads show here */}
+          {step === "results" && drawnCards.length > 0 && (
             <div
               className="fade-in-animation space-y-6"
             >
@@ -1066,6 +1002,19 @@ function NewReadingPageContent() {
                   isStreaming={isStreaming}
                   streamedContent={streamedContent}
                 />
+              </div>
+
+              {/* Start New Reading Button */}
+              <div className="flex justify-center pt-8">
+                <Button
+                  onClick={() => setShowStartOverConfirm(true)}
+                  variant="outline"
+                  size="lg"
+                  className="gap-2"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Start New Reading
+                </Button>
               </div>
             </div>
           )}
