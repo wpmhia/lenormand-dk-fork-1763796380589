@@ -30,12 +30,10 @@ export async function createJob(id: string): Promise<void> {
     updatedAt: Date.now(),
   };
   
-  // Pipeline: Set job and add to processing queue
-  const pipeline = redis.pipeline();
-  pipeline.set(`job:${id}`, job, { ex: 300 });
-  pipeline.lpush("jobs:pending", id);
-  pipeline.expire("jobs:pending", 300);
-  await pipeline.exec();
+  // Use individual commands - pipeline may not be fully supported in edge
+  await redis.set(`job:${id}`, job, { ex: 300 });
+  await redis.lpush("jobs:pending", id);
+  await redis.expire("jobs:pending", 300);
   
   // Update local cache
   jobCache.set(id, job);
@@ -53,22 +51,19 @@ export async function updateJob(id: string, updates: Partial<Job>): Promise<void
     updatedAt: Date.now(),
   };
   
-  // Pipeline: Update job and manage queues
-  const pipeline = redis.pipeline();
-  pipeline.set(`job:${id}`, updated, { ex: 300 });
+  // Update job data
+  await redis.set(`job:${id}`, updated, { ex: 300 });
   
   // Move between queues based on status
   if (updates.status === "processing") {
-    pipeline.lrem("jobs:pending", 0, id);
-    pipeline.lpush("jobs:processing", id);
-    pipeline.expire("jobs:processing", 300);
+    await redis.lrem("jobs:pending", 0, id);
+    await redis.lpush("jobs:processing", id);
+    await redis.expire("jobs:processing", 300);
   } else if (updates.status === "completed" || updates.status === "failed") {
-    pipeline.lrem("jobs:processing", 0, id);
-    pipeline.lpush("jobs:completed", id);
-    pipeline.expire("jobs:completed", 300);
+    await redis.lrem("jobs:processing", 0, id);
+    await redis.lpush("jobs:completed", id);
+    await redis.expire("jobs:completed", 300);
   }
-  
-  await pipeline.exec();
   
   // Update local cache
   jobCache.set(id, updated);
@@ -95,12 +90,10 @@ export async function getJob(id: string): Promise<Job | null> {
 export async function deleteJob(id: string): Promise<void> {
   if (!redis) return;
   
-  const pipeline = redis.pipeline();
-  pipeline.del(`job:${id}`);
-  pipeline.lrem("jobs:pending", 0, id);
-  pipeline.lrem("jobs:processing", 0, id);
-  pipeline.lrem("jobs:completed", 0, id);
-  await pipeline.exec();
+  await redis.del(`job:${id}`);
+  await redis.lrem("jobs:pending", 0, id);
+  await redis.lrem("jobs:processing", 0, id);
+  await redis.lrem("jobs:completed", 0, id);
   
   jobCache.delete(id);
 }

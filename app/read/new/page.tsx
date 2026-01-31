@@ -148,9 +148,9 @@ function NewReadingPageContent() {
       readingCardRefs.current.clear();
       aiAnalysisStartedRef.current = false;
 
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
       currentJobIdRef.current = null;
       if (transitionTimeoutRef.current) {
@@ -212,7 +212,7 @@ function NewReadingPageContent() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<string>("");
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const pollingIntervalRef = useRef<number | null>(null);
   const currentJobIdRef = useRef<string | null>(null);
 
   // Generate unique job ID
@@ -220,76 +220,48 @@ function NewReadingPageContent() {
     return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }, []);
 
-  // Cleanup SSE connection
-  const cleanupEventSource = useCallback(() => {
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
+  // Cleanup polling
+  const cleanupPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
     }
   }, []);
 
-  // Connect to SSE for real-time updates
-  const connectToSSE = useCallback((jobId: string) => {
-    cleanupEventSource();
-    
-    const sse = new EventSource(`/api/readings/status?jobId=${jobId}`);
-    eventSourceRef.current = sse;
-    
-    sse.onmessage = (event) => {
-      try {
-        const job = JSON.parse(event.data);
-        
-        if (job.status === "completed") {
-          setAiReading({ reading: job.result });
-          setAiLoading(false);
-          setJobStatus("");
-          cleanupEventSource();
-          currentJobIdRef.current = null;
-        } else if (job.status === "failed") {
-          setAiError(job.error || "Reading failed");
-          setAiLoading(false);
-          setJobStatus("");
-          cleanupEventSource();
-          currentJobIdRef.current = null;
-        } else if (job.error) {
-          setAiError(job.error);
-          setAiLoading(false);
-          setJobStatus("");
-          cleanupEventSource();
-          currentJobIdRef.current = null;
-        } else {
-          // Still processing
-          setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");
-        }
-      } catch (err) {
-        console.error("SSE parse error:", err);
-      }
-    };
-    
-    sse.onerror = () => {
-      // Connection error - fallback to polling once
-      console.warn("SSE connection failed, falling back to fetch");
-      cleanupEventSource();
+  // Poll for job status
+  const pollJobStatus = useCallback(async (jobId: string) => {
+    try {
+      const response = await fetch(`/api/readings/status?jobId=${jobId}`);
+      if (!response.ok) return;
       
-      // Single fetch as fallback
-      fetch(`/api/readings/status?jobId=${jobId}`)
-        .then(r => r.json())
-        .then(job => {
-          if (job.status === "completed") {
-            setAiReading({ reading: job.result });
-            setAiLoading(false);
-            setJobStatus("");
-            currentJobIdRef.current = null;
-          } else if (job.status === "failed") {
-            setAiError(job.error || "Reading failed");
-            setAiLoading(false);
-            setJobStatus("");
-            currentJobIdRef.current = null;
-          }
-        })
-        .catch(console.error);
-    };
-  }, [cleanupEventSource]);
+      const job = await response.json();
+      
+      if (job.status === "completed") {
+        setAiReading({ reading: job.result });
+        setAiLoading(false);
+        setJobStatus("");
+        cleanupPolling();
+        currentJobIdRef.current = null;
+      } else if (job.status === "failed") {
+        setAiError(job.error || "Reading failed");
+        setAiLoading(false);
+        setJobStatus("");
+        cleanupPolling();
+        currentJobIdRef.current = null;
+      } else if (job.error) {
+        setAiError(job.error);
+        setAiLoading(false);
+        setJobStatus("");
+        cleanupPolling();
+        currentJobIdRef.current = null;
+      } else {
+        // Still processing
+        setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");
+      }
+    } catch (err) {
+      console.error("Polling error:", err);
+    }
+  }, [cleanupPolling]);
 
   // Start async AI analysis
   const performAsyncAnalysis = useCallback(async () => {
@@ -338,8 +310,13 @@ function NewReadingPageContent() {
         return;
       }
 
-      // Connect to SSE for real-time updates
-      connectToSSE(jobId);
+      // Start polling for updates (every 1.5 seconds)
+      pollingIntervalRef.current = window.setInterval(() => {
+        pollJobStatus(jobId);
+      }, 1500);
+      
+      // Initial poll
+      pollJobStatus(jobId);
 
     } catch (error) {
       if (error instanceof Error) {
@@ -349,7 +326,7 @@ function NewReadingPageContent() {
       setJobStatus("");
       currentJobIdRef.current = null;
     }
-  }, [question, drawnCards, allCards, selectedSpread.id, generateJobId, connectToSSE]);
+  }, [question, drawnCards, allCards, selectedSpread.id, generateJobId, pollJobStatus]);
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
@@ -584,9 +561,9 @@ function NewReadingPageContent() {
       mountedRef.current = false;
 
       // Cleanup polling
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
       currentJobIdRef.current = null;
     };

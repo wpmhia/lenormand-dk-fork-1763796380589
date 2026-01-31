@@ -1,30 +1,13 @@
 // Request coalescing - deduplicate identical concurrent AI requests
 // Industry standard for reducing API costs and server load
 
-interface PendingRequest {
-  promise: Promise<string>;
+interface PendingRequest<T> {
+  promise: Promise<T>;
   timestamp: number;
 }
 
 // Key: hash of request params, Value: pending promise
-const pendingRequests = new Map<string, PendingRequest>();
-
-// Clean up old pending requests (garbage collection)
-const CLEANUP_INTERVAL = 60000; // 1 minute
-
-if (typeof window === "undefined") {
-  // Server-side only
-  setInterval(() => {
-    const now = Date.now();
-    const timeout = 30000; // 30 seconds max wait
-    
-    for (const [key, pending] of pendingRequests.entries()) {
-      if (now - pending.timestamp > timeout) {
-        pendingRequests.delete(key);
-      }
-    }
-  }, CLEANUP_INTERVAL);
-}
+const pendingRequests = new Map<string, PendingRequest<unknown>>();
 
 // Generate a hash key from request parameters
 function generateRequestKey(
@@ -39,6 +22,18 @@ function generateRequestKey(
   return `${cardsHash}|${spreadId}|${normalizedQuestion}`;
 }
 
+// Clean up old requests (call periodically)
+function cleanupOldRequests(): void {
+  const now = Date.now();
+  const timeout = 60000; // 60 seconds max wait
+  
+  for (const [key, pending] of pendingRequests.entries()) {
+    if (now - pending.timestamp > timeout) {
+      pendingRequests.delete(key);
+    }
+  }
+}
+
 // Coalesce identical requests
 export async function coalesceRequest<T>(
   cards: Array<{ id: number; name: string; position: number }>,
@@ -46,6 +41,9 @@ export async function coalesceRequest<T>(
   question: string,
   executeRequest: () => Promise<T>
 ): Promise<T> {
+  // Cleanup old requests before adding new one
+  cleanupOldRequests();
+  
   const key = generateRequestKey(cards, spreadId, question);
   
   const existing = pendingRequests.get(key);
@@ -61,7 +59,7 @@ export async function coalesceRequest<T>(
   });
   
   pendingRequests.set(key, {
-    promise: promise as Promise<string>,
+    promise: promise as Promise<unknown>,
     timestamp: Date.now(),
   });
   
