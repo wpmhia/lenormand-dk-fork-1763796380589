@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card as CardType } from "@/lib/types";
 import { MemoizedCard } from "./Card";
-import { cn } from "@/lib/utils";
 
 interface CardTransitionProps {
   cards: CardType[];
@@ -13,132 +12,117 @@ interface CardTransitionProps {
   duration?: number;
 }
 
+// Global style injection for FLIP animation
+const flipStyles = `
+@keyframes flipMove {
+  0% {
+    opacity: 1;
+    transform: translate(var(--start-x, 0), var(--start-y, 0)) scale(var(--start-scale-x, 1), var(--start-scale-y, 1));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+`;
+
 export function CardTransition({
   cards,
   sourceRects,
   targetRects,
   onComplete,
-  duration = 800,
+  duration = 600,
 }: CardTransitionProps) {
-  const [animatingCards, setAnimatingCards] = useState<
+  const [cardAnimations, setCardAnimations] = useState<
     Array<{
       card: CardType;
       index: number;
       from: DOMRect;
       to: DOMRect;
+      deltaX: number;
+      deltaY: number;
+      scaleX: number;
+      scaleY: number;
     }>
   >([]);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const completedRef = useRef(false);
 
   useEffect(() => {
     if (sourceRects.size === 0 || targetRects.size === 0) return;
 
-    const newAnimatingCards: Array<{
-      card: CardType;
-      index: number;
-      from: DOMRect;
-      to: DOMRect;
-    }> = [];
+    const animations = cards
+      .map((card, index) => {
+        const from = sourceRects.get(index);
+        const to = targetRects.get(index);
+        if (!from || !to) return null;
+        
+        // FLIP: Calculate delta from target back to source
+        const deltaX = from.left - to.left;
+        const deltaY = from.top - to.top;
+        const scaleX = from.width / to.width;
+        const scaleY = from.height / to.height;
+        
+        return { card, index, from, to, deltaX, deltaY, scaleX, scaleY };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
 
-    cards.forEach((card, index) => {
-      const from = sourceRects.get(index);
-      const to = targetRects.get(index);
-
-      if (from && to) {
-        newAnimatingCards.push({ card, index, from, to });
-      }
-    });
-
-    if (newAnimatingCards.length > 0) {
-      setAnimatingCards(newAnimatingCards);
-      setIsAnimating(true);
-
-      // Staggered start for each card
-      newAnimatingCards.forEach((_, i) => {
-        setTimeout(() => {
-          const el = document.getElementById(`flip-card-${i}`);
-          if (el) {
-            el.style.transform = "translate(0, 0) scale(1)";
-            el.style.opacity = "1";
-          }
-        }, i * 200);
-      });
-
-      // Complete after all animations
-      setTimeout(() => {
-        setIsAnimating(false);
+    if (animations.length === 0) {
+      if (!completedRef.current) {
+        completedRef.current = true;
         onComplete();
-      }, duration + newAnimatingCards.length * 200);
+      }
+      return;
     }
+
+    setCardAnimations(animations);
+
+    // Calculate total animation time including stagger
+    const maxStagger = (animations.length - 1) * 150;
+    const totalTime = duration + maxStagger + 100;
+
+    const timer = setTimeout(() => {
+      if (!completedRef.current) {
+        completedRef.current = true;
+        onComplete();
+      }
+    }, totalTime);
+
+    return () => clearTimeout(timer);
   }, [cards, sourceRects, targetRects, duration, onComplete]);
 
-  if (!isAnimating || animatingCards.length === 0) return null;
+  if (cardAnimations.length === 0) return null;
 
   return (
-    <div
-      ref={containerRef}
-      className="pointer-events-none fixed inset-0 z-50"
-      style={{ contain: "layout style" }}
-    >
-      {animatingCards.map(({ card, index, from, to }) => {
-        const deltaX = to.left - from.left;
-        const deltaY = to.top - from.top;
-        const scaleX = to.width / from.width;
-        const scaleY = to.height / from.height;
+    <>
+      <style>{flipStyles}</style>
+      <div className="pointer-events-none fixed inset-0 z-50">
+        {cardAnimations.map(({ card, index, to, deltaX, deltaY, scaleX, scaleY }) => {
+          const staggerDelay = index * 150;
 
-        return (
-          <div
-            key={`transition-${card.id}-${index}`}
-            id={`flip-card-${index}`}
-            className={cn(
-              "absolute transition-all will-change-transform",
-              "ease-out"
-            )}
-            style={{
-              left: from.left,
-              top: from.top,
-              width: from.width,
-              height: from.height,
-              transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`,
-              opacity: 0,
-              transitionDuration: `${duration}ms`,
-              transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
-            }}
-          >
-            <MemoizedCard card={card} size="md" />
-          </div>
-        );
-      })}
-    </div>
+          return (
+            <div
+              key={`transition-${card.id}-${index}`}
+              className="absolute"
+              style={{
+                left: to.left,
+                top: to.top,
+                width: to.width,
+                height: to.height,
+                willChange: "transform, opacity",
+                opacity: 0,
+                animation: `flipMove ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) ${staggerDelay}ms forwards`,
+                // @ts-ignore - CSS custom properties
+                "--start-x": `${deltaX}px`,
+                "--start-y": `${deltaY}px`,
+                "--start-scale-x": scaleX,
+                "--start-scale-y": scaleY,
+              }}
+            >
+              <MemoizedCard card={card} size="md" />
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
-}
-
-// Hook to measure element positions
-export function useCardPositions() {
-  const [positions, setPositions] = useState<Map<number, DOMRect>>(new Map());
-  const refs = useRef<Map<number, HTMLElement>>(new Map());
-
-  const setRef = useCallback((index: number) => (el: HTMLElement | null) => {
-    if (el) {
-      refs.current.set(index, el);
-    }
-  }, []);
-
-  const measurePositions = useCallback(() => {
-    const newPositions = new Map<number, DOMRect>();
-    refs.current.forEach((el, index) => {
-      const rect = el.getBoundingClientRect();
-      newPositions.set(index, rect);
-    });
-    setPositions(newPositions);
-    return newPositions;
-  }, []);
-
-  const clearPositions = useCallback(() => {
-    setPositions(new Map());
-    refs.current.clear();
-  }, []);
-
-  return { positions, setRef, measurePositions, clearPositions };
 }

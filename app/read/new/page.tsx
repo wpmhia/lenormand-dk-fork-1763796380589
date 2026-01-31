@@ -80,7 +80,6 @@ function NewReadingPageContent() {
   
   // FLIP animation state for seamless transitions
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showDeckOverlay, setShowDeckOverlay] = useState(false);
   const [sourceRects, setSourceRects] = useState<Map<number, DOMRect>>(new Map());
   const [targetRects, setTargetRects] = useState<Map<number, DOMRect>>(new Map());
   const deckCardRefs = useRef<Map<number, HTMLElement>>(new Map());
@@ -144,7 +143,6 @@ function NewReadingPageContent() {
       setParsedCards([]);
       setPath(null);
       setIsTransitioning(false);
-      setShowDeckOverlay(false);
       setSourceRects(new Map());
       setTargetRects(new Map());
       deckCardRefs.current.clear();
@@ -487,7 +485,6 @@ function NewReadingPageContent() {
   // Handle transition completion
   const handleTransitionComplete = useCallback(() => {
     setIsTransitioning(false);
-    setShowDeckOverlay(false);
     setSourceRects(new Map());
     setTargetRects(new Map());
     deckCardRefs.current.clear();
@@ -502,13 +499,20 @@ function NewReadingPageContent() {
     // Store the drawn cards for transition
     setDrawnCardTypes(cards);
     
-    // Measure deck positions
+    // Measure deck positions FIRST (before changing step)
     const deckPositions = measureDeckPositions();
-    if (deckPositions.size === 0) return;
+    if (deckPositions.size === 0) {
+      // Fallback: just transition without animation
+      const readingCards = cards.map((card, index) => ({
+        id: card.id,
+        position: index,
+      }));
+      setDrawnCards(readingCards);
+      setStep("results");
+      return;
+    }
     
-    // Start transition mode
-    setIsTransitioning(true);
-    setShowDeckOverlay(true);
+    setSourceRects(deckPositions);
     
     // Convert to ReadingCards
     const readingCards = cards.map((card, index) => ({
@@ -520,17 +524,25 @@ function NewReadingPageContent() {
     // Show results step (ReadingViewer will mount)
     setStep("results");
     
-    // Wait for ReadingViewer to render, then measure and animate
-    transitionTimeoutRef.current = window.setTimeout(() => {
-      const readingPositions = measureReadingPositions();
-      setTargetRects(readingPositions);
-    }, 100);
-  }, [measureDeckPositions, measureReadingPositions]);
+    // Wait for ReadingViewer to render, then measure targets and animate
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const readingPositions = measureReadingPositions();
+        if (readingPositions.size > 0) {
+          setTargetRects(readingPositions);
+          setIsTransitioning(true);
+        } else {
+          // No targets found, just complete without animation
+          handleTransitionComplete();
+        }
+      });
+    });
+  }, [measureDeckPositions, measureReadingPositions, handleTransitionComplete]);
 
   const handleDraw = useCallback(
     async (cards: ReadingCard[] | CardType[]) => {
       try {
-        let readingCards: ReadingCard[];
+        let readingCards: ReadingCard[] = [];
         let cardTypes: CardType[] = [];
 
         // Check if we received ReadingCard[] (from physical path) or CardType[] (from Deck component)
@@ -546,10 +558,13 @@ function NewReadingPageContent() {
           } else {
             // It's CardType[] (virtual deck path) - FLIP animation
             cardTypes = cards as CardType[];
+            readingCards = cardTypes.map((card, index) => ({
+              id: card.id,
+              position: index,
+            }));
             startCardTransition(cardTypes);
           }
         } else {
-          readingCards = [];
           setDrawnCards(readingCards);
           setStep("results");
         }
@@ -1060,19 +1075,14 @@ function NewReadingPageContent() {
             </div>
           )}
 
-          {/* Deck overlay during transition - keeps cards visible for FLIP animation */}
-          {showDeckOverlay && (
-            <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm transition-opacity duration-500" />
-          )}
-          
-          {/* FLIP Animation Layer */}
+          {/* FLIP Animation Layer - seamless card transition */}
           {isTransitioning && (
             <CardTransition
               cards={drawnCardTypes}
               sourceRects={sourceRects}
               targetRects={targetRects}
               onComplete={handleTransitionComplete}
-              duration={800}
+              duration={600}
             />
           )}
 
