@@ -1,12 +1,19 @@
 export const runtime = "edge";
 export const maxDuration = 30;
 
-import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
+import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
-import { createJob, updateJob, getJob, isRedisAvailable } from "@/lib/jobs";
+import { createJob, updateJob, isRedisAvailable } from "@/lib/jobs";
 import { coalesceRequest, getCachedReading, cacheReading } from "@/lib/request-coalescing";
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+// Edge runtime compatible env var access
+const getEnv = (key: string): string | undefined => {
+  // Try different methods for Edge runtime compatibility
+  return (process.env as Record<string, string | undefined>)?.[key] ||
+         ((globalThis as unknown) as Record<string, Record<string, string | undefined>>)?.env?.[key];
+};
+
+const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";
 
 const RATE_LIMIT = 5;

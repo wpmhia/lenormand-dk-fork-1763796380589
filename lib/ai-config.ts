@@ -4,9 +4,14 @@ import {
   COMPREHENSIVE_SPREADS,
 } from "@/lib/spreads";
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-const DEEPSEEK_BASE_URL =
-  process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
+// Edge runtime compatible env var access
+const getEnv = (key: string): string | undefined => {
+  return (process.env as Record<string, string | undefined>)?.[key] ||
+         ((globalThis as unknown) as Record<string, Record<string, string | undefined>>)?.env?.[key];
+};
+
+const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
+const DEEPSEEK_BASE_URL = getEnv("DEEPSEEK_BASE_URL") || "https://api.deepseek.com";
 
 // Maximum lengths for input sanitization
 const MAX_QUESTION_LENGTH = 500;

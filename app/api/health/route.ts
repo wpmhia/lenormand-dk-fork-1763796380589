@@ -1,5 +1,11 @@
 export const runtime = "edge";
 
+// Edge runtime compatible env var access
+const getEnv = (key: string): string | undefined => {
+  return (process.env as Record<string, string | undefined>)?.[key] ||
+         ((globalThis as unknown) as Record<string, Record<string, string | undefined>>)?.env?.[key];
+};
+
 // Health check endpoint for monitoring and load balancers
 // Returns system status and basic metrics
 export async function GET() {
@@ -7,15 +13,16 @@ export async function GET() {
     status: "healthy",
     timestamp: new Date().toISOString(),
     uptime: Date.now(),
-    version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",
-    region: process.env.VERCEL_REGION || "unknown",
-    environment: process.env.NODE_ENV || "development",
+    version: getEnv("VERCEL_GIT_COMMIT_SHA")?.slice(0, 7) || "dev",
+    region: getEnv("VERCEL_REGION") || "unknown",
+    environment: getEnv("NODE_ENV") || "development",
   };
 
   // Check critical dependencies
   const checks = {
-    redis: !!process.env.UPSTASH_REDIS_REST_URL,
-    ai: !!process.env.DEEPSEEK_API_KEY,
+    redis: !!getEnv("UPSTASH_REDIS_REST_URL"),
+    ai: !!getEnv("DEEPSEEK_API_KEY"),
+    aiKeyLength: getEnv("DEEPSEEK_API_KEY")?.length || 0,
   };
 
   const allHealthy = Object.values(checks).every(Boolean);
