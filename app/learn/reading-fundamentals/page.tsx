@@ -376,16 +376,10 @@ export default function ReadingFundamentalsPage() {
                 bestFor: "Understanding progression over time",
               },
               {
-                title: "5-Card: Sentence Reading (Quick)",
+                title: "5-Card: Sentence Reading",
                 description:
-                  "Read cards 1-2-3-4-5 as ONE grammatical sentence (subject-verb-object-modifier-outcome). Stop. Fast headline reading.",
-                bestFor: "Daily draws, quick questions, when you only need the headline",
-              },
-              {
-                title: "5-Card: Structured Reading (Full)",
-                description:
-                  "Start with the same sentence, then layer three optional interpretive lenses, analyze four adjacent pairs, add timing if needed, identify significators. Complete deep analysis.",
-                bestFor: "Important questions, relationship issues, decisions that need clarity on when, why, and who",
+                  "Read cards 1-2-3-4-5 as ONE grammatical sentence flowing left to right. The central card (position 3) is the key theme—pay special attention to how the flanking cards modify it.",
+                bestFor: "General readings, seeing development over time, understanding influencing factors",
               },
               {
                 title: "9-Card Spread",

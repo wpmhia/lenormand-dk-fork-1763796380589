@@ -114,29 +114,6 @@ const spreads = [
         ],
       },
       {
-        name: "Mind-Body-Spirit",
-        description: "Holistic view of your situation across three dimensions",
-        layout: "Mind → Body → Spirit",
-        useCase: "Wellness, balance, personal growth",
-        difficulty: "Beginner",
-        isPrimary: false,
-        positions: [
-          {
-            name: "Mind",
-            description: "Thoughts, mental state, and intellectual matters",
-          },
-          {
-            name: "Body",
-            description: "Physical health, actions, and material concerns",
-          },
-          {
-            name: "Spirit",
-            description:
-              "Emotional well-being, spiritual growth, and inner wisdom",
-          },
-        ],
-      },
-      {
         name: "3-Card: Situation-Challenge-Advice",
         description: "Diagnostic spread for problem-solving",
         layout: "Situation → Challenge → Advice",
@@ -162,113 +139,26 @@ const spreads = [
   },
   {
     category: "5-Card Spreads",
-    description: "Detailed analysis for specific situations and decisions",
+    description: "Extended narrative for more context without complexity",
     spreads: [
       {
-        name: "5-Card Situation Spread",
-        description: "Detailed analysis of a specific situation",
-        layout: "Situation → Challenge → Advice → Outcome → Timing",
-        useCase: "Problem-solving, decision making",
+        name: "5-Card Sentence Reading",
+        description: "Extended narrative read as a grammatical sentence flowing left to right",
+        layout: "Card 1 → Card 2 → Card 3 → Card 4 → Card 5",
+        useCase: "General readings, seeing development over time, understanding influencing factors",
         difficulty: "Intermediate",
         isPrimary: true,
         positions: [
-          { name: "Situation", description: "Current state of affairs" },
-          { name: "Challenge", description: "Obstacles or difficulties" },
-          { name: "Advice", description: "Guidance for moving forward" },
-          { name: "Outcome", description: "Likely result of current path" },
-          { name: "Timing", description: "When to expect developments" },
-        ],
-      },
-      {
-        name: "5-Card Structured Reading",
-        description:
-          "Grammar-based analysis where each card represents a part of speech",
-        layout: "Subject → Verb → Object → Modifier → Outcome",
-        useCase: "Analytical insights, understanding dynamics",
-        difficulty: "Intermediate",
-        isPrimary: false,
-        positions: [
-          {
-            name: "Subject",
-            description:
-              "The opening element—who or what the story begins with",
-          },
-          {
-            name: "Verb",
-            description:
-              "The action or descriptor—what is happening or being done",
-          },
-          {
-            name: "Object",
-            description: "The direct impact or target—what is being affected",
-          },
-          {
-            name: "Modifier",
-            description:
-              "The qualifier or condition—how, when, or under what circumstance",
-          },
-          {
-            name: "Outcome",
-            description: "The result or conclusion—where this leads",
-          },
+          { name: "Opening", description: "The situation's beginning or foundation" },
+          { name: "Development", description: "What unfolds or emerges" },
+          { name: "Focus", description: "The central theme or key energy (pay special attention to this card)" },
+          { name: "Influence", description: "External factors or approaching energies" },
+          { name: "Outcome", description: "Where the situation leads" },
         ],
       },
     ],
   },
-  {
-    category: "7-Card Spreads",
-    description: "Deep insights for weekly guidance or relationship dynamics",
-    spreads: [
-      {
-        name: "7-Card Week Ahead",
-        description: "Navigate your week with daily guidance and insights",
-        layout:
-          "Monday → Tuesday → Wednesday → Thursday → Friday → Saturday → Sunday",
-        useCase: "Weekly planning, timing insights",
-        difficulty: "Intermediate",
-        isPrimary: true,
-        positions: [
-          { name: "Monday", description: "New beginnings and fresh energy" },
-          { name: "Tuesday", description: "Challenges and work matters" },
-          { name: "Wednesday", description: "Communication and connections" },
-          { name: "Thursday", description: "Progress and momentum building" },
-          { name: "Friday", description: "Social activities and completion" },
-          { name: "Saturday", description: "Rest and reflection" },
-          { name: "Sunday", description: "Closure and spiritual renewal" },
-        ],
-      },
-      {
-        name: "7-Card Relationship Spread",
-        description: "Deep insights into romantic or interpersonal dynamics",
-        layout:
-          "Your Past → Your Present → Your Future → Connection → Their Past → Their Present → Their Future",
-        useCase: "Love, partnerships, relationships",
-        difficulty: "Intermediate",
-        isPrimary: false,
-        positions: [
-          {
-            name: "Your Past",
-            description: "Your past experiences in relationships",
-          },
-          {
-            name: "Your Present",
-            description: "Your current relationship energy",
-          },
-          { name: "Your Future", description: "Your relationship outlook" },
-          { name: "Connection", description: "The bond between you both" },
-          {
-            name: "Their Past",
-            description: "Their past relationship experiences",
-          },
-          {
-            name: "Their Present",
-            description: "Their current relationship energy",
-          },
-          { name: "Their Future", description: "Their relationship outlook" },
-        ],
-      },
-    ],
-  },
+
   {
     category: "9-Card Spreads",
     description: "Master spread for comprehensive life insights",

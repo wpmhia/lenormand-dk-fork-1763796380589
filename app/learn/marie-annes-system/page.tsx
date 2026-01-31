@@ -197,8 +197,8 @@ export default function MarieAnnesSystemPage() {
         </CardHeader>
         <CardContent className="space-y-4 text-foreground">
           <p>
-            Spreads like Past-Present-Future, Week-Ahead, and Relationship
-            readings were developed after Marie-Anne&apos;s time. But we apply{" "}
+            Spreads like Past-Present-Future and Situation-Challenge-Advice
+            were developed after Marie-Anne&apos;s time. But we apply{" "}
             <strong>her methodology</strong> to all of them:
           </p>
 
