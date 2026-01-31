@@ -53,7 +53,7 @@ const spreads = [
         layout: "First Card → Center Card → Third Card",
         useCase: "Binary decisions, clear answers",
         difficulty: "Beginner",
-        isPrimary: true,
+        isPrimary: false,
         positions: [
           {
             name: "First Card",
@@ -76,7 +76,7 @@ const spreads = [
         layout: "Card 1 → Card 2 → Card 3 (as flowing narrative)",
         useCase: "Universal reading, foundational technique",
         difficulty: "Beginner",
-        isPrimary: false,
+        isPrimary: true,
         positions: [
           {
             name: "Card 1",
