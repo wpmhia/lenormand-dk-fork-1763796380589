@@ -772,7 +772,7 @@ function NewReadingPageContent() {
                         >
                           <div className="flex flex-col">
                             <span>{spread.label}</span>
-                            <span className="text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                            <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -792,7 +792,7 @@ function NewReadingPageContent() {
                         >
                           <div className="flex flex-col">
                             <span>{spread.label}</span>
-                            <span className="text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                            <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
                           </div>
                         </SelectItem>
                       ))}
