@@ -167,6 +167,20 @@ const faqSchema = {
   ],
 };
 
+// Sanitize GA ID to prevent XSS via environment variable injection
+function sanitizeGaId(id: string | undefined): string {
+  if (!id) return "G-XXXXXXXXXX";
+  // Only allow alphanumeric, hyphens, and underscores (valid GA ID characters)
+  const sanitized = id.replace(/[^a-zA-Z0-9_-]/g, "");
+  // GA IDs typically start with G- and are 10+ chars
+  if (!sanitized.startsWith("G-") || sanitized.length < 5) {
+    return "G-XXXXXXXXXX";
+  }
+  return sanitized;
+}
+
+const GA_MEASUREMENT_ID = sanitizeGaId(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID);
+
 export default function RootLayout({
   children,
 }: {
@@ -192,7 +206,7 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX"}', {
+              gtag('config', '${GA_MEASUREMENT_ID}', {
                 page_path: window.location.pathname,
               });
             `,
@@ -211,7 +225,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX"}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="lazyOnload"
         />
       </head>

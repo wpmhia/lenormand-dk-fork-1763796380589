@@ -12,10 +12,16 @@ const nextConfig = {
     },
   },
   images: {
+    // Security: Explicitly allow only specific domains
+    // Do NOT use "**" - it allows any domain and creates DoS vulnerability
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.vercel.app",
       },
     ],
     formats: ["image/avif", "image/webp"],

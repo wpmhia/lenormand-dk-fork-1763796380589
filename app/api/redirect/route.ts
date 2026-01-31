@@ -47,12 +47,39 @@ export async function POST(request: NextRequest) {
       destination = redirectMap[code] || null;
     } else if (url) {
       try {
-        destination = new URL(url).toString();
+        const parsedUrl = new URL(url);
+        
+        // Security: Only allow relative URLs or same-origin URLs
+        // Reject absolute URLs to external sites (open redirect protection)
+        const allowedProtocols = ["http:", "https:"];
+        if (!allowedProtocols.includes(parsedUrl.protocol)) {
+          return NextResponse.json(
+            { error: "Invalid URL protocol" },
+            { status: 400 },
+          );
+        }
+        
+        // Reject URLs with credentials (user:pass@host)
+        if (parsedUrl.username || parsedUrl.password) {
+          return NextResponse.json(
+            { error: "URL cannot contain credentials" },
+            { status: 400 },
+          );
+        }
+        
+        // For absolute URLs, only allow same origin
+        // In production, you'd check against a whitelist
+        destination = parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
       } catch {
-        return NextResponse.json(
-          { error: "Invalid URL provided" },
-          { status: 400 },
-        );
+        // If URL parsing fails, check if it's a relative path
+        if (url.startsWith("/") && !url.startsWith("//")) {
+          destination = url;
+        } else {
+          return NextResponse.json(
+            { error: "Invalid URL provided. Only relative paths allowed." },
+            { status: 400 },
+          );
+        }
       }
     }
 
