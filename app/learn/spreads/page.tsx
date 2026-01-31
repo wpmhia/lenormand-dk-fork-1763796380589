@@ -48,13 +48,35 @@ const spreads = [
     description: "Perfect for quick insights and daily guidance",
     spreads: [
       {
+        name: "3-Card: Yes or No",
+        description: "Direct answer to your yes or no question",
+        layout: "First Card → Center Card → Third Card",
+        useCase: "Binary decisions, clear answers",
+        difficulty: "Beginner",
+        isPrimary: true,
+        positions: [
+          {
+            name: "First Card",
+            description: "The foundation of your question",
+          },
+          {
+            name: "Center Card",
+            description: "The central issue or influence",
+          },
+          {
+            name: "Third Card",
+            description: "The resolution or outcome",
+          },
+        ],
+      },
+      {
         name: "3-Card Sentence Reading",
         description:
           "Three cards flowing as a narrative sentence - the core Lenormand method",
         layout: "Card 1 → Card 2 → Card 3 (as flowing narrative)",
         useCase: "Universal reading, foundational technique",
         difficulty: "Beginner",
-        isPrimary: true,
+        isPrimary: false,
         positions: [
           {
             name: "Card 1",
@@ -111,28 +133,6 @@ const spreads = [
             name: "Spirit",
             description:
               "Emotional well-being, spiritual growth, and inner wisdom",
-          },
-        ],
-      },
-      {
-        name: "3-Card: Yes or No",
-        description: "Direct answer to your yes or no question",
-        layout: "First Card → Center Card → Third Card",
-        useCase: "Binary decisions, clear answers",
-        difficulty: "Beginner",
-        isPrimary: false,
-        positions: [
-          {
-            name: "First Card",
-            description: "The foundation of your question",
-          },
-          {
-            name: "Center Card",
-            description: "The central issue or influence",
-          },
-          {
-            name: "Third Card",
-            description: "The resolution or outcome",
           },
         ],
       },
