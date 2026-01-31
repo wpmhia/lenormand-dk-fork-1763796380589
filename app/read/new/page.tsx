@@ -782,6 +782,7 @@ function NewReadingPageContent() {
                 ) : null}
               </CardContent>
             </Card>
+          </div>
           )}
 
           {step === "drawing" && (
