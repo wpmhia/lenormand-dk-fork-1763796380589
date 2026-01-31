@@ -167,6 +167,8 @@ function DeckComponent({
         <Button
           onClick={drawCards}
           disabled={!canDraw}
+          loading={isDrawing || isProcessing}
+          loadingText={isProcessing ? "Processing..." : `Drawing ${drawCount}...`}
           size="sm"
           className="transition-all duration-300"
           aria-label={
