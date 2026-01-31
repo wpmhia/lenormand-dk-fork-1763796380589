@@ -454,7 +454,7 @@ export default function SpreadsPage() {
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/learn/combinations">
+            <Link href="/learn/card-combinations">
               <Button
                 variant="ghost"
                 size="sm"
@@ -466,13 +466,13 @@ export default function SpreadsPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 4 of 6
+                Module 5 of 8
               </Badge>
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
                 Intermediate
               </Badge>
             </div>
-            <Link href="/learn/advanced">
+            <Link href="/learn/grand-tableau-techniques">
               <Button
                 variant="ghost"
                 size="sm"
@@ -484,13 +484,13 @@ export default function SpreadsPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Module 6 of 7
+                Module 5 of 8
               </Badge>
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
                 Intermediate
               </Badge>
             </div>
-            <Link href="/learn/advanced">
+            <Link href="/learn/grand-tableau-techniques">
               <Button
                 variant="ghost"
                 size="sm"
@@ -1010,118 +1010,6 @@ export default function SpreadsPage() {
           </CardContent>
         </Card>
 
-        {/* Cards of Fate Section */}
-        <Card className="mb-8 border-border bg-card">
-          <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-foreground">
-              <Star className="mr-3 h-6 w-6 text-amber-500" />
-              The Cards of Fate (Destiny Zone)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="leading-relaxed text-muted-foreground">
-              In traditional Lenormand, four cards carry special weight as
-              <strong className="text-amber-600">
-                &quot;Cards of Fate&quot;
-              </strong>
-              . When multiple appear together in a reading, they create a
-              powerful
-              <strong>destiny zone</strong> that indicates the ultimate
-              trajectory or outcome of the matter at hand.
-            </p>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card className="border border-amber-500/30 bg-amber-500/5">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Sun className="h-5 w-5 text-amber-500" />
-                    <h4 className="text-sm font-semibold text-foreground">
-                      32. The Sun
-                    </h4>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-2 text-sm font-medium text-foreground">
-                    Success, happiness, clarity, vitality
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Provides illumination, positive
-                    outcome, certainty
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-primary/30 bg-primary/5">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Moon className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">
-                      33. The Moon
-                    </h4>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-2 text-sm font-medium text-foreground">
-                    Emotions, intuition, dreams, cycles
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Influences timing, adds emotional
-                    depth
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-primary/30 bg-primary/5">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Key className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">
-                      33. The Key
-                    </h4>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-2 text-sm font-medium text-foreground">
-                    Solutions, answers, unlocking, access
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Opens doors, provides answers,
-                    breakthroughs
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-primary/30 bg-primary/5">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Fish className="h-5 w-5 text-primary" />
-                    <h4 className="text-sm font-semibold text-foreground">
-                      34. The Fish
-                    </h4>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-2 text-sm font-medium text-foreground">
-                    Abundance, wealth, business, multiplication
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>Role:</strong> Financial matters, prosperity
-                    indicators
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <p className="text-sm italic text-foreground">
-                When multiple Cards of Fate appear together in a reading, they
-                create a powerful <strong>destiny zone</strong> that indicates
-                the ultimate trajectory or outcome of the matter at hand.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Practice Tips */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
@@ -1190,7 +1078,7 @@ export default function SpreadsPage() {
               Back to Card Combinations
             </Button>
           </Link>
-          <Link href="/learn/advanced">
+          <Link href="/learn/grand-tableau-techniques">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               Continue to Advanced Concepts
               <ArrowRight className="ml-2 h-4 w-4" />

@@ -17,13 +17,14 @@ interface LearningProgressTrackerProps {
   isOnlyTracking?: boolean;
 }
 
+// Standardized 8-module learning path
 const MODULES = [
-  "introduction",
-  "history",
-  "reading-basics",
+  "history-basics",
+  "reading-fundamentals",
   "card-meanings",
-  "spreads",
   "card-combinations",
+  "spreads",
+  "grand-tableau-techniques",
   "advanced",
   "marie-annes-system",
 ];

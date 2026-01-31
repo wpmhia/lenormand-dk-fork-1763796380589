@@ -50,7 +50,7 @@ export default function MarieAnnesSystemPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Advanced Module
+                Module 8 of 8
               </Badge>
               <Badge className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-400">
                 Historical

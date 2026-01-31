@@ -521,7 +521,7 @@ export default function CardMeaningsPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Module 4 of 7
+                Module 3 of 8
               </Badge>
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
                 Intermediate
@@ -834,7 +834,7 @@ export default function CardMeaningsPage() {
 
         {/* Navigation */}
         <div className="flex items-center justify-between border-t border-border pt-8">
-          <Link href="/learn/reading-basics">
+          <Link href="/learn/reading-fundamentals">
             <Button
               variant="outline"
               className="border-border text-card-foreground hover:bg-muted"

@@ -86,13 +86,13 @@ export default function ReadingFundamentalsPage() {
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
-                Module 2 of 6
+                Module 2 of 8
               </Badge>
               <Badge className="border-primary/30 bg-primary/10 text-primary dark:border-primary/40 dark:bg-primary/20 dark:text-primary">
                 Beginner
               </Badge>
             </div>
-            <Link href="/learn/combinations">
+            <Link href="/learn/card-combinations">
               <Button
                 variant="ghost"
                 size="sm"
@@ -787,7 +787,7 @@ export default function ReadingFundamentalsPage() {
               Back to History & Basics
             </Button>
           </Link>
-          <Link href="/learn/combinations">
+          <Link href="/learn/card-combinations">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               Continue to Card Combinations
               <ArrowRight className="ml-2 h-4 w-4" />

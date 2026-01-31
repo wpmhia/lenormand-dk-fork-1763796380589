@@ -20,11 +20,13 @@ import {
   Zap,
   Compass,
   Lightbulb,
+  LayoutGrid,
 } from "lucide-react";
 
 export default function LearnPage() {
   const { completedCount } = useLearningProgress();
 
+  // Complete 8-module learning path
   const modules = [
     {
       id: "history-basics",
@@ -57,6 +59,21 @@ export default function LearnPage() {
       ],
     },
     {
+      id: "card-meanings",
+      title: "Card Meanings",
+      description:
+        "Explore all 36 Lenormand cards with detailed meanings, keywords, timing associations, and practical interpretations.",
+      icon: Star,
+      duration: "45 min",
+      difficulty: "Beginner",
+      color: "from-primary to-primary/80",
+      learningPoints: [
+        "All 36 cards",
+        "Keywords & timing",
+        "Practical meanings",
+      ],
+    },
+    {
       id: "card-combinations",
       title: "Card Combinations",
       description:
@@ -73,24 +90,39 @@ export default function LearnPage() {
     },
     {
       id: "spreads",
-      title: "Spreads & Techniques",
+      title: "Spreads & Layouts",
       description:
-        "Discover powerful spreads from simple 3-card readings to comprehensive Grand Tableau. Master diverse reading methods.",
+        "Discover powerful spreads from simple 3-card readings to the comprehensive Grand Tableau. Master diverse reading methods.",
       icon: Compass,
       duration: "35 min",
       difficulty: "Intermediate",
       color: "from-primary to-primary/80",
       learningPoints: [
         "Popular spreads",
-        "Grand Tableau",
-        "Advanced techniques",
+        "Layout techniques",
+        "Position meanings",
+      ],
+    },
+    {
+      id: "grand-tableau-techniques",
+      title: "Grand Tableau Mastery",
+      description:
+        "Master the 36-card Grand Tableau with knight moves, mirrors, houses, and advanced interpretation techniques.",
+      icon: LayoutGrid,
+      duration: "40 min",
+      difficulty: "Advanced",
+      color: "from-primary to-primary/80",
+      learningPoints: [
+        "Knight moves",
+        "Mirror positions",
+        "House systems",
       ],
     },
     {
       id: "advanced",
       title: "Advanced Concepts",
       description:
-        "Time associations, playing card connections, cultural interpretations, and Marie-Anne's historical system.",
+        "Time associations, playing card connections, cultural interpretations, and esoteric Lenormand techniques.",
       icon: Lightbulb,
       duration: "40 min",
       difficulty: "Advanced",
@@ -298,6 +330,32 @@ export default function LearnPage() {
               </Link>
             </AnimatedCard>
           ))}
+        </div>
+
+        {/* Interactive Flashcards */}
+        <div className="mb-12">
+          <Link href="/learn/flashcards">
+            <Card className="group relative overflow-hidden border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 transition-all hover:border-primary/40 hover:shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
+              <CardContent className="relative z-10 flex items-center gap-6 p-6">
+                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
+                  <Brain className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="mb-1 text-xl font-bold text-foreground">
+                    Interactive Flashcards
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Master all 36 Lenormand cards with spaced repetition. Test your knowledge of keywords, meanings, and card combinations.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-primary">
+                  <span className="font-medium">Practice Now</span>
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Why Learn Lenormand */}
