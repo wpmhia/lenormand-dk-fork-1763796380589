@@ -74,8 +74,23 @@ function recordFailure(): void {
 
 export async function POST(request: Request) {
   try {
+    console.log("[API] Starting reading request");
+    
+    // Check if DeepSeek is configured
+    if (!DEEPSEEK_API_KEY) {
+      console.error("[API] DEEPSEEK_API_KEY not configured");
+      return new Response(
+        JSON.stringify({ 
+          error: "AI not configured",
+          message: "The AI service is not properly configured. Please contact support."
+        }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    
     // Circuit breaker check
     if (isCircuitOpen()) {
+      console.log("[API] Circuit breaker is open");
       return new Response(
         JSON.stringify({ 
           error: "Service temporarily unavailable",
@@ -117,12 +132,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    if (!isDeepSeekAvailable()) {
-      return new Response(JSON.stringify({ error: "AI not configured" }), {
-        status: 503,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    console.log("[API] DeepSeek is available, processing request");
 
     if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
       return new Response(JSON.stringify({ error: "Cards required" }), {
@@ -152,6 +162,7 @@ export async function POST(request: Request) {
     // Check cache first
     const cached = getCachedReading(cards, spreadId || "sentence-3", question || "");
     if (cached) {
+      console.log("[API] Cache hit, returning cached result");
       // Return cached result immediately
       await createJob(jobId);
       await updateJob(jobId, { status: "completed", result: cached });
@@ -181,11 +192,14 @@ export async function POST(request: Request) {
 
     // Check if Redis is available for job queue
     const redisAvailable = isRedisAvailable();
+    console.log(`[API] Redis available: ${redisAvailable}`);
     
     if (!redisAvailable) {
       // Process synchronously if Redis is not available
+      console.log("[API] Processing synchronously (Redis unavailable)");
       try {
         const result = await processAISynchronously(prompt);
+        console.log("[API] Synchronous processing completed");
         return new Response(
           JSON.stringify({ 
             jobId, 
@@ -213,12 +227,14 @@ export async function POST(request: Request) {
     }
     
     // Start background processing with Redis
+    console.log(`[API] Starting background job: ${jobId}`);
     await createJob(jobId);
     
     // Process with coalescing (deduplication)
     processAIWithCoalescing(jobId, prompt, cards, spreadId || "sentence-3", question || "");
 
     // Return immediately
+    console.log("[API] Returning 202 for background processing");
     return new Response(
       JSON.stringify({ 
         jobId, 
@@ -236,6 +252,7 @@ export async function POST(request: Request) {
       },
     );
   } catch (error: any) {
+    console.error("[API] Unhandled error:", error);
     return new Response(
       JSON.stringify({
         error: "Failed to start reading",
@@ -248,8 +265,12 @@ export async function POST(request: Request) {
 
 // Synchronous AI processing (fallback when Redis unavailable)
 async function processAISynchronously(prompt: string): Promise<string> {
+  console.log("[API] Starting synchronous AI call to DeepSeek");
   const abortController = new AbortController();
-  const timeoutId = setTimeout(() => abortController.abort(), 25000);
+  const timeoutId = setTimeout(() => {
+    console.log("[API] Aborting due to timeout");
+    abortController.abort();
+  }, 25000);
 
   try {
     const response = await fetch(`${BASE_URL}/chat/completions`, {
@@ -274,16 +295,20 @@ async function processAISynchronously(prompt: string): Promise<string> {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`[API] DeepSeek API error: ${response.status}`, errorText);
       throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
     const reading = data.choices?.[0]?.message?.content || "";
+    console.log(`[API] DeepSeek response received, length: ${reading.length}`);
     
     recordSuccess();
     return reading;
-  } catch (error) {
+  } catch (error: any) {
     clearTimeout(timeoutId);
+    console.error("[API] DeepSeek call failed:", error.name, error.message);
     recordFailure();
     throw error;
   }
@@ -296,6 +321,7 @@ async function processAIWithCoalescing(
   spreadId: string,
   question: string
 ) {
+  console.log(`[API] Starting background processing for job: ${jobId}`);
   try {
     await updateJob(jobId, { status: "processing" });
 
@@ -306,8 +332,12 @@ async function processAIWithCoalescing(
       question,
       async () => {
         // Actual API call
+        console.log(`[API] Making DeepSeek API call for job: ${jobId}`);
         const abortController = new AbortController();
-        const timeoutId = setTimeout(() => abortController.abort(), 25000);
+        const timeoutId = setTimeout(() => {
+          console.log(`[API] Timeout reached for job: ${jobId}`);
+          abortController.abort();
+        }, 25000);
 
         try {
           const response = await fetch(`${BASE_URL}/chat/completions`, {
@@ -323,7 +353,7 @@ async function processAIWithCoalescing(
                 { role: "user", content: prompt },
               ],
               temperature: 0.3,
-              max_tokens: 800, // Reduced for faster response
+              max_tokens: 800,
               stream: false,
             }),
             signal: abortController.signal,
@@ -332,16 +362,20 @@ async function processAIWithCoalescing(
           clearTimeout(timeoutId);
 
           if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`[API] DeepSeek API error for job ${jobId}: ${response.status}`, errorText);
             throw new Error(`API error: ${response.status}`);
           }
 
           const data = await response.json();
           const reading = data.choices?.[0]?.message?.content || "";
+          console.log(`[API] DeepSeek response for job ${jobId}, length: ${reading.length}`);
           
           recordSuccess();
           return reading;
-        } catch (error) {
+        } catch (error: any) {
           clearTimeout(timeoutId);
+          console.error(`[API] DeepSeek call failed for job ${jobId}:`, error.name, error.message);
           recordFailure();
           throw error;
         }
@@ -355,8 +389,10 @@ async function processAIWithCoalescing(
       status: "completed", 
       result,
     });
+    console.log(`[API] Job ${jobId} completed successfully`);
   } catch (error: any) {
     const isTimeout = error.name === "AbortError";
+    console.error(`[API] Job ${jobId} failed:`, isTimeout ? "timeout" : error.message);
     await updateJob(jobId, { 
       status: "failed",
       error: isTimeout ? "AI response timed out" : error.message,
