@@ -7,6 +7,11 @@ const redis = process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_RE
     })
   : null;
 
+// Check if Redis is available
+export function isRedisAvailable(): boolean {
+  return !!redis;
+}
+
 export interface Job {
   id: string;
   status: "pending" | "processing" | "completed" | "failed";
@@ -16,13 +21,14 @@ export interface Job {
   updatedAt: number;
 }
 
+// In-memory fallback for when Redis is unavailable
+const memoryJobs = new Map<string, Job>();
+
 // In-memory cache for job status to reduce Redis calls during polling
 const jobCache = new Map<string, Job>();
 const CACHE_TTL = 5000; // 5 seconds
 
-export async function createJob(id: string): Promise<void> {
-  if (!redis) return;
-  
+export async function createJob(id: string): Promise<boolean> {
   const job: Job = {
     id,
     status: "pending",
@@ -30,18 +36,24 @@ export async function createJob(id: string): Promise<void> {
     updatedAt: Date.now(),
   };
   
-  // Use individual commands - pipeline may not be fully supported in edge
-  await redis.set(`job:${id}`, job, { ex: 300 });
-  await redis.lpush("jobs:pending", id);
-  await redis.expire("jobs:pending", 300);
+  if (redis) {
+    try {
+      await redis.set(`job:${id}`, job, { ex: 300 });
+      await redis.lpush("jobs:pending", id);
+      await redis.expire("jobs:pending", 300);
+      jobCache.set(id, job);
+      return true;
+    } catch (err) {
+      console.warn("Redis createJob failed, using memory fallback:", err);
+    }
+  }
   
-  // Update local cache
-  jobCache.set(id, job);
+  // Fallback to memory
+  memoryJobs.set(id, job);
+  return false; // Returns false to indicate fallback mode
 }
 
 export async function updateJob(id: string, updates: Partial<Job>): Promise<void> {
-  if (!redis) return;
-  
   const existing = await getJob(id);
   if (!existing) return;
   
@@ -51,22 +63,30 @@ export async function updateJob(id: string, updates: Partial<Job>): Promise<void
     updatedAt: Date.now(),
   };
   
-  // Update job data
-  await redis.set(`job:${id}`, updated, { ex: 300 });
-  
-  // Move between queues based on status
-  if (updates.status === "processing") {
-    await redis.lrem("jobs:pending", 0, id);
-    await redis.lpush("jobs:processing", id);
-    await redis.expire("jobs:processing", 300);
-  } else if (updates.status === "completed" || updates.status === "failed") {
-    await redis.lrem("jobs:processing", 0, id);
-    await redis.lpush("jobs:completed", id);
-    await redis.expire("jobs:completed", 300);
+  if (redis) {
+    try {
+      await redis.set(`job:${id}`, updated, { ex: 300 });
+      
+      // Move between queues based on status
+      if (updates.status === "processing") {
+        await redis.lrem("jobs:pending", 0, id);
+        await redis.lpush("jobs:processing", id);
+        await redis.expire("jobs:processing", 300);
+      } else if (updates.status === "completed" || updates.status === "failed") {
+        await redis.lrem("jobs:processing", 0, id);
+        await redis.lpush("jobs:completed", id);
+        await redis.expire("jobs:completed", 300);
+      }
+      
+      jobCache.set(id, updated);
+      return;
+    } catch (err) {
+      console.warn("Redis updateJob failed, using memory fallback:", err);
+    }
   }
   
-  // Update local cache
-  jobCache.set(id, updated);
+  // Fallback to memory
+  memoryJobs.set(id, updated);
 }
 
 export async function getJob(id: string): Promise<Job | null> {
@@ -76,26 +96,36 @@ export async function getJob(id: string): Promise<Job | null> {
     return cached;
   }
   
-  if (!redis) return null;
-  
-  const job = await redis.get<Job>(`job:${id}`);
-  
-  if (job) {
-    jobCache.set(id, job);
+  if (redis) {
+    try {
+      const job = await redis.get<Job>(`job:${id}`);
+      if (job) {
+        jobCache.set(id, job);
+        return job;
+      }
+    } catch (err) {
+      console.warn("Redis getJob failed, using memory fallback:", err);
+    }
   }
   
-  return job;
+  // Fallback to memory
+  return memoryJobs.get(id) || null;
 }
 
 export async function deleteJob(id: string): Promise<void> {
-  if (!redis) return;
-  
-  await redis.del(`job:${id}`);
-  await redis.lrem("jobs:pending", 0, id);
-  await redis.lrem("jobs:processing", 0, id);
-  await redis.lrem("jobs:completed", 0, id);
+  if (redis) {
+    try {
+      await redis.del(`job:${id}`);
+      await redis.lrem("jobs:pending", 0, id);
+      await redis.lrem("jobs:processing", 0, id);
+      await redis.lrem("jobs:completed", 0, id);
+    } catch (err) {
+      console.warn("Redis deleteJob failed:", err);
+    }
+  }
   
   jobCache.delete(id);
+  memoryJobs.delete(id);
 }
 
 // Get job status with caching headers for edge caching
@@ -108,4 +138,16 @@ export async function getJobWithCache(id: string): Promise<{ job: Job | null; ca
   const cacheable = job.status === "completed" || job.status === "failed";
   
   return { job, cacheable };
+}
+
+// Cleanup old memory jobs (call periodically)
+export function cleanupMemoryJobs(): void {
+  const now = Date.now();
+  const maxAge = 10 * 60 * 1000; // 10 minutes
+  
+  for (const [id, job] of memoryJobs.entries()) {
+    if (now - job.createdAt > maxAge) {
+      memoryJobs.delete(id);
+    }
+  }
 }

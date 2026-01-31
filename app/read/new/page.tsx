@@ -73,6 +73,7 @@ function NewReadingPageContent() {
   const [physicalCardsError, setPhysicalCardsError] = useState<string | null>(
     null,
   );
+  const [physicalCardsWarnings, setPhysicalCardsWarnings] = useState<string[]>([]);
   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([]);
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([]);
   const [drawnCardTypes, setDrawnCardTypes] = useState<CardType[]>([]);
@@ -301,8 +302,8 @@ function NewReadingPageContent() {
 
       const data = await response.json();
       
-      // If already cached/completed, show immediately
-      if (data.status === "completed" && data.cached) {
+      // If completed (cached or synchronous mode), show immediately
+      if (data.status === "completed") {
         setAiReading({ reading: data.result });
         setAiLoading(false);
         setJobStatus("");
@@ -343,15 +344,20 @@ function NewReadingPageContent() {
   }, [step, drawnCards, performAsyncAnalysis]);
 
   const parsePhysicalCards = useCallback(
-    (allCards: CardType[]): ReadingCard[] => {
+    (allCards: CardType[]): { cards: ReadingCard[]; errors: string[]; warnings: string[] } => {
       const input = physicalCards.trim();
-      if (!input) return [];
+      if (!input) return { cards: [], errors: [], warnings: [] };
 
       const cardInputs = input
         .split(/[,;\s\n]+/)
         .map((s) => s.trim())
         .filter((s) => s.length > 0);
+      
       const readingCards: ReadingCard[] = [];
+      const errors: string[] = [];
+      const warnings: string[] = [];
+      const seenCardIds = new Set<number>();
+      const unmatchedInputs: string[] = [];
 
       cardInputs.forEach((cardInput, i) => {
         let card: CardType | undefined;
@@ -359,6 +365,10 @@ function NewReadingPageContent() {
         // Try to match by card number first
         const cardNum = parseInt(cardInput, 10);
         if (!isNaN(cardNum)) {
+          if (cardNum < 1 || cardNum > 36) {
+            errors.push(`"${cardInput}" is not a valid card number (must be 1-36)`);
+            return;
+          }
           card = allCards.find((c) => c.id === cardNum);
         }
 
@@ -374,14 +384,28 @@ function NewReadingPageContent() {
         }
 
         if (card) {
+          // Check for duplicates
+          if (seenCardIds.has(card.id)) {
+            warnings.push(`"${cardInput}" is a duplicate of ${card.name} (already entered)`);
+            return;
+          }
+          seenCardIds.add(card.id);
+          
           readingCards.push({
             id: card.id,
             position: i,
           });
+        } else {
+          unmatchedInputs.push(cardInput);
         }
       });
 
-      return readingCards;
+      // Report unmatched inputs as warnings
+      if (unmatchedInputs.length > 0) {
+        warnings.push(`Unrecognized: ${unmatchedInputs.join(", ")}`);
+      }
+
+      return { cards: readingCards, errors, warnings };
     },
     [physicalCards],
   );
@@ -496,8 +520,18 @@ function NewReadingPageContent() {
   // Parse physical cards when input changes
   useEffect(() => {
     if (path === "physical" && physicalCards) {
-      const parsed = parsePhysicalCards(allCards);
-      setParsedCards(parsed);
+      const { cards, errors, warnings } = parsePhysicalCards(allCards);
+      setParsedCards(cards);
+      setPhysicalCardsWarnings(warnings);
+      // Show first error if any
+      if (errors.length > 0) {
+        setPhysicalCardsError(errors[0]);
+      } else {
+        setPhysicalCardsError(null);
+      }
+    } else {
+      setPhysicalCardsWarnings([]);
+      setPhysicalCardsError(null);
     }
   }, [physicalCards, path, allCards, parsePhysicalCards]);
 
@@ -932,7 +966,7 @@ function NewReadingPageContent() {
                           </div>
                         )}
 
-                        {/* Error and Help Text */}
+                        {/* Error, Warnings, and Help Text */}
                         <div className="space-y-1">
                           {physicalCardsError && (
                             <p
@@ -942,6 +976,19 @@ function NewReadingPageContent() {
                             >
                               {physicalCardsError}
                             </p>
+                          )}
+                          {physicalCardsWarnings.length > 0 && (
+                            <div className="space-y-0.5">
+                              {physicalCardsWarnings.map((warning, i) => (
+                                <p
+                                  key={i}
+                                  className="text-amber-600 dark:text-amber-400 text-xs"
+                                  role="alert"
+                                >
+                                  ⚠️ {warning}
+                                </p>
+                              ))}
+                            </div>
                           )}
                           <p
                             id="physical-cards-help"
