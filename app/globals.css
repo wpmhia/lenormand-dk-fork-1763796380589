@@ -393,19 +393,19 @@
 
   /* ===== PHASE 2 & 3: POLISH & MAGIC ANIMATIONS ===== */
 
-  /* Step Transition Animations */
+  /* Step Transition Animations - Slower, more flowing */
   .step-enter {
-    animation: stepEnter 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: stepEnter 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   }
 
   .step-exit {
-    animation: stepExit 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+    animation: stepExit 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   }
 
   @keyframes stepEnter {
     from {
       opacity: 0;
-      transform: translateX(20px);
+      transform: translateX(30px);
     }
     to {
       opacity: 1;
@@ -420,11 +420,11 @@
     }
     to {
       opacity: 0;
-      transform: translateX(-20px);
+      transform: translateX(-30px);
     }
   }
 
-  /* Card Flip Animation */
+  /* Card Flip Animation - Meditative, slower */
   .card-flip-container {
     perspective: 1000px;
   }
@@ -433,7 +433,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
   }
 
@@ -456,11 +456,11 @@
     transform: rotateY(180deg);
   }
 
-  /* Staggered Card Reveal */
+  /* Staggered Card Reveal - Slower, more contemplative */
   .stagger-reveal {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    animation: staggerReveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    transform: translateY(30px) scale(0.92);
+    animation: staggerReveal 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   }
 
   @keyframes staggerReveal {
@@ -545,7 +545,7 @@
     }
   }
 
-  /* Floating Animation for Cards */
+  /* Floating Animation for Cards - Meditative, slower */
   .float-gentle {
     animation: floatGentle 6s ease-in-out infinite;
   }
@@ -556,6 +556,38 @@
     }
     50% {
       transform: translateY(-8px);
+    }
+  }
+
+  .float-meditative {
+    animation: floatMeditative 12s ease-in-out infinite;
+  }
+
+  @keyframes floatMeditative {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-6px) rotate(0.5deg);
+    }
+    66% {
+      transform: translateY(-3px) rotate(-0.5deg);
+    }
+  }
+
+  /* Breathing animation for placeholders */
+  .animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.02);
     }
   }
 

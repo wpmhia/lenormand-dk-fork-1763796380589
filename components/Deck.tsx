@@ -91,16 +91,16 @@ function DeckComponent({
     setDeck(remainingDeck);
     setDrawnCards(newDrawnCards);
 
-    // Staggered reveal with 400ms delays (Phase 2.2)
+    // Meditative reveal: slower, more contemplative timing
     let currentIndex = 0;
     revealIntervalRef.current = window.setInterval(() => {
       currentIndex++;
       setRevealedCount(currentIndex);
 
-      // Flip each card after it's revealed (Phase 3.1)
+      // Gentle flip after reveal - slower for meditative feel
       flipTimeoutRef.current = window.setTimeout(() => {
         setFlippedCards((prev) => new Set([...prev, currentIndex - 1]));
-      }, 300);
+      }, 600);
 
       if (currentIndex >= drawCount) {
         if (revealIntervalRef.current)
@@ -108,7 +108,7 @@ function DeckComponent({
         setIsDrawing(false);
         onDraw?.(newDrawnCards);
       }
-    }, 400);
+    }, 800);
   }, [canDraw, deck, drawCount, onDraw]);
 
   const handleKeyDown = useCallback(
@@ -271,10 +271,10 @@ function DeckComponent({
                 {/* Card with Flip Animation */}
                 <div
                   className={cn(
-                    "card-flip-container float-gentle",
+                    "card-flip-container float-meditative",
                     flippedCards.has(index) && "flipped"
                   )}
-                  style={{ animationDelay: `${index * 0.5}s` }}
+                  style={{ animationDelay: `${index * 1}s` }}
                 >
                   <div className="card-flip-inner">
                     {/* Card Back (shown initially) */}
@@ -305,7 +305,7 @@ function DeckComponent({
             }).map((_, index) => (
               <div
                 key={`placeholder-${index}`}
-                className="h-[160px] w-[112px] rounded-xl bg-muted/50 animate-pulse"
+                      className="h-[160px] w-[112px] rounded-xl bg-muted/50 animate-breathe"
               />
             ))}
           </div>

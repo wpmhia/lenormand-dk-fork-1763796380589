@@ -522,7 +522,7 @@ export function ReadingViewer({
                 return (
                   <MemoizedAnimatedCard
                     key={index}
-                    delay={index * 0.03}
+                    delay={index * 0.08}
                     className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
                       isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
                     } ${borderClass}`}
@@ -723,7 +723,7 @@ export function ReadingViewer({
             return (
               <MemoizedAnimatedCard
                 key={index}
-                delay={index * 0.4}
+                delay={index * 0.6}
                 className="flex flex-col items-center space-y-md"
               >
                 <div className="flex flex-col items-center space-y-md">
