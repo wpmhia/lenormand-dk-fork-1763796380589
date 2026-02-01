@@ -705,7 +705,7 @@ function NewReadingPageContent() {
                   2
                 </div>
                 <span className="ml-3 text-sm font-medium">
-                  {path === "physical" ? "Enter" : "Draw"}
+                  {path === "physical" ? "Enter Cards" : "Draw"}
                 </span>
               </div>
               <div
@@ -851,21 +851,9 @@ function NewReadingPageContent() {
                   <div className="space-y-6">
                     <div className="space-y-4 text-center">
                       <Label className="mb-4 block text-lg font-medium text-foreground">
-                        Choose your reading path
+                        Enter your physical Lenormand cards for interpretation and training
                       </Label>
                       <div className="btn-group-hero">
-                        <Button
-                          id="btn-draw-cards"
-                          onClick={() => {
-                            setPath("virtual");
-                            setStep("drawing");
-                          }}
-                          className="btn-group-hero-item"
-                          size="lg"
-                          variant="default"
-                        >
-                          ✨ Draw cards for me
-                        </Button>
                         <Button
                           id="btn-have-cards"
                           onClick={() => {
@@ -878,15 +866,32 @@ function NewReadingPageContent() {
                         >
                           🎴 I already have cards
                         </Button>
+                        <Button
+                          id="btn-draw-cards"
+                          onClick={() => {
+                            setPath("virtual");
+                            setStep("drawing");
+                          }}
+                          className="btn-group-hero-item"
+                          size="lg"
+                          variant="default"
+                        >
+                          ✨ Draw virtual cards
+                        </Button>
                       </div>
                       <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-                        <p className="flex items-center justify-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-primary/60"></span>
-                          Cards are shuffled in your browser—no account needed.
+                        <p className="flex items-center justify-center gap-2 text-center">
+                          💫 Your cards stay on your table; we translate their meanings 🎓 Practice real readings with your own deck, or draw virtually to learn
                         </p>
                         <p className="flex items-center justify-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-muted-foreground/60"></span>
-                          Your cards stay on your table; we only interpret them.
+                          <a
+                            href="https://www.etsy.com/search?q=lenormand+cards"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            Don't have a deck yet? Buy one on Etsy →
+                          </a>
                         </p>
                       </div>
                     </div>
@@ -905,7 +910,7 @@ function NewReadingPageContent() {
                   <div className="text-center">
                     <h2 className="relative mb-4 text-3xl font-semibold text-foreground">
                       {path === "virtual"
-                        ? "Draw Your Cards"
+                        ? "Draw Virtual Cards"
                         : "Enter Your Cards"}
                       <div className="absolute -bottom-2 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
                     </h2>
