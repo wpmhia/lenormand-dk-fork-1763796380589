@@ -32,8 +32,6 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     description:
       "Deeper exploration of complex situations without overwhelming detail",
     isAuthentic: true,
-    disabled: true,
-    disabledReason: "Support on Ko-Fi to unlock",
   },
   {
     id: "grand-tableau",
@@ -42,8 +40,6 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     description:
       "Complete life situation through full 4x9 grid - her most comprehensive reading",
     isAuthentic: true,
-    disabled: true,
-    disabledReason: "Support on Ko-Fi to unlock",
   },
 ];
 

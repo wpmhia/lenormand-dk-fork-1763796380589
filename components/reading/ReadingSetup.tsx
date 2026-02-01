@@ -96,18 +96,7 @@ export function ReadingSetup({
           </Button>
         )}
 
-        {/* Support Teaser */}
-        <p className="text-center text-xs text-muted-foreground">
-          9-card and Grand Tableau spreads available for{" "}
-          <a
-            href="https://ko-fi.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline"
-          >
-            supporters
-          </a>
-        </p>
+
       </CardContent>
     </Card>
   );

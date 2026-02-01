@@ -27,7 +27,7 @@ const crimsonPro = Crimson_Pro({
 export const metadata: Metadata = {
   title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
   description:
-    "Get clear, practical answers from Lenormand cards. Not symbolism - sentences. Free 1-3 card readings. Support on Ko-Fi for 9-card & Grand Tableau.",
+    "Get clear, practical answers from Lenormand cards. Not symbolism - sentences. Free readings with all spreads including Grand Tableau.",
   keywords: [
     "Lenormand cards",
     "Lenormand readings",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     siteName: "Lenormand Intelligence",
     title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
     description:
-      "Get clear, practical answers from Lenormand cards. Free 1-3 card readings. Support on Ko-Fi for 9-card & Grand Tableau.",
+      "Get clear, practical answers from Lenormand cards. Free readings with all spreads including Grand Tableau.",
     images: [
       {
         url: "https://lenormand.dk/favicon-512.png",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
     description:
-      "Get clear, practical answers from Lenormand cards. Free 1-3 card readings. Support on Ko-Fi for 9-card & Grand Tableau.",
+      "Get clear, practical answers from Lenormand cards. Free readings with all spreads including Grand Tableau.",
     images: ["https://lenormand.dk/favicon-512.png"],
     creator: "@LenormandAI",
   },
