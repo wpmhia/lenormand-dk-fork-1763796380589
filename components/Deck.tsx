@@ -113,13 +113,6 @@ function DeckComponent({
               backgroundColor: "#1a1a1a",
             }}
           />
-          
-          {/* Deck Count Badge */}
-          <div className="pointer-events-none absolute -right-2 -top-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-md">
-              {cards.length}
-            </span>
-          </div>
 
           {/* Drawing Overlay */}
           {isDrawing && (
