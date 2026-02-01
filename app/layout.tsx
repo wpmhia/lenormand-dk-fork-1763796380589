@@ -239,7 +239,7 @@ export default function RootLayout({
             suppressHydrationWarning
           >
             <Header />
-            <main className="flex-grow pt-14">{children}</main>
+            <main className="flex-grow">{children}</main>
             <Footer />
           </div>
           <Toaster />
