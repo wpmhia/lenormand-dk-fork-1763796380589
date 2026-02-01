@@ -30,8 +30,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   handleRetry = () => {
+    // Reset error state to allow component re-render without full page reload
     this.setState({ hasError: false, error: undefined });
-    window.location.reload();
   };
 
   render() {
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               className="border-destructive/30 hover:bg-destructive/10 text-destructive-foreground mt-2"
             >
               <RefreshCw className="mr-2 h-3 w-3" />
-              Reload Page
+              Try Again
             </Button>
           </AlertDescription>
         </Alert>

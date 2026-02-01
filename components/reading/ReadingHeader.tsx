@@ -10,7 +10,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Share2, User } from "lucide-react";
+import { Share2, User, HelpCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Reading } from "@/lib/types";
 import { SignificatorType } from "@/lib/spreads";
 
@@ -81,6 +87,22 @@ export function ReadingHeader({
         {reading.layoutType === 36 && (
           <div className="flex items-center gap-2">
             <span className="text-xs">Significator:</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-5 w-5 p-0">
+                    <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    The <strong>Significator</strong> represents the querent (person asking the question). 
+                    Card 28 (Woman/Anima) or 29 (Man/Animus) marks their position in the spread, 
+                    allowing directional readings (past/future from their perspective).
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Select
               value={significatorType}
               onValueChange={(value) =>

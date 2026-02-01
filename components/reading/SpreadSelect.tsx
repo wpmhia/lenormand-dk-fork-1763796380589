@@ -13,6 +13,7 @@ import {
   COMPREHENSIVE_SPREADS,
   Spread,
 } from "@/lib/spreads";
+import { Lock } from "lucide-react";
 
 interface SpreadSelectProps {
   value: Spread;
@@ -46,13 +47,15 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
             spread.disabled ? (
               <div
                 key={spread.id}
-                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm py-3 pl-2 pr-8 text-sm outline-none opacity-50"
+                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm bg-muted/30 py-3 pl-2 pr-8 text-sm outline-none"
               >
                 <div className="flex flex-col">
-                  <span className="text-muted-foreground">
-                    {spread.label} (Pro)
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Lock className="h-3 w-3" />
+                    {spread.label}
+                    <span className="text-xs">(Ko-Fi Supporter)</span>
                   </span>
-                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
+                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground/70">
                     {spread.cards} cards • {spread.description}
                   </span>
                 </div>
@@ -84,13 +87,15 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
             spread.disabled ? (
               <div
                 key={spread.id}
-                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm py-3 pl-2 pr-8 text-sm outline-none opacity-50"
+                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm bg-muted/30 py-3 pl-2 pr-8 text-sm outline-none"
               >
                 <div className="flex flex-col">
-                  <span className="text-muted-foreground">
-                    {spread.label} (Pro)
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Lock className="h-3 w-3" />
+                    {spread.label}
+                    <span className="text-xs">(Ko-Fi Supporter)</span>
                   </span>
-                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
+                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground/70">
                     {spread.cards} cards • {spread.description}
                   </span>
                 </div>

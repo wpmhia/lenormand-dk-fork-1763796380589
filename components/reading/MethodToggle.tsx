@@ -48,7 +48,17 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
             <div className="font-medium">Physical Cards</div>
             <div className="text-xs opacity-80">Enter your own cards</div>
           </div>
-        </Button>
+         </Button>
+      </div>
+      
+      {/* Method Guidance */}
+      <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
+        <p className="mb-1">
+          <strong>Virtual Deck:</strong> Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+        </p>
+        <p>
+          <strong>Physical Cards:</strong> Use when you&apos;ve already drawn cards from your physical Lenormand deck and want the AI interpretation.
+        </p>
       </div>
     </div>
   );

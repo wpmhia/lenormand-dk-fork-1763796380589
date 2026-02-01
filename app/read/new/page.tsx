@@ -6,7 +6,7 @@ import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AlertTriangle, Sparkles } from "lucide-react";
+import { AlertTriangle, Sparkles, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
 import { AUTHENTIC_SPREADS, COMPREHENSIVE_SPREADS, Spread } from "@/lib/spreads";
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
@@ -160,6 +160,19 @@ function NewReadingPageContent() {
       setStep("drawing");
     }
   }, [method]);
+
+  // Handle back navigation
+  const handleBack = useCallback(() => {
+    if (step === "drawing") {
+      setStep("setup");
+      setMethod(null);
+    } else if (step === "results") {
+      setStep("drawing");
+      setDrawnCards([]);
+      setDrawnCardTypes([]);
+      resetAnalysis();
+    }
+  }, [step, resetAnalysis]);
 
   // Measure positions for animation
   const measureDeckPositions = useCallback(() => {
@@ -330,6 +343,21 @@ function NewReadingPageContent() {
                 </div>
               ))}
             </div>
+
+            {/* Back Button */}
+            {step !== "setup" && (
+              <div className="mt-4 flex justify-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBack}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to {step === "drawing" ? "Setup" : "Card Entry"}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Error Alert */}

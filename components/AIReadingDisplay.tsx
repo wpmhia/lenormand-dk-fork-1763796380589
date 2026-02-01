@@ -306,9 +306,19 @@ export function AIReadingDisplay({
     return (
       <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
         <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Reading Unavailable</AlertTitle>
+        <AlertTitle>AI Reading Failed</AlertTitle>
         <AlertDescription className="space-y-3">
-          <p className="text-sm">The cards are not speaking at this moment. This may be due to a temporary issue.</p>
+          <p className="text-sm">
+            The AI interpretation could not be generated. This may be due to:
+          </p>
+          <ul className="list-disc pl-4 text-sm text-muted-foreground">
+            <li>Network connectivity issues</li>
+            <li>AI service temporarily unavailable</li>
+            <li>Rate limit reached (too many requests)</li>
+          </ul>
+          <p className="text-sm text-muted-foreground">
+            You can still interpret the cards using traditional Lenormand meanings shown below.
+          </p>
           <Button
             variant="outline"
             size="sm"
@@ -316,7 +326,7 @@ export function AIReadingDisplay({
             className="border-destructive/30 hover:bg-destructive/10 text-destructive-foreground"
           >
             <RefreshCw className="mr-2 h-3 w-3" />
-            Try Again
+            Retry AI Interpretation
           </Button>
         </AlertDescription>
       </Alert>

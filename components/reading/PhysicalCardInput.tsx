@@ -32,6 +32,7 @@ export function PhysicalCardInput({
   const [errors, setErrors] = useState<string[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([]);
+  const [truncationWarning, setTruncationWarning] = useState<string | null>(null);
 
   const parseCards = useCallback((inputValue: string): ParsedCardResult => {
     const trimmed = inputValue.trim();
@@ -161,9 +162,16 @@ export function PhysicalCardInput({
               .filter((s) => s.length > 0);
             if (inputs.length > targetCount) {
               const truncated = inputs.slice(0, targetCount).join(", ");
+              const removedCount = inputs.length - targetCount;
               setInput(truncated);
+              setTruncationWarning(
+                `${removedCount} card${removedCount > 1 ? 's' : ''} removed. Maximum ${targetCount} cards allowed for this spread.`
+              );
+              // Clear warning after 5 seconds
+              setTimeout(() => setTruncationWarning(null), 5000);
             } else {
               setInput(newValue);
+              setTruncationWarning(null);
             }
           }}
           placeholder={`Enter ${targetCount} card numbers (1-36) or names\n\nExamples: 1 5 12 • Rider, Clover, Ship • Birds, 20, 36`}
@@ -189,6 +197,16 @@ export function PhysicalCardInput({
               </div>
             ))}
           </div>
+        )}
+
+        {/* Truncation Warning */}
+        {truncationWarning && (
+          <Alert variant="default" className="border-amber-500/20 bg-amber-500/10">
+            <AlertCircle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-700">
+              {truncationWarning}
+            </AlertDescription>
+          </Alert>
         )}
 
         {/* Error Messages - Prominent Alert */}
