@@ -4,7 +4,7 @@ export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 3) return 400;   // ~200-300 words natural flow
   if (cardCount <= 5) return 600;   // ~300-450 words
   if (cardCount <= 9) return 800;   // ~400-600 words
-  return 1500;                      // Grand Tableau: 3-paragraph synthesis
+  return 2500;                      // Grand Tableau (36 cards): needs more tokens for comprehensive synthesis
 }
 
 // Timeout budgets - Vercel Free plan max is 10s, Pro is 60s
@@ -13,7 +13,7 @@ export function getTimeoutMs(cardCount: number): number {
   if (cardCount <= 3) return 6000;   // 6s for 3 cards (faster with minimal prompt)
   if (cardCount <= 5) return 7000;   // 7s for 5 cards
   if (cardCount <= 9) return 8000;   // 8s for 9 cards
-  return 10000;                      // 10s max for Grand Tableau
+  return 25000;                     // 25s for Grand Tableau (36 cards) - needs more time for complex analysis
 }
 
 // Parse SSE stream data
