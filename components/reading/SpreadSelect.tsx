@@ -75,5 +75,5 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
   );
 }
 
-export { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS };
+export { COMPREHENSIVE_SPREADS };
 export type { Spread };

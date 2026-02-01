@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Eye, ArrowRight } from "lucide-react";
-import { SpreadSelect, Spread, AUTHENTIC_SPREADS } from "./SpreadSelect";
+import { SpreadSelect, Spread } from "./SpreadSelect";
 import { MethodToggle } from "./MethodToggle";
 
 interface ReadingSetupProps {
@@ -102,5 +102,4 @@ export function ReadingSetup({
   );
 }
 
-export { AUTHENTIC_SPREADS };
 export type { Spread };
