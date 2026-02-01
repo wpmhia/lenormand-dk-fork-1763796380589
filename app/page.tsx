@@ -97,22 +97,18 @@ export default function Home() {
               spreadId="sentence-3"
             />
             <ReadingTypeCard
-              icon={<Heart className="h-5 w-5 text-muted-foreground" />}
+              icon={<Heart className="h-5 w-5 text-primary" />}
               title="9-Card Reading"
-              description="Deeper situation analysis - Support on Ko-Fi to unlock"
+              description="Deeper situation analysis with comprehensive insights"
               cardCount={9}
               spreadId="comprehensive"
-              disabled={true}
-              disabledReason="Ko-Fi Supporter"
             />
             <ReadingTypeCard
-              icon={<Calendar className="h-5 w-5 text-muted-foreground" />}
+              icon={<Calendar className="h-5 w-5 text-primary" />}
               title="Grand Tableau"
-              description="Complete 360° life reading - Support on Ko-Fi to unlock"
+              description="Complete 360° life reading with all 36 cards"
               cardCount={36}
               spreadId="grand-tableau"
-              disabled={true}
-              disabledReason="Ko-Fi Supporter"
             />
           </div>
         </div>
@@ -218,12 +214,8 @@ export default function Home() {
               Your cards form sentences. We translate them into clear, practical
               guidance.{" "}
               <span className="font-semibold text-foreground">
-                Free readings: Single & 3-card.
-              </span>{" "}
-              <a href="https://ko-fi.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                Support on Ko-Fi
-              </a>{" "}
-              to unlock 9-card & Grand Tableau.
+                All spreads available: Single Card, 3-Card Sentence, 9-Card Reading, and Grand Tableau.
+              </span>
             </p>
           </div>
         </div>
@@ -372,8 +364,8 @@ export default function Home() {
               <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
             </h2>
             <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-              Start with free 1-3 card readings. Support on Ko-Fi to unlock the full
-              9-card and 36-card Grand Tableau experience.
+              All spreads available - from quick single card draws to the complete
+              36-card Grand Tableau experience.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/read/new">
@@ -382,15 +374,11 @@ export default function Home() {
                   <ArrowRight className="ml-3 h-5 w-5" />
                 </Button>
               </Link>
-              <a
-                href="https://ko-fi.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href="/learn">
                 <Button variant="outline" size="lg">
-                  Support on Ko-Fi
+                  Learn Lenormand
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
