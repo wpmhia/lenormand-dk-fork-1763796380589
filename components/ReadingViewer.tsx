@@ -51,6 +51,8 @@ import {
   Eye,
   Brain,
   Zap,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 interface ReadingViewerProps {
@@ -378,6 +380,7 @@ export function ReadingViewer({
   const [shareClicked, setShareClicked] = useState(false);
   const [significatorType, setSignificatorType] =
     useState<SignificatorType>("none");
+  const [showAdvancedAnalysis, setShowAdvancedAnalysis] = useState(false);
 
   const cardIndex = useMemo(
     () => new Map(allCards.map((c) => [c.id, c])),
@@ -464,8 +467,26 @@ export function ReadingViewer({
     } else if (reading.layoutType === 36) {
       return (
         <div className="space-y-sm">
-          {/* Grand Tableau directional legend */}
-          {significatorIndex !== -1 && (
+          {/* Advanced Analysis Toggle */}
+          <button
+            onClick={() => setShowAdvancedAnalysis(!showAdvancedAnalysis)}
+            className="mb-4 flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card/50 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+          >
+            {showAdvancedAnalysis ? (
+              <>
+                <ChevronUp className="h-4 w-4" />
+                Hide Advanced Analysis
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-4 w-4" />
+                Show Advanced Analysis (Significator, Directions, Topics)
+              </>
+            )}
+          </button>
+
+          {/* Grand Tableau directional legend - only when advanced is shown */}
+          {showAdvancedAnalysis && significatorIndex !== -1 && (
             <div className="mb-lg flex flex-wrap items-center justify-center gap-lg text-xs">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-amber-600" />
@@ -518,14 +539,19 @@ export function ReadingViewer({
                 const zone = DIRECTIONAL_ZONES[zoneInfo.zone];
 
                 let borderClass = "border-border";
-                if (isSignificator) {
+                if (showAdvancedAnalysis) {
+                  if (isSignificator) {
+                    borderClass = "border-amber-500 ring-2 ring-amber-500/30";
+                  } else if (isCorner) {
+                    borderClass = "border-purple-500/50";
+                  } else if (isCardsOfFate) {
+                    borderClass = "border-red-500/50";
+                  } else if (isCenter) {
+                    borderClass = "border-green-500/50";
+                  }
+                } else if (isSignificator) {
+                  // Always show significator border even in simple mode
                   borderClass = "border-amber-500 ring-2 ring-amber-500/30";
-                } else if (isCorner) {
-                  borderClass = "border-purple-500/50";
-                } else if (isCardsOfFate) {
-                  borderClass = "border-red-500/50";
-                } else if (isCenter) {
-                  borderClass = "border-green-500/50";
                 }
 
                 return (
@@ -553,34 +579,38 @@ export function ReadingViewer({
                             YOU
                           </Badge>
                         )}
-                        {isCorner && (
-                          <Badge
-                            variant="outline"
-                            className="border-purple-500/50 text-[10px] text-purple-600"
-                          >
-                            Context
-                          </Badge>
-                        )}
-                        {isCardsOfFate && (
-                          <Badge
-                            variant="outline"
-                            className="border-red-500/50 text-[10px] text-red-600"
-                          >
-                            Fate
-                          </Badge>
-                        )}
-                        {isCenter && (
-                          <Badge
-                            variant="outline"
-                            className="border-green-500/50 text-[10px] text-green-600"
-                          >
-                            Heart
-                          </Badge>
+                        {showAdvancedAnalysis && (
+                          <>
+                            {isCorner && (
+                              <Badge
+                                variant="outline"
+                                className="border-purple-500/50 text-[10px] text-purple-600"
+                              >
+                                Context
+                              </Badge>
+                            )}
+                            {isCardsOfFate && (
+                              <Badge
+                                variant="outline"
+                                className="border-red-500/50 text-[10px] text-red-600"
+                              >
+                                Fate
+                              </Badge>
+                            )}
+                            {isCenter && (
+                              <Badge
+                                variant="outline"
+                                className="border-green-500/50 text-[10px] text-green-600"
+                              >
+                                Heart
+                              </Badge>
+                            )}
+                          </>
                         )}
                       </div>
 
-                      {/* Directional indicator */}
-                      {zone && significatorIndex !== -1 && !isSignificator && (
+                      {/* Directional indicator - only in advanced mode */}
+                      {showAdvancedAnalysis && zone && significatorIndex !== -1 && !isSignificator && (
                         <div
                           className={`flex items-center gap-1 text-[10px] ${zone.color}`}
                         >
@@ -611,8 +641,8 @@ export function ReadingViewer({
                         }
                       />
 
-                      {/* Topic card badge */}
-                      {topicInfo && (
+                      {/* Topic card badge - only in advanced mode */}
+                      {showAdvancedAnalysis && topicInfo && (
                         <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
                           {getTopicIcon(topicInfo.type)}
                           <span>{topicInfo.label}</span>
@@ -625,8 +655,8 @@ export function ReadingViewer({
             </div>
           </div>
 
-          {/* Topic cards summary */}
-          {topicCards.length > 0 && (
+          {/* Topic cards summary - only in advanced mode */}
+          {showAdvancedAnalysis && topicCards.length > 0 && (
             <div className="mt-lg rounded-lg border border-border bg-card p-md">
               <h4 className="mb-md flex items-center gap-2 text-sm font-semibold">
                 <Sparkles className="h-4 w-4 text-primary" />
@@ -664,8 +694,8 @@ export function ReadingViewer({
             </div>
           )}
 
-          {/* Diagonals summary */}
-          {diagonals && (
+          {/* Diagonals summary - only in advanced mode */}
+          {showAdvancedAnalysis && diagonals && (
             <div className="mt-lg grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {[
                 {

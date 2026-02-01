@@ -61,7 +61,6 @@ export default function Home() {
                 width={400}
                 height={300}
                 priority
-                unoptimized
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 className="block h-auto w-full max-w-xs rounded-md border-0 object-cover shadow-none lg:max-w-sm"
               />

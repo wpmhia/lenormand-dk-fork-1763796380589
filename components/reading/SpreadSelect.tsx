@@ -1,0 +1,120 @@
+"use client";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AUTHENTIC_SPREADS,
+  MODERN_SPREADS,
+  COMPREHENSIVE_SPREADS,
+  Spread,
+} from "@/lib/spreads";
+
+interface SpreadSelectProps {
+  value: Spread;
+  onChange: (spread: Spread) => void;
+  disabled?: boolean;
+}
+
+export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
+  return (
+    <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
+      <label className="font-medium text-foreground">
+        Choose Your Spread:
+      </label>
+      <Select
+        value={value.id}
+        onValueChange={(spreadId) => {
+          const spread = COMPREHENSIVE_SPREADS.find((s) => s.id === spreadId);
+          if (spread) onChange(spread);
+        }}
+        disabled={disabled}
+      >
+        <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
+          <SelectValue>{value.label}</SelectValue>
+        </SelectTrigger>
+        <SelectContent className="border-border bg-popover text-popover-foreground max-h-[400px] overflow-y-auto">
+          {/* Authentic Spreads Header */}
+          <div className="sticky top-0 bg-popover px-2 py-1.5 text-xs font-bold text-primary">
+            ✨ AUTHENTIC SPREADS
+          </div>
+          {AUTHENTIC_SPREADS.map((spread) =>
+            spread.disabled ? (
+              <div
+                key={spread.id}
+                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm py-3 pl-2 pr-8 text-sm outline-none opacity-50"
+              >
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">
+                    {spread.label} (Pro)
+                  </span>
+                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
+                    {spread.cards} cards • {spread.description}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <SelectItem
+                key={spread.id}
+                value={spread.id}
+                className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
+              >
+                <div className="flex flex-col">
+                  <span>{spread.label}</span>
+                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
+                    {spread.cards} cards • {spread.description}
+                  </span>
+                </div>
+              </SelectItem>
+            )
+          )}
+
+          {/* Divider */}
+          <div className="sticky top-0 my-2 border-t border-border bg-popover" />
+
+          {/* Modern Spreads Header */}
+          <div className="sticky top-0 bg-popover px-2 py-1.5 text-xs font-bold text-primary">
+            🔮 MODERN SPREADS
+          </div>
+          {MODERN_SPREADS.map((spread) =>
+            spread.disabled ? (
+              <div
+                key={spread.id}
+                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm py-3 pl-2 pr-8 text-sm outline-none opacity-50"
+              >
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">
+                    {spread.label} (Pro)
+                  </span>
+                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
+                    {spread.cards} cards • {spread.description}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <SelectItem
+                key={spread.id}
+                value={spread.id}
+                className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
+              >
+                <div className="flex flex-col">
+                  <span>{spread.label}</span>
+                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
+                    {spread.cards} cards • {spread.description}
+                  </span>
+                </div>
+              </SelectItem>
+            )
+          )}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export { AUTHENTIC_SPREADS, MODERN_SPREADS, COMPREHENSIVE_SPREADS };
+export type { Spread };
