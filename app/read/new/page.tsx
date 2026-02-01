@@ -76,6 +76,7 @@ function NewReadingPageContent() {
     error: aiError,
     streamedContent,
     isPartial,
+    aiMethod,
     startAnalysis,
     retryAnalysis,
     resetAnalysis,
