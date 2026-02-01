@@ -1,9 +1,10 @@
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
+import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
+import { getCachedReading, cacheReading } from "@/lib/request-coalescing";
 
 // Direct env access for Node.js runtime
 const getEnvVar = (key: string): string | undefined => {
@@ -65,6 +66,24 @@ export async function POST(request: Request) {
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
     
+    // Check in-memory cache first (saves API costs)
+    const cached = getCachedReading(cards, spreadId || "sentence-3", question || "");
+    if (cached) {
+      console.log("[API] Cache hit - returning cached reading");
+      return new Response(
+        JSON.stringify({ reading: cached, cached: true }),
+        { 
+          status: 200, 
+          headers: { 
+            "Content-Type": "application/json",
+            "X-Cache": "HIT",
+            "X-RateLimit-Limit": String(rateLimitResult.limit),
+            "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+          }
+        }
+      );
+    }
+    
     const prompt = buildPrompt(
       cards,
       spreadId || "sentence-3",
@@ -112,8 +131,30 @@ export async function POST(request: Request) {
     
     console.log("[API] DeepSeek response OK, streaming...");
 
+    // Collect stream for caching while piping to client
+    const streamStartTime = Date.now();
+    let fullResponse = "";
+    
+    // Create a TransformStream to cache the response
+    const { readable, writable } = new TransformStream({
+      transform(chunk, controller) {
+        const text = new TextDecoder().decode(chunk);
+        fullResponse += text;
+        controller.enqueue(chunk);
+      },
+      flush() {
+        // Cache the complete response
+        const duration = Date.now() - streamStartTime;
+        console.log(`[API] Stream complete in ${duration}ms, caching response`);
+        cacheReading(cards, spreadId || "sentence-3", question || "", fullResponse);
+      }
+    });
+    
+    // Pipe the response through our transform
+    response.body?.pipeTo(writable).catch(console.error);
+    
     // Stream with rate limit headers
-    return new Response(response.body, {
+    return new Response(readable, {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
