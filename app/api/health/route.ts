@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 // Edge runtime compatible env var access
 const getEnv = (key: string): string | undefined => {

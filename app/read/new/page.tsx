@@ -40,6 +40,7 @@ import {
   COMPREHENSIVE_SPREADS,
 } from "@/lib/spreads";
 import { AIReadingResponse } from "@/lib/ai-config";
+import { USE_STREAMING, parseSSEChunk } from "@/lib/streaming";
 
 import { Deck } from "@/components/Deck";
 import { ReadingViewer } from "@/components/ReadingViewer";
@@ -137,7 +138,9 @@ function NewReadingPageContent() {
       setAiReading(null);
       setAiLoading(false);
       setAiError(null);
-      setJobStatus("");
+      setStreamedContent("");
+      setIsStreaming(false);
+      setIsPartial(false);
       setPhysicalCards("");
       setPhysicalCardsError(null);
       setParsedCards([]);
@@ -149,11 +152,7 @@ function NewReadingPageContent() {
       readingCardRefs.current.clear();
       aiAnalysisStartedRef.current = false;
 
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
-      }
-      currentJobIdRef.current = null;
+      cleanupEventSource();
       if (transitionTimeoutRef.current) {
         clearTimeout(transitionTimeoutRef.current);
         transitionTimeoutRef.current = null;
@@ -208,82 +207,37 @@ function NewReadingPageContent() {
     loadData();
   }, []);
 
-  // AI async job state (replaces streaming)
+  // AI streaming state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [jobStatus, setJobStatus] = useState<string>("");
+  const [streamedContent, setStreamedContent] = useState<string>("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [isPartial, setIsPartial] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const pollingIntervalRef = useRef<number | null>(null);
-  const currentJobIdRef = useRef<string | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-  // Generate unique job ID
-  const generateJobId = useCallback(() => {
-    return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }, []);
-
-  // Cleanup polling
-  const cleanupPolling = useCallback(() => {
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
+  // Cleanup EventSource
+  const cleanupEventSource = useCallback(() => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
     }
   }, []);
 
-  // Poll for job status
-  const pollJobStatus = useCallback(async (jobId: string) => {
-    try {
-      const response = await fetch(`/api/readings/status?jobId=${jobId}`);
-      if (!response.ok) return;
-      
-      const job = await response.json();
-      
-      if (job.status === "completed") {
-        setAiReading({ reading: job.result });
-        setAiLoading(false);
-        setJobStatus("");
-        cleanupPolling();
-        currentJobIdRef.current = null;
-      } else if (job.status === "failed") {
-        setAiError(job.error || "Reading failed");
-        setAiLoading(false);
-        setJobStatus("");
-        cleanupPolling();
-        currentJobIdRef.current = null;
-      } else if (job.error) {
-        setAiError(job.error);
-        setAiLoading(false);
-        setJobStatus("");
-        cleanupPolling();
-        currentJobIdRef.current = null;
-      } else if (job.status === "processing" && job.result) {
-        // Progressive chunk delivery - show partial results immediately
-        setAiReading({ reading: job.result });
-        setJobStatus(`Receiving... ${job.chunkIndex !== undefined ? Math.round(((job.chunkIndex + 1) / job.totalChunks) * 100) : 50}%`);
-      } else {
-        // Still processing
-        setJobStatus(job.status === "processing" ? "Consulting the cards..." : "Preparing your reading...");
-      }
-    } catch (err) {
-      console.error("Polling error:", err);
-    }
-  }, [cleanupPolling]);
-
-  // Start async AI analysis
-  const performAsyncAnalysis = useCallback(async () => {
-    if (currentJobIdRef.current) return; // Already in progress
-
-    const jobId = generateJobId();
-    currentJobIdRef.current = jobId;
+  // Start streaming AI analysis
+  const performStreamingAnalysis = useCallback(async () => {
+    if (eventSourceRef.current) return; // Already in progress
 
     setAiLoading(true);
     setAiError(null);
     setAiReading(null);
-    setJobStatus("Preparing your reading...");
+    setStreamedContent("");
+    setIsStreaming(true);
+    setIsPartial(false);
 
     try {
       const aiRequest = {
-        jobId,
         question: question.trim() || "What guidance do these cards have for me?",
         cards: drawnCards.map((card) => ({
           id: card.id,
@@ -293,8 +247,8 @@ function NewReadingPageContent() {
         spreadId: selectedSpread.id,
       };
 
-      // Start the job
-      const response = await fetch("/api/readings/start", {
+      // Use POST with fetch to get streaming response
+      const response = await fetch("/api/readings/interpret", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(aiRequest),
@@ -305,34 +259,58 @@ function NewReadingPageContent() {
         throw new Error(error.error || "Failed to start reading");
       }
 
-      const data = await response.json();
-      
-      // If completed (cached or synchronous mode), show immediately
-      if (data.status === "completed") {
-        setAiReading({ reading: data.result });
+      // Check if we got a JSON error response (fallback) or stream
+      const contentType = response.headers.get("content-type");
+      if (contentType?.includes("application/json")) {
+        // Fallback response (error or timeout)
+        const data = await response.json();
+        if (data.error) {
+          setAiError(data.error);
+          setAiReading(data.reading ? { reading: data.reading } : null);
+          setIsPartial(data.partial || false);
+        } else {
+          setAiReading({ reading: data.reading });
+        }
         setAiLoading(false);
-        setJobStatus("");
-        currentJobIdRef.current = null;
+        setIsStreaming(false);
         return;
       }
 
-      // Start polling for updates (every 1.5 seconds)
-      pollingIntervalRef.current = window.setInterval(() => {
-        pollJobStatus(jobId);
-      }, 1500);
-      
-      // Initial poll
-      pollJobStatus(jobId);
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("No response body");
+      }
+
+      const decoder = new TextDecoder();
+      let accumulated = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const content = parseSSEChunk(chunk);
+        
+        if (content) {
+          accumulated += content;
+          setStreamedContent(accumulated);
+        }
+      }
+
+      // Stream complete
+      setAiReading({ reading: accumulated });
+      setAiLoading(false);
+      setIsStreaming(false);
 
     } catch (error) {
       if (error instanceof Error) {
         setAiError(error.message);
       }
       setAiLoading(false);
-      setJobStatus("");
-      currentJobIdRef.current = null;
+      setIsStreaming(false);
     }
-  }, [question, drawnCards, allCards, selectedSpread.id, generateJobId, pollJobStatus]);
+  }, [question, drawnCards, allCards, selectedSpread.id]);
 
   // Auto-start AI analysis when entering results step
   useEffect(() => {
@@ -342,11 +320,13 @@ function NewReadingPageContent() {
       !aiAnalysisStartedRef.current
     ) {
       aiAnalysisStartedRef.current = true;
-      performAsyncAnalysis();
+      if (USE_STREAMING) {
+        performStreamingAnalysis();
+      }
     } else if (step !== "results") {
       aiAnalysisStartedRef.current = false;
     }
-  }, [step, drawnCards, performAsyncAnalysis]);
+  }, [step, drawnCards, performStreamingAnalysis]);
 
   const parsePhysicalCards = useCallback(
     (allCards: CardType[]): { cards: ReadingCard[]; errors: string[]; warnings: string[] } => {
@@ -593,23 +573,19 @@ function NewReadingPageContent() {
   const retryAIAnalysis = useCallback(() => {
     if (drawnCards.length > 0) {
       aiAnalysisStartedRef.current = false;
-      performAsyncAnalysis();
+      setStreamedContent("");
+      setIsPartial(false);
+      performStreamingAnalysis();
     }
-  }, [drawnCards, performAsyncAnalysis]);
+  }, [drawnCards, performStreamingAnalysis]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       mountedRef.current = false;
-
-      // Cleanup polling
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
-      }
-      currentJobIdRef.current = null;
+      cleanupEventSource();
     };
-  }, []);
+  }, [cleanupEventSource]);
 
   return (
     <TooltipProvider>

@@ -1,19 +1,18 @@
-export const runtime = "edge";
-export const maxDuration = 30; // Vercel max duration for edge
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const BASE_URL = "https://api.deepseek.com";
 
-// Rate limit: 5 requests per minute per IP
 const RATE_LIMIT = 5;
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_WINDOW = 60 * 1000;
 
 export async function POST(request: Request) {
   try {
-    // Rate limiting
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
@@ -52,15 +51,20 @@ export async function POST(request: Request) {
     }
 
     const { question, cards, spreadId } = body;
+    const cardCount = cards.length;
+    
     const prompt = buildPrompt(
       cards,
       spreadId || "sentence-3",
       question || "What do the cards show?",
     );
 
-    // Abort controller for timeout - fail fast if API is slow
+    // Dynamic timeout based on card count
+    const timeoutMs = getTimeoutMs(cardCount);
+    const maxTokens = getTokenBudget(cardCount);
+
     const abortController = new AbortController();
-    const timeoutId = setTimeout(() => abortController.abort(), 25000);
+    const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
@@ -73,12 +77,12 @@ export async function POST(request: Request) {
         messages: [
           {
             role: "system",
-            content: "You are Marie-Anne Lenormand. Reply in plain text only.",
+            content: "You are Marie-Anne Lenormand. Give direct, practical readings using markdown formatting with **bold headers**.",
           },
           { role: "user", content: prompt },
         ],
         temperature: 0.3,
-        max_tokens: 1000, // Further reduced for faster response
+        max_tokens: maxTokens,
         stream: true,
       }),
       signal: abortController.signal,
@@ -90,17 +94,18 @@ export async function POST(request: Request) {
       throw new Error(`API error: ${response.status}`);
     }
 
-    // Zero-processing passthrough with rate limit headers
+    // Stream with rate limit headers
     return new Response(response.body, {
       headers: {
         "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
       },
     });
   } catch (error: any) {
-    // Check if it's a timeout
     const isTimeout = error.name === "AbortError" || 
                       error.message?.includes("abort") ||
                       error.message?.includes("timeout");
@@ -109,10 +114,11 @@ export async function POST(request: Request) {
       JSON.stringify({
         error: isTimeout ? "AI response timed out" : "Stream failed",
         reading: isTimeout 
-          ? "The cards have been drawn, but the spirits are taking time to whisper their message. Please try again in a moment, or reflect on the traditional meanings of your cards while you wait."
-          : "The cards whisper their message through the mist. Reflect on the cards' traditional meanings. The answer emerges from within.",
+          ? "The spirits are taking time to whisper their message. Tap to retry, or reflect on the traditional meanings of your cards."
+          : "The cards whisper through the mist. Reflect on their traditional meanings—the answer emerges from within.",
         source: "fallback",
         timedOut: isTimeout,
+        partial: true,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } },
     );

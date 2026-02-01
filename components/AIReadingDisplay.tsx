@@ -44,6 +44,7 @@ interface AIReadingDisplayProps {
   question?: string;
   isStreaming?: boolean;
   streamedContent?: string;
+  isPartial?: boolean;
 }
 
 export function AIReadingDisplay({
@@ -59,6 +60,7 @@ export function AIReadingDisplay({
   question,
   isStreaming = false,
   streamedContent,
+  isPartial = false,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
 
@@ -379,14 +381,31 @@ export function AIReadingDisplay({
             </ReactMarkdown>
           </div>
 
-          {/* Reading complete indicator */}
+          {/* Reading complete or partial indicator */}
           <div className="mt-6 flex items-center justify-center border-t border-border pt-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
-                <Check className="h-4 w-4 text-green-500" />
+            {isPartial ? (
+              <div className="flex flex-col items-center gap-2">
+                <div className="text-sm text-amber-600 dark:text-amber-400">
+                  Interpretation incomplete
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onRetry}
+                  className="gap-2"
+                >
+                  <RefreshCw className="h-3 w-3" />
+                  Tap to retry
+                </Button>
               </div>
-              <span>Reading complete</span>
-            </div>
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
+                  <Check className="h-4 w-4 text-green-500" />
+                </div>
+                <span>Reading complete</span>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
