@@ -27,7 +27,7 @@ export default function HistoryBasicsPage() {
       duration="20 minutes"
       difficulty="Beginner"
       icon={<BookOpen className="h-8 w-8 text-white" />}
-      nextModule={{ id: "reading-fundamentals", title: "Reading Fundamentals" }}
+      nextModule={{ id: "card-meanings", title: "Card Meanings" }}
       breadcrumbs={[
         { name: "Home", url: "/" },
         { name: "Learn", url: "/learn" },

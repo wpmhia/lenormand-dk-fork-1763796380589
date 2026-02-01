@@ -452,7 +452,7 @@ export default function CardCombinationsPage() {
   return (
     <ModulePageClient
       moduleId="card-combinations"
-      moduleNumber={3}
+      moduleNumber={4}
       totalModules={8}
       title="Card Combinations"
       description="Master how cards interact and create new meanings together. Learn key combinations across different life contexts."

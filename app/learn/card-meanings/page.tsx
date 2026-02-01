@@ -509,31 +509,31 @@ export default function CardMeaningsPage() {
       <div className="border-b border-border bg-card/80 backdrop-blur">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/learn">
+            <Link href="/learn/history-basics">
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-primary hover:text-primary/80"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Course
+                Prev: History & Basics
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Module 3 of 8
+                Module 2 of 8
               </Badge>
               <Badge className="border-border bg-muted text-muted-foreground dark:border-border dark:bg-muted/50 dark:text-muted-foreground">
-                Intermediate
+                Beginner
               </Badge>
             </div>
-            <Link href="/learn/card-combinations">
+            <Link href="/learn/reading-fundamentals">
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-primary hover:text-primary/80"
               >
-                Next Module
+                Next: Reading Fundamentals
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>

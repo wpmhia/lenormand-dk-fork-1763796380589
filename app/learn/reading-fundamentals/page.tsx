@@ -23,14 +23,14 @@ export default function ReadingFundamentalsPage() {
   return (
     <ModulePageClient
       moduleId="reading-fundamentals"
-      moduleNumber={2}
+      moduleNumber={3}
       totalModules={8}
       title="Reading Fundamentals"
       description="Master the core methodology of Lenormand divination. Learn sentence structure and fundamental techniques."
       duration="30 minutes"
       difficulty="Beginner"
       icon={<Target className="h-8 w-8 text-white" />}
-      prevModule={{ id: "history-basics", title: "History & Basics" }}
+      prevModule={{ id: "card-meanings", title: "Card Meanings" }}
       nextModule={{ id: "card-combinations", title: "Card Combinations" }}
       breadcrumbs={[
         { name: "Home", url: "/" },
