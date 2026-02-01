@@ -68,10 +68,20 @@ export const MODERN_SPREADS: Spread[] = [
   },
 ];
 
-// All spreads combined - Authentic first, then Modern
+// All spreads in order: 1 card → 3 cards → 5 cards → 9 cards → 36 cards
 export const COMPREHENSIVE_SPREADS: Spread[] = [
-  ...AUTHENTIC_SPREADS,
-  ...MODERN_SPREADS,
+  // 1 Card
+  AUTHENTIC_SPREADS[0], // single-card
+  // 3 Cards
+  MODERN_SPREADS[0], // yes-no-maybe
+  MODERN_SPREADS[1], // past-present-future
+  AUTHENTIC_SPREADS[1], // sentence-3
+  // 5 Cards
+  MODERN_SPREADS[2], // sentence-5
+  // 9 Cards
+  AUTHENTIC_SPREADS[2], // comprehensive
+  // 36 Cards
+  AUTHENTIC_SPREADS[3], // grand-tableau
 ];
 
 // Legacy names for backward compatibility
