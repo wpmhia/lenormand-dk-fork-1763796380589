@@ -66,10 +66,10 @@ export default function ReadingFundamentalsPage() {
                       <span className="font-bold text-white">1</span>
                     </div>
                     <p className="text-sm font-medium text-foreground">
-                      The Rider
+                      Card 1
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      News, Messages
+                      Opening/Context
                     </p>
                   </div>
                   <div className="flex flex-col items-center">
@@ -77,10 +77,10 @@ export default function ReadingFundamentalsPage() {
                       <span className="font-bold text-white">2</span>
                     </div>
                     <p className="text-sm font-medium text-foreground">
-                      The Snake
+                      Card 2
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Deception, Wisdom
+                      Central/Action
                     </p>
                   </div>
                   <div className="flex flex-col items-center">
@@ -88,32 +88,19 @@ export default function ReadingFundamentalsPage() {
                       <span className="font-bold text-white">3</span>
                     </div>
                     <p className="text-sm font-medium text-foreground">
-                      The Bouquet
+                      Card 3
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Gift, Celebration
+                      Outcome/Result
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <h3 className="mb-3 font-medium text-foreground">
-                  Possible Interpretations:
-                </h3>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>
-                    • &ldquo;News about deception brings a gift&rdquo; - Warning
-                    about deceptive news that leads to something positive
-                  </li>
-                  <li>
-                    • &ldquo;A message reveals hidden wisdom as a gift&rdquo; -
-                    Learning something valuable from a communication
-                  </li>
-                  <li>
-                    • &ldquo;Quick changes bring celebration&rdquo; - Positive
-                    changes happening soon
-                  </li>
-                </ul>
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <p className="text-sm text-muted-foreground">
+                  <strong className="text-card-foreground">How it works:</strong>{" "}
+                  After you learn the 36 card meanings in the next module, you&apos;ll be able to read any three cards as a flowing sentence. For now, understand that Card 1 sets the context, Card 2 shows the central action, and Card 3 reveals the outcome.
+                </p>
               </div>
             </div>
           </div>
@@ -157,9 +144,9 @@ export default function ReadingFundamentalsPage() {
                   you only need the headline
                 </p>
                 <p>
-                  <strong>Example:</strong> &quot;The Rider (subject) brings an
+                  <strong>Example:</strong> &quot;Card 1 (subject) brings an
                   invitation (object) to the family (modifier) and leads to
-                  money (outcome).&quot;
+                  money (outcome).&quot; - Once you know the cards, you&apos;ll substitute Card 1 with the actual card name and meaning.
                 </p>
               </div>
             </div>
@@ -277,112 +264,6 @@ export default function ReadingFundamentalsPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* The Man and The Woman */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle className="flex items-center text-2xl text-foreground">
-            <Users className="mr-3 h-6 w-6 text-primary" />
-            Understanding The Man and The Woman: Position Roles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="rounded-lg border border-border bg-muted p-6">
-            <p className="leading-relaxed text-muted-foreground">
-              <strong className="text-foreground">
-                Critical Terminology:
-              </strong>{" "}
-              In Lenormand, &ldquo;The Man&rdquo; and &ldquo;The Woman&rdquo;
-              refer to{" "}
-              <strong className="text-foreground">
-                positions in the reading, not gender
-              </strong>
-              . These terms date back to Marie-Anne&apos;s original system and
-              represent structural roles rather than the gender of people
-              involved.
-            </p>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <h3 className="mb-3 flex items-center font-semibold text-foreground">
-                <span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                  1
-                </span>
-                The Man (First Person)
-              </h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>
-                  <strong className="text-card-foreground">Meaning:</strong>{" "}
-                  The first person in the reading
-                </p>
-                <p>
-                  <strong className="text-card-foreground">Also called:</strong>{" "}
-                  Primary subject, the querent, central figure
-                </p>
-                <p>
-                  <strong className="text-card-foreground">
-                    In a relationship reading:
-                  </strong>{" "}
-                  The primary perspective being examined (could be anyone—man,
-                  woman, or any person)
-                </p>
-                <p>
-                  <strong className="text-card-foreground">Example:</strong>{" "}
-                  In a reading about two people meeting, if you shuffle and get
-                  The Man in position 1, it represents the first person&apos;s
-                  perspective, regardless of their actual gender.
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <h3 className="mb-3 flex items-center font-semibold text-foreground">
-                <span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                  2
-                </span>
-                The Woman (Second Person)
-              </h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>
-                  <strong className="text-card-foreground">Meaning:</strong>{" "}
-                  The second person in the reading
-                </p>
-                <p>
-                  <strong className="text-card-foreground">Also called:</strong>{" "}
-                  Secondary subject, another figure, related person
-                </p>
-                <p>
-                  <strong className="text-card-foreground">
-                    In a relationship reading:
-                  </strong>{" "}
-                  The secondary perspective or the other person involved (could
-                  be anyone—woman, man, or any person)
-                </p>
-                <p>
-                  <strong className="text-card-foreground">Example:</strong>{" "}
-                  If you&apos;re reading about a meeting between two people and
-                  The Woman appears, it represents the second person&apos;s
-                  perspective or role, regardless of their actual gender.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
-            <p className="text-sm text-muted-foreground">
-              <strong className="text-card-foreground">
-                How to Interpret:
-              </strong>{" "}
-              Rather than thinking &ldquo;male&rdquo; or &ldquo;female,&rdquo;
-              think &ldquo;first person&rdquo; and &ldquo;second person.&rdquo;
-              This allows for accurate reading of any situation—gender-neutral,
-              same-gender relationships, or any dynamic where perspective
-              matters.
-            </p>
           </div>
         </CardContent>
       </Card>
