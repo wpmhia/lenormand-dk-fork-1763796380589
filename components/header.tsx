@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
+import { Sparkles, Home, BookOpen, Plus, Menu, X, Heart } from "lucide-react";
 import { useState } from "react";
 
 export function Header() {
@@ -56,6 +56,15 @@ export function Header() {
             <Sparkles className="h-5 w-5" />
             <span>Learn</span>
           </Link>
+          <a
+            href="https://ko-fi.com/Y8Y81NVDEK"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent/50 hover:text-primary"
+          >
+            <Heart className="h-5 w-5" />
+            <span>Support</span>
+          </a>
         </nav>
         <div className="ml-auto md:hidden">
           <button
@@ -110,9 +119,10 @@ export function Header() {
               href="https://ko-fi.com/Y8Y81NVDEK"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent/50 hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
             >
+              <Heart className="h-5 w-5" />
               <span>Support</span>
             </a>
           </nav>
