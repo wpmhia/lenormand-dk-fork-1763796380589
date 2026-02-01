@@ -8,7 +8,7 @@ export interface Spread {
   disabledReason?: string;
 }
 
-// Marie-Anne's Original Spreads
+// Classic Spreads
 export const AUTHENTIC_SPREADS: Spread[] = [
   {
     id: "single-card",
@@ -22,7 +22,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     cards: 3,
     label: "3-Card Sentence",
     description:
-      "Her daily reading: opening → turning point → outcome + deadline + action",
+      "Opening, turning point, and outcome with timing and action guidance",
     isAuthentic: true,
   },
   {
@@ -38,7 +38,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     cards: 36,
     label: "36-Card Grand Tableau",
     description:
-      "Complete life situation through full 4x9 grid - her most comprehensive reading",
+      "Complete life situation through full 4x9 grid - the most comprehensive reading",
     isAuthentic: true,
   },
 ];

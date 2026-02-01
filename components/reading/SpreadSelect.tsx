@@ -8,8 +8,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AUTHENTIC_SPREADS,
-  MODERN_SPREADS,
   COMPREHENSIVE_SPREADS,
   Spread,
 } from "@/lib/spreads";
@@ -39,11 +37,7 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
           <SelectValue>{value.label}</SelectValue>
         </SelectTrigger>
         <SelectContent className="border-border bg-popover text-popover-foreground max-h-[400px] overflow-y-auto">
-          {/* Authentic Spreads Header */}
-          <div className="sticky top-0 bg-popover px-2 py-1.5 text-xs font-bold text-primary">
-            ✨ AUTHENTIC SPREADS
-          </div>
-          {AUTHENTIC_SPREADS.map((spread) =>
+          {COMPREHENSIVE_SPREADS.map((spread) =>
             spread.disabled ? (
               <div
                 key={spread.id}
@@ -65,46 +59,6 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
                 key={spread.id}
                 value={spread.id}
                 className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
-              >
-                <div className="flex flex-col">
-                  <span>{spread.label}</span>
-                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">
-                    {spread.cards} cards • {spread.description}
-                  </span>
-                </div>
-              </SelectItem>
-            )
-          )}
-
-          {/* Divider */}
-          <div className="sticky top-0 my-2 border-t border-border bg-popover" />
-
-          {/* Modern Spreads Header */}
-          <div className="sticky top-0 bg-popover px-2 py-1.5 text-xs font-bold text-primary">
-            🔮 MODERN SPREADS
-          </div>
-          {MODERN_SPREADS.map((spread) =>
-            spread.disabled ? (
-              <div
-                key={spread.id}
-                className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm bg-muted/30 py-3 pl-2 pr-8 text-sm outline-none"
-              >
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <Lock className="h-3 w-3" />
-                    {spread.label}
-                    <span className="text-xs">(Ko-Fi Supporter)</span>
-                  </span>
-                  <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground/70">
-                    {spread.cards} cards • {spread.description}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <SelectItem
-                key={spread.id}
-                value={spread.id}
-                className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
               >
                 <div className="flex flex-col">
                   <span>{spread.label}</span>
