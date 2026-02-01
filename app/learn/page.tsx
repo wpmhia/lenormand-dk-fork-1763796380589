@@ -14,8 +14,6 @@ import {
   TrendingUp,
   CheckCircle2,
   Target,
-  Heart,
-  Users,
   Star,
   Zap,
   Compass,
@@ -23,6 +21,7 @@ import {
   LayoutGrid,
   Brain,
   Shield,
+  Users,
 } from "lucide-react";
 
 export default function LearnPage() {
@@ -165,29 +164,7 @@ export default function LearnPage() {
     }
   };
 
-  const testimonials = [
-    {
-      name: "Sarah M.",
-      role: "Spiritual Seeker",
-      content:
-        "This course demystified Lenormand for me. I went from confused to confident in just a week!",
-      avatar: "👩",
-    },
-    {
-      name: "James K.",
-      role: "Professional Reader",
-      content:
-        "The structured approach here is excellent. My reading accuracy improved significantly after reviewing these modules.",
-      avatar: "👨",
-    },
-    {
-      name: "Elena R.",
-      role: "Tarot Enthusiast",
-      content:
-        "As a Tarot reader, learning Lenormand was a natural next step. This course made the transition seamless.",
-      avatar: "👩",
-    },
-  ];
+
 
   return (
     <div className="page-layout">
@@ -403,103 +380,6 @@ export default function LearnPage() {
               </CardContent>
             </Card>
           </Link>
-        </div>
-
-        {/* Why Learn Lenormand */}
-        <div className="mb-16 rounded-3xl border border-border bg-card p-8 shadow-2xl backdrop-blur-sm">
-          <div className="mb-8 text-center">
-            <h3 className="mb-4 text-2xl font-bold text-foreground">
-              Why Learn Lenormand?
-            </h3>
-            <p className="text-muted-foreground">
-              Discover why Lenormand has captivated diviners for over two
-              centuries
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="space-y-3 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                <Target className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="font-semibold text-foreground">
-                Direct & Practical
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                Unlike Tarot&apos;s esoteric symbolism, Lenormand speaks in
-                everyday language with clear, actionable guidance.
-              </p>
-            </div>
-
-            <div className="space-y-3 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                <Heart className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="font-semibold text-foreground">
-                Emotional Intelligence
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                Lenormand helps you understand relationships, emotions, and
-                interpersonal dynamics with remarkable clarity.
-              </p>
-            </div>
-
-            <div className="space-y-3 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
-                <Users className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="font-semibold text-foreground">
-                Community Wisdom
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                Join a global community of readers who have used Lenormand for
-                guidance, insight, and personal growth.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Testimonials */}
-        <div className="mb-16">
-          <div className="mb-8 text-center">
-            <h3 className="mb-4 text-2xl font-bold text-foreground">
-              What Learners Say
-            </h3>
-            <p className="text-muted-foreground">
-              Join thousands who have transformed their divination practice
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((testimonial, idx) => (
-              <Card key={idx} className="border border-border bg-card">
-                <CardContent className="space-y-4 pt-6">
-                  <div className="flex items-center gap-3">
-                    <div className="text-3xl">{testimonial.avatar}</div>
-                    <div>
-                      <p className="font-semibold text-foreground">
-                        {testimonial.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    &quot;{testimonial.content}&quot;
-                  </p>
-                  <div className="flex gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-4 w-4 fill-primary text-primary"
-                      />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </div>
 
         {/* CTA Section */}

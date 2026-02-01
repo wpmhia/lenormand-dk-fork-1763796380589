@@ -3,9 +3,7 @@ import { ModulePageClient } from "@/components/ModulePageClient";
 import {
   Target,
   Shuffle,
-  Eye,
   MessageSquare,
-  RotateCcw,
   BookOpen,
   Users,
   HelpCircle,
@@ -20,29 +18,6 @@ export const metadata = {
   description:
     "Master the core methodology of Lenormand divination. Learn sentence structure and fundamental reading techniques.",
 };
-
-const differences = [
-  {
-    feature: "Reversals",
-    lenormand: "No reversals - meanings are built into each card",
-    tarot: "Reversals add complexity and nuance",
-  },
-  {
-    feature: "Reading Style",
-    lenormand: "Read as sentences in card order",
-    tarot: "Intuitive interpretation of symbols",
-  },
-  {
-    feature: "Symbolism",
-    lenormand: "Concrete, everyday symbols",
-    tarot: "Archetypal, esoteric symbolism",
-  },
-  {
-    feature: "Focus",
-    lenormand: "Practical guidance and timing",
-    tarot: "Spiritual growth and transformation",
-  },
-];
 
 export default function ReadingFundamentalsPage() {
   return (
@@ -63,52 +38,6 @@ export default function ReadingFundamentalsPage() {
         { name: "Reading Fundamentals", url: "/learn/reading-fundamentals" },
       ]}
     >
-      {/* Key Differences */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle
-            id="lenormand-vs-tarot"
-            className="flex items-center text-2xl text-foreground"
-          >
-            <Eye className="mr-3 h-6 w-6 text-primary" />
-            Lenormand vs. Tarot: Key Differences
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            {differences.map((diff, index) => (
-              <div
-                key={index}
-                className="rounded-lg border border-border bg-muted p-4"
-              >
-                <div className="mb-2 flex items-center">
-                  <RotateCcw className="mr-2 h-5 w-5 text-primary" />
-                  <h3 className="font-semibold text-foreground">
-                    {diff.feature}
-                  </h3>
-                </div>
-                <div className="grid gap-4 text-sm md:grid-cols-2">
-                  <div>
-                    <span className="font-medium text-card-foreground">
-                      Lenormand:
-                    </span>
-                    <p className="mt-1 text-muted-foreground">
-                      {diff.lenormand}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="font-medium text-card-foreground">
-                      Tarot:
-                    </span>
-                    <p className="mt-1 text-muted-foreground">{diff.tarot}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Reading as Sentences */}
       <Card className="mb-8 border-border bg-card">
         <CardHeader>
@@ -345,62 +274,6 @@ export default function ReadingFundamentalsPage() {
                   <p className="mt-1 text-sm text-muted-foreground">
                     {item.description}
                   </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Popular Spreads */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle className="flex items-center text-2xl text-foreground">
-            <Target className="mr-3 h-6 w-6 text-primary" />
-            Popular Beginner Spreads
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-2">
-            {[
-              {
-                title: "3-Card Sentence Reading",
-                description:
-                  "Card 1 → Card 2 → Card 3 flowing as a narrative sentence. The core Lenormand method.",
-                bestFor: "Universal reading, foundational technique",
-              },
-              {
-                title: "3-Card Past-Present-Future",
-                description:
-                  "Past → Present → Future. Timeline-based guidance.",
-                bestFor: "Understanding progression over time",
-              },
-              {
-                title: "5-Card: Sentence Reading",
-                description:
-                  "Read cards 1-2-3-4-5 as ONE grammatical sentence flowing left to right. The central card (position 3) is the key theme—pay special attention to how the flanking cards modify it.",
-                bestFor: "General readings, seeing development over time, understanding influencing factors",
-              },
-              {
-                title: "9-Card Spread",
-                description:
-                  "Comprehensive life overview with detailed insights.",
-                bestFor: "Major life decisions",
-              },
-              {
-                title: "36-Card Grand Tableau",
-                description:
-                  "Complete reading using all cards for maximum detail.",
-                bestFor: "Advanced practitioners",
-              },
-            ].map((spread, index) => (
-              <div key={index} className="space-y-3">
-                <h3 className="font-semibold text-foreground">{spread.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {spread.description}
-                </p>
-                <div className="text-xs text-primary dark:text-primary/80">
-                  Best for: {spread.bestFor}
                 </div>
               </div>
             ))}
