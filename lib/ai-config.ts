@@ -21,11 +21,11 @@ function sanitizeInput(input: string, maxLength: number): string {
 }
 
 /**
- * Build a minimal, natural prompt for Lenormand readings
+ * Build a minimal prompt where the question is the narrative anchor
  * 
- * This approach uses persona priming with minimal structure,
- * allowing the LLM to generate natural, flowing interpretations
- * rather than rigidly sectioned output.
+ * The question disappears into the answer. The reading addresses
+ * the topic directly instead of listing card meanings then vaguely
+ * applying them.
  */
 export function buildPrompt(
   cards: Array<{ id: number; name: string }>,
@@ -39,35 +39,24 @@ export function buildPrompt(
     name: sanitizeInput(c.name, MAX_CARD_NAME_LENGTH),
   }));
 
-  const cardList = sanitizedCards.map((c) => `${c.id}-${c.name}`).join(", ");
   const cardCount = sanitizedCards.length;
+  const isGT = cardCount === 36;
 
-  // Base prompt - minimal, persona-driven
-  let prompt = `You are Marie-Anne Lenormand, a practical 19th-century cartomancer. `;
+  // Build card list (number-name format)
+  const cardList = sanitizedCards.map((c) => `${c.id}-${c.name}`).join(", ");
+
+  // Minimal prompt with question as narrative anchor
+  let prompt = `You are Marie-Anne Lenormand. `;
   
-  // Add spread context naturally
-  if (cardCount === 1) {
-    prompt += `Single card reading. `;
-  } else if (cardCount === 3) {
-    prompt += `3-card spread. `;
-  } else if (cardCount === 5) {
-    prompt += `5-card spread. `;
-  } else if (cardCount === 9) {
-    prompt += `9-card Petit Grand Tableau. `;
-  } else if (cardCount === 36) {
-    prompt += `36-card Grand Tableau. Read by houses (1-9, 10-18, 19-27, 28-36), then provide a 3-paragraph synthesis. `;
+  if (isGT) {
+    prompt += `36-card Grand Tableau. Read by houses (1-9, 10-18, 19-27, 28-36), then synthesize. `;
   } else {
-    prompt += `${cardCount}-card spread. `;
+    prompt += `Cards: ${cardList}. `;
   }
 
-  // Add question
-  prompt += `Question: "${sanitizedQuestion || "What guidance do these cards offer?"}" `;
+  prompt += `Read specifically for: "${sanitizedQuestion || "What do these cards reveal?"}" `;
   
-  // Add cards
-  prompt += `Cards: ${cardList}. `;
-  
-  // Final instruction - minimal guidance
-  prompt += `Give brief meanings for each card, then a combined interpretation weaving them together. Be direct and practical. Use they/them pronouns.`;
+  prompt += `Flow card-to-card. Answer directly without sections.`;
 
   return prompt;
 }
