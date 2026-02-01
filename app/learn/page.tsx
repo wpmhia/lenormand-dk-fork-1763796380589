@@ -45,25 +45,10 @@ export default function LearnPage() {
       ],
     },
     {
-      id: "reading-fundamentals",
-      title: "Reading Fundamentals",
-      description:
-        "Master the core methodology of reading Lenormand cards as meaningful sentences. Learn sentence structure and fundamental techniques.",
-      icon: Target,
-      duration: "30 min",
-      difficulty: "Beginner",
-      color: "from-primary to-primary/80",
-      learningPoints: [
-        "Reading as sentences",
-        "5-card methodology",
-        "Basic question types",
-      ],
-    },
-    {
       id: "card-meanings",
       title: "Card Meanings",
       description:
-        "Explore all 36 Lenormand cards with detailed meanings, keywords, timing associations, and practical interpretations.",
+        "Explore all 36 Lenormand cards with detailed meanings, keywords, timing associations, and practical interpretations. Learn the cards before reading them.",
       icon: Star,
       duration: "45 min",
       difficulty: "Beginner",
@@ -72,6 +57,21 @@ export default function LearnPage() {
         "All 36 cards",
         "Keywords & timing",
         "Practical meanings",
+      ],
+    },
+    {
+      id: "reading-fundamentals",
+      title: "Reading Fundamentals",
+      description:
+        "Master the core methodology of reading Lenormand cards as meaningful sentences. Learn sentence structure and fundamental techniques after knowing the cards.",
+      icon: Target,
+      duration: "30 min",
+      difficulty: "Beginner",
+      color: "from-primary to-primary/80",
+      learningPoints: [
+        "Reading as sentences",
+        "5-card methodology",
+        "Basic question types",
       ],
     },
     {
