@@ -81,6 +81,32 @@ function NewReadingPageContent() {
     resetAnalysis,
   } = useAIAnalysis(question, drawnCards, allCards, selectedSpread.id, step === "results");
 
+  // Reset function - defined before effects that use it
+  const performReset = useCallback(
+    (keepUrlParams = false) => {
+      setStep("setup");
+      setMethod(null);
+      setDrawnCards([]);
+      setDrawnCardTypes([]);
+      setQuestion("");
+      setSelectedSpread(AUTHENTIC_SPREADS[1]);
+      setError("");
+      setIsTransitioning(false);
+      setSourceRects(new Map());
+      setTargetRects(new Map());
+      deckCardRefs.current.clear();
+      readingCardRefs.current.clear();
+      resetAnalysis();
+
+      if (!keepUrlParams) {
+        const newUrl = new URL(window.location.href);
+        newUrl.search = "";
+        router.replace(newUrl.toString(), { scroll: false });
+      }
+    },
+    [router, resetAnalysis]
+  );
+
   // Load cards on mount
   useEffect(() => {
     async function loadData() {
@@ -125,32 +151,6 @@ function NewReadingPageContent() {
       startAnalysis();
     }
   }, [step, drawnCards, startAnalysis]);
-
-  // Reset function
-  const performReset = useCallback(
-    (keepUrlParams = false) => {
-      setStep("setup");
-      setMethod(null);
-      setDrawnCards([]);
-      setDrawnCardTypes([]);
-      setQuestion("");
-      setSelectedSpread(AUTHENTIC_SPREADS[1]);
-      setError("");
-      setIsTransitioning(false);
-      setSourceRects(new Map());
-      setTargetRects(new Map());
-      deckCardRefs.current.clear();
-      readingCardRefs.current.clear();
-      resetAnalysis();
-
-      if (!keepUrlParams) {
-        const newUrl = new URL(window.location.href);
-        newUrl.search = "";
-        router.replace(newUrl.toString(), { scroll: false });
-      }
-    },
-    [router, resetAnalysis]
-  );
 
   // Handle setup continue
   const handleSetupContinue = useCallback(() => {
