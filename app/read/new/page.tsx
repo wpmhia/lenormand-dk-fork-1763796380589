@@ -810,17 +810,29 @@ function NewReadingPageContent() {
                       <div className="px-2 py-1.5 text-xs font-bold text-primary sticky top-0 bg-popover">
                         ✨ AUTHENTIC SPREADS
                       </div>
-                      {AUTHENTIC_SPREADS.filter(spread => !spread.disabled).map((spread) => (
-                        <SelectItem
-                          key={spread.id}
-                          value={spread.id}
-                          className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
-                        >
-                          <div className="flex flex-col">
-                            <span>{spread.label}</span>
-                            <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                      {AUTHENTIC_SPREADS.map((spread) => (
+                        spread.disabled ? (
+                          <div
+                            key={spread.id}
+                            className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm py-3 pl-2 pr-8 text-sm outline-none opacity-50"
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-muted-foreground">{spread.label} (Pro)</span>
+                              <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                            </div>
                           </div>
-                        </SelectItem>
+                        ) : (
+                          <SelectItem
+                            key={spread.id}
+                            value={spread.id}
+                            className="py-3 text-card-foreground hover:bg-accent focus:bg-accent"
+                          >
+                            <div className="flex flex-col">
+                              <span>{spread.label}</span>
+                              <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                            </div>
+                          </SelectItem>
+                        )
                       ))}
 
                       {/* Divider */}
@@ -830,17 +842,29 @@ function NewReadingPageContent() {
                       <div className="px-2 py-1.5 text-xs font-bold text-primary sticky top-0 bg-popover">
                         🔮 MODERN SPREADS
                       </div>
-                      {MODERN_SPREADS.filter(spread => !spread.disabled).map((spread) => (
-                        <SelectItem
-                          key={spread.id}
-                          value={spread.id}
-                          className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
-                        >
-                          <div className="flex flex-col">
-                            <span>{spread.label}</span>
-                            <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                      {MODERN_SPREADS.map((spread) => (
+                        spread.disabled ? (
+                          <div
+                            key={spread.id}
+                            className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm py-3 pl-2 pr-8 text-sm outline-none opacity-50"
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-muted-foreground">{spread.label} (Pro)</span>
+                              <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                            </div>
                           </div>
-                        </SelectItem>
+                        ) : (
+                          <SelectItem
+                            key={spread.id}
+                            value={spread.id}
+                            className="py-3 text-sm text-card-foreground hover:bg-accent focus:bg-accent"
+                          >
+                            <div className="flex flex-col">
+                              <span>{spread.label}</span>
+                              <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground">{spread.cards} cards • {spread.description}</span>
+                            </div>
+                          </SelectItem>
+                        )
                       ))}
                     </SelectContent>
                   </Select>
