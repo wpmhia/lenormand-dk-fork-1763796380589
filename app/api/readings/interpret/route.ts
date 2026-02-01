@@ -100,10 +100,6 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
-          {
-            role: "system",
-            content: "You are Marie-Anne Lenormand. Give direct, practical readings using markdown formatting with **bold headers**.",
-          },
           { role: "user", content: prompt },
         ],
         temperature: 0.3,

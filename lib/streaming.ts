@@ -1,20 +1,19 @@
-// Token budgets - complete readings without truncation
+// Token budgets - reduced for minimal prompt approach
+// With natural output format, we need fewer tokens than rigid structured format
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 800; // Complete 3-card reading (~400-500 words)
-  if (cardCount <= 5) return 1400; // Complete 5-card reading
-  if (cardCount <= 9) return 2000; // Complete 9-card reading
-  return 3000; // Grand Tableau (36 cards)
+  if (cardCount <= 3) return 400;   // ~200-300 words natural flow
+  if (cardCount <= 5) return 600;   // ~300-450 words
+  if (cardCount <= 9) return 800;   // ~400-600 words
+  return 1500;                      // Grand Tableau: 3-paragraph synthesis
 }
 
 // Timeout budgets - Vercel Free plan max is 10s, Pro is 60s
-// Adjust these based on your plan. For Free plan, use 8000ms (8s) to be safe
+// Reduced timeouts since minimal prompts generate faster
 export function getTimeoutMs(cardCount: number): number {
-  // Use 8s for Free plan compatibility (leaves 2s buffer for Vercel's 10s limit)
-  // For Pro plan, you can increase these values
-  if (cardCount <= 3) return 8000;  // 8s for 3 cards (Free plan safe)
-  if (cardCount <= 5) return 8000;  // 8s for 5 cards (Free plan safe)
-  if (cardCount <= 9) return 8000;  // 8s for 9 cards (Free plan safe)
-  return 10000; // 10s max for Grand Tableau (Free plan limit)
+  if (cardCount <= 3) return 6000;   // 6s for 3 cards (faster with minimal prompt)
+  if (cardCount <= 5) return 7000;   // 7s for 5 cards
+  if (cardCount <= 9) return 8000;   // 8s for 9 cards
+  return 10000;                      // 10s max for Grand Tableau
 }
 
 // Parse SSE stream data
@@ -41,5 +40,3 @@ export function parseSSEChunk(chunk: string): string {
   
   return content;
 }
-
-
