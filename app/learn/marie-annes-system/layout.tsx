@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { createSafeJsonLd } from "@/lib/sanitize";
 
 export const metadata: Metadata = {
   title: "Marie-Anne's System | Historical Lenormand Expert Method",
@@ -54,7 +55,7 @@ export default function MarieAnnesSystemLayout({
         id="marie-annes-system-schema"
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: createSafeJsonLd(schema) }}
       />
       {children}
     </>

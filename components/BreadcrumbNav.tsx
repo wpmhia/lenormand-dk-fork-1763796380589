@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { ChevronRight } from "lucide-react";
+import { createSafeJsonLd } from "@/lib/sanitize";
 
 interface Breadcrumb {
   name: string;
@@ -42,7 +43,7 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
         id={`breadcrumb-schema-${items.length}`}
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: createSafeJsonLd(breadcrumbSchema) }}
         strategy="afterInteractive"
       />
       <nav

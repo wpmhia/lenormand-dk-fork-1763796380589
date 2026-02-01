@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 
 const ReactMarkdown = dynamic(() => import("react-markdown"), {
@@ -63,9 +63,27 @@ export function AIReadingDisplay({
   isPartial = false,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const setCopyTimeout = () => {
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    // Set new timeout
+    timeoutRef.current = setTimeout(() => setCopyClicked(false), 2000);
+  };
 
   const readingText = aiReading?.reading || streamedContent || "";
-  // Typewriter removed for instant text display - better UX
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
@@ -118,7 +136,7 @@ export function AIReadingDisplay({
         }),
       ]);
       setCopyClicked(true);
-      setTimeout(() => setCopyClicked(false), 2000);
+      setCopyTimeout();
     } catch (err) {
       // Log specific error for debugging
       console.warn(
@@ -130,7 +148,7 @@ export function AIReadingDisplay({
         // Fallback to text-only copy
         await navigator.clipboard.writeText(fullContent);
         setCopyClicked(true);
-        setTimeout(() => setCopyClicked(false), 2000);
+        setCopyTimeout();
       } catch (fallbackErr) {
         // Log fallback error for debugging but don't expose to user
         console.warn(
@@ -151,7 +169,7 @@ export function AIReadingDisplay({
         try {
           document.execCommand("copy");
           setCopyClicked(true);
-          setTimeout(() => setCopyClicked(false), 2000);
+          setCopyTimeout();
         } catch (execErr) {
           console.warn("Fallback copy also failed");
         } finally {
@@ -298,11 +316,13 @@ export function AIReadingDisplay({
               size="icon"
               onClick={handleCopy}
               className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              aria-label={copyClicked ? "Copied to clipboard" : "Copy reading"}
+              aria-live="polite"
             >
               {copyClicked ? (
-                <Check className="h-4 w-4" />
+                <Check className="h-4 w-4" aria-hidden="true" />
               ) : (
-                <Copy className="h-4 w-4" />
+                <Copy className="h-4 w-4" aria-hidden="true" />
               )}
             </Button>
           </div>

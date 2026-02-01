@@ -100,7 +100,8 @@ function CardInner({
               isLoaded ? "opacity-100" : "opacity-0"
             )}
             sizes={sizeToPixels[size]}
-            loading="lazy"
+            loading={size === "sm" ? "lazy" : "eager"}
+            priority={size !== "sm"}
             onLoad={() => setIsLoaded(true)}
           />
         </div>

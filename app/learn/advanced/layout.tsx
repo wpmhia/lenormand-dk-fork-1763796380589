@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { createSafeJsonLd } from "@/lib/sanitize";
 
 export const metadata: Metadata = {
   title:
@@ -55,7 +56,7 @@ export default function AdvancedLayout({
         id="advanced-schema"
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: createSafeJsonLd(schema) }}
       />
       {children}
     </>

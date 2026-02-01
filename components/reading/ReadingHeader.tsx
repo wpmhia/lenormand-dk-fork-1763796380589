@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +19,7 @@ interface ReadingHeaderProps {
   spreadId?: string;
   significatorType: SignificatorType;
   onSignificatorChange: (value: SignificatorType) => void;
-  onShare?: () => void;
+  onShare?: () => Promise<void> | void;
   showShareButton?: boolean;
   showReadingHeader?: boolean;
   shareClicked: boolean;
@@ -35,6 +36,37 @@ export function ReadingHeader({
   shareClicked,
   setShareClicked,
 }: ReadingHeaderProps) {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    if (!onShare) return;
+    
+    setShareClicked(true);
+    try {
+      await onShare();
+    } catch (err) {
+      console.error("Share failed:", err);
+    } finally {
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      // Set new timeout to reset button state
+      timeoutRef.current = setTimeout(() => {
+        setShareClicked(false);
+      }, 2000);
+    }
+  }, [onShare, setShareClicked]);
+
   if (!showReadingHeader) return null;
 
   return (
@@ -76,16 +108,14 @@ export function ReadingHeader({
 
         {showShareButton && onShare && (
           <Button
-            onClick={async () => {
-              setShareClicked(true);
-              await onShare();
-              setTimeout(() => setShareClicked(false), 2000);
-            }}
+            onClick={handleShare}
             variant="outline"
             size="sm"
             className="border-border hover:bg-muted"
+            aria-label={shareClicked ? "Link copied to clipboard" : "Share reading"}
+            aria-live="polite"
           >
-            <Share2 className="mr-2 h-4 w-4" />
+            <Share2 className="mr-2 h-4 w-4" aria-hidden="true" />
             {shareClicked ? "Copied!" : "Share"}
           </Button>
         )}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { createSafeJsonLd } from "@/lib/sanitize";
 
 export const metadata: Metadata = {
   title: "Learn Lenormand | Online Divination Course & Card Meanings",
@@ -59,7 +60,7 @@ export default function LearnLayout({
         id="learn-course-schema"
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(learningSchema) }}
+        dangerouslySetInnerHTML={{ __html: createSafeJsonLd(learningSchema) }}
       />
       {children}
     </>

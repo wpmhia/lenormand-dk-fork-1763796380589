@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/header";
 import { CookieConsent } from "@/components/CookieConsent";
+import { createSafeJsonLd } from "@/lib/sanitize";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -215,13 +216,13 @@ export default function RootLayout({
           id="schema-org"
           type="application/ld+json"
           suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: createSafeJsonLd(structuredData) }}
         />
         <Script
           id="faq-schema"
           type="application/ld+json"
           suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          dangerouslySetInnerHTML={{ __html: createSafeJsonLd(faqSchema) }}
         />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}

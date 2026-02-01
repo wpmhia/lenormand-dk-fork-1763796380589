@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { createSafeJsonLd } from "@/lib/sanitize";
 
 export const metadata: Metadata = {
   title: "Card Combinations | Lenormand Pair Meanings by Context",
@@ -54,7 +55,7 @@ export default function CardCombinationsLayout({
         id="card-combinations-schema"
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: createSafeJsonLd(schema) }}
       />
       {children}
     </>

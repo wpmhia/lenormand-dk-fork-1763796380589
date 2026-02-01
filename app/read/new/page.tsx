@@ -19,6 +19,7 @@ import {
 } from "@/components/reading";
 import { ReadingViewer } from "@/components/ReadingViewer";
 import { CardTransition } from "@/components/CardTransition";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const AIReadingDisplay = lazy(() =>
   import("@/components/AIReadingDisplay").then((m) => ({
@@ -459,24 +460,26 @@ function NewReadingPageContent() {
               )}
 
               {/* AI Analysis */}
-              <Suspense fallback={<LoadingFallback />}>
-                <AIReadingDisplay
-                  aiReading={aiReading}
-                  isLoading={aiLoading}
-                  error={aiError}
-                  onRetry={retryAnalysis}
-                  spreadId={selectedSpread.id}
-                  cards={drawnCards.map((card) => ({
-                    id: card.id,
-                    name: allCards.find((c) => c.id === card.id)?.name || "Unknown",
-                    position: card.position,
-                  }))}
-                  allCards={allCards}
-                  question={question}
-                  isStreaming={aiLoading}
-                  streamedContent={streamedContent}
-                />
-              </Suspense>
+              <ErrorBoundary>
+                <Suspense fallback={<LoadingFallback />}>
+                  <AIReadingDisplay
+                    aiReading={aiReading}
+                    isLoading={aiLoading}
+                    error={aiError}
+                    onRetry={retryAnalysis}
+                    spreadId={selectedSpread.id}
+                    cards={drawnCards.map((card) => ({
+                      id: card.id,
+                      name: allCards.find((c) => c.id === card.id)?.name || "Unknown",
+                      position: card.position,
+                    }))}
+                    allCards={allCards}
+                    question={question}
+                    isStreaming={aiLoading}
+                    streamedContent={streamedContent}
+                  />
+                </Suspense>
+              </ErrorBoundary>
 
               {/* Start New Reading */}
               <div className="flex justify-center pt-8">
