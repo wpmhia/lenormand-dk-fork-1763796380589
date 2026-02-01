@@ -247,6 +247,8 @@ function NewReadingPageContent() {
         spreadId: selectedSpread.id,
       };
 
+      console.log("[Client] Starting streaming request...");
+
       // Use POST with fetch to get streaming response
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
@@ -283,7 +285,7 @@ function NewReadingPageContent() {
         return;
       }
 
-      // Handle streaming response
+      // Handle streaming response with timeout
       const reader = response.body?.getReader();
       if (!reader) {
         throw new Error("No response body");
@@ -292,26 +294,41 @@ function NewReadingPageContent() {
       const decoder = new TextDecoder();
       let accumulated = "";
       let buffer = "";
+      let lastUpdate = Date.now();
+      const stallTimeout = 30000; // 30s without data = stall
 
       try {
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          
+          if (done) {
+            console.log("[Stream] Reader done");
+            break;
+          }
+
+          // Check for stall
+          if (Date.now() - lastUpdate > stallTimeout) {
+            console.warn("[Stream] Stalled - no data for 30s");
+            throw new Error("Stream stalled");
+          }
 
           // Append to buffer and process line by line
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
           buffer = lines.pop() || ""; // Keep incomplete line in buffer
 
+          let hasNewContent = false;
           for (const line of lines) {
             const content = parseSSEChunk(line + '\n');
             if (content) {
               accumulated += content;
+              hasNewContent = true;
             }
           }
           
           // Update UI with accumulated content
-          if (accumulated) {
+          if (hasNewContent) {
+            lastUpdate = Date.now();
             setStreamedContent(accumulated);
           }
         }
@@ -325,28 +342,40 @@ function NewReadingPageContent() {
         }
 
         // Stream complete
+        console.log("[Stream] Complete, total length:", accumulated.length);
         setAiReading({ reading: accumulated });
+        setIsPartial(false);
       } catch (streamError) {
-        console.error("Stream reading error:", streamError);
+        console.error("[Stream] Reading error:", streamError);
         // If we have partial content, show it with retry option
-        if (accumulated) {
+        if (accumulated && accumulated.length > 50) {
+          console.log("[Stream] Showing partial content");
           setAiReading({ reading: accumulated });
           setIsPartial(true);
         } else {
           throw streamError;
         }
       } finally {
+        reader.releaseLock();
         setAiLoading(false);
         setIsStreaming(false);
       }
 
     } catch (error) {
-      console.error("Streaming error:", error);
+      console.error("[Client] Streaming error:", error);
+      
+      let errorMessage = "An unexpected error occurred";
       if (error instanceof Error) {
-        setAiError(error.message === "Failed to fetch" ? "Network error - please try again" : error.message);
-      } else {
-        setAiError("An unexpected error occurred");
+        if (error.message === "Failed to fetch") {
+          errorMessage = "Network error - check your connection and try again";
+        } else if (error.message.includes("abort")) {
+          errorMessage = "Request timed out - the spirits are taking longer than expected";
+        } else {
+          errorMessage = error.message;
+        }
       }
+      
+      setAiError(errorMessage);
       setAiLoading(false);
       setIsStreaming(false);
       setIsPartial(true);
