@@ -85,7 +85,7 @@ export async function POST(request: Request) {
       return new Response(
         JSON.stringify({ 
           error: "AI not configured",
-          message: "The AI service is not properly configured. Please contact support."
+          message: "The AI service is not properly configured. Please set DEEPSEEK_API_KEY in your environment variables."
         }),
         { status: 503, headers: { "Content-Type": "application/json" } }
       );
@@ -304,7 +304,12 @@ async function processAISynchronously(prompt: string, cardCount: number): Promis
 
     const data = await response.json();
     const reading = data.choices?.[0]?.message?.content || "";
-    console.log(`[API] DeepSeek response received, length: ${reading.length}`);
+    console.log(`[API] DeepSeek response received, length: ${reading.length}, finish_reason:`, data.choices?.[0]?.finish_reason);
+    
+    if (!reading) {
+      console.error("[API] Empty response from DeepSeek:", JSON.stringify(data));
+      throw new Error("Empty response from AI");
+    }
     
     recordSuccess();
     return reading;
@@ -438,10 +443,11 @@ async function processAIWithCoalescing(
     console.log(`[API] Job ${jobId} completed successfully with progressive chunks`);
   } catch (error: any) {
     const isTimeout = error.name === "AbortError";
-    console.error(`[API] Job ${jobId} failed:`, isTimeout ? "timeout" : error.message);
+    const errorMessage = isTimeout ? "AI response timed out" : (error.message || "Unknown error");
+    console.error(`[API] Job ${jobId} failed:`, isTimeout ? "timeout" : error.message, "Card count:", cards.length);
     await updateJob(jobId, { 
       status: "failed",
-      error: isTimeout ? "AI response timed out" : error.message,
+      error: errorMessage,
     });
   }
 }

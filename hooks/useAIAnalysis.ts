@@ -112,10 +112,29 @@ export function useAIAnalysis(
         setIsLoading(false);
         setIsStreaming(false);
         setIsPartial(true);
+      } else if (data.status !== "processing" && data.status !== "pending") {
+        // Unexpected status - stop polling and show error
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+          pollIntervalRef.current = null;
+        }
+        setError("Unexpected response from server");
+        setIsLoading(false);
+        setIsStreaming(false);
+        setIsPartial(true);
       }
-      // If processing, continue polling
+      // If processing or pending, continue polling
     } catch (err) {
       console.error("Poll error:", err);
+      // Stop polling on repeated errors and show error to user
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+      setError("Failed to check reading status. Please retry.");
+      setIsLoading(false);
+      setIsStreaming(false);
+      setIsPartial(true);
     }
   }, []);
 
@@ -331,8 +350,12 @@ export function useAIAnalysis(
       
       setError(errorMessage);
       setIsPartial(true);
+      // Ensure loading is set to false on error for all cases
+      setIsLoading(false);
+      setIsStreaming(false);
     } finally {
       // Only set loading false if not polling (polling manages its own state)
+      // For polling, loading is managed in pollJobStatus and performPollingAnalysis
       if (drawnCards.length <= 3) {
         setIsLoading(false);
         setIsStreaming(false);
