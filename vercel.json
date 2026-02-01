@@ -3,10 +3,10 @@
   "outputDirectory": ".next",
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
-  "crons": [
+"crons": [
     {
       "path": "/api/health",
-      "schedule": "*/10 * * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "env": {
@@ -27,21 +27,27 @@
       "description": "Google Analytics 4 measurement ID (format: G-XXXXXXXXXX)"
     }
   },
-  "functions": {
+"functions": {
     "app/api/readings/interpret/route.ts": {
-      "memory": 1024,
       "maxDuration": 60
     },
     "app/api/readings/start/route.ts": {
-      "memory": 512,
       "maxDuration": 60
     },
     "app/api/readings/status/route.ts": {
-      "memory": 256,
       "maxDuration": 10
     },
     "app/api/health/route.ts": {
-      "memory": 256,
+      "maxDuration": 10
+    }
+  },
+    "app/api/readings/start/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/readings/status/route.ts": {
+      "maxDuration": 10
+    },
+    "app/api/health/route.ts": {
       "maxDuration": 10
     }
   },
