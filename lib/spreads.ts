@@ -60,13 +60,6 @@ export const MODERN_SPREADS: Spread[] = [
     isAuthentic: false,
   },
   {
-    id: "situation-challenge-advice",
-    cards: 3,
-    label: "3-Card: Situation-Challenge-Advice",
-    description: "Problem-solving spread - diagnostic clarity on any issue",
-    isAuthentic: false,
-  },
-  {
     id: "sentence-5",
     cards: 5,
     label: "5-Card: Sentence Reading",
