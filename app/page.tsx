@@ -49,9 +49,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Free: Single & 3-card readings • Supporters unlock 9-card & Grand Tableau
-            </p>
+
           </div>
 
           {/* Image column */}
