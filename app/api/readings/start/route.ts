@@ -5,6 +5,7 @@ import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { createJob, updateJob, isRedisAvailable } from "@/lib/jobs";
 import { coalesceRequest, getCachedReading, cacheReading } from "@/lib/request-coalescing";
+import { getTokenBudget } from "@/lib/streaming";
 import { getEnv } from "@/lib/env";
 
 
@@ -200,7 +201,7 @@ export async function POST(request: Request) {
       // Process synchronously if Redis is not available
       console.log("[API] Processing synchronously (Redis unavailable)");
       try {
-        const result = await processAISynchronously(prompt);
+        const result = await processAISynchronously(prompt, cards.length);
         console.log("[API] Synchronous processing completed");
         return new Response(
           JSON.stringify({ 
@@ -266,7 +267,7 @@ export async function POST(request: Request) {
 }
 
 // Synchronous AI processing (fallback when Redis unavailable)
-async function processAISynchronously(prompt: string): Promise<string> {
+async function processAISynchronously(prompt: string, cardCount: number): Promise<string> {
   console.log("[API] Starting synchronous AI call to DeepSeek");
   const abortController = new AbortController();
   const timeoutId = setTimeout(() => {
@@ -287,7 +288,7 @@ async function processAISynchronously(prompt: string): Promise<string> {
           { role: "user", content: prompt },
         ],
         temperature: 0.3,
-        max_tokens: 800,
+        max_tokens: getTokenBudget(cardCount),
         stream: false,
       }),
       signal: abortController.signal,
@@ -374,12 +375,11 @@ async function processAIWithCoalescing(
             },
             body: JSON.stringify({
               model: "deepseek-chat",
-              messages: [
-{ role: "system", content: "You are Marie-Anne Lenormand. Use markdown formatting with **bold headers** and bullet points for clarity." },
-                { role: "user", content: prompt },
-              ],
+        messages: [
+          { role: "user", content: prompt },
+        ],
               temperature: 0.3,
-              max_tokens: 800,
+        max_tokens: getTokenBudget(cards.length),
               stream: false,
             }),
             signal: abortController.signal,
