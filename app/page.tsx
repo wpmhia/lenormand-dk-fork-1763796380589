@@ -37,8 +37,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
-              Get your Lenormand reading in 30 seconds. No signup, no account
-              required.
+              Clear answers from the 36-card sentence oracle. No symbolism to decode — just practical guidance.
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
               <Link href="/read/new">
@@ -51,7 +50,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="text-sm text-muted-foreground">
-              No account required • Community supported • Takes 30 seconds
+              Free: Single & 3-card readings • Supporters unlock 9-card & Grand Tableau
             </p>
           </div>
 
@@ -101,11 +100,13 @@ export default function Home() {
               spreadId="sentence-3"
             />
             <ReadingTypeCard
-              icon={<Heart className="h-5 w-5 text-primary" />}
+              icon={<Heart className="h-5 w-5 text-muted-foreground" />}
               title="9-Card Reading"
-              description="Deeper situation analysis"
+              description="Deeper situation analysis — Support on Ko-Fi to unlock"
               cardCount={9}
               spreadId="comprehensive"
+              disabled={true}
+              disabledReason="Ko-Fi Supporter"
             />
             <ReadingTypeCard
               icon={<Calendar className="h-5 w-5 text-muted-foreground" />}
@@ -217,15 +218,15 @@ export default function Home() {
           {/* About This Site */}
           <div className="mt-12 rounded-lg bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-6 text-center">
             <p className="leading-relaxed text-muted-foreground">
-              This site combines{" "}
+              Your cards form sentences. We translate them into clear, practical
+              guidance.{" "}
               <span className="font-semibold text-foreground">
-                historical reading methods
+                Free readings: Single & 3-card.
               </span>{" "}
-              from 1800s France with{" "}
-              <span className="font-semibold text-foreground">
-                modern AI analysis
-              </span>
-              . Built by the community, for the community.
+              <a href="https://ko-fi.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                Support on Ko-Fi
+              </a>{" "}
+              to unlock 9-card & Grand Tableau.
             </p>
           </div>
         </div>
@@ -369,20 +370,31 @@ export default function Home() {
         <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 text-center shadow-2xl backdrop-blur-sm">
           <div className="relative z-10">
             <h2 className="relative mb-4 text-4xl font-bold text-foreground">
-              The Lenormand Tradition,{" "}
-              <span className="text-primary">Powered by AI</span>
+              Clear Answers,{" "}
+              <span className="text-primary">No Symbolism to Decode</span>
               <div className="absolute -bottom-2 left-1/2 h-0.5 w-48 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60"></div>
             </h2>
             <p className="mx-auto mb-6 max-w-2xl text-xl leading-relaxed text-muted-foreground">
-              Explore interpretations inspired by historical Lenormand
-              traditions through modern intelligence
+              Start with free 1-3 card readings. Support on Ko-Fi to unlock the full
+              9-card and 36-card Grand Tableau experience.
             </p>
-            <Link href="/read/new">
-              <Button size="lg">
-                Get Your Reading
-                <ArrowRight className="ml-3 h-5 w-5" />
-              </Button>
-            </Link>
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link href="/read/new">
+                <Button size="lg">
+                  Get Your Reading
+                  <ArrowRight className="ml-3 h-5 w-5" />
+                </Button>
+              </Link>
+              <a
+                href="https://ko-fi.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="lg">
+                  Support on Ko-Fi
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       </div>
