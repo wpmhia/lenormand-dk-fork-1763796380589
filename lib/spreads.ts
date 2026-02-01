@@ -69,13 +69,14 @@ export const MODERN_SPREADS: Spread[] = [
 ];
 
 // All spreads in order: 1 card → 3 cards → 5 cards → 9 cards → 36 cards
+// 3-Card Sentence is default (position 1)
 export const COMPREHENSIVE_SPREADS: Spread[] = [
   // 1 Card
   AUTHENTIC_SPREADS[0], // single-card
-  // 3 Cards
+  // 3 Cards (sentence-3 first as default)
+  AUTHENTIC_SPREADS[1], // sentence-3 (default)
   MODERN_SPREADS[0], // yes-no-maybe
   MODERN_SPREADS[1], // past-present-future
-  AUTHENTIC_SPREADS[1], // sentence-3
   // 5 Cards
   MODERN_SPREADS[2], // sentence-5
   // 9 Cards
