@@ -879,10 +879,7 @@ function NewReadingPageContent() {
                           ✨ Draw virtual cards
                         </Button>
                       </div>
-                      <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-                        <p className="flex items-center justify-center gap-2 text-center">
-                          💫 Your cards stay on your table; we translate their meanings 🎓 Practice real readings with your own deck, or draw virtually to learn
-                        </p>
+                      <div className="mt-4 text-sm text-muted-foreground">
                         <p className="flex items-center justify-center gap-2">
                           <a
                             href="https://www.etsy.com/search?q=lenormand+cards"
