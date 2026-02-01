@@ -4,14 +4,9 @@ export const maxDuration = 60;
 import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
-import { getCachedReading, cacheReading } from "@/lib/request-coalescing";
 
 // Direct env access for Node.js runtime
-const getEnvVar = (key: string): string | undefined => {
-  return process.env[key];
-};
-
-const DEEPSEEK_API_KEY = getEnvVar("DEEPSEEK_API_KEY");
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const BASE_URL = "https://api.deepseek.com";
 
 const RATE_LIMIT = 5;
@@ -22,10 +17,7 @@ export async function POST(request: Request) {
     console.log("[API] Interpret request started");
     
     const ip = getClientIP(request);
-    console.log("[API] Client IP:", ip);
-    
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
-    console.log("[API] Rate limit result:", rateLimitResult.success);
 
     if (!rateLimitResult.success) {
       return new Response(
@@ -48,13 +40,12 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     if (!DEEPSEEK_API_KEY) {
-      console.error("[API] DEEPSEEK_API_KEY not set. Value:", DEEPSEEK_API_KEY);
+      console.error("[API] DEEPSEEK_API_KEY not set");
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 503,
         headers: { "Content-Type": "application/json" },
       });
     }
-    console.log("[API] DEEPSEEK_API_KEY is set, length:", DEEPSEEK_API_KEY.length);
 
     if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
       return new Response(JSON.stringify({ error: "Cards required" }), {
@@ -65,24 +56,6 @@ export async function POST(request: Request) {
 
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
-    
-    // Check in-memory cache first (saves API costs)
-    const cached = getCachedReading(cards, spreadId || "sentence-3", question || "");
-    if (cached) {
-      console.log("[API] Cache hit - returning cached reading");
-      return new Response(
-        JSON.stringify({ reading: cached, cached: true }),
-        { 
-          status: 200, 
-          headers: { 
-            "Content-Type": "application/json",
-            "X-Cache": "HIT",
-            "X-RateLimit-Limit": String(rateLimitResult.limit),
-            "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-          }
-        }
-      );
-    }
     
     const prompt = buildPrompt(
       cards,
@@ -131,30 +104,8 @@ export async function POST(request: Request) {
     
     console.log("[API] DeepSeek response OK, streaming...");
 
-    // Collect stream for caching while piping to client
-    const streamStartTime = Date.now();
-    let fullResponse = "";
-    
-    // Create a TransformStream to cache the response
-    const { readable, writable } = new TransformStream({
-      transform(chunk, controller) {
-        const text = new TextDecoder().decode(chunk);
-        fullResponse += text;
-        controller.enqueue(chunk);
-      },
-      flush() {
-        // Cache the complete response
-        const duration = Date.now() - streamStartTime;
-        console.log(`[API] Stream complete in ${duration}ms, caching response`);
-        cacheReading(cards, spreadId || "sentence-3", question || "", fullResponse);
-      }
-    });
-    
-    // Pipe the response through our transform
-    response.body?.pipeTo(writable).catch(console.error);
-    
-    // Stream with rate limit headers
-    return new Response(readable, {
+    // Direct passthrough - no caching (random cards make cache useless)
+    return new Response(response.body, {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",

@@ -268,19 +268,10 @@ function NewReadingPageContent() {
         throw new Error(errorMessage);
       }
 
-      // Check if we got a JSON response (cached, error, or fallback)
+      // Check if we got a JSON error response (fallback)
       const contentType = response.headers.get("content-type");
       if (contentType?.includes("application/json")) {
         const data = await response.json();
-        
-        if (data.cached) {
-          // Cached response - instant display
-          console.log("[Client] Cache hit - instant response");
-          setAiReading({ reading: data.reading });
-          setAiLoading(false);
-          setIsStreaming(false);
-          return;
-        }
         
         if (data.error) {
           setAiError(data.error);
