@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense, lazy } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -20,22 +20,7 @@ import {
 import { ReadingViewer } from "@/components/ReadingViewer";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-
-const AIReadingDisplay = lazy(() =>
-  import("@/components/AIReadingDisplay").then((m) => ({
-    default: m.AIReadingDisplay,
-  }))
-);
-
-function LoadingFallback() {
-  return (
-    <div className="animate-pulse space-y-4">
-      <div className="h-40 rounded-xl bg-muted/50" />
-      <div className="h-20 rounded-xl bg-muted/50" />
-      <div className="h-12 rounded-lg bg-muted/50" />
-    </div>
-  );
-}
+import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 
 type Step = "setup" | "drawing" | "results";
 type Method = "virtual" | "physical" | null;
@@ -400,24 +385,22 @@ function NewReadingPageContent() {
 
               {/* AI Analysis */}
               <ErrorBoundary>
-                <Suspense fallback={<LoadingFallback />}>
-                  <AIReadingDisplay
-                    aiReading={aiReading}
-                    isLoading={aiLoading}
-                    error={aiError}
-                    onRetry={retryAnalysis}
-                    spreadId={selectedSpread.id}
-                    cards={drawnCards.map((card) => ({
-                      id: card.id,
-                      name: allCards.find((c) => c.id === card.id)?.name || "Unknown",
-                      position: card.position,
-                    }))}
-                    allCards={allCards}
-                    question={question}
-                    isStreaming={aiLoading}
-                    streamedContent={streamedContent}
-                  />
-                </Suspense>
+                <AIReadingDisplay
+                  aiReading={aiReading}
+                  isLoading={aiLoading}
+                  error={aiError}
+                  onRetry={retryAnalysis}
+                  spreadId={selectedSpread.id}
+                  cards={drawnCards.map((card) => ({
+                    id: card.id,
+                    name: allCards.find((c) => c.id === card.id)?.name || "Unknown",
+                    position: card.position,
+                  }))}
+                  allCards={allCards}
+                  question={question}
+                  isStreaming={aiLoading}
+                  streamedContent={streamedContent}
+                />
               </ErrorBoundary>
 
               {/* Start New Reading */}
