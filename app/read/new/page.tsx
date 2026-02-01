@@ -887,7 +887,7 @@ function NewReadingPageContent() {
                             rel="noopener noreferrer"
                             className="text-primary hover:underline"
                           >
-                            Don't have a deck yet? Buy one on Etsy →
+                            Don&apos;t have a deck yet? Buy one on Etsy →
                           </a>
                         </p>
                       </div>
