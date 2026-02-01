@@ -37,7 +37,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
-              Clear answers from the 36-card sentence oracle. No symbolism to decode — just practical guidance.
+              Clear answers from the 36-card sentence oracle. No symbolism to decode - just practical guidance.
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
               <Link href="/read/new">
@@ -102,7 +102,7 @@ export default function Home() {
             <ReadingTypeCard
               icon={<Heart className="h-5 w-5 text-muted-foreground" />}
               title="9-Card Reading"
-              description="Deeper situation analysis — Support on Ko-Fi to unlock"
+              description="Deeper situation analysis - Support on Ko-Fi to unlock"
               cardCount={9}
               spreadId="comprehensive"
               disabled={true}
@@ -111,7 +111,7 @@ export default function Home() {
             <ReadingTypeCard
               icon={<Calendar className="h-5 w-5 text-muted-foreground" />}
               title="Grand Tableau"
-              description="Complete 360° life reading — Support on Ko-Fi to unlock"
+              description="Complete 360° life reading - Support on Ko-Fi to unlock"
               cardCount={36}
               spreadId="grand-tableau"
               disabled={true}
@@ -150,7 +150,7 @@ export default function Home() {
                 <p className="leading-relaxed text-muted-foreground">
                   Cards are combined to form coherent narratives. Draw 3 cards
                   and read them left-to-right as a sentence. The meanings are
-                  concrete and literal—no complex symbolism required.
+                  concrete and literal - no complex symbolism required.
                 </p>
               </div>
             </div>

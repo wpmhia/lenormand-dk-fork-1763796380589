@@ -26,7 +26,7 @@ const crimsonPro = Crimson_Pro({
 export const metadata: Metadata = {
   title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
   description:
-    "Get clear, practical answers from Lenormand cards. Not symbolism—sentences. Free 1-3 card readings. Support on Ko-Fi for 9-card & Grand Tableau.",
+    "Get clear, practical answers from Lenormand cards. Not symbolism - sentences. Free 1-3 card readings. Support on Ko-Fi for 9-card & Grand Tableau.",
   keywords: [
     "Lenormand cards",
     "Lenormand readings",
