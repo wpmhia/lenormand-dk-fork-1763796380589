@@ -18,7 +18,7 @@ import {
   StartOverDialog,
 } from "@/components/reading";
 import { ReadingViewer } from "@/components/ReadingViewer";
-import { CardTransition } from "@/components/CardTransition";
+
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const AIReadingDisplay = lazy(() =>
@@ -59,12 +59,7 @@ function NewReadingPageContent() {
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([]);
   const [drawnCardTypes, setDrawnCardTypes] = useState<CardType[]>([]);
 
-  // Animation state
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [sourceRects, setSourceRects] = useState<Map<number, DOMRect>>(new Map());
-  const [targetRects, setTargetRects] = useState<Map<number, DOMRect>>(new Map());
-  const deckCardRefs = useRef<Map<number, HTMLElement>>(new Map());
-  const readingCardRefs = useRef<Map<number, HTMLElement>>(new Map());
+
 
   // Dialog state
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
@@ -93,11 +88,7 @@ function NewReadingPageContent() {
       setQuestion("");
       setSelectedSpread(AUTHENTIC_SPREADS[1]);
       setError("");
-      setIsTransitioning(false);
-      setSourceRects(new Map());
-      setTargetRects(new Map());
-      deckCardRefs.current.clear();
-      readingCardRefs.current.clear();
+
       resetAnalysis();
 
       if (!keepUrlParams) {
@@ -174,53 +165,9 @@ function NewReadingPageContent() {
     }
   }, [step, resetAnalysis]);
 
-  // Measure positions for animation
-  const measureDeckPositions = useCallback(() => {
-    const positions = new Map<number, DOMRect>();
-    deckCardRefs.current.forEach((el, index) => {
-      const rect = el.getBoundingClientRect();
-      positions.set(index, rect);
-    });
-    setSourceRects(positions);
-    return positions;
-  }, []);
-
-  const measureReadingPositions = useCallback(() => {
-    const positions = new Map<number, DOMRect>();
-    readingCardRefs.current.forEach((el, index) => {
-      const rect = el.getBoundingClientRect();
-      positions.set(index, rect);
-    });
-    setTargetRects(positions);
-    return positions;
-  }, []);
-
-  const setReadingCardRef = useCallback(
-    (index: number) => (el: HTMLElement | null) => {
-      if (el) readingCardRefs.current.set(index, el);
-    },
-    []
-  );
-
-  // Handle virtual deck draw
+  // Handle virtual deck draw - simplified, no complex animations
   const handleVirtualDraw = useCallback(
     (cards: CardType[]) => {
-      const deckPositions = measureDeckPositions();
-
-      if (deckPositions.size === 0) {
-        // Fallback without animation
-        const readingCards = cards.map((card, index) => ({
-          id: card.id,
-          position: index,
-        }));
-        setDrawnCardTypes(cards);
-        setDrawnCards(readingCards);
-        setStep("results");
-        return;
-      }
-
-      setSourceRects(deckPositions);
-
       const readingCards = cards.map((card, index) => ({
         id: card.id,
         position: index,
@@ -228,21 +175,8 @@ function NewReadingPageContent() {
       setDrawnCardTypes(cards);
       setDrawnCards(readingCards);
       setStep("results");
-
-      // Wait for ReadingViewer to render, then animate
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const readingPositions = measureReadingPositions();
-          if (readingPositions.size > 0) {
-            setTargetRects(readingPositions);
-            setIsTransitioning(true);
-          } else {
-            setIsTransitioning(false);
-          }
-        });
-      });
     },
-    [measureDeckPositions, measureReadingPositions]
+    []
   );
 
   // Handle physical card submit
@@ -258,15 +192,6 @@ function NewReadingPageContent() {
     },
     [allCards]
   );
-
-  // Handle transition complete
-  const handleTransitionComplete = useCallback(() => {
-    setIsTransitioning(false);
-    setSourceRects(new Map());
-    setTargetRects(new Map());
-    deckCardRefs.current.clear();
-    readingCardRefs.current.clear();
-  }, []);
 
   // Handle start over
   const handleStartOver = useCallback(() => {
@@ -420,11 +345,7 @@ function NewReadingPageContent() {
                       cards={allCards}
                       drawCount={selectedSpread.cards}
                       onDraw={handleVirtualDraw}
-                      isProcessing={isTransitioning}
-                      setCardRef={(index) => (el) => {
-                        if (el) deckCardRefs.current.set(index, el);
-                      }}
-                      hideDrawnCards={isTransitioning}
+
                     />
                   )}
                 </div>
@@ -449,16 +370,7 @@ function NewReadingPageContent() {
             </div>
           )}
 
-          {/* FLIP Animation Layer */}
-          {isTransitioning && (
-            <CardTransition
-              cards={drawnCardTypes}
-              sourceRects={sourceRects}
-              targetRects={targetRects}
-              onComplete={handleTransitionComplete}
-              duration={600}
-            />
-          )}
+
 
           {/* Step 3: Results */}
           {step === "results" && drawnCards.length > 0 && (
@@ -478,8 +390,7 @@ function NewReadingPageContent() {
                   }}
                   allCards={allCards}
                   spreadId={selectedSpread.id}
-                  setCardRef={setReadingCardRef}
-                  hideCardsDuringTransition={isTransitioning}
+
                 />
               ) : (
                 <div className="p-4 text-center text-muted-foreground">
