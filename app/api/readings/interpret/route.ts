@@ -1,5 +1,7 @@
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// Vercel Free plan: max 10s, Pro plan: max 60s
+// Set to 10 for Free plan compatibility, increase to 60 if on Pro
+export const maxDuration = 10;
 
 import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";

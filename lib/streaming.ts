@@ -10,12 +10,15 @@ export function getTokenBudget(cardCount: number): number {
   return 3000; // Grand Tableau (36 cards)
 }
 
-// Timeout budgets - allow enough time for complete generation
+// Timeout budgets - Vercel Free plan max is 10s, Pro is 60s
+// Adjust these based on your plan. For Free plan, use 8000ms (8s) to be safe
 export function getTimeoutMs(cardCount: number): number {
-  if (cardCount <= 3) return 20000; // 20s for 3 cards
-  if (cardCount <= 5) return 30000; // 30s for 5 cards
-  if (cardCount <= 9) return 45000; // 45s for 9 cards
-  return 60000; // 60s for Grand Tableau
+  // Use 8s for Free plan compatibility (leaves 2s buffer for Vercel's 10s limit)
+  // For Pro plan, you can increase these values
+  if (cardCount <= 3) return 8000;  // 8s for 3 cards (Free plan safe)
+  if (cardCount <= 5) return 8000;  // 8s for 5 cards (Free plan safe)
+  if (cardCount <= 9) return 8000;  // 8s for 9 cards (Free plan safe)
+  return 10000; // 10s max for Grand Tableau (Free plan limit)
 }
 
 // Parse SSE stream data
