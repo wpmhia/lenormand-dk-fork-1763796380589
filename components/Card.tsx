@@ -12,6 +12,7 @@ interface CardProps {
   showBack?: boolean;
   size?: "sm" | "md" | "lg";
   className?: string;
+  selected?: boolean;
 }
 
 const sizeClasses: Record<string, string> = {
@@ -32,6 +33,7 @@ function CardInner({
   showBack = false,
   size = "md",
   className,
+  selected = false,
 }: CardProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   
@@ -54,6 +56,7 @@ function CardInner({
       <div
         className={cn(
           "card-mystical group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl will-change-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+          selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
           sizeClasses[size],
           className,
         )}
@@ -61,7 +64,8 @@ function CardInner({
         onKeyDown={onClick ? handleKeyDown : undefined}
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? "button" : undefined}
-        aria-label="Lenormand card back. Click to draw or select card"
+        aria-label={selected ? "Selected card" : "Lenormand card back. Click to draw or select card"}
+        aria-pressed={selected}
         style={{
           backgroundImage: "url(/images/card-back.png)",
           backgroundSize: "cover",
@@ -77,6 +81,7 @@ function CardInner({
       <div
         className={cn(
           "card-mystical group relative cursor-pointer overflow-hidden rounded-xl will-change-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+          selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
           sizeClasses[size],
           className,
         )}
@@ -84,7 +89,8 @@ function CardInner({
         onKeyDown={onClick ? handleKeyDown : undefined}
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? "button" : undefined}
-        aria-label={`${card.name} card. Click to ${onClick ? "select" : "view details"}`}
+        aria-label={`${card.name} card${selected ? " (selected)" : ""}. Click to ${onClick ? "select" : "view details"}`}
+        aria-pressed={selected}
       >
         <div className="relative h-full w-full overflow-hidden rounded-lg bg-muted">
           {/* Skeleton placeholder to prevent layout shift */}

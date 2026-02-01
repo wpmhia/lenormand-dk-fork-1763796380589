@@ -303,7 +303,24 @@ export function AIReadingDisplay({
   }
 
   if (!aiReading?.reading) {
-    return null;
+    return (
+      <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Reading Unavailable</AlertTitle>
+        <AlertDescription className="space-y-3">
+          <p className="text-sm">The cards are not speaking at this moment. This may be due to a temporary issue.</p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onRetry}
+            className="border-destructive/30 hover:bg-destructive/10 text-destructive-foreground"
+          >
+            <RefreshCw className="mr-2 h-3 w-3" />
+            Try Again
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
   }
 
   return (

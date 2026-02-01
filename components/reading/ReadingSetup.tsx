@@ -17,6 +17,7 @@ interface ReadingSetupProps {
   onMethodChange: (method: "virtual" | "physical") => void;
   onContinue: () => void;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 export function ReadingSetup({
@@ -28,6 +29,7 @@ export function ReadingSetup({
   onMethodChange,
   onContinue,
   disabled = false,
+  isLoading = false,
 }: ReadingSetupProps) {
   const [charCount, setCharCount] = useState(question.length);
 
@@ -83,7 +85,9 @@ export function ReadingSetup({
         {method && (
           <Button
             onClick={onContinue}
-            disabled={!canContinue || disabled}
+            disabled={!canContinue || disabled || isLoading}
+            loading={isLoading}
+            loadingText="Loading..."
             size="lg"
             className="w-full"
           >

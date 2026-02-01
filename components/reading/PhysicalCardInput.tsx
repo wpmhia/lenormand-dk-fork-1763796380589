@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
-import { Sparkles } from "lucide-react";
+import { Sparkles, AlertCircle } from "lucide-react";
 
 interface PhysicalCardInputProps {
   allCards: CardType[];
@@ -190,26 +191,39 @@ export function PhysicalCardInput({
           </div>
         )}
 
-        {/* Error and Warning Messages */}
-        <div className="space-y-1">
-          {errors.map((error, i) => (
-            <p key={`error-${i}`} className="text-xs text-destructive" role="alert">
-              {error}
-            </p>
-          ))}
-          {warnings.map((warning, i) => (
-            <p
-              key={`warning-${i}`}
-              className="text-xs text-amber-600 dark:text-amber-400"
-              role="alert"
-            >
-              ⚠️ {warning}
-            </p>
-          ))}
-          <p className="text-xs text-muted-foreground">
-            💡 Use numbers (1-36) or names. Try &quot;rider&quot;, &quot;clover&quot;, &quot;ship&quot;. Press Ctrl+Enter to submit.
-          </p>
-        </div>
+        {/* Error Messages - Prominent Alert */}
+        {errors.length > 0 && (
+          <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <ul className="list-disc pl-4 text-sm">
+                {errors.map((error, i) => (
+                  <li key={`error-${i}`}>{error}</li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Warning Messages */}
+        {warnings.length > 0 && (
+          <div className="space-y-1">
+            {warnings.map((warning, i) => (
+              <p
+                key={`warning-${i}`}
+                className="text-xs text-amber-600 dark:text-amber-400"
+                role="alert"
+              >
+                ⚠️ {warning}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {/* Help Text */}
+        <p className="text-xs text-muted-foreground">
+          💡 Use numbers (1-36) or names. Try &quot;rider&quot;, &quot;clover&quot;, &quot;ship&quot;. Press Ctrl+Enter to submit.
+        </p>
       </div>
 
       <Button

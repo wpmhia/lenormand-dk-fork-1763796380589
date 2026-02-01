@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +37,7 @@ export function ReadingHeader({
   setShareClicked,
 }: ReadingHeaderProps) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -50,12 +51,14 @@ export function ReadingHeader({
   const handleShare = useCallback(async () => {
     if (!onShare) return;
     
-    setShareClicked(true);
+    setIsSharing(true);
     try {
       await onShare();
+      setShareClicked(true);
     } catch (err) {
       console.error("Share failed:", err);
     } finally {
+      setIsSharing(false);
       // Clear any existing timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -111,11 +114,13 @@ export function ReadingHeader({
             onClick={handleShare}
             variant="outline"
             size="sm"
+            loading={isSharing}
+            loadingText="Sharing..."
             className="border-border hover:bg-muted"
-            aria-label={shareClicked ? "Link copied to clipboard" : "Share reading"}
+            aria-label={shareClicked ? "Link copied to clipboard" : isSharing ? "Sharing reading" : "Share reading"}
             aria-live="polite"
           >
-            <Share2 className="mr-2 h-4 w-4" aria-hidden="true" />
+            {!isSharing && <Share2 className="mr-2 h-4 w-4" aria-hidden="true" />}
             {shareClicked ? "Copied!" : "Share"}
           </Button>
         )}
