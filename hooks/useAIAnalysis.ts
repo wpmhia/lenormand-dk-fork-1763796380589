@@ -98,7 +98,9 @@ export function useAIAnalysis(
           clearInterval(pollIntervalRef.current);
           pollIntervalRef.current = null;
         }
-        setAiReading({ reading: data.result?.reading || data.reading });
+        // Handle both formats: result as string or result.reading
+        const readingText = typeof data.result === "string" ? data.result : data.result?.reading;
+        setAiReading({ reading: readingText || data.reading || "Reading completed but no content received" });
         setIsLoading(false);
         setIsStreaming(false);
         setIsPartial(false);
@@ -295,8 +297,10 @@ export function useAIAnalysis(
     const data = await response.json();
     
     if (data.status === "completed" && data.result) {
-      // Immediate completion (cached result)
-      setAiReading({ reading: data.result.reading });
+      // Immediate completion (cached result or sync mode)
+      // Handle both formats: result as string (sync mode) or result.reading (cached)
+      const readingText = typeof data.result === "string" ? data.result : data.result.reading;
+      setAiReading({ reading: readingText });
       setIsLoading(false);
       setIsStreaming(false);
       setIsPartial(false);
