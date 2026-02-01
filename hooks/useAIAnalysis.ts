@@ -329,9 +329,9 @@ export function useAIAnalysis(
     setIsPartial(false);
 
     try {
-      // Use streaming for 5 cards or less (fast enough for Vercel Free 10s limit)
-      // Use polling for 7+ cards (more reliable for longer generations)
-      if (drawnCards.length <= 5) {
+      // Streaming for 1-3 cards (fast, fits Vercel 10s limit)
+      // Polling for 9+ cards (9 and 36 card spreads need more time)
+      if (drawnCards.length <= 3) {
         await performStreamingAnalysis();
       } else {
         await performPollingAnalysis();
@@ -360,7 +360,7 @@ export function useAIAnalysis(
     } finally {
       // Only set loading false if not polling (polling manages its own state)
       // For polling, loading is managed in pollJobStatus and performPollingAnalysis
-      if (drawnCards.length <= 5) {
+      if (drawnCards.length <= 3) {
         setIsLoading(false);
         setIsStreaming(false);
       }
