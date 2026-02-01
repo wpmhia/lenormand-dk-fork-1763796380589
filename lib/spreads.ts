@@ -4,6 +4,8 @@ export interface Spread {
   label: string;
   description: string;
   isAuthentic?: boolean;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 // Marie-Anne's Original Spreads
@@ -38,6 +40,8 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     description:
       "Complete life situation through full 4x9 grid - her most comprehensive reading",
     isAuthentic: true,
+    disabled: true,
+    disabledReason: "Support on Ko-Fi to unlock",
   },
 ];
 

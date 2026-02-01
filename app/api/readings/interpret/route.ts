@@ -4,6 +4,7 @@ export const maxDuration = 60;
 import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
+import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 
 // Direct env access for Node.js runtime
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
@@ -56,7 +57,23 @@ export async function POST(request: Request) {
 
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
-    
+
+    // Check if spread is disabled (premium feature)
+    const spread = COMPREHENSIVE_SPREADS.find(s => s.id === spreadId);
+    if (spread?.disabled) {
+      return new Response(
+        JSON.stringify({
+          error: `${spread.label} is available for Ko-Fi supporters`,
+          disabled: true,
+          supporterLink: "https://ko-fi.com",
+        }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
     const prompt = buildPrompt(
       cards,
       spreadId || "sentence-3",

@@ -810,7 +810,7 @@ function NewReadingPageContent() {
                       <div className="px-2 py-1.5 text-xs font-bold text-primary sticky top-0 bg-popover">
                         ✨ AUTHENTIC SPREADS
                       </div>
-                      {AUTHENTIC_SPREADS.map((spread) => (
+                      {AUTHENTIC_SPREADS.filter(spread => !spread.disabled).map((spread) => (
                         <SelectItem
                           key={spread.id}
                           value={spread.id}
@@ -830,7 +830,7 @@ function NewReadingPageContent() {
                       <div className="px-2 py-1.5 text-xs font-bold text-primary sticky top-0 bg-popover">
                         🔮 MODERN SPREADS
                       </div>
-                      {MODERN_SPREADS.map((spread) => (
+                      {MODERN_SPREADS.filter(spread => !spread.disabled).map((spread) => (
                         <SelectItem
                           key={spread.id}
                           value={spread.id}

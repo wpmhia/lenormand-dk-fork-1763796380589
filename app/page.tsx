@@ -108,11 +108,13 @@ export default function Home() {
               spreadId="comprehensive"
             />
             <ReadingTypeCard
-              icon={<Calendar className="h-5 w-5 text-primary" />}
+              icon={<Calendar className="h-5 w-5 text-muted-foreground" />}
               title="Grand Tableau"
-              description="Complete 360° life reading"
+              description="Complete 360° life reading — Support on Ko-Fi to unlock"
               cardCount={36}
               spreadId="grand-tableau"
+              disabled={true}
+              disabledReason="Ko-Fi Supporter"
             />
           </div>
         </div>
