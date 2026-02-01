@@ -5,13 +5,8 @@ import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { createJob, updateJob, isRedisAvailable } from "@/lib/jobs";
 import { coalesceRequest, getCachedReading, cacheReading } from "@/lib/request-coalescing";
+import { getEnv } from "@/lib/env";
 
-// Edge runtime compatible env var access
-const getEnv = (key: string): string | undefined => {
-  // Try different methods for Edge runtime compatibility
-  return (process.env as Record<string, string | undefined>)?.[key] ||
-         ((globalThis as unknown) as Record<string, Record<string, string | undefined>>)?.env?.[key];
-};
 
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";

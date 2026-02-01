@@ -1,10 +1,6 @@
 import { Redis } from "@upstash/redis";
+import { getEnv } from "./env";
 
-// Edge runtime compatible env var access
-const getEnv = (key: string): string | undefined => {
-  return (process.env as Record<string, string | undefined>)?.[key] ||
-         ((globalThis as unknown) as Record<string, Record<string, string | undefined>>)?.env?.[key];
-};
 
 const redisUrl = getEnv("UPSTASH_REDIS_REST_URL");
 const redisToken = getEnv("UPSTASH_REDIS_REST_TOKEN");
