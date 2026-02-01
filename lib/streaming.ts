@@ -2,20 +2,20 @@
 // Set to false to use legacy job polling (for rollback)
 export const USE_STREAMING = true;
 
-// Token budgets optimized for speed
+// Token budgets - complete readings without truncation
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 400; // Fastest for simple spreads
-  if (cardCount <= 5) return 700;
-  if (cardCount <= 9) return 1000;
-  return 1500; // Grand Tableau
+  if (cardCount <= 3) return 800; // Complete 3-card reading (~400-500 words)
+  if (cardCount <= 5) return 1400; // Complete 5-card reading
+  if (cardCount <= 9) return 2000; // Complete 9-card reading
+  return 3000; // Grand Tableau (36 cards)
 }
 
-// Timeout budgets (slightly longer than expected AI time)
+// Timeout budgets - allow enough time for complete generation
 export function getTimeoutMs(cardCount: number): number {
-  if (cardCount <= 3) return 15000; // 15s for 3 cards
-  if (cardCount <= 5) return 20000; // 20s for 5 cards
-  if (cardCount <= 9) return 25000; // 25s for 9 cards
-  return 35000; // 35s for Grand Tableau
+  if (cardCount <= 3) return 20000; // 20s for 3 cards
+  if (cardCount <= 5) return 30000; // 30s for 5 cards
+  if (cardCount <= 9) return 45000; // 45s for 9 cards
+  return 60000; // 60s for Grand Tableau
 }
 
 // Parse SSE stream data
