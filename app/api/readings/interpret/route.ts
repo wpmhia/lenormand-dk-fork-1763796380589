@@ -5,7 +5,12 @@ import { buildPrompt, isDeepSeekAvailable } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+// Direct env access for Node.js runtime
+const getEnvVar = (key: string): string | undefined => {
+  return process.env[key];
+};
+
+const DEEPSEEK_API_KEY = getEnvVar("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";
 
 const RATE_LIMIT = 5;
@@ -13,8 +18,13 @@ const RATE_LIMIT_WINDOW = 60 * 1000;
 
 export async function POST(request: Request) {
   try {
+    console.log("[API] Interpret request started");
+    
     const ip = getClientIP(request);
+    console.log("[API] Client IP:", ip);
+    
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
+    console.log("[API] Rate limit result:", rateLimitResult.success);
 
     if (!rateLimitResult.success) {
       return new Response(
@@ -36,12 +46,14 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    if (!isDeepSeekAvailable()) {
+    if (!DEEPSEEK_API_KEY) {
+      console.error("[API] DEEPSEEK_API_KEY not set. Value:", DEEPSEEK_API_KEY);
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 503,
         headers: { "Content-Type": "application/json" },
       });
     }
+    console.log("[API] DEEPSEEK_API_KEY is set, length:", DEEPSEEK_API_KEY.length);
 
     if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
       return new Response(JSON.stringify({ error: "Cards required" }), {
@@ -66,6 +78,8 @@ export async function POST(request: Request) {
     const abortController = new AbortController();
     const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
+    console.log("[API] Calling DeepSeek API with timeout:", timeoutMs, "maxTokens:", maxTokens);
+    
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
@@ -91,8 +105,12 @@ export async function POST(request: Request) {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("[API] DeepSeek API error:", response.status, errorText);
       throw new Error(`API error: ${response.status}`);
     }
+    
+    console.log("[API] DeepSeek response OK, streaming...");
 
     // Stream with rate limit headers
     return new Response(response.body, {
@@ -100,12 +118,15 @@ export async function POST(request: Request) {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
+        "Access-Control-Allow-Origin": "*",
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
       },
     });
   } catch (error: any) {
+    console.error("[API] Interpret error:", error.name, error.message);
+    
     const isTimeout = error.name === "AbortError" || 
                       error.message?.includes("abort") ||
                       error.message?.includes("timeout");

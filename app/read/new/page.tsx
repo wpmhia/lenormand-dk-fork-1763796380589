@@ -255,8 +255,15 @@ function NewReadingPageContent() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to start reading");
+        let errorMessage = "Failed to start reading";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If JSON parsing fails, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
 
       // Check if we got a JSON error response (fallback) or stream
@@ -284,31 +291,65 @@ function NewReadingPageContent() {
 
       const decoder = new TextDecoder();
       let accumulated = "";
+      let buffer = "";
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        const content = parseSSEChunk(chunk);
-        
-        if (content) {
-          accumulated += content;
-          setStreamedContent(accumulated);
+          // Append to buffer and process line by line
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            const content = parseSSEChunk(line + '\n');
+            if (content) {
+              accumulated += content;
+            }
+          }
+          
+          // Update UI with accumulated content
+          if (accumulated) {
+            setStreamedContent(accumulated);
+          }
         }
-      }
 
-      // Stream complete
-      setAiReading({ reading: accumulated });
-      setAiLoading(false);
-      setIsStreaming(false);
+        // Process any remaining buffer
+        if (buffer) {
+          const content = parseSSEChunk(buffer);
+          if (content) {
+            accumulated += content;
+          }
+        }
+
+        // Stream complete
+        setAiReading({ reading: accumulated });
+      } catch (streamError) {
+        console.error("Stream reading error:", streamError);
+        // If we have partial content, show it with retry option
+        if (accumulated) {
+          setAiReading({ reading: accumulated });
+          setIsPartial(true);
+        } else {
+          throw streamError;
+        }
+      } finally {
+        setAiLoading(false);
+        setIsStreaming(false);
+      }
 
     } catch (error) {
+      console.error("Streaming error:", error);
       if (error instanceof Error) {
-        setAiError(error.message);
+        setAiError(error.message === "Failed to fetch" ? "Network error - please try again" : error.message);
+      } else {
+        setAiError("An unexpected error occurred");
       }
       setAiLoading(false);
       setIsStreaming(false);
+      setIsPartial(true);
     }
   }, [question, drawnCards, allCards, selectedSpread.id]);
 
