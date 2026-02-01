@@ -8,7 +8,7 @@ import {
   getGrandTableauAdjacentCards,
   getCombinationMeaning,
 } from "@/lib/data";
-import { getStaticCombination } from "@/lib/static-data";
+
 import {
   GrandTableauPosition,
   getGrandTableauPosition,
@@ -895,14 +895,12 @@ export function ReadingViewer({
                 const card = getCardByIdMemo(adjCard.id);
                 if (!card) return null;
 
-                const combination =
-                  getStaticCombination(selectedCard.id, card.id) ||
-                  getCombinationMeaning(
-                    selectedCard,
-                    card,
-                    readingCard.position,
-                    adjCard.position,
-                  );
+                const combination = getCombinationMeaning(
+                  selectedCard,
+                  card,
+                  readingCard.position,
+                  adjCard.position,
+                );
 
                 return (
                   <div

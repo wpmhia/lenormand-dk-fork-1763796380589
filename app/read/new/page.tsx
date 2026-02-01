@@ -473,7 +473,7 @@ function NewReadingPageContent() {
                   }))}
                   allCards={allCards}
                   question={question}
-                  isStreaming={false}
+                  isStreaming={aiLoading}
                   streamedContent={streamedContent}
                 />
               </Suspense>
