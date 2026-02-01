@@ -1,7 +1,3 @@
-// Streaming configuration and feature flag
-// Set to false to use legacy job polling (for rollback)
-export const USE_STREAMING = true;
-
 // Token budgets - complete readings without truncation
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 3) return 800; // Complete 3-card reading (~400-500 words)
@@ -46,15 +42,4 @@ export function parseSSEChunk(chunk: string): string {
   return content;
 }
 
-// Check if markdown is complete (no unclosed tags)
-export function isCompleteMarkdown(text: string): boolean {
-  // Check for unclosed bold/italic
-  const boldCount = (text.match(/\*\*/g) || []).length;
-  const italicCount = (text.match(/(?<!\*)\*(?!\*)/g) || []).length;
-  
-  // Check for unclosed headers
-  const headerLines = text.split('\n').filter(l => l.startsWith('#'));
-  
-  // Simple heuristic: even number of ** and *
-  return boldCount % 2 === 0 && italicCount % 2 === 0;
-}
+

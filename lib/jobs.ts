@@ -119,22 +119,6 @@ export async function getJob(id: string): Promise<Job | null> {
   return memoryJobs.get(id) || null;
 }
 
-export async function deleteJob(id: string): Promise<void> {
-  if (redis) {
-    try {
-      await redis.del(`job:${id}`);
-      await redis.lrem("jobs:pending", 0, id);
-      await redis.lrem("jobs:processing", 0, id);
-      await redis.lrem("jobs:completed", 0, id);
-    } catch (err) {
-      console.warn("Redis deleteJob failed:", err);
-    }
-  }
-  
-  jobCache.delete(id);
-  memoryJobs.delete(id);
-}
-
 // Get job status with caching headers for edge caching
 export async function getJobWithCache(id: string): Promise<{ job: Job | null; cacheable: boolean }> {
   const job = await getJob(id);
@@ -147,14 +131,4 @@ export async function getJobWithCache(id: string): Promise<{ job: Job | null; ca
   return { job, cacheable };
 }
 
-// Cleanup old memory jobs (call periodically)
-export function cleanupMemoryJobs(): void {
-  const now = Date.now();
-  const maxAge = 10 * 60 * 1000; // 10 minutes
-  
-  for (const [id, job] of memoryJobs.entries()) {
-    if (now - job.createdAt > maxAge) {
-      memoryJobs.delete(id);
-    }
-  }
-}
+

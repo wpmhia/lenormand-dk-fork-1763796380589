@@ -3,14 +3,8 @@ import {
   MODERN_SPREADS,
   COMPREHENSIVE_SPREADS,
 } from "@/lib/spreads";
+import { getEnv } from "./env";
 
-// Edge runtime compatible env var access
-const getEnv = (key: string): string | undefined => {
-  return (process.env as Record<string, string | undefined>)?.[key] ||
-         ((globalThis as unknown) as Record<string, Record<string, string | undefined>>)?.env?.[key];
-};
-
-const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const DEEPSEEK_BASE_URL = getEnv("DEEPSEEK_BASE_URL") || "https://api.deepseek.com";
 
 // Maximum lengths for input sanitization
@@ -52,23 +46,8 @@ const ALL_SPREADS = [...AUTHENTIC_SPREADS, ...MODERN_SPREADS];
 // Create a Map for O(1) spread lookups instead of O(n) find()
 const SPREAD_MAP = new Map(ALL_SPREADS.map((s) => [s.id, s]));
 
-export function isDeepSeekAvailable(): boolean {
-  return !!DEEPSEEK_API_KEY;
-}
-
-export function getAllSpreads() {
-  return ALL_SPREADS;
-}
-
 export function getSpreadById(spreadId: string) {
   return SPREAD_MAP.get(spreadId);
-}
-
-export function getMaxTokens(spreadCards: number): number {
-  if (spreadCards <= 3) return 800;
-  if (spreadCards <= 5) return 1200;
-  if (spreadCards < 9) return 1800;
-  return 2000;
 }
 
 // Pre-build grand-tableau position labels once at module load
