@@ -38,7 +38,6 @@ export type SpreadId =
   | "sentence-3"
   | "past-present-future"
   | "yes-no-maybe"
-  | "situation-challenge-advice"
   | "mind-body-spirit"
   | "sentence-5"
   | "structured-reading"

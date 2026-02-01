@@ -31,20 +31,6 @@ export const getPositionInfo = (position: number, spreadId?: string): PositionIn
         meaning: "Potential outcome based on your current path",
       },
     },
-    "situation-challenge-advice": {
-      0: {
-        label: "Situation",
-        meaning: "The current situation or question you face",
-      },
-      1: {
-        label: "Challenge",
-        meaning: "Obstacles or difficulties you may encounter",
-      },
-      2: {
-        label: "Advice",
-        meaning: "Guidance for how to proceed",
-      },
-    },
     "mind-body-spirit": {
       0: {
         label: "Mind",

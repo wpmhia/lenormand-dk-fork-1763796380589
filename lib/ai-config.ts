@@ -63,10 +63,6 @@ Weave these three cards into one flowing narrative. 3-5 sentences. ${ENFORCEMENT
 Cards: ${cardList}
 Flow through time: the first card reveals the past foundation, the second shows the present moment, the third opens the future. One continuous paragraph, 4-5 sentences. No isolated card meanings. ${ENFORCEMENT}`,
 
-    "situation-challenge-advice": `${basePersona}
-Cards: ${cardList}
-Flow through the problem: first card paints the situation, second reveals the obstacle or challenge, third offers the path forward. One narrative arc, 4-5 sentences. Do not list cards separately. ${ENFORCEMENT}`,
-
     "mind-body-spirit": `${basePersona}
 Cards: ${cardList}
 Flow through the levels: first card reveals the mental landscape, second shows the physical reality, third opens the spiritual dimension. One continuous paragraph, 4-5 sentences. ${ENFORCEMENT}`,
