@@ -31,7 +31,7 @@ const spreads = [
         description:
           "One card for direct, immediate answers and daily guidance",
         layout: "One Card",
-        useCase: "Daily oracle, quick questions, immediate answers",
+        useCase: "Daily guidance, quick questions, immediate answers",
         difficulty: "Beginner",
         isPrimary: true,
         positions: [

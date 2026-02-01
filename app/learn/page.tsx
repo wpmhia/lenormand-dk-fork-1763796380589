@@ -34,7 +34,7 @@ export default function LearnPage() {
       id: "history-basics",
       title: "History & Basics",
       description:
-        "Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card oracle unique.",
+        "Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card system unique.",
       icon: BookOpen,
       duration: "20 min",
       difficulty: "Beginner",
@@ -212,7 +212,7 @@ export default function LearnPage() {
               <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 Embark on a comprehensive journey through the ancient art of
                 Lenormand divination. From beginner fundamentals to advanced
-                techniques, master the 36-card oracle that has guided seekers
+                techniques, master the 36-card system that has guided seekers
                 for centuries.
               </p>
 

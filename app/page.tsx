@@ -37,7 +37,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
-              Clear answers from the 36-card sentence oracle. No symbolism to decode - just practical guidance.
+              Clear answers from the 36-card Lenormand system. No symbolism to decode - just practical guidance.
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
               <Link href="/read/new">
@@ -260,7 +260,7 @@ export default function Home() {
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   Discover the ancient wisdom and unique power of the 36-card
-                  oracle system
+                  reading system
                 </p>
               </CardContent>
             </Card>

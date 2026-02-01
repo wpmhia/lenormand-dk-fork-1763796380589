@@ -13,7 +13,7 @@ import {
 export const metadata = {
   title: "History & Basics | Lenormand Course",
   description:
-    "Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card oracle unique and powerful.",
+    "Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card system unique and powerful.",
 };
 
 export default function HistoryBasicsPage() {
@@ -23,7 +23,7 @@ export default function HistoryBasicsPage() {
       moduleNumber={1}
       totalModules={8}
       title="History & Basics"
-      description="Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card oracle unique and powerful."
+      description="Discover the origins of Lenormand divination and learn the fundamental concepts that make this 36-card system unique and powerful."
       duration="20 minutes"
       difficulty="Beginner"
       icon={<BookOpen className="h-8 w-8 text-white" />}
