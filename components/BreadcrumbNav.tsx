@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { ChevronRight } from "lucide-react";
@@ -15,15 +14,11 @@ interface BreadcrumbNavProps {
   items: Breadcrumb[];
 }
 
+const SITE_URL = "https://lenormand.dk";
+
 export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
-  const [origin, setOrigin] = useState("");
-
-  useEffect(() => {
-    setOrigin(window.location.origin);
-  }, []);
-
   const getItemUrl = (url: string) => {
-    return origin ? `${origin}${url}` : url;
+    return `${SITE_URL}${url}`;
   };
 
   const breadcrumbSchema = {
