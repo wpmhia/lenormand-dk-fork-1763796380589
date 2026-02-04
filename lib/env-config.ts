@@ -26,9 +26,9 @@ export const ENV_VARIABLES: EnvVariable[] = [
   },
   {
     name: "NEXT_PUBLIC_GA_MEASUREMENT_ID",
-    description: "Google Analytics measurement ID (optional)",
-    required: false,
-    instructions: "Get from Google Analytics dashboard if you want tracking",
+    description: "Google Analytics 4 Measurement ID",
+    required: true,
+    instructions: "Get from Google Analytics dashboard (Admin > Data Streams > Web stream > Measurement ID). Format: G-XXXXXXXXXX",
   },
   {
     name: "READING_HMAC_SECRET",

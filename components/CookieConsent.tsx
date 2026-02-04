@@ -66,10 +66,15 @@ export function CookieConsent() {
         try {
           const parsed = JSON.parse(savedPreferences);
           if (parsed && typeof parsed === "object") {
+            const hasAnalyticsConsent = parsed.analytics ?? false;
             setPreferences({
-              analytics: parsed.analytics ?? false,
+              analytics: hasAnalyticsConsent,
               necessary: parsed.necessary ?? true,
             });
+            // Load GA if previously consented
+            if (hasAnalyticsConsent) {
+              loadGoogleAnalytics();
+            }
           }
         } catch (error) {
           setPreferences({
