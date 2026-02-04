@@ -160,56 +160,77 @@ export function CookieConsent() {
     <>
       {/* Cookie Banner */}
       {showBanner && (
-        <div
-          id="cookie-banner"
-          className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 p-4 pb-safe shadow-lg backdrop-blur-sm md:pb-6"
-          role="dialog"
-          aria-label="Cookie consent banner"
-          aria-describedby="cookie-banner-description"
-        >
-          <div className="container mx-auto max-w-4xl">
-            <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
-              <div className="flex flex-shrink-0 items-center gap-2">
-                <Cookie className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">
-                  Cookie Preferences
-                </span>
+        <>
+          {/* Backdrop - forces interaction */}
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+          <div
+            id="cookie-banner"
+            className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 p-4"
+            role="dialog"
+            aria-label="Cookie consent banner"
+            aria-describedby="cookie-banner-description"
+          >
+            <div className="rounded-xl border border-border bg-card p-6 shadow-2xl">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <Cookie className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Cookie Preferences
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    Your privacy matters to us
+                  </p>
+                </div>
               </div>
 
               <div
                 id="cookie-banner-description"
-                className="flex-1 text-sm text-muted-foreground"
+                className="mb-6 space-y-3 text-sm text-muted-foreground"
               >
-                We use cookies to enhance your experience. Essential cookies are
-                always enabled. Analytics cookies help us understand how you use
-                our site.
+                <p>
+                  We use cookies to enhance your experience and help us improve our site.
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Essential cookies</span> are always enabled for the site to function properly.
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Analytics cookies</span> help us understand how you use our site, so we can make it better for you. No personal data is collected.
+                </p>
               </div>
 
-              <div className="flex flex-shrink-0 flex-col gap-2 sm:flex-row">
+              <div className="flex flex-col gap-3">
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowSettings(true)}
-                  className="text-xs"
+                  size="lg"
+                  onClick={acceptAll}
+                  className="w-full font-semibold"
                 >
-                  <Settings className="mr-1 h-3 w-3" />
-                  Settings
+                  Accept All Cookies
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={acceptNecessaryOnly}
-                  className="text-xs"
-                >
-                  Essential Only
-                </Button>
-                <Button size="sm" onClick={acceptAll} className="text-xs">
-                  Accept All
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    size="default"
+                    onClick={() => setShowSettings(true)}
+                    className="flex-1"
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    Customize
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="default"
+                    onClick={acceptNecessaryOnly}
+                    className="flex-1 text-muted-foreground"
+                  >
+                    Essential Only
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Cookie Settings Modal */}
