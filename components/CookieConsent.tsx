@@ -162,15 +162,15 @@ export function CookieConsent() {
       {showBanner && (
         <>
           {/* Backdrop - forces interaction */}
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+          <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" />
           <div
             id="cookie-banner"
-            className="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 p-4"
+            className="fixed left-1/2 top-1/2 z-[101] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 p-4"
             role="dialog"
             aria-label="Cookie consent banner"
             aria-describedby="cookie-banner-description"
           >
-            <div className="rounded-xl border border-border bg-card p-6 shadow-2xl">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <Cookie className="h-6 w-6 text-primary" />
