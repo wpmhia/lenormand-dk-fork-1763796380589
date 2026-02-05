@@ -1,185 +1,45 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 
 const ReactMarkdown = dynamic(() => import("react-markdown"), {
-  loading: () => <div className="animate-pulse">Loading...</div>,
   ssr: false,
 });
 import { AIReadingResponse } from "@/lib/ai-config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
-import {
-  RefreshCw,
-  Copy,
-  Check,
-  AlertCircle,
-  ExternalLink,
-} from "lucide-react";
+import { RefreshCw, Copy, Check, AlertCircle } from "lucide-react";
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
   isLoading: boolean;
   error: string | null;
-  errorDetails?: {
-    type?: string;
-    helpUrl?: string;
-    action?: string;
-    waitTime?: number;
-    fields?: string[];
-  } | null;
   onRetry: () => void;
-  retryCount?: number;
-  cards?: Array<{
-    id: number;
-    name: string;
-    position: number;
-  }>;
-  allCards?: any[];
-  spreadId?: string;
-  question?: string;
-  isStreaming?: boolean;
-  streamedContent?: string;
-  isPartial?: boolean;
 }
 
 export function AIReadingDisplay({
   aiReading,
   isLoading,
   error,
-  errorDetails,
   onRetry,
-  retryCount = 0,
-  cards,
-  allCards,
-  spreadId,
-  question,
-  isStreaming = false,
-  streamedContent,
-  isPartial = false,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  const setCopyTimeout = () => {
-    // Clear any existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    // Set new timeout
-    timeoutRef.current = setTimeout(() => setCopyClicked(false), 2000);
-  };
-
-  const readingText = aiReading?.reading || streamedContent || "";
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
-
-    const attribution =
-      "\n\n---\nGet your reading with Lenormand Intelligence (Lenormand.dk).";
-    const fullContent = aiReading.reading + attribution;
-
-    // Check if we're in a secure context and have user interaction
-    if (!window.isSecureContext) {
-      console.warn("Clipboard access requires secure context (HTTPS)");
-      return;
-    }
-
     try {
-      // Check if Clipboard API is available
-      if (!navigator.clipboard) {
-        throw new Error("Clipboard API not available");
-      }
-
-      // Validate content length to prevent excessive clipboard usage
-      if (fullContent.length > 50000) {
-        console.warn("Content too long for clipboard");
-        return;
-      }
-
-      const htmlContent = aiReading.reading
-        .replace(/^### (.*$)/gim, "<h3>$1</h3>")
-        .replace(/^## (.*$)/gim, "<h2>$1</h2>")
-        .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-        .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
-        .replace(/\*(.*)\*/gim, "<em>$1</em>")
-        .replace(/\n- (.*$)/gim, "<li>$1</li>")
-        .replace(/\n(\d+)\. (.*$)/gim, "<li>$2</li>")
-        .replace(/\n\n/gim, "<br><br>")
-        .replace(/\n/gim, "<br>");
-
-      const blobHtml = new Blob(
-        [
-          `<div style="font-family: system-ui, sans-serif; line-height: 1.6;">${htmlContent}</div>${attribution.replace("\n\n---", "<hr>")}`,
-        ],
-        { type: "text/html" },
-      );
-      const blobText = new Blob([fullContent], { type: "text/plain" });
-
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/html": blobHtml,
-          "text/plain": blobText,
-        }),
-      ]);
+      await navigator.clipboard.writeText(aiReading.reading);
       setCopyClicked(true);
-      setCopyTimeout();
+      setTimeout(() => setCopyClicked(false), 2000);
     } catch (err) {
-      // Log specific error for debugging
-      console.warn(
-        "Rich clipboard failed:",
-        err instanceof Error ? err.message : "Unknown error",
-      );
-
-      try {
-        // Fallback to text-only copy
-        await navigator.clipboard.writeText(fullContent);
-        setCopyClicked(true);
-        setCopyTimeout();
-      } catch (fallbackErr) {
-        // Log fallback error for debugging but don't expose to user
-        console.warn(
-          "Text clipboard failed:",
-          fallbackErr instanceof Error ? fallbackErr.message : "Unknown error",
-        );
-
-        // Final fallback: show user can copy manually
-        const textArea = document.createElement("textarea");
-        textArea.value = fullContent;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        try {
-          document.execCommand("copy");
-          setCopyClicked(true);
-          setCopyTimeout();
-        } catch (execErr) {
-          console.warn("Fallback copy also failed");
-        } finally {
-          document.body.removeChild(textArea);
-        }
-      }
+      console.warn("Copy failed:", err);
     }
   };
 
-  if (isLoading && !streamedContent) {
+  if (isLoading) {
     return (
       <AIThinkingIndicator
         message="Consulting the cards..."
@@ -188,112 +48,14 @@ export function AIReadingDisplay({
     );
   }
 
-  if (isLoading && streamedContent) {
-    return (
-      <Card className="border-border bg-card shadow-lg">
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
-            </span>
-            <span>Generating...</span>
-          </div>
-          <div className="reading-content space-y-4 opacity-80">
-            <ReactMarkdown
-              components={{
-                h1: ({ node, ...props }) => (
-                  <h1
-                    className="text-2xl font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                h2: ({ node, ...props }) => (
-                  <h2
-                    className="text-xl font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                h3: ({ node, ...props }) => (
-                  <h3
-                    className="text-lg font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                p: ({ node, ...props }) => (
-                  <div
-                    className="text-base leading-relaxed text-foreground/90"
-                    {...props}
-                  />
-                ),
-                strong: ({ node, ...props }) => (
-                  <strong
-                    className="font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                em: ({ node, ...props }) => (
-                  <em className="italic text-foreground/80" {...props} />
-                ),
-                hr: ({ node, ...props }) => (
-                  <hr className="my-4 border-border" {...props} />
-                ),
-                a: ({ node, ...props }: any) => (
-                  <a
-                    {...props}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  />
-                ),
-              }}
-            >
-              {readingText}
-            </ReactMarkdown>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   if (error) {
     return (
-      <Alert
-        variant="destructive"
-        className="border-destructive/20 bg-destructive/5"
-      >
-        <div className="mb-3 flex items-center gap-2">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Interpretation Unavailable</AlertTitle>
-          <Badge variant="destructive" className="ml-auto">
-            Error
-          </Badge>
-        </div>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Interpretation Unavailable</AlertTitle>
         <AlertDescription className="space-y-3">
           <div className="text-sm">{error}</div>
-          {errorDetails && (
-            <div className="text-sm opacity-90">
-              {errorDetails.action && (
-                <div className="font-medium">{errorDetails.action}</div>
-              )}
-              {errorDetails.helpUrl && (
-                <a
-                  href={errorDetails.helpUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-destructive-foreground mt-1 inline-flex items-center gap-1 underline"
-                >
-                  View Help <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
-            </div>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRetry}
-            className="border-destructive/30 hover:bg-destructive/10 text-destructive-foreground mt-2"
-          >
+          <Button variant="outline" size="sm" onClick={onRetry}>
             <RefreshCw className="mr-2 h-3 w-3" />
             Try Again
           </Button>
@@ -304,29 +66,14 @@ export function AIReadingDisplay({
 
   if (!aiReading?.reading) {
     return (
-      <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
+      <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>AI Reading Failed</AlertTitle>
-        <AlertDescription className="space-y-3">
-          <p className="text-sm">
-            The AI interpretation could not be generated. This may be due to:
-          </p>
-          <ul className="list-disc pl-4 text-sm text-muted-foreground">
-            <li>Network connectivity issues</li>
-            <li>AI service temporarily unavailable</li>
-            <li>Rate limit reached (too many requests)</li>
-          </ul>
-          <p className="text-sm text-muted-foreground">
-            You can still interpret the cards using traditional Lenormand meanings shown below.
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRetry}
-            className="border-destructive/30 hover:bg-destructive/10 text-destructive-foreground"
-          >
+        <AlertDescription>
+          <p className="text-sm">The AI interpretation could not be generated.</p>
+          <Button variant="outline" size="sm" onClick={onRetry} className="mt-2">
             <RefreshCw className="mr-2 h-3 w-3" />
-            Retry AI Interpretation
+            Retry
           </Button>
         </AlertDescription>
       </Alert>
@@ -334,128 +81,35 @@ export function AIReadingDisplay({
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="border-border bg-card shadow-lg">
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-end gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopy}
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
-              aria-label={copyClicked ? "Copied to clipboard" : "Copy reading"}
-              aria-live="polite"
-            >
-              {copyClicked ? (
-                <Check className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Copy className="h-4 w-4" aria-hidden="true" />
-              )}
-            </Button>
-          </div>
+    <Card>
+      <CardContent className="p-6">
+        <div className="mb-4 flex items-center justify-end">
+          <Button variant="ghost" size="icon" onClick={handleCopy}>
+            {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          </Button>
+        </div>
 
-          <div className="reading-content space-y-4">
-            <ReactMarkdown
-              components={{
-                h1: ({ node, ...props }) => (
-                  <h1
-                    className="text-2xl font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                h2: ({ node, ...props }) => (
-                  <h2
-                    className="text-xl font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                h3: ({ node, ...props }) => (
-                  <h3
-                    className="text-lg font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                p: ({ node, ...props }) => (
-                  <div
-                    className="text-base leading-relaxed text-foreground/90"
-                    {...props}
-                  />
-                ),
-                ul: ({ node, ...props }) => (
-                  <ul
-                    className="list-disc pl-6 text-foreground/90"
-                    {...props}
-                  />
-                ),
-                ol: ({ node, ...props }) => (
-                  <ol
-                    className="list-decimal pl-6 text-foreground/90"
-                    {...props}
-                  />
-                ),
-                li: ({ node, ...props }) => (
-                  <li className="text-foreground/90" {...props} />
-                ),
-                blockquote: ({ node, ...props }) => (
-                  <blockquote
-                    className="border-l-4 border-primary/40 pl-4 italic text-foreground/80"
-                    {...props}
-                  />
-                ),
-                strong: ({ node, ...props }) => (
-                  <strong
-                    className="font-semibold text-foreground"
-                    {...props}
-                  />
-                ),
-                em: ({ node, ...props }) => (
-                  <em className="italic text-foreground/80" {...props} />
-                ),
-                hr: ({ node, ...props }) => (
-                  <hr className="my-4 border-border" {...props} />
-                ),
-                a: ({ node, ...props }: any) => (
-                  <a
-                    {...props}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  />
-                ),
-              }}
-            >
-              {readingText}
-            </ReactMarkdown>
-          </div>
+        <div className="reading-content space-y-4">
+          <ReactMarkdown
+            components={{
+              h1: ({ ...props }) => <h1 className="text-2xl font-semibold" {...props} />,
+              h2: ({ ...props }) => <h2 className="text-xl font-semibold" {...props} />,
+              h3: ({ ...props }) => <h3 className="text-lg font-semibold" {...props} />,
+              p: ({ ...props }) => <p className="leading-relaxed" {...props} />,
+              strong: ({ ...props }) => <strong className="font-semibold" {...props} />,
+            }}
+          >
+            {aiReading.reading}
+          </ReactMarkdown>
+        </div>
 
-          {/* Reading complete or partial indicator */}
-          <div className="mt-6 flex items-center justify-center border-t border-border pt-4">
-            {isPartial ? (
-              <div className="flex flex-col items-center gap-2">
-                <div className="text-sm text-amber-600 dark:text-amber-400">
-                  Interpretation incomplete
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onRetry}
-                  className="gap-2"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                  Tap to retry
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500/20">
-                  <Check className="h-4 w-4 text-green-500" />
-                </div>
-                <span>Reading complete</span>
-              </div>
-            )}
+        <div className="mt-6 flex items-center justify-center border-t pt-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Check className="h-4 w-4 text-green-500" />
+            <span>Reading complete</span>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -286,17 +286,7 @@ export default function SharedReadingPage({ params }: PageProps) {
               aiReading={aiReading}
               isLoading={false}
               error={null}
-              errorDetails={null}
               onRetry={() => performAIAnalysis(reading.cards)}
-              retryCount={0}
-              cards={reading.cards.map((card) => ({
-                id: card.id,
-                name: getCardById(allCards, card.id)?.name || "Unknown",
-                position: card.position,
-              }))}
-              allCards={allCards}
-              spreadId={getSpreadIdFromLayoutType(reading.layoutType)}
-              question={reading.question}
             />
           )}
 

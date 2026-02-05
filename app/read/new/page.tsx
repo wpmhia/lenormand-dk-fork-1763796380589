@@ -14,9 +14,9 @@ import { useAIAnalysis } from "@/hooks/useAIAnalysis";
 import {
   ReadingSetup,
   PhysicalCardInput,
-  VirtualDeckDraw,
   StartOverDialog,
 } from "@/components/reading";
+import { Deck } from "@/components/Deck";
 import { ReadingViewer } from "@/components/ReadingViewer";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -55,11 +55,7 @@ function NewReadingPageContent() {
     aiReading,
     isLoading: aiLoading,
     error: aiError,
-    streamedContent,
-    isPartial,
-    aiMethod,
     startAnalysis,
-    retryAnalysis,
     resetAnalysis,
   } = useAIAnalysis(question, drawnCards, allCards, selectedSpread.id, step === "results");
 
@@ -326,11 +322,10 @@ function NewReadingPageContent() {
                       <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
                     </div>
                   ) : (
-                    <VirtualDeckDraw
+                    <Deck
                       cards={allCards}
                       drawCount={selectedSpread.cards}
                       onDraw={handleVirtualDraw}
-
                     />
                   )}
                 </div>
@@ -389,17 +384,7 @@ function NewReadingPageContent() {
                   aiReading={aiReading}
                   isLoading={aiLoading}
                   error={aiError}
-                  onRetry={retryAnalysis}
-                  spreadId={selectedSpread.id}
-                  cards={drawnCards.map((card) => ({
-                    id: card.id,
-                    name: allCards.find((c) => c.id === card.id)?.name || "Unknown",
-                    position: card.position,
-                  }))}
-                  allCards={allCards}
-                  question={question}
-                  isStreaming={aiLoading}
-                  streamedContent={streamedContent}
+                  onRetry={startAnalysis}
                 />
               </ErrorBoundary>
 

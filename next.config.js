@@ -60,20 +60,6 @@ const nextConfig = {
         ],
       },
       {
-        // Job status for completed jobs - cache at edge
-        source: "/api/readings/status",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=0, must-revalidate",
-          },
-          {
-            key: "Vercel-CDN-Cache-Control",
-            value: "public, max-age=300",
-          },
-        ],
-      },
-      {
         // Security headers for all routes
         source: "/:path*",
         headers: [
