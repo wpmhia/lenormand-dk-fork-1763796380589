@@ -47,45 +47,53 @@ export function CookieConsent() {
   useEffect(() => {
     setMounted(true);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const testMode = urlParams.get("test-cookies");
-    const forceShow = urlParams.get("show-cookies");
+    // Small delay to ensure hydration is complete
+    const timer = setTimeout(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const testMode = urlParams.get("test-cookies");
+      const forceShow = urlParams.get("show-cookies");
 
-    if (testMode === "true" || forceShow === "true") {
-      setShowBanner(true);
-      return;
-    }
-
-    try {
-      const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-      const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
-
-      if (!consent) {
+      if (testMode === "true" || forceShow === "true") {
         setShowBanner(true);
-      } else if (savedPreferences) {
-        try {
-          const parsed = JSON.parse(savedPreferences);
-          if (parsed && typeof parsed === "object") {
-            const hasAnalyticsConsent = parsed.analytics ?? false;
-            setPreferences({
-              analytics: hasAnalyticsConsent,
-              necessary: parsed.necessary ?? true,
-            });
-            // Load GA if previously consented
-            if (hasAnalyticsConsent) {
-              loadGoogleAnalytics();
-            }
-          }
-        } catch (error) {
-          setPreferences({
-            analytics: false,
-            necessary: true,
-          });
-        }
+        return;
       }
-    } catch {
-      setShowBanner(true);
-    }
+
+      try {
+        const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+        const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
+
+        console.log("[CookieConsent] Consent check:", { consent, savedPreferences });
+
+        if (!consent) {
+          console.log("[CookieConsent] No consent found, showing banner");
+          setShowBanner(true);
+        } else if (savedPreferences) {
+          try {
+            const parsed = JSON.parse(savedPreferences);
+            if (parsed && typeof parsed === "object") {
+              const hasAnalyticsConsent = parsed.analytics ?? false;
+              setPreferences({
+                analytics: hasAnalyticsConsent,
+                necessary: parsed.necessary ?? true,
+              });
+              // Load GA if previously consented
+              if (hasAnalyticsConsent) {
+                loadGoogleAnalytics();
+              }
+            }
+          } catch (error) {
+            setPreferences({
+              analytics: false,
+              necessary: true,
+            });
+          }
+        }
+      } catch {
+        setShowBanner(true);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const acceptAll = () => {
@@ -150,11 +158,9 @@ export function CookieConsent() {
   };
 
   // Don't render until mounted to avoid hydration mismatch
-  if (!mounted) {
+  if (!mounted || (!showBanner && !showSettings)) {
     return null;
   }
-
-  if (!showBanner && !showSettings) return null;
 
   return (
     <>
