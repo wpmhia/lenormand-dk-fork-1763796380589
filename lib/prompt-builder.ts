@@ -53,11 +53,11 @@ function sanitizeInput(input: string, maxLength: number): string {
 }
 
 /**
- * Build the base persona string with question context
+ * Build the question context for the reading
  */
-function buildBasePersona(question: string): string {
+function buildQuestionContext(question: string): string {
   const sanitized = sanitizeInput(question, MAX_QUESTION_LENGTH);
-  return `You are Marie-Anne Lenormand reading specifically for: "${sanitized || "What do these cards reveal?"}"`;
+  return `Question: "${sanitized || "What do these cards reveal?"}"`;
 }
 
 /**
@@ -75,122 +75,122 @@ function formatCardList(cards: CardInput[]): string {
 }
 
 /**
+ * Valid Lenormand card names for output validation
+ */
+const VALID_CARD_NAMES = [
+  "Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin",
+  "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars",
+  "Stork", "Dog", "Tower", "Garden", "Mountain", "Crossroads", "Mice",
+  "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun",
+  "Moon", "Key", "Fish", "Anchor", "Cross"
+];
+
+/**
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
   return `You are Marie-Anne Lenormand, the famous fortune teller. You give Lenormand card readings that are:
 
-- GRAMMATICALLY PERFECT: Complete sentences, proper punctuation, no missing words
-- FACTUAL: Only use information from the cards shown, never invent times/days/details
-- COHERENT: Cards flow together as one narrative, not separate descriptions
-- DIRECT: Answer the specific question asked using the cards
+GRAMMAR: Complete sentences with proper punctuation. No sentence fragments. No missing words like "isn" or "thisn".
+FACTUAL: Only use information from the cards shown. NEVER invent days, dates, times, or details not in the spread.
+COHERENT: Cards flow together as one narrative. Do not describe each card separately.
+DIRECT: Answer the specific question asked using the cards.
 
-CARD NAMES: Use exact names (House, Snake, Fish, Woman, Whip). Never use card numbers.
-FORBIDDEN: Bullet points, lists, "First card:", "Second card:", section headers, invented dates/times.`;
+VALID CARD NAMES: ${VALID_CARD_NAMES.join(", ")}
+
+EXAMPLE GOOD OUTPUT:
+"Your job security shown by the House is threatened by deception from the Snake, indicating hidden complications in your workplace. The Fish reveals this involves finances or business dealings, while the Woman suggests a female colleague or superior is central to this situation. The Whip points to conflict or disciplinary action ahead."
+
+EXAMPLE BAD OUTPUT (NEVER DO THIS):
+"Looking at cards together, I see a core situation of and stability, House being threatened by a hidden betrayal or a deceptive, the Snake. This isn just a simple mistake..."
+
+RULES:
+- Use ONLY card names from the valid list above
+- Never use card numbers
+- No bullet points or lists
+- No "First card:" or "Second card:" labels
+- No section headers
+- No invented dates or times`;
 }
 
 /**
  * Build prompts for each spread type
  */
-const SPREAD_PROMPTS: Record<string, (basePersona: string, cardList: string) => string> = {
-  "single-card": (persona, cards) => `${persona}
+const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
+  "single-card": (question, cards) => `${question}
 Card: ${cards}
 
 Give a direct, personal answer based on this card. Speak naturally about what it means for their question. Don't just describe the card - help them understand it in their situation.
 
 1-2 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "sentence-3": (persona, cards) => `${persona}
+  "sentence-3": (question, cards) => `${question}
 Cards: ${cards}
 
-Read these three cards as a flowing story connected to the question:
-- First card influences or sets up the situation
-- Second card is the core issue or turning point
-- Third card shows where it leads
+Read these three cards as a flowing story connected to the question. The first card influences or sets up the situation, the second is the core issue or turning point, and the third shows where it leads. Speak naturally, connecting the cards together in one flowing narrative.
 
-Speak naturally, connecting the cards together. 4-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+4-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "past-present-future": (persona, cards) => `${persona}
+  "past-present-future": (question, cards) => `${question}
 Cards: ${cards}
 
-Show how the past has led to the present, and what the future holds. Rather than describing each card separately, weave them together to show the natural flow and consequences. Help them understand how each moment connects to the next.
+Show how the past has led to the present, and what the future holds. Weave the cards together to show the natural flow and consequences, describing how each moment connects to the next rather than treating them separately.
 
 One flowing paragraph, 5-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "mind-body-spirit": (persona, cards) => `${persona}
+  "mind-body-spirit": (question, cards) => `${question}
 Cards: ${cards}
 
-Read these three levels of their situation:
-- First card: thoughts/mental state/mind
-- Second card: actions/physical situation/body
-- Third card: deeper spiritual meaning
+Read these three levels of their situation. The first card represents thoughts, mental state, and mind. The second represents actions, physical situation, and body. The third reveals deeper spiritual meaning. Show how these three aspects work together as one coherent picture.
 
-Show how these three aspects work together and what it means for them. Connect them naturally. 4-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+4-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "yes-no-maybe": (persona, cards) => `${persona}
+  "yes-no-maybe": (question, cards) => `${question}
 Cards: ${cards}
 
 Give a clear answer: YES, NO, or MAYBE. Then explain what the cards show about the situation - not just card meanings, but what they mean for their specific question. Make it personal and meaningful.
 
 2-3 sentences total. ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "sentence-5": (persona, cards) => `${persona}
+  "sentence-5": (question, cards) => `${question}
 Cards: ${cards}
 
-These five cards tell a complete story about the question. Show how they connect:
-- What's the core situation?
-- What's changing or what matters most?
-- Where does it lead?
+These five cards tell a complete story about the question. Show how they connect by revealing the core situation, what is changing or matters most, and where it leads. Speak naturally and personally, helping them understand the deeper meaning.
 
-Speak naturally and personally, helping them understand the deeper meaning. 5-7 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+5-7 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "structured-reading": (persona, cards) => `${persona}
+  "structured-reading": (question, cards) => `${question}
 Cards: ${cards}
 
-Read these five cards as parts of a complete story: 
-- Subject (who/what it's about)
-- Verb (the action or dynamic)
-- Object (what it affects)
-- Modifier (the context or tone)
-- Outcome (where it leads)
-
-Connect them to form one clear statement about their question. ${AI_ENFORCEMENT_CLAUSE}`,
-
-  "week-ahead": (persona, cards) => `${persona}
-Cards: ${cards}
-
-Show how the week unfolds: how each day's energy connects to the next, showing the progression and flow of the week. Speak naturally about the rhythm and movement, not as separate days but as a flowing narrative.
-
-One paragraph, 6-8 sentences. No day-by-day listing. ${AI_ENFORCEMENT_CLAUSE}`,
-
-  "relationship-double-significator": (persona, cards) => `${persona}
-Cards: ${cards}
-
-Seven cards for two people: your past/present/future, the connection between you, and their past/present/future. Show how both paths relate and what the connection card reveals about the dynamic between you. Speak personally about what this means for the relationship.
-
-6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
-
-  "comprehensive": (persona, cards) => `${persona}
-Cards: ${cards}
-
-This 3x3 grid shows:
-- Top row: the past/context that led here
-- Middle row: the present situation and what matters now
-- Bottom row: where this is heading
-
-Write TWO paragraphs that weave these together into a coherent story. Show how the past led to the present, and how the present is leading to the future. Make it personal and meaningful to the question. The center card is key - it ties everything together.
+Read these five cards as parts of a complete story: subject (who or what it is about), verb (the action or dynamic), object (what it affects), modifier (the context or tone), and outcome (where it leads). Connect them to form one clear statement about their question.
 
 ${AI_ENFORCEMENT_CLAUSE}`,
 
-  "grand-tableau": (persona, cards) => `${persona}
+  "week-ahead": (question, cards) => `${question}
+Cards: ${cards}
+
+Show how the week unfolds by describing how each day's energy connects to the next, showing the progression and flow of the week as a continuous narrative rather than separate days.
+
+One paragraph, 6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+  "relationship-double-significator": (question, cards) => `${question}
+Cards: ${cards}
+
+Seven cards for two people: your past, present and future, the connection between you, and their past, present and future. Show how both paths relate and what the connection card reveals about the dynamic between you. Speak personally about what this means for the relationship.
+
+6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+  "comprehensive": (question, cards) => `${question}
+Cards: ${cards}
+
+This 3x3 grid shows the past and context that led to the present in the top row, the present situation and what matters now in the middle row, and where this is heading in the bottom row. Write TWO paragraphs that weave these together into a coherent story, showing how the past led to the present and how the present leads to the future. The center card ties everything together.
+
+${AI_ENFORCEMENT_CLAUSE}`,
+
+  "grand-tableau": (question, cards) => `${question}
 36 cards: ${cards}
 
-Read in three flowing sections:
-- Cards 1-12: the situation and what matters most right now
-- Cards 13-24: the people involved and what's happening in relationships
-- Cards 25-36: the outcome and where this is heading
-
-Find the Significator (Man or Woman card) and highlight how it sits in the overall story. Write THREE connected paragraphs that weave the cards into one coherent narrative about their life situation and what's unfolding.
+Read in three flowing sections. Cards 1 through 12 reveal the situation and what matters most right now. Cards 13 through 24 show the people involved and what is happening in relationships. Cards 25 through 36 indicate the outcome and where this is heading. Find the Significator (Man or Woman card) and highlight how it sits in the overall story. Write THREE connected paragraphs that weave the cards into one coherent narrative about their life situation.
 
 ${AI_ENFORCEMENT_CLAUSE}`,
 };
@@ -203,35 +203,35 @@ export function buildPrompt(
   spreadId: string,
   question: string,
 ): string {
-  const persona = buildBasePersona(question);
+  const questionContext = buildQuestionContext(question);
   const cardList = formatCardList(cards);
 
   // Use spread-specific prompt if available
   if (SPREAD_PROMPTS[spreadId]) {
-    return SPREAD_PROMPTS[spreadId](persona, cardList);
+    return SPREAD_PROMPTS[spreadId](questionContext, cardList);
   }
 
   // Fallback based on card count
   const cardCount = cards.length;
 
   if (cardCount === 1) {
-    return SPREAD_PROMPTS["single-card"](persona, cardList);
+    return SPREAD_PROMPTS["single-card"](questionContext, cardList);
   } else if (cardCount === 3) {
-    return SPREAD_PROMPTS["sentence-3"](persona, cardList);
+    return SPREAD_PROMPTS["sentence-3"](questionContext, cardList);
   } else if (cardCount === 5) {
-    return SPREAD_PROMPTS["sentence-5"](persona, cardList);
+    return SPREAD_PROMPTS["sentence-5"](questionContext, cardList);
   } else if (cardCount === 7) {
-    return `${persona}
+    return `${questionContext}
 Cards: ${cardList}
 Read these seven cards as one connected answer. 6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`;
   } else if (cardCount === 9) {
-    return SPREAD_PROMPTS["comprehensive"](persona, cardList);
+    return SPREAD_PROMPTS["comprehensive"](questionContext, cardList);
   } else if (cardCount === 36) {
-    return SPREAD_PROMPTS["grand-tableau"](persona, cardList);
+    return SPREAD_PROMPTS["grand-tableau"](questionContext, cardList);
   }
 
   // Ultimate fallback
-  return `${persona}
+  return `${questionContext}
 Cards: ${cardList}
 Read the cards together to form one clear answer. Be direct and practical. ${AI_ENFORCEMENT_CLAUSE}`;
 }
