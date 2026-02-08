@@ -25,6 +25,7 @@ const crimsonPro = Crimson_Pro({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://lenormand.dk"),
   title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
   description:
     "Get clear, practical answers from Lenormand cards. Not symbolism - sentences. Free readings with all spreads including Grand Tableau.",

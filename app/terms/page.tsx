@@ -1,5 +1,25 @@
+import { Metadata } from "next";
 import { Eye, Scale, AlertTriangle, Heart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | Lenormand Intelligence",
+  description:
+    "Read the Terms of Service for Lenormand Intelligence. Guidelines for using our divination services responsibly and ethically.",
+  openGraph: {
+    title: "Terms of Service | Lenormand Intelligence",
+    description:
+      "Guidelines for using our mystical divination services responsibly and ethically.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/terms",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function TermsPage() {
   return (

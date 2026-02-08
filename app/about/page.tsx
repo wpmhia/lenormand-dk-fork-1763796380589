@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Metadata } from "next";
 import {
   Sparkles,
   Lightbulb,
@@ -10,6 +11,21 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "About Us | Lenormand Intelligence",
+  description:
+    "Learn about Lenormand Intelligence - bridging ancient Lenormand divination wisdom with modern AI. Discover our mission, values, and the team behind the platform.",
+  openGraph: {
+    title: "About Lenormand Intelligence",
+    description:
+      "Where ancient wisdom meets modern intelligence. Discover our mission to make Lenormand divination accessible through responsible AI.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 export default function AboutPage() {
   return (

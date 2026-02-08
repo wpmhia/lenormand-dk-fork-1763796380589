@@ -1,5 +1,25 @@
+import { Metadata } from "next";
 import { Shield, Lock, Eye, Database, Cookie } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | Lenormand Intelligence",
+  description:
+    "Learn how Lenormand Intelligence protects your privacy. We store readings only on your device, use encrypted connections, and never share your data with third parties.",
+  openGraph: {
+    title: "Privacy Policy | Lenormand Intelligence",
+    description:
+      "Your privacy is paramount. Read how we protect your data and keep your readings confidential.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/privacy",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function PrivacyPage() {
   return (

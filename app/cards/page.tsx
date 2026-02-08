@@ -12,7 +12,9 @@ export const metadata: Metadata = {
     description:
       "Complete guide to all 36 Lenormand cards with meanings and combinations.",
     type: "website",
-    url: "https://lenormand.dk/cards",
+  },
+  alternates: {
+    canonical: "/cards",
   },
 };
 
