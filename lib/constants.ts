@@ -71,12 +71,12 @@ export const API_REQUEST_TIMEOUT_MS = 30 * 1000;
 // ============================================================================
 
 /** AI enforcement clause to maintain reading style */
-export const AI_ENFORCEMENT_CLAUSE = 
-  "You are a skilled Lenormand reader giving a personal, meaningful reading. " +
-  "TONE: Conversational and warm. STYLE: Connect card meanings to the person's actual situation. " +
-  "FLOW: Build ideas across cards showing how they relate. Don't describe each card separately. " +
-  "CRITICAL: Use ONLY card names (never numbers). No bullet points, lists, or 'First card:' sections. " +
-  "No flowery metaphors. Always speak naturally as if having a real conversation about their situation.";
+export const AI_ENFORCEMENT_CLAUSE =
+  "GRAMMAR: Write in complete, grammatically correct sentences. No fragments, no missing words. " +
+  "CARDS: Reference cards by name only (House, Snake, Fish, Woman, Whip - not numbers). " +
+  "CONTENT: Answer ONLY from the cards shown. Never invent days, times, or details not in the spread. " +
+  "STYLE: One flowing narrative. No bullet points, no 'First card:' labels, no section headers. " +
+  "TONE: Conversational and direct. Connect cards into a coherent story about their question.";
 
 /** Sentence lengths for different reading types */
 export const READING_SENTENCE_COUNTS = {

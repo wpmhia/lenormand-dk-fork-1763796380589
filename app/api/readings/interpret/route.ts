@@ -3,7 +3,7 @@ export const runtime = "edge";
 // Set to 10 for Free plan compatibility, increase to 60 if on Pro
 export const maxDuration = 10;
 
-import { buildPrompt } from "@/lib/prompt-builder";
+import { buildPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
@@ -122,9 +122,10 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
+          { role: "system", content: buildSystemPrompt() },
           { role: "user", content: prompt },
         ],
-        temperature: 0.3,
+        temperature: 0.4,
         max_tokens: maxTokens,
         stream: true,
       }),
