@@ -42,13 +42,13 @@ export function Header() {
             <BookOpen className="h-5 w-5" />
             <span>Cards</span>
           </Link>
-          <Link
-            href="/read/new"
-            className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-          >
-            <Plus className="h-5 w-5" />
-            <span>New Reading</span>
-          </Link>
+           <Link
+             href="/read/new?reset=true"
+             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+           >
+             <Plus className="h-5 w-5" />
+             <span>New Reading</span>
+           </Link>
           <Link
             href="/learn"
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
@@ -99,14 +99,14 @@ export function Header() {
               <BookOpen className="h-5 w-5" />
               <span>Cards</span>
             </Link>
-            <Link
-              href="/read/new"
-              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Plus className="h-5 w-5" />
-              <span>New Reading</span>
-            </Link>
+             <Link
+               href="/read/new?reset=true"
+               className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+               onClick={() => setMobileMenuOpen(false)}
+             >
+               <Plus className="h-5 w-5" />
+               <span>New Reading</span>
+             </Link>
             <Link
               href="/learn"
               className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
