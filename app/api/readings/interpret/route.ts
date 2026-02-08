@@ -1,4 +1,4 @@
-export const runtime = "nodejs";
+export const runtime = "edge";
 // Vercel Free plan: max 10s, Pro plan: max 60s
 // Set to 10 for Free plan compatibility, increase to 60 if on Pro
 export const maxDuration = 10;
@@ -7,9 +7,10 @@ import { buildPrompt } from "@/lib/ai-config";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
+import { getEnv } from "@/lib/env";
 
-// Direct env access for Node.js runtime
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+// Use getEnv for edge runtime compatibility
+const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";
 
 const RATE_LIMIT = 5;

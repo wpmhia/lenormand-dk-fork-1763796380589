@@ -61,18 +61,22 @@ export function ReadingHeader({
     try {
       await onShare();
       setShareClicked(true);
+      
+      // Clear any existing timeout before setting a new one
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      
+      // Set new timeout to reset button state
+      timeoutRef.current = setTimeout(() => {
+        setShareClicked(false);
+        timeoutRef.current = null;
+      }, 2000);
     } catch (err) {
       console.error("Share failed:", err);
     } finally {
       setIsSharing(false);
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      // Set new timeout to reset button state
-      timeoutRef.current = setTimeout(() => {
-        setShareClicked(false);
-      }, 2000);
     }
   }, [onShare, setShareClicked]);
 

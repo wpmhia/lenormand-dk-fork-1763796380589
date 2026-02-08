@@ -19,43 +19,45 @@ export function CookieConsent() {
     const hasConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!hasConsent) {
       setVisible(true);
-    } else if (hasConsent === "true") {
-      loadGoogleAnalytics();
+    } else if (hasConsent === "false") {
+      // User declined - disable GA tracking
+      disableGoogleAnalytics();
     }
   }, []);
 
   const acceptCookies = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "true");
     setVisible(false);
-    loadGoogleAnalytics();
+    // GA is already loaded from layout, just enable tracking
+    enableGoogleAnalytics();
   };
 
   const declineCookies = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "false");
     setVisible(false);
+    disableGoogleAnalytics();
   };
 
-  const loadGoogleAnalytics = () => {
-    if (typeof window === "undefined") return;
-    if (window.gtag) return;
-
+  const enableGoogleAnalytics = () => {
+    if (typeof window === "undefined" || !window.gtag) return;
     const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
     if (!gaId) return;
+    
+    // Enable tracking
+    window.gtag("consent", "update", {
+      analytics_storage: "granted",
+    });
+  };
 
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
-
-    script.onload = () => {
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function gtag(...args: unknown[]) {
-        window.dataLayer.push(args);
-      };
-      window.gtag("js", new Date());
-      window.gtag("config", gaId);
-    };
-
-    document.head.appendChild(script);
+  const disableGoogleAnalytics = () => {
+    if (typeof window === "undefined" || !window.gtag) return;
+    const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+    if (!gaId) return;
+    
+    // Disable tracking
+    window.gtag("consent", "update", {
+      analytics_storage: "denied",
+    });
   };
 
   if (!visible) return null;
