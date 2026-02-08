@@ -21,7 +21,7 @@ function sanitizeInput(input: string, maxLength: number): string {
 }
 
 // Harsh enforcement clause to break the AI's list-format habit and purple prose
-const ENFORCEMENT = "If you use bullet points, numbered lists, or sections like 'First card:' you have failed. Use plain language - no flowery metaphors, no 'weaving narratives' or 'whispers'. Be direct and practical like traditional Lenormand. Always reference cards by name (e.g. 'Garden', 'Fox', 'Anchor').";
+const ENFORCEMENT = "If you use bullet points, numbered lists, or sections like 'First card:' you have failed. Use plain language - no flowery metaphors, no 'weaving narratives' or 'whispers'. Be direct and practical like traditional Lenormand. CRITICAL: Use ONLY card names (e.g. 'Tree', 'Lily', 'Paths'), never card numbers. Never write '30-Lily' - just write 'Lily'. Never reference card IDs.";
 
 /**
  * Build spread-specific prompts with the question as narrative anchor
@@ -43,8 +43,8 @@ export function buildPrompt(
     name: sanitizeInput(c.name, MAX_CARD_NAME_LENGTH),
   }));
 
-  // Build card list (number-name format)
-  const cardList = sanitizedCards.map((c) => `${c.id}-${c.name}`).join(", ");
+  // Build card list (names only, no numbers)
+  const cardList = sanitizedCards.map((c) => c.name).join(", ");
   
   // Base persona with question as anchor
   const basePersona = `You are Marie-Anne Lenormand reading specifically for: "${sanitizedQuestion || "What do these cards reveal?"}"`;

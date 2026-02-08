@@ -75,7 +75,8 @@ export const AI_ENFORCEMENT_CLAUSE =
   "If you use bullet points, numbered lists, or sections like 'First card:' you have failed. " +
   "Use plain language - no flowery metaphors, no 'weaving narratives' or 'whispers'. " +
   "Be direct and practical like traditional Lenormand. " +
-  "Always reference cards by name (e.g. 'Garden', 'Fox', 'Anchor').";
+  "CRITICAL: Use ONLY card names (e.g. 'Tree', 'Lily', 'Paths'), never card numbers. " +
+  "Never write '30-Lily' - just write 'Lily'. Never reference card IDs.";
 
 /** Sentence lengths for different reading types */
 export const READING_SENTENCE_COUNTS = {

@@ -34,13 +34,13 @@ function buildBasePersona(question: string): string {
 }
 
 /**
- * Format cards as comma-separated ID-name pairs
+ * Format cards as comma-separated names only (no numbers)
  */
 function formatCardList(
   cards: Array<{ id: number; name: string }>,
 ): string {
   return cards
-    .map((c) => `${c.id}-${sanitizeInput(c.name, MAX_CARD_NAME_LENGTH)}`)
+    .map((c) => sanitizeInput(c.name, MAX_CARD_NAME_LENGTH))
     .join(", ");
 }
 
