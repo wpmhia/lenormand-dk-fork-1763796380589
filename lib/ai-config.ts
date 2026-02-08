@@ -20,8 +20,8 @@ function sanitizeInput(input: string, maxLength: number): string {
     .replace(/\n|\r/g, " "); // Replace newlines with spaces
 }
 
-// Harsh enforcement clause to break the AI's list-format habit
-const ENFORCEMENT = "If you use bullet points, numbered lists, or sections like 'First card:' you have failed.";
+// Harsh enforcement clause to break the AI's list-format habit and purple prose
+const ENFORCEMENT = "If you use bullet points, numbered lists, or sections like 'First card:' you have failed. Use plain language - no flowery metaphors, no 'weaving narratives' or 'whispers'. Be direct and practical like traditional Lenormand. Always reference cards by name (e.g. 'Garden', 'Fox', 'Anchor').";
 
 /**
  * Build spread-specific prompts with the question as narrative anchor
@@ -53,47 +53,47 @@ export function buildPrompt(
   const spreadPrompts: Record<string, string> = {
     "single-card": `${basePersona}
 Card: ${cardList}
-Answer the question directly using this single card's energy. 1-2 sentences. ${ENFORCEMENT}`,
+Give a direct answer based on this card. Keep it practical and concrete. 1-2 sentences. ${ENFORCEMENT}`,
 
     "sentence-3": `${basePersona}
 Cards: ${cardList}
-Weave these three cards into one flowing narrative. 3-5 sentences. ${ENFORCEMENT}`,
+Read these three cards as a sentence: first card modifies the second, which leads to the third. Be direct and practical. 3-5 sentences. ${ENFORCEMENT}`,
 
     "past-present-future": `${basePersona}
 Cards: ${cardList}
-Flow through time: the first card reveals the past foundation, the second shows the present moment, the third opens the future. One continuous paragraph, 4-5 sentences. No isolated card meanings. ${ENFORCEMENT}`,
+Read through time: first card is what happened before, second card is the current situation, third card is what's coming. Connect them naturally in one paragraph. 4-5 sentences. ${ENFORCEMENT}`,
 
     "mind-body-spirit": `${basePersona}
 Cards: ${cardList}
-Flow through the levels: first card reveals the mental landscape, second shows the physical reality, third opens the spiritual dimension. One continuous paragraph, 4-5 sentences. ${ENFORCEMENT}`,
+Read through three levels: first card is thoughts/mental state, second is actions/physical situation, third is spiritual/deeper meaning. Connect them naturally. 4-5 sentences. ${ENFORCEMENT}`,
 
     "yes-no-maybe": `${basePersona}
 Cards: ${cardList}
-Start with YES, NO, or MAYBE in caps, then explain in 2-3 flowing sentences why the cards show this verdict. ${ENFORCEMENT}`,
+Start with YES, NO, or MAYBE in caps, then explain why based on the cards. Be direct and practical. 2-3 sentences. ${ENFORCEMENT}`,
 
     "sentence-5": `${basePersona}
 Cards: ${cardList}
-Tell one continuous story across all five cards. 5-7 sentences. No sections, no card numbers. ${ENFORCEMENT}`,
+Read all five cards as one connected answer. Each card adds meaning to create the complete picture. 5-7 sentences. ${ENFORCEMENT}`,
 
     "structured-reading": `${basePersona}
 Cards: ${cardList}
-Five cards as subject → verb → object → modifier → outcome. One flowing sentence or paragraph connecting all five into a complete statement. ${ENFORCEMENT}`,
+Read as subject → verb → object → modifier → outcome. Connect all five cards to form one clear statement. ${ENFORCEMENT}`,
 
     "week-ahead": `${basePersona}
 Cards: ${cardList}
-Seven days flow: each card blends into the next showing the week's progression. One narrative paragraph, 6-8 sentences. No day-by-day listing. ${ENFORCEMENT}`,
+Read the week ahead: show how each day's card connects to the next. One paragraph showing the progression. 6-8 sentences. No day-by-day listing. ${ENFORCEMENT}`,
 
     "relationship-double-significator": `${basePersona}
 Cards: ${cardList}
-Seven cards weaving two people's paths: your past/present/future, the connection between you, their past/present/future. One continuous narrative showing how these lives intertwine. 6-8 sentences. ${ENFORCEMENT}`,
+Seven cards for two people: your past/present/future, the connection card, their past/present/future. Show how both paths relate. 6-8 sentences. ${ENFORCEMENT}`,
 
     "comprehensive": `${basePersona}
 Cards: ${cardList}
-Read this 3x3 grid: top row = past/context, middle = present/core, bottom = future/resolution. Two flowing paragraphs showing how the center influences all around it. ${ENFORCEMENT}`,
+Read the 3x3 grid: top row is past/context, middle row is present situation, bottom row is future/outcome. Focus on how the center card ties everything together. Two paragraphs. ${ENFORCEMENT}`,
 
     "grand-tableau": `${basePersona}
 36 cards: ${cardList}
-Three groups: 1-12 (the situation), 13-24 (people/dynamics), 25-36 (outcome). Exactly 3 paragraphs. Identify the Significator (card 28/29). ${ENFORCEMENT}`,
+Read in three sections: cards 1-12 show the situation, 13-24 show people and relationships, 25-36 show outcome. Exactly 3 paragraphs. Find and mention the Significator (Man-28 or Woman-29). ${ENFORCEMENT}`,
   };
 
   // Return spread-specific prompt or fall back to generic based on card count
@@ -113,7 +113,7 @@ Three groups: 1-12 (the situation), 13-24 (people/dynamics), 25-36 (outcome). Ex
   } else if (cardCount === 7) {
     return `${basePersona}
 Cards: ${cardList}
-Weave these seven cards into one continuous narrative flow. 6-8 sentences. ${ENFORCEMENT}`;
+Read these seven cards as one connected answer. 6-8 sentences. ${ENFORCEMENT}`;
   } else if (cardCount === 9) {
     return spreadPrompts["comprehensive"];
   } else if (cardCount === 36) {
@@ -123,7 +123,7 @@ Weave these seven cards into one continuous narrative flow. 6-8 sentences. ${ENF
   // Ultimate fallback for any other count
   return `${basePersona}
 Cards: ${cardList}
-Flow card-to-card into one narrative. Answer directly without sections. ${ENFORCEMENT}`;
+Read the cards together to form one clear answer. Be direct and practical. ${ENFORCEMENT}`;
 }
 
 export interface AIReadingRequest {
