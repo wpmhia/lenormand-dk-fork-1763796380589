@@ -38,7 +38,8 @@ export function useAIAnalysis(
         };
       });
 
-      const response = await fetch("/api/readings/start", {
+      // Use streaming endpoint for lower CPU usage (10s max vs 30s)
+      const response = await fetch("/api/readings/interpret", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,15 +49,50 @@ export function useAIAnalysis(
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.error || "Failed to get reading");
       }
 
-      setAiReading({
-        reading: data.reading,
-      });
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullReading = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6);
+              if (data === "[DONE]") continue;
+
+              try {
+                const parsed = JSON.parse(data);
+                const delta = parsed.choices?.[0]?.delta?.content;
+                if (delta) {
+                  fullReading += delta;
+                  // Update reading progressively for better UX
+                  setAiReading({ reading: fullReading });
+                }
+              } catch {
+                // Ignore parse errors for incomplete chunks
+              }
+            }
+          }
+        }
+      }
+
+      if (!fullReading) {
+        throw new Error("No reading received");
+      }
+
+      setAiReading({ reading: fullReading });
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {

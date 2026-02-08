@@ -13,8 +13,14 @@ import { getEnv } from "@/lib/env";
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";
 
-const RATE_LIMIT = 5;
+const RATE_LIMIT = 3;  // Reduced from 5 to 3 requests per minute for free tier optimization
 const RATE_LIMIT_WINDOW = 60 * 1000;
+
+// Response compression headers for reduced bandwidth
+const COMPRESSION_HEADERS = {
+  "Content-Encoding": "gzip",
+  "Vary": "Accept-Encoding",
+};
 
 export async function POST(request: Request) {
   try {
