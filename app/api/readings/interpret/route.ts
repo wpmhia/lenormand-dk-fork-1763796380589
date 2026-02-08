@@ -6,6 +6,7 @@ export const maxDuration = 10;
 import { buildPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
+import { validateReading, logValidationResult } from "@/lib/output-validation";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
@@ -125,7 +126,8 @@ export async function POST(request: Request) {
           { role: "system", content: buildSystemPrompt() },
           { role: "user", content: prompt },
         ],
-        temperature: 0.2,
+        temperature: 0.3,
+        top_p: 0.9,
         max_tokens: maxTokens,
         stream: true,
       }),

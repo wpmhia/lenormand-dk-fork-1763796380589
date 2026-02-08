@@ -77,7 +77,7 @@ function formatCardList(cards: CardInput[]): string {
 /**
  * Valid Lenormand card names for output validation
  */
-const VALID_CARD_NAMES = [
+export const VALID_CARD_NAMES = [
   "Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin",
   "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars",
   "Stork", "Dog", "Tower", "Garden", "Mountain", "Crossroads", "Mice",
@@ -196,6 +196,13 @@ ${AI_ENFORCEMENT_CLAUSE}`,
 };
 
 /**
+ * Detect if question is a yes/no type
+ */
+function isYesNoQuestion(question: string): boolean {
+  return /^(will|is|are|can|should|do|does|did|could|would|may|might)\b/i.test(question.trim());
+}
+
+/**
  * Build prompt for AI reading
  */
 export function buildPrompt(
@@ -206,34 +213,45 @@ export function buildPrompt(
   const questionContext = buildQuestionContext(question);
   const cardList = formatCardList(cards);
 
+  // Add yes/no instruction for binary questions
+  const yesNoInstruction = isYesNoQuestion(question) 
+    ? "\n\nThis is a YES/NO question. Start your answer with YES, NO, or MAYBE, then explain why."
+    : "";
+
   // Use spread-specific prompt if available
   if (SPREAD_PROMPTS[spreadId]) {
-    return SPREAD_PROMPTS[spreadId](questionContext, cardList);
+    const basePrompt = SPREAD_PROMPTS[spreadId](questionContext, cardList);
+    return yesNoInstruction ? basePrompt.replace(AI_ENFORCEMENT_CLAUSE, yesNoInstruction + " " + AI_ENFORCEMENT_CLAUSE) : basePrompt;
   }
 
   // Fallback based on card count
   const cardCount = cards.length;
 
   if (cardCount === 1) {
-    return SPREAD_PROMPTS["single-card"](questionContext, cardList);
+    const base = SPREAD_PROMPTS["single-card"](questionContext, cardList);
+    return yesNoInstruction ? base.replace(AI_ENFORCEMENT_CLAUSE, yesNoInstruction + " " + AI_ENFORCEMENT_CLAUSE) : base;
   } else if (cardCount === 3) {
-    return SPREAD_PROMPTS["sentence-3"](questionContext, cardList);
+    const base = SPREAD_PROMPTS["sentence-3"](questionContext, cardList);
+    return yesNoInstruction ? base.replace(AI_ENFORCEMENT_CLAUSE, yesNoInstruction + " " + AI_ENFORCEMENT_CLAUSE) : base;
   } else if (cardCount === 5) {
-    return SPREAD_PROMPTS["sentence-5"](questionContext, cardList);
+    const base = SPREAD_PROMPTS["sentence-5"](questionContext, cardList);
+    return yesNoInstruction ? base.replace(AI_ENFORCEMENT_CLAUSE, yesNoInstruction + " " + AI_ENFORCEMENT_CLAUSE) : base;
   } else if (cardCount === 7) {
     return `${questionContext}
 Cards: ${cardList}
-Read these seven cards as one connected answer. 6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`;
+Read these seven cards as one connected answer. 6-8 sentences.${yesNoInstruction} ${AI_ENFORCEMENT_CLAUSE}`;
   } else if (cardCount === 9) {
-    return SPREAD_PROMPTS["comprehensive"](questionContext, cardList);
+    const base = SPREAD_PROMPTS["comprehensive"](questionContext, cardList);
+    return yesNoInstruction ? base.replace(AI_ENFORCEMENT_CLAUSE, yesNoInstruction + " " + AI_ENFORCEMENT_CLAUSE) : base;
   } else if (cardCount === 36) {
-    return SPREAD_PROMPTS["grand-tableau"](questionContext, cardList);
+    const base = SPREAD_PROMPTS["grand-tableau"](questionContext, cardList);
+    return yesNoInstruction ? base.replace(AI_ENFORCEMENT_CLAUSE, yesNoInstruction + " " + AI_ENFORCEMENT_CLAUSE) : base;
   }
 
   // Ultimate fallback
   return `${questionContext}
 Cards: ${cardList}
-Read the cards together to form one clear answer. Be direct and practical. ${AI_ENFORCEMENT_CLAUSE}`;
+Read the cards together to form one clear answer. Be direct and practical.${yesNoInstruction} ${AI_ENFORCEMENT_CLAUSE}`;
 }
 
 /**
