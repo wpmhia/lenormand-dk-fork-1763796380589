@@ -12,7 +12,7 @@ import { Calendar, User, Share2, Sparkles, XCircle } from "lucide-react";
 import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
 import { decodeReadingFromUrl, getCardById } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
-import { AIReadingResponse } from "@/lib/ai-config";
+import { AIReadingResponse } from "@/lib/prompt-builder";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 
 interface PageProps {

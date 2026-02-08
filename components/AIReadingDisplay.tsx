@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const ReactMarkdown = dynamic(() => import("react-markdown"), {
   ssr: false,
 });
-import { AIReadingResponse } from "@/lib/ai-config";
+import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";

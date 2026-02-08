@@ -3,11 +3,13 @@ export const runtime = "edge";
 // Set to 10 for Free plan compatibility, increase to 60 if on Pro
 export const maxDuration = 10;
 
-import { buildPrompt } from "@/lib/ai-config";
+import { buildPrompt } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getEnv } from "@/lib/env";
+import staticCardsData from "@/public/data/cards.json";
+import { Card } from "@/lib/types";
 
 // Use getEnv for edge runtime compatibility
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
@@ -15,6 +17,9 @@ const BASE_URL = "https://api.deepseek.com";
 
 const RATE_LIMIT = 3;  // Reduced from 5 to 3 requests per minute for free tier optimization
 const RATE_LIMIT_WINDOW = 60 * 1000;
+
+// Load cards data for keyword lookups
+const allCards = staticCardsData as Card[];
 
 // Response compression headers for reduced bandwidth
 const COMPRESSION_HEADERS = {
@@ -83,8 +88,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // Enrich cards with keywords for better AI grounding
+    const cardsWithKeywords = cards.map((c: { id: number; name: string }) => {
+      const cardData = allCards.find((card: Card) => card.id === c.id);
+      return {
+        id: c.id,
+        name: c.name,
+        keywords: cardData?.keywords || [],
+      };
+    });
+
     const prompt = buildPrompt(
-      cards,
+      cardsWithKeywords,
       spreadId || "sentence-3",
       question || "What do the cards show?",
     );

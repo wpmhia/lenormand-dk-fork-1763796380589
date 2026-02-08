@@ -11,6 +11,33 @@ import {
   AI_ENFORCEMENT_CLAUSE,
 } from "./constants";
 
+// ============================================================================
+// Types
+// ============================================================================
+
+export interface AIReadingRequest {
+  question: string;
+  cards: Array<{
+    id: number;
+    name: string;
+    position: number;
+  }>;
+  spreadId?: string;
+}
+
+export interface AIReadingResponse {
+  reading: string;
+  aiInterpretationId?: string;
+  wasContinued?: boolean;
+}
+
+interface CardInput {
+  id: number;
+  name: string;
+  keywords?: string[];
+  uprightMeaning?: string;
+}
+
 /**
  * Sanitize user input to prevent prompt injection
  */
@@ -34,13 +61,16 @@ function buildBasePersona(question: string): string {
 }
 
 /**
- * Format cards as comma-separated names only (no numbers)
+ * Format cards with their keywords for better AI grounding
+ * Includes top 3-4 keywords to help the AI understand traditional meanings
  */
-function formatCardList(
-  cards: Array<{ id: number; name: string }>,
-): string {
+function formatCardList(cards: CardInput[]): string {
   return cards
-    .map((c) => sanitizeInput(c.name, MAX_CARD_NAME_LENGTH))
+    .map((c) => {
+      const name = sanitizeInput(c.name, MAX_CARD_NAME_LENGTH);
+      const keywords = c.keywords?.slice(0, 3).join(", ");
+      return keywords ? `${name} (${keywords})` : name;
+    })
     .join(", ");
 }
 
@@ -154,7 +184,7 @@ ${AI_ENFORCEMENT_CLAUSE}`,
  * Build prompt for AI reading
  */
 export function buildPrompt(
-  cards: Array<{ id: number; name: string }>,
+  cards: CardInput[],
   spreadId: string,
   question: string,
 ): string {

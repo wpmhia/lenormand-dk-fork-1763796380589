@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { AIReadingResponse } from "@/lib/ai-config";
+import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 
