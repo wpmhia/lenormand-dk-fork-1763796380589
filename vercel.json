@@ -29,12 +29,6 @@
   },
   "functions": {
     "app/api/readings/interpret/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/readings/start/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/readings/status/route.ts": {
       "maxDuration": 10
     },
     "app/api/health/route.ts": {
@@ -65,16 +59,6 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/readings/start",
-      "destination": "/api/readings/interpret"
-    },
-    {
-      "source": "/api/readings/status",
-      "destination": "/api/readings/interpret"
     }
   ]
 }
