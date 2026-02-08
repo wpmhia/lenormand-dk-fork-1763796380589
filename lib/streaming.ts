@@ -1,19 +1,19 @@
-// Token budgets - reduced for minimal prompt approach and Vercel free plan optimization
-// With natural output format, we need fewer tokens than rigid structured format
+// Token budgets - allow full responses without truncation
+// Most Lenormand readings need 400-800 tokens for complete sentences
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 300;   // Reduced from 400: ~150-250 words natural flow
-  if (cardCount <= 5) return 500;   // Reduced from 600: ~250-400 words
-  if (cardCount <= 9) return 700;   // Reduced from 800: ~350-550 words
-  return 2200;                      // Reduced from 2500: Grand Tableau still comprehensive but more efficient
+  if (cardCount <= 3) return 600;   // 3-card: Full response without truncation (~300-400 words)
+  if (cardCount <= 5) return 800;   // 5-card: Complete reading (~400-500 words)
+  if (cardCount <= 9) return 1200;  // 9-card: Comprehensive without cutting off
+  return 2400;                      // Grand Tableau: Full detailed reading
 }
 
 // Timeout budgets - Vercel Free plan max is 10s, Pro is 60s
-// Reduced timeouts to minimize CPU usage and stay within free tier limits
+// Allow sufficient time for complete responses without truncation
 export function getTimeoutMs(cardCount: number): number {
-  if (cardCount <= 3) return 5000;   // Reduced from 6s: 5s for 3 cards
-  if (cardCount <= 5) return 6000;   // Reduced from 7s: 6s for 5 cards
-  if (cardCount <= 9) return 7000;   // Reduced from 8s: 7s for 9 cards
-  return 9500;                      // Reduced from 25s: 9.5s for Grand Tableau (stay under 10s maxDuration)
+  if (cardCount <= 3) return 8000;   // 8s for 3-card: allow full response
+  if (cardCount <= 5) return 9000;   // 9s for 5-card: allow complete reading
+  if (cardCount <= 9) return 9500;   // 9.5s for 9-card: stay under 10s maxDuration
+  return 9500;                       // 9.5s for Grand Tableau (stay under 10s maxDuration)
 }
 
 // Parse SSE stream data
