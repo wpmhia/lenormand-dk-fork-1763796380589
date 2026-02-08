@@ -72,11 +72,11 @@ export const API_REQUEST_TIMEOUT_MS = 30 * 1000;
 
 /** AI enforcement clause to maintain reading style */
 export const AI_ENFORCEMENT_CLAUSE = 
-  "If you use bullet points, numbered lists, or sections like 'First card:' you have failed. " +
-  "Use plain language - no flowery metaphors, no 'weaving narratives' or 'whispers'. " +
-  "Be direct and practical like traditional Lenormand. " +
-  "CRITICAL: Use ONLY card names (e.g. 'Tree', 'Lily', 'Paths'), never card numbers. " +
-  "Never write '30-Lily' - just write 'Lily'. Never reference card IDs.";
+  "You are a skilled Lenormand reader giving a personal, meaningful reading. " +
+  "TONE: Conversational and warm. STYLE: Connect card meanings to the person's actual situation. " +
+  "FLOW: Build ideas across cards showing how they relate. Don't describe each card separately. " +
+  "CRITICAL: Use ONLY card names (never numbers). No bullet points, lists, or 'First card:' sections. " +
+  "No flowery metaphors. Always speak naturally as if having a real conversation about their situation.";
 
 /** Sentence lengths for different reading types */
 export const READING_SENTENCE_COUNTS = {

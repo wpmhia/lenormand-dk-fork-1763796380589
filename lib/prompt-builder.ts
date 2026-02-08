@@ -50,47 +50,104 @@ function formatCardList(
 const SPREAD_PROMPTS: Record<string, (basePersona: string, cardList: string) => string> = {
   "single-card": (persona, cards) => `${persona}
 Card: ${cards}
-Give a direct answer based on this card. Keep it practical and concrete. 1-2 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Give a direct, personal answer based on this card. Speak naturally about what it means for their question. Don't just describe the card - help them understand it in their situation.
+
+1-2 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "sentence-3": (persona, cards) => `${persona}
 Cards: ${cards}
-Read these three cards as a sentence: first card modifies the second, which leads to the third. Be direct and practical. 3-5 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Read these three cards as a flowing story connected to the question:
+- First card influences or sets up the situation
+- Second card is the core issue or turning point
+- Third card shows where it leads
+
+Speak naturally, connecting the cards together. 4-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "past-present-future": (persona, cards) => `${persona}
 Cards: ${cards}
-Read through time: first card is what happened before, second card is the current situation, third card is what's coming. Connect them naturally in one paragraph. 4-5 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Show how the past has led to the present, and what the future holds. Rather than describing each card separately, weave them together to show the natural flow and consequences. Help them understand how each moment connects to the next.
+
+One flowing paragraph, 5-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "mind-body-spirit": (persona, cards) => `${persona}
 Cards: ${cards}
-Read through three levels: first card is thoughts/mental state, second is actions/physical situation, third is spiritual/deeper meaning. Connect them naturally. 4-5 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Read these three levels of their situation:
+- First card: thoughts/mental state/mind
+- Second card: actions/physical situation/body
+- Third card: deeper spiritual meaning
+
+Show how these three aspects work together and what it means for them. Connect them naturally. 4-6 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "yes-no-maybe": (persona, cards) => `${persona}
 Cards: ${cards}
-Start with YES, NO, or MAYBE in caps, then explain why based on the cards. Be direct and practical. 2-3 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Give a clear answer: YES, NO, or MAYBE. Then explain what the cards show about the situation - not just card meanings, but what they mean for their specific question. Make it personal and meaningful.
+
+2-3 sentences total. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "sentence-5": (persona, cards) => `${persona}
 Cards: ${cards}
-Read all five cards as one connected answer. Each card adds meaning to create the complete picture. 5-7 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+These five cards tell a complete story about the question. Show how they connect:
+- What's the core situation?
+- What's changing or what matters most?
+- Where does it lead?
+
+Speak naturally and personally, helping them understand the deeper meaning. 5-7 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "structured-reading": (persona, cards) => `${persona}
 Cards: ${cards}
-Read as subject → verb → object → modifier → outcome. Connect all five cards to form one clear statement. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Read these five cards as parts of a complete story: 
+- Subject (who/what it's about)
+- Verb (the action or dynamic)
+- Object (what it affects)
+- Modifier (the context or tone)
+- Outcome (where it leads)
+
+Connect them to form one clear statement about their question. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "week-ahead": (persona, cards) => `${persona}
 Cards: ${cards}
-Read the week ahead: show how each day's card connects to the next. One paragraph showing the progression. 6-8 sentences. No day-by-day listing. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Show how the week unfolds: how each day's energy connects to the next, showing the progression and flow of the week. Speak naturally about the rhythm and movement, not as separate days but as a flowing narrative.
+
+One paragraph, 6-8 sentences. No day-by-day listing. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "relationship-double-significator": (persona, cards) => `${persona}
 Cards: ${cards}
-Seven cards for two people: your past/present/future, the connection card, their past/present/future. Show how both paths relate. 6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
+
+Seven cards for two people: your past/present/future, the connection between you, and their past/present/future. Show how both paths relate and what the connection card reveals about the dynamic between you. Speak personally about what this means for the relationship.
+
+6-8 sentences. ${AI_ENFORCEMENT_CLAUSE}`,
 
   "comprehensive": (persona, cards) => `${persona}
 Cards: ${cards}
-Read the 3x3 grid: top row is past/context, middle row is present situation, bottom row is future/outcome. Focus on how the center card ties everything together. Two paragraphs. ${AI_ENFORCEMENT_CLAUSE}`,
+
+This 3x3 grid shows:
+- Top row: the past/context that led here
+- Middle row: the present situation and what matters now
+- Bottom row: where this is heading
+
+Write TWO paragraphs that weave these together into a coherent story. Show how the past led to the present, and how the present is leading to the future. Make it personal and meaningful to the question. The center card is key - it ties everything together.
+
+${AI_ENFORCEMENT_CLAUSE}`,
 
   "grand-tableau": (persona, cards) => `${persona}
 36 cards: ${cards}
-Read in three sections: cards 1-12 show the situation, 13-24 show people and relationships, 25-36 show outcome. Exactly 3 paragraphs. Find and mention the Significator (Man-28 or Woman-29). ${AI_ENFORCEMENT_CLAUSE}`,
+
+Read in three flowing sections:
+- Cards 1-12: the situation and what matters most right now
+- Cards 13-24: the people involved and what's happening in relationships
+- Cards 25-36: the outcome and where this is heading
+
+Find the Significator (Man or Woman card) and highlight how it sits in the overall story. Write THREE connected paragraphs that weave the cards into one coherent narrative about their life situation and what's unfolding.
+
+${AI_ENFORCEMENT_CLAUSE}`,
 };
 
 /**

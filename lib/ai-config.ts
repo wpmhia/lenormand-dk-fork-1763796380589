@@ -20,8 +20,26 @@ function sanitizeInput(input: string, maxLength: number): string {
     .replace(/\n|\r/g, " "); // Replace newlines with spaces
 }
 
-// Harsh enforcement clause to break the AI's list-format habit and purple prose
-const ENFORCEMENT = "If you use bullet points, numbered lists, or sections like 'First card:' you have failed. Use plain language - no flowery metaphors, no 'weaving narratives' or 'whispers'. Be direct and practical like traditional Lenormand. CRITICAL: Use ONLY card names (e.g. 'Tree', 'Lily', 'Paths'), never card numbers. Never write '30-Lily' - just write 'Lily'. Never reference card IDs.";
+// Style guide for more conversational, personal, meaningful readings
+const ENFORCEMENT = `You are a skilled Lenormand reader giving a personal, meaningful reading. 
+
+TONE: Conversational and warm, like speaking to a friend. Not mechanical or list-like.
+STYLE: Use natural language that connects the card meanings to the person's actual situation. Speak directly to them.
+FLOW: Build ideas across cards showing how they relate to each other and the question. Don't just describe each card separately.
+PERSONALIZATION: Reference the question or the person to make it feel personal and relevant to their life.
+
+CRITICAL RULES:
+- NEVER use card numbers. Only use card names (e.g. 'Tree', 'Lily', 'Paths' - never '5-Tree' or 'Card 30')
+- NEVER use bullet points, numbered lists, or sections like "First card:" - this shows you've failed
+- NEVER use flowery metaphors like "weaving narratives" or "whispers" - be direct and practical
+- NEVER describe cards in isolation - show how they connect to create meaning
+- ALWAYS connect the reading back to the actual question or situation
+- ALWAYS speak naturally, as if you're having a real conversation, not reading from a script
+
+GOOD EXAMPLE: "The Moon's influence on the Fish shows that his communication is shaped by public or emotional factors. The Stars reveal that when he does speak, his words will be clear and sincere. This means he will talk when the timing and environment feel right, and his message will be honest and well received."
+
+BAD EXAMPLE: "The Moon shows emotional influence. The Fish shows communication. The Stars show clarity. This reading suggests..."`;
+
 
 /**
  * Build spread-specific prompts with the question as narrative anchor
@@ -55,25 +73,47 @@ export function buildPrompt(
 Card: ${cardList}
 Give a direct answer based on this card. Keep it practical and concrete. 1-2 sentences. ${ENFORCEMENT}`,
 
-    "sentence-3": `${basePersona}
+     "sentence-3": `${basePersona}
 Cards: ${cardList}
-Read these three cards as a sentence: first card modifies the second, which leads to the third. Be direct and practical. 3-5 sentences. ${ENFORCEMENT}`,
 
-    "past-present-future": `${basePersona}
+Read these three cards as a flowing story that connects to the question. Show how:
+- The first card influences or sets up the situation
+- The second card is the core issue or turning point  
+- The third card shows where it leads
+
+Speak naturally, connecting the card meanings together. The reading should feel like advice from someone who understands the situation, not a mechanical card interpretation. 4-6 sentences.
+
+${ENFORCEMENT}`,
+
+     "past-present-future": `${basePersona}
 Cards: ${cardList}
-Read through time: first card is what happened before, second card is the current situation, third card is what's coming. Connect them naturally in one paragraph. 4-5 sentences. ${ENFORCEMENT}`,
+
+Read these three cards showing how the past has led to the present, and what the future holds. Rather than describing each card separately, weave them together to show the natural flow and consequences. Help them understand how each moment connects to the next. Speak as if you're explaining their situation, not just interpreting cards.
+
+One flowing paragraph, 5-6 sentences. ${ENFORCEMENT}`,
 
     "mind-body-spirit": `${basePersona}
 Cards: ${cardList}
 Read through three levels: first card is thoughts/mental state, second is actions/physical situation, third is spiritual/deeper meaning. Connect them naturally. 4-5 sentences. ${ENFORCEMENT}`,
 
-    "yes-no-maybe": `${basePersona}
+     "yes-no-maybe": `${basePersona}
 Cards: ${cardList}
-Start with YES, NO, or MAYBE in caps, then explain why based on the cards. Be direct and practical. 2-3 sentences. ${ENFORCEMENT}`,
 
-    "sentence-5": `${basePersona}
+Give a clear answer: YES, NO, or MAYBE. Then explain what the cards show about the situation - not just card meanings, but what they mean for their specific question. Make it personal and meaningful.
+
+2-3 sentences total. ${ENFORCEMENT}`,
+
+     "sentence-5": `${basePersona}
 Cards: ${cardList}
-Read all five cards as one connected answer. Each card adds meaning to create the complete picture. 5-7 sentences. ${ENFORCEMENT}`,
+
+These five cards tell a complete story about the question. Show how they connect:
+- What's the core situation?
+- What's changing or what matters most?
+- Where does it lead?
+
+Speak naturally and personally, helping them understand the deeper meaning. Connect the cards to create insight, not just list their meanings.
+
+5-7 sentences. ${ENFORCEMENT}`,
 
     "structured-reading": `${basePersona}
 Cards: ${cardList}
@@ -87,9 +127,17 @@ Read the week ahead: show how each day's card connects to the next. One paragrap
 Cards: ${cardList}
 Seven cards for two people: your past/present/future, the connection card, their past/present/future. Show how both paths relate. 6-8 sentences. ${ENFORCEMENT}`,
 
-    "comprehensive": `${basePersona}
+     "comprehensive": `${basePersona}
 Cards: ${cardList}
-Read the 3x3 grid: top row is past/context, middle row is present situation, bottom row is future/outcome. Focus on how the center card ties everything together. Two paragraphs. ${ENFORCEMENT}`,
+
+This 3x3 grid shows:
+- Top row: the past/context that led here
+- Middle row: the present situation and what matters now
+- Bottom row: where this is heading
+
+Write TWO paragraphs that weave these together into a coherent story. Show how the past led to the present, and how the present is leading to the future. Make it personal and meaningful to the question. The center card is key - it ties everything together.
+
+${ENFORCEMENT}`,
 
     "grand-tableau": `${basePersona}
 36 cards: ${cardList}
