@@ -236,7 +236,7 @@ export default function Home() {
         </div>
 
         <div className="mb-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Link href="/learn/introduction">
+          <Link href="/learn/history-basics">
             <Card className="group cursor-pointer border-border transition-all hover:border-primary/50 hover:shadow-lg">
               <CardHeader>
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20">
@@ -291,7 +291,7 @@ export default function Home() {
             </Card>
           </Link>
 
-          <Link href="/learn/reading-basics">
+          <Link href="/learn/reading-fundamentals">
             <Card className="group cursor-pointer border-border transition-all hover:border-primary/50 hover:shadow-lg">
               <CardHeader>
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20">

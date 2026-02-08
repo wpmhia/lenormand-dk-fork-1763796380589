@@ -53,22 +53,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/learn/introduction`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/learn/reading-basics`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/learn/history-basics`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/learn/reading-fundamentals`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/learn/card-meanings`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/learn/spreads`,
@@ -83,10 +83,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/learn/card-meanings`,
+      url: `${baseUrl}/learn/card-combinations`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/learn/marie-annes-system`,
@@ -95,16 +95,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/learn/card-combinations`,
+      url: `${baseUrl}/learn/flashcards`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.6,
     },
     {
-      url: `${baseUrl}/learn/reading-fundamentals`,
+      url: `${baseUrl}/learn/practice`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/learn/case-studies`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/learn/ethics`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     {
       url: `${baseUrl}/about`,

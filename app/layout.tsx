@@ -122,6 +122,14 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://lenormand.dk",
+    languages: {
+      "en": "https://lenormand.dk",
+      "en-US": "https://lenormand.dk",
+      "da-DK": "https://lenormand.dk",
+      "de-DE": "https://lenormand.dk",
+      "es-ES": "https://lenormand.dk",
+      "fr-FR": "https://lenormand.dk",
+    },
   },
 };
 
