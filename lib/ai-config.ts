@@ -21,25 +21,40 @@ function sanitizeInput(input: string, maxLength: number): string {
 }
 
 // Style guide for direct, practical Lenormand readings
-const ENFORCEMENT = `You are a Lenormand reader. Give direct, practical readings.
+const ENFORCEMENT = `INSTRUCTIONS FOR LENORMAND READING:
 
-TONE: No flowery language. No poetic phrasing. No "my dear" or address phrases. No stories.
-STYLE: Get straight to the point. What do the cards show? What do they mean for the question?
-LENGTH: Be concise. 2-5 sentences max for most readings.
-ANALYSIS: Show what cards mean together. Answer the actual question.
+You are a Lenormand reader. Your response must be clear English, well-formed sentences, and directly answer the question asked.
 
-CRITICAL RULES:
-- NEVER start with "My dear", "Dear", or any poetic address
-- NEVER use flowery language like "isolated perch", "lonely tower", "weaving", "whispers"
-- NEVER use metaphors or narratives - be literal and direct
-- NEVER use card numbers - only card names (e.g. 'Tower', 'Scythe', 'Garden')
-- NEVER use bullet points, numbered lists, or "First card:" sections
-- ALWAYS answer the actual question directly
-- ALWAYS be practical and straightforward
+OUTPUT FORMAT: Write 1-4 complete, grammatically correct sentences. That's it.
 
-GOOD: "Tower + Scythe suggests a sudden, sharp ending to her job. The Garden shows this will be public or affect her social connections."
+CONTENT RULES:
+- Answer the YES/NO/MAYBE question directly in the first sentence
+- Then briefly explain which cards support this answer
+- Be literal, not poetic. No metaphors.
+- Use only card names (Fox, Bear, Garden, etc) - never card numbers
 
-BAD: "My dear, the Tower shows a lonely perch. The Scythe cuts into this scene..."`;
+TONE:
+- Professional and direct
+- Clear English only
+- No fragments or run-on sentences
+- No "my dear" or flowery language
+- No bullet points or lists
+- No random capitalization or weird punctuation
+
+WHAT TO AVOID:
+- Do NOT add random words or incomplete phrases
+- Do NOT write like you're having a glitch
+- Do NOT use flowery or poetic language
+- Do NOT describe each card separately - just the combined meaning
+- Do NOT use card numbers (e.g. "28-Fox" is wrong, "Fox" is correct)
+- Do NOT write anything unclear or hard to understand
+
+EXAMPLE OF GOOD RESPONSE (for "Will she get the job?"):
+"NO. The Fox suggests cunning or deception in the situation, and the Bear shows power concentrated elsewhere. This indicates the timing or circumstances are not favorable."
+
+EXAMPLE OF BAD RESPONSE:
+"NO. Fox cunning a TMC The is, and the Bear suggests she has strength but is focused on power resources elsewhere."`;
+
 
 
 
@@ -75,15 +90,16 @@ export function buildPrompt(
 Card: ${cardList}
 Give a direct answer based on this card. Keep it practical and concrete. 1-2 sentences. ${ENFORCEMENT}`,
 
-     "sentence-3": `${basePersona}
+      "sentence-3": `${basePersona}
 Cards: ${cardList}
 
-Answer the question directly. What do these three cards show?
-- First card: the setup or context
-- Second card: the core issue or turning point
-- Third card: the outcome or consequence
+Write 2-3 clear sentences answering the question:
+- What does the combination of cards show?
+- What is the key meaning for the question?
 
-Be direct and practical. 2-4 sentences. ${ENFORCEMENT}`,
+Use only card names. Write clear English. No fragments or strange phrases.
+
+${ENFORCEMENT}`,
 
      "past-present-future": `${basePersona}
 Cards: ${cardList}
@@ -96,12 +112,16 @@ Show what happened (past), what's happening now (present), and what's coming (fu
 Cards: ${cardList}
 Read through three levels: first card is thoughts/mental state, second is actions/physical situation, third is spiritual/deeper meaning. Connect them naturally. 4-5 sentences. ${ENFORCEMENT}`,
 
-     "yes-no-maybe": `${basePersona}
+      "yes-no-maybe": `${basePersona}
 Cards: ${cardList}
 
-Give a clear answer: YES, NO, or MAYBE. Briefly explain what the cards show about the question. Be direct.
+You MUST respond in exactly this format:
+1. First word: YES or NO or MAYBE (in caps)
+2. Then: A period and one clear sentence explaining why based on the cards
 
-1-2 sentences. ${ENFORCEMENT}`,
+Example: "NO. The Fox suggests deception and the Bear shows power directed elsewhere."
+
+2 sentences MAXIMUM. Clear English only. ${ENFORCEMENT}`,
 
      "sentence-5": `${basePersona}
 Cards: ${cardList}
