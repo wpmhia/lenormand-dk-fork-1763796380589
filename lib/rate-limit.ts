@@ -1,7 +1,12 @@
 // Rate limiter with Redis support (falls back to in-memory)
 import { Redis } from "@upstash/redis";
 import { getEnv } from "./env";
-
+import {
+  DEFAULT_RATE_LIMIT,
+  DEFAULT_RATE_WINDOW_MS,
+  MAX_RATE_LIMIT_CACHE_SIZE,
+  RATE_LIMIT_EVICTION_PERCENTAGE,
+} from "./constants";
 
 const redisUrl = getEnv("UPSTASH_REDIS_REST_URL");
 const redisToken = getEnv("UPSTASH_REDIS_REST_TOKEN");
@@ -20,8 +25,6 @@ interface RateLimitEntry {
 }
 
 const ipCache = new Map<string, RateLimitEntry>();
-const CLEANUP_INTERVAL = 60 * 1000;
-const MAX_CACHE_SIZE = 10000; // Maximum entries to prevent memory exhaustion
 
 // Note: In serverless/Edge environments, setInterval persists across requests
 // and can cause memory issues. The LRU eviction in evictOldestEntries() handles
@@ -29,13 +32,13 @@ const MAX_CACHE_SIZE = 10000; // Maximum entries to prevent memory exhaustion
 
 // LRU eviction: remove oldest entries when cache exceeds max size
 function evictOldestEntries(): void {
-  if (ipCache.size <= MAX_CACHE_SIZE) return;
+  if (ipCache.size <= MAX_RATE_LIMIT_CACHE_SIZE) return;
   
   const entries = Array.from(ipCache.entries());
   entries.sort((a, b) => a[1].lastAccess - b[1].lastAccess);
   
-  // Remove oldest 20% of entries
-  const entriesToRemove = Math.floor(MAX_CACHE_SIZE * 0.2);
+  // Remove oldest entries based on configured percentage
+  const entriesToRemove = Math.floor(MAX_RATE_LIMIT_CACHE_SIZE * RATE_LIMIT_EVICTION_PERCENTAGE);
   for (let i = 0; i < entriesToRemove && i < entries.length; i++) {
     ipCache.delete(entries[i][0]);
   }
@@ -50,8 +53,8 @@ export interface RateLimitResult {
 
 export async function rateLimit(
   ip: string,
-  limit: number = 5,
-  windowMs: number = 60 * 1000,
+  limit: number = DEFAULT_RATE_LIMIT,
+  windowMs: number = DEFAULT_RATE_WINDOW_MS,
 ): Promise<RateLimitResult> {
   const now = Date.now();
   const key = `rate_limit:${ip}`;
