@@ -141,34 +141,57 @@ export default function SharedReadingPage({ params }: PageProps) {
           body: JSON.stringify(aiRequest),
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          let errorData;
-          try {
-            errorData = JSON.parse(errorText);
-          } catch {
-            errorData = { error: errorText || "Server error" };
-          }
-          throw new Error(errorData.error || "Server error");
-        }
+         if (!response.ok) {
+           const errorText = await response.text();
+           let errorData;
+           try {
+             errorData = JSON.parse(errorText);
+           } catch {
+             errorData = { error: errorText || "Server error" };
+           }
+           throw new Error(errorData.error || "Server error");
+         }
 
-        const responseText = await response.text();
-        let aiResult;
-        try {
-          aiResult = JSON.parse(responseText);
-        } catch (parseError) {
-          throw new Error("Invalid response format from server");
-        }
+         // Handle streaming response
+         const reader = response.body?.getReader();
+         const decoder = new TextDecoder();
+         let fullReading = "";
 
-        if (mountedRef.current) {
-          if (aiResult) {
-            setAiReading(aiResult);
-          } else {
-            setAiError(
-              "AI service returned no analysis. The reading is still available.",
-            );
-          }
-        }
+         if (reader) {
+           while (true) {
+             const { done, value } = await reader.read();
+             if (done) break;
+
+             const chunk = decoder.decode(value, { stream: true });
+             const lines = chunk.split("\n");
+
+             for (const line of lines) {
+               if (line.startsWith("data: ")) {
+                 const data = line.slice(6);
+                 if (data === "[DONE]") continue;
+
+                 try {
+                   const parsed = JSON.parse(data);
+                   const delta = parsed.choices?.[0]?.delta?.content;
+                   if (delta) {
+                     fullReading += delta;
+                     if (mountedRef.current) {
+                       setAiReading({ reading: fullReading });
+                     }
+                   }
+                 } catch {
+                   // Ignore parse errors for incomplete chunks
+                 }
+               }
+             }
+           }
+         }
+
+         if (!fullReading && mountedRef.current) {
+           setAiError(
+             "AI service returned no analysis. The reading is still available.",
+           );
+         }
       } catch (error) {
         if (mountedRef.current) {
           const errorMessage =
