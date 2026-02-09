@@ -86,12 +86,7 @@ export function Footer() {
                unoptimized
              />
            </a>
-            <div className="flex flex-col items-center justify-between gap-2 text-[10px] text-muted-foreground md:flex-row md:w-full">
-             <span>© 2026 Lenormand Intelligence</span>
-              <span className="flex items-center gap-1 whitespace-nowrap">
-                Made by <a href="https://humanstack.dk/" rel="follow" className="text-primary/80 hover:text-primary transition-colors font-medium">Humanstack</a>
-              </span>
-           </div>
+            <p className="text-[10px] text-muted-foreground">Made by <a href="https://humanstack.dk" className="underline">Humanstack</a></p>
          </div>
       </div>
     </footer>
