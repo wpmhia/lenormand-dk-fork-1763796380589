@@ -73,47 +73,17 @@ export function useAIAnalysis(
           throw new Error(data.error || "Failed to get reading");
         }
 
-        // Handle streaming response
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
-        let fullReading = "";
+         // Handle JSON response
+         const data = await response.json();
+         const fullReading = data.reading;
 
-        if (reader) {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+         if (!fullReading) {
+           throw new Error("No reading received");
+         }
 
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split("\n");
-
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
-                if (data === "[DONE]") continue;
-
-                try {
-                  const parsed = JSON.parse(data);
-                  const delta = parsed.choices?.[0]?.delta?.content;
-                  if (delta) {
-                    fullReading += delta;
-                    // Update reading progressively for better UX
-                    setAiReading({ reading: fullReading });
-                  }
-                } catch {
-                  // Ignore parse errors for incomplete chunks
-                }
-              }
-            }
-          }
-        }
-
-        if (!fullReading) {
-          throw new Error("No reading received");
-        }
-
-        setAiReading({ reading: fullReading });
-        lastError = null;
-        break; // Success, exit retry loop
+         setAiReading({ reading: fullReading });
+         lastError = null;
+         break; // Success, exit retry loop
       } catch (err: any) {
         lastError = err;
         
