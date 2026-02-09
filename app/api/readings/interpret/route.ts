@@ -5,8 +5,7 @@ export const maxDuration = 10;
 
 import { buildPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
-import { getTokenBudget, getTimeoutMs } from "@/lib/streaming";
-import { validateReading, logValidationResult } from "@/lib/output-validation";
+import { getTokenBudget } from "@/lib/streaming";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
@@ -16,17 +15,11 @@ import { Card } from "@/lib/types";
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";
 
-const RATE_LIMIT = 3;  // Reduced from 5 to 3 requests per minute for free tier optimization
-const RATE_LIMIT_WINDOW = 60 * 1000;
+const RATE_LIMIT = 5;  // 5 requests per minute
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute window
 
 // Load cards data for keyword lookups
 const allCards = staticCardsData as Card[];
-
-// Response compression headers for reduced bandwidth
-const COMPRESSION_HEADERS = {
-  "Content-Encoding": "gzip",
-  "Vary": "Accept-Encoding",
-};
 
 export async function POST(request: Request) {
   try {
@@ -105,14 +98,14 @@ export async function POST(request: Request) {
       question || "What do the cards show?",
     );
 
-    // Dynamic timeout based on card count
-    const timeoutMs = getTimeoutMs(cardCount);
+    // Aggressive timeout to stay under 10s maxDuration
+    const timeoutMs = 7000; // 7 seconds max for DeepSeek API call
     const maxTokens = getTokenBudget(cardCount);
 
     const abortController = new AbortController();
     const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
-    console.log("[API] Calling DeepSeek API with timeout:", timeoutMs, "maxTokens:", maxTokens);
+    console.log("[API] Calling DeepSeek API with 7s timeout, maxTokens:", maxTokens);
     
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
