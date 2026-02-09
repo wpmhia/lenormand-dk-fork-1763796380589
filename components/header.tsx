@@ -13,7 +13,7 @@ export function Header() {
         <div className="flex items-center space-x-2">
           <Link
             href="/"
-            className="logo-font text-base font-bold leading-normal transition-opacity hover:opacity-80 sm:text-lg"
+            className="logo-font text-sm font-bold leading-tight transition-opacity hover:opacity-80 sm:text-base md:text-lg"
           >
             <span className="relative inline-block">
               Lenormand

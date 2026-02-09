@@ -288,9 +288,9 @@ function NewReadingPageContent() {
             </Alert>
           )}
 
-          {/* Step 1: Setup */}
+           {/* Step 1: Setup */}
           {step === "setup" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="step-enter">
               <ReadingSetup
                 question={question}
                 onQuestionChange={setQuestion}
@@ -303,9 +303,9 @@ function NewReadingPageContent() {
             </div>
           )}
 
-          {/* Step 2: Drawing */}
+           {/* Step 2: Drawing */}
           {step === "drawing" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="step-enter">
               {method === "virtual" ? (
                 <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
                   <div className="mb-6 text-center">
@@ -352,9 +352,9 @@ function NewReadingPageContent() {
 
 
 
-          {/* Step 3: Results */}
+           {/* Step 3: Results */}
           {step === "results" && drawnCards.length > 0 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
+            <div className="step-enter space-y-6">
               {allCards.length > 0 ? (
                 <ReadingViewer
                   reading={{

@@ -41,10 +41,12 @@ export function AIReadingDisplay({
 
   if (isLoading) {
     return (
-      <AIThinkingIndicator
-        message="Consulting the cards..."
-        subtext="Reading the cards for clear, practical guidance"
-      />
+      <div className="consulting-glow rounded-2xl">
+        <AIThinkingIndicator
+          message="Consulting the cards..."
+          subtext="Reading the cards for clear, practical guidance"
+        />
+      </div>
     );
   }
 
