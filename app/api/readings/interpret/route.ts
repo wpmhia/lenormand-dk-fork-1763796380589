@@ -114,48 +114,61 @@ export async function POST(request: Request) {
 
     console.log("[API] Calling DeepSeek API with timeout:", timeoutMs, "maxTokens:", maxTokens);
     
-    const response = await fetch(`${BASE_URL}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-          { role: "system", content: buildSystemPrompt() },
-          { role: "user", content: prompt },
-        ],
-        temperature: 0.3,
-        top_p: 0.9,
-        max_tokens: maxTokens,
-        stream: true,
-      }),
-      signal: abortController.signal,
-    });
+     const response = await fetch(`${BASE_URL}/chat/completions`, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+       },
+       body: JSON.stringify({
+         model: "deepseek-chat",
+         messages: [
+           { role: "system", content: buildSystemPrompt() },
+           { role: "user", content: prompt },
+         ],
+         temperature: 0.3,
+         top_p: 0.9,
+         max_tokens: maxTokens,
+         stream: false,
+       }),
+       signal: abortController.signal,
+     });
 
-    clearTimeout(timeoutId);
+     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("[API] DeepSeek API error:", response.status, errorText);
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    console.log("[API] DeepSeek response OK, streaming...");
+     if (!response.ok) {
+       const errorText = await response.text();
+       console.error("[API] DeepSeek API error:", response.status, errorText);
+       throw new Error(`API error: ${response.status}`);
+     }
+     
+     console.log("[API] DeepSeek response OK");
 
-    // Direct passthrough - no caching (random cards make cache useless)
-    return new Response(response.body, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "Access-Control-Allow-Origin": "*",
-        "X-RateLimit-Limit": String(rateLimitResult.limit),
-        "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-        "X-RateLimit-Reset": String(rateLimitResult.reset),
-      },
-    });
+     const responseData = await response.json();
+     const reading = responseData.choices?.[0]?.message?.content || "";
+     
+     if (!reading) {
+       throw new Error("No content in API response");
+     }
+
+     // Return clean JSON response
+     return new Response(
+       JSON.stringify({
+         reading,
+         source: "deepseek",
+         partial: false,
+       }),
+       {
+         status: 200,
+         headers: {
+           "Content-Type": "application/json",
+           "Cache-Control": "no-cache",
+           "X-RateLimit-Limit": String(rateLimitResult.limit),
+           "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+           "X-RateLimit-Reset": String(rateLimitResult.reset),
+         },
+       }
+     );
   } catch (error: any) {
     console.error("[API] Interpret error:", error.name, error.message);
     
