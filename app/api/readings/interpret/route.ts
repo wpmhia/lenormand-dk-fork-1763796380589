@@ -98,14 +98,14 @@ export async function POST(request: Request) {
       question || "What do the cards show?",
     );
 
-    // Aggressive timeout to stay under 10s maxDuration
-    const timeoutMs = 7000; // 7 seconds max for DeepSeek API call
+     // Timeout to stay under 10s maxDuration with buffer
+     const timeoutMs = 8500; // 8.5 seconds max for DeepSeek API call
     const maxTokens = getTokenBudget(cardCount);
 
     const abortController = new AbortController();
     const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
-    console.log("[API] Calling DeepSeek API with 7s timeout, maxTokens:", maxTokens);
+     console.log("[API] Calling DeepSeek API with 8.5s timeout, maxTokens:", maxTokens);
     
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
@@ -122,46 +122,78 @@ export async function POST(request: Request) {
         temperature: 0.6,
         top_p: 0.9,
         max_tokens: maxTokens,
-        stream: false,
+        stream: true,
       }),
       signal: abortController.signal,
     });
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("[API] DeepSeek API error:", response.status, errorText);
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    console.log("[API] DeepSeek response OK");
+     if (!response.ok) {
+       const errorText = await response.text();
+       console.error("[API] DeepSeek API error:", response.status, errorText);
+       throw new Error(`API error: ${response.status}`);
+     }
+     
+     console.log("[API] DeepSeek response OK");
 
-    const responseData = await response.json();
-    const reading = responseData.choices?.[0]?.message?.content || "";
-    
-    if (!reading) {
-      throw new Error("No content in API response");
-    }
+     // Stream the response from DeepSeek directly
+     const encoder = new TextEncoder();
+     const decoder = new TextDecoder();
+     
+     const stream = new ReadableStream({
+       async start(controller) {
+         const reader = response.body?.getReader();
+         
+         if (!reader) {
+           controller.close();
+           return;
+         }
 
-    // Return clean JSON response
-    return new Response(
-      JSON.stringify({
-        reading,
-        source: "deepseek",
-        partial: false,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache",
-          "X-RateLimit-Limit": String(rateLimitResult.limit),
-          "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-          "X-RateLimit-Reset": String(rateLimitResult.reset),
-        },
-      }
-    );
+         try {
+           while (true) {
+             const { done, value } = await reader.read();
+             if (done) break;
+
+             const chunk = decoder.decode(value, { stream: true });
+             const lines = chunk.split("\n");
+
+             for (const line of lines) {
+               if (line.startsWith("data: ")) {
+                 const data = line.slice(6);
+                 if (data === "[DONE]") continue;
+                 
+                 try {
+                   const parsed = JSON.parse(data);
+                   // Pass through the streaming data from DeepSeek
+                   controller.enqueue(encoder.encode(`data: ${JSON.stringify(parsed)}\n\n`));
+                 } catch {
+                   // Ignore parse errors for incomplete chunks
+                 }
+               }
+             }
+           }
+         } catch (error) {
+           console.error("[API] Stream error:", error);
+           controller.error(error);
+         } finally {
+           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+           controller.close();
+         }
+       },
+     });
+
+     return new Response(stream, {
+       status: 200,
+       headers: {
+         "Content-Type": "text/event-stream",
+         "Cache-Control": "no-cache",
+         "Connection": "keep-alive",
+         "X-RateLimit-Limit": String(rateLimitResult.limit),
+         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+         "X-RateLimit-Reset": String(rateLimitResult.reset),
+       },
+     });
   } catch (error: any) {
     console.error("[API] Interpret error:", error.name, error.message);
     

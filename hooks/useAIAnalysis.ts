@@ -11,6 +11,9 @@ interface UseAIAnalysisReturn {
   resetAnalysis: () => void;
 }
 
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY = 1000; // 1 second
+
 export function useAIAnalysis(
   question: string,
   drawnCards: ReadingCard[],
@@ -28,76 +31,106 @@ export function useAIAnalysis(
     setIsLoading(true);
     setError(null);
 
-    try {
-      const cards = drawnCards.map((card) => {
-        const cardData = getCardById(allCards, card.id);
-        return {
-          id: card.id,
-          name: cardData?.name || `Card ${card.id}`,
-          position: card.position,
-        };
-      });
+    let lastError: any = null;
 
-      // Use streaming endpoint for lower CPU usage (10s max vs 30s)
-      const response = await fetch("/api/readings/interpret", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question,
-          cards,
-          spreadId: selectedSpreadId,
-        }),
-      });
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        const cards = drawnCards.map((card) => {
+          const cardData = getCardById(allCards, card.id);
+          return {
+            id: card.id,
+            name: cardData?.name || `Card ${card.id}`,
+            position: card.position,
+          };
+        });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to get reading");
-      }
+        // Use streaming endpoint
+        const response = await fetch("/api/readings/interpret", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question,
+            cards,
+            spreadId: selectedSpreadId,
+          }),
+        });
 
-      // Handle streaming response
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      let fullReading = "";
+        if (!response.ok) {
+          const data = await response.json();
+          
+          // Rate limit - use exponential backoff
+          if (response.status === 429) {
+            const retryAfter = parseInt(data.retryAfter || "5", 10);
+            const delayMs = Math.min(retryAfter * 1000, 30000);
+            
+            if (attempt < MAX_RETRIES - 1) {
+              console.log(`[useAIAnalysis] Rate limited, retrying in ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+              await new Promise(resolve => setTimeout(resolve, delayMs));
+              continue;
+            }
+          }
+          
+          throw new Error(data.error || "Failed to get reading");
+        }
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let fullReading = "";
 
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split("\n");
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") continue;
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split("\n");
 
-              try {
-                const parsed = JSON.parse(data);
-                const delta = parsed.choices?.[0]?.delta?.content;
-                if (delta) {
-                  fullReading += delta;
-                  // Update reading progressively for better UX
-                  setAiReading({ reading: fullReading });
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+                if (data === "[DONE]") continue;
+
+                try {
+                  const parsed = JSON.parse(data);
+                  const delta = parsed.choices?.[0]?.delta?.content;
+                  if (delta) {
+                    fullReading += delta;
+                    // Update reading progressively for better UX
+                    setAiReading({ reading: fullReading });
+                  }
+                } catch {
+                  // Ignore parse errors for incomplete chunks
                 }
-              } catch {
-                // Ignore parse errors for incomplete chunks
               }
             }
           }
         }
-      }
 
-      if (!fullReading) {
-        throw new Error("No reading received");
-      }
+        if (!fullReading) {
+          throw new Error("No reading received");
+        }
 
-      setAiReading({ reading: fullReading });
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
+        setAiReading({ reading: fullReading });
+        lastError = null;
+        break; // Success, exit retry loop
+      } catch (err: any) {
+        lastError = err;
+        
+        // Exponential backoff for retries
+        if (attempt < MAX_RETRIES - 1) {
+          const delayMs = INITIAL_RETRY_DELAY * Math.pow(2, attempt);
+          console.log(`[useAIAnalysis] Attempt ${attempt + 1} failed, retrying in ${delayMs}ms:`, err.message);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+      }
     }
+
+    if (lastError) {
+      setError(lastError.message || "Something went wrong");
+    }
+
+    setIsLoading(false);
   }, [question, drawnCards, allCards, selectedSpreadId, enabled]);
 
   const resetAnalysis = useCallback(() => {
