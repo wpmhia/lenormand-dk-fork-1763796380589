@@ -143,6 +143,11 @@ const structuredData = {
   url: "https://lenormand.dk",
   applicationCategory: "Lifestyle",
   isAccessibleForFree: true,
+  developer: {
+    "@type": "Organization",
+    name: "Humanstack",
+    url: "https://humanstack.dk/",
+  },
 };
 
 const faqSchema = {
