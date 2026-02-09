@@ -384,12 +384,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Humanstack Credit Section */}
-      <div className="container-section px-4 py-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          Built by <a href="https://humanstack.dk/" className="text-primary hover:text-primary/80 transition-colors font-medium">Humanstack</a> - AI-powered web solutions for Danish businesses
-        </p>
-      </div>
+
     </main>
   );
 }
