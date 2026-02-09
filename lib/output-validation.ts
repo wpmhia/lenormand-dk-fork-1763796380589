@@ -20,6 +20,12 @@ const GARBLED_PATTERNS = [
   { pattern: /\bof\s+and\s+/i, desc: "garbled_of_and" },
   { pattern: /\bthe\s+\w+\s*,\s*the\s+\w+\s*$/m, desc: "fragment_card_list" },
   { pattern: /\s{2,}/g, desc: "excessive_whitespace" },
+  // Grammar fragments
+  { pattern: /\bthe\w+\b/i, desc: "missing_space_after_the" },  // "theover" -> "the over"
+  { pattern: /\w+that\b/i, desc: "missing_space_before_that" },  // "fortunatethat" or orphaned "that"
+  { pattern: /\bto\s+the\s*$/m, desc: "fragment_to_the" },  // "hopeful to the."
+  { pattern: /\bthe\s*$/m, desc: "fragment_the" },  // sentence ending with "the"
+  { pattern: /\ba\s*$/m, desc: "fragment_a" },  // sentence ending with "a"
 ];
 
 // Patterns for structural issues
@@ -55,6 +61,14 @@ export function validateReading(text: string): ValidationResult {
   const lastSentence = text.split(/[.!?]/).pop()?.trim();
   if (lastSentence && lastSentence.length > 0 && lastSentence.length < 20) {
     issues.push("incomplete_final_sentence");
+    severity = "high";
+  }
+
+  // Check for orphaned words (single word after final punctuation)
+  const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
+  const lastRealSentence = sentences[sentences.length - 1]?.trim();
+  if (lastRealSentence && lastRealSentence.split(/\s+/).length < 3) {
+    issues.push("incomplete_final_sentence_orphaned_words");
     severity = "high";
   }
 
