@@ -72,11 +72,14 @@ export const API_REQUEST_TIMEOUT_MS = 30 * 1000;
 
 /** AI enforcement clause to maintain reading style - appended to user prompts */
 export const AI_ENFORCEMENT_CLAUSE =
-  "GRAMMAR: Write in complete, grammatically correct sentences. No fragments, no missing words like 'isn' or incomplete phrases. " +
+  "GRAMMAR: Every sentence must be complete and grammatically correct. " +
+  "NEVER write incomplete sentences like 'suggesting the outcome ultimately a sense of stability' (missing verb/structure). " +
+  "Every phrase must have proper subject-verb agreement. Do NOT omit articles, verbs, or prepositions. " +
   "CARDS: Reference cards by name only, never by numbers. " +
   "CONTENT: Answer ONLY from the cards shown. NEVER invent days, dates, times, or details not in the spread. " +
   "STYLE: One flowing narrative paragraph. No bullet points, no 'First card:' labels, no section headers, no lists. " +
-  "TONE: Conversational and direct. Weave cards together into a coherent story that answers their specific question.";
+  "TONE: Conversational and direct. Weave cards together into a coherent story that answers their specific question. " +
+  "Quality check before responding: Read your answer aloud mentally. Every sentence must be complete and readable.";
 
 /** Sentence lengths for different reading types */
 export const READING_SENTENCE_COUNTS = {
