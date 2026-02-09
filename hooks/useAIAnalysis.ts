@@ -73,7 +73,7 @@ export function useAIAnalysis(
           throw new Error(data.error || "Failed to get reading");
         }
 
-         // Handle JSON response
+         // Parse JSON response
          const data = await response.json();
          const fullReading = data.reading;
 

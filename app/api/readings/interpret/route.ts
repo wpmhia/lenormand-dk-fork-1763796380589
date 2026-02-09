@@ -100,10 +100,10 @@ export async function POST(request: Request) {
 
      // Timeout to stay under 10s maxDuration with buffer
      const timeoutMs = 8500; // 8.5 seconds max for DeepSeek API call
-    const maxTokens = getTokenBudget(cardCount);
+     const maxTokens = getTokenBudget(cardCount);
 
-    const abortController = new AbortController();
-    const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
+     const abortController = new AbortController();
+     const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
      console.log("[API] Calling DeepSeek API with 8.5s timeout, maxTokens:", maxTokens);
     
