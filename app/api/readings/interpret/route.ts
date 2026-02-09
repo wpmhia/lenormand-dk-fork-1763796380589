@@ -122,12 +122,12 @@ export async function POST(request: Request) {
         temperature: 0.6,
         top_p: 0.9,
         max_tokens: maxTokens,
-        stream: true,
+        stream: false,
       }),
       signal: abortController.signal,
     });
 
-    clearTimeout(timeoutId);
+     clearTimeout(timeoutId);
 
      if (!response.ok) {
        const errorText = await response.text();
@@ -137,63 +137,30 @@ export async function POST(request: Request) {
      
      console.log("[API] DeepSeek response OK");
 
-     // Stream the response from DeepSeek directly
-     const encoder = new TextEncoder();
-     const decoder = new TextDecoder();
+     const responseData = await response.json();
+     const reading = responseData.choices?.[0]?.message?.content || "";
      
-     const stream = new ReadableStream({
-       async start(controller) {
-         const reader = response.body?.getReader();
-         
-         if (!reader) {
-           controller.close();
-           return;
-         }
+     if (!reading) {
+       throw new Error("No content in API response");
+     }
 
-         try {
-           while (true) {
-             const { done, value } = await reader.read();
-             if (done) break;
-
-             const chunk = decoder.decode(value, { stream: true });
-             const lines = chunk.split("\n");
-
-             for (const line of lines) {
-               if (line.startsWith("data: ")) {
-                 const data = line.slice(6);
-                 if (data === "[DONE]") continue;
-                 
-                 try {
-                   const parsed = JSON.parse(data);
-                   // Pass through the streaming data from DeepSeek
-                   controller.enqueue(encoder.encode(`data: ${JSON.stringify(parsed)}\n\n`));
-                 } catch {
-                   // Ignore parse errors for incomplete chunks
-                 }
-               }
-             }
-           }
-         } catch (error) {
-           console.error("[API] Stream error:", error);
-           controller.error(error);
-         } finally {
-           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-           controller.close();
-         }
-       },
-     });
-
-     return new Response(stream, {
-       status: 200,
-       headers: {
-         "Content-Type": "text/event-stream",
-         "Cache-Control": "no-cache",
-         "Connection": "keep-alive",
-         "X-RateLimit-Limit": String(rateLimitResult.limit),
-         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-         "X-RateLimit-Reset": String(rateLimitResult.reset),
-       },
-     });
+     // Return as JSON
+     return new Response(
+       JSON.stringify({
+         reading,
+         source: "deepseek",
+       }),
+       {
+         status: 200,
+         headers: {
+           "Content-Type": "application/json",
+           "Cache-Control": "no-cache",
+           "X-RateLimit-Limit": String(rateLimitResult.limit),
+           "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+           "X-RateLimit-Reset": String(rateLimitResult.reset),
+         },
+       }
+     );
   } catch (error: any) {
     console.error("[API] Interpret error:", error.name, error.message);
     

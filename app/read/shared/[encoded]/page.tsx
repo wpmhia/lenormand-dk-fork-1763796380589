@@ -152,45 +152,17 @@ export default function SharedReadingPage({ params }: PageProps) {
            throw new Error(errorData.error || "Server error");
          }
 
-         // Handle streaming response
-         const reader = response.body?.getReader();
-         const decoder = new TextDecoder();
-         let fullReading = "";
-
-         if (reader) {
-           while (true) {
-             const { done, value } = await reader.read();
-             if (done) break;
-
-             const chunk = decoder.decode(value, { stream: true });
-             const lines = chunk.split("\n");
-
-             for (const line of lines) {
-               if (line.startsWith("data: ")) {
-                 const data = line.slice(6);
-                 if (data === "[DONE]") continue;
-
-                 try {
-                   const parsed = JSON.parse(data);
-                   const delta = parsed.choices?.[0]?.delta?.content;
-                   if (delta) {
-                     fullReading += delta;
-                     if (mountedRef.current) {
-                       setAiReading({ reading: fullReading });
-                     }
-                   }
-                 } catch {
-                   // Ignore parse errors for incomplete chunks
-                 }
-               }
-             }
+         // Handle JSON response
+         const aiResult = await response.json();
+         
+         if (mountedRef.current) {
+           if (aiResult?.reading) {
+             setAiReading(aiResult);
+           } else {
+             setAiError(
+               "AI service returned no analysis. The reading is still available.",
+             );
            }
-         }
-
-         if (!fullReading && mountedRef.current) {
-           setAiError(
-             "AI service returned no analysis. The reading is still available.",
-           );
          }
       } catch (error) {
         if (mountedRef.current) {
