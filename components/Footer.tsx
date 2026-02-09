@@ -70,31 +70,31 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col items-center justify-center gap-4 border-t border-border/50 pt-4">
-          <a
-            href="https://ko-fi.com/Y8Y81NVDEK"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center"
-          >
-            <Image
-              width={144}
-              height={36}
-              style={{ border: 0, height: 36, width: "auto" }}
-              src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
-              alt="Buy Me a Coffee at ko-fi.com"
-              unoptimized
-            />
-          </a>
-          <div className="flex flex-col items-center justify-between gap-2 text-[10px] text-muted-foreground md:flex-row md:w-full">
-            <span>© 2026 Lenormand Intelligence</span>
-            <span className="flex items-center gap-1">
-              Made with
-              <Heart className="h-2.5 w-2.5 text-primary/60" />
-              in Denmark
-            </span>
-          </div>
-        </div>
+         <div className="mt-4 flex flex-col items-center justify-center gap-4 border-t border-border/50 pt-4">
+           <a
+             href="https://ko-fi.com/Y8Y81NVDEK"
+             target="_blank"
+             rel="noopener noreferrer"
+             className="inline-flex items-center justify-center"
+           >
+             <Image
+               width={144}
+               height={36}
+               style={{ border: 0, height: 36, width: "auto" }}
+               src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
+               alt="Buy Me a Coffee at ko-fi.com"
+               unoptimized
+             />
+           </a>
+           <div className="flex flex-col items-center justify-between gap-2 text-[10px] text-muted-foreground md:flex-row md:w-full">
+             <span>© 2026 Lenormand Intelligence</span>
+             <span className="flex items-center gap-1">
+               Made with
+               <Heart className="h-2.5 w-2.5 text-primary/60" />
+               by <a href="https://humanstack.dk/" rel="follow" className="text-primary/80 hover:text-primary transition-colors font-medium">Humanstack</a>
+             </span>
+           </div>
+         </div>
       </div>
     </footer>
   );
