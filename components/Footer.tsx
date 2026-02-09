@@ -88,11 +88,9 @@ export function Footer() {
            </a>
             <div className="flex flex-col items-center justify-between gap-2 text-[10px] text-muted-foreground md:flex-row md:w-full">
              <span>© 2026 Lenormand Intelligence</span>
-             <span className="flex items-center gap-1 whitespace-nowrap">
-               Made with
-               <Heart className="h-2.5 w-2.5 text-primary/60" />
-               by&nbsp;<a href="https://humanstack.dk/" rel="follow" className="text-primary/80 hover:text-primary transition-colors font-medium">Humanstack</a>
-             </span>
+              <span className="flex items-center gap-1 whitespace-nowrap">
+                Made by <a href="https://humanstack.dk/" rel="follow" className="text-primary/80 hover:text-primary transition-colors font-medium">Humanstack</a>
+              </span>
            </div>
          </div>
       </div>
