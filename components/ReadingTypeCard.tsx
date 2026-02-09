@@ -30,7 +30,7 @@ export function ReadingTypeCard({
   const href = spreadId ? `/read/new?spread=${spreadId}` : "/read/new";
 
   const cardContent = (
-    <Card className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm ${disabled ? 'opacity-60' : 'cursor-pointer hover:border-primary/50 hover:shadow-lg transition-all'}`}>
+    <Card className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm ${disabled ? 'opacity-60' : 'cursor-pointer hover:border-primary/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300'}`}>
       <CardHeader className="relative z-10 pb-3">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">

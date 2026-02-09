@@ -25,8 +25,8 @@ export default function Home() {
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
       <div className="container-hero">
-        <div className="relative mb-8 flex flex-col items-center justify-center gap-8 lg:flex-row lg:items-center lg:justify-center lg:gap-12">
-          <div className="space-component relative z-10 overflow-visible text-center lg:max-w-md lg:text-left">
+         <div className="relative mb-8 flex flex-col items-center justify-center gap-8 md:flex-row md:items-center md:justify-center md:gap-12">
+           <div className="space-component relative z-10 overflow-visible text-center md:max-w-md md:text-left">
             <h1 className="logo-font relative mb-4 overflow-visible pb-2 text-4xl font-bold leading-normal text-foreground sm:text-5xl lg:text-6xl xl:text-7xl">
               <span className="relative inline-block">
                 Lenormand
@@ -36,10 +36,10 @@ export default function Home() {
                 Intelligence
               </span>
             </h1>
-            <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
+             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl md:mx-0">
               Clear answers from the 36-card Lenormand system. No symbolism to decode - just practical guidance.
             </p>
-            <div className="flex flex-col items-center gap-4 sm:flex-row lg:items-start lg:justify-start">
+             <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start md:justify-start">
               <Link href="/read/new">
                 <Button size="lg">Get Your Reading</Button>
               </Link>
@@ -62,7 +62,7 @@ export default function Home() {
                 height={300}
                 priority
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="block h-auto w-full max-w-xs rounded-md border-0 object-cover shadow-none lg:max-w-sm"
+                 className="block h-auto w-full max-w-xs rounded-lg border-0 object-cover shadow-lg transition-shadow duration-300 hover:shadow-xl md:max-w-sm"
               />
             </div>
           </div>

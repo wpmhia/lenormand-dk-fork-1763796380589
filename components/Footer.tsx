@@ -13,16 +13,16 @@ export function Footer() {
                 Lenormand
               </h3>
             </Link>
-            <p className="mt-1 text-[10px] text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               AI-Enhanced Divination
             </p>
           </div>
 
           <div>
-            <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Explore
             </h4>
-            <ul className="space-y-1 text-xs">
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <Link href="/" className="text-muted-foreground transition-colors hover:text-primary">
                   Home
@@ -47,10 +47,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Links
             </h4>
-            <ul className="space-y-1 text-xs">
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <Link href="/about" className="text-muted-foreground transition-colors hover:text-primary">
                   About
@@ -86,7 +86,7 @@ export function Footer() {
                unoptimized
              />
            </a>
-            <p className="text-[10px] text-muted-foreground">Made by <a href="https://humanstack.dk" className="underline">Humanstack</a></p>
+             <p className="text-xs text-muted-foreground">Made by <a href="https://humanstack.dk" className="underline">Humanstack</a></p>
          </div>
       </div>
     </footer>

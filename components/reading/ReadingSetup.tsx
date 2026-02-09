@@ -54,7 +54,7 @@ export function ReadingSetup({
               setCharCount(e.target.value.length);
             }}
             placeholder="What guidance do the cards have for me today?"
-            className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
+            className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-lg"
             maxLength={500}
             aria-describedby="question-count"
           />

@@ -80,7 +80,7 @@ function CardInner({
     <>
       <div
         className={cn(
-          "card-mystical group relative cursor-pointer overflow-hidden rounded-xl will-change-transform focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+           "card-mystical group relative cursor-pointer overflow-hidden rounded-xl transition-all duration-300 will-change-transform hover:scale-105 hover:shadow-elevation-4 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
           selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
           sizeClasses[size],
           className,
