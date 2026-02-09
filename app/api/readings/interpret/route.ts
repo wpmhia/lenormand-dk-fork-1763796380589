@@ -171,10 +171,10 @@ export async function POST(request: Request) {
     
     return new Response(
       JSON.stringify({
-        error: isTimeout ? "AI response timed out" : "Stream failed",
+        error: isTimeout ? "AI response timed out" : "Reading failed",
         reading: isTimeout 
-          ? "The spirits are taking time to whisper their message. Tap to retry, or reflect on the traditional meanings of your cards."
-          : "The cards whisper through the mist. Reflect on their traditional meanings—the answer emerges from within.",
+          ? "The AI took too long to respond. Tap to retry, or check the traditional meanings of your cards below."
+          : "Unable to generate a reading right now. Please check the traditional card meanings below, or try again.",
         source: "fallback",
         timedOut: isTimeout,
         partial: true,
