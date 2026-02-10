@@ -134,7 +134,9 @@ export async function POST(request: Request) {
           clearTimeout(timeoutId);
 
           if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+            const errorText = await response.text();
+            console.error("[API] DeepSeek API error:", response.status, errorText);
+            throw new Error(`API error: ${response.status} - ${errorText}`);
           }
 
           const reader = response.body?.getReader();
@@ -182,16 +184,18 @@ export async function POST(request: Request) {
           controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
+          console.error("[API] Stream error:", error.name, error.message);
           const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
           const errorData = JSON.stringify({
             type: "error",
             error: isTimeout ? "AI response timed out" : "Reading failed",
+            message: error.message || "Unknown error",
             reading: isTimeout
               ? "The AI took too long to respond. Tap to retry, or check the traditional meanings of your cards below."
               : "Unable to generate a reading right now.",
           });
           controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
-          controller.error(error);
+          controller.close();
         }
       },
     });
