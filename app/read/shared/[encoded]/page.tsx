@@ -52,6 +52,7 @@ export default function SharedReadingPage({ params }: PageProps) {
   // AI-related state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiStreaming, setAiStreaming] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiErrorDetails, setAiErrorDetails] = useState<{
     type?: string;
@@ -105,6 +106,7 @@ export default function SharedReadingPage({ params }: PageProps) {
       if (!mountedRef.current || !reading) return;
 
       setAiLoading(true);
+      setAiStreaming(false);
       setAiError(null);
       setAiErrorDetails(null);
       setAiAttempted(true);
@@ -131,6 +133,7 @@ export default function SharedReadingPage({ params }: PageProps) {
             name: getCardById(allCards, card.id)?.name || "Unknown",
             position: card.position,
           })),
+          spreadId: getSpreadIdFromLayoutType(reading.layoutType),
         };
 
         const response = await fetch("/api/readings/interpret", {
@@ -141,29 +144,94 @@ export default function SharedReadingPage({ params }: PageProps) {
           body: JSON.stringify(aiRequest),
         });
 
-         if (!response.ok) {
-           const errorText = await response.text();
-           let errorData;
-           try {
-             errorData = JSON.parse(errorText);
-           } catch {
-             errorData = { error: errorText || "Server error" };
-           }
-           throw new Error(errorData.error || "Server error");
-         }
+        if (!response.ok) {
+          const errorText = await response.text();
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = { error: errorText || "Server error" };
+          }
+          throw new Error(errorData.error || "Server error");
+        }
 
-         // Handle JSON response
-         const aiResult = await response.json();
-         
-         if (mountedRef.current) {
-           if (aiResult?.reading) {
-             setAiReading(aiResult);
-           } else {
-             setAiError(
-               "AI service returned no analysis. The reading is still available.",
-             );
-           }
-         }
+        // Check if response is SSE stream
+        const contentType = response.headers.get("content-type");
+        if (contentType?.includes("text/event-stream")) {
+          // Handle SSE streaming response
+          const reader = response.body?.getReader();
+          if (!reader) {
+            throw new Error("No response body");
+          }
+
+          if (mountedRef.current) {
+            setAiLoading(false);
+            setAiStreaming(true);
+          }
+
+          const decoder = new TextDecoder();
+          let accumulatedText = "";
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split("\n");
+
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+                try {
+                  const parsed = JSON.parse(data);
+
+                  if (parsed.type === "chunk" && parsed.content) {
+                    accumulatedText += parsed.content;
+                    // Update UI with progressive text
+                    if (mountedRef.current) {
+                      setAiReading({
+                        reading: accumulatedText,
+                        source: "deepseek",
+                      });
+                    }
+                  } else if (parsed.type === "done") {
+                    // Stream complete
+                    if (mountedRef.current) {
+                      setAiStreaming(false);
+                    }
+                    break;
+                  } else if (parsed.type === "error") {
+                    throw new Error(parsed.error || "Stream error");
+                  }
+                } catch (e) {
+                  // Ignore parse errors for incomplete chunks
+                }
+              }
+            }
+          }
+
+          if (mountedRef.current) {
+            setAiStreaming(false);
+            if (!accumulatedText) {
+              setAiError(
+                "AI service returned no analysis. The reading is still available.",
+              );
+            }
+          }
+        } else {
+          // Fallback: Handle JSON response
+          const aiResult = await response.json();
+          
+          if (mountedRef.current) {
+            if (aiResult?.reading) {
+              setAiReading(aiResult);
+            } else {
+              setAiError(
+                "AI service returned no analysis. The reading is still available.",
+              );
+            }
+          }
+        }
       } catch (error) {
         if (mountedRef.current) {
           const errorMessage =
@@ -194,13 +262,14 @@ export default function SharedReadingPage({ params }: PageProps) {
             });
           }
         }
-      } finally {
+       } finally {
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
         }
         if (mountedRef.current) {
           setAiLoading(false);
+          setAiStreaming(false);
         }
       }
     },
@@ -280,6 +349,7 @@ export default function SharedReadingPage({ params }: PageProps) {
             <AIReadingDisplay
               aiReading={aiReading}
               isLoading={false}
+              isStreaming={aiStreaming}
               error={null}
               onRetry={() => performAIAnalysis(reading.cards)}
             />

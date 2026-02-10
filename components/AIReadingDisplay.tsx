@@ -16,6 +16,7 @@ import { RefreshCw, Copy, Check, AlertCircle } from "lucide-react";
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
   isLoading: boolean;
+  isStreaming?: boolean;
   error: string | null;
   onRetry: () => void;
 }
@@ -23,6 +24,7 @@ interface AIReadingDisplayProps {
 export function AIReadingDisplay({
   aiReading,
   isLoading,
+  isStreaming = false,
   error,
   onRetry,
 }: AIReadingDisplayProps) {
@@ -106,10 +108,17 @@ export function AIReadingDisplay({
         </div>
 
         <div className="mt-6 flex items-center justify-center border-t pt-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Check className="h-4 w-4 text-green-500" />
-            <span>Reading complete</span>
-          </div>
+          {isStreaming ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="h-4 w-4 animate-pulse rounded-full bg-primary"></div>
+              <span>Streaming reading...</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Check className="h-4 w-4 text-green-500" />
+              <span>Reading complete</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

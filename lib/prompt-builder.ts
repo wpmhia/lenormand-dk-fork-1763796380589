@@ -26,6 +26,7 @@ export interface AIReadingRequest {
 
 export interface AIReadingResponse {
   reading: string;
+  source?: string;
   aiInterpretationId?: string;
   wasContinued?: boolean;
 }

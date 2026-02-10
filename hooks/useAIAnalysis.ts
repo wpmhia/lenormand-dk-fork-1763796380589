@@ -57,33 +57,66 @@ export function useAIAnalysis(
 
         if (!response.ok) {
           const data = await response.json();
-          
+
           // Rate limit - use exponential backoff
           if (response.status === 429) {
             const retryAfter = parseInt(data.retryAfter || "5", 10);
             const delayMs = Math.min(retryAfter * 1000, 30000);
-            
+
             if (attempt < MAX_RETRIES - 1) {
               console.log(`[useAIAnalysis] Rate limited, retrying in ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
               await new Promise(resolve => setTimeout(resolve, delayMs));
               continue;
             }
           }
-          
+
           throw new Error(data.error || "Failed to get reading");
         }
 
-         // Parse JSON response
-         const data = await response.json();
-         const fullReading = data.reading;
+        // Handle streaming response
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let fullReading = "";
 
-         if (!fullReading) {
-           throw new Error("No reading received");
-         }
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-         setAiReading({ reading: fullReading });
-         lastError = null;
-         break; // Success, exit retry loop
+            const chunk = decoder.decode(value);
+            const lines = chunk.split("\n");
+
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+
+                if (data === "[DONE]") continue;
+
+                try {
+                  const parsed = JSON.parse(data);
+
+                  if (parsed.type === "chunk" && parsed.content) {
+                    fullReading += parsed.content;
+                    // Update reading progressively
+                    setAiReading({ reading: fullReading });
+                  } else if (parsed.type === "error") {
+                    throw new Error(parsed.error || "Reading failed");
+                  }
+                } catch {
+                  // Ignore parse errors
+                }
+              }
+            }
+          }
+        }
+
+        if (!fullReading) {
+          throw new Error("No reading received");
+        }
+
+        setAiReading({ reading: fullReading });
+        lastError = null;
+        break; // Success, exit retry loop
       } catch (err: any) {
         lastError = err;
         
