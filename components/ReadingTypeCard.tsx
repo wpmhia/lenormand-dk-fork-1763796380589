@@ -30,11 +30,15 @@ export function ReadingTypeCard({
   const href = spreadId ? `/read/new?spread=${spreadId}` : "/read/new";
 
   const cardContent = (
-    <Card className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm ${disabled ? 'opacity-60' : 'cursor-pointer hover:border-primary/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300'}`}>
+    <Card
+      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm ${disabled ? "opacity-60" : "cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl"}`}
+    >
       <CardHeader className="relative z-10 pb-3">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <CardTitle className={`line-clamp-2 flex items-center gap-2 text-base font-semibold ${disabled ? 'text-muted-foreground' : 'text-card-foreground'}`}>
+            <CardTitle
+              className={`line-clamp-2 flex items-center gap-2 text-base font-semibold ${disabled ? "text-muted-foreground" : "text-card-foreground"}`}
+            >
               {icon}
               <span>{title}</span>
             </CardTitle>
@@ -50,7 +54,7 @@ export function ReadingTypeCard({
           {disabled && (
             <Badge
               variant="outline"
-              className="w-fit whitespace-nowrap text-xs border-amber-500/50 text-amber-600"
+              className="w-fit whitespace-nowrap border-amber-500/50 text-xs text-amber-600"
             >
               <Lock className="mr-1 h-3 w-3" />
               {disabledReason || "Supporter exclusive"}
@@ -93,9 +97,5 @@ export function ReadingTypeCard({
     );
   }
 
-  return (
-    <Link href={href}>
-      {cardContent}
-    </Link>
-  );
+  return <Link href={href}>{cardContent}</Link>;
 }

@@ -8,7 +8,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AlertTriangle, Sparkles, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
-import { AUTHENTIC_SPREADS, COMPREHENSIVE_SPREADS, Spread } from "@/lib/spreads";
+import {
+  AUTHENTIC_SPREADS,
+  COMPREHENSIVE_SPREADS,
+  Spread,
+} from "@/lib/spreads";
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
 
 import {
@@ -38,13 +42,13 @@ function NewReadingPageContent() {
   const [step, setStep] = useState<Step>("setup");
   const [method, setMethod] = useState<Method>(null);
   const [question, setQuestion] = useState("");
-  const [selectedSpread, setSelectedSpread] = useState<Spread>(AUTHENTIC_SPREADS[1]);
+  const [selectedSpread, setSelectedSpread] = useState<Spread>(
+    AUTHENTIC_SPREADS[1],
+  );
 
   // Card state
   const [drawnCards, setDrawnCards] = useState<ReadingCard[]>([]);
   const [drawnCardTypes, setDrawnCardTypes] = useState<CardType[]>([]);
-
-
 
   // Dialog state
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
@@ -58,7 +62,13 @@ function NewReadingPageContent() {
     error: aiError,
     startAnalysis,
     resetAnalysis,
-  } = useAIAnalysis(question, drawnCards, allCards, selectedSpread.id, step === "results");
+  } = useAIAnalysis(
+    question,
+    drawnCards,
+    allCards,
+    selectedSpread.id,
+    step === "results",
+  );
 
   // Reset function - defined before effects that use it
   const performReset = useCallback(
@@ -79,7 +89,7 @@ function NewReadingPageContent() {
         router.replace(newUrl.toString(), { scroll: false });
       }
     },
-    [router, resetAnalysis]
+    [router, resetAnalysis],
   );
 
   // Load cards on mount
@@ -148,18 +158,15 @@ function NewReadingPageContent() {
   }, [step, resetAnalysis]);
 
   // Handle virtual deck draw - simplified, no complex animations
-  const handleVirtualDraw = useCallback(
-    (cards: CardType[]) => {
-      const readingCards = cards.map((card, index) => ({
-        id: card.id,
-        position: index,
-      }));
-      setDrawnCardTypes(cards);
-      setDrawnCards(readingCards);
-      setStep("results");
-    },
-    []
-  );
+  const handleVirtualDraw = useCallback((cards: CardType[]) => {
+    const readingCards = cards.map((card, index) => ({
+      id: card.id,
+      position: index,
+    }));
+    setDrawnCardTypes(cards);
+    setDrawnCards(readingCards);
+    setStep("results");
+  }, []);
 
   // Handle physical card submit
   const handlePhysicalSubmit = useCallback(
@@ -172,7 +179,7 @@ function NewReadingPageContent() {
       setDrawnCards(cards);
       setStep("results");
     },
-    [allCards]
+    [allCards],
   );
 
   // Handle start over
@@ -232,7 +239,7 @@ function NewReadingPageContent() {
                     >
                       {i + 1}
                     </div>
-                    <span className="ml-3 text-sm font-medium hidden sm:inline">
+                    <span className="ml-3 hidden text-sm font-medium sm:inline">
                       {getStepLabel(s)}
                     </span>
                   </div>
@@ -242,8 +249,8 @@ function NewReadingPageContent() {
                         ["drawing", "results"].includes(step) && i === 0
                           ? "bg-primary"
                           : step === "results" && i === 1
-                          ? "bg-primary"
-                          : "bg-muted"
+                            ? "bg-primary"
+                            : "bg-muted"
                       }`}
                     />
                   )}
@@ -269,11 +276,11 @@ function NewReadingPageContent() {
 
           {/* Error Alert */}
           {error && (
-            <Alert className="mb-6 border-destructive/30 bg-destructive/10">
+            <Alert className="border-destructive/30 bg-destructive/10 mb-6">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
-                  <AlertDescription className="mt-0.5 text-destructive-foreground">
+                  <AlertTriangle className="text-destructive mt-0.5 h-5 w-5 flex-shrink-0" />
+                  <AlertDescription className="text-destructive-foreground mt-0.5">
                     {error}
                   </AlertDescription>
                 </div>
@@ -281,7 +288,7 @@ function NewReadingPageContent() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setError("")}
-                  className="h-auto p-1 text-destructive hover:bg-destructive/10 hover:text-destructive/80"
+                  className="text-destructive hover:bg-destructive/10 hover:text-destructive/80 h-auto p-1"
                 >
                   ✕
                 </Button>
@@ -289,7 +296,7 @@ function NewReadingPageContent() {
             </Alert>
           )}
 
-           {/* Step 1: Setup */}
+          {/* Step 1: Setup */}
           {step === "setup" && (
             <div className="step-enter">
               <ReadingSetup
@@ -304,7 +311,7 @@ function NewReadingPageContent() {
             </div>
           )}
 
-           {/* Step 2: Drawing */}
+          {/* Step 2: Drawing */}
           {step === "drawing" && (
             <div className="step-enter">
               {method === "virtual" ? (
@@ -351,9 +358,7 @@ function NewReadingPageContent() {
             </div>
           )}
 
-
-
-           {/* Step 3: Results */}
+          {/* Step 3: Results */}
           {step === "results" && drawnCards.length > 0 && (
             <div className="step-enter space-y-6">
               {allCards.length > 0 ? (
@@ -371,7 +376,6 @@ function NewReadingPageContent() {
                   }}
                   allCards={allCards}
                   spreadId={selectedSpread.id}
-
                 />
               ) : (
                 <div className="p-4 text-center text-muted-foreground">
