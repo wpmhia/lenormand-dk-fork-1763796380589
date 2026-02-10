@@ -54,6 +54,7 @@ function NewReadingPageContent() {
   const {
     aiReading,
     isLoading: aiLoading,
+    isStreaming: aiStreaming,
     error: aiError,
     startAnalysis,
     resetAnalysis,
@@ -383,6 +384,7 @@ function NewReadingPageContent() {
                 <AIReadingDisplay
                   aiReading={aiReading}
                   isLoading={aiLoading}
+                  isStreaming={aiStreaming}
                   error={aiError}
                   onRetry={startAnalysis}
                 />

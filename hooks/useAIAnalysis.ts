@@ -6,6 +6,7 @@ import { getCardById } from "@/lib/data";
 interface UseAIAnalysisReturn {
   aiReading: AIReadingResponse | null;
   isLoading: boolean;
+  isStreaming: boolean;
   error: string | null;
   startAnalysis: () => void;
   resetAnalysis: () => void;
@@ -23,12 +24,14 @@ export function useAIAnalysis(
 ): UseAIAnalysisReturn {
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const startAnalysis = useCallback(async () => {
     if (!enabled || drawnCards.length === 0) return;
 
     setIsLoading(true);
+    setIsStreaming(false);
     setError(null);
 
     let lastError: any = null;
@@ -73,48 +76,71 @@ export function useAIAnalysis(
           throw new Error(data.error || "Failed to get reading");
         }
 
-        // Handle streaming response
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
-        let fullReading = "";
+        // Check if streaming response
+        const contentType = response.headers.get("content-type");
+        const isStreamResponse = contentType?.includes("text/event-stream");
+        console.log("[useAIAnalysis] Response content-type:", contentType, "isStream:", isStreamResponse);
 
-        if (reader) {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+        if (isStreamResponse) {
+          // Handle SSE streaming
+          console.log("[useAIAnalysis] Starting SSE stream processing");
+          setIsLoading(false);
+          setIsStreaming(true);
+          
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let fullReading = "";
 
-            const chunk = decoder.decode(value);
-            const lines = chunk.split("\n");
+          if (reader) {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
 
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
+              const chunk = decoder.decode(value);
+              const lines = chunk.split("\n");
 
-                if (data === "[DONE]") continue;
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  const data = line.slice(6);
 
-                try {
-                  const parsed = JSON.parse(data);
+                  if (data === "[DONE]") continue;
 
-                  if (parsed.type === "chunk" && parsed.content) {
-                    fullReading += parsed.content;
-                    // Update reading progressively
-                    setAiReading({ reading: fullReading });
-                  } else if (parsed.type === "error") {
-                    throw new Error(parsed.error || "Reading failed");
+                  try {
+                    const parsed = JSON.parse(data);
+
+                    if (parsed.type === "chunk" && parsed.content) {
+                      fullReading += parsed.content;
+                      // Update reading progressively
+                      console.log("[useAIAnalysis] Chunk received, total length:", fullReading.length);
+                      setAiReading({ reading: fullReading, source: "deepseek" });
+                    } else if (parsed.type === "done") {
+                      setIsStreaming(false);
+                      break;
+                    } else if (parsed.type === "error") {
+                      throw new Error(parsed.error || "Reading failed");
+                    }
+                  } catch {
+                    // Ignore parse errors
                   }
-                } catch {
-                  // Ignore parse errors
                 }
               }
             }
           }
+          
+          setIsStreaming(false);
+          
+          if (!fullReading) {
+            throw new Error("No reading received");
+          }
+        } else {
+          // Fallback: Handle JSON response
+          const data = await response.json();
+          if (!data.reading) {
+            throw new Error("No reading received");
+          }
+          setAiReading(data);
         }
 
-        if (!fullReading) {
-          throw new Error("No reading received");
-        }
-
-        setAiReading({ reading: fullReading });
         lastError = null;
         break; // Success, exit retry loop
       } catch (err: any) {
@@ -134,17 +160,20 @@ export function useAIAnalysis(
     }
 
     setIsLoading(false);
+    setIsStreaming(false);
   }, [question, drawnCards, allCards, selectedSpreadId, enabled]);
 
   const resetAnalysis = useCallback(() => {
     setAiReading(null);
     setError(null);
     setIsLoading(false);
+    setIsStreaming(false);
   }, []);
 
   return {
     aiReading,
     isLoading,
+    isStreaming,
     error,
     startAnalysis,
     resetAnalysis,
