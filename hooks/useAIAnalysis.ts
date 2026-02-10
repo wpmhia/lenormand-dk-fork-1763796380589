@@ -11,7 +11,7 @@ interface UseAIAnalysisReturn {
   resetAnalysis: () => void;
 }
 
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 1; // Reduced from 3 to prevent request multiplication
 const INITIAL_RETRY_DELAY = 1000; // 1 second
 
 export function useAIAnalysis(
