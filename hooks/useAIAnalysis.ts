@@ -12,7 +12,7 @@ interface UseAIAnalysisReturn {
   resetAnalysis: () => void;
 }
 
-const MAX_RETRIES = 1; // Reduced from 3 to prevent request multiplication
+const MAX_RETRIES = 0; // No retries - streaming works first time
 const INITIAL_RETRY_DELAY = 1000; // 1 second
 
 export function useAIAnalysis(
