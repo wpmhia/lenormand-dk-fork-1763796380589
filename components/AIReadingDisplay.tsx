@@ -106,7 +106,8 @@ export function AIReadingDisplay({
         </div>
 
         <div className="reading-content space-y-4">
-          <ReactMarkdown
+          {aiReading?.reading ? (
+<ReactMarkdown
             components={{
               h1: ({ ...props }) => <h1 className="text-2xl font-semibold" {...props} />,
               h2: ({ ...props }) => <h2 className="text-xl font-semibold" {...props} />,
@@ -115,8 +116,9 @@ export function AIReadingDisplay({
               strong: ({ ...props }) => <strong className="font-semibold" {...props} />,
             }}
           >
-            {aiReading.reading}
+            {aiReading?.reading}
           </ReactMarkdown>
+          ) : null}
         </div>
 
         <div className="mt-6 flex items-center justify-center border-t pt-4">
