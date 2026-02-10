@@ -117,10 +117,16 @@ export function useAIAnalysis(
                       setIsStreaming(false);
                       break;
                     } else if (parsed.type === "error") {
-                      throw new Error(parsed.error || "Reading failed");
+                      console.error("[useAIAnalysis] Stream error event:", parsed);
+                      throw new Error(parsed.error || parsed.message || "Reading failed");
                     }
-                  } catch {
-                    // Ignore parse errors
+                  } catch (e) {
+                    // Only ignore JSON parse errors, not thrown errors
+                    if (e instanceof SyntaxError) {
+                      // Ignore incomplete JSON chunks
+                    } else {
+                      throw e;
+                    }
                   }
                 }
               }
