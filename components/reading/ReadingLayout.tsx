@@ -17,7 +17,16 @@ import { Badge } from "@/components/ui/badge";
 import { MemoizedCardWithTooltip } from "@/components/CardWithTooltip";
 import { MemoizedAnimatedCard } from "@/components/AnimatedCard";
 import { getPositionInfo, getTopicIcon } from "./SpreadPositions";
-import { Clock, Target, Brain, Eye, Zap, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import {
+  Clock,
+  Target,
+  Brain,
+  Eye,
+  Zap,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+} from "lucide-react";
 
 interface ReadingLayoutProps {
   reading: Reading;
@@ -30,7 +39,11 @@ interface ReadingLayoutProps {
   onToggleAnalysis: () => void;
   onCardClick: (card: CardType) => void;
   significatorIndex: number;
-  topicCards: Array<{ cardId: number; index: number; topic: { type: string; label: string } }>;
+  topicCards: Array<{
+    cardId: number;
+    index: number;
+    topic: { type: string; label: string };
+  }>;
   diagonals: {
     topLeft: number[];
     bottomLeft: number[];
@@ -136,156 +149,159 @@ export function ReadingLayout({
             </div>
             <div className="flex items-center gap-2">
               <Eye className="h-4 w-4 text-emerald-600" />
-              <span className="text-muted-foreground">
-                Below = Unconscious
-              </span>
+              <span className="text-muted-foreground">Below = Unconscious</span>
             </div>
           </div>
         )}
 
-        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 [-webkit-overflow-scrolling:touch]">
+        <div className="-mx-4 overflow-x-auto px-4 pb-2 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:px-0">
           <div
-            className="grid gap-1 sm:gap-sm min-w-[320px] sm:min-w-[600px]"
-            style={{ 
+            className="grid min-w-[320px] gap-1 sm:min-w-[600px] sm:gap-sm"
+            style={{
               gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
             }}
           >
-          {reading.cards
-            .map((readingCard, index) => ({
-              card: getCardByIdMemo(readingCard.id),
-              index,
-            }))
-            .filter((item) => item.card !== undefined)
-            .map(({ card, index }) => {
-              const pos = getGrandTableauPosition(index);
-              const isSignificator = index === significatorIndex;
-              const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
-              const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
-              const isCardsOfFate =
-                GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
-              const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card!.id];
+            {reading.cards
+              .map((readingCard, index) => ({
+                card: getCardByIdMemo(readingCard.id),
+                index,
+              }))
+              .filter((item) => item.card !== undefined)
+              .map(({ card, index }) => {
+                const pos = getGrandTableauPosition(index);
+                const isSignificator = index === significatorIndex;
+                const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
+                const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
+                const isCardsOfFate =
+                  GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
+                const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card!.id];
 
-              const zoneInfo =
-                significatorIndex !== -1
-                  ? getPositionZone(significatorIndex, index)
-                  : { zone: "general", distance: 0, direction: "" };
+                const zoneInfo =
+                  significatorIndex !== -1
+                    ? getPositionZone(significatorIndex, index)
+                    : { zone: "general", distance: 0, direction: "" };
 
-              const zone = DIRECTIONAL_ZONES[zoneInfo.zone];
+                const zone = DIRECTIONAL_ZONES[zoneInfo.zone];
 
-              let borderClass = "border-border";
-              if (showAdvancedAnalysis) {
-                if (isSignificator) {
+                let borderClass = "border-border";
+                if (showAdvancedAnalysis) {
+                  if (isSignificator) {
+                    borderClass = "border-amber-500 ring-2 ring-amber-500/30";
+                  } else if (isCorner) {
+                    borderClass = "border-purple-500/50";
+                  } else if (isCardsOfFate) {
+                    borderClass = "border-red-500/50";
+                  } else if (isCenter) {
+                    borderClass = "border-green-500/50";
+                  }
+                } else if (isSignificator) {
+                  // Always show significator border even in simple mode
                   borderClass = "border-amber-500 ring-2 ring-amber-500/30";
-                } else if (isCorner) {
-                  borderClass = "border-purple-500/50";
-                } else if (isCardsOfFate) {
-                  borderClass = "border-red-500/50";
-                } else if (isCenter) {
-                  borderClass = "border-green-500/50";
                 }
-              } else if (isSignificator) {
-                // Always show significator border even in simple mode
-                borderClass = "border-amber-500 ring-2 ring-amber-500/30";
-              }
 
-              return (
-                <div
-                  key={index}
-                  ref={setCardRef ? setCardRef(index) : undefined}
-                  className={hideCardsDuringTransition ? "opacity-0" : undefined}
-                >
-                  <MemoizedAnimatedCard
-                    delay={index * 0.08}
-                    className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
-                      isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
-                    } ${borderClass}`}
+                return (
+                  <div
+                    key={index}
+                    ref={setCardRef ? setCardRef(index) : undefined}
+                    className={
+                      hideCardsDuringTransition ? "opacity-0" : undefined
+                    }
                   >
-                    {/* Position header */}
-                    <div className="flex w-full items-center justify-between text-xs">
-                      <span className="font-medium text-muted-foreground">
-                        {pos.row + 1}-{pos.col + 1}
-                      </span>
-                      {isSignificator && (
-                        <Badge
-                          variant="default"
-                          className="bg-amber-600 text-[10px]"
-                        >
-                          YOU
-                        </Badge>
-                      )}
-                      {showAdvancedAnalysis && (
-                        <>
-                          {isCorner && (
-                            <Badge
-                              variant="outline"
-                              className="border-purple-500/50 text-[10px] text-purple-600"
-                            >
-                              Context
-                            </Badge>
-                          )}
-                          {isCardsOfFate && (
-                            <Badge
-                              variant="outline"
-                              className="border-red-500/50 text-[10px] text-red-600"
-                            >
-                              Fate
-                            </Badge>
-                          )}
-                          {isCenter && (
-                            <Badge
-                              variant="outline"
-                              className="border-green-500/50 text-[10px] text-green-600"
-                            >
-                              Heart
-                            </Badge>
-                          )}
-                        </>
-                      )}
-                    </div>
-
-                    {/* Directional indicator - only in advanced mode */}
-                    {showAdvancedAnalysis && zone && significatorIndex !== -1 && !isSignificator && (
-                      <div
-                        className={`flex items-center gap-1 text-[10px] ${zone.color}`}
-                      >
-                        {getZoneIcon(zoneInfo.zone)}
-                        <span>{zone.name}</span>
-                        <span className="text-muted-foreground">
-                          ({zoneInfo.distance})
+                    <MemoizedAnimatedCard
+                      delay={index * 0.08}
+                      className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
+                        isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
+                      } ${borderClass}`}
+                    >
+                      {/* Position header */}
+                      <div className="flex w-full items-center justify-between text-xs">
+                        <span className="font-medium text-muted-foreground">
+                          {pos.row + 1}-{pos.col + 1}
                         </span>
+                        {isSignificator && (
+                          <Badge
+                            variant="default"
+                            className="bg-amber-600 text-[10px]"
+                          >
+                            YOU
+                          </Badge>
+                        )}
+                        {showAdvancedAnalysis && (
+                          <>
+                            {isCorner && (
+                              <Badge
+                                variant="outline"
+                                className="border-purple-500/50 text-[10px] text-purple-600"
+                              >
+                                Context
+                              </Badge>
+                            )}
+                            {isCardsOfFate && (
+                              <Badge
+                                variant="outline"
+                                className="border-red-500/50 text-[10px] text-red-600"
+                              >
+                                Fate
+                              </Badge>
+                            )}
+                            {isCenter && (
+                              <Badge
+                                variant="outline"
+                                className="border-green-500/50 text-[10px] text-green-600"
+                              >
+                                Heart
+                              </Badge>
+                            )}
+                          </>
+                        )}
                       </div>
-                    )}
 
-                    <MemoizedCardWithTooltip
-                      card={card!}
-                      size="sm"
-                      onClick={() => onCardClick(card!)}
-                      className="cursor-pointer"
-                      positionLabel={
-                        isSignificator
-                          ? "Significator (You)"
-                          : zone?.name || undefined
-                      }
-                      positionDescription={
-                        isSignificator
-                          ? "This card represents you in the reading"
-                          : zoneInfo.direction
-                            ? `${zone.description} - Distance: ${zoneInfo.distance}`
-                            : undefined
-                      }
-                    />
+                      {/* Directional indicator - only in advanced mode */}
+                      {showAdvancedAnalysis &&
+                        zone &&
+                        significatorIndex !== -1 &&
+                        !isSignificator && (
+                          <div
+                            className={`flex items-center gap-1 text-[10px] ${zone.color}`}
+                          >
+                            {getZoneIcon(zoneInfo.zone)}
+                            <span>{zone.name}</span>
+                            <span className="text-muted-foreground">
+                              ({zoneInfo.distance})
+                            </span>
+                          </div>
+                        )}
 
-                    {/* Topic card badge - only in advanced mode */}
-                    {showAdvancedAnalysis && topicInfo && (
-                      <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
-                        {getTopicIcon(topicInfo.type)}
-                        <span>{topicInfo.label}</span>
-                      </div>
-                    )}
-                  </MemoizedAnimatedCard>
-                </div>
-              );
-            })}
+                      <MemoizedCardWithTooltip
+                        card={card!}
+                        size="sm"
+                        onClick={() => onCardClick(card!)}
+                        className="cursor-pointer"
+                        positionLabel={
+                          isSignificator
+                            ? "Significator (You)"
+                            : zone?.name || undefined
+                        }
+                        positionDescription={
+                          isSignificator
+                            ? "This card represents you in the reading"
+                            : zoneInfo.direction
+                              ? `${zone.description} - Distance: ${zoneInfo.distance}`
+                              : undefined
+                        }
+                      />
+
+                      {/* Topic card badge - only in advanced mode */}
+                      {showAdvancedAnalysis && topicInfo && (
+                        <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+                          {getTopicIcon(topicInfo.type)}
+                          <span>{topicInfo.label}</span>
+                        </div>
+                      )}
+                    </MemoizedAnimatedCard>
+                  </div>
+                );
+              })}
           </div>
         </div>
 

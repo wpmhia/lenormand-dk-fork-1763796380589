@@ -7,10 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  COMPREHENSIVE_SPREADS,
-  Spread,
-} from "@/lib/spreads";
+import { COMPREHENSIVE_SPREADS, Spread } from "@/lib/spreads";
 import { Lock } from "lucide-react";
 
 interface SpreadSelectProps {
@@ -22,9 +19,7 @@ interface SpreadSelectProps {
 export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
   return (
     <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
-      <label className="font-medium text-foreground">
-        Choose Your Spread:
-      </label>
+      <label className="font-medium text-foreground">Choose Your Spread:</label>
       <Select
         value={value.id}
         onValueChange={(spreadId) => {
@@ -36,7 +31,7 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
         <SelectTrigger className="h-10 rounded-lg border-border bg-background text-card-foreground focus:border-primary">
           <SelectValue>{value.label}</SelectValue>
         </SelectTrigger>
-        <SelectContent className="border-border bg-popover text-popover-foreground max-h-[400px] overflow-y-auto">
+        <SelectContent className="max-h-[400px] overflow-y-auto border-border bg-popover text-popover-foreground">
           {COMPREHENSIVE_SPREADS.map((spread) =>
             spread.disabled ? (
               <div
@@ -67,7 +62,7 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
                   </span>
                 </div>
               </SelectItem>
-            )
+            ),
           )}
         </SelectContent>
       </Select>

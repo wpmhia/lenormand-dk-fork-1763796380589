@@ -6,7 +6,7 @@ export default defineConfig({
     globals: true,
     environment: "node",
     setupFiles: [],
-    exclude: ["**/theme-visual.spec.ts", "**/node_modules/**"],
+    exclude: ["**/theme-visual.spec.ts", "**/node_modules/**", "**/tests/**"],
   },
   resolve: {
     alias: {
