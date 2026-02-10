@@ -36,7 +36,7 @@ export function useAIAnalysis(
 
     let lastError: any = null;
 
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
         const cards = drawnCards.map((card) => {
           const cardData = getCardById(allCards, card.id);
