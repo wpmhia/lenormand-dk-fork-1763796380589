@@ -1,11 +1,10 @@
-// Token budgets - allow full responses without truncation
-// Most Lenormand readings need 400-800 tokens for complete sentences
-// Increased buffers to prevent sentence fragment issues (was 600/800/1200)
+// Token budgets - optimized for faster responses while maintaining quality
+// Reduced from previous values to speed up API responses and reduce timeouts
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 800;   // 3-card: Generous buffer (~400-500 words)
-  if (cardCount <= 5) return 1200;  // 5-card: Prevent truncation on longer readings
-  if (cardCount <= 9) return 1600;  // 9-card: Allow detailed 2-paragraph response
-  return 2800;                      // Grand Tableau: Full narrative room
+  if (cardCount <= 3) return 600;   // 3-card: ~300-400 words (reduced from 800)
+  if (cardCount <= 5) return 900;   // 5-card: ~450-600 words (reduced from 1200)
+  if (cardCount <= 9) return 1200;  // 9-card: ~600-800 words (reduced from 1600)
+  return 2000;                      // Grand Tableau: ~1000-1300 words (reduced from 2800)
 }
 
 // Timeout budgets - Vercel Free plan max is 10s, Pro is 60s
