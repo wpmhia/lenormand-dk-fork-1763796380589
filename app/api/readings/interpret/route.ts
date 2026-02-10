@@ -168,6 +168,7 @@ export async function POST(request: Request) {
                   const parsed = JSON.parse(data);
                   const delta = parsed.choices?.[0]?.delta?.content;
                   if (delta) {
+                    console.log("[API] Sending chunk, length:", delta.length);
                     const sseData = JSON.stringify({ type: "chunk", content: delta });
                     controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
                   }
