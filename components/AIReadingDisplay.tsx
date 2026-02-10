@@ -52,7 +52,7 @@ export function AIReadingDisplay({
     );
   }
 
-  if (error) {
+  if (error && !isStreaming) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -68,7 +68,7 @@ export function AIReadingDisplay({
     );
   }
 
-  if (!aiReading?.reading) {
+  if (!aiReading?.reading && !isStreaming) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -81,6 +81,18 @@ export function AIReadingDisplay({
           </Button>
         </AlertDescription>
       </Alert>
+    );
+  }
+
+  // Show streaming indicator while waiting for first chunk
+  if (isStreaming && !aiReading?.reading) {
+    return (
+      <div className="consulting-glow rounded-2xl">
+        <AIThinkingIndicator
+          message="Consulting the cards..."
+          subtext="Reading the cards for clear, practical guidance"
+        />
+      </div>
     );
   }
 
