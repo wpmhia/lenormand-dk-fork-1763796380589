@@ -30,13 +30,17 @@ export function useAIAnalysis(
   const startAnalysis = useCallback(async () => {
     if (!enabled || drawnCards.length === 0) return;
 
+    // Prevent concurrent requests (race condition fix)
     setIsLoading(true);
     setIsStreaming(false);
     setError(null);
 
     let lastError: any = null;
+    let abortController: AbortController | null = null;
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      let reader: ReadableStreamDefaultReader<Uint8Array> | null | undefined = null;
+      
       try {
         const cards = drawnCards.map((card) => {
           const cardData = getCardById(allCards, card.id);
@@ -47,6 +51,9 @@ export function useAIAnalysis(
           };
         });
 
+        // Use abort controller to cancel requests on unmount
+        abortController = new AbortController();
+
         // Use streaming endpoint
         const response = await fetch("/api/readings/interpret", {
           method: "POST",
@@ -56,6 +63,7 @@ export function useAIAnalysis(
             cards,
             spreadId: selectedSpreadId,
           }),
+          signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -87,78 +95,90 @@ export function useAIAnalysis(
           setIsLoading(false);
           setIsStreaming(true);
           
-          const reader = response.body?.getReader();
+          reader = response.body?.getReader();
           const decoder = new TextDecoder();
           let fullReading = "";
           let buffer = ""; // Buffer for incomplete lines
 
           if (reader) {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
+            try {
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
 
-              // Decode chunk and add to buffer
-              const chunk = decoder.decode(value, { stream: true });
-              buffer += chunk;
+                // Decode chunk and add to buffer
+                const chunk = decoder.decode(value, { stream: true });
+                buffer += chunk;
 
-              // Process complete lines
-              const lines = buffer.split("\n");
-              // Keep the last incomplete line in buffer
-              buffer = lines[lines.length - 1];
+                // Process complete lines
+                const lines = buffer.split("\n");
+                // Keep the last incomplete line in buffer
+                buffer = lines[lines.length - 1];
 
-              // Process all complete lines (all except the last one)
-              for (let i = 0; i < lines.length - 1; i++) {
-                const line = lines[i];
-                if (line.startsWith("data: ")) {
-                  const data = line.slice(6);
+                // Process all complete lines (all except the last one)
+                for (let i = 0; i < lines.length - 1; i++) {
+                  const line = lines[i];
+                  if (line.startsWith("data: ")) {
+                    const data = line.slice(6);
 
-                  if (data === "[DONE]") continue;
+                    if (data === "[DONE]") continue;
 
-                  try {
-                    const parsed = JSON.parse(data);
+                    try {
+                      const parsed = JSON.parse(data);
 
-                    if (parsed.type === "chunk" && parsed.content) {
-                      fullReading += parsed.content;
-                      // Update reading progressively
-                      console.log("[useAIAnalysis] Chunk received, total length:", fullReading.length);
-                      setAiReading({ reading: fullReading, source: "deepseek" });
-                    } else if (parsed.type === "done") {
-                      setIsStreaming(false);
-                      break;
-                    } else if (parsed.type === "error") {
-                      console.error("[useAIAnalysis] Stream error event:", parsed);
-                      throw new Error(parsed.error || parsed.message || "Reading failed");
-                    }
-                  } catch (e) {
-                    // Only ignore JSON parse errors, not thrown errors
-                    if (e instanceof SyntaxError) {
-                      // Ignore incomplete JSON chunks, will retry when more data arrives
-                      console.log("[useAIAnalysis] Skipping incomplete JSON, will retry: ", data.substring(0, 50));
-                    } else {
-                      throw e;
+                      if (parsed.type === "chunk" && parsed.content) {
+                        fullReading += parsed.content;
+                        // Update reading progressively
+                        console.log("[useAIAnalysis] Chunk received, total length:", fullReading.length);
+                        setAiReading({ reading: fullReading, source: "deepseek" });
+                      } else if (parsed.type === "done") {
+                        setIsStreaming(false);
+                        break;
+                      } else if (parsed.type === "error") {
+                        console.error("[useAIAnalysis] Stream error event:", parsed);
+                        throw new Error(parsed.error || parsed.message || "Reading failed");
+                      }
+                    } catch (e) {
+                      // Only ignore JSON parse errors, not thrown errors
+                      if (e instanceof SyntaxError) {
+                        // Ignore incomplete JSON chunks, will retry when more data arrives
+                        console.log("[useAIAnalysis] Skipping incomplete JSON, will retry: ", data.substring(0, 50));
+                      } else {
+                        throw e;
+                      }
                     }
                   }
                 }
               }
-            }
 
-            // Process any remaining buffered data
-            if (buffer.trim()) {
-              if (buffer.startsWith("data: ")) {
-                const data = buffer.slice(6);
-                if (data !== "[DONE]") {
-                  try {
-                    const parsed = JSON.parse(data);
-                    if (parsed.type === "chunk" && parsed.content) {
-                      fullReading += parsed.content;
-                      console.log("[useAIAnalysis] Final chunk received, total length:", fullReading.length);
-                      setAiReading({ reading: fullReading, source: "deepseek" });
+              // Process any remaining buffered data
+              if (buffer.trim()) {
+                if (buffer.startsWith("data: ")) {
+                  const data = buffer.slice(6);
+                  if (data !== "[DONE]") {
+                    try {
+                      const parsed = JSON.parse(data);
+                      if (parsed.type === "chunk" && parsed.content) {
+                        fullReading += parsed.content;
+                        console.log("[useAIAnalysis] Final chunk received, total length:", fullReading.length);
+                        setAiReading({ reading: fullReading, source: "deepseek" });
+                      }
+                    } catch (e) {
+                      console.warn("[useAIAnalysis] Failed to parse final buffer:", e);
                     }
-                  } catch (e) {
-                    console.warn("[useAIAnalysis] Failed to parse final buffer:", e);
                   }
                 }
               }
+
+              // Finalize decoder to handle any remaining bytes
+              const finalChunk = decoder.decode();
+              if (finalChunk.trim()) {
+                console.warn("[useAIAnalysis] Decoder had remaining bytes:", finalChunk.length);
+              }
+            } finally {
+              // CRITICAL FIX: Always release the reader lock
+              reader.releaseLock();
+              reader = null;
             }
           }
           
@@ -179,6 +199,22 @@ export function useAIAnalysis(
         lastError = null;
         break; // Success, exit retry loop
       } catch (err: any) {
+        // Clean up reader on error
+        if (reader) {
+          try {
+            reader.releaseLock();
+          } catch (e) {
+            // Already released or closed
+          }
+          reader = null;
+        }
+
+        // Check if this was an abort error
+        if (err.name === "AbortError") {
+          console.log("[useAIAnalysis] Request aborted");
+          break; // Don't retry aborted requests
+        }
+
         lastError = err;
         
         // Exponential backoff for retries

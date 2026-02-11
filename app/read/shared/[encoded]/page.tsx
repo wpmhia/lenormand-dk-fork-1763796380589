@@ -116,13 +116,14 @@ export default function SharedReadingPage({ params }: PageProps) {
         clearTimeout(timeoutRef.current);
       }
       
-      timeoutRef.current = setTimeout(() => {
-        if (mountedRef.current) {
-          setAiLoading(false);
-          setAiError("AI analysis timed out. The reading is still available.");
-        }
-        timeoutRef.current = null;
-      }, 35000);
+       // Match server timeout: maxDuration = 10s, plus 2s buffer for network = 12s total
+       timeoutRef.current = setTimeout(() => {
+         if (mountedRef.current) {
+           setAiLoading(false);
+           setAiError("AI analysis timed out. The reading is still available.");
+         }
+         timeoutRef.current = null;
+       }, 12000);
 
       try {
         const aiRequest = {
