@@ -99,7 +99,8 @@ Always write prose, never lists.`;
 }
 
 /**
- * Build prompts for each spread type
+ * Build prompts for each spread type - Lenormand-compliant readings
+ * All spreads use pair-reading method: combine adjacent cards for flowing narrative
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
   "single-card": (question, cards) => `${question}
@@ -107,25 +108,59 @@ Card: ${cards}
 
 Write a single clear paragraph. Start with what the card means for the question, then expand on the message. Keep it under 100 words.`,
   
-  "sentence-3": (question, cards) => `${question}\nCards: ${cards}\n\nRead these three cards as a story: situation, turning point, outcome.`,
+  "sentence-3": (question, cards) => `${question}
+Cards (left to right): ${cards}
+
+Read as one flowing sentence by combining card pairs:
+- Card 1: Current situation or topic
+- Cards 1+2: How the situation develops (combine their meanings)
+- Cards 2+3: The outcome and resolution
+
+Connect all meanings into a single narrative sentence.`,
   
-  "past-present-future": (question, cards) => `${question}\nCards: ${cards}\n\nInterpret as: past influence, present situation, future direction.`,
+  "sentence-5": (question, cards) => `${question}
+Cards (left to right): ${cards}
+
+Read as a complete flowing sentence by combining card pairs:
+Each pair tells part of the story: 1+2, 2+3, 3+4, 4+5
+Connect all meanings into one unfolding narrative.`,
   
-  "mind-body-spirit": (question, cards) => `${question}\nCards: ${cards}\n\nRead as: thoughts/mind, physical reality, deeper spiritual meaning.`,
+  "comprehensive": (question, cards) => `${question}
+9-Card Petit Grand Tableau (3x3 grid): ${cards}
+
+Read as three rows, each row combining pairs:
+
+ROW 1 (cards 1-3): Opening situation
+- Card 1: Topic
+- Cards 1+2: How it opens
+- Cards 2+3: Where it leads
+
+ROW 2 (cards 4-6): Development and complication
+
+ROW 3 (cards 7-9): Resolution and outcome
+
+CENTER CARD (position 5): The heart connecting all
+
+Read each row as a connected sentence, then the three rows as a complete story.`,
   
-  "yes-no-maybe": (question, cards) => `${question}\nCards: ${cards}\n\nAnswer YES, NO, or MAYBE, then explain what the cards reveal.`,
-  
-  "sentence-5": (question, cards) => `${question}\nCards: ${cards}\n\nRead these five cards as a complete unfolding: the full situation and direction.`,
-  
-  "structured-reading": (question, cards) => `${question}\nCards: ${cards}\n\nInterpret as: subject, action, object, context, outcome.`,
-  
-  "week-ahead": (question, cards) => `${question}\nCards: ${cards}\n\nRead how the week unfolds from start to finish.`,
-  
-  "relationship-double-significator": (question, cards) => `${question}\nCards: ${cards}\n\nRead: first three as one person's path, middle as the relationship, last three as the other person's path.`,
-  
-  "comprehensive": (question, cards) => `${question}\nCards: ${cards}\n\nRead as a 3x3 grid: top row is past/foundation, middle is present, bottom is future. Center card connects all.`,
-  
-  "grand-tableau": (question, cards) => `${question}\n36 cards: ${cards}\n\nRead three areas: 1-12 is situation, 13-24 is people/influences, 25-36 is outcome.`,
+  "grand-tableau": (question, cards) => `${question}
+36-Card Grand Tableau (4x9 grid): ${cards}
+
+Read as a comprehensive layout:
+
+GRID STRUCTURE (read left-to-right by row):
+- Rows 1-3: Foundation and current situation
+- Rows 2-4: Development and complications
+- Rows 3-4: Resolution and outcome
+
+DIRECTIONAL READING:
+Left side: Influences from the past
+Right side: Emerging futures
+Top: Conscious thoughts and awareness
+Bottom: Unconscious forces and hidden factors
+Center: Heart of the matter
+
+Read by combining pairs within each row, then weave all rows into a comprehensive narrative.`,
 };
 
 /**

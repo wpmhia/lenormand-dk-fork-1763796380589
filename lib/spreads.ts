@@ -43,46 +43,31 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   },
 ];
 
-// Modern Spreads - Essential variations for different needs
+// Modern Spreads - Authentic Lenormand variations
 export const MODERN_SPREADS: Spread[] = [
-  {
-    id: "yes-no-maybe",
-    cards: 3,
-    label: "3-Card: Yes or No",
-    description: "Direct answer to binary questions - clarity through three cards",
-    isAuthentic: false,
-  },
-  {
-    id: "past-present-future",
-    cards: 3,
-    label: "3-Card: Past-Present-Future",
-    description: "Time-based guidance - understanding progression and flow",
-    isAuthentic: false,
-  },
   {
     id: "sentence-5",
     cards: 5,
-    label: "5-Card: Sentence Reading",
-    description: "Extended narrative - more context without complexity",
+    label: "5-Card Sentence Reading",
+    description: "Extended narrative using pair-reading technique - Lenormand's flexible approach for more complex situations",
     isAuthentic: false,
   },
 ];
 
-// All spreads in order: 1 card → 3 cards → 5 cards → 9 cards → 36 cards
+// All spreads in Lenormand-compliant order: 1 card → 3 cards → 5 cards → 9 cards → 36 cards
 // 3-Card Sentence is default (position 1)
 export const COMPREHENSIVE_SPREADS: Spread[] = [
   // 1 Card
   AUTHENTIC_SPREADS[0], // single-card
   // 3 Cards (sentence-3 first as default)
   AUTHENTIC_SPREADS[1], // sentence-3 (default)
-  MODERN_SPREADS[0], // yes-no-maybe
-  MODERN_SPREADS[1], // past-present-future
   // 5 Cards
-  MODERN_SPREADS[2], // sentence-5
+  MODERN_SPREADS[0], // sentence-5
   // 9 Cards
-  AUTHENTIC_SPREADS[2], // comprehensive
+  AUTHENTIC_SPREADS[2], // petit-grand-tableau (9-card grid)
   // 36 Cards
-  AUTHENTIC_SPREADS[3], // grand-tableau
+  AUTHENTIC_SPREADS[3], // grand-tableau (4x9 grid)
+  // REMOVED: yes-no-maybe, past-present-future (not authentic Lenormand)
 ];
 
 // Legacy names for backward compatibility
