@@ -105,23 +105,33 @@ export function buildSystemPrompt(): string {
 
 /**
  * Build prompts for each spread type - Lenormand-compliant readings
- * All spreads use pair-reading method: combine adjacent cards for flowing narrative
+ * Question + Cards + Spread Rules
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
-   "single-card": (question, cards) => `${question}
-Card: ${cards}`,
-  
-   "sentence-3": (question, cards) => `${question}
-Cards: ${cards}`,
-  
-   "sentence-5": (question, cards) => `${question}
-Cards: ${cards}`,
-  
-   "comprehensive": (question, cards) => `${question}
-Cards: ${cards}`,
-  
+  "single-card": (question, cards) => `${question}
+Card: ${cards}
+
+What does this single card reveal?`,
+
+  "sentence-3": (question, cards) => `${question}
+Cards (left to right): ${cards}
+
+Read these three cards as a sentence. First card is the situation, second is the turning point, third is the outcome.`,
+
+  "sentence-5": (question, cards) => `${question}
+Cards: ${cards}
+
+Read the pairs: 1+2 is the opening, 2+3 is the development, 3+4 is the turning point, 4+5 is the outcome.`,
+
+  "comprehensive": (question, cards) => `${question}
+Cards (3x3 grid): ${cards}
+
+Read by rows: Row 1 = opening situation, Row 2 = development, Row 3 = outcome.`,
+
   "grand-tableau": (question, cards) => `${question}
-Cards: ${cards}`
+Cards (4x9 grid): ${cards}
+
+Read pairs within rows. Focus on the significator and immediate surroundings. What is the overall situation and direction?`
 };
 
 /**
