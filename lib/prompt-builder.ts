@@ -15,10 +15,10 @@ import {
  * Optimized for faster responses while maintaining quality
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 80;    // 1 sentence max
-  if (cardCount <= 5) return 120;   // 2 sentences max
-  if (cardCount <= 9) return 180;   // 3 sentences max
-  return 280;                       // Grand Tableau: 4-5 sentences max
+  if (cardCount <= 3) return 150;   // 2-3 sentences
+  if (cardCount <= 5) return 200;   // 3-4 sentences
+  if (cardCount <= 9) return 300;   // 4-6 sentences
+  return 400;                       // Grand Tableau: natural length
 }
 
 // ============================================================================
@@ -100,7 +100,7 @@ export const VALID_CARD_NAMES = [
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
-  return `You are an expert Lenormand fortune teller. Provide ULTRA-CONCISE readings - one sentence per card or pair. Direct, practical, no elaboration. Be terse.`;
+  return `You are a Lenormand fortune teller. Read the cards naturally as flowing sentences about what they reveal. No preamble, no meta-commentary, just the reading.`;
 }
 
 /**
@@ -111,27 +111,27 @@ const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string)
    "single-card": (question, cards) => `${question}
 Card: ${cards}
 
-One sentence. That's it.`,
+What does this card reveal?`,
   
    "sentence-3": (question, cards) => `${question}
 Cards: ${cards}
 
-Three sentences max. Card 1→situation. Card 2→action. Card 3→result.`,
+Read these three cards as a flowing sentence or narrative.`,
   
    "sentence-5": (question, cards) => `${question}
 Cards: ${cards}
 
-Two sentences. Pairs: 1+2 (start), 2+3 (middle), 3+4 (turn), 4+5 (outcome).`,
+Read these five cards as a flowing narrative.`,
   
    "comprehensive": (question, cards) => `${question}
 Cards (9-card): ${cards}
 
-Three sentences. Row 1=opening, Row 2=action, Row 3=outcome.`,
+Read these nine cards as a narrative about the situation.`,
   
   "grand-tableau": (question, cards) => `${question}
 Cards (36): ${cards}
 
-Four sentences max. Key: what's the main theme and direction?`
+Read these 36 cards as a complete picture of the situation.`
 };
 
 /**
