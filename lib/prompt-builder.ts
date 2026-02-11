@@ -15,10 +15,10 @@ import {
  * Optimized for faster responses while maintaining quality
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 200;   // 3-card: ultra-concise, 1-2 sentences max
-  if (cardCount <= 5) return 350;   // 5-card: brief, 2-3 sentences
-  if (cardCount <= 9) return 600;   // 9-card: concise, 3-5 sentences
-  return 1200;                      // Grand Tableau: moderate, 400-600 words
+  if (cardCount <= 3) return 80;    // 1 sentence max
+  if (cardCount <= 5) return 120;   // 2 sentences max
+  if (cardCount <= 9) return 180;   // 3 sentences max
+  return 280;                       // Grand Tableau: 4-5 sentences max
 }
 
 // ============================================================================
@@ -100,7 +100,7 @@ export const VALID_CARD_NAMES = [
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
-  return `You are an expert Lenormand fortune teller. Provide clear, direct readings focused on practical meaning and action. Avoid flowery language, metaphors, and spiritual elaboration.`;
+  return `You are an expert Lenormand fortune teller. Provide ULTRA-CONCISE readings - one sentence per card or pair. Direct, practical, no elaboration. Be terse.`;
 }
 
 /**
@@ -111,37 +111,27 @@ const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string)
    "single-card": (question, cards) => `${question}
 Card: ${cards}
 
-Direct answer and immediate action needed.
-
-End with a clear conclusion.`,
+One sentence. That's it.`,
   
    "sentence-3": (question, cards) => `${question}
-Cards (three-card spread): ${cards}
+Cards: ${cards}
 
-Opening situation → Turning point → Outcome. Include timing and action guidance.
-
-Conclusion: Sum up the key message and recommended action.`,
+Three sentences max. Card 1→situation. Card 2→action. Card 3→result.`,
   
    "sentence-5": (question, cards) => `${question}
-Cards (five-card spread): ${cards}
+Cards: ${cards}
 
-Pair-reading: 1+2 (start), 2+3 (middle), 3+4 (direction), 4+5 (outcome).
-
-Conclusion: What does this situation lead to?`,
+Two sentences. Pairs: 1+2 (start), 2+3 (middle), 3+4 (turn), 4+5 (outcome).`,
   
    "comprehensive": (question, cards) => `${question}
-Cards (nine-card spread): ${cards}
+Cards (9-card): ${cards}
 
-3x3 grid: Row 1 = Opening, Row 2 = Development, Row 3 = Outcome.
-
-Conclusion: Overall picture and main takeaway.`,
+Three sentences. Row 1=opening, Row 2=action, Row 3=outcome.`,
   
   "grand-tableau": (question, cards) => `${question}
-Cards (Grand Tableau, 36 cards): ${cards}
+Cards (36): ${cards}
 
-4x9 grid: Complete life situation. Significator (M28/W29) as reference. Zones: left=past, right=future, above=conscious, below=unconscious. Read pairs within rows.
-
-Conclusion: Synthesize the complete picture. What is the ultimate direction or outcome?`
+Four sentences max. Key: what's the main theme and direction?`
 };
 
 /**
