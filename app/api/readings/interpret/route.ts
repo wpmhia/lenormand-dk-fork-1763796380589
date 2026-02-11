@@ -1,4 +1,5 @@
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 // Vercel Free plan: max 10s - proven to work with fixed token limits
 export const maxDuration = 10;
 
@@ -122,10 +123,27 @@ export async function POST(request: Request) {
                 { role: "system", content: buildSystemPrompt() },
                 { role: "user", content: prompt },
               ],
-              temperature: 0.3,
-              top_p: 0.8,
-              max_tokens: maxTokens,
+              temperature: 0.7,
+              top_p: 0.9,
+              max_tokens: 150,
               stream: true,
+              response_format: {
+                type: "json_schema",
+                json_schema: {
+                  name: "lenormand_reading",
+                  schema: {
+                    type: "object",
+                    properties: {
+                      sentence: {
+                        type: "string",
+                        description: "The complete Lenormand reading"
+                      }
+                    },
+                    required: ["sentence"]
+                  },
+                  strict: true
+                }
+              }
             }),
             signal: abortController.signal,
           });

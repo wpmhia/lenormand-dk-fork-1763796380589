@@ -115,7 +115,19 @@ export function useAIAnalysis(
                   if (event.type === "chunk" && event.content) {
                     fullReading += event.content;
                     console.log("[useAIAnalysis] Chunk received, total length:", fullReading.length);
-                    setAiReading({ reading: fullReading, source: "deepseek" });
+                    
+                    // Try to parse as JSON for structured output
+                    try {
+                      const parsed = JSON.parse(fullReading);
+                      if (parsed.sentence) {
+                        setAiReading({ reading: parsed.sentence, source: "deepseek" });
+                      } else {
+                        setAiReading({ reading: fullReading, source: "deepseek" });
+                      }
+                    } catch {
+                      // Not complete JSON yet, show what we have
+                      setAiReading({ reading: fullReading, source: "deepseek" });
+                    }
                   } else if (event.type === "done") {
                     setIsStreaming(false);
                     break;
@@ -132,7 +144,18 @@ export function useAIAnalysis(
                 if (event.type === "chunk" && event.content) {
                   fullReading += event.content;
                   console.log("[useAIAnalysis] Final chunk received, total length:", fullReading.length);
-                  setAiReading({ reading: fullReading, source: "deepseek" });
+                  
+                  // Final JSON parse for structured output
+                  try {
+                    const parsed = JSON.parse(fullReading);
+                    if (parsed.sentence) {
+                      setAiReading({ reading: parsed.sentence, source: "deepseek" });
+                    } else {
+                      setAiReading({ reading: fullReading, source: "deepseek" });
+                    }
+                  } catch {
+                    setAiReading({ reading: fullReading, source: "deepseek" });
+                  }
                 }
               }
 
