@@ -82,7 +82,7 @@ export function useAIAnalysis(
         console.log("[useAIAnalysis] Response content-type:", contentType, "isStream:", isStreamResponse);
 
         if (isStreamResponse) {
-          // Handle SSE streaming
+          // Handle SSE streaming with proper line buffering
           console.log("[useAIAnalysis] Starting SSE stream processing");
           setIsLoading(false);
           setIsStreaming(true);
@@ -90,16 +90,25 @@ export function useAIAnalysis(
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
           let fullReading = "";
+          let buffer = ""; // Buffer for incomplete lines
 
           if (reader) {
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
 
-              const chunk = decoder.decode(value);
-              const lines = chunk.split("\n");
+              // Decode chunk and add to buffer
+              const chunk = decoder.decode(value, { stream: true });
+              buffer += chunk;
 
-              for (const line of lines) {
+              // Process complete lines
+              const lines = buffer.split("\n");
+              // Keep the last incomplete line in buffer
+              buffer = lines[lines.length - 1];
+
+              // Process all complete lines (all except the last one)
+              for (let i = 0; i < lines.length - 1; i++) {
+                const line = lines[i];
                 if (line.startsWith("data: ")) {
                   const data = line.slice(6);
 
@@ -123,10 +132,30 @@ export function useAIAnalysis(
                   } catch (e) {
                     // Only ignore JSON parse errors, not thrown errors
                     if (e instanceof SyntaxError) {
-                      // Ignore incomplete JSON chunks
+                      // Ignore incomplete JSON chunks, will retry when more data arrives
+                      console.log("[useAIAnalysis] Skipping incomplete JSON, will retry: ", data.substring(0, 50));
                     } else {
                       throw e;
                     }
+                  }
+                }
+              }
+            }
+
+            // Process any remaining buffered data
+            if (buffer.trim()) {
+              if (buffer.startsWith("data: ")) {
+                const data = buffer.slice(6);
+                if (data !== "[DONE]") {
+                  try {
+                    const parsed = JSON.parse(data);
+                    if (parsed.type === "chunk" && parsed.content) {
+                      fullReading += parsed.content;
+                      console.log("[useAIAnalysis] Final chunk received, total length:", fullReading.length);
+                      setAiReading({ reading: fullReading, source: "deepseek" });
+                    }
+                  } catch (e) {
+                    console.warn("[useAIAnalysis] Failed to parse final buffer:", e);
                   }
                 }
               }
