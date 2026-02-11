@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
+import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 
 interface UseAIAnalysisReturn {
   aiReading: AIReadingResponse | null;
@@ -90,7 +91,7 @@ export function useAIAnalysis(
         console.log("[useAIAnalysis] Response content-type:", contentType, "isStream:", isStreamResponse);
 
         if (isStreamResponse) {
-          // Handle SSE streaming with proper line buffering
+          // Handle SSE streaming using shared parser
           console.log("[useAIAnalysis] Starting SSE stream processing");
           setIsLoading(false);
           setIsStreaming(true);
@@ -98,7 +99,7 @@ export function useAIAnalysis(
           reader = response.body?.getReader();
           const decoder = new TextDecoder();
           let fullReading = "";
-          let buffer = ""; // Buffer for incomplete lines
+          let buffer = "";
 
           if (reader) {
             try {
@@ -106,67 +107,32 @@ export function useAIAnalysis(
                 const { done, value } = await reader.read();
                 if (done) break;
 
-                // Decode chunk and add to buffer
                 const chunk = decoder.decode(value, { stream: true });
-                buffer += chunk;
+                const { events, buffer: newBuffer } = processSSEChunk(chunk, buffer);
+                buffer = newBuffer;
 
-                // Process complete lines
-                const lines = buffer.split("\n");
-                // Keep the last incomplete line in buffer
-                buffer = lines[lines.length - 1];
-
-                // Process all complete lines (all except the last one)
-                for (let i = 0; i < lines.length - 1; i++) {
-                  const line = lines[i];
-                  if (line.startsWith("data: ")) {
-                    const data = line.slice(6);
-
-                    if (data === "[DONE]") continue;
-
-                    try {
-                      const parsed = JSON.parse(data);
-
-                      if (parsed.type === "chunk" && parsed.content) {
-                        fullReading += parsed.content;
-                        // Update reading progressively
-                        console.log("[useAIAnalysis] Chunk received, total length:", fullReading.length);
-                        setAiReading({ reading: fullReading, source: "deepseek" });
-                      } else if (parsed.type === "done") {
-                        setIsStreaming(false);
-                        break;
-                      } else if (parsed.type === "error") {
-                        console.error("[useAIAnalysis] Stream error event:", parsed);
-                        throw new Error(parsed.error || parsed.message || "Reading failed");
-                      }
-                    } catch (e) {
-                      // Only ignore JSON parse errors, not thrown errors
-                      if (e instanceof SyntaxError) {
-                        // Ignore incomplete JSON chunks, will retry when more data arrives
-                        console.log("[useAIAnalysis] Skipping incomplete JSON, will retry: ", data.substring(0, 50));
-                      } else {
-                        throw e;
-                      }
-                    }
+                for (const event of events) {
+                  if (event.type === "chunk" && event.content) {
+                    fullReading += event.content;
+                    console.log("[useAIAnalysis] Chunk received, total length:", fullReading.length);
+                    setAiReading({ reading: fullReading, source: "deepseek" });
+                  } else if (event.type === "done") {
+                    setIsStreaming(false);
+                    break;
+                  } else if (event.type === "error") {
+                    console.error("[useAIAnalysis] Stream error event:", event);
+                    throw new Error(event.error || event.message || "Reading failed");
                   }
                 }
               }
 
               // Process any remaining buffered data
-              if (buffer.trim()) {
-                if (buffer.startsWith("data: ")) {
-                  const data = buffer.slice(6);
-                  if (data !== "[DONE]") {
-                    try {
-                      const parsed = JSON.parse(data);
-                      if (parsed.type === "chunk" && parsed.content) {
-                        fullReading += parsed.content;
-                        console.log("[useAIAnalysis] Final chunk received, total length:", fullReading.length);
-                        setAiReading({ reading: fullReading, source: "deepseek" });
-                      }
-                    } catch (e) {
-                      console.warn("[useAIAnalysis] Failed to parse final buffer:", e);
-                    }
-                  }
+              const finalEvents = finalizeSSEStream(buffer);
+              for (const event of finalEvents) {
+                if (event.type === "chunk" && event.content) {
+                  fullReading += event.content;
+                  console.log("[useAIAnalysis] Final chunk received, total length:", fullReading.length);
+                  setAiReading({ reading: fullReading, source: "deepseek" });
                 }
               }
 
@@ -176,7 +142,7 @@ export function useAIAnalysis(
                 console.warn("[useAIAnalysis] Decoder had remaining bytes:", finalChunk.length);
               }
             } finally {
-              // CRITICAL FIX: Always release the reader lock
+              // Always release the reader lock
               reader.releaseLock();
               reader = null;
             }

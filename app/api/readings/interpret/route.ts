@@ -9,6 +9,7 @@ import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
+import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 
 // Use getEnv for edge runtime compatibility
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
@@ -144,73 +145,49 @@ export async function POST(request: Request) {
            }
 
            const decoder = new TextDecoder();
-           let buffer = ""; // Buffer for incomplete lines
+            let buffer = "";
 
-           // Send headers first
-           controller.enqueue(encoder.encode(
-             `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
-           ));
+            // Send headers first
+            controller.enqueue(encoder.encode(
+              `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
+            ));
 
-           while (true) {
-             const { done, value } = await reader.read();
-             if (done) break;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
 
-             // Decode chunk and add to buffer
-             const chunk = decoder.decode(value, { stream: true });
-             buffer += chunk;
+              const chunk = decoder.decode(value, { stream: true });
+              const { events } = processSSEChunk(chunk, buffer);
+              
+              for (const event of events) {
+                // Event is from DeepSeek - pass through with our wrapper
+                const data = (event as any);
+                if (data && typeof data === "object") {
+                  const delta = data.choices?.[0]?.delta?.content;
+                  if (delta) {
+                    console.log("[API] Sending chunk, length:", delta.length);
+                    const sseData = JSON.stringify({ type: "chunk", content: delta });
+                    controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                  }
+                }
+              }
+            }
 
-             // Process complete lines
-             const lines = buffer.split("\n");
-             // Keep the last incomplete line in buffer
-             buffer = lines[lines.length - 1];
+            // Process any remaining buffered data
+            const finalEvents = finalizeSSEStream(buffer);
+            for (const event of finalEvents) {
+              const data = (event as any);
+              if (data && typeof data === "object") {
+                const delta = data.choices?.[0]?.delta?.content;
+                if (delta) {
+                  console.log("[API] Sending final chunk, length:", delta.length);
+                  const sseData = JSON.stringify({ type: "chunk", content: delta });
+                  controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                }
+              }
+            }
 
-             // Process all complete lines (all except the last one)
-             for (let i = 0; i < lines.length - 1; i++) {
-               const line = lines[i];
-               if (line.startsWith("data: ")) {
-                 const data = line.slice(6);
-                 if (data === "[DONE]") {
-                   controller.enqueue(encoder.encode("data: {\"type\":\"done\"}\n\n"));
-                   break;
-                 }
-
-                 try {
-                   const parsed = JSON.parse(data);
-                   const delta = parsed.choices?.[0]?.delta?.content;
-                   if (delta) {
-                     console.log("[API] Sending chunk, length:", delta.length);
-                     const sseData = JSON.stringify({ type: "chunk", content: delta });
-                     controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
-                   }
-                 } catch (e) {
-                   // Ignore parse errors for incomplete JSON
-                   console.log("[API] Skipping incomplete JSON chunk");
-                 }
-               }
-             }
-           }
-
-           // Process any remaining buffered data
-           if (buffer.trim()) {
-             if (buffer.startsWith("data: ")) {
-               const data = buffer.slice(6);
-               if (data !== "[DONE]") {
-                 try {
-                   const parsed = JSON.parse(data);
-                   const delta = parsed.choices?.[0]?.delta?.content;
-                   if (delta) {
-                     console.log("[API] Sending final chunk, length:", delta.length);
-                     const sseData = JSON.stringify({ type: "chunk", content: delta });
-                     controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
-                   }
-                 } catch (e) {
-                   console.log("[API] Failed to parse final buffer chunk");
-                 }
-               }
-             }
-           }
-
-          controller.close();
+           controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
           console.error("[API] Stream error:", error.name, error.message);
