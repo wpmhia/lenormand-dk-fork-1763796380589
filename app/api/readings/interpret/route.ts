@@ -140,46 +140,76 @@ export async function POST(request: Request) {
           }
 
           const reader = response.body?.getReader();
-          if (!reader) {
-            throw new Error("No response body");
-          }
+           if (!reader) {
+             throw new Error("No response body");
+           }
 
-          const decoder = new TextDecoder();
+           const decoder = new TextDecoder();
+           let buffer = ""; // Buffer for incomplete lines
 
-          // Send headers first
-          controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
-          ));
+           // Send headers first
+           controller.enqueue(encoder.encode(
+             `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
+           ));
 
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+           while (true) {
+             const { done, value } = await reader.read();
+             if (done) break;
 
-            const chunk = decoder.decode(value);
-            const lines = chunk.split("\n");
+             // Decode chunk and add to buffer
+             const chunk = decoder.decode(value, { stream: true });
+             buffer += chunk;
 
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
-                if (data === "[DONE]") {
-                  controller.enqueue(encoder.encode("data: {\"type\":\"done\"}\n\n"));
-                  break;
-                }
+             // Process complete lines
+             const lines = buffer.split("\n");
+             // Keep the last incomplete line in buffer
+             buffer = lines[lines.length - 1];
 
-                try {
-                  const parsed = JSON.parse(data);
-                  const delta = parsed.choices?.[0]?.delta?.content;
-                  if (delta) {
-                    console.log("[API] Sending chunk, length:", delta.length);
-                    const sseData = JSON.stringify({ type: "chunk", content: delta });
-                    controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
-                  }
-                } catch {
-                  // Ignore parse errors
-                }
-              }
-            }
-          }
+             // Process all complete lines (all except the last one)
+             for (let i = 0; i < lines.length - 1; i++) {
+               const line = lines[i];
+               if (line.startsWith("data: ")) {
+                 const data = line.slice(6);
+                 if (data === "[DONE]") {
+                   controller.enqueue(encoder.encode("data: {\"type\":\"done\"}\n\n"));
+                   break;
+                 }
+
+                 try {
+                   const parsed = JSON.parse(data);
+                   const delta = parsed.choices?.[0]?.delta?.content;
+                   if (delta) {
+                     console.log("[API] Sending chunk, length:", delta.length);
+                     const sseData = JSON.stringify({ type: "chunk", content: delta });
+                     controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                   }
+                 } catch (e) {
+                   // Ignore parse errors for incomplete JSON
+                   console.log("[API] Skipping incomplete JSON chunk");
+                 }
+               }
+             }
+           }
+
+           // Process any remaining buffered data
+           if (buffer.trim()) {
+             if (buffer.startsWith("data: ")) {
+               const data = buffer.slice(6);
+               if (data !== "[DONE]") {
+                 try {
+                   const parsed = JSON.parse(data);
+                   const delta = parsed.choices?.[0]?.delta?.content;
+                   if (delta) {
+                     console.log("[API] Sending final chunk, length:", delta.length);
+                     const sseData = JSON.stringify({ type: "chunk", content: delta });
+                     controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                   }
+                 } catch (e) {
+                   console.log("[API] Failed to parse final buffer chunk");
+                 }
+               }
+             }
+           }
 
           controller.close();
         } catch (error: any) {
