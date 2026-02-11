@@ -16,10 +16,10 @@ import {
  * Completes in 4-8 seconds on Vercel free plan
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 250;   // ~180 words, complete response guaranteed
-  if (cardCount <= 9) return 280;   // ~200 words, row analysis
-  if (cardCount <= 36) return 280;  // ~200 words, brief but complete significator reading
-  return 250;
+  if (cardCount <= 3) return 280;   // ~200 words
+  if (cardCount <= 9) return 320;   // ~230 words
+  if (cardCount <= 36) return 380;  // ~280 words, significator + key cards
+  return 280;
 }
 
 // ============================================================================
@@ -102,11 +102,11 @@ export const VALID_CARD_NAMES = [
  * 3-paragraph structure: individual cards → blend → direct answer
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Provide brief, complete readings that NEVER truncate mid-sentence.
+  return `You are a Lenormand fortune teller. Provide readings that NEVER truncate mid-sentence. Always finish every sentence completely.
 
-Structure: 2-3 short paragraphs maximum. Always finish your final sentence completely.
+Readings should be specific: name actual cards, describe their positions, explain their interactions. Avoid generic phrases like "lingering confusion and burdens" - instead say "the Clouds at position 12 indicates confusion about work."
 
-Be specific and contextual. Avoid generic fluff.`;
+Structure: 2-3 paragraphs. Be specific, contextual, and complete.`;
 }
 
 /**
@@ -137,7 +137,7 @@ Cards: ${cards}
   "grand-tableau": (question, cards) => `${question}
 Cards: ${cards}
 
-Grand Tableau (36 cards). Give ONE short paragraph: mention the Significator's position and the single most important insight. Stop there. Do not list cards. Finish your sentence.`
+Grand Tableau: 1) Name the Significator's position, 2) Describe specific nearby cards by name (left=past, right=future, above=conscious, below=unconscious), 3) Synthesize their story in 2-3 sentences. Always finish your sentences.`
 };
 
 /**
