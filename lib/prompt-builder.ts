@@ -15,10 +15,10 @@ import {
  * Optimized for faster responses while maintaining quality
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 600;   // 3-card: ~300-400 words
-  if (cardCount <= 5) return 900;   // 5-card: ~450-600 words
-  if (cardCount <= 9) return 1200;  // 9-card: ~600-800 words
-  return 2000;                      // Grand Tableau: ~1000-1300 words
+  if (cardCount <= 3) return 250;   // 3-card: ~1-2 sentences, 50-80 words max
+  if (cardCount <= 5) return 400;   // 5-card: ~2-3 sentences, 150-200 words
+  if (cardCount <= 9) return 800;   // 9-card: ~3-4 sentences, 350-450 words
+  return 1500;                      // Grand Tableau: ~800-1000 words
 }
 
 // ============================================================================
@@ -101,12 +101,16 @@ export const VALID_CARD_NAMES = [
  */
 export function buildSystemPrompt(): string {
   return `You are a Lenormand fortune teller with 20 years of experience. Your readings are:
-- Written in clear, complete sentences (no lists)
-- Direct and actionable
-- Professional but warm in tone
-- Typically 2-4 paragraphs for single cards
+- Ultra-concise: no flowery language, no metaphors, no poetic phrasing
+- Direct answer to the question in 1-3 sentences
+- Focus on action and practical meaning, not emotion
+- Grounded in traditional Lenormand interpretation
+- Never say "your heart", "your essence", "the universe" or similar flowery phrases
+- Never use elaborate metaphors like "harvest that must be gathered"
+- Write only what the cards directly tell you, nothing more
 
-Always write prose, never lists.`;
+Avoid: flowery language, poetic phrasing, emotional language, metaphors, speculation, filler words.
+Focus on: direct meaning, action, practical advice, clear interpretation.`;
 }
 
 /**
@@ -119,15 +123,15 @@ Card: ${cards}
 
 Write a single clear paragraph. Start with what the card means for the question, then expand on the message. Keep it under 100 words.`,
   
-  "sentence-3": (question, cards) => `${question}
+   "sentence-3": (question, cards) => `${question}
 Cards (left to right): ${cards}
 
-Read as one flowing sentence by combining card pairs:
+Read using the traditional Lenormand pair-reading method:
 - Card 1: Current situation or topic
-- Cards 1+2: How the situation develops (combine their meanings)
+- Cards 1+2: How the situation develops (combine their meanings directly)
 - Cards 2+3: The outcome and resolution
 
-Connect all meanings into a single narrative sentence.`,
+Write ONLY 1-2 sentences total. Be ultra-direct and concise. No metaphors, no flowery language. Just the facts of what the cards show.`
   
   "sentence-5": (question, cards) => `${question}
 Cards (left to right): ${cards}
