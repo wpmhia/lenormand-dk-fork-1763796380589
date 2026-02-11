@@ -2,8 +2,13 @@ import { Card, Reading, ReadingCard } from "./types";
 import staticCardsData from "@/public/data/cards.json";
 
 // HMAC signing for URL-shared readings (security fix)
-const READING_HMAC_SECRET =
-  process.env.READING_HMAC_SECRET || "default-dev-key-change-in-production";
+const DEFAULT_HMAC_SECRET = "default-dev-key-change-in-production";
+const READING_HMAC_SECRET = process.env.READING_HMAC_SECRET || DEFAULT_HMAC_SECRET;
+
+// Warn once if using default secret
+if (!process.env.READING_HMAC_SECRET && typeof window === "undefined") {
+  console.warn("[SECURITY] READING_HMAC_SECRET not set. Using default key which is insecure for production.");
+}
 
 async function generateHMAC(data: string): Promise<string> {
   if (typeof window === "undefined") {

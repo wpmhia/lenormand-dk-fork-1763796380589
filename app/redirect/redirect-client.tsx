@@ -27,31 +27,33 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const params = useSearchParams();
+  const resolvedParams = useSearchParams();
+  const destination = params.get("to") || resolvedParams.get("to");
+  const isPermanent = params.get("permanent") || resolvedParams.get("permanent");
 
   useEffect(() => {
     const handleRedirect = async () => {
-      const resolvedParams = await searchParams;
-      const destination = params.get("to") || resolvedParams.to;
-      const redirectCode = params.get("code") || resolvedParams.code;
-      const isPermanent = params.get("permanent") || resolvedParams.permanent;
+      const resolved = await searchParams;
+      const dest = params.get("to") || resolved.to;
+      const perm = params.get("permanent") || resolved.permanent;
 
-      if (!destination && !redirectCode) {
+      if (!dest && !resolved.code) {
         setError("No redirect destination provided");
         return;
       }
 
       let url: string;
 
-      if (redirectCode) {
-        const resolvedUrl = redirectMap[redirectCode];
+      if (resolved.code) {
+        const resolvedUrl = redirectMap[resolved.code];
         if (!resolvedUrl) {
           setError("Invalid redirect code");
           return;
         }
         url = resolvedUrl;
-      } else if (destination) {
+      } else if (dest) {
         try {
-          url = new URL(destination).toString();
+          url = new URL(dest).toString();
         } catch {
           setError("Invalid URL provided");
           return;
@@ -61,8 +63,9 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
         return;
       }
 
+      const redirectPermanent = perm === "true" || perm === "1";
       const timeout = setTimeout(() => {
-        if (isPermanent === "true" || isPermanent === "1") {
+        if (redirectPermanent) {
           router.replace(url);
         } else {
           router.push(url);
@@ -73,12 +76,8 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
     };
 
     handleRedirect();
-  }, [params, searchParams, router]);
-
-  const resolvedParams = useSearchParams();
-  const destination = params.get("to") || resolvedParams.get("to");
-  const isPermanent =
-    params.get("permanent") || resolvedParams.get("permanent");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, router]);
 
   if (error) {
     return (
