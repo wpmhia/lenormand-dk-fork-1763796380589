@@ -17,8 +17,8 @@ import {
  */
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 3) return 280;   // ~200 words, 2-3 paragraphs
-  if (cardCount <= 9) return 350;   // ~250 words, allows row analysis
-  if (cardCount <= 36) return 400;  // ~300 words, significator + zones (safe for 10s timeout)
+  if (cardCount <= 9) return 320;   // ~220 words, row analysis
+  if (cardCount <= 36) return 350;  // ~250 words, focused significator reading
   return 280;
 }
 
@@ -139,7 +139,7 @@ Cards: ${cards}
   "grand-tableau": (question, cards) => `${question}
 Cards: ${cards}
 
-Grand Tableau (36 cards, 4x9 grid). Look for the Significator (Man/Woman card) first. Read left-to-right for past-to-future. Corners (1,9,28,36) show underlying forces. Cards near the Significator are most relevant.`
+Grand Tableau (36 cards). Focus on: 1) Significator (Man/Woman) position, 2) Cards immediately surrounding it, 3) Overall story the grid tells. Be concise.`
 };
 
 /**
