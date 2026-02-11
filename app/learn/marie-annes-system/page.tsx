@@ -159,13 +159,13 @@ export default function MarieAnnesSystemPage() {
               </p>
             </div>
 
-            <div className="rounded-lg bg-muted p-4">
-              <h4 className="font-semibold">3-Card Sentence</h4>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Her daily workhorse. Opening → Turning Point → Outcome. Always
-                with deadline and action.
-              </p>
-            </div>
+             <div className="rounded-lg bg-muted p-4">
+               <h4 className="font-semibold">3-Card Sentence (Pair-Reading)</h4>
+               <p className="mt-1 text-sm text-muted-foreground">
+                 Her daily workhorse. Combines pairs: Card 1 → Cards 1+2 development → Cards 2+3 outcome. 
+                 Always with deadline and practical action.
+               </p>
+             </div>
 
             <div className="rounded-lg bg-muted p-4">
               <h4 className="font-semibold">9-Card Petit Grand Tableau</h4>
@@ -195,9 +195,9 @@ export default function MarieAnnesSystemPage() {
             Modern Spreads (Applied with Her Methodology)
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-foreground">
-          <p>
-            Spreads like Past-Present-Future and Situation-Challenge-Advice
+         <CardContent className="space-y-4 text-foreground">
+           <p>
+             Spreads like Situation-Challenge-Advice and 3-Card Sentence Reading
             were developed after Marie-Anne&apos;s time. But we apply{" "}
             <strong>her methodology</strong> to all of them:
           </p>

@@ -43,100 +43,59 @@ const spreads = [
       },
     ],
   },
-  {
-    category: "3-Card Spreads",
-    description: "Perfect for quick insights and daily guidance",
-    spreads: [
-      {
-        name: "3-Card: Yes or No",
-        description: "Direct answer to your yes or no question",
-        layout: "First Card → Center Card → Third Card",
-        useCase: "Binary decisions, clear answers",
-        difficulty: "Beginner",
-        isPrimary: false,
-        positions: [
-          {
-            name: "First Card",
-            description: "The foundation of your question",
-          },
-          {
-            name: "Center Card",
-            description: "The central issue or influence",
-          },
-          {
-            name: "Third Card",
-            description: "The resolution or outcome",
-          },
-        ],
-      },
-      {
-        name: "3-Card Sentence Reading",
-        description:
-          "Three cards flowing as a narrative sentence - the core Lenormand method",
-        layout: "Card 1 → Card 2 → Card 3 (as flowing narrative)",
-        useCase: "Universal reading, foundational technique",
-        difficulty: "Beginner",
-        isPrimary: true,
-        positions: [
-          {
-            name: "Card 1",
-            description:
-              "First element in the narrative sentence (subject/context)",
-          },
-          {
-            name: "Card 2",
-            description:
-              "Central element in the narrative (action/development)",
-          },
-          {
-            name: "Card 3",
-            description: "Final element in the narrative (object/outcome)",
-          },
-        ],
-      },
-      {
-        name: "3-Card Past-Present-Future",
-        description: "Classic timeline spread for understanding progression",
-        layout: "Past → Present → Future",
-        useCase: "General guidance, life overview",
-        difficulty: "Beginner",
-        isPrimary: false,
-        positions: [
-          {
-            name: "Past",
-            description: "What has led to the current situation",
-          },
-          {
-            name: "Present",
-            description: "Current circumstances and energies",
-          },
-          { name: "Future", description: "Likely outcome or direction" },
-        ],
-      },
-      {
-        name: "3-Card: Situation-Challenge-Advice",
-        description: "Diagnostic spread for problem-solving",
-        layout: "Situation → Challenge → Advice",
-        useCase: "Problem analysis, decision making",
-        difficulty: "Beginner",
-        isPrimary: false,
-        positions: [
-          {
-            name: "Situation",
-            description: "What's currently happening",
-          },
-          {
-            name: "Challenge",
-            description: "What's blocking or opposing you",
-          },
-          {
-            name: "Advice",
-            description: "What to do about it",
-          },
-        ],
-      },
-    ],
-  },
+   {
+     category: "3-Card Spreads",
+     description: "Perfect for quick insights and daily guidance - Lenormand's most popular method",
+     spreads: [
+       {
+         name: "3-Card Sentence Reading",
+         description:
+           "Three cards flowing as a narrative sentence using pair-reading - the core Lenormand method",
+         layout: "Card 1 → Card 2 → Card 3 (combine pairs: 1+2, then 2+3)",
+         useCase: "Universal reading, foundational technique, any question",
+         difficulty: "Beginner",
+         isPrimary: true,
+         positions: [
+           {
+             name: "Card 1",
+             description:
+               "Current situation or topic (read with Card 2 to see development)",
+           },
+           {
+             name: "Card 2",
+             description:
+               "Development or action (read with Card 1 and Card 3 for full meaning)",
+           },
+           {
+             name: "Card 3",
+             description: "Outcome or resolution (read with Card 2 to see how it concludes)",
+           },
+         ],
+       },
+       {
+         name: "3-Card: Situation-Challenge-Advice",
+         description: "Diagnostic spread for problem-solving using Lenormand pair-reading",
+         layout: "Situation → Challenge → Advice (read pairs 1+2 and 2+3)",
+         useCase: "Problem analysis, decision making, troubleshooting",
+         difficulty: "Beginner",
+         isPrimary: false,
+         positions: [
+           {
+             name: "Situation",
+             description: "What's currently happening (combined with Challenge shows the problem)",
+           },
+           {
+             name: "Challenge",
+             description: "What's blocking or opposing you (read with Advice to see the solution path)",
+           },
+           {
+             name: "Advice",
+             description: "What to do about it (the resolution that follows from the challenge)",
+           },
+         ],
+       },
+     ],
+   },
   {
     category: "5-Card Spreads",
     description: "Extended narrative for more context without complexity",
@@ -159,121 +118,122 @@ const spreads = [
     ],
   },
 
-  {
-    category: "9-Card Spreads",
-    description: "Master spread for comprehensive life insights",
-    spreads: [
-      {
-        name: "9-Card Comprehensive Spread",
-        description: "Complete life reading using traditional 3x3 grid layout",
-        layout:
-          "3x3 Grid: Recent Past → Present → Near Future (across rows) × Inner World → Direct Actions → External Influences (down columns)",
-        useCase: "Major life decisions, deep insight",
-        difficulty: "Advanced",
-        isPrimary: true,
-        positions: [
-          {
-            name: "Recent Past - Inner World",
-            description:
-              "Thoughts, feelings, and personal resources from your recent past that influence your current situation",
-          },
-          {
-            name: "Recent Past - Direct Actions",
-            description:
-              "Actions you took recently that shaped your current circumstances",
-          },
-          {
-            name: "Recent Past - Outside World",
-            description: "External influences and events from your recent past",
-          },
-          {
-            name: "Present - Inner World",
-            description: "Your current thoughts, feelings, and internal state",
-          },
-          {
-            name: "Present - Direct Actions",
-            description:
-              "Your current actions and the central issue you're facing",
-          },
-          {
-            name: "Present - Outside World",
-            description:
-              "Current external influences, other people, and environmental factors",
-          },
-          {
-            name: "Near Future - Inner World",
-            description:
-              "How your thoughts and feelings will evolve in the near future",
-          },
-          {
-            name: "Near Future - Direct Actions",
-            description: "Actions you'll need to take in the near future",
-          },
-          {
-            name: "Near Future - Outside World",
-            description:
-              "External events and influences approaching in the near future",
-          },
-        ],
-      },
-    ],
-  },
+   {
+     category: "9-Card Spreads",
+     description: "Petit Grand Tableau - Master spread for comprehensive life insights using authentic Lenormand row-reading",
+     spreads: [
+       {
+         name: "9-Card Petit Grand Tableau",
+         description: "Complete life reading using traditional 3x3 grid layout read as three rows with pair combinations",
+         layout:
+           "3x3 Grid (3 rows): Row 1 = Opening situation, Row 2 = Development, Row 3 = Resolution (read pairs 1+2, 2+3 in each row)",
+         useCase: "Major life decisions, deep insight, complex situations",
+         difficulty: "Intermediate",
+         isPrimary: true,
+         positions: [
+           {
+             name: "Row 1, Card 1",
+             description:
+               "The topic or beginning of the situation (pair with Card 2 to see opening development)",
+           },
+           {
+             name: "Row 1, Card 2",
+             description:
+               "How the situation opens or develops initially (read with Card 3 to see where it leads)",
+           },
+           {
+             name: "Row 1, Card 3",
+             description: "Where the opening leads or the transition point",
+           },
+           {
+             name: "Row 2, Card 1",
+             description:
+               "Development or complication emerges (shows what unfolds from Row 1)",
+           },
+           {
+             name: "Row 2, Card 2 (CENTER)",
+             description:
+               "Heart of the matter - the central theme connecting all rows. Read with surrounding cards for full meaning",
+           },
+           {
+             name: "Row 2, Card 3",
+             description:
+               "Further development or turning point in the narrative",
+           },
+           {
+             name: "Row 3, Card 1",
+             description:
+               "Resolution begins (shows how development leads to closing)",
+           },
+           {
+             name: "Row 3, Card 2",
+             description:
+               "How the resolution manifests or the final action taken",
+           },
+           {
+             name: "Row 3, Card 3",
+             description: "Final outcome or settled state",
+           },
+         ],
+       },
+     ],
+   },
   {
     category: "36-Card Master Reading",
     description: "Complete deck reading for comprehensive guidance",
     spreads: [
-      {
-        name: "Grand Tableau (36-Card Reading)",
-        description:
-          "The most comprehensive Lenormand reading using all 36 cards",
-        layout: "4 rows of 9 cards (traditional French 'salon' method)",
-        useCase:
-          "Major life decisions, year-ahead readings, complex relationship issues",
-        difficulty: "Expert",
-        isPrimary: true,
-        positions: [
-          {
-            name: "Significator",
-            description:
-              "The card representing you (usually Woman #29 or Man #28) - the center of the reading",
-          },
-          {
-            name: "Cross of the Moment",
-            description:
-              "The 5-card cross formed by significator's row and column - reveals immediate situation",
-          },
-          {
-            name: "Four Corners",
-            description:
-              "Cards 1, 6, 31, 36 - represent the fixed frame and foundation of the situation",
-          },
-          {
-            name: "Four Center Cards",
-            description:
-              "Cards 13, 16, 12, 11 - reveal what's secretly driving the matter",
-          },
-          {
-            name: "Nine-Card Square",
-            description:
-              "3x3 area around significator - shows immediate influences and personal sphere",
-          },
-          {
-            name: "Knight Moves",
-            description:
-              "L-shaped patterns from significator - reveal underlying patterns and connections",
-          },
-          {
-            name: "Mirror Positions",
-            description:
-              "Cards directly opposite significator - show balancing energies and lessons",
-          },
-          {
-            name: "House Meanings",
-            description:
-              "Each position has traditional house associations that add symbolic meaning",
-          },
-        ],
-      },
+       {
+         name: "Grand Tableau (36-Card Reading)",
+         description:
+           "The most comprehensive Lenormand reading using all 36 cards in a 4×9 grid - authentic French salon method",
+         layout: "4 rows of 9 cards (traditional salon formation) - read left-to-right by row with pair combinations",
+         useCase:
+           "Major life decisions, year-ahead readings, complex situations, complete life picture",
+         difficulty: "Expert",
+         isPrimary: true,
+         positions: [
+           {
+             name: "Significator",
+             description:
+               "The card representing you (usually Man #28 or Woman #29) - the anchor point for directional reading",
+           },
+           {
+             name: "Row-by-Row Reading",
+             description:
+               "Read all 36 cards left-to-right by row, combining adjacent cards (pairs) to build narrative",
+           },
+           {
+             name: "Directional Zones",
+             description:
+               "Cards to LEFT of significator = past influences | RIGHT = future possibilities | ABOVE = conscious thoughts | BELOW = unconscious forces",
+           },
+           {
+             name: "Four Corners",
+             description:
+               "Cards 1, 9, 28, 36 (or 1, 9, 27, 36) - represent the strongest foundational influences and extreme energies",
+           },
+           {
+             name: "Center Area",
+             description:
+               "Central cards around middle of grid - reveal what's at the heart of the situation",
+           },
+           {
+             name: "Cards of Fate",
+             description:
+               "Cards 32 (Sun), 33 (Moon), 34 (Key), 35 (Fish) - when prominent, indicate destiny points",
+           },
+           {
+             name: "Topic Cards",
+             description:
+               "Specific positions carry traditional meanings: health, love, career, money (research position associations)",
+           },
+           {
+             name: "Pair Reading",
+             description:
+               "Read adjacent cards in rows as pairs for flowing narrative - same pair-reading method as 3-card and 9-card spreads",
+           },
+         ],
+       },
     ],
   },
 ];
