@@ -18,7 +18,7 @@ import {
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 3) return 280;   // ~200 words, 2-3 paragraphs
   if (cardCount <= 9) return 350;   // ~250 words, allows row analysis
-  if (cardCount <= 36) return 500;  // ~350 words, enables significator + zones
+  if (cardCount <= 36) return 400;  // ~300 words, significator + zones (safe for 10s timeout)
   return 280;
 }
 
@@ -108,7 +108,7 @@ export function buildSystemPrompt(): string {
 2. The blend: how they interact as a sequence  
 3. The answer: direct response to the question
 
-Be specific and contextual. Avoid generic fluff.`;
+Be specific and contextual. Avoid generic fluff. Return ONLY the reading text, no JSON, no labels.`;
 }
 
 /**

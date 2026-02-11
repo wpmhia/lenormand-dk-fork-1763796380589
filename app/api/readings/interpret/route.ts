@@ -125,7 +125,7 @@ export async function POST(request: Request) {
               ],
               temperature: 0.75,
               top_p: 0.9,
-              max_tokens: 280,
+              max_tokens: maxTokens,
               stream: true
             }),
             signal: abortController.signal,
