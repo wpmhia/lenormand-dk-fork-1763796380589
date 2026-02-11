@@ -15,10 +15,10 @@ import {
  * Optimized for faster responses while maintaining quality
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 150;   // 2-3 sentences
-  if (cardCount <= 5) return 200;   // 3-4 sentences
-  if (cardCount <= 9) return 300;   // 4-6 sentences
-  return 400;                       // Grand Tableau: natural length
+  if (cardCount <= 3) return 200;   // natural length
+  if (cardCount <= 5) return 250;   // natural length
+  if (cardCount <= 9) return 350;   // natural length
+  return 500;                       // Grand Tableau: natural length
 }
 
 // ============================================================================
@@ -100,7 +100,7 @@ export const VALID_CARD_NAMES = [
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Read the cards naturally as flowing sentences about what they reveal. No preamble, no meta-commentary, just the reading.`;
+  return `You are a Lenormand fortune teller.`;
 }
 
 /**
@@ -109,29 +109,19 @@ export function buildSystemPrompt(): string {
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
    "single-card": (question, cards) => `${question}
-Card: ${cards}
-
-What does this card reveal?`,
+Card: ${cards}`,
   
    "sentence-3": (question, cards) => `${question}
-Cards: ${cards}
-
-Read these three cards as a flowing sentence or narrative.`,
+Cards: ${cards}`,
   
    "sentence-5": (question, cards) => `${question}
-Cards: ${cards}
-
-Read these five cards as a flowing narrative.`,
+Cards: ${cards}`,
   
    "comprehensive": (question, cards) => `${question}
-Cards (9-card): ${cards}
-
-Read these nine cards as a narrative about the situation.`,
+Cards: ${cards}`,
   
   "grand-tableau": (question, cards) => `${question}
-Cards (36): ${cards}
-
-Read these 36 cards as a complete picture of the situation.`
+Cards: ${cards}`
 };
 
 /**
