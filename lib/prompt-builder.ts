@@ -10,6 +10,17 @@ import {
   MAX_CARD_NAME_LENGTH,
 } from "./constants";
 
+/**
+ * Determine token budget based on card count
+ * Optimized for faster responses while maintaining quality
+ */
+export function getTokenBudget(cardCount: number): number {
+  if (cardCount <= 3) return 600;   // 3-card: ~300-400 words
+  if (cardCount <= 5) return 900;   // 5-card: ~450-600 words
+  if (cardCount <= 9) return 1200;  // 9-card: ~600-800 words
+  return 2000;                      // Grand Tableau: ~1000-1300 words
+}
+
 // ============================================================================
 // Types
 // ============================================================================

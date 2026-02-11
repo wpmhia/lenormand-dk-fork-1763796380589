@@ -3,9 +3,8 @@ export const runtime = "edge";
 // Set to 10 for Free plan compatibility, increase to 60 if on Pro
 export const maxDuration = 10;
 
-import { buildPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
+import { buildPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
-import { getTokenBudget } from "@/lib/streaming";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
