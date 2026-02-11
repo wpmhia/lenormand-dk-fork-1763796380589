@@ -123,27 +123,10 @@ export async function POST(request: Request) {
                 { role: "system", content: buildSystemPrompt() },
                 { role: "user", content: prompt },
               ],
-              temperature: 0.7,
+              temperature: 0.75,
               top_p: 0.9,
               max_tokens: 280,
-              stream: true,
-              response_format: {
-                type: "json_schema",
-                json_schema: {
-                  name: "lenormand_reading",
-                  schema: {
-                    type: "object",
-                    properties: {
-                      sentence: {
-                        type: "string",
-                        description: "The complete Lenormand reading"
-                      }
-                    },
-                    required: ["sentence"]
-                  },
-                  strict: true
-                }
-              }
+              stream: true
             }),
             signal: abortController.signal,
           });
