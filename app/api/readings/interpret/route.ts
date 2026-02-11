@@ -1,7 +1,7 @@
 export const runtime = "edge";
 // Vercel Free plan: max 10s, Pro plan: max 60s
-// Set to 10 for Free plan compatibility, increase to 60 if on Pro
-export const maxDuration = 10;
+// Set to 60 for Pro plan compatibility (allows 1200 token responses)
+export const maxDuration = 60;
 
 import { buildPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
       question || "What do the cards show?",
     );
 
-    const timeoutMs = 7500;
+     const timeoutMs = 55000; // 55 seconds to allow longer responses and network latency
     const maxTokens = getTokenBudget(cardCount);
 
     console.log("[API] Starting streaming response, maxTokens:", maxTokens);
