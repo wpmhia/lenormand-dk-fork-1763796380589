@@ -8,15 +8,15 @@ export const ENV_VARIABLES: EnvVariable[] = [
   },
   {
     name: "UPSTASH_REDIS_REST_URL",
-    description: "Upstash Redis REST URL for job queue and caching",
-    required: true,
-    instructions: "Create a Redis database at https://upstash.com and copy the REST URL",
+    description: "Upstash Redis REST URL for rate limiting (optional)",
+    required: false,
+    instructions: "Create a Redis database at https://upstash.com for production. Falls back to in-memory if not set.",
   },
   {
     name: "UPSTASH_REDIS_REST_TOKEN",
-    description: "Upstash Redis REST token for authentication",
-    required: true,
-    instructions: "From your Upstash Redis dashboard, copy the REST token",
+    description: "Upstash Redis REST token for authentication (optional)",
+    required: false,
+    instructions: "From your Upstash Redis dashboard. Falls back to in-memory if not set.",
   },
   {
     name: "DEEPSEEK_BASE_URL",
