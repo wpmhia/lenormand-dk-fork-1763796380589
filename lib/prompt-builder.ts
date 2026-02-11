@@ -12,11 +12,12 @@ import {
 
 /**
  * Determine token budget based on card count
- * Fixed at 150 tokens with JSON schema to enforce structure
+ * 280 tokens = ~200-220 words = 2-3 solid paragraphs
+ * Completes in 4-5 seconds on Vercel free plan, no truncation
  */
 export function getTokenBudget(cardCount: number): number {
-  // All spreads use same token budget - JSON schema enforces output format
-  return 150;
+  // All spreads use same token budget for consistency
+  return 280;
 }
 
 // ============================================================================
@@ -96,30 +97,47 @@ export const VALID_CARD_NAMES = [
 
 /**
  * System prompt to establish AI behavior and quality constraints
+ * 3-paragraph structure: individual cards → blend → direct answer
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Provide a single-sentence reading.`;
+  return `You are a Lenormand fortune teller. Provide a reading in 2-3 concise paragraphs:
+
+1. The cards: what each represents individually
+2. The blend: how they interact as a sequence  
+3. The answer: direct response to the question
+
+Be specific and contextual. Avoid generic fluff.`;
 }
 
 /**
  * Build prompts for each spread type
- * Question + Cards only - JSON schema enforces output format
+ * Spread-specific methodology hints for better readings
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
   "single-card": (question, cards) => `${question}
-Card: ${cards}`,
+Card: ${cards}
+
+Provide the card's meaning and a direct answer.`,
 
   "sentence-3": (question, cards) => `${question}
-Cards: ${cards}`,
+Cards: ${cards}
+
+Read as a sentence: Card 1 → Card 2 → Card 3. Consider how adjacent pairs (1+2, 2+3) blend together.`,
 
   "sentence-5": (question, cards) => `${question}
-Cards: ${cards}`,
+Cards: ${cards}
+
+Read as an extended sentence using pair-reading: blend adjacent pairs (1+2, 2+3, 3+4, 4+5) to build the narrative.`,
 
   "comprehensive": (question, cards) => `${question}
-Cards: ${cards}`,
+Cards: ${cards}
+
+9-Card spread (3x3 grid). Read row by row: Row 1 = opening, Row 2 = development (center card = heart of matter), Row 3 = resolution. Consider vertical and diagonal connections.`,
 
   "grand-tableau": (question, cards) => `${question}
-Cards: ${cards}`
+Cards: ${cards}
+
+Grand Tableau (36 cards, 4x9 grid). Look for the Significator (Man/Woman card) first. Read left-to-right for past-to-future. Corners (1,9,28,36) show underlying forces. Cards near the Significator are most relevant.`
 };
 
 /**
