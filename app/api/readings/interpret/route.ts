@@ -125,7 +125,7 @@ export async function POST(request: Request) {
               ],
               temperature: 0.7,
               top_p: 0.9,
-              max_tokens: 150,
+              max_tokens: 280,
               stream: true,
               response_format: {
                 type: "json_schema",
