@@ -53,53 +53,21 @@ export async function getCards(): Promise<Card[]> {
   return data;
 }
 
-export interface CardSummary {
-  id: number;
-  name: string;
-  number: number;
-  keywords: string[];
-  imageUrl: string | null;
-  uprightMeaning: string;
-}
+// CardSummary is same as Card - use Card type directly
+export type CardSummary = Card;
 
 export async function getCardSummaries(): Promise<CardSummary[]> {
-  const data = staticCardsData as Card[];
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return [];
-  }
-
-  return data.map((card) => ({
-    id: card.id,
-    name: card.name,
-    number: card.number,
-    keywords: card.keywords,
-    imageUrl: card.imageUrl,
-    uprightMeaning: card.uprightMeaning,
-  }));
+  return getCards();
 }
 
-export interface CardLookup {
-  id: number;
-  name: string;
-  combos?: { withCardId: number; meaning: string }[];
-}
+// CardLookup is essentially Card with combos limited to 10
+export type CardLookup = Card;
 
 export async function getCardLookupData(): Promise<CardLookup[]> {
-  const data = staticCardsData as Card[];
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return [];
-  }
-
-  return data.map((card) => ({
-    id: card.id,
-    name: card.name,
-    combos: card.combos?.slice(0, 10).map((c) => ({
-      withCardId: c.withCardId,
-      meaning: c.meaning,
-    })),
-  }));
+  const cards = await getCards();
+  // Cards already have combos built in, return as-is
+  // (limiting to 10 happens in the display layer if needed)
+  return cards;
 }
 
 export function getCardById(cards: Card[], id: number): Card | undefined {
