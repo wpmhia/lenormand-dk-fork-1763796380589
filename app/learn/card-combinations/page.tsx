@@ -388,6 +388,64 @@ const combinationContexts = [
     ],
   },
   {
+    title: "Significator Combinations (Man & Woman)",
+    icon: <Users className="h-6 w-6 text-pink-600" />,
+    description:
+      "The Man (Card 28) and Woman (Card 29) are significator cards representing people. When combined with other cards, they reveal how situations specifically affect or involve the querent or important people in their life.",
+    combinations: [
+      {
+        cards: "Man + Woman",
+        meaning: "Couple, romantic partnership, or male-female dynamic",
+        context: "The relationship between two people, marriage, or partnership",
+      },
+      {
+        cards: "Rider + Man/Woman",
+        meaning: "News or message about/from a specific person",
+        context: "Someone is communicating or arriving in the querent's life",
+      },
+      {
+        cards: "Snake + Man/Woman",
+        meaning: "Deceptive or complicated person, potential rival",
+        context: "Be cautious of this person's intentions; may indicate betrayal",
+      },
+      {
+        cards: "Coffin + Man/Woman",
+        meaning: "Transformation in the person's life, illness, or ending",
+        context: "Major life change, health concern, or relationship ending",
+      },
+      {
+        cards: "Heart + Man/Woman",
+        meaning: "Person in love, emotional involvement, or romantic interest",
+        context: "Someone has romantic feelings or is emotionally invested",
+      },
+      {
+        cards: "Ring + Man/Woman",
+        meaning: "Committed person, married figure, or contractual bond",
+        context: "Someone in a committed relationship or bound by agreement",
+      },
+      {
+        cards: "Fox + Man/Woman",
+        meaning: "Cunning or strategic person, someone at work",
+        context: "This person is clever, possibly deceptive, or career-focused",
+      },
+      {
+        cards: "Bear + Man/Woman",
+        meaning: "Powerful, authoritative, or protective person",
+        context: "Someone with strength, possibly a boss or parent figure",
+      },
+      {
+        cards: "Stork + Woman",
+        meaning: "Woman undergoing change, pregnancy, or relocation",
+        context: "Significant life transition, often literal or metaphorical birth",
+      },
+      {
+        cards: "Lily + Man/Woman",
+        meaning: "Wise, mature, or peaceful person; elder figure",
+        context: "Someone with experience, possibly an older mentor or parent",
+      },
+    ],
+  },
+  {
     title: "Universal Pair Combinations",
     icon: <Zap className="h-6 w-6 text-orange-600" />,
     description: "Fundamental combinations that work across all contexts",

@@ -112,11 +112,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Rider combined with Man brings unique energy and insights"
+        "meaning": "News from a man, message from male figure, young man arriving"
       },
       {
         "withCardId": 29,
-        "meaning": "Rider combined with Woman brings unique energy and insights"
+        "meaning": "News from a woman, message from female figure, young woman arriving"
       },
       {
         "withCardId": 30,
@@ -170,7 +170,8 @@
     },
     "historicalMeaning": "The Rider traditionally represents a messenger or courier bringing news from afar. In historical contexts, this was one of the most important cards as communication was vital.",
     "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "timing": "Near future (1-3 weeks)",
+    "playingCard": "9 of Hearts"
   },
   {
     "id": 2,
@@ -285,11 +286,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Clover combined with Man brings unique energy and insights"
+        "meaning": "Lucky man, fortunate male figure, man's good luck"
       },
       {
         "withCardId": 29,
-        "meaning": "Clover combined with Woman brings unique energy and insights"
+        "meaning": "Lucky woman, fortunate female figure, woman's good luck"
       },
       {
         "withCardId": 30,
@@ -343,7 +344,8 @@
     },
     "historicalMeaning": "The Clover is one of the most positive cards in the deck, bringing hope and relief. Historically, four-leaf clovers were collected for their legendary luck.",
     "strength": "STRONG",
-    "timing": "Near future (1-3 weeks)"
+    "timing": "Near future (1-3 weeks)",
+    "playingCard": "6 of Diamonds"
   },
   {
     "id": 3,
@@ -458,11 +460,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Ship combined with Man brings unique energy and insights"
+        "meaning": "Man traveling, male visitor from abroad, man's journey"
       },
       {
         "withCardId": 29,
-        "meaning": "Ship combined with Woman brings unique energy and insights"
+        "meaning": "Woman traveling, female visitor from abroad, woman's journey"
       },
       {
         "withCardId": 30,
@@ -515,8 +517,9 @@
       "timing": "Travel or change within 2-4 weeks"
     },
     "historicalMeaning": "The Ship represents historical trade routes and travel. Traditionally, ships brought wealth through commerce and represented both danger and opportunity.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+"strength": "NEUTRAL",
+    "timing": "Variable",
+    "playingCard": "10 of Spades"
   },
   {
     "id": 4,
@@ -631,11 +634,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "House combined with Man brings unique energy and insights"
+        "meaning": "Man at home, male head of household, man's residence"
       },
       {
         "withCardId": 29,
-        "meaning": "House combined with Woman brings unique energy and insights"
+        "meaning": "Woman at home, female head of household, woman's residence"
       },
       {
         "withCardId": 30,
@@ -689,7 +692,8 @@
     },
     "historicalMeaning": "The House represents the estate or family seat. Historically, a person's home was their greatest asset and symbol of status.",
     "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "timing": "Near future (1-3 weeks)",
+    "playingCard": "King of Hearts"
   },
   {
     "id": 5,
@@ -804,11 +808,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Tree combined with Man brings unique energy and insights"
+        "meaning": "Man's health, male vitality, man's growth and wellbeing"
       },
       {
         "withCardId": 29,
-        "meaning": "Tree combined with Woman brings unique energy and insights"
+        "meaning": "Woman's health, female vitality, woman's growth and wellbeing"
       },
       {
         "withCardId": 30,
@@ -977,11 +981,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Clouds combined with Man brings unique energy and insights"
+        "meaning": "Confused man, uncertain male figure, man's doubts"
       },
       {
         "withCardId": 29,
-        "meaning": "Clouds combined with Woman brings unique energy and insights"
+        "meaning": "Confused woman, uncertain female figure, woman's doubts"
       },
       {
         "withCardId": 30,
@@ -1156,11 +1160,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Snake combined with Man brings unique energy and insights"
+        "meaning": "Deceptive man, complicated male figure, man's betrayal"
       },
       {
         "withCardId": 29,
-        "meaning": "Snake combined with Woman brings unique energy and insights"
+        "meaning": "Deceptive woman, complicated female figure, woman's betrayal, rival woman"
       },
       {
         "withCardId": 30,
@@ -1329,11 +1333,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Coffin combined with Man brings unique energy and insights"
+        "meaning": "Man's transformation, male figure ending, man's illness"
       },
       {
         "withCardId": 29,
-        "meaning": "Coffin combined with Woman brings unique energy and insights"
+        "meaning": "Woman's transformation, female figure ending, woman's illness"
       },
       {
         "withCardId": 30,
@@ -1502,11 +1506,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Bouquet combined with Man brings unique energy and insights"
+        "meaning": "Charming man, attractive male figure, man's gift"
       },
       {
         "withCardId": 29,
-        "meaning": "Bouquet combined with Woman brings unique energy and insights"
+        "meaning": "Charming woman, attractive female figure, woman's gift"
       },
       {
         "withCardId": 30,
@@ -1675,11 +1679,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Scythe combined with Man brings unique energy and insights"
+        "meaning": "Sudden man, decisive male figure, man's abrupt change"
       },
       {
         "withCardId": 29,
-        "meaning": "Scythe combined with Woman brings unique energy and insights"
+        "meaning": "Sudden woman, decisive female figure, woman's abrupt change"
       },
       {
         "withCardId": 30,
@@ -1848,11 +1852,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Whip combined with Man brings unique energy and insights"
+        "meaning": "Argumentative man, passionate male figure, man's conflict"
       },
       {
         "withCardId": 29,
-        "meaning": "Whip combined with Woman brings unique energy and insights"
+        "meaning": "Argumentative woman, passionate female figure, woman's conflict"
       },
       {
         "withCardId": 30,
@@ -2021,11 +2025,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Birds combined with Man brings unique energy and insights"
+        "meaning": "Chatty man, communicative male figure, man's conversation"
       },
       {
         "withCardId": 29,
-        "meaning": "Birds combined with Woman brings unique energy and insights"
+        "meaning": "Chatty woman, communicative female figure, woman's conversation"
       },
       {
         "withCardId": 30,
@@ -2194,11 +2198,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Child combined with Man brings unique energy and insights"
+        "meaning": "Man's child, young boy, immature male figure"
       },
       {
         "withCardId": 29,
-        "meaning": "Child combined with Woman brings unique energy and insights"
+        "meaning": "Woman's child, young girl, immature female figure"
       },
       {
         "withCardId": 30,
@@ -2367,11 +2371,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Fox combined with Man brings unique energy and insights"
+        "meaning": "Cunning man, strategic male figure, man's deception"
       },
       {
         "withCardId": 29,
-        "meaning": "Fox combined with Woman brings unique energy and insights"
+        "meaning": "Cunning woman, strategic female figure, woman's deception"
       },
       {
         "withCardId": 30,
@@ -2540,11 +2544,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Bear combined with Man brings unique energy and insights"
+        "meaning": "Powerful man, authoritative male figure, man's strength"
       },
       {
         "withCardId": 29,
-        "meaning": "Bear combined with Woman brings unique energy and insights"
+        "meaning": "Powerful woman, authoritative female figure, woman's strength"
       },
       {
         "withCardId": 30,
@@ -2713,11 +2717,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Stars combined with Man brings unique energy and insights"
+        "meaning": "Hopeful man, aspiring male figure, man's dreams"
       },
       {
         "withCardId": 29,
-        "meaning": "Stars combined with Woman brings unique energy and insights"
+        "meaning": "Hopeful woman, aspiring female figure, woman's dreams"
       },
       {
         "withCardId": 30,
@@ -2886,11 +2890,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Stork combined with Man brings unique energy and insights"
+        "meaning": "Man changing, male transformation, man's relocation"
       },
       {
         "withCardId": 29,
-        "meaning": "Stork combined with Woman brings unique energy and insights"
+        "meaning": "Woman changing, female transformation, woman's relocation, pregnancy"
       },
       {
         "withCardId": 30,
@@ -3065,11 +3069,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Dog combined with Man brings unique energy and insights"
+        "meaning": "Loyal man, trustworthy male friend, man's companion"
       },
       {
         "withCardId": 29,
-        "meaning": "Dog combined with Woman brings unique energy and insights"
+        "meaning": "Loyal woman, trustworthy female friend, woman's companion"
       },
       {
         "withCardId": 30,
@@ -3244,11 +3248,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Tower combined with Man brings unique energy and insights"
+        "meaning": "Isolated man, authoritative male figure, man's solitude"
       },
       {
         "withCardId": 29,
-        "meaning": "Tower combined with Woman brings unique energy and insights"
+        "meaning": "Isolated woman, authoritative female figure, woman's solitude"
       },
       {
         "withCardId": 30,
@@ -3417,11 +3421,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Garden combined with Man brings unique energy and insights"
+        "meaning": "Social man, public male figure, man in community"
       },
       {
         "withCardId": 29,
-        "meaning": "Garden combined with Woman brings unique energy and insights"
+        "meaning": "Social woman, public female figure, woman in community"
       },
       {
         "withCardId": 30,
@@ -3590,11 +3594,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Mountain combined with Man brings unique energy and insights"
+        "meaning": "Blocked man, challenged male figure, man's obstacle"
       },
       {
         "withCardId": 29,
-        "meaning": "Mountain combined with Woman brings unique energy and insights"
+        "meaning": "Blocked woman, challenged female figure, woman's obstacle"
       },
       {
         "withCardId": 30,
@@ -3763,11 +3767,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Paths combined with Man brings unique energy and insights"
+        "meaning": "Man's choice, male decision, man's crossroads"
       },
       {
         "withCardId": 29,
-        "meaning": "Paths combined with Woman brings unique energy and insights"
+        "meaning": "Woman's choice, female decision, woman's crossroads"
       },
       {
         "withCardId": 30,
@@ -3936,11 +3940,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Mice combined with Man brings unique energy and insights"
+        "meaning": "Stressed man, worried male figure, man's losses"
       },
       {
         "withCardId": 29,
-        "meaning": "Mice combined with Woman brings unique energy and insights"
+        "meaning": "Stressed woman, worried female figure, woman's losses"
       },
       {
         "withCardId": 30,
@@ -4109,11 +4113,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Heart combined with Man brings unique energy and insights"
+        "meaning": "Man in love, male lover, man's emotions"
       },
       {
         "withCardId": 29,
-        "meaning": "Heart combined with Woman brings unique energy and insights"
+        "meaning": "Woman in love, female lover, woman's emotions"
       },
       {
         "withCardId": 30,
@@ -4282,11 +4286,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Ring combined with Man brings unique energy and insights"
+        "meaning": "Committed man, married male figure, man's contract"
       },
       {
         "withCardId": 29,
-        "meaning": "Ring combined with Woman brings unique energy and insights"
+        "meaning": "Committed woman, married female figure, woman's contract"
       },
       {
         "withCardId": 30,
@@ -4455,11 +4459,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Book combined with Man brings unique energy and insights"
+        "meaning": "Educated man, knowledgeable male figure, man's secrets"
       },
       {
         "withCardId": 29,
-        "meaning": "Book combined with Woman brings unique energy and insights"
+        "meaning": "Educated woman, knowledgeable female figure, woman's secrets"
       },
       {
         "withCardId": 30,
@@ -4634,11 +4638,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Letter combined with Man brings unique energy and insights"
+        "meaning": "Man's message, letter from male figure, man's document"
       },
       {
         "withCardId": 29,
-        "meaning": "Letter combined with Woman brings unique energy and insights"
+        "meaning": "Woman's message, letter from female figure, woman's document"
       },
       {
         "withCardId": 30,
@@ -4703,143 +4707,143 @@
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Man combined with Rider brings unique energy and insights"
+        "meaning": "News about a man, message concerning male figure, man arriving"
       },
       {
         "withCardId": 2,
-        "meaning": "Man combined with Clover brings unique energy and insights"
+        "meaning": "Lucky man, fortunate male figure, man's opportunity"
       },
       {
         "withCardId": 3,
-        "meaning": "Man combined with Ship brings unique energy and insights"
+        "meaning": "Man traveling, male journey, man from abroad"
       },
       {
         "withCardId": 4,
-        "meaning": "Man combined with House brings unique energy and insights"
+        "meaning": "Man at home, man's household, male in residence"
       },
       {
         "withCardId": 5,
-        "meaning": "Man combined with Tree brings unique energy and insights"
+        "meaning": "Man's health, male vitality, man's wellbeing"
       },
       {
         "withCardId": 6,
-        "meaning": "Man combined with Clouds brings unique energy and insights"
+        "meaning": "Confused man, uncertain male figure, man's doubts"
       },
       {
         "withCardId": 7,
-        "meaning": "Man combined with Snake brings unique energy and insights"
+        "meaning": "Deceptive man, complicated male figure, man's betrayal"
       },
       {
         "withCardId": 8,
-        "meaning": "Man combined with Coffin brings unique energy and insights"
+        "meaning": "Man's transformation, male figure ending, man's illness"
       },
       {
         "withCardId": 9,
-        "meaning": "Man combined with Bouquet brings unique energy and insights"
+        "meaning": "Charming man, attractive male figure, man's happiness"
       },
       {
         "withCardId": 10,
-        "meaning": "Man combined with Scythe brings unique energy and insights"
+        "meaning": "Sudden man, decisive male figure, man's abrupt change"
       },
       {
         "withCardId": 11,
-        "meaning": "Man combined with Whip brings unique energy and insights"
+        "meaning": "Argumentative man, passionate male figure, man's conflict"
       },
       {
         "withCardId": 12,
-        "meaning": "Man combined with Birds brings unique energy and insights"
+        "meaning": "Chatty man, communicative male figure, man's conversation"
       },
       {
         "withCardId": 13,
-        "meaning": "Man combined with Child brings unique energy and insights"
+        "meaning": "Man's child, young boy, immature male figure"
       },
       {
         "withCardId": 14,
-        "meaning": "Man combined with Fox brings unique energy and insights"
+        "meaning": "Cunning man, strategic male figure, man's work"
       },
       {
         "withCardId": 15,
-        "meaning": "Man combined with Bear brings unique energy and insights"
+        "meaning": "Powerful man, authoritative male figure, man's strength"
       },
       {
         "withCardId": 16,
-        "meaning": "Man combined with Stars brings unique energy and insights"
+        "meaning": "Hopeful man, aspiring male figure, man's dreams"
       },
       {
         "withCardId": 17,
-        "meaning": "Man combined with Stork brings unique energy and insights"
+        "meaning": "Man changing, male transformation, man's relocation"
       },
       {
         "withCardId": 18,
-        "meaning": "Man combined with Dog brings unique energy and insights"
+        "meaning": "Loyal man, trustworthy male friend, man's companion"
       },
       {
         "withCardId": 19,
-        "meaning": "Man combined with Tower brings unique energy and insights"
+        "meaning": "Isolated man, authoritative male figure, man's solitude"
       },
       {
         "withCardId": 20,
-        "meaning": "Man combined with Garden brings unique energy and insights"
+        "meaning": "Social man, public male figure, man in community"
       },
       {
         "withCardId": 21,
-        "meaning": "Man combined with Mountain brings unique energy and insights"
+        "meaning": "Blocked man, challenged male figure, man's obstacle"
       },
       {
         "withCardId": 22,
-        "meaning": "Man combined with Paths brings unique energy and insights"
+        "meaning": "Man's choice, male decision, man's crossroads"
       },
       {
         "withCardId": 23,
-        "meaning": "Man combined with Mice brings unique energy and insights"
+        "meaning": "Stressed man, worried male figure, man's losses"
       },
       {
         "withCardId": 24,
-        "meaning": "Man combined with Heart brings unique energy and insights"
+        "meaning": "Man in love, male lover, man's emotions"
       },
       {
         "withCardId": 25,
-        "meaning": "Man combined with Ring brings unique energy and insights"
+        "meaning": "Committed man, married male figure, man's contract"
       },
       {
         "withCardId": 26,
-        "meaning": "Man combined with Book brings unique energy and insights"
+        "meaning": "Educated man, knowledgeable male figure, man's secrets"
       },
       {
         "withCardId": 27,
-        "meaning": "Man combined with Letter brings unique energy and insights"
+        "meaning": "Man's message, letter to male figure, man's document"
       },
       {
         "withCardId": 29,
-        "meaning": "Man combined with Woman brings unique energy and insights"
+        "meaning": "Man and woman together, couple, romantic pair, partnership"
       },
       {
         "withCardId": 30,
-        "meaning": "Man combined with Lily brings unique energy and insights"
+        "meaning": "Wise man, mature male figure, man's peace"
       },
       {
         "withCardId": 31,
-        "meaning": "Man combined with Sun brings unique energy and insights"
+        "meaning": "Successful man, happy male figure, man's victory"
       },
       {
         "withCardId": 32,
-        "meaning": "Man combined with Moon brings unique energy and insights"
+        "meaning": "Intuitive man, creative male figure, man's recognition"
       },
       {
         "withCardId": 33,
-        "meaning": "Man combined with Key brings unique energy and insights"
+        "meaning": "Important man, solution through male figure, man's opportunity"
       },
       {
         "withCardId": 34,
-        "meaning": "Man combined with Fish brings unique energy and insights"
+        "meaning": "Wealthy man, abundant male figure, man's business"
       },
       {
         "withCardId": 35,
-        "meaning": "Man combined with Anchor brings unique energy and insights"
+        "meaning": "Stable man, secure male figure, man's grounding"
       },
       {
         "withCardId": 36,
-        "meaning": "Man combined with Cross brings unique energy and insights"
+        "meaning": "Burdened man, suffering male figure, man's duty"
       }
     ],
     "imageUrl": "/images/cards/28-gentleman.png",
@@ -4874,145 +4878,145 @@
     "keywords": ["feminine", "wife", "mother", "intuition", "emotion"],
     "uprightMeaning": "Woman, wife, mother, feminine energy, intuition",
     "combos": [
-      {
+{
         "withCardId": 1,
-        "meaning": "Woman combined with Rider brings unique energy and insights"
+        "meaning": "News about a woman, message concerning female figure, woman arriving"
       },
       {
         "withCardId": 2,
-        "meaning": "Woman combined with Clover brings unique energy and insights"
+        "meaning": "Lucky woman, fortunate female figure, woman's opportunity"
       },
       {
         "withCardId": 3,
-        "meaning": "Woman combined with Ship brings unique energy and insights"
+        "meaning": "Woman traveling, female journey, woman from abroad"
       },
       {
         "withCardId": 4,
-        "meaning": "Woman combined with House brings unique energy and insights"
+        "meaning": "Woman at home, woman's household, female in residence"
       },
       {
         "withCardId": 5,
-        "meaning": "Woman combined with Tree brings unique energy and insights"
+        "meaning": "Woman's health, female vitality, woman's wellbeing"
       },
       {
         "withCardId": 6,
-        "meaning": "Woman combined with Clouds brings unique energy and insights"
+        "meaning": "Confused woman, uncertain female figure, woman's doubts"
       },
       {
         "withCardId": 7,
-        "meaning": "Woman combined with Snake brings unique energy and insights"
+        "meaning": "Deceptive woman, complicated female figure, woman's betrayal, rival"
       },
       {
         "withCardId": 8,
-        "meaning": "Woman combined with Coffin brings unique energy and insights"
+        "meaning": "Woman's transformation, female figure ending, woman's illness"
       },
       {
         "withCardId": 9,
-        "meaning": "Woman combined with Bouquet brings unique energy and insights"
+        "meaning": "Charming woman, attractive female figure, woman's happiness"
       },
       {
         "withCardId": 10,
-        "meaning": "Woman combined with Scythe brings unique energy and insights"
+        "meaning": "Sudden woman, decisive female figure, woman's abrupt change"
       },
       {
         "withCardId": 11,
-        "meaning": "Woman combined with Whip brings unique energy and insights"
+        "meaning": "Argumentative woman, passionate female figure, woman's conflict"
       },
       {
         "withCardId": 12,
-        "meaning": "Woman combined with Birds brings unique energy and insights"
+        "meaning": "Chatty woman, communicative female figure, woman's conversation"
       },
       {
         "withCardId": 13,
-        "meaning": "Woman combined with Child brings unique energy and insights"
+        "meaning": "Woman's child, young girl, immature female figure"
       },
       {
         "withCardId": 14,
-        "meaning": "Woman combined with Fox brings unique energy and insights"
+        "meaning": "Cunning woman, strategic female figure, woman's work"
       },
       {
         "withCardId": 15,
-        "meaning": "Woman combined with Bear brings unique energy and insights"
+        "meaning": "Powerful woman, authoritative female figure, woman's strength"
       },
       {
         "withCardId": 16,
-        "meaning": "Woman combined with Stars brings unique energy and insights"
+        "meaning": "Hopeful woman, aspiring female figure, woman's dreams"
       },
       {
         "withCardId": 17,
-        "meaning": "Woman combined with Stork brings unique energy and insights"
+        "meaning": "Woman changing, female transformation, woman's relocation, pregnancy"
       },
       {
         "withCardId": 18,
-        "meaning": "Woman combined with Dog brings unique energy and insights"
+        "meaning": "Loyal woman, trustworthy female friend, woman's companion"
       },
       {
         "withCardId": 19,
-        "meaning": "Woman combined with Tower brings unique energy and insights"
+        "meaning": "Isolated woman, authoritative female figure, woman's solitude"
       },
       {
         "withCardId": 20,
-        "meaning": "Woman combined with Garden brings unique energy and insights"
+        "meaning": "Social woman, public female figure, woman in community"
       },
       {
         "withCardId": 21,
-        "meaning": "Woman combined with Mountain brings unique energy and insights"
+        "meaning": "Blocked woman, challenged female figure, woman's obstacle"
       },
       {
         "withCardId": 22,
-        "meaning": "Woman combined with Paths brings unique energy and insights"
+        "meaning": "Woman's choice, female decision, woman's crossroads"
       },
       {
         "withCardId": 23,
-        "meaning": "Woman combined with Mice brings unique energy and insights"
+        "meaning": "Stressed woman, worried female figure, woman's losses"
       },
       {
         "withCardId": 24,
-        "meaning": "Woman combined with Heart brings unique energy and insights"
+        "meaning": "Woman in love, female lover, woman's emotions"
       },
       {
         "withCardId": 25,
-        "meaning": "Woman combined with Ring brings unique energy and insights"
+        "meaning": "Committed woman, married female figure, woman's contract"
       },
       {
         "withCardId": 26,
-        "meaning": "Woman combined with Book brings unique energy and insights"
+        "meaning": "Educated woman, knowledgeable female figure, woman's secrets"
       },
       {
         "withCardId": 27,
-        "meaning": "Woman combined with Letter brings unique energy and insights"
+        "meaning": "Woman's message, letter to female figure, woman's document"
       },
       {
         "withCardId": 28,
-        "meaning": "Woman combined with Man brings unique energy and insights"
+        "meaning": "Woman and man together, couple, romantic pair, partnership"
       },
       {
         "withCardId": 30,
-        "meaning": "Woman combined with Lily brings unique energy and insights"
+        "meaning": "Wise woman, mature female figure, woman's peace"
       },
       {
         "withCardId": 31,
-        "meaning": "Woman combined with Sun brings unique energy and insights"
+        "meaning": "Successful woman, happy female figure, woman's victory"
       },
       {
         "withCardId": 32,
-        "meaning": "Woman combined with Moon brings unique energy and insights"
+        "meaning": "Intuitive woman, creative female figure, woman's recognition"
       },
       {
         "withCardId": 33,
-        "meaning": "Woman combined with Key brings unique energy and insights"
+        "meaning": "Important woman, solution through female figure, woman's opportunity"
       },
       {
         "withCardId": 34,
-        "meaning": "Woman combined with Fish brings unique energy and insights"
+        "meaning": "Wealthy woman, abundant female figure, woman's business"
       },
       {
         "withCardId": 35,
-        "meaning": "Woman combined with Anchor brings unique energy and insights"
+        "meaning": "Stable woman, secure female figure, woman's grounding"
       },
       {
         "withCardId": 36,
-        "meaning": "Woman combined with Cross brings unique energy and insights"
+        "meaning": "Burdened woman, suffering female figure, woman's duty"
       }
     ],
     "imageUrl": "/images/cards/29-lady.png",
@@ -5157,11 +5161,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Lily combined with Man brings unique energy and insights"
+        "meaning": "Wise man, mature male figure, man's peace"
       },
       {
         "withCardId": 29,
-        "meaning": "Lily combined with Woman brings unique energy and insights"
+        "meaning": "Wise woman, mature female figure, woman's peace"
       },
       {
         "withCardId": 31,
@@ -5330,11 +5334,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Sun combined with Man brings unique energy and insights"
+        "meaning": "Successful man, happy male figure, man's victory"
       },
       {
         "withCardId": 29,
-        "meaning": "Sun combined with Woman brings unique energy and insights"
+        "meaning": "Successful woman, happy female figure, woman's victory"
       },
       {
         "withCardId": 30,
@@ -5501,9 +5505,13 @@
         "withCardId": 27,
         "meaning": "Moon combined with Letter brings unique energy and insights"
       },
-      {
+{
         "withCardId": 28,
-        "meaning": "Moon combined with Man brings unique energy and insights"
+        "meaning": "Intuitive man, creative male figure, man's recognition"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "Intuitive woman, creative female figure, woman's recognition"
       },
       {
         "withCardId": 29,
@@ -5676,11 +5684,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Key combined with Man brings unique energy and insights"
+        "meaning": "Important man, solution through male figure, man's opportunity"
       },
       {
         "withCardId": 29,
-        "meaning": "Key combined with Woman brings unique energy and insights"
+        "meaning": "Important woman, solution through female figure, woman's opportunity"
       },
       {
         "withCardId": 30,
@@ -5849,11 +5857,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Fish combined with Man brings unique energy and insights"
+        "meaning": "Wealthy man, abundant male figure, man's business"
       },
       {
         "withCardId": 29,
-        "meaning": "Fish combined with Woman brings unique energy and insights"
+        "meaning": "Wealthy woman, abundant female figure, woman's business"
       },
       {
         "withCardId": 30,
@@ -6195,11 +6203,11 @@
       },
       {
         "withCardId": 28,
-        "meaning": "Cross combined with Man brings unique energy and insights"
+        "meaning": "Burdened man, suffering male figure, man's duty"
       },
       {
         "withCardId": 29,
-        "meaning": "Cross combined with Woman brings unique energy and insights"
+        "meaning": "Burdened woman, suffering female figure, woman's duty"
       },
       {
         "withCardId": 30,
