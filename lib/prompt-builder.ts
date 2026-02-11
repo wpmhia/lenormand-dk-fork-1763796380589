@@ -15,10 +15,11 @@ import {
  * Optimized for faster responses while maintaining quality
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 200;   // natural length
-  if (cardCount <= 5) return 250;   // natural length
-  if (cardCount <= 9) return 350;   // natural length
-  return 500;                       // Grand Tableau: natural length
+  if (cardCount <= 1) return 100;   // Single card: ~50-80 words
+  if (cardCount <= 3) return 150;   // 3-card: ~75-120 words
+  if (cardCount <= 5) return 200;   // 5-card: ~100-150 words
+  if (cardCount <= 9) return 250;   // 9-card: ~125-200 words
+  return 300;                       // 36-card: ~150-250 words
 }
 
 // ============================================================================
