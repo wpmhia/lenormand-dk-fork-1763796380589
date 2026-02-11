@@ -100,17 +100,7 @@ export const VALID_CARD_NAMES = [
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller with 20 years of experience. Your readings are:
-- Ultra-concise: no flowery language, no metaphors, no poetic phrasing
-- Direct answer to the question in 1-3 sentences
-- Focus on action and practical meaning, not emotion
-- Grounded in traditional Lenormand interpretation
-- Never say "your heart", "your essence", "the universe" or similar flowery phrases
-- Never use elaborate metaphors like "harvest that must be gathered"
-- Write only what the cards directly tell you, nothing more
-
-Avoid: flowery language, poetic phrasing, emotional language, metaphors, speculation, filler words.
-Focus on: direct meaning, action, practical advice, clear interpretation.`;
+  return `You are an expert Lenormand fortune teller. Provide clear, direct readings focused on practical meaning and action. Avoid flowery language, metaphors, and spiritual elaboration.`;
 }
 
 /**
@@ -126,12 +116,7 @@ Write a single clear paragraph. Start with what the card means for the question,
    "sentence-3": (question, cards) => `${question}
 Cards (left to right): ${cards}
 
-Read using the traditional Lenormand pair-reading method:
-- Card 1: Current situation or topic
-- Cards 1+2: How the situation develops (combine their meanings directly)
-- Cards 2+3: The outcome and resolution
-
-Write ONLY 1-2 sentences total. Be ultra-direct and concise. No metaphors, no flowery language. Just the facts of what the cards show.`,
+Provide a three-card Lenormand reading. Read the cards as a flowing narrative, combining pairs to show the situation, development, and outcome.`,
   
    "sentence-5": (question, cards) => `${question}
 Cards (left to right): ${cards}
