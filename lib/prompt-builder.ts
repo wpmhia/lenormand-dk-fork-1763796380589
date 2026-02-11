@@ -15,10 +15,10 @@ import {
  * Optimized for faster responses while maintaining quality
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 250;   // 3-card: ~1-2 sentences, 50-80 words max
-  if (cardCount <= 5) return 400;   // 5-card: ~2-3 sentences, 150-200 words
-  if (cardCount <= 9) return 800;   // 9-card: ~3-4 sentences, 350-450 words
-  return 1500;                      // Grand Tableau: ~800-1000 words
+  if (cardCount <= 3) return 200;   // 3-card: ultra-concise, 1-2 sentences max
+  if (cardCount <= 5) return 350;   // 5-card: brief, 2-3 sentences
+  if (cardCount <= 9) return 600;   // 9-card: concise, 3-5 sentences
+  return 1200;                      // Grand Tableau: moderate, 400-600 words
 }
 
 // ============================================================================
@@ -131,7 +131,7 @@ Read using the traditional Lenormand pair-reading method:
 - Cards 1+2: How the situation develops (combine their meanings directly)
 - Cards 2+3: The outcome and resolution
 
-Write ONLY 1-2 sentences total. Be ultra-direct and concise. No metaphors, no flowery language. Just the facts of what the cards show.`
+Write ONLY 1-2 sentences total. Be ultra-direct and concise. No metaphors, no flowery language. Just the facts of what the cards show.`,
   
    "sentence-5": (question, cards) => `${question}
 Cards (left to right): ${cards}
@@ -149,7 +149,7 @@ ROW 1 (cards 1-3): Opening situation
 ROW 2 (cards 4-6): Development and complication
 ROW 3 (cards 7-9): Resolution and outcome
 
-Be direct and practical. No flowery language, metaphors, or emotional phrasing.`
+Be direct and practical. No flowery language, metaphors, or emotional phrasing.`,
   
   "grand-tableau": (question, cards) => `${question}
 36-Card Grand Tableau (4x9 grid): ${cards}
