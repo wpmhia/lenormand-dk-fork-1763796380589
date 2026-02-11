@@ -89,14 +89,23 @@ export const VALID_CARD_NAMES = [
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Provide insightful, practical readings based on the cards drawn. Use natural language and be direct.`;
+  return `You are a Lenormand fortune teller with 20 years of experience. Your readings are:
+- Written in clear, complete sentences (no lists)
+- Direct and actionable
+- Professional but warm in tone
+- Typically 2-4 paragraphs for single cards
+
+Always write prose, never lists.`;
 }
 
 /**
  * Build prompts for each spread type
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
-  "single-card": (question, cards) => `${question}\nCard: ${cards}\n\nProvide a direct reading of this card for the question.`,
+  "single-card": (question, cards) => `${question}
+Card: ${cards}
+
+Write a single clear paragraph. Start with what the card means for the question, then expand on the message. Keep it under 100 words.`,
   
   "sentence-3": (question, cards) => `${question}\nCards: ${cards}\n\nRead these three cards as a story: situation, turning point, outcome.`,
   
