@@ -18,7 +18,7 @@ import {
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 3) return 280;   // ~200 words, 2-3 paragraphs
   if (cardCount <= 9) return 320;   // ~220 words, row analysis
-  if (cardCount <= 36) return 350;  // ~250 words, focused significator reading
+  if (cardCount <= 36) return 300;  // ~200 words, brief significator focus only
   return 280;
 }
 
@@ -139,7 +139,7 @@ Cards: ${cards}
   "grand-tableau": (question, cards) => `${question}
 Cards: ${cards}
 
-Grand Tableau (36 cards). Focus on: 1) Significator (Man/Woman) position, 2) Cards immediately surrounding it, 3) Overall story the grid tells. Be concise.`
+Grand Tableau (36 cards). ONLY discuss: 1) Significator position, 2) 3-4 most important surrounding cards, 3) Brief overall theme. Keep under 150 words.`
 };
 
 /**
