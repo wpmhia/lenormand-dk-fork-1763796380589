@@ -111,27 +111,37 @@ const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string)
    "single-card": (question, cards) => `${question}
 Card: ${cards}
 
-This is a single card reading - direct answer, immediate action.`,
+Direct answer and immediate action needed.
+
+End with a clear conclusion.`,
   
    "sentence-3": (question, cards) => `${question}
 Cards (three-card spread): ${cards}
 
-Read as: Opening situation, turning point, and outcome. Include timing and action guidance.`,
+Opening situation → Turning point → Outcome. Include timing and action guidance.
+
+Conclusion: Sum up the key message and recommended action.`,
   
    "sentence-5": (question, cards) => `${question}
 Cards (five-card spread): ${cards}
 
-Read using pair-reading technique: 1+2, 2+3, 3+4, 4+5 create the narrative.`,
+Pair-reading: 1+2 (start), 2+3 (middle), 3+4 (direction), 4+5 (outcome).
+
+Conclusion: What does this situation lead to?`,
   
    "comprehensive": (question, cards) => `${question}
 Cards (nine-card spread): ${cards}
 
-Read as 3x3 grid: Deeper exploration of complex situations without overwhelming detail.`,
+3x3 grid: Row 1 = Opening, Row 2 = Development, Row 3 = Outcome.
+
+Conclusion: Overall picture and main takeaway.`,
   
   "grand-tableau": (question, cards) => `${question}
 Cards (Grand Tableau, 36 cards): ${cards}
 
-Read as 4x9 grid: Complete life situation. Use significator (Man 28/Woman 29) as reference point. Read directional zones: left=past, right=future, above=conscious, below=unconscious.`
+4x9 grid: Complete life situation. Significator (M28/W29) as reference. Zones: left=past, right=future, above=conscious, below=unconscious. Read pairs within rows.
+
+Conclusion: Synthesize the complete picture. What is the ultimate direction or outcome?`
 };
 
 /**
