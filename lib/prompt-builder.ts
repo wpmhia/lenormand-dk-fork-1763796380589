@@ -109,19 +109,29 @@ export function buildSystemPrompt(): string {
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
    "single-card": (question, cards) => `${question}
-Card: ${cards}`,
+Card: ${cards}
+
+This is a single card reading - direct answer, immediate action.`,
   
    "sentence-3": (question, cards) => `${question}
-Cards (three-card spread): ${cards}`,
+Cards (three-card spread): ${cards}
+
+Read as: Opening situation, turning point, and outcome. Include timing and action guidance.`,
   
    "sentence-5": (question, cards) => `${question}
-Cards (five-card spread): ${cards}`,
+Cards (five-card spread): ${cards}
+
+Read using pair-reading technique: 1+2, 2+3, 3+4, 4+5 create the narrative.`,
   
    "comprehensive": (question, cards) => `${question}
-Cards (nine-card spread): ${cards}`,
+Cards (nine-card spread): ${cards}
+
+Read as 3x3 grid: Deeper exploration of complex situations without overwhelming detail.`,
   
   "grand-tableau": (question, cards) => `${question}
-Cards (Grand Tableau, 36 cards): ${cards}`
+Cards (Grand Tableau, 36 cards): ${cards}
+
+Read as 4x9 grid: Complete life situation. Use significator (Man 28/Woman 29) as reference point. Read directional zones: left=past, right=future, above=conscious, below=unconscious.`
 };
 
 /**

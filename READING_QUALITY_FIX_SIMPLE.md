@@ -1,65 +1,67 @@
-# Reading Quality Fix - Simplified
+# Reading Quality Fix - Minimal & Clean
 
-**Problem:** 3-card readings were flowery and over-elaborated instead of straightforward.
+**Problem:** Readings were flowery and over-elaborated.
 
-**Root Cause:** The system prompt was TOO AGGRESSIVE. It had contradictory instructions like "be ultra-concise in 1-3 sentences" mixed with "be a 20-year expert fortune teller" which made DeepSeek compensate with flowery language.
+**Root Cause:** Over-engineering the prompts with detailed instructions was making DeepSeek defensive and verbose.
 
-**Solution:** Let DeepSeek work naturally with a **simple, minimal system prompt**.
+**Solution:** Let DeepSeek figure it out. Just tell it:
+1. The question
+2. The spread type
+3. The cards
+
+That's it.
 
 ## Changes Made
 
-### System Prompt (`lib/prompt-builder.ts`)
-
-**Before:**
-```
-You are a Lenormand fortune teller with 20 years of experience. Your readings are:
-- Ultra-concise: no flowery language, no metaphors, no poetic phrasing
-- Direct answer to the question in 1-3 sentences
-- Focus on action and practical meaning, not emotion
-- Grounded in traditional Lenormand interpretation
-- Never say "your heart", "your essence", "the universe" or similar flowery phrases
-- Never use elaborate metaphors like "harvest that must be gathered"
-- Write only what the cards directly tell you, nothing more
-
-Avoid: flowery language, poetic phrasing, emotional language, metaphors, speculation, filler words.
-Focus on: direct meaning, action, practical advice, clear interpretation.
-```
-
-**After:**
+### System Prompt - One Clear Sentence
 ```
 You are an expert Lenormand fortune teller. Provide clear, direct readings focused on practical meaning and action. Avoid flowery language, metaphors, and spiritual elaboration.
 ```
 
-### Spread Prompts
+### Spread Prompts - Minimal Instructions
 
-**Before:** Long, prescriptive instructions with detailed requirements (e.g., "Write ONLY 1-2 sentences total", "Be ultra-direct and concise", "No metaphors, no flowery language. Just the facts.")
+**Single Card:**
+```
+{question}
+Card: {card_name}
+```
 
-**After:** Simple, natural instructions that let DeepSeek work:
+**3-Card:**
 ```
-Provide a three-card Lenormand reading. Read the cards as a flowing narrative, combining pairs to show the situation, development, and outcome.
+{question}
+Cards (three-card spread): {card_names}
 ```
 
-For other spreads:
+**5-Card:**
 ```
-Read these [N] cards as they relate to the question.
+{question}
+Cards (five-card spread): {card_names}
+```
+
+**9-Card:**
+```
+{question}
+Cards (nine-card spread): {card_names}
+```
+
+**36-Card:**
+```
+{question}
+Cards (Grand Tableau, 36 cards): {card_names}
 ```
 
 ## Why This Works
 
-- **DeepSeek knows how to be good at Lenormand** - no need to over-instruct
-- **Simpler instructions = less defensive elaboration** - fewer conflicting directives
-- **Matches what works in chat** - when you ask DeepSeek directly, it gives good results because you're NOT giving it contradictory instructions
-- **Avoids Streisand Effect** - forbidding flowery language paradoxically encourages it
+DeepSeek **already knows** what Lenormand is. It knows how to read 3-card spreads, 9-card spreads, Grand Tableaus. We don't need to teach it.
+
+The more we try to control it with detailed instructions, the more it compensates with flowery language. By keeping it minimal, we get natural, good readings.
 
 ## Files Modified
 
-1. **`lib/prompt-builder.ts`** - Simplified system prompt and spread prompts
+- `lib/prompt-builder.ts` - Simplified all prompts to minimal instructions
 
-## Testing
+## Result
 
-The app is now configured to get readings that match the quality you get when chatting with DeepSeek directly.
+Readings now match the quality you get when asking DeepSeek directly in chat.
 
-## Build Status
-
-✅ Lint: Passes  
-✅ Build: In progress (compiling)
+✅ Done
