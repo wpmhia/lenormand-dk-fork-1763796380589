@@ -133,30 +133,23 @@ Read using the traditional Lenormand pair-reading method:
 
 Write ONLY 1-2 sentences total. Be ultra-direct and concise. No metaphors, no flowery language. Just the facts of what the cards show.`
   
-  "sentence-5": (question, cards) => `${question}
+   "sentence-5": (question, cards) => `${question}
 Cards (left to right): ${cards}
 
-Read as a complete flowing sentence by combining card pairs:
+Read as 2-3 sentences by combining card pairs:
 Each pair tells part of the story: 1+2, 2+3, 3+4, 4+5
-Connect all meanings into one unfolding narrative.`,
+Be direct and concise. No metaphors or flowery language. Just the facts.`,
   
-  "comprehensive": (question, cards) => `${question}
+   "comprehensive": (question, cards) => `${question}
 9-Card Petit Grand Tableau (3x3 grid): ${cards}
 
-Read as three rows, each row combining pairs:
+Read as 3-4 sentences by row, combining card pairs within each row:
 
 ROW 1 (cards 1-3): Opening situation
-- Card 1: Topic
-- Cards 1+2: How it opens
-- Cards 2+3: Where it leads
-
 ROW 2 (cards 4-6): Development and complication
-
 ROW 3 (cards 7-9): Resolution and outcome
 
-CENTER CARD (position 5): The heart connecting all
-
-Read each row as a connected sentence, then the three rows as a complete story.`,
+Be direct and practical. No flowery language, metaphors, or emotional phrasing.`
   
   "grand-tableau": (question, cards) => `${question}
 36-Card Grand Tableau (4x9 grid): ${cards}
