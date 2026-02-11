@@ -165,16 +165,14 @@ export default function ReadingFundamentalsPage() {
                   and add timing if needed.
                 </p>
                 <p>
-                  <strong>Layers:</strong>
+                  <strong>Reading Method:</strong>
                 </p>
                 <ul className="ml-4 space-y-1 text-xs">
                   <li>
-                    • Three lenses: Past-Present-Future OR
-                    Problem-Advice-Outcome OR Situation-Action-Result
+                    • Combine adjacent pairs: 1+2, 2+3, 3+4, 4+5 (Lenormand pair-reading)
                   </li>
                   <li>
-                    • Four adjacent pairs: 1+2, 2+3, 3+4, 4+5 as micro-story
-                    beats
+                    • Read as unfolding narrative - each pair adds layer to story
                   </li>
                   <li>
                     • Optional timing: Add pips of card 5 (≤10=days,
