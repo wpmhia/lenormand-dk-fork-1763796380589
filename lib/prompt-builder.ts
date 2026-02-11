@@ -12,14 +12,11 @@ import {
 
 /**
  * Determine token budget based on card count
- * Optimized for faster responses while maintaining quality
+ * Fixed at 150 tokens with JSON schema to enforce structure
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 1) return 100;   // Single card: ~50-80 words
-  if (cardCount <= 3) return 150;   // 3-card: ~75-120 words
-  if (cardCount <= 5) return 200;   // 5-card: ~100-150 words
-  if (cardCount <= 9) return 250;   // 9-card: ~125-200 words
-  return 300;                       // 36-card: ~150-250 words
+  // All spreads use same token budget - JSON schema enforces output format
+  return 150;
 }
 
 // ============================================================================
@@ -101,38 +98,28 @@ export const VALID_CARD_NAMES = [
  * System prompt to establish AI behavior and quality constraints
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller.`;
+  return `You are a Lenormand fortune teller. Provide a single-sentence reading.`;
 }
 
 /**
- * Build prompts for each spread type - Lenormand-compliant readings
- * Question + Cards + Spread Rules
+ * Build prompts for each spread type
+ * Question + Cards only - JSON schema enforces output format
  */
 const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
   "single-card": (question, cards) => `${question}
-Card: ${cards}
-
-What does this single card reveal?`,
+Card: ${cards}`,
 
   "sentence-3": (question, cards) => `${question}
-Cards (left to right): ${cards}
-
-Read these three cards as a sentence. First card is the situation, second is the turning point, third is the outcome.`,
+Cards: ${cards}`,
 
   "sentence-5": (question, cards) => `${question}
-Cards: ${cards}
-
-Read the pairs: 1+2 is the opening, 2+3 is the development, 3+4 is the turning point, 4+5 is the outcome.`,
+Cards: ${cards}`,
 
   "comprehensive": (question, cards) => `${question}
-Cards (3x3 grid): ${cards}
-
-Read by rows: Row 1 = opening situation, Row 2 = development, Row 3 = outcome.`,
+Cards: ${cards}`,
 
   "grand-tableau": (question, cards) => `${question}
-Cards (4x9 grid): ${cards}
-
-Read pairs within rows. Focus on the significator and immediate surroundings. What is the overall situation and direction?`
+Cards: ${cards}`
 };
 
 /**
@@ -177,7 +164,7 @@ export function buildPrompt(
     const base = SPREAD_PROMPTS["sentence-5"](questionContext, cardList);
     return base + yesNoInstruction;
   } else if (cardCount === 7) {
-    return `${questionContext}\nCards: ${cardList}\n\nRead these cards as a complete answer.${yesNoInstruction}`;
+    return `${questionContext}\nCards: ${cardList}${yesNoInstruction}`;
   } else if (cardCount === 9) {
     const base = SPREAD_PROMPTS["comprehensive"](questionContext, cardList);
     return base + yesNoInstruction;
@@ -187,7 +174,7 @@ export function buildPrompt(
   }
 
   // Ultimate fallback
-  return `${questionContext}\nCards: ${cardList}\n\nProvide a reading of these cards.${yesNoInstruction}`;
+  return `${questionContext}\nCards: ${cardList}${yesNoInstruction}`;
 }
 
 /**
