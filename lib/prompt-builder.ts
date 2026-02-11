@@ -16,10 +16,10 @@ import {
  * Completes in 4-8 seconds on Vercel free plan
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 280;   // ~200 words, 2-3 paragraphs
-  if (cardCount <= 9) return 320;   // ~220 words, row analysis
-  if (cardCount <= 36) return 300;  // ~200 words, brief significator focus only
-  return 280;
+  if (cardCount <= 3) return 250;   // ~180 words, complete response guaranteed
+  if (cardCount <= 9) return 280;   // ~200 words, row analysis
+  if (cardCount <= 36) return 280;  // ~200 words, brief but complete significator reading
+  return 250;
 }
 
 // ============================================================================
@@ -102,13 +102,11 @@ export const VALID_CARD_NAMES = [
  * 3-paragraph structure: individual cards → blend → direct answer
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Provide a reading in 2-3 concise paragraphs:
+  return `You are a Lenormand fortune teller. Provide brief, complete readings that NEVER truncate mid-sentence.
 
-1. The cards: what each represents individually
-2. The blend: how they interact as a sequence  
-3. The answer: direct response to the question
+Structure: 2-3 short paragraphs maximum. Always finish your final sentence completely.
 
-Be specific and contextual. Avoid generic fluff. Return ONLY the reading text, no JSON, no labels.`;
+Be specific and contextual. Avoid generic fluff.`;
 }
 
 /**
@@ -124,22 +122,22 @@ Provide the card's meaning and a direct answer.`,
   "sentence-3": (question, cards) => `${question}
 Cards: ${cards}
 
-Read as a sentence: Card 1 → Card 2 → Card 3. Consider how adjacent pairs (1+2, 2+3) blend together.`,
+Read as a sentence. Blend pairs 1+2 and 2+3. Finish completely.`,
 
   "sentence-5": (question, cards) => `${question}
 Cards: ${cards}
 
-Read as an extended sentence using pair-reading: blend adjacent pairs (1+2, 2+3, 3+4, 4+5) to build the narrative.`,
+Read as an extended sentence using pair-reading. Finish completely.`,
 
   "comprehensive": (question, cards) => `${question}
 Cards: ${cards}
 
-9-Card spread (3x3 grid). Read row by row: Row 1 = opening, Row 2 = development (center card = heart of matter), Row 3 = resolution. Consider vertical and diagonal connections.`,
+9-Card spread (3x3). Read rows: opening, development, resolution. Finish completely.`,
 
   "grand-tableau": (question, cards) => `${question}
 Cards: ${cards}
 
-Grand Tableau (36 cards). ONLY discuss: 1) Significator position, 2) 3-4 most important surrounding cards, 3) Brief overall theme. Keep under 150 words.`
+Grand Tableau (36 cards). Give ONE short paragraph: mention the Significator's position and the single most important insight. Stop there. Do not list cards. Finish your sentence.`
 };
 
 /**
