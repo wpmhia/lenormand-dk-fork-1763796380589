@@ -307,10 +307,11 @@ export default function ReadingFundamentalsPage() {
               Dynamic Reading Depth
             </h3>
             <p className="text-sm text-muted-foreground">
-              Reading length adapts to your spread: 3-card spreads get concise 
-              280-token readings (~200 words), 9-card spreads expand to 320 tokens 
-              for row analysis, and Grand Tableau (36-card) readings use 300 tokens 
-              for brief significator and key card focus.
+              Reading length adapts to your spread: 3-card spreads get 
+              250-token readings (~180 words), 9-card spreads use 280 tokens 
+              for row analysis, and Grand Tableau (36-card) readings use 280 tokens 
+              for brief but complete significator readings. All responses finish 
+              their final sentence—never truncated.
             </p>
           </div>
 
