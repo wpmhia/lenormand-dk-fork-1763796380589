@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
-
-const ReactMarkdown = dynamic(() => import("react-markdown"), {
-  ssr: false,
-});
+import ReactMarkdown from "react-markdown";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
