@@ -12,11 +12,13 @@ import {
 
 /**
  * Determine token budget based on card count
- * 280 tokens = ~200-220 words = 2-3 solid paragraphs
- * Completes in 4-5 seconds on Vercel free plan, no truncation
+ * Scales with spread complexity for appropriate depth
+ * Completes in 4-8 seconds on Vercel free plan
  */
 export function getTokenBudget(cardCount: number): number {
-  // All spreads use same token budget for consistency
+  if (cardCount <= 3) return 280;   // ~200 words, 2-3 paragraphs
+  if (cardCount <= 9) return 350;   // ~250 words, allows row analysis
+  if (cardCount <= 36) return 500;  // ~350 words, enables significator + zones
   return 280;
 }
 

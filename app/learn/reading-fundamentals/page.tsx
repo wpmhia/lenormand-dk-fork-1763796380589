@@ -266,6 +266,78 @@ export default function ReadingFundamentalsPage() {
         </CardContent>
       </Card>
 
+      {/* AI Reading Structure */}
+      <Card className="mb-8 border-border bg-card">
+        <CardHeader>
+          <CardTitle className="flex items-center text-2xl text-foreground">
+            <BookOpen className="mr-3 h-6 w-6 text-primary" />
+            Reading Quality & Structure
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <p className="leading-relaxed text-muted-foreground">
+            Our AI readings follow a proven 3-paragraph structure for clear, 
+            contextual interpretations. The depth scales with your spread complexity 
+            to ensure appropriate detail without overwhelming you.
+          </p>
+
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-6">
+            <h3 className="mb-3 font-semibold text-foreground">
+              The 3-Paragraph Structure
+            </h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <p>
+                <strong className="text-card-foreground">1. The Cards:</strong>{" "}
+                What each card represents individually in the context of your question.
+              </p>
+              <p>
+                <strong className="text-card-foreground">2. The Blend:</strong>{" "}
+                How the cards interact as a sequence—the Lenormand pair-reading technique 
+                applied to your specific spread.
+              </p>
+              <p>
+                <strong className="text-card-foreground">3. The Answer:</strong>{" "}
+                Direct response to your question, synthesizing the cards into actionable guidance.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-muted p-4">
+            <h3 className="mb-2 font-semibold text-foreground">
+              Dynamic Reading Depth
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Reading length adapts to your spread: 3-card spreads get concise 
+              280-token readings (~200 words), 9-card spreads expand to 350 tokens 
+              for row analysis, and Grand Tableau (36-card) readings use 500 tokens 
+              to cover significator positioning, directional zones, and key intersections.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
+            <h3 className="mb-2 font-semibold text-foreground">
+              Spread-Specific Methodology
+            </h3>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>
+                <strong>3-Card:</strong> Read as sentence flow with adjacent pair blending (1+2, 2+3).
+              </p>
+              <p>
+                <strong>5-Card:</strong> Extended narrative using chain pair-reading (1+2, 2+3, 3+4, 4+5).
+              </p>
+              <p>
+                <strong>9-Card:</strong> Row-by-row analysis (opening → development → resolution) 
+                with center card as the heart of the matter.
+              </p>
+              <p>
+                <strong>Grand Tableau:</strong> Significator focus with directional zones 
+                (left=past, right=future, above=conscious, below=unconscious) and corner analysis.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Common Questions */}
       <Card className="mb-8 border-border bg-card">
         <CardHeader>
