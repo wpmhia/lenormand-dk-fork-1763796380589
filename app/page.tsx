@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
+import { ReadingCounter } from "@/components/ReadingCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getReadingCount, formatReadingCount } from "@/lib/counter";
 import {
   Sparkles,
   ArrowRight,
@@ -20,7 +22,10 @@ import {
   Zap,
 } from "lucide-react";
 
-export default function Home() {
+export default async function Home() {
+  // Fetch initial reading count for SSR
+  const initialCount = await getReadingCount();
+  const initialFormatted = formatReadingCount(initialCount);
   return (
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
@@ -49,6 +54,14 @@ export default function Home() {
                   Learn First
                 </Button>
               </Link>
+            </div>
+            
+            {/* Reading Counter - Social Proof */}
+            <div className="mt-6 flex justify-center md:justify-start">
+              <ReadingCounter 
+                initialCount={initialCount} 
+                initialFormatted={initialFormatted}
+              />
             </div>
           </div>
 

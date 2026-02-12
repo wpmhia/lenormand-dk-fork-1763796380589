@@ -5,6 +5,7 @@ export const maxDuration = 10;
 
 import { buildPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { incrementReadingCount } from "@/lib/counter";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
@@ -211,6 +212,12 @@ export async function POST(request: Request) {
             controller.enqueue(encoder.encode(
               `data: ${JSON.stringify({ type: "done", truncated: isTruncated })}\n\n`
             ));
+
+            // Increment reading counter on successful completion
+            // Fire and forget - don't block response
+            incrementReadingCount().catch(() => {
+              // Silently ignore counter errors
+            });
 
             controller.close();
         } catch (error: any) {
