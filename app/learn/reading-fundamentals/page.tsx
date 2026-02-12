@@ -308,9 +308,9 @@ export default function ReadingFundamentalsPage() {
             </h3>
             <p className="text-sm text-muted-foreground">
               Reading length adapts to your spread: 3-card spreads get 
-              260-token readings (~180 words), 9-card spreads use 280 tokens 
-              for row analysis, and Grand Tableau (36-card) readings use 320 tokens 
-              for focused significator analysis.
+              240-token readings (~160 words), 9-card spreads use 260 tokens 
+              for row analysis, and Grand Tableau (36-card) readings use 280 tokens 
+              for focused significator analysis. Every reading completes fully.
             </p>
           </div>
 
