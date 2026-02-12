@@ -141,13 +141,6 @@ Grand Tableau: 1) Name the Significator's position, 2) Describe specific nearby 
 };
 
 /**
- * Detect if question is a yes/no type
- */
-function isYesNoQuestion(question: string): boolean {
-  return /^(will|is|are|can|should|do|does|did|could|would|may|might)\b/i.test(question.trim());
-}
-
-/**
  * Build prompt for AI reading
  */
 export function buildPrompt(
@@ -158,41 +151,31 @@ export function buildPrompt(
   const questionContext = buildQuestionContext(question);
   const cardList = formatCardList(cards);
 
-  // Add yes/no instruction for binary questions
-  const yesNoInstruction = isYesNoQuestion(question) 
-    ? "\n\nRemember: This is a YES/NO question."
-    : "";
-
   // Use spread-specific prompt if available
   if (SPREAD_PROMPTS[spreadId]) {
     const basePrompt = SPREAD_PROMPTS[spreadId](questionContext, cardList);
-    return basePrompt + yesNoInstruction;
+    return basePrompt;
   }
 
   // Fallback based on card count
   const cardCount = cards.length;
 
   if (cardCount === 1) {
-    const base = SPREAD_PROMPTS["single-card"](questionContext, cardList);
-    return base + yesNoInstruction;
+    return SPREAD_PROMPTS["single-card"](questionContext, cardList);
   } else if (cardCount === 3) {
-    const base = SPREAD_PROMPTS["sentence-3"](questionContext, cardList);
-    return base + yesNoInstruction;
+    return SPREAD_PROMPTS["sentence-3"](questionContext, cardList);
   } else if (cardCount === 5) {
-    const base = SPREAD_PROMPTS["sentence-5"](questionContext, cardList);
-    return base + yesNoInstruction;
+    return SPREAD_PROMPTS["sentence-5"](questionContext, cardList);
   } else if (cardCount === 7) {
-    return `${questionContext}\nCards: ${cardList}${yesNoInstruction}`;
+    return `${questionContext}\nCards: ${cardList}`;
   } else if (cardCount === 9) {
-    const base = SPREAD_PROMPTS["comprehensive"](questionContext, cardList);
-    return base + yesNoInstruction;
+    return SPREAD_PROMPTS["comprehensive"](questionContext, cardList);
   } else if (cardCount === 36) {
-    const base = SPREAD_PROMPTS["grand-tableau"](questionContext, cardList);
-    return base + yesNoInstruction;
+    return SPREAD_PROMPTS["grand-tableau"](questionContext, cardList);
   }
 
   // Ultimate fallback
-  return `${questionContext}\nCards: ${cardList}${yesNoInstruction}`;
+  return `${questionContext}\nCards: ${cardList}`;
 }
 
 /**
