@@ -44,8 +44,8 @@ export async function getReadingCount(): Promise<number> {
   if (redis) {
     try {
       const count = await redis.get<number>(COUNTER_KEY);
-      // Seed with initial count if Redis is empty
-      if (count === null || count === undefined) {
+      // Seed with initial count if Redis is empty or below minimum
+      if (count === null || count === undefined || count < INITIAL_COUNT) {
         await redis.set(COUNTER_KEY, INITIAL_COUNT);
         return INITIAL_COUNT;
       }
