@@ -12,10 +12,10 @@ const redis = redisUrl && redisToken
     })
   : null;
 
-// In-memory fallback counter - starts at 118
-let memoryCounter = 118;
+// In-memory fallback counter - starts at 120
+let memoryCounter = 120;
 const COUNTER_KEY = "reading_count:total";
-const INITIAL_COUNT = 118;
+const INITIAL_COUNT = 120;
 
 /**
  * Increment the total reading counter
