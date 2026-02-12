@@ -12,9 +12,10 @@ const redis = redisUrl && redisToken
     })
   : null;
 
-// In-memory fallback counter
-let memoryCounter = 0;
+// In-memory fallback counter - starts at 118
+let memoryCounter = 118;
 const COUNTER_KEY = "reading_count:total";
+const INITIAL_COUNT = 118;
 
 /**
  * Increment the total reading counter
@@ -43,7 +44,12 @@ export async function getReadingCount(): Promise<number> {
   if (redis) {
     try {
       const count = await redis.get<number>(COUNTER_KEY);
-      return count || 0;
+      // Seed with initial count if Redis is empty
+      if (count === null || count === undefined) {
+        await redis.set(COUNTER_KEY, INITIAL_COUNT);
+        return INITIAL_COUNT;
+      }
+      return count;
     } catch {
       // Fall back to in-memory on Redis error
     }
