@@ -196,7 +196,16 @@ export default function SharedReadingPage({ params }: PageProps) {
                       });
                     }
                   } else if (parsed.type === "done") {
-                    // Stream complete
+                    // Stream complete - check if truncated
+                    if (parsed.truncated && accumulatedText) {
+                      accumulatedText += "\n\n*[Reading was cut short. The cards still provide guidance above.]*";
+                      if (mountedRef.current) {
+                        setAiReading({
+                          reading: accumulatedText,
+                          source: "deepseek",
+                        });
+                      }
+                    }
                     if (mountedRef.current) {
                       setAiStreaming(false);
                     }

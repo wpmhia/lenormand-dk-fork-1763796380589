@@ -16,10 +16,10 @@ import {
  * Completes in 4-8 seconds on Vercel free plan
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 280;   // ~200 words
-  if (cardCount <= 9) return 320;   // ~230 words
-  if (cardCount <= 36) return 380;  // ~280 words, significator + key cards
-  return 280;
+  if (cardCount <= 3) return 260;   // ~180 words - always completes
+  if (cardCount <= 9) return 280;   // ~200 words - brief but complete
+  if (cardCount <= 36) return 320;  // ~240 words - significator focus only
+  return 260;
 }
 
 // ============================================================================
@@ -132,7 +132,7 @@ Read as an extended sentence using pair-reading. Finish completely.`,
   "comprehensive": (question, cards) => `${question}
 Cards: ${cards}
 
-9-Card spread (3x3). Read rows: opening, development, resolution. Finish completely.`,
+9-Card spread: Name the center card (heart of matter), briefly describe what each row shows. Keep to 2 short paragraphs. Finish every sentence.`,
 
   "grand-tableau": (question, cards) => `${question}
 Cards: ${cards}

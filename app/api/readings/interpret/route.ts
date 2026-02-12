@@ -144,8 +144,10 @@ export async function POST(request: Request) {
              throw new Error("No response body");
            }
 
-           const decoder = new TextDecoder();
+            const decoder = new TextDecoder();
             let buffer = "";
+            let fullText = "";
+            let isTruncated = false;
 
             // Send headers first
             controller.enqueue(encoder.encode(
@@ -160,14 +162,19 @@ export async function POST(request: Request) {
               const { events } = processSSEChunk(chunk, buffer);
               
               for (const event of events) {
-                // Event is from DeepSeek - pass through with our wrapper
                 const data = (event as any);
                 if (data && typeof data === "object") {
                   const delta = data.choices?.[0]?.delta?.content;
                   if (delta) {
+                    fullText += delta;
                     console.log("[API] Sending chunk, length:", delta.length);
                     const sseData = JSON.stringify({ type: "chunk", content: delta });
                     controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                  }
+                  // Check for finish reason
+                  const finishReason = data.choices?.[0]?.finish_reason;
+                  if (finishReason === "length") {
+                    isTruncated = true;
                   }
                 }
               }
@@ -180,14 +187,30 @@ export async function POST(request: Request) {
               if (data && typeof data === "object") {
                 const delta = data.choices?.[0]?.delta?.content;
                 if (delta) {
+                  fullText += delta;
                   console.log("[API] Sending final chunk, length:", delta.length);
                   const sseData = JSON.stringify({ type: "chunk", content: delta });
                   controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
                 }
+                const finishReason = data.choices?.[0]?.finish_reason;
+                if (finishReason === "length") {
+                  isTruncated = true;
+                }
               }
             }
 
-           controller.close();
+            // Check if text ends mid-sentence (no period, question mark, or exclamation at end)
+            const trimmed = fullText.trim();
+            if (trimmed.length > 0 && !/[.!?]$/.test(trimmed)) {
+              isTruncated = true;
+            }
+
+            // Send done event with truncation status
+            controller.enqueue(encoder.encode(
+              `data: ${JSON.stringify({ type: "done", truncated: isTruncated })}\n\n`
+            ));
+
+            controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
           console.error("[API] Stream error:", error.name, error.message);
