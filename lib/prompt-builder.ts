@@ -16,10 +16,10 @@ import {
  * Completes in 4-8 seconds on Vercel free plan
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 260;   // ~180 words - always completes
-  if (cardCount <= 9) return 280;   // ~200 words - brief but complete
-  if (cardCount <= 36) return 320;  // ~240 words - significator focus only
-  return 260;
+  if (cardCount <= 3) return 240;   // ~160 words - guaranteed complete
+  if (cardCount <= 9) return 260;   // ~180 words - brief but complete
+  if (cardCount <= 36) return 280;  // ~200 words - significator focus
+  return 240;
 }
 
 // ============================================================================
@@ -102,11 +102,11 @@ export const VALID_CARD_NAMES = [
  * 3-paragraph structure: individual cards → blend → direct answer
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Provide readings that NEVER truncate mid-sentence. Always finish every sentence completely.
+  return `You are a Lenormand fortune teller. Provide brief, complete readings.
 
-Readings should be specific: name actual cards, describe their positions, explain their interactions. Avoid generic phrases like "lingering confusion and burdens" - instead say "the Clouds at position 12 indicates confusion about work."
+CRITICAL: You must finish every sentence. Never leave a sentence unfinished. Plan your response to fit comfortably within the space available.
 
-Structure: 2-3 paragraphs. Be specific, contextual, and complete.`;
+Readings should be specific: name actual cards, describe their positions, explain their interactions. Be concrete and contextual.`;
 }
 
 /**
