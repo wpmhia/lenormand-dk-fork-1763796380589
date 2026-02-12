@@ -159,7 +159,9 @@ export async function POST(request: Request) {
               if (done) break;
 
               const chunk = decoder.decode(value, { stream: true });
-              const { events } = processSSEChunk(chunk, buffer);
+              const result = processSSEChunk(chunk, buffer);
+              const events = result.events;
+              buffer = result.buffer;
               
               for (const event of events) {
                 const data = (event as any);
