@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 export function Footer() {
   return (
@@ -70,21 +69,6 @@ export function Footer() {
         </div>
 
          <div className="mt-4 flex flex-col items-center justify-center gap-4 border-t border-border/50 pt-4">
-           <a
-             href="https://ko-fi.com/Y8Y81NVDEK"
-             target="_blank"
-             rel="noopener noreferrer"
-             className="inline-flex items-center justify-center"
-           >
-             <Image
-               width={144}
-               height={36}
-               style={{ border: 0, height: 36, width: "auto" }}
-               src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
-               alt="Buy Me a Coffee at ko-fi.com"
-               unoptimized
-             />
-           </a>
            <p className="text-xs text-muted-foreground">Made by <a href="https://humanstack.dk" className="underline">Humanstack</a></p>
          </div>
       </div>

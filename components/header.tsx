@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Home, BookOpen, Plus, Menu, X, Heart } from "lucide-react";
+import Image from "next/image";
+import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 export function Header() {
@@ -56,15 +57,21 @@ export function Header() {
             <Sparkles className="h-5 w-5" />
             <span>Learn</span>
           </Link>
-          <a
-            href="https://ko-fi.com/Y8Y81NVDEK"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent/50 hover:text-primary"
-          >
-            <Heart className="h-5 w-5" />
-            <span>Support</span>
-          </a>
+           <a
+             href="https://ko-fi.com/Y8Y81NVDEK"
+             target="_blank"
+             rel="noopener noreferrer"
+             className="inline-flex items-center justify-center"
+           >
+             <Image
+               width={144}
+               height={36}
+               style={{ border: 0, height: 32, width: "auto" }}
+               src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
+               alt="Buy Me a Coffee at ko-fi.com"
+               unoptimized
+             />
+           </a>
         </nav>
         <div className="ml-auto md:hidden">
           <button
@@ -115,16 +122,22 @@ export function Header() {
               <Sparkles className="h-5 w-5" />
               <span>Learn</span>
             </Link>
-            <a
-              href="https://ko-fi.com/Y8Y81NVDEK"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-accent/50 hover:text-primary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Heart className="h-5 w-5" />
-              <span>Support</span>
-            </a>
+             <a
+               href="https://ko-fi.com/Y8Y81NVDEK"
+               target="_blank"
+               rel="noopener noreferrer"
+               className="flex min-h-11 items-center justify-center rounded px-3 py-2"
+               onClick={() => setMobileMenuOpen(false)}
+             >
+               <Image
+                 width={144}
+                 height={36}
+                 style={{ border: 0, height: 36, width: "auto" }}
+                 src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
+                 alt="Buy Me a Coffee at ko-fi.com"
+                 unoptimized
+               />
+             </a>
           </nav>
         </div>
       )}
