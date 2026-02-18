@@ -5,9 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
-import { getDailyCardId, getTodayDateString } from "@/lib/daily-card";
+import { getDailyCardId, getTodayDateString, getCachedDailyInsight, setCachedDailyInsight } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
 interface DailyCardModalProps {
@@ -38,6 +37,14 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   const generateInsight = async (cardData: CardType | undefined) => {
     if (!cardData) {
+      setInsightLoading(false);
+      return;
+    }
+
+    // Check cache first
+    const cached = getCachedDailyInsight();
+    if (cached) {
+      setInsight(cached);
       setInsightLoading(false);
       return;
     }
@@ -84,8 +91,12 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                 if (parsed.type === "chunk" && parsed.content) {
                   fullText += parsed.content;
                 } else if (parsed.type === "done") {
-                  const sentences = fullText.split(/[.!?]+/).filter(Boolean);
-                  setInsight(sentences.slice(0, 2).join(". ") + ".");
+                  // Clean markdown and cache
+                  const cleaned = cleanMarkdown(fullText);
+                  const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
+                  const result = sentences.slice(0, 2).join(". ") + ".";
+                  setInsight(result);
+                  setCachedDailyInsight(result);
                   setInsightLoading(false);
                   return;
                 }
@@ -98,8 +109,11 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
         // Fallback if stream ends without done signal
         if (fullText) {
-          const sentences = fullText.split(/[.!?]+/).filter(Boolean);
-          setInsight(sentences.slice(0, 2).join(". ") + ".");
+          const cleaned = cleanMarkdown(fullText);
+          const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
+          const result = sentences.slice(0, 2).join(". ") + ".";
+          setInsight(result);
+          setCachedDailyInsight(result);
         } else {
           setInsight(cardData.uprightMeaning);
         }
@@ -107,8 +121,11 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         // Non-streaming fallback
         const data = await response.json();
         const text = data.reading || "";
-        const sentences = text.split(/[.!?]+/).filter(Boolean);
-        setInsight(sentences.slice(0, 2).join(". ") + ".");
+        const cleaned = cleanMarkdown(text);
+        const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
+        const result = sentences.slice(0, 2).join(". ") + ".";
+        setInsight(result);
+        setCachedDailyInsight(result);
       }
     } catch (error) {
       console.error("Failed to generate insight:", error);
@@ -116,6 +133,17 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     } finally {
       setInsightLoading(false);
     }
+  };
+
+  // Strip markdown formatting (* for bold, # for headings)
+  const cleanMarkdown = (text: string): string => {
+    return text
+      .replace(/#{1,6}\s+/g, '')  // Remove # headings
+      .replace(/\*\*(.+?)\*\*/g, '$1')  // Remove **bold**
+      .replace(/\*(.+?)\*/g, '$1')  // Remove *italic*
+      .replace(/___(.+?)___/g, '$1')  // Remove ___underline___
+      .replace(/`(.+?)`/g, '$1')  // Remove `code`
+      .trim();
   };
 
   const handleClose = () => {
