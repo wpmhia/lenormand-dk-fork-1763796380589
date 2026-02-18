@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, X, ArrowRight, RefreshCw, Loader2 } from "lucide-react";
+import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { getDailyCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
@@ -26,14 +26,14 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     if (open && cards.length > 0) {
       const cardId = getDailyCardId();
       const foundCard = cards.find((c) => c.id === cardId);
-      setCard(foundCard || null);
-      setLoading(false);
-      setInsight("");
-      setInsightLoading(true);
-
-      // Generate AI insight
-      generateInsight(foundCard);
+      if (foundCard) {
+        setCard(foundCard);
+        setInsight("");
+        setInsightLoading(true);
+        generateInsight(foundCard);
+      }
     }
+    setLoading(false);
   }, [open, cards]);
 
   const generateInsight = async (cardData: CardType | undefined) => {
@@ -127,13 +127,6 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-gradient-to-b from-card to-background">
-        <button
-          onClick={handleClose}
-          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted/50 hover:bg-muted transition-colors"
-        >
-          <X className="h-4 w-4 text-muted-foreground" />
-        </button>
-
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
