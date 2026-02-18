@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -88,6 +89,23 @@ const PRACTICE_EXERCISES = [
     hints: ["House = check home thoroughly", "Stork = soon, possibly during routine activities", "Key = definite yes to being found"],
   },
 ];
+
+// Helper function to get card image URL
+const CARD_NAMES: Record<number, string> = {
+  1: "rider", 2: "clover", 3: "ship", 4: "house", 5: "tree",
+  6: "clouds", 7: "snake", 8: "coffin", 9: "bouquet", 10: "whip",
+  11: "whip", 12: "birds", 13: "child", 14: "fox", 15: "bear",
+  16: "stars", 17: "stork", 18: "dog", 19: "tower", 20: "garden",
+  21: "mountain", 22: "paths", 23: "mice", 24: "heart", 25: "ring",
+  26: "book", 27: "letter", 28: "gentleman", 29: "lady", 30: "lilies",
+  31: "sun", 32: "moon", 33: "key", 34: "fish", 35: "anchor", 36: "cross",
+};
+
+function getCardImageUrl(cardId: number): string {
+  const paddedId = cardId.toString().padStart(2, "0");
+  const name = CARD_NAMES[cardId] || "rider";
+  return `/images/cards/${paddedId}-${name}.png`;
+}
 
 export default function PracticeReadingsPage() {
   const [currentExercise, setCurrentExercise] = useState(0);
@@ -209,18 +227,25 @@ export default function PracticeReadingsPage() {
                 <Card
                   key={card.id}
                   className={cn(
-                    "border-2 transition-all",
+                    "overflow-hidden border-2 transition-all",
                     index === 0 && "border-blue-500/30 bg-blue-500/5",
                     index === 1 && "border-purple-500/30 bg-purple-500/5",
                     index === 2 && "border-green-500/30 bg-green-500/5"
                   )}
                 >
-                  <CardHeader className="pb-2">
-                    <div className="text-xs text-muted-foreground">{card.position}</div>
-                    <CardTitle className="text-lg">{card.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{card.meaning}</p>
+                  <div className="relative aspect-[2.5/3.5] w-full">
+                    <Image
+                      src={getCardImageUrl(card.id)}
+                      alt={card.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 33vw, 128px"
+                    />
+                  </div>
+                  <CardContent className="p-3">
+                    <div className="mb-1 text-xs font-medium text-muted-foreground">{card.position}</div>
+                    <div className="text-sm font-semibold">{card.name}</div>
+                    <p className="mt-1 text-xs text-muted-foreground">{card.meaning}</p>
                   </CardContent>
                 </Card>
               ))}
