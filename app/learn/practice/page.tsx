@@ -240,6 +240,10 @@ export default function PracticeReadingsPage() {
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 33vw, 128px"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
                     />
                   </div>
                   <CardContent className="p-3">

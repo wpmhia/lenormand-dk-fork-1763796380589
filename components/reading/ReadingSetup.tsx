@@ -44,6 +44,9 @@ export function ReadingSetup({
       <CardContent className="space-y-6">
         {/* Question Input */}
         <div className="space-y-3">
+          <label htmlFor="question" className="text-sm font-medium text-foreground">
+            Your Question
+          </label>
           <Textarea
             id="question"
             value={question}
