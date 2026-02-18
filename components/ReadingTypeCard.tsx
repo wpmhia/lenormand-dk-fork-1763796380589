@@ -31,7 +31,7 @@ export function ReadingTypeCard({
 
   const cardContent = (
     <Card
-      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm ${disabled ? "opacity-60" : "cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl"}`}
+      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm ${disabled ? "opacity-60" : "cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"}`}
     >
       <CardHeader className="relative z-10 pb-3">
         <div className="flex flex-col gap-2">
