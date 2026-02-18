@@ -53,14 +53,62 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         }),
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        setInsight(cardData.uprightMeaning);
+        setInsightLoading(false);
+        return;
+      }
+
+      // Handle streaming response (SSE)
+      const contentType = response.headers.get("content-type");
+      if (contentType?.includes("text/event-stream")) {
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let fullText = "";
+
+        while (reader) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6);
+              if (data === "[DONE]") continue;
+              try {
+                const parsed = JSON.parse(data);
+                if (parsed.type === "chunk" && parsed.content) {
+                  fullText += parsed.content;
+                } else if (parsed.type === "done") {
+                  const sentences = fullText.split(/[.!?]+/).filter(Boolean);
+                  setInsight(sentences.slice(0, 2).join(". ") + ".");
+                  setInsightLoading(false);
+                  return;
+                }
+              } catch {
+                // Skip invalid JSON
+              }
+            }
+          }
+        }
+
+        // Fallback if stream ends without done signal
+        if (fullText) {
+          const sentences = fullText.split(/[.!?]+/).filter(Boolean);
+          setInsight(sentences.slice(0, 2).join(". ") + ".");
+        } else {
+          setInsight(cardData.uprightMeaning);
+        }
+      } else {
+        // Non-streaming fallback
         const data = await response.json();
-        // Extract just a short summary (first sentence or two)
         const text = data.reading || "";
         const sentences = text.split(/[.!?]+/).filter(Boolean);
         setInsight(sentences.slice(0, 2).join(". ") + ".");
-      } else {
-        setInsight(cardData.uprightMeaning);
       }
     } catch (error) {
       console.error("Failed to generate insight:", error);
