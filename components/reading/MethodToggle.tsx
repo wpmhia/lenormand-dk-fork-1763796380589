@@ -6,14 +6,14 @@ import { Laptop, PenLine } from "lucide-react";
 interface MethodToggleProps {
   value: "virtual" | "physical" | null;
   onChange: (method: "virtual" | "physical") => void;
-  onContinue: () => void;
+  onContinue: (method: "virtual" | "physical") => void;
   disabled?: boolean;
 }
 
 export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
   const handleMethodClick = (method: "virtual" | "physical") => {
     onChange(method);
-    onContinue();
+    onContinue(method);
   };
   return (
     <div className="space-y-3">
