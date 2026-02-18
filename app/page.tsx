@@ -1,10 +1,17 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
+import { DailyGuidanceModal } from "@/components/DailyGuidanceModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getReadingCount, formatReadingCount } from "@/lib/counter";
+import { getCards } from "@/lib/data";
+import { Card as CardType } from "@/lib/types";
+import { hasViewedDailyCard } from "@/lib/daily-card";
 import {
   Sparkles,
   ArrowRight,
@@ -18,14 +25,26 @@ import {
   Users,
   TrendingUp,
   CheckCircle2,
-  Star,
-  Zap,
 } from "lucide-react";
 
-export default async function Home() {
-  // Fetch initial reading count for SSR
-  const initialCount = await getReadingCount();
-  const initialFormatted = formatReadingCount(initialCount);
+export default function Home() {
+  const [showDailyGuidance, setShowDailyGuidance] = useState(false);
+  const [hasViewed, setHasViewed] = useState(false);
+  const [cards, setCards] = useState<CardType[]>([]);
+  const [initialCount, setInitialCount] = useState(0);
+  const [initialFormatted, setInitialFormatted] = useState("");
+
+  useEffect(() => {
+    setHasViewed(hasViewedDailyCard());
+    async function loadData() {
+      const cardData = await getCards();
+      setCards(cardData);
+      const count = await getReadingCount();
+      setInitialCount(count);
+      setInitialFormatted(formatReadingCount(count));
+    }
+    loadData();
+  }, []);
   return (
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
@@ -54,6 +73,24 @@ export default async function Home() {
                   Learn First
                 </Button>
               </Link>
+              <Button 
+                variant={hasViewed ? "ghost" : "outline"} 
+                size="lg" 
+                onClick={() => setShowDailyGuidance(true)}
+                className={`gap-2 ${hasViewed ? 'text-muted-foreground' : 'border-primary/30 bg-primary/5 hover:bg-primary/10'}`}
+              >
+                {hasViewed ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4" />
+                    Seen Today
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Daily Guidance
+                  </>
+                )}
+              </Button>
             </div>
             
             {/* Reading Counter - Social Proof */}
@@ -397,6 +434,13 @@ export default async function Home() {
           </div>
         </div>
       </div>
+
+      {/* Daily Guidance Modal */}
+      <DailyGuidanceModal 
+        open={showDailyGuidance} 
+        onOpenChange={setShowDailyGuidance}
+        cards={cards}
+      />
     </main>
   );
 }
