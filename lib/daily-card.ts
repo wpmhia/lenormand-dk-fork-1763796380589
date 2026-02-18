@@ -1,5 +1,3 @@
-const DAILY_CARD_KEY = 'daily_card_viewed';
-
 export function getDailyCardId(): number {
   const today = new Date().toISOString().slice(0, 10);
   let hash = 0;
@@ -8,18 +6,6 @@ export function getDailyCardId(): number {
     hash |= 0;
   }
   return Math.abs(hash) % 36 + 1;
-}
-
-export function hasViewedDailyCard(): boolean {
-  if (typeof window === 'undefined') return false;
-  const today = new Date().toISOString().slice(0, 10);
-  return localStorage.getItem(DAILY_CARD_KEY) === today;
-}
-
-export function markDailyCardViewed(): void {
-  if (typeof window === 'undefined') return;
-  const today = new Date().toISOString().slice(0, 10);
-  localStorage.setItem(DAILY_CARD_KEY, today);
 }
 
 export function getTodayDateString(): string {

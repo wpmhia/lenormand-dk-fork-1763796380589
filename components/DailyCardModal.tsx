@@ -7,7 +7,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, X, ArrowRight, RefreshCw, Loader2 } from "lucide-react";
-import { getDailyCardId, markDailyCardViewed, getTodayDateString } from "@/lib/daily-card";
+import { getDailyCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
 interface DailyCardModalProps {
@@ -71,7 +71,6 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   };
 
   const handleClose = () => {
-    markDailyCardViewed();
     onOpenChange(false);
   };
 

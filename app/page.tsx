@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getReadingCount, formatReadingCount } from "@/lib/counter";
 import { getCards } from "@/lib/data";
 import { Card as CardType } from "@/lib/types";
-import { hasViewedDailyCard } from "@/lib/daily-card";
 import {
   Sparkles,
   ArrowRight,
@@ -24,18 +23,15 @@ import {
   Lightbulb,
   Users,
   TrendingUp,
-  CheckCircle2,
 } from "lucide-react";
 
 export default function Home() {
-  const [showDailyGuidance, setShowDailyGuidance] = useState(false);
-  const [hasViewed, setHasViewed] = useState(false);
+  const [showDailyCard, setShowDailyCard] = useState(false);
   const [cards, setCards] = useState<CardType[]>([]);
   const [initialCount, setInitialCount] = useState(0);
   const [initialFormatted, setInitialFormatted] = useState("");
 
   useEffect(() => {
-    setHasViewed(hasViewedDailyCard());
     async function loadData() {
       const cardData = await getCards();
       setCards(cardData);
@@ -69,22 +65,13 @@ export default function Home() {
                 <Button size="lg">Get Your Reading</Button>
               </Link>
               <Button 
-                variant={hasViewed ? "ghost" : "outline"} 
+                variant="outline" 
                 size="lg" 
-                onClick={() => setShowDailyGuidance(true)}
-                className={`gap-2 ${hasViewed ? 'text-muted-foreground' : 'border-primary/30 bg-primary/5 hover:bg-primary/10'}`}
+                onClick={() => setShowDailyCard(true)}
+                className="gap-2 border-primary/30 bg-primary/5 hover:bg-primary/10"
               >
-                {hasViewed ? (
-                  <>
-                    <CheckCircle2 className="h-4 w-4" />
-                    Seen Today
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4" />
-                    Daily Card
-                  </>
-                )}
+                <Sparkles className="h-4 w-4" />
+                Daily Card
               </Button>
             </div>
             
@@ -432,8 +419,8 @@ export default function Home() {
 
       {/* Daily Card Modal */}
       <DailyCardModal 
-        open={showDailyGuidance} 
-        onOpenChange={setShowDailyGuidance}
+        open={showDailyCard} 
+        onOpenChange={setShowDailyCard}
         cards={cards}
       />
     </main>
