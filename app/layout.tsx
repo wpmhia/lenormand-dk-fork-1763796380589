@@ -235,13 +235,19 @@ export default function RootLayout({
         className={`${inter.className} antialiased`}
         suppressHydrationWarning
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          Skip to main content
+        </a>
         <TooltipProvider>
           <div
             className="flex min-h-screen flex-col bg-background text-foreground"
             suppressHydrationWarning
           >
             <Header />
-            <main className="flex-grow">{children}</main>
+            <main id="main-content" className="flex-grow">{children}</main>
             <Footer />
           </div>
           <Toaster />

@@ -745,7 +745,13 @@ export default function CardMeaningsPage() {
                   </CardContent>
                 </Card>
               </Link>
-            ))}
+              ))}
+          </div>
+        )}
+
+        {debouncedSearchTerm && filteredCards.length === 0 && (
+          <div className="py-12 text-center text-muted-foreground">
+            No cards found matching &quot;{debouncedSearchTerm}&quot;. Try a different search term.
           </div>
         )}
 
