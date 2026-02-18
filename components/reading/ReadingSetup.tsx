@@ -33,8 +33,6 @@ export function ReadingSetup({
 }: ReadingSetupProps) {
   const [charCount, setCharCount] = useState(question.length);
 
-  const canContinue = method !== null;
-
   return (
     <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
       <CardHeader className="pb-4">

@@ -106,7 +106,7 @@ export function AIReadingDisplay({
     <Card>
       <CardContent className="p-6">
         <div className="mb-4 flex items-center justify-end">
-          <Button variant="ghost" size="icon" onClick={handleCopy}>
+          <Button variant="ghost" size="icon" onClick={handleCopy} aria-label="Copy reading to clipboard">
             {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           </Button>
         </div>
