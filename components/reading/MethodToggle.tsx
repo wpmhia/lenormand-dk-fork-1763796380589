@@ -6,10 +6,15 @@ import { Laptop, PenLine } from "lucide-react";
 interface MethodToggleProps {
   value: "virtual" | "physical" | null;
   onChange: (method: "virtual" | "physical") => void;
+  onContinue: () => void;
   disabled?: boolean;
 }
 
-export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
+export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
+  const handleMethodClick = (method: "virtual" | "physical") => {
+    onChange(method);
+    onContinue();
+  };
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium text-foreground">
@@ -20,7 +25,7 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
           type="button"
           variant={value === "virtual" ? "default" : "outline"}
           size="lg"
-          onClick={() => onChange("virtual")}
+          onClick={() => handleMethodClick("virtual")}
           disabled={disabled}
           className={`flex h-auto flex-col items-center gap-2 py-4 ${
             value === "virtual" ? "ring-2 ring-primary ring-offset-2" : ""
@@ -37,7 +42,7 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
           type="button"
           variant={value === "physical" ? "default" : "outline"}
           size="lg"
-          onClick={() => onChange("physical")}
+          onClick={() => handleMethodClick("physical")}
           disabled={disabled}
           className={`flex h-auto flex-col items-center gap-2 py-4 ${
             value === "physical" ? "ring-2 ring-primary ring-offset-2" : ""
