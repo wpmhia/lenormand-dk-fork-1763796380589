@@ -29,7 +29,17 @@ export function AIReadingDisplay({
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
     try {
-      await navigator.clipboard.writeText(aiReading.reading);
+      const plainText = aiReading.reading
+        .replace(/^#{1,6}\s+/gm, '') // Remove # headings
+        .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
+        .replace(/\*(.+?)\*/g, '$1') // Remove italic
+        .replace(/_(.+?)_/g, '$1') // Remove underline
+        .replace(/`(.+?)`/g, '$1') // Remove code
+        .replace(/^\*\s+/gm, '') // Remove bullet points
+        .replace(/^\d+\.\s+/gm, '') // Remove numbered lists
+        .trim();
+      
+      await navigator.clipboard.writeText(plainText);
       setCopyClicked(true);
       setTimeout(() => setCopyClicked(false), 2000);
     } catch (err) {
@@ -103,17 +113,17 @@ export function AIReadingDisplay({
 
         <div className="reading-content space-y-4">
           {aiReading?.reading ? (
-<ReactMarkdown
-            components={{
-              h1: ({ ...props }) => <h1 className="text-2xl font-semibold" {...props} />,
-              h2: ({ ...props }) => <h2 className="text-xl font-semibold" {...props} />,
-              h3: ({ ...props }) => <h3 className="text-lg font-semibold" {...props} />,
-              p: ({ ...props }) => <p className="leading-relaxed" {...props} />,
-              strong: ({ ...props }) => <strong className="font-semibold" {...props} />,
-            }}
-          >
-            {aiReading?.reading}
-          </ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                h1: ({ children, ...props }) => <h1 className="text-2xl font-semibold" {...props}>{children}</h1>,
+                h2: ({ children, ...props }) => <h2 className="text-xl font-semibold" {...props}>{children}</h2>,
+                h3: ({ children, ...props }) => <h3 className="text-lg font-semibold" {...props}>{children}</h3>,
+                p: ({ children, ...props }) => <p className="leading-relaxed" {...props}>{children}</p>,
+                strong: ({ children, ...props }) => <strong className="font-semibold" {...props}>{children}</strong>,
+              }}
+            >
+              {aiReading?.reading}
+            </ReactMarkdown>
           ) : null}
         </div>
 
