@@ -78,23 +78,9 @@ export function ReadingSetup({
         <MethodToggle
           value={method}
           onChange={onMethodChange}
+          onContinue={onContinue}
           disabled={disabled}
         />
-
-        {/* Continue Button */}
-        {method && (
-          <Button
-            onClick={onContinue}
-            disabled={!canContinue || disabled || isLoading}
-            loading={isLoading}
-            loadingText="Loading..."
-            size="lg"
-            className="w-full"
-          >
-            Continue
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        )}
       </CardContent>
     </Card>
   );
