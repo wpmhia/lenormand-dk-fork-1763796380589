@@ -10,13 +10,13 @@ import { Sparkles, X, ArrowRight, RefreshCw, Loader2 } from "lucide-react";
 import { getDailyCardId, markDailyCardViewed, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
-interface DailyGuidanceModalProps {
+interface DailyCardModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cards: CardType[];
 }
 
-export function DailyGuidanceModal({ open, onOpenChange, cards }: DailyGuidanceModalProps) {
+export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProps) {
   const [card, setCard] = useState<CardType | null>(null);
   const [insight, setInsight] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -98,7 +98,7 @@ export function DailyGuidanceModal({ open, onOpenChange, cards }: DailyGuidanceM
               <p className="text-sm font-medium text-muted-foreground">
                 {getTodayDateString()}
               </p>
-              <p className="text-xs text-muted-foreground/70">Your Daily Guidance</p>
+              <p className="text-xs text-muted-foreground/70">Your Daily Card</p>
             </div>
 
             {/* Card Image */}

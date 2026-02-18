@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
-import { DailyGuidanceModal } from "@/components/DailyGuidanceModal";
+import { DailyCardModal } from "@/components/DailyCardModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getReadingCount, formatReadingCount } from "@/lib/counter";
 import { getCards } from "@/lib/data";
@@ -82,7 +82,7 @@ export default function Home() {
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4" />
-                    Daily Guidance
+                    Daily Card
                   </>
                 )}
               </Button>
@@ -430,8 +430,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Daily Guidance Modal */}
-      <DailyGuidanceModal 
+      {/* Daily Card Modal */}
+      <DailyCardModal 
         open={showDailyGuidance} 
         onOpenChange={setShowDailyGuidance}
         cards={cards}
