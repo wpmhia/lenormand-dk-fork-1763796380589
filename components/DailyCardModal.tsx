@@ -56,7 +56,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         body: JSON.stringify({
           question: "What will today bring me?",
           cards: [{ id: cardData.id, name: cardData.name, position: 0 }],
-          spreadId: "daily-card",
+          spreadId: "single-card",
         }),
       });
 
