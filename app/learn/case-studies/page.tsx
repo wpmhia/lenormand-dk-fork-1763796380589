@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +144,23 @@ const CASE_STUDIES = [
   },
 ];
 
+// Helper function to get card image URL
+const CARD_NAMES: Record<number, string> = {
+  1: "rider", 2: "clover", 3: "ship", 4: "house", 5: "tree",
+  6: "clouds", 7: "snake", 8: "coffin", 9: "bouquet", 10: "whip",
+  11: "whip", 12: "birds", 13: "child", 14: "fox", 15: "bear",
+  16: "stars", 17: "stork", 18: "dog", 19: "tower", 20: "garden",
+  21: "mountain", 22: "paths", 23: "mice", 24: "heart", 25: "ring",
+  26: "book", 27: "letter", 28: "gentleman", 29: "lady", 30: "lilies",
+  31: "sun", 32: "moon", 33: "key", 34: "fish", 35: "anchor", 36: "cross",
+};
+
+function getCardImageUrl(cardId: number): string {
+  const paddedId = cardId.toString().padStart(2, "0");
+  const name = CARD_NAMES[cardId] || "rider";
+  return `/images/cards/${paddedId}-${name}.png`;
+}
+
 export default function CaseStudiesPage() {
   const [expandedCase, setExpandedCase] = useState<number | null>(null);
   const [expandedStep, setExpandedStep] = useState<{caseId: number, step: number} | null>(null);
@@ -254,13 +272,20 @@ export default function CaseStudiesPage() {
                       <h4 className="mb-3 font-semibold">The Cards Drawn</h4>
                       <div className="grid gap-3 md:grid-cols-5">
                         {study.cards.map((card, index) => (
-                          <Card key={card.id} className="border-primary/20">
-                            <CardHeader className="pb-2">
+                          <Card key={card.id} className="overflow-hidden border-primary/20">
+                            <div className="relative aspect-[2.5/3.5] w-full">
+                              <Image
+                                src={getCardImageUrl(card.id)}
+                                alt={card.name}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 20vw, 128px"
+                              />
+                            </div>
+                            <CardContent className="p-2">
                               <div className="text-xs text-muted-foreground">Position {index + 1}</div>
-                              <CardTitle className="text-sm">{card.name}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-0">
-                              <p className="text-xs text-muted-foreground">{card.meaning}</p>
+                              <div className="text-sm font-semibold">{card.name}</div>
+                              <p className="mt-1 text-xs text-muted-foreground">{card.meaning}</p>
                             </CardContent>
                           </Card>
                         ))}

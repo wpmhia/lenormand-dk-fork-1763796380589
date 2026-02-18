@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,23 @@ const FLASHCARDS = [
   { id: 35, name: "The Anchor", keywords: ["Stability", "Work", "Long-term", "Security"], meaning: "Stability, work, long-term security" },
   { id: 36, name: "The Cross", keywords: ["Burden", "Fate", "Suffering", "Spiritual"], meaning: "Burden, fate, suffering, or spirituality" },
 ];
+
+// Helper function to get card image URL
+const CARD_NAMES: Record<number, string> = {
+  1: "rider", 2: "clover", 3: "ship", 4: "house", 5: "tree",
+  6: "clouds", 7: "snake", 8: "coffin", 9: "bouquet", 10: "whip",
+  11: "whip", 12: "birds", 13: "child", 14: "fox", 15: "bear",
+  16: "stars", 17: "stork", 18: "dog", 19: "tower", 20: "garden",
+  21: "mountain", 22: "paths", 23: "mice", 24: "heart", 25: "ring",
+  26: "book", 27: "letter", 28: "gentleman", 29: "lady", 30: "lilies",
+  31: "sun", 32: "moon", 33: "key", 34: "fish", 35: "anchor", 36: "cross",
+};
+
+function getCardImageUrl(cardId: number): string {
+  const paddedId = cardId.toString().padStart(2, "0");
+  const name = CARD_NAMES[cardId] || "rider";
+  return `/images/cards/${paddedId}-${name}.png`;
+}
 
 interface FlashcardProgress {
   known: number[];
@@ -302,17 +320,26 @@ export default function FlashcardsPage() {
               {/* Front */}
               <Card
                 className={cn(
-                  "absolute inset-0 flex flex-col items-center justify-center border-2 p-8",
+                  "absolute inset-0 flex flex-col items-center justify-center border-2 p-6",
                   "backface-hidden",
                   knownCards.includes(currentCard.id) && "border-green-500/50 bg-green-500/5",
                   learningCards.includes(currentCard.id) && "border-amber-500/50 bg-amber-500/5"
                 )}
                 style={{ backfaceVisibility: "hidden" }}
               >
-                <div className="mb-4 text-sm text-muted-foreground">
+                <div className="relative mb-3 h-32 w-24 overflow-hidden rounded-lg shadow-md sm:h-40 sm:w-32">
+                  <Image
+                    src={getCardImageUrl(currentCard.id)}
+                    alt={currentCard.name}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                  />
+                </div>
+                <div className="mb-2 text-sm text-muted-foreground">
                   Card #{currentCard.id}
                 </div>
-                <h2 className="mb-2 text-center text-3xl font-bold text-foreground">
+                <h2 className="mb-2 text-center text-xl font-bold text-foreground">
                   {currentCard.name}
                 </h2>
                 <div className="flex flex-wrap justify-center gap-2">
@@ -342,16 +369,25 @@ export default function FlashcardsPage() {
 
               {/* Back */}
               <Card
-                className="absolute inset-0 flex flex-col items-center justify-center border-2 border-primary/50 bg-primary/5 p-8"
+                className="absolute inset-0 flex flex-col items-center justify-center border-2 border-primary/50 bg-primary/5 p-6"
                 style={{
                   backfaceVisibility: "hidden",
                   transform: "rotateY(180deg)",
                 }}
               >
-                <h3 className="mb-4 text-xl font-semibold text-foreground">
+                <div className="relative mb-3 h-32 w-24 overflow-hidden rounded-lg shadow-md sm:h-40 sm:w-32">
+                  <Image
+                    src={getCardImageUrl(currentCard.id)}
+                    alt={currentCard.name}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                  />
+                </div>
+                <h3 className="mb-3 text-lg font-semibold text-foreground">
                   {currentCard.name}
                 </h3>
-                <p className="mb-6 text-center text-lg text-muted-foreground">
+                <p className="mb-4 text-center text-base text-muted-foreground">
                   {currentCard.meaning}
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
