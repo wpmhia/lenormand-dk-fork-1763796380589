@@ -25,26 +25,30 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     if (open && cards.length > 0) {
       const cardId = getDailyCardId();
       const foundCard = cards.find((c) => c.id === cardId);
+      
+      // Check cache first
+      const cached = getCachedDailyInsight();
+      if (cached && cached.cardId === cardId) {
+        setCard(foundCard || null);
+        setInsight(cached.insight);
+        setInsightLoading(false);
+        setLoading(false);
+        return;
+      }
+      
+      // No cache, fetch new insight
       if (foundCard) {
         setCard(foundCard);
         setInsight("");
         setInsightLoading(true);
-        generateInsight(foundCard);
+        generateInsight(foundCard, cardId);
       }
     }
     setLoading(false);
   }, [open, cards]);
 
-  const generateInsight = async (cardData: CardType | undefined) => {
+  const generateInsight = async (cardData: CardType | undefined, cardId: number) => {
     if (!cardData) {
-      setInsightLoading(false);
-      return;
-    }
-
-    // Check cache first
-    const cached = getCachedDailyInsight();
-    if (cached) {
-      setInsight(cached);
       setInsightLoading(false);
       return;
     }
@@ -96,7 +100,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                   const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
                   const result = sentences.slice(0, 2).join(". ") + ".";
                   setInsight(result);
-                  setCachedDailyInsight(result);
+                  setCachedDailyInsight(cardId, result);
                   setInsightLoading(false);
                   return;
                 }
@@ -113,7 +117,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
           const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
           const result = sentences.slice(0, 2).join(". ") + ".";
           setInsight(result);
-          setCachedDailyInsight(result);
+          setCachedDailyInsight(cardId, result);
         } else {
           setInsight(cardData.uprightMeaning);
         }
@@ -125,7 +129,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
         const result = sentences.slice(0, 2).join(". ") + ".";
         setInsight(result);
-        setCachedDailyInsight(result);
+        setCachedDailyInsight(cardId, result);
       }
     } catch (error) {
       console.error("Failed to generate insight:", error);
