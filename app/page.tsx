@@ -68,11 +68,6 @@ export default function Home() {
               <Link href="/read/new">
                 <Button size="lg">Get Your Reading</Button>
               </Link>
-              <Link href="/learn">
-                <Button variant="outline" size="lg">
-                  Learn First
-                </Button>
-              </Link>
               <Button 
                 variant={hasViewed ? "ghost" : "outline"} 
                 size="lg" 
