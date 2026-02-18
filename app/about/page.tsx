@@ -361,7 +361,7 @@ export default function AboutPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link href="/read/new">
               <Button size="lg" className="w-full sm:w-auto">
-                Get Your Reading
+                Do a Reading
               </Button>
             </Link>
             <Link href="/learn">
