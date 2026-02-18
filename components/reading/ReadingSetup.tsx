@@ -15,7 +15,7 @@ interface ReadingSetupProps {
   onSpreadChange: (spread: Spread) => void;
   method: "virtual" | "physical" | null;
   onMethodChange: (method: "virtual" | "physical") => void;
-  onContinue: () => void;
+  onContinue: (method: "virtual" | "physical") => void;
   disabled?: boolean;
   isLoading?: boolean;
 }

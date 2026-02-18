@@ -138,11 +138,10 @@ function NewReadingPageContent() {
   }, [step, drawnCards, startAnalysis]);
 
   // Handle setup continue
-  const handleSetupContinue = useCallback(() => {
-    if (method) {
-      setStep("drawing");
-    }
-  }, [method]);
+  const handleSetupContinue = useCallback((method: "virtual" | "physical") => {
+    setMethod(method);
+    setStep("drawing");
+  }, []);
 
   // Handle back navigation
   const handleBack = useCallback(() => {
