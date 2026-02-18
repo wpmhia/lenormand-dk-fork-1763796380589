@@ -2,6 +2,11 @@
   "name": "lenormand-intelligence",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
   "scripts": {
     "dev": "HOST=0.0.0.0 PORT=4000 next dev",
     "build": "rm -rf .next && next build",
