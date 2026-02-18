@@ -47,7 +47,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: "Give me a brief daily guidance message",
+          question: "What will today bring me?",
           cards: [{ id: cardData.id, name: cardData.name, position: 0 }],
           spreadId: "daily-card",
         }),
