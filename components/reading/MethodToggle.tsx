@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Laptop, CreditCard } from "lucide-react";
+import { Laptop, Heart } from "lucide-react";
 
 interface MethodToggleProps {
   value: "virtual" | "physical" | null;
@@ -48,7 +48,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
             value === "physical" ? "ring-2 ring-primary ring-offset-2" : ""
           }`}
         >
-          <CreditCard className="h-6 w-6" />
+          <Heart className="h-6 w-6" />
           <div className="text-center">
             <div className="font-medium">Physical Cards</div>
             <div className="text-xs opacity-80">Enter your own cards</div>
