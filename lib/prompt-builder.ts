@@ -117,7 +117,7 @@ const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string)
   "single-card": (question, cards) => `${question}
 Card: ${cards}
 
-Give a brief, direct meaning. One sentence.`,
+Give a direct meaning.`,
 
   "sentence-3": (question, cards) => `${question}
 Cards: ${cards}
