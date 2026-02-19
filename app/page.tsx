@@ -62,7 +62,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start md:justify-start">
               <Link href="/read/new">
-                <Button size="lg">Do a Reading</Button>
+                <Button size="lg">Get Your Reading</Button>
               </Link>
               <Button 
                 variant="outline" 
@@ -403,7 +403,7 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/read/new">
                 <Button size="lg">
-                  Do a Reading
+                  Get Your Reading
                   <ArrowRight className="ml-3 h-5 w-5" />
                 </Button>
               </Link>
