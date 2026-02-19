@@ -16,33 +16,38 @@ export function Footer() {
             </p>
           </div>
 
-          <div>
-            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Explore
-            </h4>
-            <ul className="space-y-1.5 text-sm">
-              <li>
-                <Link href="/" className="text-muted-foreground transition-colors hover:text-primary">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/read/new" className="text-muted-foreground transition-colors hover:text-primary">
-                  Reading
-                </Link>
-              </li>
-              <li>
-                <Link href="/cards" className="text-muted-foreground transition-colors hover:text-primary">
-                  Cards
-                </Link>
-              </li>
-              <li>
-                <Link href="/learn" className="text-muted-foreground transition-colors hover:text-primary">
-                  Learn
-                </Link>
-              </li>
-            </ul>
-          </div>
+           <div>
+             <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+               Explore
+             </h4>
+             <ul className="space-y-1.5 text-sm">
+               <li>
+                 <Link href="/" className="text-muted-foreground transition-colors hover:text-primary">
+                   Home
+                 </Link>
+               </li>
+               <li>
+                 <Link href="/read/new" className="text-muted-foreground transition-colors hover:text-primary">
+                   Reading
+                 </Link>
+               </li>
+               <li>
+                 <Link href="/history" className="text-muted-foreground transition-colors hover:text-primary">
+                   History
+                 </Link>
+               </li>
+               <li>
+                 <Link href="/cards" className="text-muted-foreground transition-colors hover:text-primary">
+                   Cards
+                 </Link>
+               </li>
+               <li>
+                 <Link href="/learn" className="text-muted-foreground transition-colors hover:text-primary">
+                   Learn
+                 </Link>
+               </li>
+             </ul>
+           </div>
 
           <div>
             <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
