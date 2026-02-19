@@ -174,8 +174,8 @@ function NewReadingPageContent() {
 
       setReadingSaved(true);
       toast({
-        title: "Reading saved",
-        description: "Your reading has been saved to history.",
+        description: "Reading saved",
+        duration: 2000,
       });
     }
   }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread, saveReading, toast]);
