@@ -77,7 +77,7 @@ function HistoryPageContent() {
               href="/read/new" 
               className="inline-flex h-10 items-center justify-center rounded-md border border-primary bg-transparent px-8 py-2 text-sm font-medium text-primary transition-all hover:bg-primary hover:text-primary-foreground active:scale-95"
             >
-              Create a Reading
+              Start a Reading
             </Link>
           </div>
         ) : (
