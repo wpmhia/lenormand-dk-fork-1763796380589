@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
-  Sparkles,
+  Diamond,
   Clock,
   Heart,
   Target,
@@ -18,6 +18,7 @@ import {
   Zap,
   MessageSquare,
   Users,
+  Spade,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -77,7 +78,7 @@ export default function CardDetailClient({
         <div className="mb-16">
           <div className="mb-8 text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
-              <Sparkles className="h-4 w-4 text-primary" />
+              <Diamond className="h-4 w-4 text-primary" />
               <span className="text-sm font-semibold text-primary">
                 Card #{card.id}
               </span>
@@ -236,7 +237,7 @@ export default function CardDetailClient({
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <Sparkles className="h-5 w-5 text-primary" />
+                      <Heart className="h-5 w-5 text-primary" />
                       Key Themes
                     </CardTitle>
                   </CardHeader>
@@ -339,7 +340,7 @@ export default function CardDetailClient({
                     {GRAND_TABLEAU_CORNERS.includes(card.id) && (
                       <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-950/30">
                         <div className="mb-2 flex items-center gap-2">
-                          <Sparkles className="h-5 w-5 text-purple-600" />
+                          <Spade className="h-5 w-5 text-purple-600" />
                           <h4 className="font-semibold text-foreground">
                             Corner Card
                           </h4>

@@ -41,7 +41,7 @@ export default function HistoryBasicsPage() {
             id="what-is-lenormand"
             className="flex items-center text-2xl text-foreground"
           >
-            <Sparkles className="mr-3 h-6 w-6 text-primary" />
+            <Diamond className="mr-3 h-6 w-6 text-primary" />
             What is Lenormand?
           </CardTitle>
         </CardHeader>
