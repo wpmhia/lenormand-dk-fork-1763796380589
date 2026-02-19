@@ -16,7 +16,7 @@ import {
   EyeOff,
   CheckCircle2,
   XCircle,
-  Sparkles,
+  Club,
   Trophy,
   Brain,
   Shuffle,
@@ -361,7 +361,7 @@ export default function FlashcardsPage() {
                 )}
                 {learningCards.includes(currentCard.id) && (
                   <Badge className="mt-4 bg-amber-500/20 text-amber-600">
-                    <Sparkles className="mr-1 h-3 w-3" />
+                    <Club className="mr-1 h-3 w-3" />
                     Learning
                   </Badge>
                 )}

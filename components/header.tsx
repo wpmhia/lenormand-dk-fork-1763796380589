@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Home, BookOpen, Plus, Menu, X } from "lucide-react";
+import { Club, Home, BookOpen, Plus, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 export function Header() {
@@ -40,7 +40,7 @@ export function Header() {
             href="/learn"
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
           >
-            <Sparkles className="h-5 w-5" />
+            <Club className="h-5 w-5" />
             <span>Learn</span>
           </Link>
           <Link
@@ -103,7 +103,7 @@ export function Header() {
               className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <Sparkles className="h-5 w-5" />
+              <Club className="h-5 w-5" />
               <span>Learn</span>
             </Link>
             <Link

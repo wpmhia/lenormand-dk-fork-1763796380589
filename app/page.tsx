@@ -12,7 +12,7 @@ import { getReadingCount, formatReadingCount } from "@/lib/counter";
 import { getCards } from "@/lib/data";
 import { Card as CardType } from "@/lib/types";
 import {
-  Sparkles,
+  Club,
   ArrowRight,
   Heart,
   Shield,
@@ -70,7 +70,7 @@ export default function Home() {
                 onClick={() => setShowDailyCard(true)}
                 className="gap-2 border-primary/30 bg-primary/5 hover:bg-primary/10"
               >
-                <Sparkles className="h-4 w-4" />
+                <Heart className="h-4 w-4" />
                 Daily Card
               </Button>
             </div>
@@ -122,7 +122,7 @@ export default function Home() {
               spreadId="single-card"
             />
             <ReadingTypeCard
-              icon={<Sparkles className="h-5 w-5 text-primary" />}
+              icon={<Club className="h-5 w-5 text-primary" />}
               title="3-Card Sentence"
               description="Three-card narrative"
               cardCount={3}
@@ -292,7 +292,7 @@ export default function Home() {
             <Card className="group cursor-pointer border-border transition-all hover:border-primary/50 hover:shadow-lg">
               <CardHeader>
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20">
-                  <Sparkles className="h-5 w-5 text-primary" />
+                  <Club className="h-5 w-5 text-primary" />
                 </div>
                 <CardTitle className="text-lg">
                   Card Meanings & Associations

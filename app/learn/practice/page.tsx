@@ -16,7 +16,7 @@ import {
   EyeOff,
   CheckCircle2,
   RefreshCw,
-  Sparkles,
+  Heart,
   Lightbulb,
   BookOpen,
 } from "lucide-react";
@@ -289,7 +289,7 @@ export default function PracticeReadingsPage() {
                 className="flex w-full items-center justify-between"
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
+                  <Heart className="h-5 w-5 text-primary" />
                   <span className="font-semibold">Sample Interpretation</span>
                 </div>
                 {showInterpretation ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
