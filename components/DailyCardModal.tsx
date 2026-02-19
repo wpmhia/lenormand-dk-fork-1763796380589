@@ -22,32 +22,39 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   const [insightLoading, setInsightLoading] = useState(true);
 
   useEffect(() => {
-    if (open && cards.length > 0) {
-      const cardId = getDailyCardId();
-      const foundCard = cards.find((c) => c.id === cardId);
-      
-      // Check cache first
-      const cached = getCachedDailyInsight();
-      if (cached && cached.cardId === cardId) {
-        setCard(foundCard || null);
-        setInsight(cached.insight);
-        setInsightLoading(false);
-        setLoading(false);
-        return;
-      }
-      
-      // No cache, fetch new insight
-      if (foundCard) {
-        setCard(foundCard);
-        setInsight("");
-        setInsightLoading(true);
-        generateInsight(foundCard, cardId);
-      }
+    if (!open || cards.length === 0) {
+      setLoading(false);
+      return;
     }
+    
+    const cardId = getDailyCardId();
+    const foundCard = cards.find((c) => c.id === cardId);
+    
+    if (!foundCard) {
+      setLoading(false);
+      return;
+    }
+    
+    // Check cache first
+    const cached = getCachedDailyInsight();
+    if (cached && cached.cardId === cardId) {
+      setCard(foundCard);
+      setInsight(cached.insight);
+      setInsightLoading(false);
+      setLoading(false);
+      return;
+    }
+    
+    // No cache, fetch new insight
+    setCard(foundCard);
+    setInsight("");
+    setInsightLoading(true);
+    generateInsight(foundCard, cardId);
     setLoading(false);
   }, [open, cards]);
 
-  const generateInsight = async (cardData: CardType | undefined, cardId: number) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const generateInsight = async (cardData: CardType, cardId: number) => {
     if (!cardData) {
       setInsightLoading(false);
       return;
