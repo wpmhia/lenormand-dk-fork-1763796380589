@@ -73,7 +73,10 @@ function HistoryPageContent() {
             <p className="text-muted-foreground mb-6">
               Start a new Lenormand reading and it will appear here.
             </p>
-            <Link href="/read/new" className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+            <Link 
+              href="/read/new" 
+              className="inline-flex h-10 items-center justify-center rounded-md border border-primary bg-transparent px-8 py-2 text-sm font-medium text-primary transition-all hover:bg-primary hover:text-primary-foreground active:scale-95"
+            >
               Create a Reading
             </Link>
           </div>
