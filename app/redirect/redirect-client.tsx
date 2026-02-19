@@ -27,15 +27,20 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const params = useSearchParams();
-  const resolvedParams = useSearchParams();
-  const destination = params.get("to") || resolvedParams.get("to");
-  const isPermanent = params.get("permanent") || resolvedParams.get("permanent");
+  const destination = params.get("to");
+  const isPermanent = params.get("permanent");
 
   useEffect(() => {
+    let cancelled = false;
+    
     const handleRedirect = async () => {
+      if (cancelled) return;
+      
       const resolved = await searchParams;
-      const dest = params.get("to") || resolved.to;
-      const perm = params.get("permanent") || resolved.permanent;
+      if (cancelled) return;
+      
+      const dest = resolved.to;
+      const perm = resolved.permanent;
 
       if (!dest && !resolved.code) {
         setError("No redirect destination provided");
@@ -65,6 +70,7 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
 
       const redirectPermanent = perm === "true" || perm === "1";
       const timeout = setTimeout(() => {
+        if (cancelled) return;
         if (redirectPermanent) {
           router.replace(url);
         } else {
@@ -76,8 +82,9 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
     };
 
     handleRedirect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, router]);
+    
+    return () => { cancelled = true; };
+  }, [searchParams, router]);
 
   if (error) {
     return (
