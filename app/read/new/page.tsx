@@ -20,7 +20,6 @@ import { useToast } from "@/hooks/use-toast";
 import {
   ReadingSetup,
   PhysicalCardInput,
-  StartOverDialog,
 } from "@/components/reading";
 import { Deck } from "@/components/Deck";
 import { ReadingViewer } from "@/components/ReadingViewer";
@@ -53,7 +52,6 @@ function NewReadingPageContent() {
   const [drawnCardTypes, setDrawnCardTypes] = useState<CardType[]>([]);
 
   // Dialog state
-  const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
   const [readingSaved, setReadingSaved] = useState(false);
 
@@ -234,12 +232,6 @@ function NewReadingPageContent() {
     },
     [allCards],
   );
-
-  // Handle start over
-  const handleStartOver = useCallback(() => {
-    performReset(true);
-    setShowStartOverConfirm(false);
-  }, [performReset]);
 
   // Get step label for progress
   const getStepLabel = (stepName: Step): string => {
@@ -447,27 +439,20 @@ function NewReadingPageContent() {
                 />
               </ErrorBoundary>
 
-              {/* Start New Reading */}
-              <div className="flex justify-center pt-8">
-                <Button
-                  onClick={() => setShowStartOverConfirm(true)}
-                  variant="outline"
-                  size="lg"
-                  className="gap-2"
-                >
-                  <Spade className="h-4 w-4" />
-                  Start New Reading
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Start Over Dialog */}
-          <StartOverDialog
-            open={showStartOverConfirm}
-            onOpenChange={setShowStartOverConfirm}
-            onConfirm={handleStartOver}
-          />
+               {/* Start New Reading */}
+               <div className="flex justify-center pt-8">
+                 <Button
+                   onClick={() => performReset(true)}
+                   variant="outline"
+                   size="lg"
+                   className="gap-2"
+                 >
+                   <Spade className="h-4 w-4" />
+                   Start New Reading
+                 </Button>
+               </div>
+             </div>
+           )}
         </div>
       </div>
     </TooltipProvider>
