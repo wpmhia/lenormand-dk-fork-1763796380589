@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ModulePageClient } from "@/components/ModulePageClient";
 import {
   BookOpen,
-  Sparkles,
+  Diamond,
   Clock,
   Star,
   Heart,

@@ -10,7 +10,7 @@ import {
   BookOpen,
   Clock,
   ArrowRight,
-  Sparkles,
+  Club,
   TrendingUp,
   CheckCircle2,
   Target,
@@ -139,7 +139,7 @@ export default function LearnPage() {
       title: "Marie-Anne's System",
       description:
         "Learn the historical methodology inspired by Marie-Anne Lenormand's practical, deadline-driven readings and authentic techniques.",
-      icon: Sparkles,
+      icon: Club,
       duration: "30 min",
       difficulty: "Advanced",
       color: "from-amber-500 to-amber-600",
@@ -202,7 +202,7 @@ export default function LearnPage() {
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/learn/history-basics">
                 <Button className="btn-learn">
-                  <Sparkles className="mr-2 h-5 w-5" />
+                  <Club className="mr-2 h-5 w-5" />
                   Start Your Journey
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

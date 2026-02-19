@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { Spade, ArrowRight, Loader2 } from "lucide-react";
 import { getDailyCardId, getTodayDateString, getCachedDailyInsight, setCachedDailyInsight } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
@@ -206,7 +206,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
             {/* Divider */}
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-              <Sparkles className="h-4 w-4 text-primary" />
+              <Spade className="h-4 w-4 text-primary" />
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
             </div>
 

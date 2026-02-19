@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Sparkles } from "lucide-react";
+import { Diamond } from "lucide-react";
 
 interface ReadingCounterProps {
   initialCount?: number;
@@ -99,9 +99,9 @@ export function ReadingCounter({
     >
       {/* Animated sparkles */}
       <div className="relative">
-        <Sparkles className="h-4 w-4 animate-pulse text-primary" />
+        <Diamond className="h-4 w-4 animate-pulse text-primary" />
         <div className="absolute inset-0 animate-ping opacity-30">
-          <Sparkles className="h-4 w-4 text-primary" />
+          <Diamond className="h-4 w-4 text-primary" />
         </div>
       </div>
       

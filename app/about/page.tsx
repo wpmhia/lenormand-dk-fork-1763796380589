@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { Metadata } from "next";
 import {
-  Sparkles,
+  Club,
+  Diamond,
   Lightbulb,
   Users,
   BookOpen,
@@ -34,11 +35,11 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="mb-16 text-center">
           <div className="mb-6 flex items-center justify-center gap-3">
-            <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+            <Club className="h-10 w-10 animate-pulse text-primary" />
             <h1 className="text-5xl font-bold text-foreground">
               Lenormand Intelligence
             </h1>
-            <Sparkles className="h-10 w-10 animate-pulse text-primary" />
+            <Diamond className="h-10 w-10 animate-pulse text-primary" />
           </div>
           <p className="mb-4 text-xl text-muted-foreground">
             Where ancient wisdom meets modern intelligence
@@ -115,7 +116,7 @@ export default function AboutPage() {
             <Card className="border-border bg-muted transition-colors hover:bg-muted/80">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Sparkles className="h-5 w-5 text-primary" />
+                  <Club className="h-5 w-5 text-primary" />
                   AI-Assisted Readings
                 </CardTitle>
               </CardHeader>
@@ -309,7 +310,7 @@ export default function AboutPage() {
           <CardContent>
             <ul className="space-y-3 text-foreground">
               <li className="flex gap-3">
-                <Sparkles className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
+                <Diamond className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
                 <span>
                   <strong>AI-Assisted Readings:</strong> Immediate, nuanced
                   interpretations grounded in curated knowledge
