@@ -40,14 +40,14 @@ export function Header() {
             href="/learn"
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
           >
-            <Club className="h-5 w-5" />
+            <BookOpen className="h-5 w-5" />
             <span>Learn</span>
           </Link>
           <Link
             href="/cards"
             className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
           >
-            <BookOpen className="h-5 w-5" />
+            <Club className="h-5 w-5" />
             <span>Cards</span>
           </Link>
            <Link
@@ -103,7 +103,7 @@ export function Header() {
               className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <Club className="h-5 w-5" />
+              <BookOpen className="h-5 w-5" />
               <span>Learn</span>
             </Link>
             <Link
@@ -111,7 +111,7 @@ export function Header() {
               className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <BookOpen className="h-5 w-5" />
+              <Club className="h-5 w-5" />
               <span>Cards</span>
             </Link>
              <Link
