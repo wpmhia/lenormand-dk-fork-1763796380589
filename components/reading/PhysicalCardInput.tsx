@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
-import { Sparkles, AlertCircle } from "lucide-react";
+import { Diamond, AlertCircle } from "lucide-react";
 
 interface PhysicalCardInputProps {
   allCards: CardType[];
@@ -257,7 +257,7 @@ export function PhysicalCardInput({
           </>
         ) : (
           <>
-            <Sparkles className="mr-2 h-4 w-4" />
+            <Diamond className="mr-2 h-4 w-4" />
             Start Reading
           </>
         )}

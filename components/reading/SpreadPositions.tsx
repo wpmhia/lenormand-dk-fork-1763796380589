@@ -7,7 +7,7 @@ import {
   Anchor,
   Fish,
   Ship,
-  Sparkles,
+  Club,
 } from "lucide-react";
 
 export interface PositionInfo {
@@ -270,7 +270,7 @@ export const getTopicIcon = (type: string) => {
     case "travel":
       return <Ship className="h-3 w-3" />;
     default:
-      return <Sparkles className="h-3 w-3" />;
+      return <Club className="h-3 w-3" />;
   }
 };
 

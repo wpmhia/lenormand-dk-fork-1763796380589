@@ -6,7 +6,7 @@ import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AlertTriangle, Sparkles, ArrowLeft } from "lucide-react";
+import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
@@ -401,7 +401,7 @@ function NewReadingPageContent() {
                   size="lg"
                   className="gap-2"
                 >
-                  <Sparkles className="h-4 w-4" />
+                  <Spade className="h-4 w-4" />
                   Start New Reading
                 </Button>
               </div>

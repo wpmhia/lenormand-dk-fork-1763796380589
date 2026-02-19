@@ -6,7 +6,7 @@ import {
   GRAND_TABLEAU_TOPIC_CARDS,
 } from "@/lib/spreads";
 import { getTopicIcon } from "./SpreadPositions";
-import { Sparkles, Zap, Clock, Target, Brain, Eye } from "lucide-react";
+import { Club, Zap, Clock, Target, Brain, Eye } from "lucide-react";
 
 interface GrandTableauAnalysisProps {
   cards: CardType[];
@@ -39,7 +39,7 @@ export function GrandTableauAnalysis({
       {showAdvancedAnalysis && topicCards.length > 0 && (
         <div className="mt-lg rounded-lg border border-border bg-card p-md">
           <h4 className="mb-md flex items-center gap-2 text-sm font-semibold">
-            <Sparkles className="h-4 w-4 text-primary" />
+            <Club className="h-4 w-4 text-primary" />
             Topic Cards in This Reading
           </h4>
           <div className="flex flex-wrap gap-md">
