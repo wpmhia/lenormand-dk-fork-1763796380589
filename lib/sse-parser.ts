@@ -43,19 +43,23 @@ export function processSSEChunk(
   chunk: string,
   buffer: string
 ): { events: SSEChunk[]; buffer: string } {
-  // Add new chunk to existing buffer
   buffer += chunk;
   
-  // Split into lines, keeping track of incomplete final line
   const lines = buffer.split("\n");
-  buffer = lines[lines.length - 1]; // Keep last (possibly incomplete) line
+  buffer = lines[lines.length - 1];
   
-  // Parse all complete lines
   const events: SSEChunk[] = [];
   for (let i = 0; i < lines.length - 1; i++) {
-    const parsed = parseSSELine(lines[i]);
-    if (parsed) {
-      events.push(parsed);
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Handle case where multiple messages arrive without newlines between them
+    const subLines = line.split("data: ").filter(s => s.length > 0);
+    for (const subLine of subLines) {
+      const parsed = parseSSELine("data: " + subLine);
+      if (parsed) {
+        events.push(parsed);
+      }
     }
   }
   

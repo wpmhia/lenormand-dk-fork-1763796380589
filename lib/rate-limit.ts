@@ -25,6 +25,60 @@ interface RateLimitEntry {
 }
 
 const ipCache = new Map<string, RateLimitEntry>();
+let cacheLock = false;
+
+async function atomicCacheUpdate(
+  ip: string,
+  now: number,
+  windowMs: number,
+  limit: number
+): Promise<RateLimitResult> {
+  while (cacheLock) {
+    await new Promise(resolve => setTimeout(resolve, 1));
+  }
+  cacheLock = true;
+  try {
+    const entry = ipCache.get(ip);
+
+    if (!entry || entry.resetTime < now) {
+      evictOldestEntries();
+      
+      const newEntry: RateLimitEntry = {
+        count: 1,
+        resetTime: now + windowMs,
+        lastAccess: now,
+      };
+      ipCache.set(ip, newEntry);
+      return {
+        success: true,
+        limit,
+        remaining: limit - 1,
+        reset: newEntry.resetTime,
+      };
+    }
+
+    if (entry.count >= limit) {
+      entry.lastAccess = now;
+      return {
+        success: false,
+        limit,
+        remaining: 0,
+        reset: entry.resetTime,
+      };
+    }
+
+    entry.count++;
+    entry.lastAccess = now;
+    return {
+      success: true,
+      limit,
+      remaining: limit - entry.count,
+      reset: entry.resetTime,
+    };
+  } finally {
+    cacheLock = false;
+  }
+}
 
 // Note: In serverless/Edge environments, setInterval persists across requests
 // and can cause memory issues. The LRU eviction in evictOldestEntries() handles
@@ -67,7 +121,8 @@ export async function rateLimit(
       if (!data || data.resetTime < now) {
         // New window
         const resetTime = now + windowMs;
-        await redis.set(key, { count: 1, resetTime }, { ex: Math.ceil(windowMs / 1000) });
+        const ttlSeconds = Math.ceil((resetTime - now) / 1000);
+        await redis.set(key, { count: 1, resetTime }, { ex: ttlSeconds });
         return {
           success: true,
           limit,
@@ -97,45 +152,8 @@ export async function rateLimit(
     }
   }
 
-  // In-memory fallback
-  const entry = ipCache.get(ip);
-
-  if (!entry || entry.resetTime < now) {
-    // Evict old entries if cache is too large
-    evictOldestEntries();
-    
-    const newEntry: RateLimitEntry = {
-      count: 1,
-      resetTime: now + windowMs,
-      lastAccess: now,
-    };
-    ipCache.set(ip, newEntry);
-    return {
-      success: true,
-      limit,
-      remaining: limit - 1,
-      reset: newEntry.resetTime,
-    };
-  }
-
-  if (entry.count >= limit) {
-    entry.lastAccess = now; // Update access time even for blocked requests
-    return {
-      success: false,
-      limit,
-      remaining: 0,
-      reset: entry.resetTime,
-    };
-  }
-
-  entry.count++;
-  entry.lastAccess = now;
-  return {
-    success: true,
-    limit,
-    remaining: limit - entry.count,
-    reset: entry.resetTime,
-  };
+  // In-memory fallback with basic locking
+  return atomicCacheUpdate(ip, now, windowMs, limit);
 }
 
 export function getClientIP(request: Request): string {

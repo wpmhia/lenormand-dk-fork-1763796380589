@@ -140,10 +140,11 @@ export async function POST(request: Request) {
             throw new Error(`API error: ${response.status} - ${errorText}`);
           }
 
-          const reader = response.body?.getReader();
-           if (!reader) {
-             throw new Error("No response body");
-           }
+          const body = response.body;
+          if (!body) {
+            throw new Error("No response body");
+          }
+          const reader = body.getReader();
 
             const decoder = new TextDecoder();
             let buffer = "";
