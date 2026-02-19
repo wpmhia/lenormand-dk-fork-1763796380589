@@ -162,21 +162,32 @@ function NewReadingPageContent() {
         position: `Card ${index + 1}`,
       }));
 
-      saveReading({
-        id: `reading-${Date.now()}`,
-        timestamp: Date.now(),
-        question,
-        spreadType: selectedSpread.label,
-        cards: cardData,
-        interpretationPreview: preview,
-        interpretationFull: interpretationText,
-      });
+      // Save reading and show toast
+      (async () => {
+        try {
+          await saveReading({
+            id: `reading-${Date.now()}`,
+            timestamp: Date.now(),
+            question,
+            spreadType: selectedSpread.label,
+            cards: cardData,
+            interpretationPreview: preview,
+            interpretationFull: interpretationText,
+          });
 
-      setReadingSaved(true);
-      toast({
-        description: "Reading saved",
-        duration: 2000,
-      });
+          setReadingSaved(true);
+          toast({
+            description: "Reading saved",
+            duration: 2000,
+          });
+        } catch (error) {
+          console.error("Failed to save reading:", error);
+          toast({
+            description: "Failed to save reading",
+            duration: 2000,
+          });
+        }
+      })();
     }
   }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread, saveReading, toast]);
 
