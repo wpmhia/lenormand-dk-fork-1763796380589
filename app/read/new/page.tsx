@@ -14,6 +14,8 @@ import {
   Spread,
 } from "@/lib/spreads";
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
+import { useReadingHistory } from "@/hooks/use-reading-history";
+import { useToast } from "@/hooks/use-toast";
 
 import {
   ReadingSetup,
@@ -53,6 +55,7 @@ function NewReadingPageContent() {
   // Dialog state
   const [showStartOverConfirm, setShowStartOverConfirm] = useState(false);
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
+  const [readingSaved, setReadingSaved] = useState(false);
 
   // AI Analysis
   const {
@@ -70,6 +73,10 @@ function NewReadingPageContent() {
     step === "results",
   );
 
+  // Reading history
+  const { saveReading } = useReadingHistory();
+  const { toast } = useToast();
+
   // Reset function - defined before effects that use it
   const performReset = useCallback(
     (keepUrlParams = false) => {
@@ -80,6 +87,7 @@ function NewReadingPageContent() {
       setQuestion("");
       setSelectedSpread(AUTHENTIC_SPREADS[1]);
       setError("");
+      setReadingSaved(false);
 
       resetAnalysis();
 
@@ -136,6 +144,41 @@ function NewReadingPageContent() {
       startAnalysis();
     }
   }, [step, drawnCards, startAnalysis]);
+
+  // Auto-save reading when AI interpretation completes
+  useEffect(() => {
+    if (
+      aiReading &&
+      !aiStreaming &&
+      step === "results" &&
+      drawnCardTypes.length > 0 &&
+      !readingSaved
+    ) {
+      const interpretationText = aiReading.reading || "";
+      const preview = interpretationText.substring(0, 150);
+      const cardData = drawnCardTypes.map((card, index) => ({
+        id: card.id,
+        name: card.name,
+        position: `Card ${index + 1}`,
+      }));
+
+      saveReading({
+        id: `reading-${Date.now()}`,
+        timestamp: Date.now(),
+        question,
+        spreadType: selectedSpread.label,
+        cards: cardData,
+        interpretationPreview: preview,
+        interpretationFull: interpretationText,
+      });
+
+      setReadingSaved(true);
+      toast({
+        title: "Reading saved",
+        description: "Your reading has been saved to history.",
+      });
+    }
+  }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread, saveReading, toast]);
 
   // Handle setup continue
   const handleSetupContinue = useCallback((method: "virtual" | "physical") => {
