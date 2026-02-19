@@ -14,8 +14,22 @@ const redis = redisUrl && redisToken
 
 // In-memory fallback counter - starts at 120
 let memoryCounter = 120;
+let counterLock = false;
 const COUNTER_KEY = "reading_count:total";
 const INITIAL_COUNT = 120;
+
+async function atomicIncrement(): Promise<number> {
+  while (counterLock) {
+    await new Promise(resolve => setTimeout(resolve, 1));
+  }
+  counterLock = true;
+  try {
+    memoryCounter++;
+    return memoryCounter;
+  } finally {
+    counterLock = false;
+  }
+}
 
 /**
  * Increment the total reading counter
@@ -31,9 +45,7 @@ export async function incrementReadingCount(): Promise<number> {
     }
   }
   
-  // In-memory fallback
-  memoryCounter++;
-  return memoryCounter;
+  return atomicIncrement();
 }
 
 /**
@@ -44,8 +56,8 @@ export async function getReadingCount(): Promise<number> {
   if (redis) {
     try {
       const count = await redis.get<number>(COUNTER_KEY);
-      // Seed with initial count if Redis is empty or below minimum
-      if (count === null || count === undefined || count < INITIAL_COUNT) {
+      // Use atomic INCR with initial value only if truly empty
+      if (count === null || count === undefined) {
         await redis.set(COUNTER_KEY, INITIAL_COUNT);
         return INITIAL_COUNT;
       }

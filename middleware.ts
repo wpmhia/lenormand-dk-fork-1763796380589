@@ -35,10 +35,8 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // Compression hint for API routes
-  if (pathname.startsWith("/api/")) {
-    response.headers.set("Accept-Encoding", "gzip, deflate, br");
-  }
+  // Remove incorrect Accept-Encoding header setting - it's a request header, not response
+  // (Server cannot dictate client encoding preferences)
 
   return response;
 }
