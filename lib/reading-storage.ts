@@ -1,5 +1,6 @@
 import { SavedReading } from "@/lib/types/reading";
 
+const API_BASE = "/api/readings/history";
 const DB_NAME = "LenormandReadings";
 const STORE_NAME = "readings";
 const LOCALSTORAGE_KEY = "lenormand_readings";
@@ -7,6 +8,7 @@ const MAX_READINGS = 30;
 
 let db: IDBDatabase | null = null;
 let useLocalStorage = false;
+let serverSyncFailed = false;
 
 async function initDB(): Promise<IDBDatabase> {
   if (db) return db;
@@ -40,6 +42,25 @@ async function initDB(): Promise<IDBDatabase> {
 }
 
 export async function addReading(reading: SavedReading): Promise<void> {
+  // Try server API first for persistent storage
+  if (!serverSyncFailed) {
+    try {
+      const response = await fetch(API_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reading),
+      });
+      if (response.ok) {
+        return;
+      }
+      console.warn("Server sync failed, falling back to local storage");
+    } catch (err) {
+      console.warn("Server sync unavailable, using local storage:", err);
+      serverSyncFailed = true;
+    }
+  }
+
+  // Fallback to IndexedDB/localStorage
   try {
     // Try IndexedDB first
     try {
@@ -82,6 +103,20 @@ export async function addReading(reading: SavedReading): Promise<void> {
 }
 
 export async function getReadings(): Promise<SavedReading[]> {
+  // Try server API first for persistent storage
+  if (!serverSyncFailed) {
+    try {
+      const response = await fetch(API_BASE);
+      if (response.ok) {
+        const data = await response.json();
+        return data.readings || [];
+      }
+    } catch (err) {
+      console.warn("Server sync unavailable, using local storage:", err);
+    }
+  }
+
+  // Fallback to IndexedDB/localStorage
   try {
     // Try IndexedDB first
     try {
@@ -118,6 +153,21 @@ export async function getReadings(): Promise<SavedReading[]> {
 }
 
 export async function deleteReading(id: string): Promise<void> {
+  // Try server API first for persistent storage
+  if (!serverSyncFailed) {
+    try {
+      const response = await fetch(`${API_BASE}?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        return;
+      }
+    } catch (err) {
+      console.warn("Server sync unavailable, using local storage:", err);
+    }
+  }
+
+  // Fallback to IndexedDB/localStorage
   try {
     // Try IndexedDB first
     try {
@@ -149,6 +199,21 @@ export async function deleteReading(id: string): Promise<void> {
 }
 
 export async function clearAllReadings(): Promise<void> {
+  // Try server API first for persistent storage
+  if (!serverSyncFailed) {
+    try {
+      const response = await fetch(API_BASE, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        return;
+      }
+    } catch (err) {
+      console.warn("Server sync unavailable, using local storage:", err);
+    }
+  }
+
+  // Fallback to IndexedDB/localStorage
   try {
     // Try IndexedDB first
     try {
