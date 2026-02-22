@@ -62,7 +62,7 @@ export function AIReadingDisplay({
     onFollowUp(followUpQuestion.trim());
   };
 
-  const handleFollowUpKeyDown = (e: React.KeyboardEvent) => {
+  const handleFollowUpKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleFollowUpSubmit();
@@ -195,23 +195,30 @@ export function AIReadingDisplay({
           </div>
         )}
 
-        {followUpResponse && (
+        {(followUpResponse || followUpStreaming) && (
           <div className="mt-8 pt-6 border-t border-border/50">
             <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
               <MessageCircle className="h-4 w-4 text-primary" />
               Follow-up
             </div>
             <div className="text-sm text-foreground/90">
-              <ReactMarkdown
-                components={{
-                  p: ({ children }) => <p className="leading-relaxed">{children}</p>,
-                  strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                }}
-              >
-                {followUpResponse}
-              </ReactMarkdown>
+              {followUpStreaming && !followUpResponse ? (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="h-3 w-3 animate-pulse rounded-full bg-primary"></div>
+                  <span>Consulting the cards...</span>
+                </div>
+              ) : (
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p className="leading-relaxed">{children}</p>,
+                    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                  }}
+                >
+                  {followUpResponse || ""}
+                </ReactMarkdown>
+              )}
             </div>
-            {followUpStreaming && (
+            {followUpStreaming && followUpResponse && (
               <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary"></div>
                 <span>typing...</span>
