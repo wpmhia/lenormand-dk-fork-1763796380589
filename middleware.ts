@@ -25,6 +25,7 @@ export async function middleware(request: NextRequest) {
   // Essential security headers only (minimal overhead)
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self'; connect-src 'self' https://api.deepseek.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';");
 
   // Add caching for static pages (not API routes)
   if (!pathname.startsWith("/api/")) {

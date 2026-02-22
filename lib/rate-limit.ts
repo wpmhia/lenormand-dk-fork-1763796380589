@@ -105,13 +105,24 @@ export interface RateLimitResult {
   reset: number;
 }
 
+async function hashIP(ip: string): Promise<string> {
+  // Use Web Crypto API for Edge runtime compatibility
+  const encoder = new TextEncoder();
+  const data = encoder.encode(ip);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  return hashHex.slice(0, 16);
+}
+
 export async function rateLimit(
   ip: string,
   limit: number = DEFAULT_RATE_LIMIT,
   windowMs: number = DEFAULT_RATE_WINDOW_MS,
 ): Promise<RateLimitResult> {
   const now = Date.now();
-  const key = `rate_limit:${ip}`;
+  // SECURITY: Hash IP before using as cache key to prevent IP exposure in logs
+  const key = `rate_limit:${await hashIP(ip)}`;
 
   // Use Redis if available
   if (redis) {
@@ -159,7 +170,10 @@ export async function rateLimit(
 export function getClientIP(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    return forwarded.split(",")[0].trim();
+    // SECURITY: Use rightmost IP (closest to server) to prevent spoofing
+    // Format: client, proxy1, proxy2, ..., server
+    const ips = forwarded.split(",").map(ip => ip.trim());
+    return ips[ips.length - 1] || "unknown";
   }
 
   const realIP = request.headers.get("x-real-ip");

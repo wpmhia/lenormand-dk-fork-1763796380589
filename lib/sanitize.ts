@@ -16,9 +16,10 @@ export function sanitizeHtml(html: string): string {
   }
   
   // Client-side: use DOMPurify
+  // SECURITY: Explicitly NO "script" tag to prevent XSS
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ["script", "div", "span", "p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "a", "strong", "em", "b", "i"],
-    ALLOWED_ATTR: ["type", "id", "class", "href", "target", "rel", "aria-label", "aria-hidden"],
+    ALLOWED_TAGS: ["div", "span", "p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "a", "strong", "em", "b", "i"],
+    ALLOWED_ATTR: ["id", "class", "href", "target", "rel", "aria-label", "aria-hidden"],
   });
 }
 

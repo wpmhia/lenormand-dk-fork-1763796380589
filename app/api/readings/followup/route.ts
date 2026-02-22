@@ -101,8 +101,8 @@ Provide a brief, direct answer to the follow-up question based on the original r
           clearTimeout(timeoutId);
 
           if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`API error: ${response.status} - ${errorText}`);
+            // SECURITY: Don't expose external API error details
+            throw new Error("External service error");
           }
 
           const body = response.body;
@@ -162,10 +162,10 @@ Provide a brief, direct answer to the follow-up question based on the original r
         } catch (error: any) {
           clearTimeout(timeoutId);
           const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
+          // SECURITY: Generic error messages - don't expose internal details
           const errorData = JSON.stringify({
             type: "error",
-            error: isTimeout ? "AI response timed out" : "Follow-up failed",
-            message: error.message || "Unknown error",
+            error: isTimeout ? "Response timed out" : "Processing failed",
           });
           controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
           controller.close();
@@ -188,10 +188,10 @@ Provide a brief, direct answer to the follow-up question based on the original r
     const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
     const status = isTimeout ? 504 : 500;
 
+    // SECURITY: Generic error messages - don't expose internal details
     return new Response(
       JSON.stringify({
-        error: isTimeout ? "AI response timed out" : "Follow-up failed",
-        message: error.message || "Unable to process follow-up question",
+        error: isTimeout ? "Response timed out" : "Processing failed",
       }),
       { status, headers: { "Content-Type": "application/json" } },
     );

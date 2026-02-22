@@ -50,8 +50,8 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     if (!DEEPSEEK_API_KEY) {
-      console.error("[API] DEEPSEEK_API_KEY not set");
-      return new Response(JSON.stringify({ error: "AI not configured" }), {
+      // SECURITY: Don't expose which service is not configured
+      return new Response(JSON.stringify({ error: "Service unavailable" }), {
         status: 503,
         headers: { "Content-Type": "application/json" },
       });
@@ -135,9 +135,8 @@ export async function POST(request: Request) {
           clearTimeout(timeoutId);
 
           if (!response.ok) {
-            const errorText = await response.text();
-            console.error("[API] DeepSeek API error:", response.status, errorText);
-            throw new Error(`API error: ${response.status} - ${errorText}`);
+            // SECURITY: Don't expose external API error details
+            throw new Error("External service error");
           }
 
           const body = response.body;
@@ -223,12 +222,11 @@ export async function POST(request: Request) {
             controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
-          console.error("[API] Stream error:", error.name, error.message);
           const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
+          // SECURITY: Don't expose internal error details to client
           const errorData = JSON.stringify({
             type: "error",
-            error: isTimeout ? "AI response timed out" : "Reading failed",
-            message: error.message || "Unknown error",
+            error: isTimeout ? "Response timed out" : "Processing failed",
             reading: isTimeout
               ? "The AI took too long to respond. Tap to retry, or check the traditional meanings of your cards below."
               : "Unable to generate a reading right now.",
@@ -251,8 +249,6 @@ export async function POST(request: Request) {
        },
       });
   } catch (error: any) {
-    console.error("[API] Interpret error:", error.name, error.message);
-    
     const isTimeout = error.name === "AbortError" || 
                       error.message?.includes("abort") ||
                       error.message?.includes("timeout");
@@ -260,11 +256,12 @@ export async function POST(request: Request) {
     // Return proper error status instead of 200 to track real errors
     const status = isTimeout ? 504 : 500;
     
+    // SECURITY: Generic error messages - don't expose internal details
     return new Response(
       JSON.stringify({
-        error: isTimeout ? "AI response timed out" : "Reading failed",
+        error: isTimeout ? "Response timed out" : "Processing failed",
         reading: isTimeout 
-          ? "The AI took too long to respond. Tap to retry, or check the traditional meanings of your cards below."
+          ? "The AI took too long to respond. Tap to retry, or check the traditional card meanings below."
           : "Unable to generate a reading right now. Please check the traditional card meanings below, or try again.",
         source: "fallback",
         timedOut: isTimeout,
