@@ -11,6 +11,10 @@ interface UseAIAnalysisReturn {
   error: string | null;
   startAnalysis: () => void;
   resetAnalysis: () => void;
+  followUpResponse: string | null;
+  followUpLoading: boolean;
+  followUpStreaming: boolean;
+  submitFollowUp: (question: string) => void;
 }
 
 const MAX_RETRIES = 2; // Retry on transient errors
@@ -27,6 +31,9 @@ export function useAIAnalysis(
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [followUpResponse, setFollowUpResponse] = useState<string | null>(null);
+  const [followUpLoading, setFollowUpLoading] = useState(false);
+  const [followUpStreaming, setFollowUpStreaming] = useState(false);
 
   const startAnalysis = useCallback(async () => {
     if (!enabled || drawnCards.length === 0) return;
@@ -228,7 +235,103 @@ export function useAIAnalysis(
     setError(null);
     setIsLoading(false);
     setIsStreaming(false);
+    setFollowUpResponse(null);
+    setFollowUpLoading(false);
+    setFollowUpStreaming(false);
   }, []);
+
+  const submitFollowUp = useCallback(async (followUpQuestion: string) => {
+    if (!aiReading?.reading || drawnCards.length === 0) return;
+
+    setFollowUpLoading(true);
+    setFollowUpStreaming(false);
+
+    try {
+      const cards = drawnCards.map((card) => {
+        const cardData = getCardById(allCards, card.id);
+        return {
+          id: card.id,
+          name: cardData?.name || `Card ${card.id}`,
+          position: card.position,
+        };
+      });
+
+      const response = await fetch("/api/readings/followup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          followUpQuestion,
+          originalReading: aiReading.reading,
+          cards,
+          spreadId: selectedSpreadId,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to get follow-up");
+      }
+
+      const contentType = response.headers.get("content-type");
+      const isStreamResponse = contentType?.includes("text/event-stream");
+
+      if (isStreamResponse) {
+        setFollowUpLoading(false);
+        setFollowUpStreaming(true);
+
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = "";
+        let buffer = "";
+
+        if (reader) {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              const chunk = decoder.decode(value, { stream: true });
+              const { events, buffer: newBuffer } = processSSEChunk(chunk, buffer);
+              buffer = newBuffer;
+
+              for (const event of events) {
+                if (event.type === "chunk" && event.content) {
+                  fullResponse += event.content;
+                  setFollowUpResponse(fullResponse);
+                } else if (event.type === "done") {
+                  setFollowUpStreaming(false);
+                  break;
+                } else if (event.type === "error") {
+                  throw new Error(event.error || "Follow-up failed");
+                }
+              }
+            }
+
+            const finalEvents = finalizeSSEStream(buffer);
+            for (const event of finalEvents) {
+              if (event.type === "chunk" && event.content) {
+                fullResponse += event.content;
+                setFollowUpResponse(fullResponse);
+              }
+            }
+          } finally {
+            reader.releaseLock();
+          }
+        }
+
+        setFollowUpStreaming(false);
+      } else {
+        const data = await response.json();
+        setFollowUpResponse(data.reading || data.response || "No response received");
+      }
+    } catch (err: any) {
+      console.error("[useAIAnalysis] Follow-up error:", err);
+      setFollowUpResponse("Sorry, I couldn't process your follow-up question. Please try again.");
+    } finally {
+      setFollowUpLoading(false);
+      setFollowUpStreaming(false);
+    }
+  }, [aiReading, drawnCards, allCards, selectedSpreadId]);
 
   return {
     aiReading,
@@ -237,5 +340,9 @@ export function useAIAnalysis(
     error,
     startAnalysis,
     resetAnalysis,
+    followUpResponse,
+    followUpLoading,
+    followUpStreaming,
+    submitFollowUp,
   };
 }
