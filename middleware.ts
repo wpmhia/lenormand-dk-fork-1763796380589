@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   // Essential security headers only (minimal overhead)
   response.headers.set("X-Content-Type-Options", "nosniff");
   // X-Frame-Options removed to allow E2B iframe embedding
-  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self'; connect-src 'self' https://api.deepseek.com; frame-src 'self' https://e2b.dev https://*.e2b.dev; base-uri 'self'; form-action 'self';");
+  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self'; connect-src 'self' https://api.deepseek.com; frame-src 'self' https://e2b.dev https://*.e2b.dev https://e2b.app https://*.e2b.app; base-uri 'self'; form-action 'self';");
 
   // Add caching for static pages (not API routes)
   if (!pathname.startsWith("/api/")) {
@@ -43,5 +43,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/read/:path*", "/cards/:path*", "/learn/:path*"],
+  matcher: ["/((?!api|_next|favicon.ico).*)"],
 };
