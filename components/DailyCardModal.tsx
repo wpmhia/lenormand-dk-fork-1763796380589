@@ -6,8 +6,9 @@ import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Spade, ArrowRight, Loader2 } from "lucide-react";
-import { getDailyCardId, getTodayDateString, getCachedDailyInsight, setCachedDailyInsight } from "@/lib/daily-card";
+import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface DailyCardModalProps {
   open: boolean;
@@ -15,69 +16,83 @@ interface DailyCardModalProps {
   cards: CardType[];
 }
 
+type ViewState = "draw" | "drawing" | "result";
+
 export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProps) {
+  const [viewState, setViewState] = useState<ViewState>("draw");
   const [card, setCard] = useState<CardType | null>(null);
   const [insight, setInsight] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [insightLoading, setInsightLoading] = useState(true);
+  const [insightLoading, setInsightLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || cards.length === 0) {
-      setLoading(false);
-      return;
+    if (!open) return;
+    
+    // Check if already drawn today
+    const cached = getDailyCardCache();
+    if (cached?.drawn && cached.cardId) {
+      const foundCard = cards.find((c) => c.id === cached.cardId);
+      if (foundCard) {
+        setCard(foundCard);
+        setInsight(cached.insight);
+        setViewState("result");
+        return;
+      }
     }
     
-    const cardId = getDailyCardId();
-    const foundCard = cards.find((c) => c.id === cardId);
-    
-    if (!foundCard) {
-      setLoading(false);
-      return;
-    }
-    
-    // Check cache first
-    const cached = getCachedDailyInsight();
-    if (cached && cached.cardId === cardId) {
-      setCard(foundCard);
-      setInsight(cached.insight);
-      setInsightLoading(false);
-      setLoading(false);
-      return;
-    }
-    
-    // No cache, fetch new insight
-    setCard(foundCard);
+    // Reset to draw state
+    setViewState("draw");
+    setCard(null);
     setInsight("");
-    setInsightLoading(true);
-    generateInsight(foundCard, cardId);
-    setLoading(false);
   }, [open, cards]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const generateInsight = async (cardData: CardType, cardId: number) => {
-    if (!cardData) {
-      setInsightLoading(false);
+  const handleDraw = async () => {
+    setViewState("drawing");
+    
+    // Simulate brief suspense
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    const cardId = drawRandomCardId();
+    const drawnCard = cards.find((c) => c.id === cardId);
+    
+    if (!drawnCard) {
+      setViewState("draw");
       return;
     }
+    
+    setCard(drawnCard);
+    setViewState("result");
+    
+    // Check if we have cached insight for this card today
+    const cached = getDailyCardCache();
+    if (cached?.cardId === cardId && cached.insight) {
+      setInsight(cached.insight);
+      return;
+    }
+    
+    // Generate new insight
+    setInsightLoading(true);
+    generateInsight(drawnCard, cardId);
+  };
 
+  const generateInsight = async (cardData: CardType, cardId: number) => {
     try {
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: "What will today bring me?",
-          cards: [{ id: cardData.id, name: cardData.name, position: 0 }],
-          spreadId: "single-card",
+          question: "What will happen today?",
+          cards: [{ id: cardData.id, name: cardData.name, position: 0, keywords: cardData.keywords }],
+          spreadId: "daily-card",
         }),
       });
 
       if (!response.ok) {
         setInsight(cardData.uprightMeaning);
+        setDailyCardCache(cardId, cardData.uprightMeaning);
         setInsightLoading(false);
         return;
       }
 
-      // Handle streaming response (SSE)
       const contentType = response.headers.get("content-type");
       if (contentType?.includes("text/event-stream")) {
         const reader = response.body?.getReader();
@@ -102,12 +117,8 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                 if (parsed.type === "chunk" && parsed.content) {
                   fullText += parsed.content;
                 } else if (parsed.type === "done") {
-                  // Clean markdown and cache
-                  const cleaned = cleanMarkdown(fullText);
-                  const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
-                  const result = sentences.slice(0, 2).join(". ") + ".";
-                  setInsight(result);
-                  setCachedDailyInsight(cardId, result);
+                  setInsight(fullText);
+                  setDailyCardCache(cardId, fullText);
                   setInsightLoading(false);
                   return;
                 }
@@ -120,41 +131,25 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
         // Fallback if stream ends without done signal
         if (fullText) {
-          const cleaned = cleanMarkdown(fullText);
-          const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
-          const result = sentences.slice(0, 2).join(". ") + ".";
-          setInsight(result);
-          setCachedDailyInsight(cardId, result);
+          setInsight(fullText);
+          setDailyCardCache(cardId, fullText);
         } else {
           setInsight(cardData.uprightMeaning);
+          setDailyCardCache(cardId, cardData.uprightMeaning);
         }
       } else {
-        // Non-streaming fallback
         const data = await response.json();
-        const text = data.reading || "";
-        const cleaned = cleanMarkdown(text);
-        const sentences = cleaned.split(/[.!?]+/).filter(Boolean);
-        const result = sentences.slice(0, 2).join(". ") + ".";
-        setInsight(result);
-        setCachedDailyInsight(cardId, result);
+        const text = data.reading || cardData.uprightMeaning;
+        setInsight(text);
+        setDailyCardCache(cardId, text);
       }
     } catch (error) {
       console.error("Failed to generate insight:", error);
       setInsight(cardData.uprightMeaning);
+      setDailyCardCache(cardId, cardData.uprightMeaning);
     } finally {
       setInsightLoading(false);
     }
-  };
-
-  // Strip markdown formatting (* for bold, # for headings)
-  const cleanMarkdown = (text: string): string => {
-    return text
-      .replace(/#{1,6}\s+/g, '')  // Remove # headings
-      .replace(/\*\*(.+?)\*\*/g, '$1')  // Remove **bold**
-      .replace(/\*(.+?)\*/g, '$1')  // Remove *italic*
-      .replace(/___(.+?)___/g, '$1')  // Remove ___underline___
-      .replace(/`(.+?)`/g, '$1')  // Remove `code`
-      .trim();
   };
 
   const handleClose = () => {
@@ -166,11 +161,69 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-gradient-to-b from-card to-background">
-        {loading ? (
-          <div className="flex items-center justify-center p-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        {viewState === "draw" && (
+          <div className="p-8 text-center space-y-6">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {getTodayDateString()}
+              </p>
+              <h3 className="text-xl font-bold text-foreground mt-1">
+                Your Daily Card
+              </h3>
+              <p className="text-sm text-muted-foreground mt-2">
+                Take a moment to focus on your day ahead, then draw your card.
+              </p>
+            </div>
+
+            {/* Clickable Deck */}
+            <button
+              onClick={handleDraw}
+              className="relative mx-auto block transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl"
+              aria-label="Draw your daily card"
+            >
+              <div
+                className="card-mystical overflow-hidden rounded-xl shadow-2xl shadow-primary/20"
+                style={{
+                  width: "140px",
+                  height: "200px",
+                  backgroundImage: "url(/images/card-back.png)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundColor: "#1a1a1a",
+                }}
+              />
+            </button>
+
+            <p className="text-sm text-muted-foreground">
+              Click the deck to draw
+            </p>
           </div>
-        ) : card ? (
+        )}
+
+        {viewState === "drawing" && (
+          <div className="flex items-center justify-center p-16">
+            <div className="text-center space-y-4">
+              <div className="relative">
+                <div
+                  className="card-mystical overflow-hidden rounded-xl mx-auto animate-pulse"
+                  style={{
+                    width: "140px",
+                    height: "200px",
+                    backgroundImage: "url(/images/card-back.png)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundColor: "#1a1a1a",
+                  }}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground animate-pulse">
+                Drawing your card...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {viewState === "result" && card && (
           <div className="space-y-4 p-6">
             {/* Date */}
             <div className="text-center">
@@ -190,8 +243,6 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                   className="object-cover"
                   unoptimized
                 />
-                {/* Card back overlay effect */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
             </div>
 
@@ -213,17 +264,24 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
             {/* AI Insight */}
             <div className="text-center">
               <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                Today&apos;s Insight
+                Today&apos;s Prediction
               </p>
               {insightLoading ? (
                 <div className="flex items-center justify-center gap-2 text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm">Receiving guidance...</span>
+                  <span className="text-sm">Consulting the cards...</span>
                 </div>
               ) : insight ? (
-                <p className="text-sm leading-relaxed text-foreground/90 italic">
-                  &ldquo;{insight}&rdquo;
-                </p>
+                <div className="text-sm leading-relaxed text-foreground/90 text-left">
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p className="mb-2">{children}</p>,
+                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                    }}
+                  >
+                    {insight}
+                  </ReactMarkdown>
+                </div>
               ) : (
                 <p className="text-sm leading-relaxed text-muted-foreground italic">
                   {card.uprightMeaning}
@@ -241,12 +299,10 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
               </Link>
             </div>
           </div>
-        ) : (
-          <div className="p-8 text-center">
-            <p className="text-muted-foreground">Unable to load daily card</p>
-          </div>
         )}
       </DialogContent>
     </Dialog>
   );
 }
+
+import ReactMarkdown from "react-markdown";
