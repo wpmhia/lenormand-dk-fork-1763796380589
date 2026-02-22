@@ -283,6 +283,7 @@ export function useAIAnalysis(
         const decoder = new TextDecoder();
         let fullResponse = "";
         let buffer = "";
+        let streamEnded = false;
 
         if (reader) {
           try {
@@ -299,12 +300,14 @@ export function useAIAnalysis(
                   fullResponse += event.content;
                   setFollowUpResponse(fullResponse);
                 } else if (event.type === "done") {
-                  setFollowUpStreaming(false);
+                  streamEnded = true;
                   break;
                 } else if (event.type === "error") {
                   throw new Error(event.error || "Follow-up failed");
                 }
               }
+              
+              if (streamEnded) break;
             }
 
             const finalEvents = finalizeSSEStream(buffer);
