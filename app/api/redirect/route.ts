@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { corsHeaders } from "@/lib/cors";
+import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleCorsPreflight();
+}
 
 const redirectMap: Record<string, string> = {
   reading: "/read/new",

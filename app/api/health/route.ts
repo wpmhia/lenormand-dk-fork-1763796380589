@@ -1,6 +1,12 @@
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
+import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleCorsPreflight();
+}
+
 // Simple, fast health check for warm-up pings
 // Optimized for Vercel free plan - minimal compute
 export async function GET() {
@@ -16,6 +22,7 @@ export async function GET() {
         "Content-Type": "application/json",
         "Cache-Control": "no-store, no-cache, must-revalidate",
         "X-Health-Check": "true",
+        ...corsHeaders,
       },
     }
   );
