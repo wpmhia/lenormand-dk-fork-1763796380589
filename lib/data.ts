@@ -1,46 +1,9 @@
 import { Card, Reading, ReadingCard } from "./types";
 import staticCardsData from "@/public/data/cards.json";
 
-// HMAC signing for URL-shared readings (security fix)
-const DEFAULT_HMAC_SECRET = "default-dev-key-change-in-production";
-const READING_HMAC_SECRET = process.env.READING_HMAC_SECRET || DEFAULT_HMAC_SECRET;
-
-// Warn once if using default secret
-if (!process.env.READING_HMAC_SECRET && typeof window === "undefined") {
-  console.warn("[SECURITY] READING_HMAC_SECRET not set. Using default key which is insecure for production.");
-}
-
-async function generateHMAC(data: string): Promise<string> {
-  if (typeof window === "undefined") {
-    // Node.js (server-side)
-    const crypto = await import("crypto");
-    return crypto
-      .createHmac("sha256", READING_HMAC_SECRET)
-      .update(data)
-      .digest("hex")
-      .slice(0, 16); // Use first 16 chars for URL shortness
-  } else {
-    // Browser (client-side) - use SubtleCrypto
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-      "raw",
-      encoder.encode(READING_HMAC_SECRET),
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"],
-    );
-    const signature = await crypto.subtle.sign(
-      "HMAC",
-      key,
-      encoder.encode(data),
-    );
-    const hashArray = Array.from(new Uint8Array(signature));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    return hashHex.slice(0, 16);
-  }
-}
+// NOTE: HMAC signing is now server-only in app/api/readings/share/route.ts
+// Client-side code NEVER has access to crypto keys
+// This prevents secret extraction and URL forgery
 
 export async function getCards(): Promise<Card[]> {
   const data = staticCardsData as Card[];
@@ -74,63 +37,45 @@ export function getCardById(cards: Card[], id: number): Card | undefined {
   return cards.find((card) => card.id === id);
 }
 
-// Encode reading data for URL sharing with HMAC signature
+// Encode reading data for URL sharing - server-side HMAC only
 export async function encodeReadingForUrl(reading: Reading): Promise<string> {
-  const data = {
-    t: reading.title,
-    q: reading.question,
-    l: reading.layoutType,
-    c: reading.cards.map((card) => ({
-      i: card.id,
-      p: card.position,
-    })),
-  };
-  const json = JSON.stringify(data);
-  const base64 = btoa(json).replace(
-    /[+/=]/g,
-    (c) =>
-      ({
-        "+": "-",
-        "/": "_",
-        "=": "",
-      })[c] || c,
-  );
+  // Server-side HMAC generation via API to prevent secret exposure
+  const response = await fetch("/api/readings/share", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      t: reading.title,
+      q: reading.question,
+      l: reading.layoutType,
+      c: reading.cards.map((card) => ({
+        i: card.id,
+        p: card.position,
+      })),
+    }),
+  });
 
-  // Add HMAC signature for verification
-  const hmac = await generateHMAC(base64);
-  return `${base64}.${hmac}`;
+  if (!response.ok) {
+    throw new Error("Failed to encode reading");
+  }
+
+  const { encoded } = await response.json();
+  return encoded;
 }
 
-// Decode reading data from URL with HMAC validation
+// Decode reading data from URL with server-side HMAC validation
 export async function decodeReadingFromUrl(
   encoded: string,
 ): Promise<Partial<Reading> | null> {
   try {
-    // Split signature from data
-    const [base64WithPad, providedHmac] = encoded.split(".");
-
-    if (!base64WithPad || !providedHmac) {
-      return null; // Invalid format
-    }
-
-    // Verify HMAC signature
-    const computedHmac = await generateHMAC(base64WithPad);
-    if (computedHmac !== providedHmac) {
-      console.warn(
-        "HMAC signature validation failed - URL may have been tampered with",
-      );
+    // Server-side HMAC validation via API
+    const response = await fetch(`/api/readings/share?encoded=${encodeURIComponent(encoded)}`);
+    
+    if (!response.ok) {
       return null;
     }
 
-    const base64 = base64WithPad.replace(
-      /[-_]/g,
-      (c) => ({ "-": "+", _: "/" })[c] || c,
-    );
-    const padLength = (4 - (base64.length % 4)) % 4;
-    const paddedBase64 = base64 + "=".repeat(padLength);
-    const json = atob(paddedBase64);
-    const data = JSON.parse(json);
-
+    const data = await response.json();
+    
     // Validate data structure to prevent XSS
     if (!Array.isArray(data.c) || typeof data.l !== "number") {
       return null;

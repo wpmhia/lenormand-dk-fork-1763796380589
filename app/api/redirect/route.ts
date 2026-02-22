@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { corsHeaders } from "@/lib/cors";
 
 const redirectMap: Record<string, string> = {
   reading: "/read/new",
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
   if (!code) {
     return NextResponse.json(
       { error: "No redirect code provided" },
-      { status: 400 },
+      { status: 400, headers: corsHeaders },
     );
   }
 
@@ -26,13 +27,13 @@ export async function GET(request: NextRequest) {
   if (!destination) {
     return NextResponse.json(
       { error: "Invalid redirect code" },
-      { status: 404 },
+      { status: 404, headers: corsHeaders },
     );
   }
 
   return NextResponse.json(
     { url: destination },
-    { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400" } },
+    { headers: { "Cache-Control": "public, max-age=86400, s-maxage=86400", ...corsHeaders } },
   );
 }
 
@@ -46,16 +47,28 @@ export async function POST(request: NextRequest) {
     if (code) {
       destination = redirectMap[code] || null;
     } else if (url) {
+      // SECURITY: Check for javascript: protocol BEFORE parsing URL
+      // This prevents bypassing protocol checks via URL parsing quirks
+      const lowerUrl = url.toLowerCase().trim();
+      if (lowerUrl.startsWith("javascript:") || 
+          lowerUrl.startsWith("data:") || 
+          lowerUrl.startsWith("vbscript:") ||
+          lowerUrl.startsWith("file:")) {
+        return NextResponse.json(
+          { error: "Invalid URL protocol" },
+          { status: 400, headers: corsHeaders },
+        );
+      }
+      
       try {
         const parsedUrl = new URL(url);
         
-        // Security: Only allow relative URLs or same-origin URLs
-        // Reject absolute URLs to external sites (open redirect protection)
+        // Security: Only allow http: and https: protocols
         const allowedProtocols = ["http:", "https:"];
         if (!allowedProtocols.includes(parsedUrl.protocol)) {
           return NextResponse.json(
             { error: "Invalid URL protocol" },
-            { status: 400 },
+            { status: 400, headers: corsHeaders },
           );
         }
         
@@ -63,7 +76,7 @@ export async function POST(request: NextRequest) {
         if (parsedUrl.username || parsedUrl.password) {
           return NextResponse.json(
             { error: "URL cannot contain credentials" },
-            { status: 400 },
+            { status: 400, headers: corsHeaders },
           );
         }
         
@@ -72,12 +85,13 @@ export async function POST(request: NextRequest) {
         destination = parsedUrl.pathname + parsedUrl.search + parsedUrl.hash;
       } catch {
         // If URL parsing fails, check if it's a relative path
+        // SECURITY: Also check for protocol-relative URLs (//evil.com)
         if (url.startsWith("/") && !url.startsWith("//")) {
           destination = url;
         } else {
           return NextResponse.json(
             { error: "Invalid URL provided. Only relative paths allowed." },
-            { status: 400 },
+            { status: 400, headers: corsHeaders },
           );
         }
       }
@@ -86,7 +100,7 @@ export async function POST(request: NextRequest) {
     if (!destination) {
       return NextResponse.json(
         { error: "No valid destination found" },
-        { status: 400 },
+        { status: 400, headers: corsHeaders },
       );
     }
 
@@ -95,12 +109,12 @@ export async function POST(request: NextRequest) {
         url: destination,
         permanent: permanent === true || permanent === "true",
       },
-      { status: 200 },
+      { status: 200, headers: corsHeaders },
     );
   } catch {
     return NextResponse.json(
       { error: "Invalid request body" },
-      { status: 400 },
+      { status: 400, headers: corsHeaders },
     );
   }
 }

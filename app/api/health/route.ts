@@ -5,10 +5,10 @@ export const dynamic = "force-dynamic";
 // Optimized for Vercel free plan - minimal compute
 export async function GET() {
   // Return immediately - just need to wake up the function
+  // SECURITY: No timestamp to prevent timing attacks
   return new Response(
     JSON.stringify({ 
       status: "ok",
-      ts: Date.now(),
     }),
     {
       status: 200,
