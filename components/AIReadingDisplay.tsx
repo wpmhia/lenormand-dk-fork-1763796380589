@@ -124,8 +124,8 @@ export function AIReadingDisplay({
   }
 
   return (
-    <Card className="border-0 shadow-none bg-transparent">
-      <CardContent className="p-0">
+    <Card>
+      <CardContent className="p-6">
         <div className="flex items-center justify-end mb-4">
           <Button variant="ghost" size="icon" onClick={handleCopy} aria-label="Copy reading">
             {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
