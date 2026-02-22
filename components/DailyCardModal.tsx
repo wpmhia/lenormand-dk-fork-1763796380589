@@ -160,7 +160,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-gradient-to-b from-card to-background">
+      <DialogContent className="sm:max-w-md max-h-[90vh] p-0 overflow-hidden border-0 bg-gradient-to-b from-card to-background">
         {viewState === "draw" && (
           <div className="p-8 text-center space-y-6">
             <div>
@@ -224,7 +224,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         )}
 
         {viewState === "result" && card && (
-          <div className="space-y-4 p-6">
+          <div className="space-y-4 p-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
             {/* Date */}
             <div className="text-center">
               <p className="text-sm font-medium text-muted-foreground">
