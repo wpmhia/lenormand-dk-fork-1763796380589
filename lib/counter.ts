@@ -39,13 +39,17 @@ export async function incrementReadingCount(): Promise<number> {
   if (redis) {
     try {
       const newCount = await redis.incr(COUNTER_KEY);
+      console.log("[Counter] Incremented to:", newCount);
       return newCount;
-    } catch {
+    } catch (err) {
+      console.error("[Counter] Redis increment failed:", err);
       // Fall back to in-memory on Redis error
     }
   }
   
-  return atomicIncrement();
+  const count = atomicIncrement();
+  console.log("[Counter] In-memory increment to:", count);
+  return count;
 }
 
 /**
