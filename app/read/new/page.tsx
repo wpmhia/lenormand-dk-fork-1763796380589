@@ -63,6 +63,10 @@ function NewReadingPageContent() {
     error: aiError,
     startAnalysis,
     resetAnalysis,
+    followUpResponse,
+    followUpLoading,
+    followUpStreaming,
+    submitFollowUp,
   } = useAIAnalysis(
     question,
     drawnCards,
@@ -436,6 +440,10 @@ function NewReadingPageContent() {
                   isStreaming={aiStreaming}
                   error={aiError}
                   onRetry={startAnalysis}
+                  onFollowUp={submitFollowUp}
+                  followUpLoading={followUpLoading}
+                  followUpStreaming={followUpStreaming}
+                  followUpResponse={followUpResponse}
                 />
               </ErrorBoundary>
 
