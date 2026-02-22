@@ -221,9 +221,10 @@ export async function POST(request: Request) {
 
             // Increment reading counter on successful completion
             // Fire and forget - don't block response
-            incrementReadingCount().catch(() => {
-              // Silently ignore counter errors
-            });
+            console.log("[API] Reading completed, incrementing counter");
+            incrementReadingCount()
+              .then(newCount => console.log("[API] Counter incremented to:", newCount))
+              .catch(err => console.error("[API] Counter increment failed:", err));
 
             controller.close();
         } catch (error: any) {
