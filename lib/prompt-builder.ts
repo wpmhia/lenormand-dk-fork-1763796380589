@@ -119,6 +119,19 @@ Card: ${cards}
 
 Give a direct meaning.`,
 
+  "daily-card": (question, cards) => `Daily Card Draw - Traditional Lenormand Practice
+
+Card: ${cards}
+
+This is a morning daily draw asking "What will happen today?"
+
+Provide a concrete, specific prediction about what this card indicates will occur today. Lenormand cards predict tangible events and situations, not abstract energies.
+
+Format:
+- State what the card traditionally signifies
+- Give a concrete prediction for today
+- Keep it brief and direct`,
+
   "sentence-3": (question, cards) => `${question}
 Cards: ${cards}
 
