@@ -6,6 +6,11 @@ import { buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
+import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleCorsPreflight();
+}
 
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 const BASE_URL = "https://api.deepseek.com";
@@ -31,6 +36,7 @@ export async function POST(request: Request) {
             "X-RateLimit-Limit": String(rateLimitResult.limit),
             "X-RateLimit-Remaining": String(rateLimitResult.remaining),
             "X-RateLimit-Reset": String(rateLimitResult.reset),
+            ...corsHeaders,
           },
         },
       );
@@ -41,7 +47,7 @@ export async function POST(request: Request) {
     if (!DEEPSEEK_API_KEY) {
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 503,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
@@ -50,14 +56,14 @@ export async function POST(request: Request) {
     if (!followUpQuestion || typeof followUpQuestion !== "string") {
       return new Response(JSON.stringify({ error: "Follow-up question required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
     if (!originalReading || typeof originalReading !== "string") {
       return new Response(JSON.stringify({ error: "Original reading required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
@@ -182,6 +188,7 @@ Provide a brief, direct answer to the follow-up question based on the original r
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
+        ...corsHeaders,
       },
     });
   } catch (error: any) {
@@ -193,7 +200,7 @@ Provide a brief, direct answer to the follow-up question based on the original r
       JSON.stringify({
         error: isTimeout ? "Response timed out" : "Processing failed",
       }),
-      { status, headers: { "Content-Type": "application/json" } },
+      { status, headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
   }
 }

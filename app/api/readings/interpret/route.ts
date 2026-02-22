@@ -11,6 +11,11 @@ import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
+import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+
+export async function OPTIONS() {
+  return handleCorsPreflight();
+}
 
 // Use getEnv for edge runtime compatibility
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
@@ -42,6 +47,7 @@ export async function POST(request: Request) {
             "X-RateLimit-Limit": String(rateLimitResult.limit),
             "X-RateLimit-Remaining": String(rateLimitResult.remaining),
             "X-RateLimit-Reset": String(rateLimitResult.reset),
+            ...corsHeaders,
           },
         },
       );
@@ -53,14 +59,14 @@ export async function POST(request: Request) {
       // SECURITY: Don't expose which service is not configured
       return new Response(JSON.stringify({ error: "Service unavailable" }), {
         status: 503,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
     if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
       return new Response(JSON.stringify({ error: "Cards required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
@@ -78,7 +84,7 @@ export async function POST(request: Request) {
         }),
         {
           status: 403,
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...corsHeaders },
         },
       );
     }
@@ -246,6 +252,7 @@ export async function POST(request: Request) {
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
+        ...corsHeaders,
        },
       });
   } catch (error: any) {
@@ -267,7 +274,7 @@ export async function POST(request: Request) {
         timedOut: isTimeout,
         partial: true,
       }),
-      { status, headers: { "Content-Type": "application/json" } },
+      { status, headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
   }
 }
