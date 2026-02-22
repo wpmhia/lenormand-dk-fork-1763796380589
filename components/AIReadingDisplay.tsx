@@ -149,20 +149,6 @@ export function AIReadingDisplay({
           ) : null}
         </div>
 
-        <div className="mt-6 flex items-center justify-center border-t pt-4">
-          {isStreaming ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="h-4 w-4 animate-pulse rounded-full bg-primary"></div>
-              <span>Streaming reading...</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>Reading complete</span>
-            </div>
-          )}
-        </div>
-
         {/* Follow-up Question Section */}
         {!isStreaming && !followUpResponse && (
           <div className="mt-6 border-t pt-6">
