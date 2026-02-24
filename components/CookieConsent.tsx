@@ -19,21 +19,19 @@ export function CookieConsent() {
     const hasConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!hasConsent) {
       setVisible(true);
-    } else if (hasConsent === "false") {
-      // User declined - disable GA tracking
+    } else if (hasConsent === "denied") {
       disableGoogleAnalytics();
     }
   }, []);
 
   const acceptCookies = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "true");
+    localStorage.setItem(COOKIE_CONSENT_KEY, "granted");
     setVisible(false);
-    // GA is already loaded from layout, just enable tracking
     enableGoogleAnalytics();
   };
 
   const declineCookies = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "false");
+    localStorage.setItem(COOKIE_CONSENT_KEY, "denied");
     setVisible(false);
     disableGoogleAnalytics();
   };
