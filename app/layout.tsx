@@ -200,6 +200,11 @@ export default function RootLayout({
         />
         <link rel="dns-prefetch" href="https://cdn.buymeacoffee.com" />
         <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="15461d07-3bb4-43f2-8a57-3f68da93c7d7"
+        />
+        <Script
           id="schema-org"
           type="application/ld+json"
           suppressHydrationWarning
