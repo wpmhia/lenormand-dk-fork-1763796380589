@@ -1,7 +1,6 @@
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
-// Vercel Free plan: max 10s - proven to work with fixed token limits
-export const maxDuration = 10;
+export const maxDuration = 30;
 
 import { buildPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
@@ -44,6 +43,7 @@ export async function POST(request: Request) {
           status: 429,
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-store, must-revalidate",
             "X-RateLimit-Limit": String(rateLimitResult.limit),
             "X-RateLimit-Remaining": String(rateLimitResult.remaining),
             "X-RateLimit-Reset": String(rateLimitResult.reset),
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
       question || "What do the cards show?",
     );
 
-     const timeoutMs = 8000; // 8 seconds - with 100-300 token limit, response completes fast
+     const timeoutMs = 15000; // 15 seconds - accounts for cold starts
     const maxTokens = getTokenBudget(cardCount);
 
     console.log("[API] Starting streaming response, maxTokens:", maxTokens);

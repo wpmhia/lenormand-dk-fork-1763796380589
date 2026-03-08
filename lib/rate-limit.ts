@@ -106,13 +106,14 @@ export interface RateLimitResult {
 }
 
 async function hashIP(ip: string): Promise<string> {
-  // Use Web Crypto API for Edge runtime compatibility
-  const encoder = new TextEncoder();
-  const data = encoder.encode(ip);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-  return hashHex.slice(0, 16);
+  // Simple hash for rate limiting - fast and sufficient
+  let hash = 0;
+  for (let i = 0; i < ip.length; i++) {
+    const char = ip.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
 }
 
 export async function rateLimit(
