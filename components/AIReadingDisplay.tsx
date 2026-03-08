@@ -1,12 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { AIReadingResponse } from "@/lib/prompt-builder";
+import { useState, useMemo } from "react";
+import { AIReadingResponse, VALID_CARD_NAMES } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
+
+const CARD_NAMES = [
+  "The Rider", "The Clover", "The Ship", "The House", "The Tree", "The Clouds", "The Snake", "The Coffin",
+  "The Bouquet", "The Scythe", "The Whip", "The Birds", "The Child", "The Fox", "The Bear", "The Stars",
+  "The Stork", "The Dog", "The Tower", "The Garden", "The Mountain", "The Crossroads", "The Mice",
+  "The Heart", "The Ring", "The Book", "The Letter", "The Man", "The Woman", "The Lily", "The Sun",
+  "The Moon", "The Key", "The Fish", "The Anchor", "The Cross"
+];
+
+function highlightCardNames(text: string): React.ReactNode {
+  let result = text;
+  CARD_NAMES.forEach(name => {
+    result = result.replace(new RegExp(name, 'g'), `{{${name}}}`);
+  });
+  
+  const parts = result.split(/(\{\{[^}]+\}\})/g);
+  
+  return parts.map((part, i) => {
+    if (part.startsWith('{{') && part.endsWith('}}')) {
+      const cardName = part.slice(2, -2);
+      return <span key={i} className="text-primary font-medium">{cardName}</span>;
+    }
+    return part;
+  });
+}
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
@@ -133,7 +158,7 @@ export function AIReadingDisplay({
 
         <div className="reading-content space-y-4 text-foreground">
           {aiReading?.reading && (
-            <p className="leading-relaxed whitespace-pre-wrap">{aiReading.reading}</p>
+            <div className="leading-relaxed whitespace-pre-wrap">{highlightCardNames(aiReading.reading)}</div>
           )}
         </div>
 
@@ -197,7 +222,7 @@ export function AIReadingDisplay({
                   <span>Consulting the cards...</span>
                 </div>
               ) : (
-                <p className="leading-relaxed whitespace-pre-wrap">{followUpResponse || ""}</p>
+                <div className="leading-relaxed whitespace-pre-wrap">{highlightCardNames(followUpResponse || "")}</div>
               )}
             </div>
             {followUpStreaming && followUpResponse && (
