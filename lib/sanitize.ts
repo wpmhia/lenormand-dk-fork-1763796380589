@@ -1,28 +1,3 @@
-import DOMPurify from "dompurify";
-
-/**
- * Sanitize HTML content for safe rendering with dangerouslySetInnerHTML
- * 
- * This is used for structured data (JSON-LD) and other HTML that needs
- * to be rendered as raw HTML but should be sanitized first.
- */
-export function sanitizeHtml(html: string): string {
-  if (typeof window === "undefined") {
-    // Server-side: basic sanitization
-    return html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-      .replace(/javascript:/gi, "")
-      .replace(/on\w+\s*=/gi, "");
-  }
-  
-  // Client-side: use DOMPurify
-  // SECURITY: Explicitly NO "script" tag to prevent XSS
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ["div", "span", "p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "a", "strong", "em", "b", "i"],
-    ALLOWED_ATTR: ["id", "class", "href", "target", "rel", "aria-label", "aria-hidden"],
-  });
-}
-
 /**
  * Create safe JSON-LD structured data script content
  */
