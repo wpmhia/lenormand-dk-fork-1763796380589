@@ -64,8 +64,8 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Analytics:</strong> We use Umami Analytics, a
-                  privacy-friendly alternative that doesn't use cookies. Data
-                  is anonymized and we don't track personal information.
+                  privacy-friendly alternative that does not use cookies. Data
+                  is anonymized and we do not track personal information.
                 </li>
               </ul>
               <p className="mt-4 text-sm text-muted-foreground">
