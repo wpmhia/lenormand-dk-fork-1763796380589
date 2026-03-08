@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Shield, Lock, Eye, Database, Cookie } from "lucide-react";
+import { Shield, Lock, Eye, Database } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
@@ -58,14 +58,15 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>AI Interpretations:</strong> When you request AI
-                  analysis, your reading is sent securely to our processing
-                  service. This data is not stored permanently and is deleted
-                  after the interpretation is generated.
+                  analysis, your reading is sent securely to our AI processing
+                  service (Mistral). This data is not stored permanently and is
+                  deleted after the interpretation is generated.
                 </li>
                 <li>
-                  <strong>Analytics:</strong> We collect anonymous usage
-                  statistics (with your consent) to understand how users
-                  interact with our platform and improve the experience.
+                  <strong>Analytics:</strong> We use Umami Analytics, a
+                  privacy-friendly alternative that doesn't require consent and
+                  doesn't use cookies. Data is anonymized and we don't track
+                  personal information.
                 </li>
                 <li>
                   <strong>Preferences:</strong> Your cookie consent choices and
@@ -166,14 +167,13 @@ export default function PrivacyPage() {
           <Card className="border-border bg-muted">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-foreground">
-                <Cookie className="h-5 w-5 text-primary/80" />
-                Cookies & Analytics
+                <Eye className="h-5 w-5 text-primary/80" />
+                Privacy-Friendly Analytics
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-foreground">
+              <CardContent className="space-y-4 text-foreground">
               <p>
-                We use cookies and analytics to improve your experience while
-                respecting your privacy:
+                We use minimal cookies and privacy-friendly analytics:
               </p>
               <div className="space-y-3">
                 <div>
@@ -181,55 +181,33 @@ export default function PrivacyPage() {
                     Essential Cookies
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    These are required for core website functionality:
+                    Required for core website functionality:
                   </p>
                   <ul className="ml-4 mt-2 list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                    <li>
-                      Session management (keeping you logged in if needed)
-                    </li>
                     <li>Security and fraud prevention</li>
-                    <li>
-                      Site functionality (dark mode, language preferences)
-                    </li>
+                    <li>Site functionality (dark mode preferences)</li>
                   </ul>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Essential cookies are always enabled and cannot be disabled,
-                    as the site cannot function without them.
-                  </p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">
-                    Analytics Cookies
+                    Umami Analytics
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    We use Google Analytics 4 (GA4) to understand visitor
-                    behavior and improve our services. This is completely
-                    optional.
+                    We use Umami, a GDPR-compliant analytics solution that:
                   </p>
                   <ul className="ml-4 mt-2 list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                    <li>Which pages are most visited</li>
-                    <li>How long users spend on each section</li>
-                    <li>Device type and operating system (anonymized)</li>
-                    <li>
-                      Geographic location (country/region, not specific
-                      addresses)
-                    </li>
-                    <li>Traffic sources (how you found us)</li>
+                    <li>Does NOT use cookies</li>
+                    <li>Does NOT require consent banner</li>
+                    <li>Does NOT track personal data</li>
+                    <li>Does NOT collect IP addresses</li>
+                    <li>Stores data anonymously</li>
                   </ul>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Google Analytics data is collected through cookies and is
-                    subject to Google&rsquo;s privacy policy. We have configured
-                    GA4 with privacy controls including data retention deletion
-                    and IP anonymization.
+                    Umami provides only aggregate usage statistics and cannot be
+                    used to identify individual visitors.
                   </p>
                 </div>
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">
-                <strong>Your Control:</strong> You can manage your cookie
-                preferences at any time using the cookie settings banner at the
-                bottom of the page. Declining analytics cookies does not affect
-                site functionality.
-              </p>
             </CardContent>
           </Card>
 
@@ -256,14 +234,7 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Opt-out:</strong> You can decline AI analysis requests
-                  and disable analytics tracking without losing any core
-                  functionality.
-                </li>
-                <li>
-                  <strong>Cookie Management:</strong> Manage cookie preferences
-                  at any time using the cookie consent banner or privacy
-                  settings. You can withdraw analytics consent without affecting
-                  site functionality.
+                  without losing any core functionality.
                 </li>
                 <li>
                   <strong>Do Not Track:</strong> If your browser has &quot;Do
@@ -273,52 +244,51 @@ export default function PrivacyPage() {
             </CardContent>
           </Card>
 
-          {/* eslint-disable-next-line tailwindcss/classnames-order */}
-          <Card
-            id="cookie-management"
-            className="mt-4 scroll-mt-4 border-border bg-muted"
-          >
+          <Card className="border-border bg-muted">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-foreground">
-                <Cookie className="h-5 w-5 text-primary/80" />
-                Cookie Management
-              </CardTitle>
+              <CardTitle className="text-foreground">GDPR Compliance</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-foreground">
               <p>
-                We use cookies to enhance your browsing experience and analyze
-                site traffic. You have full control over cookie preferences.
+                This website is GDPR compliant. Here&apos;s how we meet the
+                requirements:
               </p>
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Essential Cookies:</strong> Required for basic site
-                  functionality. These cannot be disabled as they are necessary
-                  for the site to work properly.
+                  <strong>Lawful Basis:</strong> Our legitimate interest in
+                  providing the service and improving user experience through
+                  anonymous analytics.
                 </li>
                 <li>
-                  <strong>Analytics Cookies:</strong> Help us understand how
-                  visitors interact with our website. You can enable or disable
-                  these at any time.
+                  <strong>Data Minimization:</strong> We collect only what is
+                  necessary - no personal data beyond what you explicitly share.
                 </li>
                 <li>
-                  <strong>Managing Preferences:</strong> Click &quot;Cookie
-                  Preferences&quot; in the footer to reset your consent choices.
-                  This will show the consent banner again on your next visit.
+                  <strong>No Profiling:</strong> We do not create user profiles
+                  or track individuals across websites.
                 </li>
                 <li>
-                  <strong>Testing Mode:</strong> Add{" "}
-                  <code>?test-cookies=true</code> or
-                  <code>?show-cookies=true</code> to the URL to force the cookie
-                  banner to display for testing purposes.
+                  <strong>No Cookies Required:</strong> Our analytics (Umami)
+                  does not use cookies and does not require consent under GDPR.
                 </li>
                 <li>
-                  <strong>Browser Settings:</strong> You can also manage cookies
-                  through your browser settings at any time.
+                  <strong>Data Processing:</strong> AI processing is done via
+                  Mistral. Read data is not stored on our servers.
+                </li>
+                <li>
+                  <strong>Right to be Forgotten:</strong> Since we store no
+                  personal data, there is nothing to delete beyond what you
+                  choose to remove from your device.
+                </li>
+                <li>
+                  <strong>International Transfers:</strong> Our service providers
+                  (Mistral, Umami) may process data outside the EU. We ensure
+                  appropriate safeguards are in place.
                 </li>
               </ul>
               <p className="mt-4 text-sm text-muted-foreground">
-                <strong>Note:</strong> Clearing your browser cache may also
-                remove stored cookie preferences.
+                For any GDPR-related inquiries, contact us at support [at]
+                lenormand-intelligence.com
               </p>
             </CardContent>
           </Card>
@@ -339,11 +309,8 @@ export default function PrivacyPage() {
               </p>
               <p className="mt-4 text-sm text-muted-foreground">
                 <strong>Policy Updates:</strong> This policy is effective as of
-                November 2024. We may update it to reflect changes in our
-                practices, technology, or legal requirements. We will notify you
-                of any material changes by posting the updated policy here and
-                updating the effective date. Your continued use of the site
-                after changes constitutes acceptance of the updated policy.
+                March 2026. We may update it to reflect changes in our
+                practices, technology, or legal requirements.
               </p>
             </CardContent>
           </Card>
