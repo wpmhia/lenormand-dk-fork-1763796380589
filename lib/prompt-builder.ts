@@ -123,10 +123,7 @@ Card: ${cards}
 
 Explain what this card means for the question. Be specific and practical.`,
 
-  "daily-card": (question, cards) => `${question}
-Card: ${cards}
-
-This is a daily draw. Predict what will happen today based on this card. Be concrete and specific.`,
+  "daily-card": (question, cards) => `Daily: ${cards}. What happens today? One sentence.`,
 
   "sentence-3": (question, cards) => `${question}
 Cards: ${cards}
