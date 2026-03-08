@@ -3,6 +3,7 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import heroImage from "@/public/images/hero-image.jpg";
 import { Button } from "@/components/ui/button";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
@@ -88,7 +89,7 @@ export function HomeClient({ initialCount, initialFormatted }: HomeClientProps) 
           <div className="relative z-10 flex justify-center">
             <div className="hero-image-cell flex min-h-[300px] items-center rounded-none bg-transparent p-0">
               <Image
-                src="/images/hero-image.jpg"
+                src={heroImage}
                 alt="Mystical Lenormand cards arranged in a reading spread"
                 width={364}
                 height={500}
