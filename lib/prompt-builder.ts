@@ -16,10 +16,12 @@ import {
  * Completes in 4-8 seconds on Vercel free plan
  */
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 3) return 240;   // ~160 words - guaranteed complete
-  if (cardCount <= 9) return 260;   // ~180 words - brief but complete
-  if (cardCount <= 36) return 280;  // ~200 words - significator focus
-  return 240;
+  if (cardCount <= 1) return 200;
+  if (cardCount <= 3) return 300;
+  if (cardCount <= 5) return 400;
+  if (cardCount <= 9) return 500;
+  if (cardCount <= 36) return 600;
+  return 300;
 }
 
 // ============================================================================
@@ -102,55 +104,81 @@ export const VALID_CARD_NAMES = [
  * 3-paragraph structure: individual cards → blend → direct answer
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand fortune teller. Provide brief, complete readings.
+  return `You are a Lenormand card reader. Give clear, complete readings.
 
-CRITICAL: You must finish every sentence. Never leave a sentence unfinished. Plan your response to fit comfortably within the space available.
+RULES:
+- Name each card by its full name (The Rider, The Clover, etc.)
+- Explain what each position means
+- Describe how cards interact with their neighbors
+- Give a direct answer to the question
+- Always finish every sentence
 
-Readings should be specific: name actual cards, describe their positions, explain their interactions. Be concrete and contextual.`;
+FORMAT:
+1. Start with the most important card/position
+2. Explain the card combinations
+3. End with a direct answer to the question`;
 }
 
 /**
  * Build prompts for each spread type
  * Spread-specific methodology hints for better readings
  */
-const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string) => string> = {
+const SPREAD_PROMPTS: Record<string, (questionContext: string, cardList: string, positions?: string) => string> = {
   "single-card": (question, cards) => `${question}
 Card: ${cards}
 
-Give a direct meaning.`,
+Explain what this card means for the question. Be specific and practical.`,
 
-  "daily-card": (question, cards) => `Daily Card Draw - Traditional Lenormand Practice
-
+  "daily-card": (question, cards) => `${question}
 Card: ${cards}
 
-This is a morning daily draw asking "What will happen today?"
+This is a daily draw. Predict what will happen today based on this card. Be concrete and specific.`,
 
-Provide a concrete, specific prediction about what this card indicates will occur today. Lenormand cards predict tangible events and situations, not abstract energies.
+  "sentence-3": (question, cards, positions) => `${question}
+Cards (in order): ${cards}
 
-Format:
-- State what the card traditionally signifies
-- Give a concrete prediction for today
-- Keep it brief and direct`,
+Position meanings:
+- Card 1: The opening/theme
+- Card 2: The development/challenge  
+- Card 3: The outcome
 
-  "sentence-3": (question, cards) => `${question}
-Cards: ${cards}
-
-Read as a sentence. Blend pairs 1+2 and 2+3. Finish completely.`,
+Read the cards as a flowing sentence. Explain how card 1 leads to card 2, and card 2 leads to card 3. Name each card and its role.`,
 
   "sentence-5": (question, cards) => `${question}
-Cards: ${cards}
+Cards (in order): ${cards}
 
-Read as an extended sentence using pair-reading. Finish completely.`,
+Position meanings:
+- Card 1: Past/Background
+- Card 2: Present influence
+- Card 3: Heart of the matter
+- Card 4: Near future
+- Card 5: Final outcome
+
+Read as a story from past to future. Card 3 is the pivot point. Name each card and explain its position.`,
 
   "comprehensive": (question, cards) => `${question}
-Cards: ${cards}
+Cards in 3x3 grid: ${cards}
 
-9-Card spread: Name the center card (heart of matter), briefly describe what each row shows. Keep to 2 short paragraphs. Finish every sentence.`,
+Grid layout (left to right, top to bottom):
+- Top row (cards 1-3): Mental/conscious influences
+- Middle row (cards 4-6): Present situation
+- Bottom row (cards 7-9): Emotional/unconscious forces
+
+Card 5 (center): The heart of the matter
+
+Name the center card first. Then describe what each row reveals. Finish with the overall answer.`,
 
   "grand-tableau": (question, cards) => `${question}
-Cards: ${cards}
+36 cards in 4x9 grid: ${cards}
 
-Grand Tableau: 1) Name the Significator's position, 2) Describe specific nearby cards by name (left=past, right=future, above=conscious, below=unconscious), 3) Synthesize their story in 2-3 sentences. Always finish your sentences.`
+Find the Man (card 29) or Woman (card 28) - this is the Significator.
+Cards near the Significator:
+- Left = Past influences
+- Right = Future possibilities
+- Above = Conscious thoughts
+- Below = Unconscious drives
+
+Describe what surrounds the Significator. Name specific cards and their positions. Give a clear answer to the question.`
 };
 
 /**
