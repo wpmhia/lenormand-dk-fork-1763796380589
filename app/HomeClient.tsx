@@ -297,7 +297,7 @@ export function HomeClient({ initialCount, initialFormatted }: HomeClientProps) 
                 </CardHeader>
                 <CardContent>
                   <p className="line-clamp-2 text-sm text-muted-foreground">
-                    {card.meaning}
+                    {typeof card.meaning === 'string' ? card.meaning : card.meaning?.general}
                   </p>
                 </CardContent>
               </Card>
