@@ -70,11 +70,11 @@ export const metadata: Metadata = {
         type: "image/png",
       },
       {
-        url: "https://lenormand.dk/images/hero-image.jpg",
+        url: "https://lenormand.dk/images/hero-image.webp",
         width: 1200,
         height: 800,
         alt: "Lenormand Intelligence - Clear Lenormand Card Readings",
-        type: "image/jpeg",
+        type: "image/webp",
       },
     ],
   },
