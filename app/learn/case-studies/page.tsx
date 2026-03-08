@@ -285,7 +285,7 @@ export default function CaseStudiesPage() {
                             <CardContent className="p-2">
                               <div className="text-xs text-muted-foreground">Position {index + 1}</div>
                               <div className="text-sm font-semibold">{card.name}</div>
-                              <p className="mt-1 text-xs text-muted-foreground">{card.meaning}</p>
+                              <p className="mt-1 text-xs text-muted-foreground">{typeof card.meaning === 'string' ? card.meaning : card.meaning?.general}</p>
                             </CardContent>
                           </Card>
                         ))}

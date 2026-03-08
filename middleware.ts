@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   // Essential security headers only (minimal overhead)
   response.headers.set("X-Content-Type-Options", "nosniff");
   // X-Frame-Options removed to allow E2B iframe embedding
-  response.headers.set("Content-Security-Policy", "default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self'; connect-src 'self' https:; frame-src *; base-uri 'self'; form-action 'self';");
+  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self'; connect-src 'self' https://api.mistral.ai https://api.umami.is; frame-ancestors 'none'; base-uri 'self'; form-action 'self';");
 
   // Add caching for static pages (not API routes)
   if (!pathname.startsWith("/api/")) {
