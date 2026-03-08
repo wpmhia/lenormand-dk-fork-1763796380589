@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/header";
-import { CookieConsent } from "@/components/CookieConsent";
+import { Suspense } from "react";
 import { createSafeJsonLd } from "@/lib/sanitize";
 
 const inter = Inter({
@@ -199,29 +199,6 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link rel="dns-prefetch" href="https://cdn.buymeacoffee.com" />
-        {/* Google Analytics */}
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('consent', 'default', {
-                  analytics_storage: 'granted',
-                  ad_storage: 'denied',
-                });
-                gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}', {
-                  page_path: window.location.pathname,
-                });
-              `}
-            </Script>
-          </>
-        )}
         <Script
           id="schema-org"
           type="application/ld+json"
@@ -255,7 +232,6 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
-          <CookieConsent />
         </TooltipProvider>
       </body>
     </html>
