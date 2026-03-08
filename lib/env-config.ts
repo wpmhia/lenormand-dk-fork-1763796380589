@@ -1,10 +1,10 @@
 // IMPORTANT: When adding new env variables to the codebase, update this array
 export const ENV_VARIABLES: EnvVariable[] = [
   {
-    name: "DEEPSEEK_API_KEY",
-    description: "API key for DeepSeek AI service for Lenormand reading interpretations",
+    name: "MISTRAL_API_KEY",
+    description: "API key for Mistral AI service for Lenormand reading interpretations",
     required: true,
-    instructions: "Get your API key from https://platform.deepseek.com/api-keys",
+    instructions: "Get your API key from https://console.mistral.ai/api-keys",
   },
   {
     name: "UPSTASH_REDIS_REST_URL",
@@ -19,10 +19,10 @@ export const ENV_VARIABLES: EnvVariable[] = [
     instructions: "From your Upstash Redis dashboard. Falls back to in-memory if not set.",
   },
   {
-    name: "DEEPSEEK_BASE_URL",
-    description: "Base URL for DeepSeek API (optional)",
+    name: "MISTRAL_BASE_URL",
+    description: "Base URL for Mistral API (optional)",
     required: false,
-    instructions: "Only set if using a custom endpoint. Default: https://api.deepseek.com",
+    instructions: "Only set if using a custom endpoint. Default: https://api.mistral.ai",
   },
   {
     name: "NEXT_PUBLIC_GA_MEASUREMENT_ID",

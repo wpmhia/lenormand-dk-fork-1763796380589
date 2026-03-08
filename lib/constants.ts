@@ -60,8 +60,8 @@ export const RATE_LIMIT_EVICTION_PERCENTAGE = 0.2;
 // API Configuration
 // ============================================================================
 
-/** DeepSeek API base URL */
-export const DEEPSEEK_BASE_URL = "https://api.deepseek.com";
+/** Mistral API base URL */
+export const MISTRAL_BASE_URL = "https://api.mistral.ai";
 
 /** Default timeout for API requests in milliseconds */
 export const API_REQUEST_TIMEOUT_MS = 30 * 1000;

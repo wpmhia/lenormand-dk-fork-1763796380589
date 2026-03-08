@@ -18,8 +18,8 @@ export async function OPTIONS() {
 }
 
 // Use getEnv for edge runtime compatibility
-const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
-const BASE_URL = "https://api.deepseek.com";
+const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
+const BASE_URL = getEnv("MISTRAL_BASE_URL") || "https://api.mistral.ai";
 
 const RATE_LIMIT = 5;  // 5 requests per minute
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute window
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    if (!DEEPSEEK_API_KEY) {
+    if (!MISTRAL_API_KEY) {
       // SECURITY: Don't expose which service is not configured
       return new Response(JSON.stringify({ error: "Service unavailable" }), {
         status: 503,
@@ -118,14 +118,14 @@ export async function POST(request: Request) {
         const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
         try {
-          const response = await fetch(`${BASE_URL}/chat/completions`, {
+          const response = await fetch(`${BASE_URL}/v1/chat/completions`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+              Authorization: `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-              model: "deepseek-chat",
+              model: "mistral-small-latest",
               messages: [
                 { role: "system", content: buildSystemPrompt() },
                 { role: "user", content: prompt },
