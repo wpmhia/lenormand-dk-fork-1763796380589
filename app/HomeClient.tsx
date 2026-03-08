@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
-import { DailyCardModal } from "@/components/DailyCardModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCards } from "@/lib/data";
 import { Card as CardType } from "@/lib/types";
@@ -23,6 +22,8 @@ import {
   Users,
   TrendingUp,
 } from "lucide-react";
+
+const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
 
 interface HomeClientProps {
   initialCount: number;
@@ -313,11 +314,13 @@ export function HomeClient({ initialCount, initialFormatted }: HomeClientProps) 
       </div>
 
       {/* Daily Card Modal */}
-      <DailyCardModal
-        open={showDailyCard}
-        onOpenChange={setShowDailyCard}
-        cards={cards}
-      />
+      <Suspense fallback={null}>
+        <DailyCardModal
+          open={showDailyCard}
+          onOpenChange={setShowDailyCard}
+          cards={cards}
+        />
+      </Suspense>
     </main>
   );
 }
