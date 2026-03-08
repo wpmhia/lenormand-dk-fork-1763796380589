@@ -88,7 +88,7 @@ export default function Home() {
           <div className="relative z-10 flex justify-center">
             <div className="hero-image-cell flex min-h-[300px] items-center rounded-none bg-transparent p-0">
               <Image
-                src="/images/hero-image.jpg"
+                src="/images/hero-image.webp"
                 alt="Mystical Lenormand cards arranged in a reading spread"
                 width={400}
                 height={300}
