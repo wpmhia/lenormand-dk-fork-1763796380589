@@ -249,7 +249,7 @@ export default function PracticeReadingsPage() {
                   <CardContent className="p-3">
                     <div className="mb-1 text-xs font-medium text-muted-foreground">{card.position}</div>
                     <div className="text-sm font-semibold">{card.name}</div>
-                    <p className="mt-1 text-xs text-muted-foreground">{card.meaning}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{typeof card.meaning === 'string' ? card.meaning : card.meaning?.general}</p>
                   </CardContent>
                 </Card>
               ))}

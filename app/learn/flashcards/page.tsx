@@ -388,7 +388,7 @@ export default function FlashcardsPage() {
                   {currentCard.name}
                 </h3>
                 <p className="mb-4 text-center text-base text-muted-foreground">
-                  {currentCard.meaning}
+                  {typeof currentCard.meaning === 'string' ? currentCard.meaning : currentCard.meaning?.general}
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {currentCard.keywords.map((keyword) => (
