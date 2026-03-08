@@ -104,13 +104,14 @@ export const VALID_CARD_NAMES = [
  * 3-paragraph structure: individual cards → blend → direct answer
  */
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand card reader. Give clear, complete readings.
+  return `You are a Lenormand card reader. Write flowing prose, not lists or bullet points.
 
 - Name each card (The Rider, The Clover, etc.)
-- Explain positions when relevant
+- Write complete sentences in paragraphs
+- Explain positions naturally in the flow
 - Describe card interactions
-- Give a direct answer
-- Always finish every sentence`;
+- End with a direct answer to the question
+- Never use numbered lists or bullet points`;
 }
 
 /**
@@ -132,26 +133,26 @@ This is a daily draw. Predict what will happen today based on this card. Be conc
 Cards: ${cards}
 
 Positions: 1=Opening, 2=Development, 3=Outcome.
-Read as a sentence. Name each card and explain how it flows to the next. End with the answer.`,
+Write as flowing prose. Name each card and explain how the reading unfolds. End with the answer.`,
 
   "sentence-5": (question, cards) => `${question}
 Cards: ${cards}
 
 Positions: 1=Past, 2=Present, 3=Heart, 4=Near Future, 5=Outcome.
-Read as a story. Card 3 is the pivot. Name each card and its position. End with the answer.`,
+Write as a story in paragraphs. Card 3 is the pivot. Name each card. End with the answer.`,
 
   "comprehensive": (question, cards) => `${question}
 Cards (3x3 grid): ${cards}
 
 Rows: Top=Mental, Middle=Present, Bottom=Emotional. Center card=Heart of matter.
-Name the center card first. Describe each row briefly. End with the answer.`,
+Write in paragraphs. Name the center card first, then describe each row. End with the answer.`,
 
   "grand-tableau": (question, cards) => `${question}
 36 cards (4x9 grid): ${cards}
 
 Find the Man (29) or Woman (28) card - this is the Significator.
 Near the Significator: Left=Past, Right=Future, Above=Conscious, Below=Unconscious.
-Describe what surrounds the Significator. Name specific cards. Give a clear answer.`
+Write in paragraphs. Describe what surrounds the Significator. Name specific cards. End with the answer.`
 };
 
 /**
