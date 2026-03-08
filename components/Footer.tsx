@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -14,6 +15,16 @@ export function Footer() {
             <p className="mt-1 text-xs text-muted-foreground">
               AI-Enhanced Divination
             </p>
+            <div className="mt-4 flex items-center gap-2">
+              <p className="text-xs text-muted-foreground">Powered by</p>
+              <Image
+                src="/images/mistral-ai-logo.svg"
+                alt="Mistral AI"
+                width={80}
+                height={24}
+                className="h-6 w-auto"
+              />
+            </div>
           </div>
 
            <div>
