@@ -1,6 +1,6 @@
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
-export const maxDuration = 10;
+export const maxDuration = 30;
 
 import { buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     }
 
     const cardCount = cards?.length || 3;
-    const timeoutMs = 8000;
+    const timeoutMs = 15000;
     const maxTokens = getTokenBudget(cardCount);
 
     const prompt = `Original reading: "${originalReading}"
