@@ -192,7 +192,7 @@ export default function SharedReadingPage({ params }: PageProps) {
                     if (mountedRef.current) {
                       setAiReading({
                         reading: accumulatedText,
-                        source: "deepseek",
+                        source: "mistral",
                       });
                     }
                   } else if (parsed.type === "done") {
@@ -248,7 +248,7 @@ export default function SharedReadingPage({ params }: PageProps) {
           } else if (errorMessage.includes("API key")) {
             setAiErrorDetails({
               type: "configuration_needed",
-              helpUrl: "https://platform.deepseek.com/",
+              helpUrl: "https://platform.mistral.com/",
               action: "Configure API key",
             });
           } else if (errorMessage.includes("temporarily unavailable")) {

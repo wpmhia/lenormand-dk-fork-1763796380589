@@ -12,8 +12,8 @@ export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
-const BASE_URL = "https://api.deepseek.com";
+const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
+const BASE_URL = getEnv("MISTRAL_BASE_URL") || "https://api.mistral.ai";
 
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    if (!DEEPSEEK_API_KEY) {
+    if (!MISTRAL_API_KEY) {
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 503,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -84,14 +84,14 @@ Provide a brief, direct answer to the follow-up question based on the original r
         const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
         try {
-          const response = await fetch(`${BASE_URL}/chat/completions`, {
+          const response = await fetch(`${BASE_URL}/v1/chat/completions`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+              Authorization: `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-              model: "deepseek-chat",
+              model: "mistral-small-latest",
               messages: [
                 { role: "system", content: buildSystemPrompt() },
                 { role: "user", content: prompt },

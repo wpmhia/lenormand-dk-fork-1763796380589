@@ -127,13 +127,13 @@ export function useAIAnalysis(
                     try {
                       const parsed = JSON.parse(fullReading);
                       if (parsed.sentence) {
-                        setAiReading({ reading: parsed.sentence, source: "deepseek" });
+                        setAiReading({ reading: parsed.sentence, source: "mistral" });
                       } else {
-                        setAiReading({ reading: fullReading, source: "deepseek" });
+                        setAiReading({ reading: fullReading, source: "mistral" });
                       }
                     } catch {
                       // Not complete JSON yet, show what we have
-                      setAiReading({ reading: fullReading, source: "deepseek" });
+                      setAiReading({ reading: fullReading, source: "mistral" });
                     }
                   } else if (event.type === "done") {
                     setIsStreaming(false);
@@ -156,12 +156,12 @@ export function useAIAnalysis(
                   try {
                     const parsed = JSON.parse(fullReading);
                     if (parsed.sentence) {
-                      setAiReading({ reading: parsed.sentence, source: "deepseek" });
+                      setAiReading({ reading: parsed.sentence, source: "mistral" });
                     } else {
-                      setAiReading({ reading: fullReading, source: "deepseek" });
+                      setAiReading({ reading: fullReading, source: "mistral" });
                     }
                   } catch {
-                    setAiReading({ reading: fullReading, source: "deepseek" });
+                    setAiReading({ reading: fullReading, source: "mistral" });
                   }
                 }
               }

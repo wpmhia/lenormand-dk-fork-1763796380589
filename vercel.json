@@ -10,12 +10,12 @@
     }
   ],
   "env": {
-    "DEEPSEEK_API_KEY": {
-      "description": "DeepSeek API key for AI interpretation"
+    "MISTRAL_API_KEY": {
+      "description": "Mistral API key for AI interpretation"
     },
-    "DEEPSEEK_BASE_URL": {
-      "description": "DeepSeek API base URL (optional, defaults to https://api.deepseek.com)",
-      "default": "https://api.deepseek.com"
+    "MISTRAL_BASE_URL": {
+      "description": "Mistral API base URL (optional, defaults to https://api.mistral.ai)",
+      "default": "https://api.mistral.ai"
     },
     "UPSTASH_REDIS_REST_URL": {
       "description": "Upstash Redis for persistent caching"
