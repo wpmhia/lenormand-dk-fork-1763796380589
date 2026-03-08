@@ -10,17 +10,11 @@ import { ReadingCounter } from "@/components/ReadingCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
 import {
-  Club,
   ArrowRight,
   Heart,
   Shield,
-  Calendar,
   BookOpen,
-  Compass,
   Target,
-  Lightbulb,
-  Users,
-  TrendingUp,
 } from "lucide-react";
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
@@ -107,7 +101,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               Start with quick answers or explore deeper insights
             </p>
           </div>
-          <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid items-stretch gap-6 sm:grid-cols-3">
             <ReadingTypeCard
               icon={<Shield className="h-5 w-5 text-primary" />}
               title="Single Card"
@@ -116,73 +110,20 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               spreadId="single-card"
             />
             <ReadingTypeCard
-              icon={<Club className="h-5 w-5 text-primary" />}
+              icon={<Heart className="h-5 w-5 text-primary" />}
               title="3-Card Sentence"
               description="Three-card narrative"
               cardCount={3}
               spreadId="sentence-3"
             />
             <ReadingTypeCard
-              icon={<Heart className="h-5 w-5 text-primary" />}
-              title="Past-Present-Future"
-              description="Timeline reading"
-              cardCount={3}
-              spreadId="past-present-future"
-            />
-            <ReadingTypeCard
-              icon={<Compass className="h-5 w-5 text-primary" />}
-              title="Yes or No"
-              description="Clear answer"
-              cardCount={1}
-              spreadId="yes-no"
+              icon={<Target className="h-5 w-5 text-primary" />}
+              title="5-Card Sentence"
+              description="Detailed answer"
+              cardCount={5}
+              spreadId="sentence-5"
             />
           </div>
-        </div>
-
-        {/* Additional Reading Types */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <ReadingTypeCard
-            icon={<Target className="h-5 w-5 text-primary" />}
-            title="5-Card Sentence"
-            description="Detailed answer"
-            cardCount={5}
-            spreadId="sentence-5"
-          />
-          <ReadingTypeCard
-            icon={<Calendar className="h-5 w-5 text-primary" />}
-            title="Week Ahead"
-            description="Daily guidance"
-            cardCount={7}
-            spreadId="week-ahead"
-          />
-          <ReadingTypeCard
-            icon={<Users className="h-5 w-5 text-primary" />}
-            title="Relationship"
-            description="For two people"
-            cardCount={9}
-            spreadId="relationship-double"
-          />
-          <ReadingTypeCard
-            icon={<Lightbulb className="h-5 w-5 text-primary" />}
-            title="Mind-Body-Spirit"
-            description="Holistic view"
-            cardCount={3}
-            spreadId="mind-body-spirit"
-          />
-          <ReadingTypeCard
-            icon={<TrendingUp className="h-5 w-5 text-primary" />}
-            title="Decision Making"
-            description="Choice guidance"
-            cardCount={5}
-            spreadId="decision-making"
-          />
-          <ReadingTypeCard
-            icon={<BookOpen className="h-5 w-5 text-primary" />}
-            title="Situational"
-            description="Full analysis"
-            cardCount={9}
-            spreadId="situational-9"
-          />
         </div>
       </div>
 
@@ -198,14 +139,14 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
           <ReadingTypeCard
-            icon={<ArrowRight className="h-5 w-5 text-primary" />}
-            title="Structured Reading"
-            description="9-card detailed spread"
+            icon={<BookOpen className="h-5 w-5 text-primary" />}
+            title="9-Card Comprehensive"
+            description="Deep dive into complex situations"
             cardCount={9}
-            spreadId="structured-reading"
+            spreadId="comprehensive"
           />
           <ReadingTypeCard
-            icon={<Users className="h-5 w-5 text-primary" />}
+            icon={<ArrowRight className="h-5 w-5 text-primary" />}
             title="Grand Tableau"
             description="All 36 cards"
             cardCount={36}
