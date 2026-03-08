@@ -9,3 +9,4 @@ export function createSafeJsonLd(data: unknown): string {
     .replace(/>/g, "\\u003e");
   return escaped;
 }
+
