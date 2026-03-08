@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -134,17 +133,7 @@ export function AIReadingDisplay({
 
         <div className="reading-content space-y-4 text-foreground">
           {aiReading?.reading && (
-            <ReactMarkdown
-              components={{
-                h1: ({ children }) => <h1 className="text-xl font-semibold mb-3">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-lg font-semibold mb-2">{children}</h2>,
-                h3: ({ children }) => <h3 className="font-semibold mb-2">{children}</h3>,
-                p: ({ children }) => <p className="leading-relaxed mb-3">{children}</p>,
-                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-              }}
-            >
-              {aiReading.reading}
-            </ReactMarkdown>
+            <p className="leading-relaxed whitespace-pre-wrap">{aiReading.reading}</p>
           )}
         </div>
 
@@ -208,14 +197,7 @@ export function AIReadingDisplay({
                   <span>Consulting the cards...</span>
                 </div>
               ) : (
-                <ReactMarkdown
-                  components={{
-                    p: ({ children }) => <p className="leading-relaxed">{children}</p>,
-                    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                  }}
-                >
-                  {followUpResponse || ""}
-                </ReactMarkdown>
+                <p className="leading-relaxed whitespace-pre-wrap">{followUpResponse || ""}</p>
               )}
             </div>
             {followUpStreaming && followUpResponse && (
