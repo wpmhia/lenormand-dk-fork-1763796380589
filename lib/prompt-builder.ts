@@ -17,11 +17,11 @@ import {
  */
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 200;
-  if (cardCount <= 3) return 300;
-  if (cardCount <= 5) return 400;
-  if (cardCount <= 9) return 500;
-  if (cardCount <= 36) return 600;
-  return 300;
+  if (cardCount <= 3) return 350;
+  if (cardCount <= 5) return 450;
+  if (cardCount <= 9) return 550;
+  if (cardCount <= 36) return 700;
+  return 350;
 }
 
 // ============================================================================
@@ -106,17 +106,11 @@ export const VALID_CARD_NAMES = [
 export function buildSystemPrompt(): string {
   return `You are a Lenormand card reader. Give clear, complete readings.
 
-RULES:
-- Name each card by its full name (The Rider, The Clover, etc.)
-- Explain what each position means
-- Describe how cards interact with their neighbors
-- Give a direct answer to the question
-- Always finish every sentence
-
-FORMAT:
-1. Start with the most important card/position
-2. Explain the card combinations
-3. End with a direct answer to the question`;
+- Name each card (The Rider, The Clover, etc.)
+- Explain positions when relevant
+- Describe card interactions
+- Give a direct answer
+- Always finish every sentence`;
 }
 
 /**
@@ -134,51 +128,30 @@ Card: ${cards}
 
 This is a daily draw. Predict what will happen today based on this card. Be concrete and specific.`,
 
-  "sentence-3": (question, cards, positions) => `${question}
-Cards (in order): ${cards}
+  "sentence-3": (question, cards) => `${question}
+Cards: ${cards}
 
-Position meanings:
-- Card 1: The opening/theme
-- Card 2: The development/challenge  
-- Card 3: The outcome
-
-Read the cards as a flowing sentence. Explain how card 1 leads to card 2, and card 2 leads to card 3. Name each card and its role.`,
+Positions: 1=Opening, 2=Development, 3=Outcome.
+Read as a sentence. Name each card and explain how it flows to the next. End with the answer.`,
 
   "sentence-5": (question, cards) => `${question}
-Cards (in order): ${cards}
+Cards: ${cards}
 
-Position meanings:
-- Card 1: Past/Background
-- Card 2: Present influence
-- Card 3: Heart of the matter
-- Card 4: Near future
-- Card 5: Final outcome
-
-Read as a story from past to future. Card 3 is the pivot point. Name each card and explain its position.`,
+Positions: 1=Past, 2=Present, 3=Heart, 4=Near Future, 5=Outcome.
+Read as a story. Card 3 is the pivot. Name each card and its position. End with the answer.`,
 
   "comprehensive": (question, cards) => `${question}
-Cards in 3x3 grid: ${cards}
+Cards (3x3 grid): ${cards}
 
-Grid layout (left to right, top to bottom):
-- Top row (cards 1-3): Mental/conscious influences
-- Middle row (cards 4-6): Present situation
-- Bottom row (cards 7-9): Emotional/unconscious forces
-
-Card 5 (center): The heart of the matter
-
-Name the center card first. Then describe what each row reveals. Finish with the overall answer.`,
+Rows: Top=Mental, Middle=Present, Bottom=Emotional. Center card=Heart of matter.
+Name the center card first. Describe each row briefly. End with the answer.`,
 
   "grand-tableau": (question, cards) => `${question}
-36 cards in 4x9 grid: ${cards}
+36 cards (4x9 grid): ${cards}
 
-Find the Man (card 29) or Woman (card 28) - this is the Significator.
-Cards near the Significator:
-- Left = Past influences
-- Right = Future possibilities
-- Above = Conscious thoughts
-- Below = Unconscious drives
-
-Describe what surrounds the Significator. Name specific cards and their positions. Give a clear answer to the question.`
+Find the Man (29) or Woman (28) card - this is the Significator.
+Near the Significator: Left=Past, Right=Future, Above=Conscious, Below=Unconscious.
+Describe what surrounds the Significator. Name specific cards. Give a clear answer.`
 };
 
 /**
