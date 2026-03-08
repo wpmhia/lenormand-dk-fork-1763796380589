@@ -195,9 +195,13 @@ function NewReadingPageContent() {
 
   // Handle setup continue
   const handleSetupContinue = useCallback((method: "virtual" | "physical") => {
+    if (!question.trim()) {
+      setError("Please enter a question to guide your reading.");
+      return;
+    }
     setMethod(method);
     setStep("drawing");
-  }, []);
+  }, [question]);
 
   // Handle back navigation
   const handleBack = useCallback(() => {
