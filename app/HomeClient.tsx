@@ -88,10 +88,10 @@ export function HomeClient({ initialCount, initialFormatted }: HomeClientProps) 
           <div className="relative z-10 flex justify-center">
             <div className="hero-image-cell flex min-h-[300px] items-center rounded-none bg-transparent p-0">
               <Image
-                src="/images/hero-image.webp"
+                src="/images/hero-image.jpg"
                 alt="Mystical Lenormand cards arranged in a reading spread"
-                width={400}
-                height={300}
+                width={364}
+                height={500}
                 priority
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 className="block h-auto w-full max-w-xs rounded-lg border-0 object-cover shadow-lg transition-shadow duration-300 hover:shadow-xl md:max-w-sm"
