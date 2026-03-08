@@ -64,13 +64,8 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Analytics:</strong> We use Umami Analytics, a
-                  privacy-friendly alternative that doesn't require consent and
-                  doesn't use cookies. Data is anonymized and we don't track
-                  personal information.
-                </li>
-                <li>
-                  <strong>Preferences:</strong> Your cookie consent choices and
-                  theme preferences are saved locally on your device.
+                  privacy-friendly alternative that doesn't use cookies. Data
+                  is anonymized and we don't track personal information.
                 </li>
               </ul>
               <p className="mt-4 text-sm text-muted-foreground">
@@ -173,21 +168,9 @@ export default function PrivacyPage() {
             </CardHeader>
               <CardContent className="space-y-4 text-foreground">
               <p>
-                We use minimal cookies and privacy-friendly analytics:
+                We use privacy-friendly analytics:
               </p>
               <div className="space-y-3">
-                <div>
-                  <h4 className="font-semibold text-foreground">
-                    Essential Cookies
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Required for core website functionality:
-                  </p>
-                  <ul className="ml-4 mt-2 list-inside list-disc space-y-1 text-sm text-muted-foreground">
-                    <li>Security and fraud prevention</li>
-                    <li>Site functionality (dark mode preferences)</li>
-                  </ul>
-                </div>
                 <div>
                   <h4 className="font-semibold text-foreground">
                     Umami Analytics
@@ -197,7 +180,7 @@ export default function PrivacyPage() {
                   </p>
                   <ul className="ml-4 mt-2 list-inside list-disc space-y-1 text-sm text-muted-foreground">
                     <li>Does NOT use cookies</li>
-                    <li>Does NOT require consent banner</li>
+                    <li>Does NOT require consent</li>
                     <li>Does NOT track personal data</li>
                     <li>Does NOT collect IP addresses</li>
                     <li>Stores data anonymously</li>
@@ -268,8 +251,9 @@ export default function PrivacyPage() {
                   or track individuals across websites.
                 </li>
                 <li>
-                  <strong>No Cookies Required:</strong> Our analytics (Umami)
-                  does not use cookies and does not require consent under GDPR.
+                  <strong>No Cookies:</strong> We do not use cookies. Our
+                  analytics (Umami) is cookie-free and does not require consent
+                  under GDPR.
                 </li>
                 <li>
                   <strong>Data Processing:</strong> AI processing is done via
