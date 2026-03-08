@@ -272,16 +272,9 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                   <span className="text-sm">Consulting the cards...</span>
                 </div>
               ) : insight ? (
-                <div className="text-sm leading-relaxed text-foreground/90 text-left">
-                  <ReactMarkdown
-                    components={{
-                      p: ({ children }) => <p className="mb-2">{children}</p>,
-                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                    }}
-                  >
-                    {insight}
-                  </ReactMarkdown>
-                </div>
+                <p className="text-sm leading-relaxed text-foreground/90 text-left">
+                  {insight}
+                </p>
               ) : (
                 <p className="text-sm leading-relaxed text-muted-foreground italic">
                   {card.uprightMeaning}
@@ -304,5 +297,3 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     </Dialog>
   );
 }
-
-import ReactMarkdown from "react-markdown";
