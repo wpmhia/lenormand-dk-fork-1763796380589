@@ -89,10 +89,7 @@ const nextConfig = {
   },
   // Enable experimental features for better performance
   experimental: {
-    // Optimize package imports for faster builds
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
-    // Output ESNext without transpiling for modern browsers (~45KB savings)
-    esbuildTargets: "esnext",
   },
 };
 
