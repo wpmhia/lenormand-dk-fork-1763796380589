@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, lazy, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import heroImage from "@/public/images/hero-image.jpg";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCards } from "@/lib/data";
 import { Card as CardType } from "@/lib/types";
 import {
   Club,
@@ -29,19 +28,13 @@ const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod
 interface HomeClientProps {
   initialCount: number;
   initialFormatted: string;
+  cards: CardType[];
 }
 
-export function HomeClient({ initialCount, initialFormatted }: HomeClientProps) {
+export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
-  const [cards, setCards] = useState<CardType[]>([]);
+  const [cards, setCards] = useState<CardType[]>(initialCards);
 
-  useEffect(() => {
-    async function loadData() {
-      const cardData = await getCards();
-      setCards(cardData);
-    }
-    loadData();
-  }, []);
   return (
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
