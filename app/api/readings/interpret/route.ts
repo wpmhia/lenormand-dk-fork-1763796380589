@@ -125,7 +125,7 @@ export async function POST(request: Request) {
               Authorization: `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-              model: "mistral-tiny",
+              model: "mistral-small-latest",
               messages: [
                 { role: "system", content: buildSystemPrompt() },
                 { role: "user", content: prompt },

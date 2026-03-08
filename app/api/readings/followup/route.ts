@@ -91,7 +91,7 @@ Provide a brief, direct answer to the follow-up question based on the original r
               Authorization: `Bearer ${MISTRAL_API_KEY}`,
             },
             body: JSON.stringify({
-              model: "mistral-tiny",
+              model: "mistral-small-latest",
               messages: [
                 { role: "system", content: buildSystemPrompt() },
                 { role: "user", content: prompt },
