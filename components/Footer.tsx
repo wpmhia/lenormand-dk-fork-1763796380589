@@ -15,14 +15,14 @@ export function Footer() {
             <p className="mt-1 text-xs text-muted-foreground">
               AI-Enhanced Divination
             </p>
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-4 flex flex-col items-start gap-1">
               <p className="text-xs text-muted-foreground">Powered by</p>
               <Image
-                src="/images/mistral-ai-logo.svg"
+                src="/images/mistral-ai-logo.png"
                 alt="Mistral AI"
-                width={80}
-                height={24}
-                className="h-6 w-auto"
+                width={120}
+                height={40}
+                className="h-5 w-auto"
               />
             </div>
           </div>
