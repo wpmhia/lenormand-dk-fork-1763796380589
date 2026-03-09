@@ -22,6 +22,7 @@ function DeckComponent({
   const [isShuffling, setIsShuffling] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const shuffleTimeoutRef = useRef<number | null>(null);
+  const drawTimeoutRef = useRef<number | null>(null);
 
   const canDraw = cards.length >= drawCount && !isDrawing && !isProcessing;
 
@@ -42,8 +43,11 @@ function DeckComponent({
     const shuffled = [...cards].sort(() => Math.random() - 0.5);
     const drawnCards = shuffled.slice(0, drawCount);
 
-    // Brief delay for user feedback, then callback
-    setTimeout(() => {
+    // Clear previous timeout and set new one
+    if (drawTimeoutRef.current) {
+      clearTimeout(drawTimeoutRef.current);
+    }
+    drawTimeoutRef.current = window.setTimeout(() => {
       setIsDrawing(false);
       onDraw?.(drawnCards);
     }, 600);
@@ -52,6 +56,7 @@ function DeckComponent({
   useEffect(() => {
     return () => {
       if (shuffleTimeoutRef.current) clearTimeout(shuffleTimeoutRef.current);
+      if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
     };
   }, []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ export function PhysicalCardInput({
   const [warnings, setWarnings] = useState<string[]>([]);
   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([]);
   const [truncationWarning, setTruncationWarning] = useState<string | null>(null);
+  const truncationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const parseCards = useCallback((inputValue: string): ParsedCardResult => {
     const trimmed = inputValue.trim();
@@ -110,7 +111,12 @@ export function PhysicalCardInput({
     };
 
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      if (truncationTimeoutRef.current) {
+        clearTimeout(truncationTimeoutRef.current);
+      }
+    };
   }, [parsedCards, targetCount, isSubmitting, onSubmit]);
 
   const isComplete = parsedCards.length === targetCount;
@@ -167,8 +173,11 @@ export function PhysicalCardInput({
               setTruncationWarning(
                 `${removedCount} card${removedCount > 1 ? 's' : ''} removed. Maximum ${targetCount} cards allowed for this spread.`
               );
-              // Clear warning after 5 seconds
-              setTimeout(() => setTruncationWarning(null), 5000);
+              // Clear previous timeout and set new one
+              if (truncationTimeoutRef.current) {
+                clearTimeout(truncationTimeoutRef.current);
+              }
+              truncationTimeoutRef.current = setTimeout(() => setTruncationWarning(null), 5000);
             } else {
               setInput(newValue);
               setTruncationWarning(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -53,6 +53,7 @@ export function AIReadingDisplay({
   const [copyClicked, setCopyClicked] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
   const [showFollowUpInput, setShowFollowUpInput] = useState(false);
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
@@ -69,7 +70,12 @@ export function AIReadingDisplay({
       
       await navigator.clipboard.writeText(plainText);
       setCopyClicked(true);
-      setTimeout(() => setCopyClicked(false), 2000);
+      
+      // Clear previous timeout and set new one
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      copyTimeoutRef.current = setTimeout(() => setCopyClicked(false), 2000);
     } catch (err) {
       console.warn("Copy failed:", err);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -23,6 +23,20 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   const [card, setCard] = useState<CardType | null>(null);
   const [insight, setInsight] = useState<string>("");
   const [insightLoading, setInsightLoading] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const drawTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (drawTimeoutRef.current) {
+        clearTimeout(drawTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -48,8 +62,10 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   const handleDraw = async () => {
     setViewState("drawing");
     
-    // Simulate brief suspense
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Simulate brief suspense with cancellable timeout
+    await new Promise((resolve) => {
+      drawTimeoutRef.current = setTimeout(resolve, 800);
+    });
     
     const cardId = drawRandomCardId();
     const drawnCard = cards.find((c) => c.id === cardId);
@@ -75,6 +91,9 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   };
 
   const generateInsight = async (cardData: CardType, cardId: number) => {
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+    
     try {
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
@@ -84,6 +103,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
           cards: [{ id: cardData.id, name: cardData.name, position: 0, keywords: cardData.keywords }],
           spreadId: "daily-card",
         }),
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
@@ -96,37 +116,48 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
       const contentType = response.headers.get("content-type");
       if (contentType?.includes("text/event-stream")) {
         const reader = response.body?.getReader();
+        if (!reader) {
+          setInsight(cardData.uprightMeaning);
+          setDailyCardCache(cardId, cardData.uprightMeaning);
+          setInsightLoading(false);
+          return;
+        }
+        
         const decoder = new TextDecoder();
         let buffer = "";
         let fullText = "";
 
-        while (reader) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || "";
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
 
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") continue;
-              try {
-                const parsed = JSON.parse(data);
-                if (parsed.type === "chunk" && parsed.content) {
-                  fullText += parsed.content;
-                } else if (parsed.type === "done") {
-                  setInsight(fullText);
-                  setDailyCardCache(cardId, fullText);
-                  setInsightLoading(false);
-                  return;
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+                if (data === "[DONE]") continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  if (parsed.type === "chunk" && parsed.content) {
+                    fullText += parsed.content;
+                  } else if (parsed.type === "done") {
+                    setInsight(fullText);
+                    setDailyCardCache(cardId, fullText);
+                    setInsightLoading(false);
+                    return;
+                  }
+                } catch {
+                  // Skip invalid JSON
                 }
-              } catch {
-                // Skip invalid JSON
               }
             }
           }
+        } finally {
+          reader.releaseLock();
         }
 
         // Fallback if stream ends without done signal
@@ -144,11 +175,14 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         setDailyCardCache(cardId, text);
       }
     } catch (error) {
-      console.error("Failed to generate insight:", error);
-      setInsight(cardData.uprightMeaning);
-      setDailyCardCache(cardId, cardData.uprightMeaning);
+      if ((error as Error).name !== "AbortError") {
+        console.error("Failed to generate insight:", error);
+        setInsight(cardData.uprightMeaning);
+        setDailyCardCache(cardId, cardData.uprightMeaning);
+      }
     } finally {
       setInsightLoading(false);
+      abortControllerRef.current = null;
     }
   };
 
