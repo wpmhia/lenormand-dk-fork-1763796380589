@@ -102,25 +102,14 @@ function NewReadingPageContent() {
     [router, resetAnalysis],
   );
 
-  // Load cards on mount
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const cards = await getCards();
-        if (cards.length > 0) {
-          setAllCards(cards);
-        } else {
-          setError("Failed to load cards. Please try refreshing the page.");
-        }
-      } catch (err) {
-        console.error("Error loading cards:", err);
-        setError("An error occurred while loading the deck.");
-      } finally {
-        setLoadingCards(false);
-      }
-    }
-    loadData();
-  }, []);
+  // Load cards synchronously - getCards() is synchronous
+  const cards = getCards();
+  if (cards.length > 0) {
+    setAllCards(cards);
+  } else {
+    setError("Failed to load cards. Please try refreshing the page.");
+  }
+  setLoadingCards(false);
 
   // Handle reset parameter
   useEffect(() => {

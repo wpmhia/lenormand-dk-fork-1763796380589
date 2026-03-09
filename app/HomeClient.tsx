@@ -68,7 +68,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             <div className="mt-6 flex justify-center md:justify-start">
               <ReadingCounter 
                 initialCount={initialCount} 
-                initialFormatted={initialFormatted}
               />
             </div>
           </div>
