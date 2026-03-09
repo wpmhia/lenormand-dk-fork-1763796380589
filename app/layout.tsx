@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/header";
 import { Suspense } from "react";
 import { createSafeJsonLd } from "@/lib/sanitize";
+import { SupporterProvider } from "@/components/SupporterProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -222,15 +223,17 @@ export default function RootLayout({
           Skip to main content
         </a>
         <TooltipProvider>
-          <div
-            className="flex min-h-screen flex-col bg-background text-foreground"
-            suppressHydrationWarning
-          >
-            <Header />
-            <main id="main-content" className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-          <Toaster />
+          <SupporterProvider>
+            <div
+              className="flex min-h-screen flex-col bg-background text-foreground"
+              suppressHydrationWarning
+            >
+              <Header />
+              <main id="main-content" className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+            <Toaster />
+          </SupporterProvider>
         </TooltipProvider>
       </body>
     </html>

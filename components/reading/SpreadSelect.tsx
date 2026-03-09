@@ -7,8 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { COMPREHENSIVE_SPREADS, Spread } from "@/lib/spreads";
+import { COMPREHENSIVE_SPREADS, isSpreadDisabled, Spread } from "@/lib/spreads";
 import { Lock } from "lucide-react";
+import { useSupporter } from "@/components/SupporterProvider";
 
 interface SpreadSelectProps {
   value: Spread;
@@ -17,6 +18,8 @@ interface SpreadSelectProps {
 }
 
 export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
+  const { isSupporter } = useSupporter();
+
   return (
     <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
       <label className="font-medium text-foreground">Choose Your Spread:</label>
@@ -24,7 +27,7 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
         value={value.id}
         onValueChange={(spreadId) => {
           const spread = COMPREHENSIVE_SPREADS.find((s) => s.id === spreadId);
-          if (spread) onChange(spread);
+          if (spread && !isSpreadDisabled(spread, isSupporter)) onChange(spread);
         }}
         disabled={disabled}
       >
@@ -33,7 +36,7 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
         </SelectTrigger>
         <SelectContent className="max-h-[400px] overflow-y-auto border-border bg-popover text-popover-foreground">
           {COMPREHENSIVE_SPREADS.map((spread) =>
-            spread.disabled ? (
+            isSpreadDisabled(spread, isSupporter) ? (
               <div
                 key={spread.id}
                 className="relative flex w-full cursor-not-allowed select-none items-center rounded-sm bg-muted/30 py-3 pl-2 pr-8 text-sm outline-none"
@@ -42,10 +45,10 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <Lock className="h-3 w-3" />
                     {spread.label}
-                    <span className="text-xs">(Ko-Fi Supporter)</span>
+                    <span className="text-xs">(Supporter)</span>
                   </span>
                   <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground/70">
-                    {spread.cards} cards • {spread.description}
+                    {spread.disabledReason || `${spread.cards} cards`}
                   </span>
                 </div>
               </div>

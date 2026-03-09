@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
-import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
+import { RefreshCw, Copy, Check, AlertCircle, MessageCircle, Crown } from "lucide-react";
 import { getCards } from "@/lib/data";
+import Link from "next/link";
 
 const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
@@ -156,6 +157,28 @@ export function AIReadingDisplay({
             <div className="leading-relaxed whitespace-pre-wrap">{highlightCardNames(aiReading.reading)}</div>
           )}
         </div>
+
+        {!isLoading && !isStreaming && (
+          <div className="mt-6 rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
+            <div className="flex items-start gap-3">
+              <Crown className="h-5 w-5 flex-shrink-0 text-amber-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                  Enjoying your readings?
+                </p>
+                <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                  Support the app and unlock 9-card & 36-card spreads.
+                </p>
+                <Link href="/support">
+                  <Button size="sm" variant="outline" className="mt-2 border-amber-300 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900">
+                    <Crown className="mr-1 h-3 w-3" />
+                    Learn more
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
 
         {!isStreaming && !followUpResponse && (
           <div className="mt-8 pt-6 border-t border-border/50">

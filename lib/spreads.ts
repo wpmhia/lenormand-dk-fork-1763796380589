@@ -6,6 +6,12 @@ export interface Spread {
   isAuthentic?: boolean;
   disabled?: boolean;
   disabledReason?: string;
+  supporterOnly?: boolean;
+}
+
+export function isSpreadDisabled(spread: Spread, isSupporter: boolean): boolean {
+  if (!spread.supporterOnly) return false;
+  return !isSupporter;
 }
 
 // Classic Spreads
@@ -32,6 +38,8 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     description:
       "Deeper exploration of complex situations without overwhelming detail",
     isAuthentic: true,
+    supporterOnly: true,
+    disabledReason: "Unlock with supporter code",
   },
   {
     id: "grand-tableau",
@@ -40,6 +48,8 @@ export const AUTHENTIC_SPREADS: Spread[] = [
     description:
       "Complete life situation through full 4x9 grid - the most comprehensive reading",
     isAuthentic: true,
+    supporterOnly: true,
+    disabledReason: "Unlock with supporter code",
   },
 ];
 

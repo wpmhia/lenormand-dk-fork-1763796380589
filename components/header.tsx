@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Club, Home, BookOpen, Plus, Menu, X, History } from "lucide-react";
+import { Club, Home, BookOpen, Plus, Menu, X, History, Crown } from "lucide-react";
 import { useState } from "react";
 
 export function Header() {
@@ -63,6 +63,13 @@ export function Header() {
             >
               <History className="h-5 w-5" />
               <span>History</span>
+            </Link>
+            <Link
+              href="/support"
+              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+              title="Support"
+            >
+              <Crown className="h-5 w-5" />
             </Link>
             <a
               href="https://ko-fi.com/Y8Y81NVDEK"
