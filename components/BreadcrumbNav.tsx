@@ -47,7 +47,7 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
         suppressHydrationWarning
       >
         {items.map((item, index) => (
-          <div key={item.url} className="flex items-center">
+          <span key={item.url} className="flex items-center">
             {index > 0 && (
               <ChevronRight className="mx-1 h-4 w-4 flex-shrink-0 text-muted-foreground/50" />
             )}
@@ -61,7 +61,7 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
                 {item.name}
               </Link>
             )}
-          </div>
+          </span>
         ))}
       </nav>
     </>
