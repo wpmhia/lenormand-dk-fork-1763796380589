@@ -47,16 +47,16 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
         suppressHydrationWarning
       >
         {items.map((item, index) => (
-          <span key={item.url} className="inline-flex items-center align-middle">
+          <span key={item.url} className="inline-flex items-center">
             {index > 0 && (
-              <ChevronRight className="mx-1 h-4 w-4 flex-shrink-0 text-muted-foreground/50" />
+              <ChevronRight className="mx-1 h-4 w-4 text-muted-foreground/50" />
             )}
             {index === items.length - 1 ? (
-              <span className="font-medium text-foreground">{item.name}</span>
+              <span className="font-medium text-foreground leading-none">{item.name}</span>
             ) : (
               <Link
                 href={item.url}
-                className="transition-colors hover:text-primary"
+                className="leading-none transition-colors hover:text-primary"
               >
                 {item.name}
               </Link>
