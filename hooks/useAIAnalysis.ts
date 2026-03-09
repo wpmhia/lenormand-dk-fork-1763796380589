@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
@@ -34,8 +34,14 @@ export function useAIAnalysis(
   const [followUpResponse, setFollowUpResponse] = useState<string | null>(null);
   const [followUpLoading, setFollowUpLoading] = useState(false);
   const [followUpStreaming, setFollowUpStreaming] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const startAnalysis = useCallback(async () => {
+    // Abort any previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     if (!enabled || drawnCards.length === 0) return;
 
     setIsLoading(true);
@@ -43,6 +49,7 @@ export function useAIAnalysis(
     setError(null);
 
     let lastError: any = null;
+    abortControllerRef.current = new AbortController();
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
@@ -51,13 +58,11 @@ export function useAIAnalysis(
           return { id: card.id, name: cardData?.name || `Card ${card.id}`, position: card.position };
         });
 
-        const abortController = new AbortController();
-
         const response = await fetch("/api/readings/interpret", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question, cards, spreadId: selectedSpreadId }),
-          signal: abortController.signal,
+          signal: abortControllerRef.current.signal,
         });
 
         if (!response.ok) {
@@ -127,7 +132,10 @@ export function useAIAnalysis(
         lastError = null;
         break;
       } catch (err: any) {
-        if (err.name === "AbortError") break;
+        if (err.name === "AbortError") {
+          // Don't set error on abort, just exit
+          return;
+        }
         lastError = err;
         if (attempt < MAX_RETRIES - 1) {
           await new Promise(resolve => setTimeout(resolve, INITIAL_RETRY_DELAY * Math.pow(2, attempt)));
@@ -138,9 +146,18 @@ export function useAIAnalysis(
     if (lastError) setError(lastError.message || "Something went wrong");
     setIsLoading(false);
     setIsStreaming(false);
+    abortControllerRef.current = null;
   }, [question, drawnCards, allCards, selectedSpreadId, enabled]);
 
   const resetAnalysis = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    if (followUpAbortControllerRef.current) {
+      followUpAbortControllerRef.current.abort();
+      followUpAbortControllerRef.current = null;
+    }
     setAiReading(null);
     setError(null);
     setIsLoading(false);
@@ -150,11 +167,19 @@ export function useAIAnalysis(
     setFollowUpStreaming(false);
   }, []);
 
+  const followUpAbortControllerRef = useRef<AbortController | null>(null);
+
   const submitFollowUp = useCallback(async (followUpQuestion: string) => {
     if (!aiReading?.reading || drawnCards.length === 0) return;
 
+    // Abort any previous follow-up request
+    if (followUpAbortControllerRef.current) {
+      followUpAbortControllerRef.current.abort();
+    }
+
     setFollowUpLoading(true);
     setFollowUpStreaming(false);
+    followUpAbortControllerRef.current = new AbortController();
 
     try {
       const cards = drawnCards.map((card) => {
@@ -171,6 +196,7 @@ export function useAIAnalysis(
           cards,
           spreadId: selectedSpreadId,
         }),
+        signal: followUpAbortControllerRef.current.signal,
       });
 
       if (!response.ok) {
@@ -228,11 +254,14 @@ export function useAIAnalysis(
         const data = await response.json();
         setFollowUpResponse(data.reading || data.response || "No response received");
       }
-    } catch {
-      setFollowUpResponse("Sorry, I couldn't process your follow-up question. Please try again.");
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        setFollowUpResponse("Sorry, I couldn't process your follow-up question. Please try again.");
+      }
     } finally {
       setFollowUpLoading(false);
       setFollowUpStreaming(false);
+      followUpAbortControllerRef.current = null;
     }
   }, [aiReading, drawnCards, allCards, selectedSpreadId]);
 
