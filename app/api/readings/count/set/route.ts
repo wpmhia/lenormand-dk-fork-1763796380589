@@ -1,6 +1,6 @@
 export const runtime = "edge";
 
-import { Redis } from "@upstash/redis";
+import { setReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 
@@ -8,18 +8,7 @@ export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-const redisUrl = getEnv("UPSTASH_REDIS_REST_URL");
-const redisToken = getEnv("UPSTASH_REDIS_REST_TOKEN");
 const ADMIN_TOKEN = getEnv("ADMIN_API_TOKEN");
-
-const redis = redisUrl && redisToken
-  ? new Redis({
-      url: redisUrl,
-      token: redisToken,
-    })
-  : null;
-
-const COUNTER_KEY = "reading_count:total";
 
 /**
  * POST to set/reset the reading counter
@@ -46,9 +35,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (redis) {
-      await redis.set(COUNTER_KEY, count);
-    }
+    await setReadingCount(count);
 
     return new Response(
       JSON.stringify({ success: true, count }),

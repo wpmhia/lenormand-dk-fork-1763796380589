@@ -1,80 +1,28 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { BackToTop } from "@/components/BackToTop";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { getCards } from "@/lib/data";
 
-interface CardData {
-  id: number;
-  number: number;
-  name: string;
-  keywords: string[];
-  description: string;
-  traditionalMeaning?: string;
-  reversedMeaning?: string;
+export const revalidate = 3600;
+
+interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
-interface CardMeaningPageProps {
-  params: { id: string };
-}
-
-export default function CardMeaningPage({ params }: CardMeaningPageProps) {
-  const [card, setCard] = useState<CardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        const response = await fetch("/api/cards");
-        if (!response.ok) throw new Error("Failed to fetch cards");
-        const cardsData = await response.json();
-        const cardData = cardsData.find(
-          (c: CardData) => c.id === parseInt(params.id),
-        );
-        setCard(cardData || null);
-      } catch (error) {
-        console.error("Error fetching card:", error);
-        setCard(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCards();
-  }, [params.id]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="container mx-auto px-4 py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 w-48 rounded bg-muted" />
-            <div className="h-64 w-full rounded bg-muted" />
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default async function CardMeaningPage({ params }: PageProps) {
+  const { id } = await params;
+  const cardId = parseInt(id);
+  const allCards = getCards();
+  const card = allCards.find((c) => c.id === cardId);
 
   if (!card) {
-    return (
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-2xl font-bold">Card not found</h1>
-          <Link href="/learn/card-meanings">
-            <Button variant="outline" className="mt-4">
-              Back to Card Meanings
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const previousCardId = Math.max(1, card.id - 1);
@@ -152,30 +100,30 @@ export default function CardMeaningPage({ params }: CardMeaningPageProps) {
                     </div>
 
                     <h3 className="mb-2 mt-4 text-lg font-semibold">
-                      Description
+                      Meaning
                     </h3>
                     <p className="mb-4 leading-relaxed text-muted-foreground">
-                      {card.description}
+                      {card.uprightMeaning}
                     </p>
 
-                    {card.traditionalMeaning && (
+                    {card.timing && (
                       <>
                         <h3 className="mb-2 text-lg font-semibold">
-                          Traditional Meaning
+                          Timing
                         </h3>
                         <p className="leading-relaxed text-muted-foreground">
-                          {card.traditionalMeaning}
+                          {card.timing}
                         </p>
                       </>
                     )}
 
-                    {card.reversedMeaning && (
+                    {card.historicalMeaning && (
                       <>
                         <h3 className="mb-2 mt-4 text-lg font-semibold">
-                          Reversed Meaning
+                          Historical Meaning
                         </h3>
                         <p className="leading-relaxed text-muted-foreground">
-                          {card.reversedMeaning}
+                          {card.historicalMeaning}
                         </p>
                       </>
                     )}
