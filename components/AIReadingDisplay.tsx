@@ -7,15 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
+import { getCards } from "@/lib/data";
 
-const CARD_NAMES = [
-  "The Rider", "The Clover", "The Ship", "The House", "The Tree", "The Clouds", "The Snake", "The Coffin",
-  "The Bouquet", "The Scythe", "The Whip", "The Birds", "The Child", "The Fox", "The Bear", "The Stars",
-  "The Stork", "The Dog", "The Tower", "The Garden", "The Mountain", "The Crossroads", "The Mice",
-  "The Heart", "The Ring", "The Book", "The Letter", "The Man", "The Woman", "The Lily", "The Sun",
-  "The Moon", "The Key", "The Fish", "The Anchor", "The Cross"
-];
-
+const allCards = getCards();
+const CARD_NAMES = allCards.map(c => c.name);
 const CARD_REGEX = new RegExp(`(${CARD_NAMES.join('|')})`, 'g');
 
 function highlightCardNames(text: string): React.ReactNode {
