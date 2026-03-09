@@ -9,6 +9,7 @@ import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
+import { useSupporter } from "@/components/SupporterProvider";
 import {
   ArrowRight,
   Heart,
@@ -27,6 +28,7 @@ interface HomeClientProps {
 
 export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
+  const { isSupporter } = useSupporter();
 
   const previewCards = useMemo(() => initialCards.slice(0, 6), [initialCards]);
 
@@ -144,7 +146,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             description="Deep dive into complex situations"
             cardCount={9}
             spreadId="comprehensive"
-            disabled={true}
+            disabled={!isSupporter}
             disabledReason="Premium"
           />
           <ReadingTypeCard
@@ -153,7 +155,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             description="All 36 cards"
             cardCount={36}
             spreadId="grand-tableau"
-            disabled={true}
+            disabled={!isSupporter}
             disabledReason="Premium"
           />
         </div>
