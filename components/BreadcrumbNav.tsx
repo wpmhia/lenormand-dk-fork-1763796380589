@@ -42,14 +42,14 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
         strategy="afterInteractive"
       />
       <nav
-        className="flex flex-wrap items-center text-sm text-muted-foreground"
+        className="flex items-center gap-1 text-sm text-muted-foreground"
         aria-label="Breadcrumb"
         suppressHydrationWarning
       >
         {items.map((item, index) => (
           <div key={item.url} className="flex items-center">
             {index > 0 && (
-              <ChevronRight className="mx-2 h-4 w-4 flex-shrink-0" />
+              <ChevronRight className="mx-1 h-4 w-4 flex-shrink-0 text-muted-foreground/50" />
             )}
             {index === items.length - 1 ? (
               <span className="font-medium text-foreground">{item.name}</span>
