@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const count = await getReadingCount();
   const initialFormatted = formatReadingCount(count);
-  const cards = await getCards();
+  const cards = getCards();
 
   return <HomeClient initialCount={count} initialFormatted={initialFormatted} cards={cards} />;
 }

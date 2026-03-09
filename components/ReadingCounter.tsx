@@ -2,18 +2,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Diamond } from "lucide-react";
+import { formatReadingCount } from "@/lib/counter";
 
 interface ReadingCounterProps {
   initialCount?: number;
-  initialFormatted?: string;
 }
 
 export function ReadingCounter({ 
-  initialCount = 0,
-  initialFormatted = "0"
+  initialCount = 0
 }: ReadingCounterProps) {
   const [count, setCount] = useState(initialCount);
-  const [formatted, setFormatted] = useState(initialFormatted);
   const [isVisible, setIsVisible] = useState(false);
   const [displayCount, setDisplayCount] = useState(0);
   const counterRef = useRef<HTMLDivElement>(null);
@@ -61,34 +59,28 @@ export function ReadingCounter({
     return () => clearInterval(timer);
   }, [isVisible, count]);
 
-  // Refresh count from API periodically
+  // Refresh count from API periodically (only if initialCount was 0)
   useEffect(() => {
+    if (initialCount > 0) return;
+
     const fetchCount = async () => {
       try {
         const response = await fetch("/api/readings/count");
         if (response.ok) {
           const data = await response.json();
           setCount(data.count);
-          setFormatted(data.formatted);
         }
       } catch {
         // Silently ignore errors
       }
     };
 
-    // Initial fetch if no initial data
-    if (initialCount === 0) {
-      fetchCount();
-    }
-
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchCount, 30000);
+    fetchCount();
+    const interval = setInterval(fetchCount, 60000); // Refresh every 60s
     return () => clearInterval(interval);
   }, [initialCount]);
 
-  const displayFormatted = displayCount >= 1000 
-    ? formatNumber(displayCount)
-    : displayCount.toString();
+  const displayFormatted = formatReadingCount(displayCount);
 
   return (
     <div 
@@ -119,14 +111,4 @@ export function ReadingCounter({
       <div className="absolute inset-0 -z-10 rounded-full bg-primary/5 blur-md" />
     </div>
   );
-}
-
-function formatNumber(num: number): string {
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + "M";
-  }
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1) + "k";
-  }
-  return num.toString();
 }
