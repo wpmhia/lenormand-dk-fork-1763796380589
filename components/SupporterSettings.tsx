@@ -87,12 +87,12 @@ export function SupporterSettings({ onClose }: SupporterSettingsProps) {
           </>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg border border-green-200 bg-green-50/50 p-4 text-center dark:border-green-800 dark:bg-green-950/20">
-              <Check className="mx-auto mb-2 h-8 w-8 text-green-600" />
-              <p className="font-medium text-green-700 dark:text-green-400">
+            <div className="rounded-lg border border-amber-700/50 bg-amber-950/50 p-4 text-center">
+              <Check className="mx-auto mb-2 h-8 w-8 text-amber-400" />
+              <p className="font-medium text-amber-200">
                 You&apos;re a supporter!
               </p>
-              <p className="text-sm text-green-600 dark:text-green-500">
+              <p className="text-sm text-amber-400">
                 Thank you for your support ❤️
               </p>
             </div>
