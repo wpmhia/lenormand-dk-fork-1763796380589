@@ -10,14 +10,6 @@ export function getCards(): Card[] {
 export type CardSummary = Card;
 export type CardLookup = Card;
 
-export function getCardSummaries(): Card[] {
-  return cards;
-}
-
-export function getCardLookupData(): Card[] {
-  return cards;
-}
-
 export function getCardById(allCards: Card[], id: number): Card | undefined {
   return allCards.find((card) => card.id === id);
 }
