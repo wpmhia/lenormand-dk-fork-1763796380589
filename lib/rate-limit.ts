@@ -8,6 +8,11 @@ const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOK
 
 const cache = new Map<string, { count: number; resetTime: number }>();
 const MAX_CACHE_SIZE = 1000;
+const CLEANUP_PROBABILITY = 0.01;
+
+function shouldCleanup(): boolean {
+  return Math.random() < CLEANUP_PROBABILITY;
+}
 
 export interface RateLimitResult {
   success: boolean;
@@ -48,10 +53,16 @@ export async function rateLimit(
     } catch { /* fallthrough */ }
   }
 
-  // In-memory fallback
-  if (cache.size > MAX_CACHE_SIZE) {
+  // In-memory fallback - probabilistic cleanup for O(1) average
+  if (cache.size > MAX_CACHE_SIZE && shouldCleanup()) {
+    const keysToDelete: string[] = [];
     for (const [k, v] of cache) {
-      if (v.resetTime < now) cache.delete(k);
+      if (v.resetTime < now) {
+        keysToDelete.push(k);
+      }
+    }
+    for (const k of keysToDelete) {
+      cache.delete(k);
     }
   }
 
