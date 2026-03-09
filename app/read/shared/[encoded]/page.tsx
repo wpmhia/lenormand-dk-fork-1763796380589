@@ -42,8 +42,9 @@ function getSpreadIdFromLayoutType(layoutType: number): string {
 }
 
 export default function SharedReadingPage({ params }: PageProps) {
+  const cardsData = staticCardsData as CardType[];
   const [reading, setReading] = useState<Reading | null>(null);
-  const [allCards, setAllCards] = useState<CardType[]>([]);
+  const [allCards, setAllCards] = useState<CardType[]>(cardsData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
@@ -87,7 +88,6 @@ export default function SharedReadingPage({ params }: PageProps) {
           updatedAt: new Date(),
         };
 
-        setAllCards(cardsData);
         setReading(reading);
       } catch (error) {
         notFound();
