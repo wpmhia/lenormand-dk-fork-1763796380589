@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import heroImage from "@/public/images/hero-image.jpg";
@@ -27,7 +27,8 @@ interface HomeClientProps {
 
 export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
-  const [cards, setCards] = useState<CardType[]>(initialCards);
+
+  const previewCards = useMemo(() => initialCards.slice(0, 6), [initialCards]);
 
   return (
     <main className="bg-background text-foreground" role="main">
@@ -222,7 +223,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.slice(0, 6).map((card) => (
+          {previewCards.map((card) => (
             <Link key={card.id} href={`/learn/card-meanings/${card.id}`}>
               <Card className="h-full cursor-pointer border-border bg-muted/50 transition-all duration-300 hover:border-primary/50 hover:shadow-lg">
                 <CardHeader>
@@ -253,7 +254,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         <DailyCardModal
           open={showDailyCard}
           onOpenChange={setShowDailyCard}
-          cards={cards}
+          cards={initialCards}
         />
       </Suspense>
     </main>
