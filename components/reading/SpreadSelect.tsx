@@ -45,7 +45,9 @@ export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <Lock className="h-3 w-3" />
                     {spread.label}
-                    <span className="text-xs">(Supporter)</span>
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                      Premium
+                    </span>
                   </span>
                   <span className="line-clamp-2 max-w-[280px] text-xs text-muted-foreground/70">
                     {spread.disabledReason || `${spread.cards} cards`}

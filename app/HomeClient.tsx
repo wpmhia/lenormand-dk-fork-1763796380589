@@ -144,6 +144,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             description="Deep dive into complex situations"
             cardCount={9}
             spreadId="comprehensive"
+            disabled={true}
+            disabledReason="Premium"
           />
           <ReadingTypeCard
             icon={<ArrowRight className="h-5 w-5 text-primary" />}
@@ -151,6 +153,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             description="All 36 cards"
             cardCount={36}
             spreadId="grand-tableau"
+            disabled={true}
+            disabledReason="Premium"
           />
         </div>
       </div>

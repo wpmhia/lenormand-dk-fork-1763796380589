@@ -54,10 +54,10 @@ export function ReadingTypeCard({
           {disabled && (
             <Badge
               variant="outline"
-              className="w-fit whitespace-nowrap border-amber-500/50 text-xs text-amber-600"
+              className="w-fit whitespace-nowrap border-amber-500/50 bg-amber-50 text-xs text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
             >
               <Lock className="mr-1 h-3 w-3" />
-              {disabledReason || "Supporter exclusive"}
+              Premium
             </Badge>
           )}
         </div>
@@ -86,14 +86,9 @@ export function ReadingTypeCard({
 
   if (disabled) {
     return (
-      <a
-        href="https://ko-fi.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block"
-      >
+      <Link href="/support" className="block">
         {cardContent}
-      </a>
+      </Link>
     );
   }
 
