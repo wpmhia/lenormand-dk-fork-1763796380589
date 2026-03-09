@@ -22,32 +22,6 @@ const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = 60 * 1000;
 const allCards = staticCardsData as Card[];
 
-const responseCache = new Map<string, string>();
-const CACHE_MAX_SIZE = 100;
-const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
-
-function getCacheKey(question: string, cards: any[], spreadId: string): string {
-  const cardIds = cards.map(c => c.id).sort().join(",");
-  return `${spreadId}:${cardIds}:${question.slice(0, 50)}`;
-}
-
-function getCachedResponse(key: string): string | null {
-  const cached = responseCache.get(key);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-    return cached.response;
-  }
-  responseCache.delete(key);
-  return null;
-}
-
-function setCachedResponse(key: string, response: string): void {
-  if (responseCache.size >= CACHE_MAX_SIZE) {
-    const firstKey = responseCache.keys().next().value;
-    responseCache.delete(firstKey);
-  }
-  responseCache.set(key, { response, timestamp: Date.now() });
-}
-
 export async function POST(request: Request) {
   try {
     const ip = getClientIP(request);
