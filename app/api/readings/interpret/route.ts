@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     if (spread?.supporterOnly) {
       return new Response(
         JSON.stringify({
-          error: `${spread.label} is available for supporters`,
+          error: "Unlock this spread with a supporter code! Visit /support to learn more.",
           disabled: true,
           supporterLink: "/support",
         }),

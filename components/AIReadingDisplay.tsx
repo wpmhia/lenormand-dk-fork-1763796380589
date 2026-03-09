@@ -101,6 +101,30 @@ export function AIReadingDisplay({
   }
 
   if (error && !isStreaming) {
+    const isSupporterError = error.includes("supporter") || error.includes("Support");
+    
+    if (isSupporterError) {
+      return (
+        <Alert className="border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
+          <Crown className="h-4 w-4 text-amber-600" />
+          <AlertTitle className="text-amber-800 dark:text-amber-300">Premium Spread</AlertTitle>
+          <AlertDescription className="space-y-3">
+            <div className="text-sm text-amber-700 dark:text-amber-400">
+              {error}
+            </div>
+            <Button 
+              size="sm" 
+              onClick={() => window.location.href = '/support'}
+              className="bg-amber-500 hover:bg-amber-600 text-white"
+            >
+              <Crown className="mr-2 h-3 w-3" />
+              Unlock with Code
+            </Button>
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />

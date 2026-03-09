@@ -361,18 +361,16 @@ export default function SharedReadingPage({ params }: PageProps) {
           )}
 
           {aiError && !aiLoading && (
-            <div className="bg-destructive/5 border-destructive/20 space-y-4 rounded-lg border p-6 text-center">
-              <div className="text-destructive font-medium">
-                AI Analysis Unavailable
+            <div className="bg-amber-50 border-amber-200 space-y-4 rounded-lg border p-6 text-center dark:bg-amber-950/30 dark:border-amber-800">
+              <div className="text-amber-700 font-medium dark:text-amber-400">
+                Premium Spread
               </div>
               <div className="text-sm text-muted-foreground">{aiError}</div>
               <Button
-                onClick={() => performAIAnalysis(reading.cards)}
-                variant="outline"
-                size="sm"
-                className="border-destructive text-destructive hover:bg-destructive/10"
+                onClick={() => window.location.href = '/support'}
+                className="bg-amber-500 hover:bg-amber-600 text-white"
               >
-                Try Again
+                Unlock with Support Code
               </Button>
             </div>
           )}
