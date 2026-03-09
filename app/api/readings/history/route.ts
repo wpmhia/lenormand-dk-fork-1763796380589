@@ -29,7 +29,11 @@ export async function GET() {
 
     return new Response(
       JSON.stringify({ readings: sorted }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      { status: 200, headers: { 
+        "Content-Type": "application/json",
+        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        ...corsHeaders 
+      } }
     );
   } catch {
     return new Response(
