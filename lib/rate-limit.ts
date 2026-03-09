@@ -14,6 +14,8 @@ function shouldCleanup(): boolean {
   return Math.random() < CLEANUP_PROBABILITY;
 }
 
+const LOCAL_CACHE_TTL_MS = 5000;
+
 export interface RateLimitResult {
   success: boolean;
   limit: number;
@@ -37,18 +39,31 @@ export async function rateLimit(
   const now = Date.now();
   const key = `rl:${hashIP(ip)}`;
 
+  // Check local cache first (5s TTL) - avoids Redis for repeated requests
+  const localEntry = cache.get(key);
+  if (localEntry && localEntry.resetTime >= now) {
+    if (localEntry.count >= limit) {
+      return { success: false, limit, remaining: 0, reset: localEntry.resetTime };
+    }
+    localEntry.count++;
+    return { success: true, limit, remaining: limit - localEntry.count, reset: localEntry.resetTime };
+  }
+
   if (redis) {
     try {
       const data = await redis.get<{ count: number; resetTime: number }>(key);
       if (!data || data.resetTime < now) {
         const resetTime = now + windowMs;
         await redis.set(key, { count: 1, resetTime }, { ex: Math.ceil(windowMs / 1000) });
+        cache.set(key, { count: 1, resetTime });
         return { success: true, limit, remaining: limit - 1, reset: resetTime };
       }
       if (data.count >= limit) {
+        cache.set(key, { count: data.count, resetTime: data.resetTime });
         return { success: false, limit, remaining: 0, reset: data.resetTime };
       }
       await redis.set(key, { count: data.count + 1, resetTime: data.resetTime }, { ex: Math.ceil((data.resetTime - now) / 1000) });
+      cache.set(key, { count: data.count + 1, resetTime: data.resetTime });
       return { success: true, limit, remaining: limit - data.count - 1, reset: data.resetTime };
     } catch { /* fallthrough */ }
   }
