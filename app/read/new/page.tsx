@@ -102,14 +102,17 @@ function NewReadingPageContent() {
     [router, resetAnalysis],
   );
 
-  // Load cards synchronously - getCards() is synchronous
   const cards = getCards();
-  if (cards.length > 0) {
-    setAllCards(cards);
-  } else {
-    setError("Failed to load cards. Please try refreshing the page.");
-  }
-  setLoadingCards(false);
+
+  // Load cards in useEffect to avoid setState during render
+  useEffect(() => {
+    if (cards.length > 0) {
+      setAllCards(cards);
+    } else {
+      setError("Failed to load cards. Please try refreshing the page.");
+    }
+    setLoadingCards(false);
+  }, [cards]);
 
   // Handle reset parameter
   useEffect(() => {
