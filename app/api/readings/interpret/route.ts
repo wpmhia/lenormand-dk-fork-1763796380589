@@ -67,12 +67,12 @@ export async function POST(request: Request) {
     const cardCount = cards.length;
 
     const spread = COMPREHENSIVE_SPREADS.find(s => s.id === spreadId);
-    if (spread?.disabled) {
+    if (spread?.supporterOnly) {
       return new Response(
         JSON.stringify({
-          error: `${spread.label} is available for Ko-Fi supporters`,
+          error: `${spread.label} is available for supporters`,
           disabled: true,
-          supporterLink: "https://ko-fi.com",
+          supporterLink: "/support",
         }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } },
       );
