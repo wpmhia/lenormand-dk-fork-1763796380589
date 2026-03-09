@@ -36,7 +36,6 @@ export function SupporterSettings({ onClose }: SupporterSettingsProps) {
 
   const benefits = [
     "Access to 9-card and 36-card spreads",
-    "Unlimited reading history (cloud sync)",
     "Priority AI processing",
     "Support the development",
   ];
@@ -105,14 +104,18 @@ export function SupporterSettings({ onClose }: SupporterSettingsProps) {
           </div>
         )}
 
-        <div className="text-center text-xs text-muted-foreground">
+        <div className="text-center">
           <a
-            href="https://ko-fi.com"
+            href="https://ko-fi.com/Y8Y81NVDEK"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-primary"
+            className="inline-block"
           >
-            Get a supporter code on Ko-fi
+            <img
+              src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
+              alt="Support on Ko-fi"
+              className="h-8 w-auto"
+            />
           </a>
         </div>
       </CardContent>
