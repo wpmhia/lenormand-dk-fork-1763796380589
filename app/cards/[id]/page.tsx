@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Script from "next/script";
-import { getCardById, getCardLookupData } from "@/lib/data";
+import { getCardById, getCards } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
 import CardDetailClient from "./CardDetailClient";
 import { Card } from "@/lib/types";
@@ -87,7 +87,7 @@ export default async function CardDetailPage({ params }: PageProps) {
 
   const cards = staticCardsData as Card[];
   const card = getCardById(cards, cardId);
-  const allCards = await getCardLookupData();
+  const allCards = getCards();
 
   if (!card) {
     notFound();
@@ -120,7 +120,7 @@ export default async function CardDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: createSafeJsonLd(cardSchema) }}
       />
-      <CardDetailClient card={card} allCards={allCards as any} />
+      <CardDetailClient card={card} allCards={allCards} />
     </>
   );
 }
