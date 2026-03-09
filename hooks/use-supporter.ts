@@ -10,20 +10,19 @@ export interface SupporterStatus {
   code: string | null;
 }
 
-export function useSupporterStatus() {
-  const [status, setStatus] = useState<SupporterStatus>({
-    isSupporter: false,
-    code: null,
-  });
-  const [isLoading, setIsLoading] = useState(true);
+function getInitialStatus(): SupporterStatus {
+  if (typeof window === "undefined") {
+    return { isSupporter: false, code: null };
+  }
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored && VALID_CODES.includes(stored.toUpperCase())) {
+    return { isSupporter: true, code: stored.toUpperCase() };
+  }
+  return { isSupporter: false, code: null };
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored && VALID_CODES.includes(stored.toUpperCase())) {
-      setStatus({ isSupporter: true, code: stored.toUpperCase() });
-    }
-    setIsLoading(false);
-  }, []);
+export function useSupporterStatus() {
+  const [status, setStatus] = useState<SupporterStatus>(getInitialStatus);
 
   const redeemCode = useCallback((code: string): boolean => {
     const normalizedCode = code.trim().toUpperCase();
@@ -40,5 +39,5 @@ export function useSupporterStatus() {
     setStatus({ isSupporter: false, code: null });
   }, []);
 
-  return { status, isLoading, redeemCode, clearStatus };
+  return { status, redeemCode, clearStatus };
 }
