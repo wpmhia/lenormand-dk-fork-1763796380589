@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 
 const STORAGE_KEY = "lenormand_supporter_code";
-const VALID_CODES = ["LENORMAND-PLUS", "THANKYOU", "SUPPORT2024"];
+const VALID_CODES = ["LENORMAND-PLUS", "THANKYOU", "SUPPORT2026"];
 
 export interface SupporterStatus {
   isSupporter: boolean;
