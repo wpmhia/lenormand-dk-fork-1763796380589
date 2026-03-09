@@ -25,59 +25,50 @@ interface RateLimitEntry {
 }
 
 const ipCache = new Map<string, RateLimitEntry>();
-let cacheLock = false;
 
-async function atomicCacheUpdate(
+function updateCache(
   ip: string,
   now: number,
   windowMs: number,
   limit: number
-): Promise<RateLimitResult> {
-  while (cacheLock) {
-    await new Promise(resolve => setTimeout(resolve, 1));
-  }
-  cacheLock = true;
-  try {
-    const entry = ipCache.get(ip);
+): RateLimitResult {
+  const entry = ipCache.get(ip);
 
-    if (!entry || entry.resetTime < now) {
-      evictOldestEntries();
-      
-      const newEntry: RateLimitEntry = {
-        count: 1,
-        resetTime: now + windowMs,
-        lastAccess: now,
-      };
-      ipCache.set(ip, newEntry);
-      return {
-        success: true,
-        limit,
-        remaining: limit - 1,
-        reset: newEntry.resetTime,
-      };
-    }
-
-    if (entry.count >= limit) {
-      entry.lastAccess = now;
-      return {
-        success: false,
-        limit,
-        remaining: 0,
-        reset: entry.resetTime,
-      };
-    }
-
-    entry.count++;
-    entry.lastAccess = now;
+  if (!entry || entry.resetTime < now) {
+    evictOldestEntries();
+    
+    const newEntry: RateLimitEntry = {
+      count: 1,
+      resetTime: now + windowMs,
+      lastAccess: now,
+    };
+    ipCache.set(ip, newEntry);
     return {
       success: true,
       limit,
-      remaining: limit - entry.count,
+      remaining: limit - 1,
+      reset: newEntry.resetTime,
+    };
+  }
+
+  if (entry.count >= limit) {
+    entry.lastAccess = now;
+    return {
+      success: false,
+      limit,
+      remaining: 0,
       reset: entry.resetTime,
     };
-  } finally {
-    cacheLock = false;
   }
+
+  entry.count++;
+  entry.lastAccess = now;
+  return {
+    success: true,
+    limit,
+    remaining: limit - entry.count,
+    reset: entry.resetTime,
+  };
 }
 
 // Note: In serverless/Edge environments, setInterval persists across requests
@@ -164,8 +155,7 @@ export async function rateLimit(
     }
   }
 
-  // In-memory fallback with basic locking
-  return atomicCacheUpdate(ip, now, windowMs, limit);
+  return updateCache(ip, now, windowMs, limit);
 }
 
 export function getClientIP(request: Request): string {

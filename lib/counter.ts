@@ -14,22 +14,8 @@ const redis = redisUrl && redisToken
 
 // In-memory fallback counter - starts at 120
 let memoryCounter = 120;
-let counterLock = false;
 const COUNTER_KEY = "reading_count:total";
 const INITIAL_COUNT = 120;
-
-async function atomicIncrement(): Promise<number> {
-  while (counterLock) {
-    await new Promise(resolve => setTimeout(resolve, 1));
-  }
-  counterLock = true;
-  try {
-    memoryCounter++;
-    return memoryCounter;
-  } finally {
-    counterLock = false;
-  }
-}
 
 /**
  * Increment the total reading counter
@@ -47,9 +33,9 @@ export async function incrementReadingCount(): Promise<number> {
     }
   }
   
-  const count = atomicIncrement();
-  console.log("[Counter] In-memory increment to:", count);
-  return count;
+  memoryCounter++;
+  console.log("[Counter] In-memory increment to:", memoryCounter);
+  return memoryCounter;
 }
 
 /**
