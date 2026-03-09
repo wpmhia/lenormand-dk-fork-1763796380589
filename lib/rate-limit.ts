@@ -1,93 +1,13 @@
-// Rate limiter with Redis support (falls back to in-memory)
 import { Redis } from "@upstash/redis";
 import { getEnv } from "./env";
-import {
-  DEFAULT_RATE_LIMIT,
-  DEFAULT_RATE_WINDOW_MS,
-  MAX_RATE_LIMIT_CACHE_SIZE,
-  RATE_LIMIT_EVICTION_PERCENTAGE,
-} from "./constants";
+import { DEFAULT_RATE_LIMIT, DEFAULT_RATE_WINDOW_MS } from "./constants";
 
-const redisUrl = getEnv("UPSTASH_REDIS_REST_URL");
-const redisToken = getEnv("UPSTASH_REDIS_REST_TOKEN");
-
-const redis = redisUrl && redisToken
-  ? new Redis({
-      url: redisUrl,
-      token: redisToken,
-    })
+const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN")
+  ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
   : null;
 
-interface RateLimitEntry {
-  count: number;
-  resetTime: number;
-  lastAccess: number; // For LRU eviction
-}
-
-const ipCache = new Map<string, RateLimitEntry>();
-
-function updateCache(
-  ip: string,
-  now: number,
-  windowMs: number,
-  limit: number
-): RateLimitResult {
-  const entry = ipCache.get(ip);
-
-  if (!entry || entry.resetTime < now) {
-    evictOldestEntries();
-    
-    const newEntry: RateLimitEntry = {
-      count: 1,
-      resetTime: now + windowMs,
-      lastAccess: now,
-    };
-    ipCache.set(ip, newEntry);
-    return {
-      success: true,
-      limit,
-      remaining: limit - 1,
-      reset: newEntry.resetTime,
-    };
-  }
-
-  if (entry.count >= limit) {
-    entry.lastAccess = now;
-    return {
-      success: false,
-      limit,
-      remaining: 0,
-      reset: entry.resetTime,
-    };
-  }
-
-  entry.count++;
-  entry.lastAccess = now;
-  return {
-    success: true,
-    limit,
-    remaining: limit - entry.count,
-    reset: entry.resetTime,
-  };
-}
-
-// Note: In serverless/Edge environments, setInterval persists across requests
-// and can cause memory issues. The LRU eviction in evictOldestEntries() handles
-// cleanup when the cache gets too large, so we don't need periodic cleanup.
-
-// LRU eviction: remove oldest entries when cache exceeds max size
-function evictOldestEntries(): void {
-  if (ipCache.size <= MAX_RATE_LIMIT_CACHE_SIZE) return;
-  
-  const entries = Array.from(ipCache.entries());
-  entries.sort((a, b) => a[1].lastAccess - b[1].lastAccess);
-  
-  // Remove oldest entries based on configured percentage
-  const entriesToRemove = Math.floor(MAX_RATE_LIMIT_CACHE_SIZE * RATE_LIMIT_EVICTION_PERCENTAGE);
-  for (let i = 0; i < entriesToRemove && i < entries.length; i++) {
-    ipCache.delete(entries[i][0]);
-  }
-}
+const cache = new Map<string, { count: number; resetTime: number }>();
+const MAX_CACHE_SIZE = 1000;
 
 export interface RateLimitResult {
   success: boolean;
@@ -96,13 +16,10 @@ export interface RateLimitResult {
   reset: number;
 }
 
-async function hashIP(ip: string): Promise<string> {
-  // Simple hash for rate limiting - fast and sufficient
+function hashIP(ip: string): string {
   let hash = 0;
   for (let i = 0; i < ip.length; i++) {
-    const char = ip.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
+    hash = ((hash << 5) - hash + ip.charCodeAt(i)) | 0;
   }
   return Math.abs(hash).toString(36);
 }
@@ -113,64 +30,49 @@ export async function rateLimit(
   windowMs: number = DEFAULT_RATE_WINDOW_MS,
 ): Promise<RateLimitResult> {
   const now = Date.now();
-  // SECURITY: Hash IP before using as cache key to prevent IP exposure in logs
-  const key = `rate_limit:${await hashIP(ip)}`;
+  const key = `rl:${hashIP(ip)}`;
 
-  // Use Redis if available
   if (redis) {
     try {
       const data = await redis.get<{ count: number; resetTime: number }>(key);
-      
       if (!data || data.resetTime < now) {
-        // New window
         const resetTime = now + windowMs;
-        const ttlSeconds = Math.ceil((resetTime - now) / 1000);
-        await redis.set(key, { count: 1, resetTime }, { ex: ttlSeconds });
-        return {
-          success: true,
-          limit,
-          remaining: limit - 1,
-          reset: resetTime,
-        };
+        await redis.set(key, { count: 1, resetTime }, { ex: Math.ceil(windowMs / 1000) });
+        return { success: true, limit, remaining: limit - 1, reset: resetTime };
       }
-
       if (data.count >= limit) {
-        return {
-          success: false,
-          limit,
-          remaining: 0,
-          reset: data.resetTime,
-        };
+        return { success: false, limit, remaining: 0, reset: data.resetTime };
       }
-
       await redis.set(key, { count: data.count + 1, resetTime: data.resetTime }, { ex: Math.ceil((data.resetTime - now) / 1000) });
-      return {
-        success: true,
-        limit,
-        remaining: limit - data.count - 1,
-        reset: data.resetTime,
-      };
-    } catch {
-      // Fall back to in-memory on Redis error
+      return { success: true, limit, remaining: limit - data.count - 1, reset: data.resetTime };
+    } catch { /* fallthrough */ }
+  }
+
+  // In-memory fallback
+  if (cache.size > MAX_CACHE_SIZE) {
+    for (const [k, v] of cache) {
+      if (v.resetTime < now) cache.delete(k);
     }
   }
 
-  return updateCache(ip, now, windowMs, limit);
+  const entry = cache.get(key);
+  if (!entry || entry.resetTime < now) {
+    const resetTime = now + windowMs;
+    cache.set(key, { count: 1, resetTime });
+    return { success: true, limit, remaining: limit - 1, reset: resetTime };
+  }
+  if (entry.count >= limit) {
+    return { success: false, limit, remaining: 0, reset: entry.resetTime };
+  }
+  entry.count++;
+  return { success: true, limit, remaining: limit - entry.count, reset: entry.resetTime };
 }
 
 export function getClientIP(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    // SECURITY: Use rightmost IP (closest to server) to prevent spoofing
-    // Format: client, proxy1, proxy2, ..., server
     const ips = forwarded.split(",").map(ip => ip.trim());
     return ips[ips.length - 1] || "unknown";
   }
-
-  const realIP = request.headers.get("x-real-ip");
-  if (realIP) {
-    return realIP;
-  }
-
-  return "unknown";
+  return request.headers.get("x-real-ip") || "unknown";
 }

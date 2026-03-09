@@ -50,11 +50,7 @@ export const DEFAULT_RATE_LIMIT = 5;
 /** Default rate limit window in milliseconds (1 minute) */
 export const DEFAULT_RATE_WINDOW_MS = 60 * 1000;
 
-/** Maximum number of IP entries in cache before LRU eviction */
-export const MAX_RATE_LIMIT_CACHE_SIZE = 10000;
 
-/** Percentage of cache to evict when max size is reached */
-export const RATE_LIMIT_EVICTION_PERCENTAGE = 0.2;
 
 // ============================================================================
 // API Configuration
