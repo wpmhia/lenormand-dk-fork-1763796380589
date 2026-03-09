@@ -1,12 +1,12 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 1) return 200;
-  if (cardCount <= 3) return 350;
-  if (cardCount <= 5) return 450;
-  if (cardCount <= 9) return 550;
-  if (cardCount <= 36) return 700;
-  return 350;
+  if (cardCount <= 1) return 150;
+  if (cardCount <= 3) return 250;
+  if (cardCount <= 5) return 350;
+  if (cardCount <= 9) return 450;
+  if (cardCount <= 36) return 550;
+  return 250;
 }
 
 export interface AIReadingResponse {
