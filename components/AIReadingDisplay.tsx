@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { AIReadingResponse, VALID_CARD_NAMES } from "@/lib/prompt-builder";
+import { useState, useMemo, useCallback } from "react";
+import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -16,21 +16,15 @@ const CARD_NAMES = [
   "The Moon", "The Key", "The Fish", "The Anchor", "The Cross"
 ];
 
+const CARD_REGEX = new RegExp(`(${CARD_NAMES.join('|')})`, 'g');
+
 function highlightCardNames(text: string): React.ReactNode {
-  let result = text;
-  CARD_NAMES.forEach(name => {
-    result = result.replace(new RegExp(name, 'g'), `{{${name}}}`);
-  });
-  
-  const parts = result.split(/(\{\{[^}]+\}\})/g);
-  
-  return parts.map((part, i) => {
-    if (part.startsWith('{{') && part.endsWith('}}')) {
-      const cardName = part.slice(2, -2);
-      return <span key={i} className="text-primary font-medium">{cardName}</span>;
-    }
-    return part;
-  });
+  const parts = text.split(CARD_REGEX);
+  return parts.map((part, i) => 
+    CARD_NAMES.includes(part) 
+      ? <span key={i} className="text-primary font-medium">{part}</span>
+      : part
+  );
 }
 
 interface AIReadingDisplayProps {

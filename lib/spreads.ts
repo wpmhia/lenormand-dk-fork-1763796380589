@@ -70,11 +70,7 @@ export const COMPREHENSIVE_SPREADS: Spread[] = [
   // REMOVED: yes-no-maybe, past-present-future (not authentic Lenormand)
 ];
 
-// Legacy names for backward compatibility
-export const CORE_SPREADS: Spread[] = AUTHENTIC_SPREADS;
-export const ADVANCED_SPREADS: Spread[] = MODERN_SPREADS;
 
-// Grand Tableau Specific Types and Data
 
 export type SignificatorType = "anima" | "animus" | "none";
 

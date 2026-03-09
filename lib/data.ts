@@ -1,45 +1,28 @@
 import { Card, Reading, ReadingCard } from "./types";
 import staticCardsData from "@/public/data/cards.json";
 
-// NOTE: HMAC signing is now server-only in app/api/readings/share/route.ts
-// Client-side code NEVER has access to crypto keys
-// This prevents secret extraction and URL forgery
+const cards = staticCardsData as Card[];
 
-export async function getCards(): Promise<Card[]> {
-  const data = staticCardsData as Card[];
-
-  if (!Array.isArray(data) || data.length === 0) {
-    console.error("Invalid or empty cards data");
-    return [];
-  }
-
-  return data;
-}
-
-// CardSummary is same as Card - use Card type directly
-export type CardSummary = Card;
-
-export async function getCardSummaries(): Promise<CardSummary[]> {
-  return getCards();
-}
-
-// CardLookup is essentially Card with combos limited to 10
-export type CardLookup = Card;
-
-export async function getCardLookupData(): Promise<CardLookup[]> {
-  const cards = await getCards();
-  // Cards already have combos built in, return as-is
-  // (limiting to 10 happens in the display layer if needed)
+export function getCards(): Card[] {
   return cards;
 }
 
-export function getCardById(cards: Card[], id: number): Card | undefined {
-  return cards.find((card) => card.id === id);
+export type CardSummary = Card;
+export type CardLookup = Card;
+
+export function getCardSummaries(): Card[] {
+  return cards;
 }
 
-// Encode reading data for URL sharing - server-side HMAC only
+export function getCardLookupData(): Card[] {
+  return cards;
+}
+
+export function getCardById(allCards: Card[], id: number): Card | undefined {
+  return allCards.find((card) => card.id === id);
+}
+
 export async function encodeReadingForUrl(reading: Reading): Promise<string> {
-  // Server-side HMAC generation via API to prevent secret exposure
   const response = await fetch("/api/readings/share", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -47,40 +30,20 @@ export async function encodeReadingForUrl(reading: Reading): Promise<string> {
       t: reading.title,
       q: reading.question,
       l: reading.layoutType,
-      c: reading.cards.map((card) => ({
-        i: card.id,
-        p: card.position,
-      })),
+      c: reading.cards.map((card) => ({ i: card.id, p: card.position })),
     }),
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to encode reading");
-  }
-
+  if (!response.ok) throw new Error("Failed to encode reading");
   const { encoded } = await response.json();
   return encoded;
 }
 
-// Decode reading data from URL with server-side HMAC validation
-export async function decodeReadingFromUrl(
-  encoded: string,
-): Promise<Partial<Reading> | null> {
+export async function decodeReadingFromUrl(encoded: string): Promise<Partial<Reading> | null> {
   try {
-    // Server-side HMAC validation via API
     const response = await fetch(`/api/readings/share?encoded=${encodeURIComponent(encoded)}`);
-    
-    if (!response.ok) {
-      return null;
-    }
-
+    if (!response.ok) return null;
     const data = await response.json();
-    
-    // Validate data structure to prevent XSS
-    if (!Array.isArray(data.c) || typeof data.l !== "number") {
-      return null;
-    }
-
+    if (!Array.isArray(data.c) || typeof data.l !== "number") return null;
     return {
       title: String(data.t || ""),
       question: String(data.q || ""),
@@ -90,159 +53,82 @@ export async function decodeReadingFromUrl(
         position: Number(card.p) || 0,
       })),
     };
-  } catch (error) {
-    console.warn("Error decoding reading from URL:", error);
+  } catch {
     return null;
   }
 }
 
-// Draw cards for reading - ensures complete randomness with no repetition
-export function drawCards(cards: Card[], count: number): ReadingCard[] {
-  if (count > cards.length) {
-    throw new Error(
-      `Cannot draw ${count} cards from a deck of ${cards.length}`,
-    );
+export function drawCards(allCards: Card[], count: number): ReadingCard[] {
+  if (count > allCards.length) {
+    throw new Error(`Cannot draw ${count} cards from a deck of ${allCards.length}`);
   }
-
-  // Create a copy of the cards array to avoid modifying the original
-  const availableCards = [...cards];
-  const drawnCards: Card[] = [];
-
-  // Draw cards randomly without replacement for complete uniqueness
+  const available = [...allCards];
+  const drawn: Card[] = [];
   for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * availableCards.length);
-    const drawnCard = availableCards.splice(randomIndex, 1)[0];
-    drawnCards.push(drawnCard);
+    const idx = Math.floor(Math.random() * available.length);
+    drawn.push(available.splice(idx, 1)[0]);
   }
-
-  return drawnCards.map((card, index) => ({
-    id: card.id,
-    position: index,
-  }));
+  return drawn.map((card, index) => ({ id: card.id, position: index }));
 }
 
-// Get combination meaning between two cards
 export function getCombinationMeaning(
   card1: Card,
   card2: Card,
   card1Position?: number,
   card2Position?: number,
 ): string | null {
-  // For directional combinations, use the card that appears first in the spread
-  const useCard1Perspective =
-    card1Position !== undefined && card2Position !== undefined
-      ? card1Position <= card2Position
-      : true; // fallback to original behavior if positions not provided
-
-  const primaryCard = useCard1Perspective ? card1 : card2;
-  const secondaryCard = useCard1Perspective ? card2 : card1;
-
-  const combos = Array.isArray(primaryCard.combos) ? primaryCard.combos : [];
-  const combo = combos.find((c) => c.withCardId === secondaryCard.id);
-  return combo?.meaning || null;
+  const useCard1Perspective = card1Position !== undefined && card2Position !== undefined
+    ? card1Position <= card2Position
+    : true;
+  const primary = useCard1Perspective ? card1 : card2;
+  const secondary = useCard1Perspective ? card2 : card1;
+  const combos = Array.isArray(primary.combos) ? primary.combos : [];
+  return combos.find((c) => c.withCardId === secondary.id)?.meaning || null;
 }
 
-// Get adjacent cards for linear layouts (3, 5, 9 cards)
-export function getLinearAdjacentCards(
-  cards: ReadingCard[],
-  currentIndex: number,
-): ReadingCard[] {
+export function getLinearAdjacentCards(cards: ReadingCard[], currentIndex: number): ReadingCard[] {
+  if (currentIndex < 0 || currentIndex >= cards.length) return [];
   const adjacent: ReadingCard[] = [];
-
-  // Check if currentIndex is valid
-  if (currentIndex < 0 || currentIndex >= cards.length) {
-    return adjacent;
-  }
-
-  if (currentIndex > 0) {
-    adjacent.push(cards[currentIndex - 1]);
-  }
-  if (currentIndex < cards.length - 1) {
-    adjacent.push(cards[currentIndex + 1]);
-  }
-
+  if (currentIndex > 0) adjacent.push(cards[currentIndex - 1]);
+  if (currentIndex < cards.length - 1) adjacent.push(cards[currentIndex + 1]);
   return adjacent;
 }
 
-// Get adjacent cards for Grand Tableau (36 cards in 9x4 grid)
-export function getGrandTableauAdjacentCards(
-  cards: ReadingCard[],
-  currentIndex: number,
-): ReadingCard[] {
-  const adjacent: ReadingCard[] = [];
-
-  // Check if currentIndex is valid
-  if (currentIndex < 0 || currentIndex >= 36) {
-    return adjacent;
-  }
-
+export function getGrandTableauAdjacentCards(cards: ReadingCard[], currentIndex: number): ReadingCard[] {
+  if (currentIndex < 0 || currentIndex >= 36) return [];
   const row = Math.floor(currentIndex / 9);
   const col = currentIndex % 9;
-
-  // Create position-indexed map for O(1) lookup instead of O(n) search
   const cardByPosition = new Map(cards.map((card) => [card.position, card]));
-
-  // Adjacent positions in grid (top, bottom, left, right)
-  const adjacentPositions = [
-    { r: row - 1, c: col }, // top
-    { r: row + 1, c: col }, // bottom
-    { r: row, c: col - 1 }, // left
-    { r: row, c: col + 1 }, // right
+  const adjacent: ReadingCard[] = [];
+  const positions = [
+    { r: row - 1, c: col },
+    { r: row + 1, c: col },
+    { r: row, c: col - 1 },
+    { r: row, c: col + 1 },
   ].filter((pos) => pos.r >= 0 && pos.r < 4 && pos.c >= 0 && pos.c < 9);
-
-  adjacentPositions.forEach((pos) => {
-    const adjIndex = pos.r * 9 + pos.c;
-    const adjCard = cardByPosition.get(adjIndex);
+  for (const pos of positions) {
+    const adjCard = cardByPosition.get(pos.r * 9 + pos.c);
     if (adjCard) adjacent.push(adjCard);
-  });
-
+  }
   return adjacent;
 }
-// Get all combinations of adjacent cards in a reading
+
 export function getReadingCombinations(
   cards: ReadingCard[],
   allCards: Card[],
-): Array<{
-  card1: Card;
-  card2: Card;
-  position1: number;
-  position2: number;
-  meaning: string | null;
-}> {
-  const combinations: Array<{
-    card1: Card;
-    card2: Card;
-    position1: number;
-    position2: number;
-    meaning: string | null;
-  }> = [];
-
-  // Find combinations between adjacent cards
+): Array<{ card1: Card; card2: Card; position1: number; position2: number; meaning: string | null }> {
+  const combinations: Array<{ card1: Card; card2: Card; position1: number; position2: number; meaning: string | null }> = [];
   for (let i = 0; i < cards.length - 1; i++) {
     const currentCard = cards[i];
     const nextCard = cards[i + 1];
-
     const card1 = getCardById(allCards, currentCard.id);
     const card2 = getCardById(allCards, nextCard.id);
-
     if (card1 && card2) {
-      const meaning = getCombinationMeaning(
-        card1,
-        card2,
-        currentCard.position,
-        nextCard.position,
-      );
+      const meaning = getCombinationMeaning(card1, card2, currentCard.position, nextCard.position);
       if (meaning) {
-        combinations.push({
-          card1,
-          card2,
-          position1: currentCard.position,
-          position2: nextCard.position,
-          meaning,
-        });
+        combinations.push({ card1, card2, position1: currentCard.position, position2: nextCard.position, meaning });
       }
     }
   }
-
   return combinations;
 }

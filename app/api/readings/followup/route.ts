@@ -14,7 +14,6 @@ export async function OPTIONS() {
 
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const BASE_URL = getEnv("MISTRAL_BASE_URL") || "https://api.mistral.ai";
-
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = 60 * 1000;
 
@@ -42,8 +41,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-
     if (!MISTRAL_API_KEY) {
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 503,
@@ -51,7 +48,8 @@ export async function POST(request: Request) {
       });
     }
 
-    const { followUpQuestion, originalReading, cards, spreadId } = body;
+    const body = await request.json();
+    const { followUpQuestion, originalReading, cards } = body;
 
     if (!followUpQuestion || typeof followUpQuestion !== "string") {
       return new Response(JSON.stringify({ error: "Follow-up question required" }), {
@@ -106,20 +104,13 @@ Provide a brief, direct answer to the follow-up question based on the original r
 
           clearTimeout(timeoutId);
 
-          if (!response.ok) {
-            // SECURITY: Don't expose external API error details
-            throw new Error("External service error");
-          }
+          if (!response.ok) throw new Error("External service error");
 
-          const body = response.body;
-          if (!body) {
-            throw new Error("No response body");
-          }
-          const reader = body.getReader();
+          const reader = response.body?.getReader();
+          if (!reader) throw new Error("No response body");
 
           const decoder = new TextDecoder();
           let buffer = "";
-          let fullText = "";
 
           controller.enqueue(encoder.encode(
             `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
@@ -130,50 +121,39 @@ Provide a brief, direct answer to the follow-up question based on the original r
             if (done) break;
 
             const chunk = decoder.decode(value, { stream: true });
-            const result = processSSEChunk(chunk, buffer);
-            const events = result.events;
-            buffer = result.buffer;
+            const { events, buffer: newBuffer } = processSSEChunk(chunk, buffer);
+            buffer = newBuffer;
 
             for (const event of events) {
               const data = event as any;
               if (data && typeof data === "object") {
                 const delta = data.choices?.[0]?.delta?.content;
                 if (delta) {
-                  fullText += delta;
-                  const sseData = JSON.stringify({ type: "chunk", content: delta });
-                  controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
                 }
               }
             }
           }
 
-          const finalEvents = finalizeSSEStream(buffer);
-          for (const event of finalEvents) {
+          for (const event of finalizeSSEStream(buffer)) {
             const data = event as any;
             if (data && typeof data === "object") {
               const delta = data.choices?.[0]?.delta?.content;
               if (delta) {
-                fullText += delta;
-                const sseData = JSON.stringify({ type: "chunk", content: delta });
-                controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
               }
             }
           }
 
-          controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: "done" })}\n\n`
-          ));
-
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`));
           controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
           const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
-          // SECURITY: Generic error messages - don't expose internal details
-          const errorData = JSON.stringify({
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
             type: "error",
             error: isTimeout ? "Response timed out" : "Processing failed",
-          });
-          controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
+          })}\n\n`));
           controller.close();
         }
       },
@@ -193,14 +173,9 @@ Provide a brief, direct answer to the follow-up question based on the original r
     });
   } catch (error: any) {
     const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
-    const status = isTimeout ? 504 : 500;
-
-    // SECURITY: Generic error messages - don't expose internal details
     return new Response(
-      JSON.stringify({
-        error: isTimeout ? "Response timed out" : "Processing failed",
-      }),
-      { status, headers: { "Content-Type": "application/json", ...corsHeaders } },
+      JSON.stringify({ error: isTimeout ? "Response timed out" : "Processing failed" }),
+      { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
   }
 }

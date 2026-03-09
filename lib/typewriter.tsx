@@ -9,22 +9,13 @@ interface UseTypewriterOptions {
   onComplete?: () => void;
 }
 
-/**
- * Elegant typewriter effect for displaying AI reading content
- * Creates the illusion of streaming without server-side streaming costs
- */
-export function useTypewriter({
-  text,
-  speed = 30,
-  enabled = true,
-  onComplete,
-}: UseTypewriterOptions) {
+export function useTypewriter({ text, speed = 30, enabled = true, onComplete }: UseTypewriterOptions) {
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
   const [previousText, setPreviousText] = useState("");
 
-  const words = text.split(/(\s+)/); // Split by whitespace but keep delimiters
+  const words = text.split(/(\s+)/);
 
   useEffect(() => {
     if (!enabled || !text) {
@@ -33,22 +24,19 @@ export function useTypewriter({
       return;
     }
 
-    // Check if this is new text or additional text (progressive chunks)
     const isNewText = !previousText || !text.startsWith(previousText);
-    
     if (isNewText) {
-      // Complete reset for completely new text
       setDisplayedText("");
       setWordIndex(0);
       setIsComplete(false);
     }
-    // If text is just growing (progressive chunks), continue from current position
-    
     setPreviousText(text);
 
     const interval = setInterval(() => {
       setWordIndex((prev) => {
         const next = prev + 1;
+        const newText = words.slice(0, next).join("");
+        setDisplayedText(newText);
         if (next >= words.length) {
           clearInterval(interval);
           setIsComplete(true);
@@ -60,13 +48,7 @@ export function useTypewriter({
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed, enabled, onComplete, previousText, words.length]);
-
-  // Build displayed text from words
-  useEffect(() => {
-    const newText = words.slice(0, wordIndex).join("");
-    setDisplayedText(newText);
-  }, [wordIndex, words]);
+  }, [text, speed, enabled, onComplete, previousText, words]);
 
   const skip = useCallback(() => {
     setDisplayedText(text);
@@ -92,30 +74,12 @@ interface TypewriterTextProps {
   onComplete?: () => void;
 }
 
-/**
- * Component that renders text with typewriter effect
- */
-export function TypewriterText({
-  text,
-  speed = 30,
-  enabled = true,
-  className,
-  showCursor = true,
-  onComplete,
-}: TypewriterTextProps) {
-  const { displayedText, isComplete } = useTypewriter({
-    text,
-    speed,
-    enabled,
-    onComplete,
-  });
-
+export function TypewriterText({ text, speed = 30, enabled = true, className, showCursor = true, onComplete }: TypewriterTextProps) {
+  const { displayedText, isComplete } = useTypewriter({ text, speed, enabled, onComplete });
   return (
     <span className={className}>
       {displayedText}
-      {showCursor && !isComplete && (
-        <span className="animate-pulse text-primary">|</span>
-      )}
+      {showCursor && !isComplete && <span className="animate-pulse text-primary">|</span>}
     </span>
   );
 }

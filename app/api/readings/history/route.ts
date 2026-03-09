@@ -4,14 +4,8 @@ import { Redis } from "@upstash/redis";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 
-const redisUrl = getEnv("UPSTASH_REDIS_REST_URL");
-const redisToken = getEnv("UPSTASH_REDIS_REST_TOKEN");
-
-const redis = redisUrl && redisToken
-  ? new Redis({
-      url: redisUrl,
-      token: redisToken,
-    })
+const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN")
+  ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
   : null;
 
 const READINGS_KEY = "user_readings";
@@ -37,8 +31,7 @@ export async function GET() {
       JSON.stringify({ readings: sorted }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
-  } catch (error) {
-    console.error("Error fetching readings:", error);
+  } catch {
     return new Response(
       JSON.stringify({ readings: [], error: "Failed to fetch readings" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -78,7 +71,6 @@ export async function POST(request: Request) {
     const readings = await redis.get<any[]>(READINGS_KEY) || [];
     readings.push(newReading);
 
-    // Keep only latest MAX_READINGS
     if (readings.length > MAX_READINGS) {
       readings.sort((a, b) => b.timestamp - a.timestamp);
       readings.splice(MAX_READINGS);
@@ -90,8 +82,7 @@ export async function POST(request: Request) {
       JSON.stringify({ success: true, reading: newReading }),
       { status: 201, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
-  } catch (error) {
-    console.error("Error saving reading:", error);
+  } catch {
     return new Response(
       JSON.stringify({ error: "Failed to save reading" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -127,8 +118,7 @@ export async function DELETE(request: Request) {
       JSON.stringify({ success: true }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
-  } catch (error) {
-    console.error("Error deleting reading:", error);
+  } catch {
     return new Response(
       JSON.stringify({ error: "Failed to delete reading" }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }

@@ -16,20 +16,14 @@ export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-// Use getEnv for edge runtime compatibility
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const BASE_URL = getEnv("MISTRAL_BASE_URL") || "https://api.mistral.ai";
-
-const RATE_LIMIT = 5;  // 5 requests per minute
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute window
-
-// Load cards data for keyword lookups
+const RATE_LIMIT = 5;
+const RATE_LIMIT_WINDOW = 60 * 1000;
 const allCards = staticCardsData as Card[];
 
 export async function POST(request: Request) {
   try {
-    console.log("[API] Interpret request started");
-    
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
@@ -56,7 +50,6 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     if (!MISTRAL_API_KEY) {
-      // SECURITY: Don't expose which service is not configured
       return new Response(JSON.stringify({ error: "Service unavailable" }), {
         status: 503,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -73,7 +66,6 @@ export async function POST(request: Request) {
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
 
-    // Check if spread is disabled (premium feature)
     const spread = COMPREHENSIVE_SPREADS.find(s => s.id === spreadId);
     if (spread?.disabled) {
       return new Response(
@@ -82,35 +74,19 @@ export async function POST(request: Request) {
           disabled: true,
           supporterLink: "https://ko-fi.com",
         }),
-        {
-          status: 403,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        },
+        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } },
       );
     }
 
-    // Enrich cards with keywords for better AI grounding
     const cardsWithKeywords = cards.map((c: { id: number; name: string }) => {
       const cardData = allCards.find((card: Card) => card.id === c.id);
-      return {
-        id: c.id,
-        name: c.name,
-        keywords: cardData?.keywords || [],
-      };
+      return { id: c.id, name: c.name, keywords: cardData?.keywords || [] };
     });
 
-    const prompt = buildPrompt(
-      cardsWithKeywords,
-      spreadId || "sentence-3",
-      question || "What do the cards show?",
-    );
-
-     const timeoutMs = 15000; // 15 seconds - accounts for cold starts
+    const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?");
+    const timeoutMs = 15000;
     const maxTokens = getTokenBudget(cardCount);
 
-    console.log("[API] Starting streaming response, maxTokens:", maxTokens);
-
-    // Stream directly to client - no waiting for full response
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -140,105 +116,69 @@ export async function POST(request: Request) {
 
           clearTimeout(timeoutId);
 
-          if (!response.ok) {
-            // SECURITY: Don't expose external API error details
-            throw new Error("External service error");
-          }
+          if (!response.ok) throw new Error("External service error");
 
-          const body = response.body;
-          if (!body) {
-            throw new Error("No response body");
-          }
-          const reader = body.getReader();
+          const reader = response.body?.getReader();
+          if (!reader) throw new Error("No response body");
 
-            const decoder = new TextDecoder();
-            let buffer = "";
-            let fullText = "";
-            let isTruncated = false;
+          const decoder = new TextDecoder();
+          let buffer = "";
+          let fullText = "";
+          let isTruncated = false;
 
-            // Send headers first
-            controller.enqueue(encoder.encode(
-              `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
-            ));
+          controller.enqueue(encoder.encode(
+            `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
+          ));
 
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-              const chunk = decoder.decode(value, { stream: true });
-              const result = processSSEChunk(chunk, buffer);
-              const events = result.events;
-              buffer = result.buffer;
-              
-              for (const event of events) {
-                const data = (event as any);
-                if (data && typeof data === "object") {
-                  const delta = data.choices?.[0]?.delta?.content;
-                  if (delta) {
-                    fullText += delta;
-                    console.log("[API] Sending chunk, length:", delta.length);
-                    const sseData = JSON.stringify({ type: "chunk", content: delta });
-                    controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
-                  }
-                  // Check for finish reason
-                  const finishReason = data.choices?.[0]?.finish_reason;
-                  if (finishReason === "length") {
-                    isTruncated = true;
-                  }
-                }
-              }
-            }
+            const chunk = decoder.decode(value, { stream: true });
+            const { events, buffer: newBuffer } = processSSEChunk(chunk, buffer);
+            buffer = newBuffer;
 
-            // Process any remaining buffered data
-            const finalEvents = finalizeSSEStream(buffer);
-            for (const event of finalEvents) {
-              const data = (event as any);
+            for (const event of events) {
+              const data = event as any;
               if (data && typeof data === "object") {
                 const delta = data.choices?.[0]?.delta?.content;
                 if (delta) {
                   fullText += delta;
-                  console.log("[API] Sending final chunk, length:", delta.length);
-                  const sseData = JSON.stringify({ type: "chunk", content: delta });
-                  controller.enqueue(encoder.encode(`data: ${sseData}\n\n`));
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
                 }
-                const finishReason = data.choices?.[0]?.finish_reason;
-                if (finishReason === "length") {
-                  isTruncated = true;
-                }
+                if (data.choices?.[0]?.finish_reason === "length") isTruncated = true;
               }
             }
+          }
 
-            // Check if text ends mid-sentence (no period, question mark, or exclamation at end)
-            const trimmed = fullText.trim();
-            if (trimmed.length > 0 && !/[.!?]$/.test(trimmed)) {
-              isTruncated = true;
+          for (const event of finalizeSSEStream(buffer)) {
+            const data = event as any;
+            if (data && typeof data === "object") {
+              const delta = data.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullText += delta;
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
+              }
+              if (data.choices?.[0]?.finish_reason === "length") isTruncated = true;
             }
+          }
 
-            // Send done event with truncation status
-            controller.enqueue(encoder.encode(
-              `data: ${JSON.stringify({ type: "done", truncated: isTruncated })}\n\n`
-            ));
+          const trimmed = fullText.trim();
+          if (trimmed.length > 0 && !/[.!?]$/.test(trimmed)) isTruncated = true;
 
-            // Increment reading counter on successful completion
-            // Fire and forget - don't block response
-            console.log("[API] Reading completed, incrementing counter");
-            incrementReadingCount()
-              .then(newCount => console.log("[API] Counter incremented to:", newCount))
-              .catch(err => console.error("[API] Counter increment failed:", err));
-
-            controller.close();
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done", truncated: isTruncated })}\n\n`));
+          incrementReadingCount().catch(() => {});
+          controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
           const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
-          // SECURITY: Don't expose internal error details to client
-          const errorData = JSON.stringify({
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({
             type: "error",
             error: isTimeout ? "Response timed out" : "Processing failed",
             reading: isTimeout
               ? "The AI took too long to respond. Tap to retry, or check the traditional meanings of your cards below."
               : "Unable to generate a reading right now.",
-          });
-          controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
+          })}\n\n`));
           controller.close();
         }
       },
@@ -254,28 +194,21 @@ export async function POST(request: Request) {
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
         ...corsHeaders,
-       },
-      });
+      },
+    });
   } catch (error: any) {
-    const isTimeout = error.name === "AbortError" || 
-                      error.message?.includes("abort") ||
-                      error.message?.includes("timeout");
-    
-    // Return proper error status instead of 200 to track real errors
-    const status = isTimeout ? 504 : 500;
-    
-    // SECURITY: Generic error messages - don't expose internal details
+    const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
     return new Response(
       JSON.stringify({
         error: isTimeout ? "Response timed out" : "Processing failed",
-        reading: isTimeout 
+        reading: isTimeout
           ? "The AI took too long to respond. Tap to retry, or check the traditional card meanings below."
           : "Unable to generate a reading right now. Please check the traditional card meanings below, or try again.",
         source: "fallback",
         timedOut: isTimeout,
         partial: true,
       }),
-      { status, headers: { "Content-Type": "application/json", ...corsHeaders } },
+      { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
   }
 }
