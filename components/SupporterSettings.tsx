@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSupporterStatus } from "@/hooks/use-supporter";
+import { useSupporter } from "@/components/SupporterProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -12,7 +12,7 @@ interface SupporterSettingsProps {
 }
 
 export function SupporterSettings({ onClose }: SupporterSettingsProps) {
-  const { status, redeemCode, clearStatus } = useSupporterStatus();
+  const { isSupporter, code, redeemCode, clearStatus } = useSupporter();
   const [inputCode, setInputCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -48,13 +48,13 @@ export function SupporterSettings({ onClose }: SupporterSettingsProps) {
         </div>
         <CardTitle className="text-xl">Lenormand Supporter</CardTitle>
         <CardDescription>
-          {status.isSupporter 
-            ? `Thanks for supporting! Code: ${status.code}`
+          {isSupporter 
+            ? `Thanks for supporting! Code: ${code}`
             : "Unlock premium features with a supporter code"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!status.isSupporter ? (
+        {!isSupporter ? (
           <>
             <div className="space-y-2">
               <div className="flex gap-2">
