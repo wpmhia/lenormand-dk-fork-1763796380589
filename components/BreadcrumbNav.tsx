@@ -45,16 +45,18 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
             return (
               <li key={item.url} className="flex items-center">
                 {index > 0 && (
-                  <ChevronRight className="mx-2 h-4 w-4 text-muted-foreground/50" />
+                  <span className="mx-2 text-muted-foreground/50">
+                    <ChevronRight className="h-4 w-4" />
+                  </span>
                 )}
                 {isLast ? (
-                  <span className="font-medium text-foreground">
+                  <span className="font-medium text-foreground leading-5">
                     {item.name}
                   </span>
                 ) : (
                   <Link
                     href={item.url}
-                    className="text-muted-foreground hover:text-primary transition-colors"
+                    className="text-muted-foreground hover:text-primary transition-colors leading-5"
                   >
                     {item.name}
                   </Link>
