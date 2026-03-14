@@ -122,8 +122,8 @@ export default function MembershipPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-3xl font-bold">€0</div>
-                <div className="rounded-lg bg-primary/5 p-3">
-                  <p className="text-xs font-medium text-primary">
+                <div className="rounded-lg bg-primary/10 p-3">
+                  <p className="text-xs font-bold text-foreground">
                     ✨ All spreads included — from single card to Grand Tableau
                   </p>
                 </div>
@@ -144,23 +144,23 @@ export default function MembershipPage() {
             </Card>
 
             {/* Membership Plan */}
-            <Card className="relative border-amber-200 bg-amber-50/30 dark:border-amber-800 dark:bg-amber-950/20">
+            <Card className="relative border-amber-300 bg-amber-100 dark:border-amber-700 dark:bg-amber-900/40">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-medium text-white">
+                <span className="rounded-full bg-amber-600 px-3 py-1 text-xs font-bold text-white">
                   Most Popular
                 </span>
               </div>
               <CardHeader>
-                <CardTitle className="text-2xl">Unlimited Member</CardTitle>
+                <CardTitle className="text-2xl text-foreground">Unlimited Member</CardTitle>
                 <p className="text-sm text-muted-foreground">For dedicated readers</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold">€2,99</span>
+                  <span className="text-3xl font-bold text-foreground">€2,99</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900/30">
-                  <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
+                <div className="rounded-lg bg-white p-3 dark:bg-amber-800/50">
+                  <p className="text-xs font-bold text-foreground">
                     🚀 Upgrade for unlimited AI readings — everything else is already included!
                   </p>
                 </div>
