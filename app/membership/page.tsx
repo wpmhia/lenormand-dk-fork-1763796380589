@@ -34,10 +34,18 @@ const benefits = [
 
 const includedSpreads = [
   "Single Card",
-  "3-Card Sentence",
+  "3-Card Sentence", 
   "5-Card Sentence",
   "9-Card Box",
   "Grand Tableau (36 cards)",
+];
+
+const freeFeatures = [
+  "1 AI interpretation per day",
+  "All 36 Lenormand cards",
+  "All spread types (1-36 cards)",
+  "Reading history",
+  "Daily card draw",
 ];
 
 export default function MembershipPage() {
@@ -52,9 +60,15 @@ export default function MembershipPage() {
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
             Unlimited AI Interpretations
           </h1>
-          <p className="mb-8 text-lg text-muted-foreground md:text-xl">
+          <p className="mb-4 text-lg text-muted-foreground md:text-xl">
             Get clear, personalized AI guidance for every reading. No limits, no waiting.
           </p>
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-primary">
+              Free accounts get 1 AI reading per day — all spreads included
+            </span>
+          </div>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <a
               href="https://ko-fi.com/lenormand/tiers"
@@ -103,32 +117,27 @@ export default function MembershipPage() {
             {/* Free Plan */}
             <Card className="border-border">
               <CardHeader>
-                <CardTitle className="text-2xl">Free</CardTitle>
-                <p className="text-sm text-muted-foreground">Get started with Lenormand</p>
+                <CardTitle className="text-2xl">Free Account</CardTitle>
+                <p className="text-sm text-muted-foreground">Perfect for getting started</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-3xl font-bold">€0</div>
+                <div className="rounded-lg bg-primary/5 p-3">
+                  <p className="text-xs font-medium text-primary">
+                    ✨ All spreads included — from single card to Grand Tableau
+                  </p>
+                </div>
                 <ul className="space-y-3">
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 text-green-500" />
-                    <span>1 AI interpretation per day</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 text-green-500" />
-                    <span>All 36 Lenormand cards</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 text-green-500" />
-                    <span>Basic spreads (1-5 cards)</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 text-green-500" />
-                    <span>Reading history</span>
-                  </li>
+                  {freeFeatures.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <Check className="mt-0.5 h-4 w-4 text-green-500" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
                 </ul>
                 <Link href="/auth/sign-up">
                   <Button variant="outline" className="mt-4 w-full">
-                    Get Started Free
+                    Create Free Account
                   </Button>
                 </Link>
               </CardContent>
@@ -142,22 +151,24 @@ export default function MembershipPage() {
                 </span>
               </div>
               <CardHeader>
-                <CardTitle className="text-2xl">Member</CardTitle>
-                <p className="text-sm text-muted-foreground">Unlimited readings & more</p>
+                <CardTitle className="text-2xl">Unlimited Member</CardTitle>
+                <p className="text-sm text-muted-foreground">For dedicated readers</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold">€2,99</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
+                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900/30">
+                  <p className="text-xs font-medium text-amber-700 dark:text-amber-300">
+                    🚀 Upgrade for unlimited AI readings — everything else is already included!
+                  </p>
+                </div>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 text-green-500" />
                     <span className="font-medium">Unlimited AI interpretations</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 text-green-500" />
-                    <span>All spreads including Grand Tableau</span>
+                    <span className="text-xs text-muted-foreground">(no daily limit)</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 text-green-500" />
@@ -169,7 +180,7 @@ export default function MembershipPage() {
                   </li>
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="mt-0.5 h-4 w-4 text-green-500" />
-                    <span>Everything in Free</span>
+                    <span>All free account features</span>
                   </li>
                 </ul>
                 <a
@@ -179,7 +190,7 @@ export default function MembershipPage() {
                 >
                   <Button className="mt-4 w-full gap-2 bg-amber-500 hover:bg-amber-600">
                     <Crown className="h-4 w-4" />
-                    Become a Member
+                    Upgrade to Unlimited
                   </Button>
                 </a>
               </CardContent>
@@ -188,10 +199,14 @@ export default function MembershipPage() {
         </div>
       </section>
 
-      {/* Included Spreads */}
+      {/* All Spreads Free */}
       <section className="border-y bg-muted/50 px-4 py-16">
         <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="mb-8 text-2xl font-bold">All Spreads Included</h2>
+          <h2 className="mb-4 text-2xl font-bold">All Spreads Are Free</h2>
+          <p className="mb-8 text-muted-foreground">
+            Every user gets access to all spreads — from single card to the full Grand Tableau. 
+            The only difference is how many AI interpretations you get per day.
+          </p>
           <div className="flex flex-wrap justify-center gap-3">
             {includedSpreads.map((spread) => (
               <span
@@ -210,6 +225,20 @@ export default function MembershipPage() {
         <div className="mx-auto max-w-2xl">
           <h2 className="mb-8 text-center text-2xl font-bold">Common Questions</h2>
           <div className="space-y-6">
+            <div>
+              <h3 className="mb-2 font-semibold">Do I need an account?</h3>
+              <p className="text-sm text-muted-foreground">
+                Yes, you need a free account to get AI interpretations. All accounts start with 1 free AI reading per day. 
+                You can draw cards and explore spreads without logging in, but AI insights require an account.
+              </p>
+            </div>
+            <div>
+              <h3 className="mb-2 font-semibold">What does the membership give me?</h3>
+              <p className="text-sm text-muted-foreground">
+                The membership removes the daily limit on AI interpretations. Free accounts get 1 AI reading per day, 
+                while members get unlimited AI readings. All other features — including all spreads — are available to everyone.
+              </p>
+            </div>
             <div>
               <h3 className="mb-2 font-semibold">How does the membership work?</h3>
               <p className="text-sm text-muted-foreground">
