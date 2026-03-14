@@ -48,9 +48,21 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl">
-              Clear answers from the 36-card Lenormand system. No symbolism to
-              decode - just practical guidance.
+              Clear answers from the 36-card Lenormand system. All card spreads and learning modules are free.
             </p>
+            
+            {/* Feature badges */}
+            <div className="mb-4 flex flex-wrap justify-center gap-2 md:justify-start">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <Sparkles className="h-3 w-3" />
+                All spreads free
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <BookOpen className="h-3 w-3" />
+                Learn free
+              </span>
+            </div>
+
             <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start md:justify-start">
               <Link href="/read/new">
                 <Button size="lg" className="gap-2">
@@ -67,6 +79,17 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 <Heart className="h-4 w-4" />
                 Daily Card
               </Button>
+            </div>
+            
+            {/* AI Notice */}
+            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/20">
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                <Crown className="mr-1 inline h-4 w-4" />
+                <strong>AI interpretations:</strong> Free accounts get 1 per day. 
+                <Link href="/membership" className="ml-1 font-semibold underline">
+                  Upgrade for unlimited
+                </Link>.
+              </p>
             </div>
             
             {/* Reading Counter - Social Proof */}
@@ -94,6 +117,59 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         </div>
       </div>
 
+      {/* What's Free Section */}
+      <div className="container-section bg-muted/30 px-4 py-12">
+        <div className="mx-auto max-w-4xl">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-6">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-primary">
+                <Sparkles className="h-5 w-5" />
+                Completely Free
+              </h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500">✓</span>
+                  <span>All card spreads (1 to 36 cards)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500">✓</span>
+                  <span>All learning modules & card meanings</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500">✓</span>
+                  <span>Daily card draw</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500">✓</span>
+                  <span>Reading history</span>
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-6 dark:border-amber-800 dark:bg-amber-950/20">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-amber-700 dark:text-amber-300">
+                <Crown className="h-5 w-5" />
+                AI Interpretations
+              </h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-500">★</span>
+                  <span><strong>Free account:</strong> 1 AI reading per day</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-amber-500">★</span>
+                  <span><strong>Unlimited Member:</strong> No daily limit</span>
+                </li>
+                <li className="mt-3 text-xs">
+                  <Link href="/auth/sign-up" className="font-medium text-amber-700 underline dark:text-amber-300">
+                    Create free account →
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Reading Types */}
       <div className="container-section px-4 py-16">
         <div className="relative mb-12 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-8 md:p-12">
@@ -103,7 +179,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
             </h2>
             <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">
-              Start with quick answers or explore deeper insights
+              All spreads are free — from single card to Grand Tableau
             </p>
           </div>
           <div className="grid items-stretch gap-6 sm:grid-cols-3">
@@ -194,7 +270,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             How It Works
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Three simple steps to your Lenormand reading
+            All card spreads are free. Create a free account for AI interpretations.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
@@ -208,8 +284,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Choose your spread and select the cards by clicking or tapping.
-              The 36 Lenormand cards are displayed in a simple grid.
+              Choose any spread — from single card to Grand Tableau. 
+              <strong className="text-primary"> All spreads are free.</strong>
             </CardContent>
           </Card>
           <Card className="border-border bg-muted/50">
@@ -218,12 +294,12 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   2
                 </span>
-                Ask Question
+                Ask Your Question
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Ask any question you want guidance on. Be specific for the most
-              useful answer.
+              Enter your question and draw your cards. 
+              <strong className="text-amber-600 dark:text-amber-400"> Sign up free</strong> to get AI interpretations.
             </CardContent>
           </Card>
           <Card className="border-border bg-muted/50">
@@ -236,8 +312,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Receive instant interpretations based on card positions. Get clear,
-              practical Lenormand sentences.
+              Receive instant AI interpretations. 
+              <strong className="text-amber-600 dark:text-amber-400"> Free: 1/day • Member: unlimited</strong>
             </CardContent>
           </Card>
         </div>
