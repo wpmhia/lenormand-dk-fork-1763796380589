@@ -16,9 +16,7 @@ import {
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
 import { useReadingHistory } from "@/hooks/use-reading-history";
 import { useToast } from "@/hooks/use-toast";
-import { useReadingQuota } from "@/hooks/use-reading-quota";
-import { useSession } from "@/lib/auth-client";
-import Link from "next/link";
+import { useMembership } from "@/components/MembershipProvider";
 
 import {
   ReadingSetup,
@@ -33,33 +31,24 @@ import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 type Step = "setup" | "drawing" | "results";
 type Method = "virtual" | "physical" | null;
 
-function QuotaBadge() {
-  const { data: session } = useSession();
-  const { quota, isLoading } = useReadingQuota();
+function MembershipBadge() {
+  const { isMember, isLoading } = useMembership();
 
-  if (!session?.user || isLoading) return null;
+  if (isLoading) return null;
 
-  if (quota.isVip) {
+  if (isMember) {
     return (
       <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
         <Crown className="h-3 w-3" />
-        <span>Unlimited AI Readings</span>
+        <span>Unlimited Member</span>
       </div>
     );
   }
 
-  const remaining = quota.remaining === Infinity ? 0 : quota.remaining;
-  const hasQuota = remaining > 0;
-
   return (
-    <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${hasQuota ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
       <Sparkles className="h-3 w-3" />
-      <span>
-        {hasQuota 
-          ? `${remaining} AI reading${remaining !== 1 ? 's' : ''} left today`
-          : 'Daily limit reached'
-        }
-      </span>
+      <span>1 free AI reading/day</span>
     </div>
   );
 }
@@ -67,8 +56,6 @@ function QuotaBadge() {
 function NewReadingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session } = useSession();
-  const { quota } = useReadingQuota();
 
   // Data state
   const [allCards, setAllCards] = useState<CardType[]>([]);
@@ -297,9 +284,9 @@ function NewReadingPageContent() {
               Let the ancient cards reveal what your heart already knows
             </p>
             
-            {/* Quota Badge */}
+            {/* Membership Badge */}
             <div className="mt-4 flex justify-center">
-              <QuotaBadge />
+              <MembershipBadge />
             </div>
 
             {/* Progress Indicator */}

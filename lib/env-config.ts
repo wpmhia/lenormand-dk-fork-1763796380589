@@ -84,6 +84,12 @@ export const ENV_VARIABLES: EnvVariable[] = [
     required: false,
     instructions: "Generate a random string. If not set, a default dev key is used (not secure for production)",
   },
+  {
+    name: "KOFI_VERIFICATION_TOKEN",
+    description: "Ko-Fi webhook verification token for membership integration",
+    required: false,
+    instructions: "Get your token from Ko-Fi Settings > API > Webhooks. Used to verify Ko-Fi payment notifications.",
+  },
 ];
 
 export interface EnvVariable {

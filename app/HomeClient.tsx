@@ -9,7 +9,6 @@ import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
-import { useSupporter } from "@/components/SupporterProvider";
 import {
   ArrowRight,
   Heart,
@@ -17,6 +16,7 @@ import {
   BookOpen,
   Target,
   Sparkles,
+  Crown,
 } from "lucide-react";
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
@@ -29,7 +29,6 @@ interface HomeClientProps {
 
 export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
-  const { isSupporter } = useSupporter();
 
   const previewCards = useMemo(() => initialCards.slice(0, 6), [initialCards]);
 
@@ -133,14 +132,14 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         </div>
       </div>
 
-      {/* Comprehensive Spreads */}
+      {/* All Spreads Available */}
       <div className="container-section bg-gradient-to-b from-background via-primary/5 to-background px-4 py-16">
         <div className="relative mb-12 text-center">
           <h2 className="mb-4 text-4xl font-bold text-foreground">
-            Comprehensive Spreads
+            All Spreads Available
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Deep dives into your questions
+            From single card to Grand Tableau — all spreads are free to use
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -150,8 +149,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             description="Deep dive into complex situations"
             cardCount={9}
             spreadId="comprehensive"
-            disabled={!isSupporter}
-            disabledReason="Premium"
           />
           <ReadingTypeCard
             icon={<ArrowRight className="h-5 w-5 text-primary" />}
@@ -159,9 +156,34 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             description="All 36 cards"
             cardCount={36}
             spreadId="grand-tableau"
-            disabled={!isSupporter}
-            disabledReason="Premium"
           />
+        </div>
+      </div>
+
+      {/* Membership CTA */}
+      <div className="container-section bg-gradient-to-b from-amber-50/50 via-background to-amber-50/50 px-4 py-16 dark:from-amber-950/20 dark:to-amber-950/20">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="mb-6 inline-flex items-center justify-center rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
+            <Crown className="h-10 w-10 text-amber-600 dark:text-amber-400" />
+          </div>
+          <h2 className="mb-4 text-3xl font-bold text-foreground">
+            Unlock AI Interpretations
+          </h2>
+          <p className="mb-8 text-lg text-muted-foreground">
+            Get personalized AI guidance for every reading. Free accounts get 1 interpretation per day. 
+            Upgrade for unlimited access.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link href="/membership">
+              <Button size="lg" className="gap-2 bg-amber-500 hover:bg-amber-600">
+                <Crown className="h-4 w-4" />
+                View Membership
+              </Button>
+            </Link>
+          </div>
+          <p className="mt-6 text-sm text-muted-foreground">
+            €2,99/month • Cancel anytime
+          </p>
         </div>
       </div>
 

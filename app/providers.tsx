@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
-import { SupporterProvider } from "@/components/SupporterProvider";
+import { MembershipProvider } from "@/components/MembershipProvider";
 
 function LinkComponent({ href, className, children }: { href: string; className?: string; children: ReactNode }) {
   return (
@@ -26,9 +26,9 @@ export function Providers({ children }: { children: ReactNode }) {
       onSessionChange={() => router.refresh()}
       Link={LinkComponent}
     >
-      <SupporterProvider>
+      <MembershipProvider>
         {children}
-      </SupporterProvider>
+      </MembershipProvider>
     </AuthUIProvider>
   );
 }

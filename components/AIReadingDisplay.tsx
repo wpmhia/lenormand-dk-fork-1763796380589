@@ -9,7 +9,7 @@ import { AIThinkingIndicator } from "@/components/ui/loading";
 import { RefreshCw, Copy, Check, AlertCircle, MessageCircle, Crown, LogIn } from "lucide-react";
 import { getCards } from "@/lib/data";
 import Link from "next/link";
-import { useSupporter } from "@/components/SupporterProvider";
+import { useMembership } from "@/components/MembershipProvider";
 import { useSession } from "@/lib/auth-client";
 
 const allCards = getCards();
@@ -48,7 +48,7 @@ export function AIReadingDisplay({
   followUpStreaming = false,
   followUpResponse = null,
 }: AIReadingDisplayProps) {
-  const { isSupporter } = useSupporter();
+  const { isMember } = useMembership();
   const { data: session } = useSession();
   const [copyClicked, setCopyClicked] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
@@ -105,9 +105,8 @@ export function AIReadingDisplay({
   }
 
   if (error && !isStreaming) {
-    const isSupporterError = error.includes("supporter") || error.includes("Support") || error.includes("VIP");
     const isAuthError = error.includes("Sign in") || error.includes("auth");
-    const isDailyLimitError = error.includes("Daily limit") || error.includes("tomorrow");
+    const isDailyLimitError = error.includes("Daily limit") || error.includes("today") || error.includes("Upgrade");
     
     if (isAuthError) {
       return (
@@ -145,36 +144,15 @@ export function AIReadingDisplay({
             <div className="text-sm text-amber-700 dark:text-amber-400">
               {error}
             </div>
-            <Button 
-              size="sm" 
-              onClick={() => window.location.href = '/account/settings'}
-              className="bg-amber-500 hover:bg-amber-600 text-white"
-            >
-              <Crown className="mr-2 h-3 w-3" />
-              Unlock VIP Access
-            </Button>
-          </AlertDescription>
-        </Alert>
-      );
-    }
-    
-    if (isSupporterError) {
-      return (
-        <Alert className="border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
-          <Crown className="h-4 w-4 text-amber-600" />
-          <AlertTitle className="text-amber-800 dark:text-amber-300">Premium Spread</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <div className="text-sm text-amber-700 dark:text-amber-400">
-              {error}
-            </div>
-            <Button 
-              size="sm" 
-              onClick={() => window.location.href = '/account/settings'}
-              className="bg-amber-500 hover:bg-amber-600 text-white"
-            >
-              <Crown className="mr-2 h-3 w-3" />
-              Unlock with Code
-            </Button>
+            <Link href="/membership">
+              <Button 
+                size="sm" 
+                className="bg-amber-500 hover:bg-amber-600 text-white"
+              >
+                <Crown className="mr-2 h-3 w-3" />
+                Upgrade to Unlimited
+              </Button>
+            </Link>
           </AlertDescription>
         </Alert>
       );
@@ -237,11 +215,11 @@ export function AIReadingDisplay({
           )}
         </div>
 
-        {!isLoading && !isStreaming && !isSupporter && (
+        {!isLoading && !isStreaming && !isMember && (
           <div className="mt-6 pt-4 border-t border-border/50">
-            <Link href="/support" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-amber-600 transition-colors">
+            <Link href="/membership" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-amber-600 transition-colors">
               <Crown className="h-3 w-3" />
-              <span>Unlock premium spreads</span>
+              <span>Upgrade for unlimited readings</span>
             </Link>
           </div>
         )}

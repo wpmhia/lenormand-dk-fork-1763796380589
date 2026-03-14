@@ -1,11 +1,11 @@
 import { AccountSettingsCards } from "@daveyplate/better-auth-ui";
-import { VipCodeForm } from "@/components/VipCodeForm";
+import { MembershipStatus } from "@/components/MembershipStatus";
 
 export default function SettingsPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center py-12 px-4 gap-6">
+    <div className="flex min-h-screen flex-col items-center gap-6 px-4 py-12">
       <AccountSettingsCards className="w-full max-w-xl" />
-      <VipCodeForm />
+      <MembershipStatus />
     </div>
   );
 }
