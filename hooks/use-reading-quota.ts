@@ -7,7 +7,7 @@ interface ReadingQuota {
   used: number;
   limit: number;
   remaining: number;
-  isVip: boolean;
+  isMember: boolean;
 }
 
 export function useReadingQuota() {
@@ -16,13 +16,13 @@ export function useReadingQuota() {
     used: 0,
     limit: 1,
     remaining: 1,
-    isVip: false,
+    isMember: false,
   });
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchQuota = useCallback(async () => {
     if (!session?.user) {
-      setQuota({ used: 0, limit: 1, remaining: 0, isVip: false });
+      setQuota({ used: 0, limit: 1, remaining: 0, isMember: false });
       setIsLoading(false);
       return;
     }
@@ -34,8 +34,8 @@ export function useReadingQuota() {
         setQuota({
           used: data.usage?.count || 0,
           limit: 1,
-          remaining: data.isVip ? Infinity : Math.max(0, 1 - (data.usage?.count || 0)),
-          isVip: data.isVip || false,
+          remaining: data.isMember ? Infinity : Math.max(0, 1 - (data.usage?.count || 0)),
+          isMember: data.isMember || false,
         });
       }
     } catch {

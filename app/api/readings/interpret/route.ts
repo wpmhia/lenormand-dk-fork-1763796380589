@@ -12,7 +12,7 @@ import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { readingUsage, userSupporter } from "@/lib/schema";
+import { readingUsage, memberships } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function OPTIONS() {
@@ -41,16 +41,25 @@ export async function POST(request: Request) {
 
     const userId = session.user.id;
 
-    // Check VIP status
-    const vipRecord = await db
+    // Check membership status
+    const membershipRecord = await db
       .select()
-      .from(userSupporter)
-      .where(eq(userSupporter.userId, userId))
+      .from(memberships)
+      .where(eq(memberships.userId, userId))
       .limit(1);
-    const isVip = vipRecord.length > 0;
+    
+    const now = new Date();
+    const membership = membershipRecord[0];
+    let isMember = false;
+    
+    if (membership && membership.tier === "unlimited" && membership.status === "active") {
+      if (!membership.expiresAt || new Date(membership.expiresAt) > now) {
+        isMember = true;
+      }
+    }
 
-    // Daily limit check for non-VIP
-    if (!isVip) {
+    // Daily limit check for non-members
+    if (!isMember) {
       const today = new Date().toISOString().split("T")[0];
       const usageRecord = await db
         .select()
@@ -63,8 +72,9 @@ export async function POST(request: Request) {
       if (usedToday >= 1) {
         return new Response(
           JSON.stringify({
-            error: "Daily limit reached. Come back tomorrow or enter a VIP code in your account settings for unlimited access.",
+            error: "You've used your free reading for today. Upgrade to unlimited for €2,99/month.",
             dailyLimitReached: true,
+            membershipLink: "/membership",
           }),
           { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
@@ -110,18 +120,8 @@ export async function POST(request: Request) {
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
 
-    // Block supporter-only spreads for non-VIP users
-    const spread = COMPREHENSIVE_SPREADS.find(s => s.id === spreadId);
-    if (spread?.supporterOnly && !isVip) {
-      return new Response(
-        JSON.stringify({
-          error: "Enter your VIP code in account settings to unlock this spread.",
-          disabled: true,
-          supporterLink: "/account/settings",
-        }),
-        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } },
-      );
-    }
+    // Note: All spreads are now available to everyone
+    // Membership only affects AI interpretation limits
 
     const cardsWithKeywords = cards.map((c: { id: number; name: string }) => {
       const cardData = allCards.find((card: Card) => card.id === c.id);
@@ -132,8 +132,8 @@ export async function POST(request: Request) {
     const timeoutMs = 25000;
     const maxTokens = getTokenBudget(cardCount);
 
-    // Increment usage for non-VIP before streaming
-    if (!isVip) {
+    // Increment usage for non-members before streaming
+    if (!isMember) {
       const today = new Date().toISOString().split("T")[0];
       await db
         .insert(readingUsage)
@@ -185,7 +185,8 @@ export async function POST(request: Request) {
           let isTruncated = false;
 
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: "headers", isVip, remainingToday: isVip ? null : 0 })}\n\n`
+            `data: ${JSON.stringify({ type: "headers", isMember, remainingToday: isMember ? null : 0 })}
+\n\n`
           ));
 
           while (true) {

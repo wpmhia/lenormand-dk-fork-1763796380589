@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { userSupporter } from "@/lib/schema";
+import { memberships } from "@/lib/schema";
 import { corsHeaders } from "@/lib/cors";
 
 const VIP_CODE = "LenormandVIP";
@@ -26,10 +26,29 @@ export async function POST(request: Request) {
       );
     }
 
+    const now = new Date();
+    // VIP code gives unlimited access without expiry (or very far expiry)
+    const farFuture = new Date();
+    farFuture.setFullYear(farFuture.getFullYear() + 100);
+
     await db
-      .insert(userSupporter)
-      .values({ userId: session.user.id })
-      .onConflictDoNothing();
+      .insert(memberships)
+      .values({
+        userId: session.user.id,
+        tier: "unlimited",
+        status: "active",
+        startedAt: now,
+        expiresAt: farFuture,
+      })
+      .onConflictDoUpdate({
+        target: memberships.userId,
+        set: {
+          tier: "unlimited",
+          status: "active",
+          expiresAt: farFuture,
+          updatedAt: now,
+        },
+      });
 
     return new Response(
       JSON.stringify({ success: true, message: "VIP access activated!" }),
