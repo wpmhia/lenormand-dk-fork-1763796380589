@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Crown, Check, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useSupporter } from "@/components/SupporterProvider";
+import { useMembership } from "@/components/MembershipProvider";
 
 export function VipCodeForm() {
-  const { isSupporter, refreshSupporter } = useSupporter();
+  const { isMember, refreshMembership } = useMembership();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -32,7 +32,7 @@ export function VipCodeForm() {
       if (res.ok) {
         setSuccess(true);
         setCode("");
-        await refreshSupporter();
+        await refreshMembership();
       } else {
         setError(data.error || "Invalid code");
       }
@@ -57,18 +57,18 @@ export function VipCodeForm() {
             <Crown className="h-5 w-5 text-white" />
           </div>
           <div>
-            <CardTitle className="text-lg">VIP Supporter Access</CardTitle>
+            <CardTitle className="text-lg">VIP Code Redemption</CardTitle>
             <CardDescription>
-              {isSupporter ? "Your VIP access is active" : "Enter your supporter code to unlock premium features"}
+              {isMember ? "Your unlimited access is active" : "Enter a VIP code for unlimited access"}
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isSupporter ? (
+        {isMember ? (
           <div className="rounded-lg border border-amber-700/50 bg-amber-950/40 p-4 text-center">
             <Check className="mx-auto mb-2 h-8 w-8 text-amber-400" />
-            <p className="font-medium text-amber-200">VIP Access Active</p>
+            <p className="font-medium text-amber-200">Unlimited Access Active</p>
             <p className="text-sm text-amber-400">Thank you for supporting Lenormand Intelligence</p>
           </div>
         ) : (
