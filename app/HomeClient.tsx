@@ -16,6 +16,9 @@ import {
   Shield,
   BookOpen,
   Target,
+  Sparkles,
+  Crown,
+  LogIn,
 } from "lucide-react";
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
@@ -251,6 +254,39 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               View All 36 Cards
             </Button>
           </Link>
+        </div>
+      </div>
+
+      {/* AI Readings CTA */}
+      <div className="container-section bg-gradient-to-b from-primary/5 via-background to-primary/5 px-4 py-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-6 inline-flex items-center justify-center rounded-full bg-primary/10 p-4">
+            <Sparkles className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="mb-4 text-3xl font-bold text-foreground">
+            AI-Powered Insights
+          </h2>
+          <p className="mb-8 text-lg text-muted-foreground">
+            Get personalized AI interpretations for your readings. Sign up for free 
+            and receive 1 AI reading per day, or unlock unlimited access with VIP.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link href="/auth/sign-up">
+              <Button size="lg" className="gap-2">
+                <LogIn className="h-4 w-4" />
+                Get Started Free
+              </Button>
+            </Link>
+            <Link href="/account/settings">
+              <Button variant="outline" size="lg" className="gap-2">
+                <Crown className="h-4 w-4" />
+                Unlock VIP
+              </Button>
+            </Link>
+          </div>
+          <p className="mt-6 text-sm text-muted-foreground">
+            Free: 1 AI reading/day • VIP: Unlimited readings + premium spreads
+          </p>
         </div>
       </div>
 

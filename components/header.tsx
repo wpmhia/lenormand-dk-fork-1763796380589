@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Club, Home, BookOpen, Plus, Menu, X, History } from "lucide-react";
+import { Club, Home, BookOpen, Plus, Menu, X, History, Crown } from "lucide-react";
 import { useState } from "react";
 import { UserButton } from "@daveyplate/better-auth-ui";
+import { useSupporter } from "@/components/SupporterProvider";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isSupporter } = useSupporter();
   
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
@@ -65,6 +67,12 @@ export function Header() {
             <History className="h-5 w-5" />
             <span>History</span>
           </Link>
+          {isSupporter && (
+            <div className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+              <Crown className="h-3 w-3" />
+              <span className="hidden sm:inline">VIP</span>
+            </div>
+          )}
           <a
             href="https://ko-fi.com/Y8Y81NVDEK"
             target="_blank"
