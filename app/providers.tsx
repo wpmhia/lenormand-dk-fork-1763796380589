@@ -1,11 +1,19 @@
 "use client";
 
 import { AuthUIProvider } from "@daveyplate/better-auth-ui";
-import Link from "next/link";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
 import { SupporterProvider } from "@/components/SupporterProvider";
+
+function LinkComponent({ href, className, children }: { href: string; className?: string; children: ReactNode }) {
+  return (
+    <NextLink href={href} className={className}>
+      {children}
+    </NextLink>
+  );
+}
 
 export function Providers({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -16,7 +24,7 @@ export function Providers({ children }: { children: ReactNode }) {
       navigate={router.push}
       replace={router.replace}
       onSessionChange={() => router.refresh()}
-      Link={Link}
+      Link={LinkComponent}
     >
       <SupporterProvider>
         {children}
