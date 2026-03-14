@@ -82,11 +82,11 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </div>
             
             {/* AI Notice */}
-            <div className="mt-4 rounded-lg border border-amber-300 bg-amber-100 p-3 dark:border-amber-700 dark:bg-amber-900/40">
-              <p className="text-sm text-amber-900 dark:text-amber-100">
-                <Crown className="mr-1 inline h-4 w-4" />
+            <div className="mt-4 rounded-lg border-2 border-amber-600 bg-white p-3 shadow-sm dark:border-amber-500 dark:bg-amber-950">
+              <p className="text-sm text-gray-900 dark:text-white">
+                <Crown className="mr-1 inline h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <strong>AI interpretations:</strong> Free accounts get 1 per day.
-                <Link href="/membership" className="ml-1 font-semibold text-amber-900 underline dark:text-amber-100">
+                <Link href="/membership" className="ml-1 font-bold text-amber-700 underline hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300">
                   Upgrade for unlimited
                 </Link>.
               </p>
@@ -121,36 +121,36 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
       <div className="container-section bg-muted/30 px-4 py-12">
         <div className="mx-auto max-w-4xl">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-primary/30 bg-primary/10 p-6">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-foreground">
+            <div className="rounded-xl border-2 border-primary bg-white p-6 shadow-md dark:border-primary dark:bg-gray-950">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
                 <Sparkles className="h-5 w-5 text-primary" />
                 Completely Free
               </h3>
-              <ul className="space-y-2 text-sm text-foreground">
+              <ul className="space-y-2 text-sm text-gray-800 dark:text-gray-100">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-600">✓</span>
                   <span>All card spreads (1 to 36 cards)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-600">✓</span>
                   <span>All learning modules & card meanings</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-600">✓</span>
                   <span>Daily card draw</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-600">✓</span>
                   <span>Reading history</span>
                 </li>
               </ul>
             </div>
-            <div className="rounded-xl border border-amber-300 bg-amber-100 p-6 dark:border-amber-700 dark:bg-amber-900/40">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-foreground">
+            <div className="rounded-xl border-2 border-amber-600 bg-white p-6 shadow-md dark:border-amber-500 dark:bg-amber-950">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
                 <Crown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 AI Interpretations
               </h3>
-              <ul className="space-y-2 text-sm text-foreground">
+              <ul className="space-y-2 text-sm text-gray-800 dark:text-gray-100">
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 dark:text-amber-400">★</span>
                   <span><strong>Free account:</strong> 1 AI reading per day</span>
@@ -160,7 +160,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                   <span><strong>Unlimited Member:</strong> No daily limit</span>
                 </li>
                 <li className="mt-3 text-xs">
-                  <Link href="/auth/sign-up" className="font-medium text-amber-900 underline dark:text-amber-100">
+                  <Link href="/auth/sign-up" className="font-bold text-amber-700 underline hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300">
                     Create free account →
                   </Link>
                 </li>
