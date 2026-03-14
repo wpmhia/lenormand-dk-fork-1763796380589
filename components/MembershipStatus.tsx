@@ -97,17 +97,20 @@ export function MembershipStatus() {
             <Crown className="h-5 w-5 text-muted-foreground" />
           </div>
           <div>
-            <CardTitle className="text-lg">Free Plan</CardTitle>
+            <CardTitle className="text-lg">Free Account</CardTitle>
             <CardDescription>
-              1 AI interpretation per day
+              1 AI interpretation per day — all spreads included
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-lg bg-muted p-4">
-          <p className="text-sm text-muted-foreground">
-            Upgrade to unlimited AI interpretations and unlock all features.
+        <div className="rounded-lg bg-primary/5 p-4">
+          <p className="text-sm font-medium text-primary">
+            ✨ You already have access to all spreads!
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Upgrade only removes the daily limit on AI interpretations.
           </p>
         </div>
 
@@ -123,15 +126,19 @@ export function MembershipStatus() {
         </a>
 
         <div className="text-xs text-muted-foreground">
-          <p>Membership includes:</p>
+          <p>Membership gives you:</p>
           <ul className="mt-1 space-y-0.5">
             <li className="flex items-center gap-1">
               <Check className="h-3 w-3 text-green-500" />
-              Unlimited AI interpretations
+              Unlimited AI interpretations (no daily limit)
             </li>
             <li className="flex items-center gap-1">
               <Check className="h-3 w-3 text-green-500" />
-              All spread types
+              Priority processing
+            </li>
+            <li className="flex items-center gap-1">
+              <Check className="h-3 w-3 text-green-500" />
+              Member badge
             </li>
             <li className="flex items-center gap-1">
               <Check className="h-3 w-3 text-green-500" />
