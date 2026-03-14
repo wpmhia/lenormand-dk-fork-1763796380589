@@ -53,11 +53,11 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             
             {/* Feature badges */}
             <div className="mb-4 flex flex-wrap justify-center gap-2 md:justify-start">
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
                 <Sparkles className="h-3 w-3" />
                 All spreads free
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
                 <BookOpen className="h-3 w-3" />
                 Learn free
               </span>
@@ -82,11 +82,11 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </div>
             
             {/* AI Notice */}
-            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/20">
-              <p className="text-sm text-amber-800 dark:text-amber-200">
+            <div className="mt-4 rounded-lg border border-amber-300 bg-amber-100 p-3 dark:border-amber-700 dark:bg-amber-900/40">
+              <p className="text-sm text-amber-900 dark:text-amber-100">
                 <Crown className="mr-1 inline h-4 w-4" />
-                <strong>AI interpretations:</strong> Free accounts get 1 per day. 
-                <Link href="/membership" className="ml-1 font-semibold underline">
+                <strong>AI interpretations:</strong> Free accounts get 1 per day.
+                <Link href="/membership" className="ml-1 font-semibold text-amber-900 underline dark:text-amber-100">
                   Upgrade for unlimited
                 </Link>.
               </p>
@@ -121,12 +121,12 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
       <div className="container-section bg-muted/30 px-4 py-12">
         <div className="mx-auto max-w-4xl">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-6">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-primary">
-                <Sparkles className="h-5 w-5" />
+            <div className="rounded-xl border border-primary/30 bg-primary/10 p-6">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-foreground">
+                <Sparkles className="h-5 w-5 text-primary" />
                 Completely Free
               </h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-foreground">
                 <li className="flex items-start gap-2">
                   <span className="text-green-500">✓</span>
                   <span>All card spreads (1 to 36 cards)</span>
@@ -145,22 +145,22 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 </li>
               </ul>
             </div>
-            <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-6 dark:border-amber-800 dark:bg-amber-950/20">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-amber-700 dark:text-amber-300">
-                <Crown className="h-5 w-5" />
+            <div className="rounded-xl border border-amber-300 bg-amber-100 p-6 dark:border-amber-700 dark:bg-amber-900/40">
+              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-foreground">
+                <Crown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 AI Interpretations
               </h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-sm text-foreground">
                 <li className="flex items-start gap-2">
-                  <span className="text-amber-500">★</span>
+                  <span className="text-amber-600 dark:text-amber-400">★</span>
                   <span><strong>Free account:</strong> 1 AI reading per day</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-amber-500">★</span>
+                  <span className="text-amber-600 dark:text-amber-400">★</span>
                   <span><strong>Unlimited Member:</strong> No daily limit</span>
                 </li>
                 <li className="mt-3 text-xs">
-                  <Link href="/auth/sign-up" className="font-medium text-amber-700 underline dark:text-amber-300">
+                  <Link href="/auth/sign-up" className="font-medium text-amber-900 underline dark:text-amber-100">
                     Create free account →
                   </Link>
                 </li>
