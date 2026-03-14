@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/header";
 import { Suspense } from "react";
 import { createSafeJsonLd } from "@/lib/sanitize";
-import { SupporterProvider } from "@/components/SupporterProvider";
+import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -223,7 +223,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <TooltipProvider>
-          <SupporterProvider>
+          <Providers>
             <div
               className="flex min-h-screen flex-col bg-background text-foreground"
               suppressHydrationWarning
@@ -233,7 +233,7 @@ export default function RootLayout({
               <Footer />
             </div>
             <Toaster />
-          </SupporterProvider>
+          </Providers>
         </TooltipProvider>
       </body>
     </html>

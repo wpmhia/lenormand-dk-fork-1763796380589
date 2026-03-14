@@ -10,6 +10,7 @@ import { RefreshCw, Copy, Check, AlertCircle, MessageCircle, Crown } from "lucid
 import { getCards } from "@/lib/data";
 import Link from "next/link";
 import { useSupporter } from "@/components/SupporterProvider";
+import { useSession } from "@/lib/auth-client";
 
 const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
@@ -48,6 +49,7 @@ export function AIReadingDisplay({
   followUpResponse = null,
 }: AIReadingDisplayProps) {
   const { isSupporter } = useSupporter();
+  const { data: session } = useSession();
   const [copyClicked, setCopyClicked] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
   const [showFollowUpInput, setShowFollowUpInput] = useState(false);

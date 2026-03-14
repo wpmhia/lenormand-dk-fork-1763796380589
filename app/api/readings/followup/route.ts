@@ -1,4 +1,3 @@
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
@@ -7,6 +6,7 @@ import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+import { auth } from "@/lib/auth";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -19,6 +19,14 @@ const RATE_LIMIT_WINDOW = 60 * 1000;
 
 export async function POST(request: Request) {
   try {
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session?.user) {
+      return new Response(
+        JSON.stringify({ error: "Sign in to use follow-up questions", requiresAuth: true }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 

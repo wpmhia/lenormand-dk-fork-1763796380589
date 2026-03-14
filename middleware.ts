@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
   response.headers.set("X-Content-Type-Options", "nosniff");
   // X-Frame-Options removed to allow E2B iframe embedding
   // style-src 'unsafe-inline' is REQUIRED for Next.js CSS-in-JS and Tailwind
-  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://api.umami.is https://api-gateway.umami.dev; frame-ancestors 'self' https://ideavo.ai https://*.ideavo.ai https://*.e2b.app https://e2b.dev; base-uri 'self'; form-action 'self';");
+  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is https://accounts.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com https://lh3.googleusercontent.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://api.umami.is https://api-gateway.umami.dev https://accounts.google.com; frame-src https://accounts.google.com; frame-ancestors 'self' https://ideavo.ai https://*.ideavo.ai https://*.e2b.app https://e2b.dev; base-uri 'self'; form-action 'self' https://accounts.google.com;");
 
   // Add caching for static pages (not API routes)
   if (!pathname.startsWith("/api/")) {

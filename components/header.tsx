@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Club, Home, BookOpen, Plus, Menu, X, History, Crown } from "lucide-react";
+import { Club, Home, BookOpen, Plus, Menu, X, History } from "lucide-react";
 import { useState } from "react";
+import { UserButton } from "@daveyplate/better-auth-ui";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,44 +51,39 @@ export function Header() {
             <Club className="h-5 w-5" />
             <span>Cards</span>
           </Link>
-           <Link
-              href="/read/new?reset=true"
-              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-            >
-              <Plus className="h-5 w-5" />
-              <span>New Reading</span>
-            </Link>
-            <Link
-              href="/history"
-              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-            >
-              <History className="h-5 w-5" />
-              <span>History</span>
-            </Link>
-            <Link
-              href="/support"
-              className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-amber-500 transition-colors hover:bg-amber-500/10 hover:text-amber-400"
-              title="Support"
-            >
-              <Crown className="h-5 w-5" />
-            </Link>
-            <a
-              href="https://ko-fi.com/Y8Y81NVDEK"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center"
-            >
-              <Image
-                width={144}
-                height={36}
-                style={{ border: 0, height: 32, width: "auto" }}
-                src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
-                alt="Buy Me a Coffee at ko-fi.com"
-                unoptimized
-              />
-            </a>
+          <Link
+            href="/read/new?reset=true"
+            className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+          >
+            <Plus className="h-5 w-5" />
+            <span>New Reading</span>
+          </Link>
+          <Link
+            href="/history"
+            className="flex min-h-11 min-w-11 items-center gap-1.5 rounded px-2.5 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+          >
+            <History className="h-5 w-5" />
+            <span>History</span>
+          </Link>
+          <a
+            href="https://ko-fi.com/Y8Y81NVDEK"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center"
+          >
+            <Image
+              width={144}
+              height={36}
+              style={{ border: 0, height: 32, width: "auto" }}
+              src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
+              alt="Buy Me a Coffee at ko-fi.com"
+              unoptimized
+            />
+          </a>
+          <UserButton size="icon" />
         </nav>
-        <div className="ml-auto md:hidden">
+        <div className="ml-auto flex items-center gap-2 md:hidden">
+          <UserButton size="icon" />
           <button
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label={mobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
@@ -128,38 +124,38 @@ export function Header() {
               <Club className="h-5 w-5" />
               <span>Cards</span>
             </Link>
-              <Link
-                href="/read/new?reset=true"
-                className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Plus className="h-5 w-5" />
-                <span>New Reading</span>
-              </Link>
-              <Link
-                href="/history"
-                className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <History className="h-5 w-5" />
-                <span>History</span>
-              </Link>
-             <a
-               href="https://ko-fi.com/Y8Y81NVDEK"
-               target="_blank"
-               rel="noopener noreferrer"
-               className="flex min-h-11 items-center justify-center rounded px-3 py-2"
-               onClick={() => setMobileMenuOpen(false)}
-             >
-               <Image
-                 width={144}
-                 height={36}
-                 style={{ border: 0, height: 36, width: "auto" }}
-                 src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
-                 alt="Buy Me a Coffee at ko-fi.com"
-                 unoptimized
-               />
-             </a>
+            <Link
+              href="/read/new?reset=true"
+              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Plus className="h-5 w-5" />
+              <span>New Reading</span>
+            </Link>
+            <Link
+              href="/history"
+              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <History className="h-5 w-5" />
+              <span>History</span>
+            </Link>
+            <a
+              href="https://ko-fi.com/Y8Y81NVDEK"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-11 items-center justify-center rounded px-3 py-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Image
+                width={144}
+                height={36}
+                style={{ border: 0, height: 36, width: "auto" }}
+                src="https://storage.ko-fi.com/cdn/kofi6.png?v=6"
+                alt="Buy Me a Coffee at ko-fi.com"
+                unoptimized
+              />
+            </a>
           </nav>
         </div>
       )}

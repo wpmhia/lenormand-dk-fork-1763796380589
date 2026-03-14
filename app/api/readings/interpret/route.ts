@@ -1,4 +1,3 @@
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
@@ -11,6 +10,10 @@ import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { readingUsage, userSupporter } from "@/lib/schema";
+import { eq, and } from "drizzle-orm";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -18,12 +21,56 @@ export async function OPTIONS() {
 
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const BASE_URL = getEnv("MISTRAL_BASE_URL") || "https://api.mistral.ai";
-const RATE_LIMIT = 5;
+const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = 60 * 1000;
 const allCards = staticCardsData as Card[];
 
 export async function POST(request: Request) {
   try {
+    // Auth gate - must be logged in
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session?.user) {
+      return new Response(
+        JSON.stringify({
+          error: "Sign in to access AI readings",
+          requiresAuth: true,
+        }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const userId = session.user.id;
+
+    // Check VIP status
+    const vipRecord = await db
+      .select()
+      .from(userSupporter)
+      .where(eq(userSupporter.userId, userId))
+      .limit(1);
+    const isVip = vipRecord.length > 0;
+
+    // Daily limit check for non-VIP
+    if (!isVip) {
+      const today = new Date().toISOString().split("T")[0];
+      const usageRecord = await db
+        .select()
+        .from(readingUsage)
+        .where(and(eq(readingUsage.userId, userId), eq(readingUsage.date, today)))
+        .limit(1);
+
+      const usedToday = usageRecord[0]?.count ?? 0;
+
+      if (usedToday >= 1) {
+        return new Response(
+          JSON.stringify({
+            error: "Daily limit reached. Come back tomorrow or enter a VIP code in your account settings for unlimited access.",
+            dailyLimitReached: true,
+          }),
+          { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    }
+
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
@@ -38,9 +85,6 @@ export async function POST(request: Request) {
           headers: {
             "Content-Type": "application/json",
             "Cache-Control": "no-store, must-revalidate",
-            "X-RateLimit-Limit": String(rateLimitResult.limit),
-            "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-            "X-RateLimit-Reset": String(rateLimitResult.reset),
             ...corsHeaders,
           },
         },
@@ -66,13 +110,14 @@ export async function POST(request: Request) {
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
 
+    // Block supporter-only spreads for non-VIP users
     const spread = COMPREHENSIVE_SPREADS.find(s => s.id === spreadId);
-    if (spread?.supporterOnly) {
+    if (spread?.supporterOnly && !isVip) {
       return new Response(
         JSON.stringify({
-          error: "Unlock this spread with a supporter code! Visit /support to learn more.",
+          error: "Enter your VIP code in account settings to unlock this spread.",
           disabled: true,
-          supporterLink: "/support",
+          supporterLink: "/account/settings",
         }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } },
       );
@@ -84,8 +129,21 @@ export async function POST(request: Request) {
     });
 
     const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?");
-    const timeoutMs = 15000;
+    const timeoutMs = 25000;
     const maxTokens = getTokenBudget(cardCount);
+
+    // Increment usage for non-VIP before streaming
+    if (!isVip) {
+      const today = new Date().toISOString().split("T")[0];
+      await db
+        .insert(readingUsage)
+        .values({ userId, date: today, count: 1 })
+        .onConflictDoNothing();
+      // If row already exists, increment
+      await db.execute(
+        `UPDATE reading_usage SET count = count + 1 WHERE user_id = '${userId}' AND date = '${today}'`
+      );
+    }
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
@@ -127,7 +185,7 @@ export async function POST(request: Request) {
           let isTruncated = false;
 
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
+            `data: ${JSON.stringify({ type: "headers", isVip, remainingToday: isVip ? null : 0 })}\n\n`
           ));
 
           while (true) {
@@ -190,9 +248,6 @@ export async function POST(request: Request) {
         "Cache-Control": "no-cache",
         "Connection": "keep-alive",
         "X-Accel-Buffering": "no",
-        "X-RateLimit-Limit": String(rateLimitResult.limit),
-        "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-        "X-RateLimit-Reset": String(rateLimitResult.reset),
         ...corsHeaders,
       },
     });
