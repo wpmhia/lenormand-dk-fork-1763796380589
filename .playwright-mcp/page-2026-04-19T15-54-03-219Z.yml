@@ -1,0 +1,230 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - main [ref=e35]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - heading "Lenormand Intelligence" [level=1] [ref=e39]:
+              - generic [ref=e40]: Lenormand
+              - generic [ref=e42]: Intelligence
+            - paragraph [ref=e43]: Clear answers from the 36-card Lenormand system. AI-powered readings and learning.
+            - generic [ref=e44]:
+              - link "Get Your Reading" [ref=e45] [cursor=pointer]:
+                - /url: /read/new
+                - button "Get Your Reading" [ref=e46]:
+                  - img [ref=e47]
+                  - text: Get Your Reading
+              - button "Daily Card" [ref=e49] [cursor=pointer]:
+                - img [ref=e50]
+                - text: Daily Card
+            - generic [ref=e53]:
+              - generic [ref=e54]:
+                - img [ref=e55]
+                - img [ref=e58]
+              - generic [ref=e60]:
+                - generic [ref=e61]: "0"
+                - generic [ref=e62]: readings generated
+          - img "Mystical Lenormand cards arranged in a reading spread" [ref=e66]
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - heading "Choose Your Reading Type" [level=2] [ref=e70]: Choose Your Reading Type
+            - paragraph [ref=e72]: All spreads are free — from single card to Grand Tableau
+          - generic [ref=e73]:
+            - link "Single Card Quick daily guidance 1 Card" [ref=e74] [cursor=pointer]:
+              - /url: /read/new?spread=single-card
+              - generic [ref=e75]:
+                - heading "Single Card" [level=3] [ref=e79]:
+                  - img [ref=e80]
+                  - generic [ref=e82]: Single Card
+                - generic [ref=e83]:
+                  - paragraph [ref=e84]: Quick daily guidance
+                  - generic [ref=e85]:
+                    - generic [ref=e86]: 1 Card
+                    - img [ref=e87]
+            - link "3-Card Sentence Three-card narrative 3 Cards" [ref=e89] [cursor=pointer]:
+              - /url: /read/new?spread=sentence-3
+              - generic [ref=e90]:
+                - heading "3-Card Sentence" [level=3] [ref=e94]:
+                  - img [ref=e95]
+                  - generic [ref=e97]: 3-Card Sentence
+                - generic [ref=e98]:
+                  - paragraph [ref=e99]: Three-card narrative
+                  - generic [ref=e100]:
+                    - generic [ref=e101]: 3 Cards
+                    - img [ref=e102]
+            - link "5-Card Sentence Detailed answer 5 Cards" [ref=e104] [cursor=pointer]:
+              - /url: /read/new?spread=sentence-5
+              - generic [ref=e105]:
+                - heading "5-Card Sentence" [level=3] [ref=e109]:
+                  - img [ref=e110]
+                  - generic [ref=e114]: 5-Card Sentence
+                - generic [ref=e115]:
+                  - paragraph [ref=e116]: Detailed answer
+                  - generic [ref=e117]:
+                    - generic [ref=e118]: 5 Cards
+                    - img [ref=e119]
+        - generic [ref=e121]:
+          - generic [ref=e122]:
+            - heading "All Spreads Available" [level=2] [ref=e123]
+            - paragraph [ref=e124]: From single card to Grand Tableau
+          - generic [ref=e125]:
+            - link "9-Card Comprehensive Deep dive into complex situations 9 Cards" [ref=e126] [cursor=pointer]:
+              - /url: /read/new?spread=comprehensive
+              - generic [ref=e127]:
+                - heading "9-Card Comprehensive" [level=3] [ref=e131]:
+                  - img [ref=e132]
+                  - generic [ref=e134]: 9-Card Comprehensive
+                - generic [ref=e135]:
+                  - paragraph [ref=e136]: Deep dive into complex situations
+                  - generic [ref=e137]:
+                    - generic [ref=e138]: 9 Cards
+                    - img [ref=e139]
+            - link "Grand Tableau All 36 cards 36 Cards" [ref=e141] [cursor=pointer]:
+              - /url: /read/new?spread=grand-tableau
+              - generic [ref=e142]:
+                - heading "Grand Tableau" [level=3] [ref=e146]:
+                  - img [ref=e147]
+                  - generic [ref=e149]: Grand Tableau
+                - generic [ref=e150]:
+                  - paragraph [ref=e151]: All 36 cards
+                  - generic [ref=e152]:
+                    - generic [ref=e153]: 36 Cards
+                    - img [ref=e154]
+        - link "Buy me a coffee" [ref=e158] [cursor=pointer]:
+          - /url: https://ko-fi.com/lenormand
+          - img [ref=e159]
+          - text: Buy me a coffee
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - heading "How It Works" [level=2] [ref=e163]
+            - paragraph [ref=e164]: Get your Lenormand reading in three simple steps
+          - generic [ref=e165]:
+            - generic [ref=e166]:
+              - heading "1 Select Cards" [level=3] [ref=e168]:
+                - generic [ref=e169]: "1"
+                - text: Select Cards
+              - generic [ref=e170]: Choose any spread — from single card to Grand Tableau.
+            - generic [ref=e171]:
+              - heading "2 Ask Your Question" [level=3] [ref=e173]:
+                - generic [ref=e174]: "2"
+                - text: Ask Your Question
+              - generic [ref=e175]: Enter your question and draw your cards.
+            - generic [ref=e176]:
+              - heading "3 Get Answer" [level=3] [ref=e178]:
+                - generic [ref=e179]: "3"
+                - text: Get Answer
+              - generic [ref=e180]: Receive instant AI interpretation.
+        - generic [ref=e181]:
+          - generic [ref=e182]:
+            - heading "Learn Lenormand" [level=2] [ref=e183]
+            - paragraph [ref=e184]: Master the 36 cards with our comprehensive guide
+          - generic [ref=e185]:
+            - link "Rider The Rider brings news and swift communication. It represents information that must be processed or acted upon quickly, often bringing a sense of urgency to situations." [ref=e186] [cursor=pointer]:
+              - /url: /learn/card-meanings/1
+              - generic [ref=e187]:
+                - heading "Rider" [level=3] [ref=e189]
+                - paragraph [ref=e191]: The Rider brings news and swift communication. It represents information that must be processed or acted upon quickly, often bringing a sense of urgency to situations.
+            - link "Clover The Clover represents a fortunate turn of events and happy coincidence. It brings relief and reassurance through small miracles and unexpected opportunities." [ref=e192] [cursor=pointer]:
+              - /url: /learn/card-meanings/2
+              - generic [ref=e193]:
+                - heading "Clover" [level=3] [ref=e195]
+                - paragraph [ref=e197]: The Clover represents a fortunate turn of events and happy coincidence. It brings relief and reassurance through small miracles and unexpected opportunities.
+            - link "Ship The Ship sails forward with movement and exploration. It represents change of location, journeys, and the passage between one state and another." [ref=e198] [cursor=pointer]:
+              - /url: /learn/card-meanings/3
+              - generic [ref=e199]:
+                - heading "Ship" [level=3] [ref=e201]
+                - paragraph [ref=e203]: The Ship sails forward with movement and exploration. It represents change of location, journeys, and the passage between one state and another.
+            - link "House The House provides security and permanence. It represents home, family matters, and the stable foundation upon which life is built." [ref=e204] [cursor=pointer]:
+              - /url: /learn/card-meanings/4
+              - generic [ref=e205]:
+                - heading "House" [level=3] [ref=e207]
+                - paragraph [ref=e209]: The House provides security and permanence. It represents home, family matters, and the stable foundation upon which life is built.
+            - link "Tree The Tree grows with strength and stability. It represents longevity, health, family roots, and the passage of time through natural cycles." [ref=e210] [cursor=pointer]:
+              - /url: /learn/card-meanings/5
+              - generic [ref=e211]:
+                - heading "Tree" [level=3] [ref=e213]
+                - paragraph [ref=e215]: The Tree grows with strength and stability. It represents longevity, health, family roots, and the passage of time through natural cycles.
+            - link "Clouds The Clouds obscure truth and clarity. It represents confusion, uncertainty, and the need to wait for clarity before proceeding." [ref=e216] [cursor=pointer]:
+              - /url: /learn/card-meanings/6
+              - generic [ref=e217]:
+                - heading "Clouds" [level=3] [ref=e219]
+                - paragraph [ref=e221]: The Clouds obscure truth and clarity. It represents confusion, uncertainty, and the need to wait for clarity before proceeding.
+          - link "View All 36 Cards" [ref=e223] [cursor=pointer]:
+            - /url: /learn
+            - button "View All 36 Cards" [ref=e224]
+    - contentinfo [ref=e225]:
+      - generic [ref=e226]:
+        - generic [ref=e227]:
+          - generic [ref=e228]:
+            - link "Lenormand" [ref=e229] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e230]
+            - paragraph [ref=e231]: AI-Enhanced Divination
+          - generic [ref=e232]:
+            - heading "Explore" [level=4] [ref=e233]
+            - list [ref=e234]:
+              - listitem [ref=e235]:
+                - link "Home" [ref=e236] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e237]:
+                - link "Reading" [ref=e238] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e239]:
+                - link "History" [ref=e240] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e241]:
+                - link "Cards" [ref=e242] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e243]:
+                - link "Learn" [ref=e244] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e245]:
+            - heading "Links" [level=4] [ref=e246]
+            - list [ref=e247]:
+              - listitem [ref=e248]:
+                - link "About" [ref=e249] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e250]:
+                - link "Support" [ref=e251] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e252]:
+                - link "Privacy" [ref=e253] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e254]:
+                - link "Terms" [ref=e255] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e257]:
+          - text: Made by
+          - link "Humanstack" [ref=e258] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
