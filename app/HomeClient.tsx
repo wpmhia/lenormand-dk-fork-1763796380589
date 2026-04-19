@@ -47,20 +47,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl">
-              Clear answers from the 36-card Lenormand system. All card spreads, AI interpretations, and learning modules are completely free.
+              Clear answers from the 36-card Lenormand system. AI-powered readings and learning.
             </p>
-
-            {/* Feature badges */}
-            <div className="mb-4 flex flex-wrap justify-center gap-2 md:justify-start">
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
-                <Sparkles className="h-3 w-3" />
-                AI readings free
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
-                <BookOpen className="h-3 w-3" />
-                All spreads free
-              </span>
-            </div>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start md:justify-start">
               <Link href="/read/new">
@@ -100,57 +88,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 className="block h-auto w-full max-w-xs rounded-lg border-0 object-cover shadow-lg transition-shadow duration-300 hover:shadow-xl md:max-w-sm"
               />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* What's Free Section */}
-      <div className="container-section bg-muted/30 px-4 py-12">
-        <div className="mx-auto max-w-4xl">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border-2 border-primary bg-white p-6 shadow-md dark:border-primary dark:bg-gray-950">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                <Sparkles className="h-5 w-5 text-primary" />
-                Completely Free
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-800 dark:text-gray-100">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600">✓</span>
-                  <span>Unlimited AI readings</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600">✓</span>
-                  <span>All card spreads (1 to 36 cards)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600">✓</span>
-                  <span>All learning modules & card meanings</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600">✓</span>
-                  <span>Daily card draw</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600">✓</span>
-                  <span>Reading history</span>
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-xl border-2 border-amber-600 bg-white p-6 shadow-md dark:border-amber-500 dark:bg-amber-950">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                <Coffee className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                Support the Project
-              </h3>
-              <p className="text-sm text-gray-800 dark:text-gray-100 mb-3">
-                Lenormand Intelligence is free for everyone. If you find value in it, consider buying me a coffee to help keep it running.
-              </p>
-              <Link href="/membership">
-                <Button variant="outline" className="w-full gap-2 border-amber-600 text-amber-700 hover:bg-amber-50 dark:border-amber-500 dark:text-amber-400">
-                  <Coffee className="h-4 w-4" />
-                  Buy Me a Coffee
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
@@ -201,7 +138,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             All Spreads Available
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            From single card to Grand Tableau — all spreads are free to use
+            From single card to Grand Tableau
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -222,33 +159,18 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         </div>
       </div>
 
-      {/* Support CTA */}
-      <div className="container-section bg-gradient-to-b from-amber-50/50 via-background to-amber-50/50 px-4 py-16 dark:from-amber-950/20 dark:to-amber-950/20">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-6 inline-flex items-center justify-center rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
-            <Coffee className="h-10 w-10 text-amber-600 dark:text-amber-400" />
-          </div>
-          <h2 className="mb-4 text-3xl font-bold text-foreground">
-            Enjoying Lenormand Intelligence?
-          </h2>
-          <p className="mb-8 text-lg text-muted-foreground">
-            This project is completely free and open to everyone. If it has helped you, consider supporting its development with a coffee.
-          </p>
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="https://ko-fi.com/lenormand"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button size="lg" className="gap-2 bg-amber-500 hover:bg-amber-600">
-                <Coffee className="h-4 w-4" />
-                Buy Me a Coffee
-              </Button>
-            </a>
-          </div>
-          <p className="mt-6 text-sm text-muted-foreground">
-            No subscriptions. No limits. Just gratitude.
-          </p>
+      {/* Support */}
+      <div className="container-section px-4 py-8">
+        <div className="mx-auto max-w-xl text-center">
+          <a
+            href="https://ko-fi.com/lenormand"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Coffee className="h-4 w-4" />
+            Buy me a coffee
+          </a>
         </div>
       </div>
 
@@ -274,7 +196,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </CardHeader>
             <CardContent className="text-muted-foreground">
               Choose any spread — from single card to Grand Tableau.
-              <strong className="text-primary"> All spreads are free.</strong>
             </CardContent>
           </Card>
           <Card className="border-border bg-muted/50">
@@ -288,7 +209,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </CardHeader>
             <CardContent className="text-muted-foreground">
               Enter your question and draw your cards.
-              <strong className="text-primary"> AI interpretation included.</strong>
             </CardContent>
           </Card>
           <Card className="border-border bg-muted/50">
@@ -302,7 +222,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </CardHeader>
             <CardContent className="text-muted-foreground">
               Receive instant AI interpretation.
-              <strong className="text-primary"> No limits, completely free.</strong>
             </CardContent>
           </Card>
         </div>
