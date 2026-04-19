@@ -1,0 +1,105 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - navigation "Breadcrumb" [ref=e38]:
+          - list [ref=e39]:
+            - listitem [ref=e40]:
+              - link "Home" [ref=e41] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e42]:
+              - img [ref=e44]
+              - generic [ref=e46]: Support
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - img [ref=e50]
+            - heading "Support Lenormand Intelligence" [level=3] [ref=e52]
+            - paragraph [ref=e53]: Help keep this project free for everyone
+          - generic [ref=e54]:
+            - paragraph [ref=e55]: Lenormand Intelligence is completely free — no subscriptions, no limits, no catches. If you find value in it, consider buying me a coffee to help cover costs.
+            - generic [ref=e56]:
+              - img [ref=e57]
+              - paragraph [ref=e59]: Voluntary Support
+              - paragraph [ref=e60]: Every coffee helps keep the lights on
+            - link "Buy Me a Coffee" [ref=e61] [cursor=pointer]:
+              - /url: https://ko-fi.com/lenormand
+              - button "Buy Me a Coffee" [ref=e62]:
+                - img [ref=e63]
+                - text: Buy Me a Coffee
+            - paragraph [ref=e65]: You can also support by sharing Lenormand Intelligence with friends!
+    - contentinfo [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - link "Lenormand" [ref=e70] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e71]
+            - paragraph [ref=e72]: AI-Enhanced Divination
+          - generic [ref=e73]:
+            - heading "Explore" [level=4] [ref=e74]
+            - list [ref=e75]:
+              - listitem [ref=e76]:
+                - link "Home" [ref=e77] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e78]:
+                - link "Reading" [ref=e79] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e80]:
+                - link "History" [ref=e81] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e82]:
+                - link "Cards" [ref=e83] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e84]:
+                - link "Learn" [ref=e85] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e86]:
+            - heading "Links" [level=4] [ref=e87]
+            - list [ref=e88]:
+              - listitem [ref=e89]:
+                - link "About" [ref=e90] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e91]:
+                - link "Support" [ref=e92] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e93]:
+                - link "Privacy" [ref=e94] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e95]:
+                - link "Terms" [ref=e96] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e98]:
+          - text: Made by
+          - link "Humanstack" [ref=e99] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
