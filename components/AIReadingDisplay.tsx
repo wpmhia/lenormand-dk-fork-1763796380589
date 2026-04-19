@@ -6,11 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
-import { RefreshCw, Copy, Check, AlertCircle, MessageCircle, Crown, LogIn } from "lucide-react";
+import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
 import { getCards } from "@/lib/data";
-import Link from "next/link";
-import { useMembership } from "@/components/MembershipProvider";
-import { useSession } from "@/lib/auth-client";
 
 const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
@@ -48,8 +45,6 @@ export function AIReadingDisplay({
   followUpStreaming = false,
   followUpResponse = null,
 }: AIReadingDisplayProps) {
-  const { isMember } = useMembership();
-  const { data: session } = useSession();
   const [copyClicked, setCopyClicked] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
   const [showFollowUpInput, setShowFollowUpInput] = useState(false);
@@ -105,59 +100,6 @@ export function AIReadingDisplay({
   }
 
   if (error && !isStreaming) {
-    const isAuthError = error.includes("Sign in") || error.includes("auth");
-    const isDailyLimitError = error.includes("Daily limit") || error.includes("today") || error.includes("Upgrade");
-    
-    if (isAuthError) {
-      return (
-        <Card className="border-dashed border-2 bg-muted/30">
-          <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-            <div className="mb-4 rounded-full bg-primary/10 p-4">
-              <LogIn className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold">Sign In Required</h3>
-            <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-              Sign in to access AI readings. Free accounts get 1 reading per day.
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild>
-                <Link href="/auth/sign-in">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/auth/sign-up">Create Account</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    if (isDailyLimitError) {
-      return (
-        <Alert className="border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800">
-          <Crown className="h-4 w-4 text-amber-600" />
-          <AlertTitle className="text-amber-800 dark:text-amber-300">Daily Limit Reached</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <div className="text-sm text-amber-700 dark:text-amber-400">
-              {error}
-            </div>
-            <Link href="/membership">
-              <Button 
-                size="sm" 
-                className="bg-amber-500 hover:bg-amber-600 text-white"
-              >
-                <Crown className="mr-2 h-3 w-3" />
-                Upgrade to Unlimited
-              </Button>
-            </Link>
-          </AlertDescription>
-        </Alert>
-      );
-    }
-    
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -214,15 +156,6 @@ export function AIReadingDisplay({
             <div className="leading-relaxed whitespace-pre-wrap">{highlightCardNames(aiReading.reading)}</div>
           )}
         </div>
-
-        {!isLoading && !isStreaming && !isMember && (
-          <div className="mt-6 pt-4 border-t border-border/50">
-            <Link href="/membership" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-amber-600 transition-colors">
-              <Crown className="h-3 w-3" />
-              <span>Upgrade for unlimited readings</span>
-            </Link>
-          </div>
-        )}
 
         {!isStreaming && !followUpResponse && (
           <div className="mt-8 pt-6 border-t border-border/50">

@@ -6,7 +6,6 @@ import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { auth } from "@/lib/auth";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -19,14 +18,6 @@ const RATE_LIMIT_WINDOW = 60 * 1000;
 
 export async function POST(request: Request) {
   try {
-    const session = await auth.api.getSession({ headers: request.headers });
-    if (!session?.user) {
-      return new Response(
-        JSON.stringify({ error: "Sign in to use follow-up questions", requiresAuth: true }),
-        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
@@ -121,7 +112,8 @@ Provide a brief, direct answer to the follow-up question based on the original r
           let buffer = "";
 
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}\n\n`
+            `data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}
+\n\n`
           ));
 
           while (true) {
@@ -137,7 +129,8 @@ Provide a brief, direct answer to the follow-up question based on the original r
               if (data && typeof data === "object") {
                 const delta = data.choices?.[0]?.delta?.content;
                 if (delta) {
-                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}
+\n\n`));
                 }
               }
             }
@@ -148,12 +141,14 @@ Provide a brief, direct answer to the follow-up question based on the original r
             if (data && typeof data === "object") {
               const delta = data.choices?.[0]?.delta?.content;
               if (delta) {
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}
+\n\n`));
               }
             }
           }
 
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
+\n\n`));
           controller.close();
         } catch (error: any) {
           clearTimeout(timeoutId);
@@ -161,7 +156,8 @@ Provide a brief, direct answer to the follow-up question based on the original r
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({
             type: "error",
             error: isTimeout ? "Response timed out" : "Processing failed",
-          })}\n\n`));
+          })}
+\n\n`));
           controller.close();
         }
       },

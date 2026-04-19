@@ -1,16 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Club, Home, BookOpen, Plus, Menu, X, History, Crown, Sparkles } from "lucide-react";
+import { Club, Home, BookOpen, Plus, Menu, X, History } from "lucide-react";
 import { useState } from "react";
-import { UserButton } from "@daveyplate/better-auth-ui";
-import { useMembership } from "@/components/MembershipProvider";
-import { Button } from "@/components/ui/button";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isMember, isLoading } = useMembership();
-  
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container flex h-14 items-center px-4">
@@ -67,37 +63,8 @@ export function Header() {
             <History className="h-5 w-5" />
             <span>History</span>
           </Link>
-          
-          {/* Membership Status */}
-          {!isLoading && (
-            <>
-              {isMember ? (
-                <div className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                  <Crown className="h-3 w-3" />
-                  <span className="hidden sm:inline">Unlimited</span>
-                </div>
-              ) : (
-                <Link href="/membership">
-                  <Button size="sm" variant="outline" className="gap-1 text-xs">
-                    <Sparkles className="h-3 w-3" />
-                    <span className="hidden sm:inline">Upgrade</span>
-                  </Button>
-                </Link>
-              )}
-            </>
-          )}
-          
-          <UserButton size="icon" />
         </nav>
         <div className="ml-auto flex items-center gap-2 md:hidden">
-          {!isLoading && !isMember && (
-            <Link href="/membership">
-              <Button size="sm" variant="outline" className="h-8 px-2 text-xs">
-                <Sparkles className="h-3 w-3" />
-              </Button>
-            </Link>
-          )}
-          <UserButton size="icon" />
           <button
             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-card-foreground transition duration-150 ease-out hover:-translate-y-[1px] hover:text-primary active:scale-95"
             aria-label={mobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
@@ -109,7 +76,7 @@ export function Header() {
           </button>
         </div>
       </div>
-      
+
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="border-t border-border bg-card px-4 py-4 md:hidden">
@@ -153,14 +120,6 @@ export function Header() {
             >
               <History className="h-5 w-5" />
               <span>History</span>
-            </Link>
-            <Link
-              href="/membership"
-              className="flex min-h-11 items-center gap-2 rounded px-3 py-2 text-sm font-medium text-card-foreground transition-colors hover:bg-accent/50 hover:text-primary"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Crown className="h-5 w-5" />
-              <span>Membership</span>
             </Link>
           </nav>
         </div>
