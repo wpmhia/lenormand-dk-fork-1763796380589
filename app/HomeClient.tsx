@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import heroImage from "@/public/images/hero-image.jpg";
 import { Button } from "@/components/ui/button";
-import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { ReadingCounter } from "@/components/ReadingCounter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
@@ -16,7 +15,7 @@ import {
   BookOpen,
   Target,
   Sparkles,
-  Crown,
+  Coffee,
 } from "lucide-react";
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
@@ -48,18 +47,18 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </span>
             </h1>
             <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl">
-              Clear answers from the 36-card Lenormand system. All card spreads and learning modules are free.
+              Clear answers from the 36-card Lenormand system. All card spreads, AI interpretations, and learning modules are completely free.
             </p>
-            
+
             {/* Feature badges */}
             <div className="mb-4 flex flex-wrap justify-center gap-2 md:justify-start">
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
                 <Sparkles className="h-3 w-3" />
-                All spreads free
+                AI readings free
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary">
                 <BookOpen className="h-3 w-3" />
-                Learn free
+                All spreads free
               </span>
             </div>
 
@@ -70,9 +69,9 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                   Get Your Reading
                 </Button>
               </Link>
-              <Button 
-                variant="outline" 
-                size="lg" 
+              <Button
+                variant="outline"
+                size="lg"
                 onClick={() => setShowDailyCard(true)}
                 className="gap-2"
               >
@@ -80,22 +79,11 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 Daily Card
               </Button>
             </div>
-            
-            {/* AI Notice */}
-            <div className="mt-4 rounded-lg border-2 border-amber-600 bg-white p-3 shadow-sm dark:border-amber-500 dark:bg-amber-950">
-              <p className="text-sm text-gray-900 dark:text-white">
-                <Crown className="mr-1 inline h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <strong>AI interpretations:</strong> Free accounts get 1 per day.
-                <Link href="/membership" className="ml-1 font-bold text-amber-700 underline hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300">
-                  Upgrade for unlimited
-                </Link>.
-              </p>
-            </div>
-            
+
             {/* Reading Counter - Social Proof */}
             <div className="mt-6 flex justify-center md:justify-start">
-              <ReadingCounter 
-                initialCount={initialCount} 
+              <ReadingCounter
+                initialCount={initialCount}
               />
             </div>
           </div>
@@ -129,6 +117,10 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               <ul className="space-y-2 text-sm text-gray-800 dark:text-gray-100">
                 <li className="flex items-start gap-2">
                   <span className="text-green-600">✓</span>
+                  <span>Unlimited AI readings</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-600">✓</span>
                   <span>All card spreads (1 to 36 cards)</span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -147,24 +139,18 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </div>
             <div className="rounded-xl border-2 border-amber-600 bg-white p-6 shadow-md dark:border-amber-500 dark:bg-amber-950">
               <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-                <Crown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                AI Interpretations
+                <Coffee className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                Support the Project
               </h3>
-              <ul className="space-y-2 text-sm text-gray-800 dark:text-gray-100">
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-600 dark:text-amber-400">★</span>
-                  <span><strong>Free account:</strong> 1 AI reading per day</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-600 dark:text-amber-400">★</span>
-                  <span><strong>Unlimited Member:</strong> No daily limit</span>
-                </li>
-                <li className="mt-3 text-xs">
-                  <Link href="/auth/sign-up" className="font-bold text-amber-700 underline hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300">
-                    Create free account →
-                  </Link>
-                </li>
-              </ul>
+              <p className="text-sm text-gray-800 dark:text-gray-100 mb-3">
+                Lenormand Intelligence is free for everyone. If you find value in it, consider buying me a coffee to help keep it running.
+              </p>
+              <Link href="/membership">
+                <Button variant="outline" className="w-full gap-2 border-amber-600 text-amber-700 hover:bg-amber-50 dark:border-amber-500 dark:text-amber-400">
+                  <Coffee className="h-4 w-4" />
+                  Buy Me a Coffee
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -236,29 +222,32 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         </div>
       </div>
 
-      {/* Membership CTA */}
+      {/* Support CTA */}
       <div className="container-section bg-gradient-to-b from-amber-50/50 via-background to-amber-50/50 px-4 py-16 dark:from-amber-950/20 dark:to-amber-950/20">
         <div className="mx-auto max-w-2xl text-center">
           <div className="mb-6 inline-flex items-center justify-center rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
-            <Crown className="h-10 w-10 text-amber-600 dark:text-amber-400" />
+            <Coffee className="h-10 w-10 text-amber-600 dark:text-amber-400" />
           </div>
           <h2 className="mb-4 text-3xl font-bold text-foreground">
-            Unlock AI Interpretations
+            Enjoying Lenormand Intelligence?
           </h2>
           <p className="mb-8 text-lg text-muted-foreground">
-            Get personalized AI guidance for every reading. Free accounts get 1 interpretation per day. 
-            Upgrade for unlimited access.
+            This project is completely free and open to everyone. If it has helped you, consider supporting its development with a coffee.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/membership">
+            <a
+              href="https://ko-fi.com/lenormand"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button size="lg" className="gap-2 bg-amber-500 hover:bg-amber-600">
-                <Crown className="h-4 w-4" />
-                View Membership
+                <Coffee className="h-4 w-4" />
+                Buy Me a Coffee
               </Button>
-            </Link>
+            </a>
           </div>
           <p className="mt-6 text-sm text-muted-foreground">
-            €2,99/month • Cancel anytime
+            No subscriptions. No limits. Just gratitude.
           </p>
         </div>
       </div>
@@ -270,7 +259,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             How It Works
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            All card spreads are free. Create a free account for AI interpretations.
+            Get your Lenormand reading in three simple steps
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
@@ -284,7 +273,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Choose any spread — from single card to Grand Tableau. 
+              Choose any spread — from single card to Grand Tableau.
               <strong className="text-primary"> All spreads are free.</strong>
             </CardContent>
           </Card>
@@ -298,8 +287,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Enter your question and draw your cards. 
-              <strong className="text-amber-600 dark:text-amber-400"> Sign up free</strong> to get AI interpretations.
+              Enter your question and draw your cards.
+              <strong className="text-primary"> AI interpretation included.</strong>
             </CardContent>
           </Card>
           <Card className="border-border bg-muted/50">
@@ -312,8 +301,8 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Receive instant AI interpretations. 
-              <strong className="text-amber-600 dark:text-amber-400"> Free: 1/day • Member: unlimited</strong>
+              Receive instant AI interpretation.
+              <strong className="text-primary"> No limits, completely free.</strong>
             </CardContent>
           </Card>
         </div>
@@ -367,3 +356,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
     </main>
   );
 }
+
+// ReadingTypeCard component (inline since we're updating the file)
+import { ReadingTypeCard } from "@/components/ReadingTypeCard";

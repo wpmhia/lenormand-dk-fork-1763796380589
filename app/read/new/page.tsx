@@ -6,7 +6,7 @@ import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AlertTriangle, Spade, ArrowLeft, Crown, Sparkles } from "lucide-react";
+import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
@@ -16,7 +16,6 @@ import {
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
 import { useReadingHistory } from "@/hooks/use-reading-history";
 import { useToast } from "@/hooks/use-toast";
-import { useMembership } from "@/components/MembershipProvider";
 
 import {
   ReadingSetup,
@@ -30,28 +29,6 @@ import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 
 type Step = "setup" | "drawing" | "results";
 type Method = "virtual" | "physical" | null;
-
-function MembershipBadge() {
-  const { isMember, isLoading } = useMembership();
-
-  if (isLoading) return null;
-
-  if (isMember) {
-    return (
-      <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-        <Crown className="h-3 w-3" />
-        <span>Unlimited Member</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-      <Sparkles className="h-3 w-3" />
-      <span>1 free AI reading/day</span>
-    </div>
-  );
-}
 
 function NewReadingPageContent() {
   const router = useRouter();
@@ -283,11 +260,6 @@ function NewReadingPageContent() {
             <p className="text-lg italic text-muted-foreground">
               Let the ancient cards reveal what your heart already knows
             </p>
-            
-            {/* Membership Badge */}
-            <div className="mt-4 flex justify-center">
-              <MembershipBadge />
-            </div>
 
             {/* Progress Indicator */}
             <div

@@ -24,9 +24,8 @@ export async function middleware(request: NextRequest) {
 
   // Essential security headers only (minimal overhead)
   response.headers.set("X-Content-Type-Options", "nosniff");
-  // X-Frame-Options removed to allow E2B iframe embedding
   // style-src 'unsafe-inline' is REQUIRED for Next.js CSS-in-JS and Tailwind
-  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is https://accounts.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com https://lh3.googleusercontent.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://api.umami.is https://api-gateway.umami.dev https://accounts.google.com; frame-src https://accounts.google.com; frame-ancestors 'self' https://ideavo.ai https://*.ideavo.ai https://*.e2b.app https://e2b.dev; base-uri 'self'; form-action 'self' https://accounts.google.com;");
+  response.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://api.umami.is https://api-gateway.umami.dev; frame-ancestors 'self' https://ideavo.ai https://*.ideavo.ai https://*.e2b.app https://e2b.dev; base-uri 'self';");
 
   // Add caching for static pages (not API routes)
   if (!pathname.startsWith("/api/")) {
@@ -37,12 +36,9 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // Remove incorrect Accept-Encoding header setting - it's a request header, not response
-  // (Server cannot dictate client encoding preferences)
-
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|favicon.ico).*)"],
+  matcher: ["/((?!api|_next|favicon.ico).*))"],
 };

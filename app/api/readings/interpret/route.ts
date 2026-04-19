@@ -10,10 +10,6 @@ import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { readingUsage, memberships } from "@/lib/schema";
-import { eq, and } from "drizzle-orm";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -27,60 +23,6 @@ const allCards = staticCardsData as Card[];
 
 export async function POST(request: Request) {
   try {
-    // Auth gate - must be logged in
-    const session = await auth.api.getSession({ headers: request.headers });
-    if (!session?.user) {
-      return new Response(
-        JSON.stringify({
-          error: "Sign in to access AI readings",
-          requiresAuth: true,
-        }),
-        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    const userId = session.user.id;
-
-    // Check membership status
-    const membershipRecord = await db
-      .select()
-      .from(memberships)
-      .where(eq(memberships.userId, userId))
-      .limit(1);
-    
-    const now = new Date();
-    const membership = membershipRecord[0];
-    let isMember = false;
-    
-    if (membership && membership.tier === "unlimited" && membership.status === "active") {
-      if (!membership.expiresAt || new Date(membership.expiresAt) > now) {
-        isMember = true;
-      }
-    }
-
-    // Daily limit check for non-members
-    if (!isMember) {
-      const today = new Date().toISOString().split("T")[0];
-      const usageRecord = await db
-        .select()
-        .from(readingUsage)
-        .where(and(eq(readingUsage.userId, userId), eq(readingUsage.date, today)))
-        .limit(1);
-
-      const usedToday = usageRecord[0]?.count ?? 0;
-
-      if (usedToday >= 1) {
-        return new Response(
-          JSON.stringify({
-            error: "You've used your free reading for today. Upgrade to unlimited for €2,99/month.",
-            dailyLimitReached: true,
-            membershipLink: "/membership",
-          }),
-          { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
-        );
-      }
-    }
-
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
@@ -120,9 +62,6 @@ export async function POST(request: Request) {
     const { question, cards, spreadId } = body;
     const cardCount = cards.length;
 
-    // Note: All spreads are now available to everyone
-    // Membership only affects AI interpretation limits
-
     const cardsWithKeywords = cards.map((c: { id: number; name: string }) => {
       const cardData = allCards.find((card: Card) => card.id === c.id);
       return { id: c.id, name: c.name, keywords: cardData?.keywords || [] };
@@ -131,19 +70,6 @@ export async function POST(request: Request) {
     const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?");
     const timeoutMs = 25000;
     const maxTokens = getTokenBudget(cardCount);
-
-    // Increment usage for non-members before streaming
-    if (!isMember) {
-      const today = new Date().toISOString().split("T")[0];
-      await db
-        .insert(readingUsage)
-        .values({ userId, date: today, count: 1 })
-        .onConflictDoNothing();
-      // If row already exists, increment
-      await db.execute(
-        `UPDATE reading_usage SET count = count + 1 WHERE user_id = '${userId}' AND date = '${today}'`
-      );
-    }
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
@@ -185,7 +111,7 @@ export async function POST(request: Request) {
           let isTruncated = false;
 
           controller.enqueue(encoder.encode(
-            `data: ${JSON.stringify({ type: "headers", isMember, remainingToday: isMember ? null : 0 })}
+            `data: ${JSON.stringify({ type: "headers" })}
 \n\n`
           ));
 
@@ -203,7 +129,8 @@ export async function POST(request: Request) {
                 const delta = data.choices?.[0]?.delta?.content;
                 if (delta) {
                   fullText += delta;
-                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}
+\n\n`));
                 }
                 if (data.choices?.[0]?.finish_reason === "length") isTruncated = true;
               }
@@ -216,7 +143,8 @@ export async function POST(request: Request) {
               const delta = data.choices?.[0]?.delta?.content;
               if (delta) {
                 fullText += delta;
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}\n\n`));
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: delta })}
+\n\n`));
               }
               if (data.choices?.[0]?.finish_reason === "length") isTruncated = true;
             }
@@ -225,7 +153,8 @@ export async function POST(request: Request) {
           const trimmed = fullText.trim();
           if (trimmed.length > 0 && !/[.!?]$/.test(trimmed)) isTruncated = true;
 
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done", truncated: isTruncated })}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done", truncated: isTruncated })}
+\n\n`));
           incrementReadingCount().catch(() => {});
           controller.close();
         } catch (error: any) {
@@ -237,7 +166,8 @@ export async function POST(request: Request) {
             reading: isTimeout
               ? "The AI took too long to respond. Tap to retry, or check the traditional meanings of your cards below."
               : "Unable to generate a reading right now.",
-          })}\n\n`));
+          })}
+\n\n`));
           controller.close();
         }
       },
