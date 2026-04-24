@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Laptop, Heart } from "lucide-react";
+import { Laptop, Heart, ArrowRight } from "lucide-react";
 
 interface MethodToggleProps {
   value: "virtual" | "physical" | null;
@@ -11,10 +11,6 @@ interface MethodToggleProps {
 }
 
 export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
-  const handleMethodClick = (method: "virtual" | "physical") => {
-    onChange(method);
-    onContinue(method);
-  };
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium text-foreground">
@@ -25,7 +21,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
           type="button"
           variant={value === "virtual" ? "default" : "outline"}
           size="lg"
-          onClick={() => handleMethodClick("virtual")}
+          onClick={() => onChange("virtual")}
           disabled={disabled}
           className={`flex h-auto flex-col items-center gap-2 py-4 ${
             value === "virtual" ? "ring-2 ring-primary ring-offset-2" : ""
@@ -42,7 +38,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
           type="button"
           variant={value === "physical" ? "default" : "outline"}
           size="lg"
-          onClick={() => handleMethodClick("physical")}
+          onClick={() => onChange("physical")}
           disabled={disabled}
           className={`flex h-auto flex-col items-center gap-2 py-4 ${
             value === "physical" ? "ring-2 ring-primary ring-offset-2" : ""
@@ -53,8 +49,21 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
             <div className="font-medium">Physical Cards</div>
             <div className="text-xs opacity-80">Enter your own cards</div>
           </div>
-         </Button>
+        </Button>
       </div>
+      
+      {value && (
+        <Button
+          type="button"
+          onClick={() => onContinue(value)}
+          disabled={disabled}
+          className="w-full gap-2"
+          size="lg"
+        >
+          Continue
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      )}
       
       {/* Method Guidance */}
       <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
