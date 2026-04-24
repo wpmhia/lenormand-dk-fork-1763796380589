@@ -10,9 +10,9 @@
     "not IE 11"
   ],
   "scripts": {
-    "dev": "HOST=0.0.0.0 PORT=4000 next dev",
-    "build": "rm -rf .next && next build",
-    "start": "next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 8080",
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
