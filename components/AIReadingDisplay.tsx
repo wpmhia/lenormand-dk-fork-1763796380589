@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,15 +11,72 @@ import { getCards } from "@/lib/data";
 
 const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
-const CARD_REGEX = new RegExp(`(${CARD_NAMES.join('|')})`, 'g');
 
-function highlightCardNames(text: string): React.ReactNode {
-  const parts = text.split(CARD_REGEX);
-  return parts.map((part, i) => 
-    CARD_NAMES.includes(part) 
-      ? <span key={i} className="text-primary font-medium">{part}</span>
-      : part
-  );
+function parseReadingText(text: string): React.ReactNode[] {
+  const lines = text.split('\n');
+  const result: React.ReactNode[] = [];
+  let key = 0;
+  
+  lines.forEach((line) => {
+    if (line.startsWith('# ')) {
+      result.push(<h1 key={key++} className="text-2xl font-bold mt-4 mb-2">{parseLineContent(line.slice(2))}</h1>);
+    } else if (line.startsWith('## ')) {
+      result.push(<h2 key={key++} className="text-xl font-bold mt-4 mb-2">{parseLineContent(line.slice(3))}</h2>);
+    } else if (line.startsWith('### ')) {
+      result.push(<h3 key={key++} className="text-lg font-bold mt-3 mb-1">{parseLineContent(line.slice(4))}</h3>);
+    } else if (line.trim()) {
+      result.push(<p key={key++} className="mb-2">{parseLineContent(line)}</p>);
+    }
+  });
+  
+  return result;
+}
+
+function parseLineContent(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+  
+  // Pattern: **bold**, *italic*, card names
+  const pattern = /(\*\*(.+?)\*\*)|(\*(.+?)\*)|(`(.+?)`)|([A-Z][a-z]+(?: [A-Z][a-z]+)*)/g;
+  
+  let match;
+  while ((match = pattern.exec(remaining)) !== null) {
+    // Add text before the match
+    if (match.index > 0) {
+      parts.push(remaining.slice(0, match.index));
+    }
+    
+    if (match[1]) {
+      // **bold**
+      parts.push(<strong key={key++} className="font-bold">{match[2]}</strong>);
+    } else if (match[3]) {
+      // *italic*
+      parts.push(<em key={key++} className="italic">{match[4]}</em>);
+    } else if (match[5]) {
+      // `code`
+      parts.push(<code key={key++} className="bg-muted px-1 py-0.5 rounded text-sm">{match[6]}</code>);
+    } else if (match[7]) {
+      // Potential card name
+      const word = match[7];
+      const isCardName = CARD_NAMES.some(name => name.toLowerCase() === word.toLowerCase());
+      if (isCardName) {
+        parts.push(<span key={key++} className="text-primary font-medium">{word}</span>);
+      } else {
+        parts.push(word);
+      }
+    }
+    
+    remaining = remaining.slice(match.index + match[0].length);
+    pattern.lastIndex = 0;
+  }
+  
+  // Add remaining text
+  if (remaining) {
+    parts.push(remaining);
+  }
+  
+  return parts;
 }
 
 interface AIReadingDisplayProps {
@@ -66,7 +123,6 @@ export function AIReadingDisplay({
       await navigator.clipboard.writeText(plainText);
       setCopyClicked(true);
       
-      // Clear previous timeout and set new one
       if (copyTimeoutRef.current) {
         clearTimeout(copyTimeoutRef.current);
       }
@@ -153,7 +209,9 @@ export function AIReadingDisplay({
 
         <div className="reading-content space-y-4 text-foreground">
           {aiReading?.reading && (
-            <div className="leading-relaxed whitespace-pre-wrap">{highlightCardNames(aiReading.reading)}</div>
+            <div className="leading-relaxed whitespace-pre-wrap">
+              {parseReadingText(aiReading.reading)}
+            </div>
           )}
         </div>
 
@@ -217,7 +275,9 @@ export function AIReadingDisplay({
                   <span>Consulting the cards...</span>
                 </div>
               ) : (
-                <div className="leading-relaxed whitespace-pre-wrap">{highlightCardNames(followUpResponse || "")}</div>
+                <div className="leading-relaxed whitespace-pre-wrap">
+                  {parseReadingText(followUpResponse || "")}
+                </div>
               )}
             </div>
             {followUpStreaming && followUpResponse && (
