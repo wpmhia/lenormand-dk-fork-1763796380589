@@ -1,0 +1,532 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - heading "The Deck" [level=1] [ref=e37]
+          - paragraph [ref=e38]: All 36 Lenormand cards with meanings and keywords
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - img [ref=e41]
+            - textbox "Search cards..." [ref=e44]
+          - combobox [ref=e45]:
+            - option "All Categories" [selected]
+            - option "People"
+            - option "Emotions"
+            - option "Objects"
+            - option "Events"
+            - option "Nature"
+          - generic [ref=e46]:
+            - button "Number" [ref=e47] [cursor=pointer]
+            - button "Name" [ref=e48] [cursor=pointer]
+        - generic [ref=e49]: Showing 36 of 36 cards
+        - generic [ref=e50]:
+          - link [ref=e51] [cursor=pointer]:
+            - /url: /cards/1
+          - 'link "Rider card. Click to view details Rider #1" [ref=e52] [cursor=pointer]':
+            - /url: /cards/1
+            - generic "Rider card. Click to view details" [ref=e53]:
+              - img "Rider" [ref=e56]
+            - generic [ref=e57]:
+              - generic [ref=e58]: Rider
+              - generic [ref=e59]: "#1"
+          - generic [ref=e60]:
+            - generic [ref=e61]: Rider
+            - generic [ref=e62]: "#1"
+          - link [ref=e63] [cursor=pointer]:
+            - /url: /cards/2
+          - 'link "Clover card. Click to view details Clover #2" [ref=e64] [cursor=pointer]':
+            - /url: /cards/2
+            - generic "Clover card. Click to view details" [ref=e65]:
+              - img "Clover" [ref=e68]
+            - generic [ref=e69]:
+              - generic [ref=e70]: Clover
+              - generic [ref=e71]: "#2"
+          - generic [ref=e72]:
+            - generic [ref=e73]: Clover
+            - generic [ref=e74]: "#2"
+          - link [ref=e75] [cursor=pointer]:
+            - /url: /cards/3
+          - 'link "Ship card. Click to view details Ship #3" [ref=e76] [cursor=pointer]':
+            - /url: /cards/3
+            - generic "Ship card. Click to view details" [ref=e77]:
+              - img "Ship" [ref=e80]
+            - generic [ref=e81]:
+              - generic [ref=e82]: Ship
+              - generic [ref=e83]: "#3"
+          - generic [ref=e84]:
+            - generic [ref=e85]: Ship
+            - generic [ref=e86]: "#3"
+          - link [ref=e87] [cursor=pointer]:
+            - /url: /cards/4
+          - 'link "House card. Click to view details House #4" [ref=e88] [cursor=pointer]':
+            - /url: /cards/4
+            - generic "House card. Click to view details" [ref=e89]:
+              - img "House" [ref=e92]
+            - generic [ref=e93]:
+              - generic [ref=e94]: House
+              - generic [ref=e95]: "#4"
+          - generic [ref=e96]:
+            - generic [ref=e97]: House
+            - generic [ref=e98]: "#4"
+          - link [ref=e99] [cursor=pointer]:
+            - /url: /cards/5
+          - 'link "Tree card. Click to view details Tree #5" [ref=e100] [cursor=pointer]':
+            - /url: /cards/5
+            - generic "Tree card. Click to view details" [ref=e101]:
+              - img "Tree" [ref=e104]
+            - generic [ref=e105]:
+              - generic [ref=e106]: Tree
+              - generic [ref=e107]: "#5"
+          - generic [ref=e108]:
+            - generic [ref=e109]: Tree
+            - generic [ref=e110]: "#5"
+          - link [ref=e111] [cursor=pointer]:
+            - /url: /cards/6
+          - 'link "Clouds card. Click to view details Clouds #6" [ref=e112] [cursor=pointer]':
+            - /url: /cards/6
+            - generic "Clouds card. Click to view details" [ref=e113]:
+              - img "Clouds" [ref=e116]
+            - generic [ref=e117]:
+              - generic [ref=e118]: Clouds
+              - generic [ref=e119]: "#6"
+          - generic [ref=e120]:
+            - generic [ref=e121]: Clouds
+            - generic [ref=e122]: "#6"
+          - link [ref=e123] [cursor=pointer]:
+            - /url: /cards/7
+          - 'link "Snake card. Click to view details Snake #7" [ref=e124] [cursor=pointer]':
+            - /url: /cards/7
+            - generic "Snake card. Click to view details" [ref=e125]:
+              - img "Snake" [ref=e128]
+            - generic [ref=e129]:
+              - generic [ref=e130]: Snake
+              - generic [ref=e131]: "#7"
+          - generic [ref=e132]:
+            - generic [ref=e133]: Snake
+            - generic [ref=e134]: "#7"
+          - link [ref=e135] [cursor=pointer]:
+            - /url: /cards/8
+          - 'link "Coffin card. Click to view details Coffin #8" [ref=e136] [cursor=pointer]':
+            - /url: /cards/8
+            - generic "Coffin card. Click to view details" [ref=e137]:
+              - img "Coffin" [ref=e140]
+            - generic [ref=e141]:
+              - generic [ref=e142]: Coffin
+              - generic [ref=e143]: "#8"
+          - generic [ref=e144]:
+            - generic [ref=e145]: Coffin
+            - generic [ref=e146]: "#8"
+          - link [ref=e147] [cursor=pointer]:
+            - /url: /cards/9
+          - 'link "Bouquet card. Click to view details Bouquet #9" [ref=e148] [cursor=pointer]':
+            - /url: /cards/9
+            - generic "Bouquet card. Click to view details" [ref=e149]:
+              - img "Bouquet" [ref=e152]
+            - generic [ref=e153]:
+              - generic [ref=e154]: Bouquet
+              - generic [ref=e155]: "#9"
+          - generic [ref=e156]:
+            - generic [ref=e157]: Bouquet
+            - generic [ref=e158]: "#9"
+          - link [ref=e159] [cursor=pointer]:
+            - /url: /cards/10
+          - 'link "Scythe card. Click to view details Scythe #10" [ref=e160] [cursor=pointer]':
+            - /url: /cards/10
+            - generic "Scythe card. Click to view details" [ref=e161]:
+              - img "Scythe" [ref=e164]
+            - generic [ref=e165]:
+              - generic [ref=e166]: Scythe
+              - generic [ref=e167]: "#10"
+          - generic [ref=e168]:
+            - generic [ref=e169]: Scythe
+            - generic [ref=e170]: "#10"
+          - link [ref=e171] [cursor=pointer]:
+            - /url: /cards/11
+          - 'link "Whip card. Click to view details Whip #11" [ref=e172] [cursor=pointer]':
+            - /url: /cards/11
+            - generic "Whip card. Click to view details" [ref=e173]:
+              - img "Whip" [ref=e176]
+            - generic [ref=e177]:
+              - generic [ref=e178]: Whip
+              - generic [ref=e179]: "#11"
+          - generic [ref=e180]:
+            - generic [ref=e181]: Whip
+            - generic [ref=e182]: "#11"
+          - link [ref=e183] [cursor=pointer]:
+            - /url: /cards/12
+          - 'link "Birds card. Click to view details Birds #12" [ref=e184] [cursor=pointer]':
+            - /url: /cards/12
+            - generic "Birds card. Click to view details" [ref=e185]:
+              - img "Birds" [ref=e188]
+            - generic [ref=e189]:
+              - generic [ref=e190]: Birds
+              - generic [ref=e191]: "#12"
+          - generic [ref=e192]:
+            - generic [ref=e193]: Birds
+            - generic [ref=e194]: "#12"
+          - link [ref=e195] [cursor=pointer]:
+            - /url: /cards/13
+          - 'link "Child card. Click to view details Child #13" [ref=e196] [cursor=pointer]':
+            - /url: /cards/13
+            - generic "Child card. Click to view details" [ref=e197]:
+              - img "Child" [ref=e200]
+            - generic [ref=e201]:
+              - generic [ref=e202]: Child
+              - generic [ref=e203]: "#13"
+          - generic [ref=e204]:
+            - generic [ref=e205]: Child
+            - generic [ref=e206]: "#13"
+          - link [ref=e207] [cursor=pointer]:
+            - /url: /cards/14
+          - 'link "Fox card. Click to view details Fox #14" [ref=e208] [cursor=pointer]':
+            - /url: /cards/14
+            - generic "Fox card. Click to view details" [ref=e209]:
+              - img "Fox" [ref=e212]
+            - generic [ref=e213]:
+              - generic [ref=e214]: Fox
+              - generic [ref=e215]: "#14"
+          - generic [ref=e216]:
+            - generic [ref=e217]: Fox
+            - generic [ref=e218]: "#14"
+          - link [ref=e219] [cursor=pointer]:
+            - /url: /cards/15
+          - 'link "Bear card. Click to view details Bear #15" [ref=e220] [cursor=pointer]':
+            - /url: /cards/15
+            - generic "Bear card. Click to view details" [ref=e221]:
+              - img "Bear" [ref=e224]
+            - generic [ref=e225]:
+              - generic [ref=e226]: Bear
+              - generic [ref=e227]: "#15"
+          - generic [ref=e228]:
+            - generic [ref=e229]: Bear
+            - generic [ref=e230]: "#15"
+          - link [ref=e231] [cursor=pointer]:
+            - /url: /cards/16
+          - 'link "Stars card. Click to view details Stars #16" [ref=e232] [cursor=pointer]':
+            - /url: /cards/16
+            - generic "Stars card. Click to view details" [ref=e233]:
+              - img "Stars" [ref=e236]
+            - generic [ref=e237]:
+              - generic [ref=e238]: Stars
+              - generic [ref=e239]: "#16"
+          - generic [ref=e240]:
+            - generic [ref=e241]: Stars
+            - generic [ref=e242]: "#16"
+          - link [ref=e243] [cursor=pointer]:
+            - /url: /cards/17
+          - 'link "Stork card. Click to view details Stork #17" [ref=e244] [cursor=pointer]':
+            - /url: /cards/17
+            - generic "Stork card. Click to view details" [ref=e245]:
+              - img "Stork" [ref=e248]
+            - generic [ref=e249]:
+              - generic [ref=e250]: Stork
+              - generic [ref=e251]: "#17"
+          - generic [ref=e252]:
+            - generic [ref=e253]: Stork
+            - generic [ref=e254]: "#17"
+          - link [ref=e255] [cursor=pointer]:
+            - /url: /cards/18
+          - 'link "Dog card. Click to view details Dog #18" [ref=e256] [cursor=pointer]':
+            - /url: /cards/18
+            - generic "Dog card. Click to view details" [ref=e257]:
+              - img "Dog" [ref=e260]
+            - generic [ref=e261]:
+              - generic [ref=e262]: Dog
+              - generic [ref=e263]: "#18"
+          - generic [ref=e264]:
+            - generic [ref=e265]: Dog
+            - generic [ref=e266]: "#18"
+          - link [ref=e267] [cursor=pointer]:
+            - /url: /cards/19
+          - 'link "Tower card. Click to view details Tower #19" [ref=e268] [cursor=pointer]':
+            - /url: /cards/19
+            - generic "Tower card. Click to view details" [ref=e269]:
+              - img "Tower" [ref=e272]
+            - generic [ref=e273]:
+              - generic [ref=e274]: Tower
+              - generic [ref=e275]: "#19"
+          - generic [ref=e276]:
+            - generic [ref=e277]: Tower
+            - generic [ref=e278]: "#19"
+          - link [ref=e279] [cursor=pointer]:
+            - /url: /cards/20
+          - 'link "Garden card. Click to view details Garden #20" [ref=e280] [cursor=pointer]':
+            - /url: /cards/20
+            - generic "Garden card. Click to view details" [ref=e281]:
+              - img "Garden" [ref=e284]
+            - generic [ref=e285]:
+              - generic [ref=e286]: Garden
+              - generic [ref=e287]: "#20"
+          - generic [ref=e288]:
+            - generic [ref=e289]: Garden
+            - generic [ref=e290]: "#20"
+          - link [ref=e291] [cursor=pointer]:
+            - /url: /cards/21
+          - 'link "Mountain card. Click to view details Mountain #21" [ref=e292] [cursor=pointer]':
+            - /url: /cards/21
+            - generic "Mountain card. Click to view details" [ref=e293]:
+              - img "Mountain" [ref=e296]
+            - generic [ref=e297]:
+              - generic [ref=e298]: Mountain
+              - generic [ref=e299]: "#21"
+          - generic [ref=e300]:
+            - generic [ref=e301]: Mountain
+            - generic [ref=e302]: "#21"
+          - link [ref=e303] [cursor=pointer]:
+            - /url: /cards/22
+          - 'link "Paths card. Click to view details Paths #22" [ref=e304] [cursor=pointer]':
+            - /url: /cards/22
+            - generic "Paths card. Click to view details" [ref=e305]:
+              - img "Paths" [ref=e308]
+            - generic [ref=e309]:
+              - generic [ref=e310]: Paths
+              - generic [ref=e311]: "#22"
+          - generic [ref=e312]:
+            - generic [ref=e313]: Paths
+            - generic [ref=e314]: "#22"
+          - link [ref=e315] [cursor=pointer]:
+            - /url: /cards/23
+          - 'link "Mice card. Click to view details Mice #23" [ref=e316] [cursor=pointer]':
+            - /url: /cards/23
+            - generic "Mice card. Click to view details" [ref=e317]:
+              - img "Mice" [ref=e320]
+            - generic [ref=e321]:
+              - generic [ref=e322]: Mice
+              - generic [ref=e323]: "#23"
+          - generic [ref=e324]:
+            - generic [ref=e325]: Mice
+            - generic [ref=e326]: "#23"
+          - link [ref=e327] [cursor=pointer]:
+            - /url: /cards/24
+          - 'link "Heart card. Click to view details Heart #24" [ref=e328] [cursor=pointer]':
+            - /url: /cards/24
+            - generic "Heart card. Click to view details" [ref=e329]:
+              - img "Heart" [ref=e332]
+            - generic [ref=e333]:
+              - generic [ref=e334]: Heart
+              - generic [ref=e335]: "#24"
+          - generic [ref=e336]:
+            - generic [ref=e337]: Heart
+            - generic [ref=e338]: "#24"
+          - link [ref=e339] [cursor=pointer]:
+            - /url: /cards/25
+          - 'link "Ring card. Click to view details Ring #25" [ref=e340] [cursor=pointer]':
+            - /url: /cards/25
+            - generic "Ring card. Click to view details" [ref=e341]:
+              - img "Ring" [ref=e344]
+            - generic [ref=e345]:
+              - generic [ref=e346]: Ring
+              - generic [ref=e347]: "#25"
+          - generic [ref=e348]:
+            - generic [ref=e349]: Ring
+            - generic [ref=e350]: "#25"
+          - link [ref=e351] [cursor=pointer]:
+            - /url: /cards/26
+          - 'link "Book card. Click to view details Book #26" [ref=e352] [cursor=pointer]':
+            - /url: /cards/26
+            - generic "Book card. Click to view details" [ref=e353]:
+              - img "Book" [ref=e356]
+            - generic [ref=e357]:
+              - generic [ref=e358]: Book
+              - generic [ref=e359]: "#26"
+          - generic [ref=e360]:
+            - generic [ref=e361]: Book
+            - generic [ref=e362]: "#26"
+          - link [ref=e363] [cursor=pointer]:
+            - /url: /cards/27
+          - 'link "Letter card. Click to view details Letter #27" [ref=e364] [cursor=pointer]':
+            - /url: /cards/27
+            - generic "Letter card. Click to view details" [ref=e365]:
+              - img "Letter" [ref=e368]
+            - generic [ref=e369]:
+              - generic [ref=e370]: Letter
+              - generic [ref=e371]: "#27"
+          - generic [ref=e372]:
+            - generic [ref=e373]: Letter
+            - generic [ref=e374]: "#27"
+          - link [ref=e375] [cursor=pointer]:
+            - /url: /cards/28
+          - 'link "Man card. Click to view details Man #28" [ref=e376] [cursor=pointer]':
+            - /url: /cards/28
+            - generic "Man card. Click to view details" [ref=e377]:
+              - img "Man" [ref=e380]
+            - generic [ref=e381]:
+              - generic [ref=e382]: Man
+              - generic [ref=e383]: "#28"
+          - generic [ref=e384]:
+            - generic [ref=e385]: Man
+            - generic [ref=e386]: "#28"
+          - link [ref=e387] [cursor=pointer]:
+            - /url: /cards/29
+          - 'link "Woman card. Click to view details Woman #29" [ref=e388] [cursor=pointer]':
+            - /url: /cards/29
+            - generic "Woman card. Click to view details" [ref=e389]:
+              - img "Woman" [ref=e392]
+            - generic [ref=e393]:
+              - generic [ref=e394]: Woman
+              - generic [ref=e395]: "#29"
+          - generic [ref=e396]:
+            - generic [ref=e397]: Woman
+            - generic [ref=e398]: "#29"
+          - link [ref=e399] [cursor=pointer]:
+            - /url: /cards/30
+          - 'link "Lily card. Click to view details Lily #30" [ref=e400] [cursor=pointer]':
+            - /url: /cards/30
+            - generic "Lily card. Click to view details" [ref=e401]:
+              - img "Lily" [ref=e404]
+            - generic [ref=e405]:
+              - generic [ref=e406]: Lily
+              - generic [ref=e407]: "#30"
+          - generic [ref=e408]:
+            - generic [ref=e409]: Lily
+            - generic [ref=e410]: "#30"
+          - link [ref=e411] [cursor=pointer]:
+            - /url: /cards/31
+          - 'link "Sun card. Click to view details Sun #31" [ref=e412] [cursor=pointer]':
+            - /url: /cards/31
+            - generic "Sun card. Click to view details" [ref=e413]:
+              - img "Sun" [ref=e416]
+            - generic [ref=e417]:
+              - generic [ref=e418]: Sun
+              - generic [ref=e419]: "#31"
+          - generic [ref=e420]:
+            - generic [ref=e421]: Sun
+            - generic [ref=e422]: "#31"
+          - link [ref=e423] [cursor=pointer]:
+            - /url: /cards/32
+          - 'link "Moon card. Click to view details Moon #32" [ref=e424] [cursor=pointer]':
+            - /url: /cards/32
+            - generic "Moon card. Click to view details" [ref=e425]:
+              - img "Moon" [ref=e428]
+            - generic [ref=e429]:
+              - generic [ref=e430]: Moon
+              - generic [ref=e431]: "#32"
+          - generic [ref=e432]:
+            - generic [ref=e433]: Moon
+            - generic [ref=e434]: "#32"
+          - link [ref=e435] [cursor=pointer]:
+            - /url: /cards/33
+          - 'link "Key card. Click to view details Key #33" [ref=e436] [cursor=pointer]':
+            - /url: /cards/33
+            - generic "Key card. Click to view details" [ref=e437]:
+              - img "Key" [ref=e440]
+            - generic [ref=e441]:
+              - generic [ref=e442]: Key
+              - generic [ref=e443]: "#33"
+          - generic [ref=e444]:
+            - generic [ref=e445]: Key
+            - generic [ref=e446]: "#33"
+          - link [ref=e447] [cursor=pointer]:
+            - /url: /cards/34
+          - 'link "Fish card. Click to view details Fish #34" [ref=e448] [cursor=pointer]':
+            - /url: /cards/34
+            - generic "Fish card. Click to view details" [ref=e449]:
+              - img "Fish" [ref=e452]
+            - generic [ref=e453]:
+              - generic [ref=e454]: Fish
+              - generic [ref=e455]: "#34"
+          - generic [ref=e456]:
+            - generic [ref=e457]: Fish
+            - generic [ref=e458]: "#34"
+          - link [ref=e459] [cursor=pointer]:
+            - /url: /cards/35
+          - 'link "Anchor card. Click to view details Anchor #35" [ref=e460] [cursor=pointer]':
+            - /url: /cards/35
+            - generic "Anchor card. Click to view details" [ref=e461]:
+              - img "Anchor" [ref=e464]
+            - generic [ref=e465]:
+              - generic [ref=e466]: Anchor
+              - generic [ref=e467]: "#35"
+          - generic [ref=e468]:
+            - generic [ref=e469]: Anchor
+            - generic [ref=e470]: "#35"
+          - link [ref=e471] [cursor=pointer]:
+            - /url: /cards/36
+          - 'link "Cross card. Click to view details Cross #36" [ref=e472] [cursor=pointer]':
+            - /url: /cards/36
+            - generic "Cross card. Click to view details" [ref=e473]:
+              - img "Cross" [ref=e476]
+            - generic [ref=e477]:
+              - generic [ref=e478]: Cross
+              - generic [ref=e479]: "#36"
+          - generic [ref=e480]:
+            - generic [ref=e481]: Cross
+            - generic [ref=e482]: "#36"
+    - contentinfo [ref=e483]:
+      - generic [ref=e484]:
+        - generic [ref=e485]:
+          - generic [ref=e486]:
+            - link "Lenormand" [ref=e487] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e488]
+            - paragraph [ref=e489]: AI-Enhanced Divination
+          - generic [ref=e490]:
+            - heading "Explore" [level=4] [ref=e491]
+            - list [ref=e492]:
+              - listitem [ref=e493]:
+                - link "Home" [ref=e494] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e495]:
+                - link "Reading" [ref=e496] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e497]:
+                - link "History" [ref=e498] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e499]:
+                - link "Cards" [ref=e500] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e501]:
+                - link "Learn" [ref=e502] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e503]:
+            - heading "Links" [level=4] [ref=e504]
+            - list [ref=e505]:
+              - listitem [ref=e506]:
+                - link "About" [ref=e507] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e508]:
+                - link "Support" [ref=e509] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e510]:
+                - link "Privacy" [ref=e511] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e512]:
+                - link "Terms" [ref=e513] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e515]:
+          - text: Made by
+          - link "Humanstack" [ref=e516] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e517]

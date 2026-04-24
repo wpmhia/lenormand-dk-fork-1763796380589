@@ -33,50 +33,79 @@ function parseReadingText(text: string): React.ReactNode[] {
 }
 
 function parseLineContent(text: string): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
+  // First, extract all **bold** sections
+  const segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'card'; content: string }[] = [];
+  
+  // Process bold first: **text**
   let remaining = text;
-  let key = 0;
-  
-  // Pattern: **bold**, *italic*, card names
-  const pattern = /(\*\*(.+?)\*\*)|(\*(.+?)\*)|(`(.+?)`)|([A-Z][a-z]+(?: [A-Z][a-z]+)*)/g;
-  
+  let lastIndex = 0;
+  const boldRegex = /\*\*([^*]+)\*\*/g;
   let match;
-  while ((match = pattern.exec(remaining)) !== null) {
-    // Add text before the match
-    if (match.index > 0) {
-      parts.push(remaining.slice(0, match.index));
+  
+  while ((match = boldRegex.exec(remaining)) !== null) {
+    if (match.index > lastIndex) {
+      // Add text before this match
+      const beforeText = remaining.slice(lastIndex, match.index);
+      if (beforeText) {
+        parseRemainingText(beforeText, segments);
+      }
+    }
+    segments.push({ type: 'bold', content: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+  
+  if (lastIndex < remaining.length) {
+    parseRemainingText(remaining.slice(lastIndex), segments);
+  }
+  
+  // Convert segments to React nodes
+  return segments.map((seg, key) => {
+    switch (seg.type) {
+      case 'bold':
+        return <strong key={key} className="font-bold">{seg.content}</strong>;
+      case 'italic':
+        return <em key={key} className="italic">{seg.content}</em>;
+      case 'code':
+        return <code key={key} className="bg-muted px-1 py-0.5 rounded text-sm">{seg.content}</code>;
+      case 'card':
+        return <span key={key} className="text-primary font-medium">{seg.content}</span>;
+      default:
+        return <span key={key}>{seg.content}</span>;
+    }
+  });
+}
+
+function parseRemainingText(text: string, segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'card'; content: string }[]) {
+  // Now process remaining text for italic, code, and card names
+  const pattern = /\*([^*]+)\*|`([^`]+)`|([A-Z][a-z]+(?: [A-Z][a-z]+)*)/g;
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', content: text.slice(lastIndex, match.index) });
     }
     
     if (match[1]) {
-      // **bold**
-      parts.push(<strong key={key++} className="font-bold">{match[2]}</strong>);
+      segments.push({ type: 'italic', content: match[1] });
+    } else if (match[2]) {
+      segments.push({ type: 'code', content: match[2] });
     } else if (match[3]) {
-      // *italic*
-      parts.push(<em key={key++} className="italic">{match[4]}</em>);
-    } else if (match[5]) {
-      // `code`
-      parts.push(<code key={key++} className="bg-muted px-1 py-0.5 rounded text-sm">{match[6]}</code>);
-    } else if (match[7]) {
-      // Potential card name
-      const word = match[7];
+      const word = match[3];
       const isCardName = CARD_NAMES.some(name => name.toLowerCase() === word.toLowerCase());
       if (isCardName) {
-        parts.push(<span key={key++} className="text-primary font-medium">{word}</span>);
+        segments.push({ type: 'card', content: word });
       } else {
-        parts.push(word);
+        segments.push({ type: 'text', content: word });
       }
     }
     
-    remaining = remaining.slice(match.index + match[0].length);
-    pattern.lastIndex = 0;
+    lastIndex = match.index + match[0].length;
   }
   
-  // Add remaining text
-  if (remaining) {
-    parts.push(remaining);
+  if (lastIndex < text.length) {
+    segments.push({ type: 'text', content: text.slice(lastIndex) });
   }
-  
-  return parts;
 }
 
 interface AIReadingDisplayProps {
