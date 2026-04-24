@@ -1,0 +1,137 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "New Lenormand Reading" [level=1] [ref=e38]: New Lenormand Reading
+          - paragraph [ref=e40]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e41]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: "1"
+              - generic [ref=e45]: Setup
+            - generic [ref=e48]:
+              - generic [ref=e49]: "2"
+              - generic [ref=e50]: Draw
+            - generic [ref=e53]:
+              - generic [ref=e54]: "3"
+              - generic [ref=e55]: Reading & AI Insights
+          - button "Back to Card Entry" [ref=e156] [cursor=pointer]:
+            - img [ref=e132]
+            - text: Back to Card Entry
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e161]: 3 Cards
+            - generic [ref=e163]:
+              - heading "Your Cards" [level=3] [ref=e164]
+              - generic [ref=e165]:
+                - generic [ref=e168]:
+                  - generic [ref=e169]: Opening Element
+                  - generic [ref=e170]:
+                    - button "Fox card. Click to select" [ref=e171] [cursor=pointer]:
+                      - img "Fox" [ref=e173]
+                    - generic [ref=e174]:
+                      - generic [ref=e175]: Fox
+                      - generic [ref=e176]: "#14"
+                - generic [ref=e179]:
+                  - generic [ref=e180]: Central Element
+                  - generic [ref=e181]:
+                    - button "Man card. Click to select" [ref=e182] [cursor=pointer]:
+                      - img "Man" [ref=e184]
+                    - generic [ref=e185]:
+                      - generic [ref=e186]: Man
+                      - generic [ref=e187]: "#28"
+                - generic [ref=e190]:
+                  - generic [ref=e191]: Closing Element
+                  - generic [ref=e192]:
+                    - button "Anchor card. Click to select" [ref=e193] [cursor=pointer]:
+                      - img "Anchor" [ref=e195]
+                    - generic [ref=e196]:
+                      - generic [ref=e197]: Anchor
+                      - generic [ref=e198]: "#35"
+          - generic [ref=e200]:
+            - button "Copy reading" [ref=e202] [cursor=pointer]:
+              - img [ref=e203]
+            - generic [ref=e207]: The reading opens with The Fox in the first position, signaling that this week calls for cunning and intelligence. The Fox represents work that requires strategy, adaptability, and perhaps a bit of cleverness to navigate. It suggests that you should pay close attention to details, use your wits, and be resourceful—this is not a time for brute force but for smart, calculated moves. Whether it's in your job, personal projects, or even how you handle relationships, The Fox advises you to think several steps ahead and stay alert to opportunities or pitfalls. In the second position, The Man appears, adding a layer of masculine energy, responsibility, or even a specific person in your life—perhaps a husband, father, or a male figure who plays a key role. This card reinforces the idea of taking action but with purpose. The Man is decisive, practical, and often represents someone who embodies these traits. Here, it suggests that your focus this week should be on taking charge in a way that aligns with your goals, whether that means stepping up in a leadership role, making a firm decision, or even addressing a situation with confidence. The Man complements The Fox by grounding your cleverness in action. Finally, The Anchor shows up in the outcome position, indicating stability and security as the likely result of your efforts. The Anchor is a positive sign, suggesting that if you apply the intelligence and decisiveness represented by The Fox and The Man, you’ll find a sense of steadiness by the end of the week. This could mean achieving a goal, resolving a problem, or simply feeling more secure in your situation. The Anchor reassures you that your focus on strategy and action will pay off, leading to a stable and hopeful outcome. So, for this week, focus on using your intelligence and resourcefulness (The Fox) to take decisive action (The Man) with the goal of securing stability (The Anchor). Your efforts will likely lead to a more stable and hopeful situation by week’s end.
+            - button "Ask a follow-up" [ref=e209] [cursor=pointer]:
+              - img [ref=e210]
+              - text: Ask a follow-up
+          - button "Start New Reading" [ref=e213] [cursor=pointer]:
+            - img [ref=e214]
+            - text: Start New Reading
+    - contentinfo [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - link "Lenormand" [ref=e96] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e97]
+            - paragraph [ref=e98]: AI-Enhanced Divination
+          - generic [ref=e99]:
+            - heading "Explore" [level=4] [ref=e100]
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - link "Home" [ref=e103] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e104]:
+                - link "Reading" [ref=e105] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e106]:
+                - link "History" [ref=e107] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e108]:
+                - link "Cards" [ref=e109] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e110]:
+                - link "Learn" [ref=e111] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e112]:
+            - heading "Links" [level=4] [ref=e113]
+            - list [ref=e114]:
+              - listitem [ref=e115]:
+                - link "About" [ref=e116] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e117]:
+                - link "Support" [ref=e118] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e119]:
+                - link "Privacy" [ref=e120] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e121]:
+                - link "Terms" [ref=e122] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e124]:
+          - text: Made by
+          - link "Humanstack" [ref=e125] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e126]
