@@ -1,0 +1,92 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - link "Back" [ref=e38] [cursor=pointer]:
+            - /url: /
+            - img [ref=e39]
+            - text: Back
+          - heading "Reading History" [level=1] [ref=e41]
+          - paragraph [ref=e42]: No readings yet
+        - generic [ref=e43]:
+          - heading "No readings yet" [level=2] [ref=e44]
+          - paragraph [ref=e45]: Start a new Lenormand reading and it will appear here.
+          - link "Start a Reading" [ref=e46] [cursor=pointer]:
+            - /url: /read/new
+    - contentinfo [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - link "Lenormand" [ref=e51] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e52]
+            - paragraph [ref=e53]: AI-Enhanced Divination
+          - generic [ref=e54]:
+            - heading "Explore" [level=4] [ref=e55]
+            - list [ref=e56]:
+              - listitem [ref=e57]:
+                - link "Home" [ref=e58] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e59]:
+                - link "Reading" [ref=e60] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e61]:
+                - link "History" [ref=e62] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e63]:
+                - link "Cards" [ref=e64] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e65]:
+                - link "Learn" [ref=e66] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e67]:
+            - heading "Links" [level=4] [ref=e68]
+            - list [ref=e69]:
+              - listitem [ref=e70]:
+                - link "About" [ref=e71] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e72]:
+                - link "Support" [ref=e73] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e74]:
+                - link "Privacy" [ref=e75] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e76]:
+                - link "Terms" [ref=e77] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e79]:
+          - text: Made by
+          - link "Humanstack" [ref=e80] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
