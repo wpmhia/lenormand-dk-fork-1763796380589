@@ -1,0 +1,137 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "New Lenormand Reading" [level=1] [ref=e38]: New Lenormand Reading
+          - paragraph [ref=e40]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e41]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: "1"
+              - generic [ref=e45]: Setup
+            - generic [ref=e48]:
+              - generic [ref=e49]: "2"
+              - generic [ref=e50]: Draw
+            - generic [ref=e53]:
+              - generic [ref=e54]: "3"
+              - generic [ref=e55]: Reading & AI Insights
+          - button "Back to Card Entry" [ref=e153] [cursor=pointer]:
+            - img [ref=e129]
+            - text: Back to Card Entry
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - generic [ref=e158]: 3 Cards
+            - generic [ref=e160]:
+              - heading "Your Cards" [level=3] [ref=e161]
+              - generic [ref=e162]:
+                - generic [ref=e165]:
+                  - generic [ref=e166]: Opening Element
+                  - generic [ref=e167]:
+                    - button "Stars card. Click to select" [ref=e168] [cursor=pointer]:
+                      - img "Stars" [ref=e170]
+                    - generic [ref=e171]:
+                      - generic [ref=e172]: Stars
+                      - generic [ref=e173]: "#16"
+                - generic [ref=e176]:
+                  - generic [ref=e177]: Central Element
+                  - generic [ref=e178]:
+                    - button "Book card. Click to select" [ref=e179] [cursor=pointer]:
+                      - img "Book" [ref=e181]
+                    - generic [ref=e182]:
+                      - generic [ref=e183]: Book
+                      - generic [ref=e184]: "#26"
+                - generic [ref=e187]:
+                  - generic [ref=e188]: Closing Element
+                  - generic [ref=e189]:
+                    - button "Woman card. Click to select" [ref=e190] [cursor=pointer]:
+                      - img "Woman" [ref=e192]
+                    - generic [ref=e193]:
+                      - generic [ref=e194]: Woman
+                      - generic [ref=e195]: "#29"
+          - generic [ref=e197]:
+            - button "Copy reading" [ref=e199] [cursor=pointer]:
+              - img [ref=e200]
+            - generic [ref=e204]: The reading begins with **The Stars** in the Opening position, which points to hope, guidance, and wishes. This card suggests that you should keep your focus on something that inspires you or aligns with your long-term goals. It’s a positive sign that you’re on the right track, but it also hints at the need for clarity—what exactly are you hoping to achieve or manifest this week? Next, **The Book** appears in the Development position, signaling knowledge, secrets, or learning. This card reinforces the idea of focusing on something that requires study, research, or a deeper understanding. It could be a project, a personal interest, or even a hidden opportunity that needs your attention. The Book urges you to dig deeper rather than taking things at face value. Finally, **The Woman** shows up in the Outcome position, representing the feminine, nurturing aspects of your life—whether that’s a partner, a mother figure, or your own intuition and inner strength. This suggests that whatever you focus on this week should involve people, relationships, or self-care. It’s a reminder that success isn’t just about logic or hard work; it’s also about how you connect with others and yourself. **Answer:** Focus this week on a goal or project that requires learning or research (The Book), while keeping your hopes and wishes aligned with your personal or emotional well-being (The Woman). Let The Stars guide you, but don’t ignore the details—dig deeper into what truly matters to you.
+            - button "Ask a follow-up" [ref=e206] [cursor=pointer]:
+              - img [ref=e207]
+              - text: Ask a follow-up
+          - button "Start New Reading" [ref=e210] [cursor=pointer]:
+            - img [ref=e211]
+            - text: Start New Reading
+    - contentinfo [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - link "Lenormand" [ref=e96] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e97]
+            - paragraph [ref=e98]: AI-Enhanced Divination
+          - generic [ref=e99]:
+            - heading "Explore" [level=4] [ref=e100]
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - link "Home" [ref=e103] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e104]:
+                - link "Reading" [ref=e105] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e106]:
+                - link "History" [ref=e107] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e108]:
+                - link "Cards" [ref=e109] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e110]:
+                - link "Learn" [ref=e111] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e112]:
+            - heading "Links" [level=4] [ref=e113]
+            - list [ref=e114]:
+              - listitem [ref=e115]:
+                - link "About" [ref=e116] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e117]:
+                - link "Support" [ref=e118] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e119]:
+                - link "Privacy" [ref=e120] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e121]:
+                - link "Terms" [ref=e122] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e124]:
+          - text: Made by
+          - link "Humanstack" [ref=e125] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e126]

@@ -1,0 +1,143 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "New Lenormand Reading" [level=1] [ref=e38]: New Lenormand Reading
+          - paragraph [ref=e40]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e41]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: "1"
+              - generic [ref=e45]: Setup
+            - generic [ref=e48]:
+              - generic [ref=e49]: "2"
+              - generic [ref=e50]: Draw
+            - generic [ref=e53]:
+              - generic [ref=e54]: "3"
+              - generic [ref=e55]: Reading & AI Insights
+          - button "Back to Card Entry" [ref=e160] [cursor=pointer]:
+            - img [ref=e136]
+            - text: Back to Card Entry
+        - alert [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - img [ref=e130]
+              - generic [ref=e132]: Please enter a question to guide your reading.
+            - button "✕" [ref=e133] [cursor=pointer]
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - generic [ref=e165]: 3 Cards
+            - generic [ref=e167]:
+              - heading "Your Cards" [level=3] [ref=e168]
+              - generic [ref=e169]:
+                - generic [ref=e172]:
+                  - generic [ref=e173]: Opening Element
+                  - generic [ref=e174]:
+                    - button "Clouds card. Click to select" [ref=e175] [cursor=pointer]:
+                      - img "Clouds" [ref=e177]
+                    - generic [ref=e178]:
+                      - generic [ref=e179]: Clouds
+                      - generic [ref=e180]: "#6"
+                - generic [ref=e183]:
+                  - generic [ref=e184]: Central Element
+                  - generic [ref=e185]:
+                    - button "Birds card. Click to select" [ref=e186] [cursor=pointer]:
+                      - img "Birds" [ref=e188]
+                    - generic [ref=e189]:
+                      - generic [ref=e190]: Birds
+                      - generic [ref=e191]: "#12"
+                - generic [ref=e194]:
+                  - generic [ref=e195]: Closing Element
+                  - generic [ref=e196]:
+                    - button "Tree card. Click to select" [ref=e197] [cursor=pointer]:
+                      - img "Tree" [ref=e199]
+                    - generic [ref=e200]:
+                      - generic [ref=e201]: Tree
+                      - generic [ref=e202]: "#5"
+          - generic [ref=e204]:
+            - button "Copy reading" [ref=e206] [cursor=pointer]:
+              - img [ref=e207]
+            - generic [ref=e211]: The opening card is **Clouds**, which signals a week clouded by confusion, uncertainty, or doubt. This isn’t a time for clear-cut decisions; instead, you may feel stuck in overthinking or second-guessing yourself. Expect some mental fog—maybe second opinions, conflicting advice, or just a general sense of "I don’t know what to do next." Don’t rush to act; clarity will come later. The next card, **Birds**, shows communication becoming a key factor. This could mean you’re dealing with chatter—either your own anxious thoughts or conversations with others that feel scattered or unresolved. There might be gossip, quick exchanges, or even a sense of mental restlessness (like a bird fluttering without landing). Pay attention to what’s being said—or left unsaid—because it could shift the confusion from Clouds into something more tangible. Finally, **Tree** arrives as the outcome, suggesting that health, growth, or stability will be the result of how you handle the first two cards. If you can manage the uncertainty (Clouds) and the communication (Birds) without burning out, you’ll see progress—maybe in your well-being, a project gaining roots, or simply feeling more grounded by the week’s end. **Answer:** Focus on grounding yourself—whether through small, steady actions or prioritizing self-care—while keeping unnecessary chatter (internal or external) in check. The confusion will lift if you stay patient and avoid forcing decisions.
+            - button "Ask a follow-up" [ref=e213] [cursor=pointer]:
+              - img [ref=e214]
+              - text: Ask a follow-up
+          - button "Start New Reading" [ref=e217] [cursor=pointer]:
+            - img [ref=e218]
+            - text: Start New Reading
+    - contentinfo [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - link "Lenormand" [ref=e96] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e97]
+            - paragraph [ref=e98]: AI-Enhanced Divination
+          - generic [ref=e99]:
+            - heading "Explore" [level=4] [ref=e100]
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - link "Home" [ref=e103] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e104]:
+                - link "Reading" [ref=e105] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e106]:
+                - link "History" [ref=e107] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e108]:
+                - link "Cards" [ref=e109] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e110]:
+                - link "Learn" [ref=e111] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e112]:
+            - heading "Links" [level=4] [ref=e113]
+            - list [ref=e114]:
+              - listitem [ref=e115]:
+                - link "About" [ref=e116] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e117]:
+                - link "Support" [ref=e118] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e119]:
+                - link "Privacy" [ref=e120] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e121]:
+                - link "Terms" [ref=e122] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e124]:
+          - text: Made by
+          - link "Humanstack" [ref=e125] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e126]
