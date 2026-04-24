@@ -1,0 +1,141 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - navigation "Breadcrumb" [ref=e37]:
+          - list [ref=e38]:
+            - listitem [ref=e39]:
+              - link "Learn" [ref=e40] [cursor=pointer]:
+                - /url: /learn
+            - listitem [ref=e41]:
+              - img [ref=e43]
+              - link "Card Meanings" [ref=e45] [cursor=pointer]:
+                - /url: /learn/card-meanings
+            - listitem [ref=e46]:
+              - img [ref=e48]
+              - generic [ref=e50]: Rider
+        - generic [ref=e52]:
+          - link "Previous" [ref=e53] [cursor=pointer]:
+            - /url: /learn/card-meanings/1
+            - button "Previous" [ref=e54]:
+              - img [ref=e55]
+              - text: Previous
+          - 'heading "01: Rider" [level=1] [ref=e57]'
+          - link "Next" [ref=e58] [cursor=pointer]:
+            - /url: /learn/card-meanings/2
+            - button "Next" [ref=e59]:
+              - text: Next
+              - img [ref=e60]
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - heading "Rider Card" [level=3] [ref=e66]
+            - generic [ref=e68]:
+              - img "Rider" [ref=e69]
+              - generic [ref=e70]:
+                - heading "Key Attributes" [level=3] [ref=e71]
+                - generic [ref=e72]:
+                  - generic [ref=e73]: news
+                  - generic [ref=e74]: messages
+                  - generic [ref=e75]: delivery
+                  - generic [ref=e76]: movement
+                  - generic [ref=e77]: +1 more
+                - heading "Meaning" [level=3] [ref=e78]
+                - paragraph [ref=e79]: News arriving soon, messages, movement, a young man
+                - heading "Timing" [level=3] [ref=e80]
+                - paragraph [ref=e81]: Near future (1-3 weeks)
+                - heading "Historical Meaning" [level=3] [ref=e82]
+                - paragraph [ref=e83]: The Rider traditionally represents a messenger or courier bringing news from afar. In historical contexts, this was one of the most important cards as communication was vital.
+          - generic [ref=e84]:
+            - link "Previous Card" [ref=e85] [cursor=pointer]:
+              - /url: /learn/card-meanings/1
+              - button "Previous Card" [ref=e86]:
+                - img [ref=e87]
+                - text: Previous Card
+            - link "Back to All Cards" [ref=e89] [cursor=pointer]:
+              - /url: /learn/card-meanings
+              - button "Back to All Cards" [ref=e90]
+            - link "Next Card" [ref=e91] [cursor=pointer]:
+              - /url: /learn/card-meanings/2
+              - button "Next Card" [ref=e92]:
+                - text: Next Card
+                - img [ref=e93]
+        - generic:
+          - button "Scroll to top":
+            - img
+    - contentinfo [ref=e95]:
+      - generic [ref=e96]:
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - link "Lenormand" [ref=e99] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e100]
+            - paragraph [ref=e101]: AI-Enhanced Divination
+          - generic [ref=e102]:
+            - heading "Explore" [level=4] [ref=e103]
+            - list [ref=e104]:
+              - listitem [ref=e105]:
+                - link "Home" [ref=e106] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e107]:
+                - link "Reading" [ref=e108] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e109]:
+                - link "History" [ref=e110] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e111]:
+                - link "Cards" [ref=e112] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e113]:
+                - link "Learn" [ref=e114] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e115]:
+            - heading "Links" [level=4] [ref=e116]
+            - list [ref=e117]:
+              - listitem [ref=e118]:
+                - link "About" [ref=e119] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e120]:
+                - link "Support" [ref=e121] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e122]:
+                - link "Privacy" [ref=e123] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e124]:
+                - link "Terms" [ref=e125] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e127]:
+          - text: Made by
+          - link "Humanstack" [ref=e128] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e129]

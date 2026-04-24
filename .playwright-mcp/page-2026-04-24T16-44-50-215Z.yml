@@ -1,0 +1,138 @@
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e261]:
+        - generic [ref=e262]:
+          - heading "New Lenormand Reading" [level=1] [ref=e263]: New Lenormand Reading
+          - paragraph [ref=e265]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e266]:
+            - generic [ref=e268]:
+              - generic [ref=e269]: "1"
+              - generic [ref=e270]: Setup
+            - generic [ref=e273]:
+              - generic [ref=e274]: "2"
+              - generic [ref=e275]: Draw
+            - generic [ref=e278]:
+              - generic [ref=e279]: "3"
+              - generic [ref=e280]: Reading & AI Insights
+        - alert [ref=e319]:
+          - generic [ref=e320]:
+            - generic [ref=e321]:
+              - img [ref=e322]
+              - generic [ref=e324]: Please enter a question to guide your reading.
+            - button "✕" [ref=e325] [cursor=pointer]
+        - generic [ref=e282]:
+          - heading "Your Sacred Question" [level=3] [ref=e284]:
+            - img [ref=e285]
+            - text: Your Sacred Question
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - text: Your Question
+              - textbox "Your Question" [active] [ref=e290]:
+                - /placeholder: What guidance do the cards have for me today?
+              - generic [ref=e291]: 0/500 characters
+            - generic [ref=e292]:
+              - text: "Choose Your Spread:"
+              - combobox [ref=e293] [cursor=pointer]:
+                - generic: 3-Card Sentence
+                - img [ref=e294]
+            - generic [ref=e296]:
+              - generic [ref=e297]: "Choose your method:"
+              - generic [ref=e298]:
+                - button "Virtual Deck Draw cards digitally" [ref=e299] [cursor=pointer]:
+                  - img [ref=e300]
+                  - generic [ref=e302]:
+                    - generic [ref=e303]: Virtual Deck
+                    - generic [ref=e304]: Draw cards digitally
+                - button "Physical Cards Enter your own cards" [ref=e305] [cursor=pointer]:
+                  - img [ref=e306]
+                  - generic [ref=e308]:
+                    - generic [ref=e309]: Physical Cards
+                    - generic [ref=e310]: Enter your own cards
+              - button "Continue" [ref=e316] [cursor=pointer]:
+                - text: Continue
+                - img [ref=e317]
+              - generic [ref=e311]:
+                - paragraph [ref=e312]:
+                  - strong [ref=e313]: "Virtual Deck:"
+                  - text: Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+                - paragraph [ref=e314]:
+                  - strong [ref=e315]: "Physical Cards:"
+                  - text: Use when you've already drawn cards from your physical Lenormand deck and want the AI interpretation.
+    - contentinfo [ref=e225]:
+      - generic [ref=e226]:
+        - generic [ref=e227]:
+          - generic [ref=e228]:
+            - link "Lenormand" [ref=e229] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e230]
+            - paragraph [ref=e231]: AI-Enhanced Divination
+          - generic [ref=e232]:
+            - heading "Explore" [level=4] [ref=e233]
+            - list [ref=e234]:
+              - listitem [ref=e235]:
+                - link "Home" [ref=e236] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e237]:
+                - link "Reading" [ref=e238] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e239]:
+                - link "History" [ref=e240] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e241]:
+                - link "Cards" [ref=e242] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e243]:
+                - link "Learn" [ref=e244] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e245]:
+            - heading "Links" [level=4] [ref=e246]
+            - list [ref=e247]:
+              - listitem [ref=e248]:
+                - link "About" [ref=e249] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e250]:
+                - link "Support" [ref=e251] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e252]:
+                - link "Privacy" [ref=e253] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e254]:
+                - link "Terms" [ref=e255] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e257]:
+          - text: Made by
+          - link "Humanstack" [ref=e258] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e259]: New Reading | AI Lenormand Card Reading & Interpretation
