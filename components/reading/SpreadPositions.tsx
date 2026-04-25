@@ -104,24 +104,24 @@ export const getPositionInfo = (position: number, spreadId?: string): PositionIn
     },
     "sentence-5": {
       0: {
-        label: "Situation",
-        meaning: "",
+        label: "Subject",
+        meaning: "Who or what the reading is about - the main person or situation",
       },
       1: {
-        label: "Challenge",
-        meaning: "",
+        label: "Action",
+        meaning: "What is happening, being done, or influencing the subject",
       },
       2: {
-        label: "Advice",
-        meaning: "",
+        label: "Focus",
+        meaning: "The heart of the matter - the central action or key event",
       },
       3: {
-        label: "Outcome",
-        meaning: "",
+        label: "Development",
+        meaning: "How the situation unfolds or what comes next",
       },
       4: {
-        label: "Timing",
-        meaning: "",
+        label: "Outcome",
+        meaning: "Where this leads - the result or conclusion",
       },
     },
     "week-ahead": {
@@ -194,45 +194,40 @@ export const getPositionInfo = (position: number, spreadId?: string): PositionIn
     },
     comprehensive: {
       0: {
-        label: "Recent Past - Inner World",
-        meaning:
-          "Thoughts, feelings, and personal resources from your recent past that influence your current situation",
+        label: "Top Row - Past",
+        meaning: "What has already happened - the foundation and background of the situation",
       },
       1: {
-        label: "Recent Past - Direct Actions",
-        meaning:
-          "Actions you took recently that shaped your current circumstances",
+        label: "Top Row - Past",
+        meaning: "What has already happened - the foundation and background of the situation",
       },
       2: {
-        label: "Recent Past - Outside World",
-        meaning: "External influences and events from your recent past",
+        label: "Top Row - Past",
+        meaning: "What has already happened - the foundation and background of the situation",
       },
       3: {
-        label: "Present - Inner World",
-        meaning: "Your current thoughts, feelings, and internal state",
+        label: "Middle Row - Present",
+        meaning: "What is happening now - the current situation and active influences",
       },
       4: {
-        label: "Present - Direct Actions",
-        meaning: "Your current actions and the central issue you're facing",
+        label: "Center - Heart of Matter",
+        meaning: "The core issue, key person, or central energy - this card reveals what truly matters",
       },
       5: {
-        label: "Present - Outside World",
-        meaning:
-          "Current external influences, other people, and environmental factors",
+        label: "Middle Row - Present",
+        meaning: "What is happening now - the current situation and active influences",
       },
       6: {
-        label: "Near Future - Inner World",
-        meaning:
-          "How your thoughts and feelings will evolve in the near future",
+        label: "Bottom Row - Future",
+        meaning: "What is coming - the direction things are heading and likely outcomes",
       },
       7: {
-        label: "Near Future - Direct Actions",
-        meaning: "Actions you'll need to take in the near future",
+        label: "Bottom Row - Future",
+        meaning: "What is coming - the direction things are heading and likely outcomes",
       },
       8: {
-        label: "Near Future - Outside World",
-        meaning:
-          "External events and influences approaching in the near future",
+        label: "Bottom Row - Future",
+        meaning: "What is coming - the direction things are heading and likely outcomes",
       },
     },
   };
