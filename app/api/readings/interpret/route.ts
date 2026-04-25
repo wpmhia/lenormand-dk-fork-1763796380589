@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 import { buildPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
-import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rateLimit, getClientIP, trackTokenUsage } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
@@ -78,6 +78,9 @@ export async function POST(request: Request) {
     });
 
     incrementReadingCount().catch(() => {});
+    
+    // Track estimated token usage (input ~200 + output maxTokens)
+    trackTokenUsage(200 + maxTokens);
 
     // Convert to our custom SSE format for backwards compatibility
     const encoder = new TextEncoder();
