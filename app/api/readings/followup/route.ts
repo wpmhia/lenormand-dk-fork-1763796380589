@@ -85,8 +85,35 @@ Provide a brief, direct answer to the follow-up question based on the original r
       maxOutputTokens: maxTokens,
     });
 
-    return result.toTextStreamResponse({
+    // Convert to our custom SSE format for backwards compatibility
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}
+\n\n`));
+
+        try {
+          for await (const chunk of result.textStream) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: chunk })}
+\n\n`));
+          }
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
+\n\n`));
+          controller.close();
+        } catch (error) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
+\n\n`));
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
       headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
