@@ -79,8 +79,37 @@ export async function POST(request: Request) {
 
     incrementReadingCount().catch(() => {});
 
-    return result.toTextStreamResponse({
-      headers: corsHeaders,
+    // Convert to our custom SSE format for backwards compatibility
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers" })}
+\n\n`));
+
+        try {
+          for await (const chunk of result.textStream) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: chunk })}
+\n\n`));
+          }
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
+\n\n`));
+          controller.close();
+        } catch (error) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
+\n\n`));
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+        ...corsHeaders,
+      },
     });
   } catch (error: any) {
     const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
