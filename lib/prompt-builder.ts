@@ -43,9 +43,9 @@ Write clear, down-to-earth prose in paragraphs. No lists or bullet points.
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nExplain what this card means for the question. Be specific and practical.`,
   "daily-card": (_, c) => `Daily: ${c}. What happens today? One sentence.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1=Opening, 2=Development, 3=Outcome.\nWrite as flowing prose. Name each card and explain how the reading unfolds. End with the answer.`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1=Past, 2=Present, 3=Heart, 4=Near Future, 5=Outcome.\nWrite as a story in paragraphs. Card 3 is the pivot. Name each card. End with the answer.`,
-  "comprehensive": (q, c) => `${q}\nCards (3x3 grid): ${c}\n\nRows: Top=Mental, Middle=Present, Bottom=Emotional. Center card=Heart of matter.\nWrite in paragraphs. Name the center card first, then describe each row. End with the answer.`,
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as a 3-card sentence: Subject → Action → Outcome.\nWrite as flowing prose. Name each card and explain how the reading unfolds. End with the answer.`,
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nRead as a 5-card sentence: Subject → Action → Focus → Development → Outcome.\nWrite as flowing prose. Name each card. End with the answer.`,
+  "comprehensive": (q, c) => `${q}\nCards (3x3 grid): ${c}\n\nRead row by row: Top=Past, Middle=Present, Bottom=Future.\nThe center card is the heart of the matter.\nAlso read columns (left to right) and diagonals for additional insight.\nWrite in paragraphs. Name the center card first. End with the answer.`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nFind the Man (29) or Woman (28) card - this is the Significator.\nNear the Significator: Left=Past, Right=Future, Above=Conscious, Below=Unconscious.\nWrite in paragraphs. Describe what surrounds the Significator. Name specific cards. End with the answer.`,
 };
 
