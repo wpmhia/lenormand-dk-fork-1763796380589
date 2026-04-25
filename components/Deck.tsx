@@ -39,8 +39,14 @@ function DeckComponent({
 
     setIsDrawing(true);
 
-    // Simple random selection without modifying visual deck
-    const shuffled = [...cards].sort(() => Math.random() - 0.5);
+    // Cryptographically secure shuffle (Fisher-Yates)
+    const shuffled = [...cards];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      const j = Math.floor((array[0] / (0xffffffff + 1)) * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
     const drawnCards = shuffled.slice(0, drawCount);
 
     // Clear previous timeout and set new one
