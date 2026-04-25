@@ -8,8 +8,8 @@ export const ENV_VARIABLES: EnvVariable[] = [
   },
   {
     name: "DATABASE_URL",
-    description: "PostgreSQL connection string for Neon database",
-    required: true,
+    description: "PostgreSQL connection string for Neon database (unused in free mode)",
+    required: false,
     instructions: "Create a project at https://neon.tech and copy the connection string",
   },
   {
