@@ -186,33 +186,33 @@ export function AIReadingDisplay({
 
   if (error && !isStreaming) {
     return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Interpretation Unavailable</AlertTitle>
-        <AlertDescription className="space-y-3">
-          <div className="text-sm">{error}</div>
-          <Button variant="outline" size="sm" onClick={onRetry}>
-            <RefreshCw className="mr-2 h-3 w-3" />
+      <Card className="border-destructive/50 bg-destructive/5">
+        <CardContent className="flex flex-col items-center justify-center p-8 text-center">
+          <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
+          <h3 className="mb-2 text-lg font-semibold text-foreground">Interpretation Unavailable</h3>
+          <p className="mb-6 text-sm text-muted-foreground max-w-md">{error}</p>
+          <Button onClick={onRetry} size="lg" className="gap-2">
+            <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
-        </AlertDescription>
-      </Alert>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!aiReading?.reading && !isStreaming) {
     return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>AI Reading Failed</AlertTitle>
-        <AlertDescription>
-          <p className="text-sm">The AI interpretation could not be generated.</p>
-          <Button variant="outline" size="sm" onClick={onRetry} className="mt-2">
-            <RefreshCw className="mr-2 h-3 w-3" />
-            Retry
+      <Card className="border-destructive/50 bg-destructive/5">
+        <CardContent className="flex flex-col items-center justify-center p-8 text-center">
+          <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
+          <h3 className="mb-2 text-lg font-semibold text-foreground">AI Reading Failed</h3>
+          <p className="mb-6 text-sm text-muted-foreground">The AI interpretation could not be generated. Please try again.</p>
+          <Button onClick={onRetry} size="lg" className="gap-2">
+            <RefreshCw className="h-4 w-4" />
+            Retry Reading
           </Button>
-        </AlertDescription>
-      </Alert>
+        </CardContent>
+      </Card>
     );
   }
 
