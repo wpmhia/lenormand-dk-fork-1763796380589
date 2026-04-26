@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 import { getReadingCount, formatReadingCount } from "@/lib/counter";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";

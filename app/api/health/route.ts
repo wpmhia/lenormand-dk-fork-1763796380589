@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
