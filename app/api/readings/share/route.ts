@@ -1,4 +1,4 @@
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
