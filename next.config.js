@@ -5,6 +5,7 @@ const nextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   swcMinify: true,
+  output: "standalone",
   modularizeImports: {
     "@/components/ui": {
       transform: "use~/components/ui/{{member}}",
@@ -12,16 +13,10 @@ const nextConfig = {
     },
   },
   images: {
-    // Security: Explicitly allow only specific domains
-    // Do NOT use "**" - it allows any domain and creates DoS vulnerability
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.vercel.app",
       },
       {
         protocol: "https",
@@ -79,9 +74,9 @@ const nextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
-          {
+            {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://api.umami.is https://api-gateway.umami.dev; frame-ancestors 'self' https://ideavo.ai https://*.ideavo.ai https://*.e2b.app https://e2b.dev; base-uri 'self'; form-action 'self';",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai; frame-ancestors 'self'; base-uri 'self';",
           },
         ],
       },
