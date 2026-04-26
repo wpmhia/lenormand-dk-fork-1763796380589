@@ -13,6 +13,8 @@ const nextConfig = {
     },
   },
   images: {
+    loader: "default",
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: "https",
