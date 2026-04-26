@@ -1,0 +1,140 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - text: Intelligence
+        - navigation [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+            - img [ref=e11]
+            - text: Home
+          - link "Learn" [ref=e14] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e15]
+            - text: Learn
+          - link "Cards" [ref=e17] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e18]
+            - text: Cards
+          - link "New Reading" [ref=e20] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e21]
+            - text: New Reading
+          - link "History" [ref=e22] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e23]
+            - text: History
+        - button "Open mobile menu" [ref=e28]:
+          - img [ref=e29]
+    - main [ref=e30]:
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - heading "New Lenormand Reading" [level=1] [ref=e34]: New Lenormand Reading
+          - paragraph [ref=e35]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e36]:
+            - generic [ref=e38]:
+              - generic [ref=e39]: "1"
+              - text: Setup
+            - generic [ref=e41]:
+              - generic [ref=e42]: "2"
+              - text: Draw
+            - generic [ref=e44]:
+              - generic [ref=e45]: "3"
+              - text: Reading & AI Insights
+        - generic [ref=e47]:
+          - heading "Your Sacred Question" [level=3] [ref=e49]:
+            - img [ref=e50]
+            - text: Your Sacred Question
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - text: Your Question
+              - textbox "Your Question" [ref=e55]:
+                - /placeholder: What guidance do the cards have for me today?
+              - generic [ref=e56]: 0/500 characters
+            - generic [ref=e57]:
+              - paragraph [ref=e58]: "Try one of these:"
+              - generic [ref=e59]:
+                - button "What guidance do the cards have for me today?" [ref=e60]
+                - button "Will I find love soon?" [ref=e61]
+                - button "How is my career developing?" [ref=e62]
+                - button "What should I focus on this week?" [ref=e63]
+                - button "What obstacles should I be aware of?" [ref=e64]
+                - button "Is this the right path for me?" [ref=e65]
+            - generic [ref=e66]:
+              - text: "Choose Your Spread:"
+              - combobox [ref=e67]:
+                - text: 3-Card Sentence
+                - img [ref=e68]
+              - combobox [ref=e70]
+            - generic [ref=e71]:
+              - generic [ref=e72]: "Choose your method:"
+              - generic [ref=e73]:
+                - button "Virtual Deck Draw cards digitally" [ref=e74]:
+                  - img [ref=e75]
+                  - generic [ref=e77]:
+                    - generic [ref=e78]: Virtual Deck
+                    - generic [ref=e79]: Draw cards digitally
+                - button "Physical Cards Enter your own cards" [ref=e80]:
+                  - img [ref=e81]
+                  - generic [ref=e83]:
+                    - generic [ref=e84]: Physical Cards
+                    - generic [ref=e85]: Enter your own cards
+              - generic [ref=e86]:
+                - paragraph [ref=e87]:
+                  - strong [ref=e88]: "Virtual Deck:"
+                  - text: Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+                - paragraph [ref=e89]:
+                  - strong [ref=e90]: "Physical Cards:"
+                  - text: Use when you've already drawn cards from your physical Lenormand deck and want the AI interpretation.
+    - contentinfo [ref=e91]:
+      - generic [ref=e92]:
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - link "Lenormand" [ref=e95] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e96]
+            - paragraph [ref=e97]: AI-Enhanced Divination
+          - generic [ref=e98]:
+            - heading "Explore" [level=4] [ref=e99]
+            - list [ref=e100]:
+              - listitem [ref=e101]:
+                - link "Home" [ref=e102] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e103]:
+                - link "Reading" [ref=e104] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e105]:
+                - link "History" [ref=e106] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e107]:
+                - link "Cards" [ref=e108] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e109]:
+                - link "Learn" [ref=e110] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e111]:
+            - heading "Links" [level=4] [ref=e112]
+            - list [ref=e113]:
+              - listitem [ref=e114]:
+                - link "About" [ref=e115] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e116]:
+                - link "Support" [ref=e117] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e118]:
+                - link "Privacy" [ref=e119] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e120]:
+                - link "Terms" [ref=e121] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e123]:
+          - text: Made by
+          - link "Humanstack" [ref=e124] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list

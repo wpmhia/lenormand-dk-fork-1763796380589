@@ -8,6 +8,15 @@ import { Eye, ArrowRight } from "lucide-react";
 import { SpreadSelect, Spread } from "./SpreadSelect";
 import { MethodToggle } from "./MethodToggle";
 
+const SUGGESTED_QUESTIONS = [
+  "What guidance do the cards have for me today?",
+  "Will I find love soon?",
+  "How is my career developing?",
+  "What should I focus on this week?",
+  "What obstacles should I be aware of?",
+  "Is this the right path for me?",
+];
+
 interface ReadingSetupProps {
   question: string;
   onQuestionChange: (question: string) => void;
@@ -67,6 +76,28 @@ export function ReadingSetup({
             {charCount}/500 characters
           </div>
         </div>
+
+        {/* Suggested Questions */}
+        {question.length === 0 && (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">Try one of these:</p>
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTED_QUESTIONS.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => {
+                    onQuestionChange(q);
+                    setCharCount(q.length);
+                  }}
+                  className="rounded-full bg-muted px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Spread Selection */}
         <SpreadSelect
