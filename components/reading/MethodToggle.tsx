@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Laptop, Heart, ArrowRight } from "lucide-react";
 
 interface MethodToggleProps {
@@ -12,67 +11,48 @@ interface MethodToggleProps {
 
 export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="text-sm font-medium text-foreground">
         Choose your method:
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <Button
+      
+      {/* Method Cards - single click to proceed */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <button
           type="button"
-          variant={value === "virtual" ? "default" : "outline"}
-          size="lg"
-          onClick={() => onChange("virtual")}
+          onClick={() => onContinue("virtual")}
           disabled={disabled}
-          className={`flex h-auto flex-col items-center gap-2 py-4 ${
-            value === "virtual" ? "ring-2 ring-primary ring-offset-2" : ""
-          }`}
+          className="group flex flex-col items-start gap-2 rounded-xl border-2 border-border bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
-          <Laptop className="h-6 w-6" />
-          <div className="text-center">
-            <div className="font-medium">Virtual Deck</div>
-            <div className="text-xs opacity-80">Draw cards digitally</div>
+          <div className="flex w-full items-center justify-between">
+            <Laptop className="h-5 w-5 text-primary" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
-        </Button>
+          <div>
+            <div className="font-medium text-foreground">Virtual Deck</div>
+            <div className="text-xs text-muted-foreground">
+              Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+            </div>
+          </div>
+        </button>
         
-        <Button
+        <button
           type="button"
-          variant={value === "physical" ? "default" : "outline"}
-          size="lg"
-          onClick={() => onChange("physical")}
+          onClick={() => onContinue("physical")}
           disabled={disabled}
-          className={`flex h-auto flex-col items-center gap-2 py-4 ${
-            value === "physical" ? "ring-2 ring-primary ring-offset-2" : ""
-          }`}
+          className="group flex flex-col items-start gap-2 rounded-xl border-2 border-border bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
-          <Heart className="h-6 w-6" />
-          <div className="text-center">
-            <div className="font-medium">Physical Cards</div>
-            <div className="text-xs opacity-80">Enter your own cards</div>
+          <div className="flex w-full items-center justify-between">
+            <Heart className="h-5 w-5 text-primary" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
-        </Button>
-      </div>
-      
-      {value && (
-        <Button
-          type="button"
-          onClick={() => onContinue(value)}
-          disabled={disabled}
-          className="w-full gap-2"
-          size="lg"
-        >
-          Continue
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-      )}
-      
-      {/* Method Guidance */}
-      <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
-        <p className="mb-1">
-          <strong>Virtual Deck:</strong> Best for quick readings. Cards are shuffled and drawn randomly by the computer.
-        </p>
-        <p>
-          <strong>Physical Cards:</strong> Use when you&apos;ve already drawn cards from your physical Lenormand deck and want the AI interpretation.
-        </p>
+          <div>
+            <div className="font-medium text-foreground">Physical Cards</div>
+            <div className="text-xs text-muted-foreground">
+              Use when you&apos;ve already drawn cards from your physical Lenormand deck and want the AI interpretation.
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );
