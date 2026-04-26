@@ -74,9 +74,9 @@ function DeckComponent({
           onClick={shuffle}
           disabled={!canDraw || isShuffling}
           variant="outline"
-          size="sm"
+          size="default"
           className={cn(
-            "transition-all duration-300",
+            "transition-all duration-300 min-h-[48px]",
             isShuffling && "scale-95"
           )}
         >
@@ -91,7 +91,8 @@ function DeckComponent({
           disabled={!canDraw}
           loading={isDrawing || isProcessing}
           loadingText={isProcessing ? "Processing..." : `Drawing ${drawCount}...`}
-          size="sm"
+          size="default"
+          className="min-h-[48px]"
         >
           <Play className="mr-2 h-4 w-4" />
           Draw {drawCount} Cards
@@ -104,7 +105,7 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           className={cn(
-            "relative rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+            "relative rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-h-[120px] min-w-[140px] sm:min-h-[160px] sm:min-w-[112px]",
             !canDraw
               ? "cursor-not-allowed opacity-60"
               : "cursor-pointer hover:scale-105 active:scale-95 hover:shadow-lg"
@@ -114,7 +115,7 @@ function DeckComponent({
         >
           {/* Card Back Image */}
           <div
-            className="card-mystical overflow-hidden rounded-xl"
+            className="card-mystical overflow-hidden rounded-xl w-full h-full"
             style={{
               width: "112px",
               height: "160px",
