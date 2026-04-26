@@ -1,17 +1,17 @@
-# Use Bun runtime for faster builds
-FROM oven/bun:1.1.4-alpine AS base
+# Use Node.js for Next.js compatibility
+FROM node:20-alpine AS base
 
 # Install dependencies
 FROM base AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN npm install
 
 # Build the app
 FROM deps AS builder
 WORKDIR /app
 COPY . .
-RUN bun run build
+RUN npm run build
 
 # Production runner
 FROM base AS runner
@@ -27,4 +27,4 @@ COPY --from=builder /app/public ./public
 
 EXPOSE 8080
 
-CMD ["bun", "run", "start"]
+CMD ["node", "server.js"]
