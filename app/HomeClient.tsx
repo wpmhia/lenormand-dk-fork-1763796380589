@@ -46,53 +46,52 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 Intelligence
               </span>
             </h1>
-            <p className="mx-auto mb-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl">
+            <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl">
               Clear answers from the 36-card Lenormand system. AI-powered readings and learning.
             </p>
 
-            <div className="flex flex-col items-center gap-4 sm:flex-row md:items-start md:justify-start">
-              <Link href="/read/new">
-                <Button size="lg" className="gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  Get Your Reading
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => setShowDailyCard(true)}
-                className="gap-2"
-              >
-                <Heart className="h-4 w-4" />
-                Daily Card
-              </Button>
-            </div>
-
-            {/* Reddit Community */}
-            <div className="mt-4 flex justify-center md:justify-start">
-              <a
-                href="https://www.reddit.com/r/LenormandIntelligence/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="h-4 w-4"
-                  aria-hidden="true"
+            <div className="flex flex-col items-center gap-4 md:items-start">
+              {/* CTA Buttons */}
+              <div className="flex flex-col items-center gap-3 sm:flex-row">
+                <Link href="/read/new">
+                  <Button size="lg" className="gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Get Your Reading
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setShowDailyCard(true)}
+                  className="gap-2"
                 >
-                  <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.75.803 1.75 1.75 0 .721-.442 1.33-1.068 1.623.07.41.098.837.098 1.273 0 2.63-3.068 4.77-6.845 4.77-3.776 0-6.844-2.14-6.844-4.77 0-.436.028-.862.098-1.273-.626-.292-1.068-.902-1.068-1.623 0-.947.782-1.75 1.75-1.75.476 0 .898.182 1.206.491 1.194-.856 2.85-1.418 4.674-1.488l-.8-3.747-2.597.547a1.25 1.25 0 0 1-2.498-.056c0-.688.562-1.249 1.25-1.249.418 0 .786.206 1.012.527l2.967-.624a.625.625 0 0 1 .256 0l2.967.624c.226-.321.594-.527 1.012-.527zM8.75 12.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zm6.5 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" />
-                </svg>
-                Join our community
-              </a>
-            </div>
+                  <Heart className="h-4 w-4" />
+                  Daily Card
+                </Button>
+              </div>
 
-            {/* Reading Counter - Social Proof */}
-            <div className="mt-6 flex justify-center md:justify-start">
-              <ReadingCounter
-                initialCount={initialCount}
-              />
+              {/* Secondary Links */}
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <a
+                  href="https://www.reddit.com/r/LenormandIntelligence/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-3.5 w-3.5"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.75.803 1.75 1.75 0 .721-.442 1.33-1.068 1.623.07.41.098.837.098 1.273 0 2.63-3.068 4.77-6.845 4.77-3.776 0-6.844-2.14-6.844-4.77 0-.436.028-.862.098-1.273-.626-.292-1.068-.902-1.068-1.623 0-.947.782-1.75 1.75-1.75.476 0 .898.182 1.206.491 1.194-.856 2.85-1.418 4.674-1.488l-.8-3.747-2.597.547a1.25 1.25 0 0 1-2.498-.056c0-.688.562-1.249 1.25-1.249.418 0 .786.206 1.012.527l2.967-.624a.625.625 0 0 1 .256 0l2.967.624c.226-.321.594-.527 1.012-.527zM8.75 12.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zm6.5 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z" />
+                  </svg>
+                  Join our community
+                </a>
+                <ReadingCounter
+                  initialCount={initialCount}
+                />
+              </div>
             </div>
           </div>
 
