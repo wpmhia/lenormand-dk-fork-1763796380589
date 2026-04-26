@@ -5,7 +5,7 @@ const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOK
   ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
   : null;
 
-let memoryCounter = 120;
+let memoryCounter = 7700;
 const KEY = "reading_count:total";
 
 let cachedCount: number | null = null;
@@ -16,10 +16,6 @@ async function fetchFromRedis(): Promise<number | null> {
   if (!redis) return null;
   try {
     const count = await redis.get<number>(KEY);
-    if (count === null) {
-      await redis.set(KEY, 120);
-      return 120;
-    }
     return count;
   } catch {
     return null;
