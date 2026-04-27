@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   // Minimal CSP - allow images from all sources for card displays
   response.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://cloud.umami.is;"
   );
 
   // Add caching for static pages (not API routes)
