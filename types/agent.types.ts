@@ -36,12 +36,6 @@ export interface AgentResponse {
 export type SpreadId =
   | "single-card"
   | "sentence-3"
-  | "past-present-future"
-  | "yes-no-maybe"
-  | "mind-body-spirit"
   | "sentence-5"
-  | "structured-reading"
-  | "week-ahead"
-  | "relationship-double-significator"
   | "comprehensive"
   | "grand-tableau";
