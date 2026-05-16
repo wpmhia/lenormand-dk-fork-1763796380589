@@ -59,10 +59,8 @@ export function ReadingCounter({
     return () => clearInterval(timer);
   }, [isVisible, count]);
 
-  // Refresh count from API periodically (only if initialCount was 0)
+  // Refresh count from API on mount and periodically
   useEffect(() => {
-    if (initialCount > 0) return;
-
     const fetchCount = async () => {
       try {
         const response = await fetch("/api/readings/count");
@@ -78,7 +76,7 @@ export function ReadingCounter({
     fetchCount();
     const interval = setInterval(fetchCount, 60000); // Refresh every 60s
     return () => clearInterval(interval);
-  }, [initialCount]);
+  }, []);
 
   const displayFormatted = formatReadingCount(displayCount);
 
