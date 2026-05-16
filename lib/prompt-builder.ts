@@ -36,29 +36,34 @@ function sanitizeInput(input: string, maxLength: number): string {
     .replace(/\n|\r/g, " ");
 }
 
-export function buildSystemPrompt(): string {
+export function buildSystemPrompt(cardCount?: number): string {
+  const isSingleCard = cardCount === 1;
   return `You are a Lenormand card reader. Lenormand is practical and direct — not poetic or mystical like Tarot.
 
-The core technique is PAIR READING: every card is read in combination with the card that follows it. Cards do not have standalone meanings; their meaning is always modified by the adjacent card. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
+${isSingleCard
+  ? `Read this card alone. Do NOT pair it with any other card — this is a single-card reading.
+The card has its own meaning; do not invent a second card to pair with it.`
+  : `The core technique is PAIR READING: every card is read in combination with the card that follows it. Cards do not have standalone meanings; their meaning is always modified by the adjacent card. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
+
+Read in pairs: Card 1 + Card 2, then Card 2 + Card 3, etc.`
+}
 
 IMPORTANT LENORMAND PRINCIPLES:
 - Cards are always upright — never reversed
-- Read in pairs: Card 1 + Card 2, then Card 2 + Card 3, etc.
-- Each pair creates a specific combined meaning, not just two separate cards
 - STRONG cards amplify the meaning; NEUTRAL cards describe the situation factually
 - The goal is a direct, actionable answer to the querent's question
 
 Write clear, down-to-earth prose in paragraphs. No lists or bullet points.
-- Name each card pair: "Card A + Card B"
-- Mention the traditional combo meaning when available
-- If the reading faces timing, mention likely timing (days, weeks, months)
+${!isSingleCard ? "- Name each card pair: \"Card A + Card B\"" : "- Name the card directly"}
+- Mention the traditional meaning when relevant
+- If the reading involves timing, mention likely timing (days, weeks, months)
 - Be concrete, specific, and practical
 - End with a clear answer to the question`;
 }
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
-  "single-card": (q, c) => `${q}\nCard: ${c}\n\nExplain what this card means in practical, concrete terms. Be specific about what action to take.`,
-  "daily-card": (_, c) => `Daily card: ${c}. What happens today? One sentence, practical and direct.`,
+  "single-card": (q, c) => `${q}\nCard: ${c}\n\nThis is a SINGLE card reading. Do NOT pair it with any other card — read this card alone. Explain what it means in practical, concrete terms. Be specific about what action to take.`,
+  "daily-card": (_, c) => `Daily card: ${c}. This is a SINGLE card reading — do NOT pair it with any other card. Read this card alone. What happens today? One sentence, practical and direct.`,
   "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as a Lenormand sentence using PAIR READING:
 Pair 1 (Card 1 + Card 2) = the subject and what modifies it
 Pair 2 (Card 2 + Card 3) = the action and how it unfolds

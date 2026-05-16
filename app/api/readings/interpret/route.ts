@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?", comboHints);
+    const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?", cardCount > 1 ? comboHints : undefined);
     const maxTokens = getTokenBudget(cardCount);
 
     const mistral = createMistral({
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
 
     const result = await streamText({
       model: mistral("mistral-small-latest"),
-      system: buildSystemPrompt(),
+      system: buildSystemPrompt(cardCount),
       prompt,
       temperature: 0.75,
       maxOutputTokens: maxTokens,
