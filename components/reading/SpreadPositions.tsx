@@ -18,51 +18,6 @@ export interface PositionInfo {
 }
 
 const SPREAD_POSITIONS: Record<string, Record<number, PositionInfo>> = {
-  "past-present-future": {
-    0: {
-      label: "Past",
-      meaning: "Influences from your past that shaped your current situation",
-    },
-    1: {
-      label: "Present",
-      meaning: "Your current circumstances and immediate challenges",
-    },
-    2: {
-      label: "Future",
-      meaning: "Potential outcome based on your current path",
-    },
-  },
-  "mind-body-spirit": {
-    0: {
-      label: "Mind",
-      meaning: "Thoughts, mental state, and intellectual matters",
-    },
-    1: {
-      label: "Body",
-      meaning: "Physical health, actions, and material concerns",
-    },
-    2: {
-      label: "Spirit",
-      meaning: "Emotional well-being, spiritual growth, and inner wisdom",
-    },
-  },
-  "yes-no-maybe": {
-    0: {
-      label: "First Card",
-      meaning:
-        "Contributes to the Yes/No count based on its positive or negative meaning",
-    },
-    1: {
-      label: "Center Card",
-      meaning:
-        "Tie-breaker card if the count is equal between positive and negative cards",
-    },
-    2: {
-      label: "Third Card",
-      meaning:
-        "Contributes to the Yes/No count based on its positive or negative meaning",
-    },
-  },
   "sentence-3": {
     0: {
       label: "Opening Element",
