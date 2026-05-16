@@ -14,15 +14,21 @@ export const ENV_VARIABLES: EnvVariable[] = [
   },
   {
     name: "UPSTASH_REDIS_REST_URL",
-    description: "Upstash Redis REST URL for rate limiting (optional)",
+    description: "Upstash Redis REST URL for reading counter and rate limiting",
     required: false,
-    instructions: "Create a Redis database at https://upstash.com for production. Falls back to in-memory if not set.",
+    instructions: "Create a Redis database at https://upstash.com for production. Without this, reading counter resets on every deploy.",
   },
   {
     name: "UPSTASH_REDIS_REST_TOKEN",
-    description: "Upstash Redis REST token for authentication (optional)",
+    description: "Upstash Redis REST token for authentication",
     required: false,
-    instructions: "From your Upstash Redis dashboard. Falls back to in-memory if not set.",
+    instructions: "From your Upstash Redis dashboard. Must be set together with UPSTASH_REDIS_REST_URL.",
+  },
+  {
+    name: "DEFAULT_READING_COUNT",
+    description: "Fallback reading counter when Redis is unavailable",
+    required: false,
+    instructions: "Set to the current accurate count, e.g. 12900. Only used when Redis is not configured.",
   },
   {
     name: "MISTRAL_BASE_URL",
