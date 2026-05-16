@@ -174,7 +174,6 @@ export function getGrandTableauPosition(index: number): GrandTableauPosition {
   const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
   const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
   const isCardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
-  const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[index];
 
   return {
     index,
@@ -183,17 +182,8 @@ export function getGrandTableauPosition(index: number): GrandTableauPosition {
     isCorner,
     isCenter,
     isCardsOfFate,
-    isTopicCard: !!topicInfo,
-    topicType: topicInfo?.type as
-      | "health"
-      | "home"
-      | "love"
-      | "job"
-      | "boss"
-      | "career"
-      | "money"
-      | "travel"
-      | undefined,
+    isTopicCard: false,
+    topicType: undefined,
   };
 }
 

@@ -11,12 +11,32 @@ const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOK
 const READINGS_KEY = "user_readings";
 const MAX_READINGS = 30;
 
+function getSessionId(request: Request): string | null {
+  const sessionId = request.headers.get("X-Session-Id");
+  if (sessionId && /^[a-f0-9-]{8,64}$/i.test(sessionId)) {
+    return sessionId;
+  }
+  return null;
+}
+
+function readingsKey(sessionId: string): string {
+  return `user_readings:${sessionId}`;
+}
+
 export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const sessionId = getSessionId(request);
+    if (!sessionId) {
+      return new Response(
+        JSON.stringify({ error: "Session ID required via X-Session-Id header" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     if (!redis) {
       return new Response(
         JSON.stringify({ readings: [], warning: "Redis not configured" }),
@@ -24,14 +44,14 @@ export async function GET() {
       );
     }
 
-    const readings = await redis.get<any[]>(READINGS_KEY);
+    const readings = await redis.get<any[]>(readingsKey(sessionId));
     const sorted = (readings || []).sort((a, b) => b.timestamp - a.timestamp);
 
     return new Response(
       JSON.stringify({ readings: sorted }),
       { status: 200, headers: { 
         "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        "Cache-Control": "private, no-cache",
         ...corsHeaders 
       } }
     );
@@ -45,6 +65,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const sessionId = getSessionId(request);
+    if (!sessionId) {
+      return new Response(
+        JSON.stringify({ error: "Session ID required via X-Session-Id header" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const body = await request.json();
     const { id, timestamp, question, spreadType, cards, interpretationPreview, interpretationFull } = body;
 
@@ -72,7 +100,8 @@ export async function POST(request: Request) {
       interpretationFull: interpretationFull || "",
     };
 
-    const readings = await redis.get<any[]>(READINGS_KEY) || [];
+    const key = readingsKey(sessionId);
+    const readings = await redis.get<any[]>(key) || [];
     readings.push(newReading);
 
     if (readings.length > MAX_READINGS) {
@@ -80,7 +109,7 @@ export async function POST(request: Request) {
       readings.splice(MAX_READINGS);
     }
 
-    await redis.set(READINGS_KEY, readings);
+    await redis.set(key, readings);
 
     return new Response(
       JSON.stringify({ success: true, reading: newReading }),
@@ -96,6 +125,14 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const sessionId = getSessionId(request);
+    if (!sessionId) {
+      return new Response(
+        JSON.stringify({ error: "Session ID required via X-Session-Id header" }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
@@ -113,10 +150,11 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const readings = await redis.get<any[]>(READINGS_KEY) || [];
+    const key = readingsKey(sessionId);
+    const readings = await redis.get<any[]>(key) || [];
     const filtered = readings.filter((r) => r.id !== id);
 
-    await redis.set(READINGS_KEY, filtered);
+    await redis.set(key, filtered);
 
     return new Response(
       JSON.stringify({ success: true }),
