@@ -31,22 +31,50 @@ function sanitizeInput(input: string, maxLength: number): string {
 }
 
 export function buildSystemPrompt(): string {
-  return `You are a Lenormand card reader. Lenormand is practical and direct - not poetic or mystical like Tarot.
+  return `You are a Lenormand card reader. Lenormand is practical and direct — not poetic or mystical like Tarot.
+
+The core technique is PAIR READING: every card must be read in combination with the card that follows it. Cards do not have standalone meanings; their meaning is always modified by the adjacent card. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
 
 Write clear, down-to-earth prose in paragraphs. No lists or bullet points.
-- Name each card (The Rider, The Clover, etc.)
-- Give concrete, specific meanings
-- Be practical and direct
+- Name each card pair: "Card A + Card B"
+- Explain how each pair modifies the meaning
+- Be concrete, specific, and practical
 - End with a clear answer to the question`;
 }
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
-  "single-card": (q, c) => `${q}\nCard: ${c}\n\nExplain what this card means for the question. Be specific and practical.`,
-  "daily-card": (_, c) => `Daily: ${c}. What happens today? One sentence.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as a 3-card sentence: Subject → Action → Outcome.\nWrite as flowing prose. Name each card and explain how the reading unfolds. End with the answer.`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nRead as a 5-card sentence: Subject → Action → Focus → Development → Outcome.\nWrite as flowing prose. Name each card. End with the answer.`,
-  "comprehensive": (q, c) => `${q}\nCards (3x3 grid): ${c}\n\nRead row by row: Top=Past, Middle=Present, Bottom=Future.\nThe center card is the heart of the matter.\nAlso read columns (left to right) and diagonals for additional insight.\nWrite in paragraphs. Name the center card first. End with the answer.`,
-  "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nFind the Man (29) or Woman (28) card - this is the Significator.\nNear the Significator: Left=Past, Right=Future, Above=Conscious, Below=Unconscious.\nWrite in paragraphs. Describe what surrounds the Significator. Name specific cards. End with the answer.`,
+  "single-card": (q, c) => `${q}\nCard: ${c}\n\nExplain what this card means in practical, concrete terms. Be specific about what action to take.`,
+  "daily-card": (_, c) => `Daily card: ${c}. What happens today? One sentence, practical and direct.`,
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as a Lenormand sentence using PAIR READING:
+Pair 1 (Card 1 + Card 2) = the subject and what modifies it
+Pair 2 (Card 2 + Card 3) = the action and how it unfolds
+Full sentence (Card 1 + Card 2 + Card 3) = the outcome
+
+Name each pair: "The Rider plus the Clover means..." Explain how the cards modify each other. End with a clear answer.`,
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nRead as a 5-card Lenormand sentence using PAIR READING:
+Pair 1 (1+2) = Subject, Pair 2 (2+3) = Action, Pair 3 (3+4) = Development, Pair 4 (4+5) = Outcome
+
+Name each pair. Explain how adjacent cards modify each other's meaning. Synthesize into flowing prose. End with the answer.`,
+  "comprehensive": (q, c) => `${q}\nCards (3x3 grid): ${c}\n\nRead using Lenormand grid reading:
+Top row (cards 1-2-3) = Past — read as pairs: 1+2, 2+3
+Middle row (cards 4-5-6) = Present — read as pairs: 4+5, 5+6
+Bottom row (cards 7-8-9) = Future — read as pairs: 7+8, 8+9
+Card 5 (center) = the heart of the matter — name it first
+Also read columns top-to-bottom for additional insight.
+
+Read in pairs throughout. Name each pair. Write in paragraphs. End with the answer.`,
+  "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using authentic Lenormand Grand Tableau method:
+1. Find the MAN (29) or WOMAN (28) card — this is the Significator (the querent).
+2. Read in PAIRS: every card modifies the card that follows it. Focus especially on pairs surrounding the Significator.
+3. Directional zones relative to the Significator:
+   - Left of Significator = Past influences
+   - Right of Significator = Future developments
+   - Above Significator = Conscious thoughts
+   - Below Significator = Unconscious forces
+4. The bottom row (positions 27-35) = Cards of Fate — major life themes.
+5. Corner cards = the foundation or overall context.
+
+Write in paragraphs. Describe the card pairs around the Significator. Name specific card pairs and how they interact. End with the answer.`,
 };
 
 export function buildPrompt(cards: CardInput[], spreadId: string, question: string): string {

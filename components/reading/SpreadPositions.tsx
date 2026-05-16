@@ -20,19 +20,19 @@ export interface PositionInfo {
 const SPREAD_POSITIONS: Record<string, Record<number, PositionInfo>> = {
   "sentence-3": {
     0: {
-      label: "Opening Element",
+      label: "Opening Card",
       meaning:
-        "Primary element - can represent past, mind, or situation depending on context",
+        "The subject or starting point of the situation",
     },
     1: {
-      label: "Central Element",
+      label: "Central Card",
       meaning:
-        "Core element - can represent present, body, or action depending on context",
+        "The core action, challenge, or turning point",
     },
     2: {
-      label: "Closing Element",
+      label: "Closing Card",
       meaning:
-        "Final element - can represent future, spirit, or outcome; check mirror relationship with central element",
+        "The outcome or resolution; check the mirror relationship with the central card",
     },
   },
   "structured-reading": {
