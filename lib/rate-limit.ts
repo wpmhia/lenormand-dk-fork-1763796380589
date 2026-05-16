@@ -62,8 +62,13 @@ export async function rateLimit(
 export function getClientIP(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    const ips = forwarded.split(",").map(ip => ip.trim());
+    const ips = forwarded.split(",").map((s) => s.trim());
     return ips[0] || "unknown";
   }
-  return request.headers.get("x-real-ip") || "unknown";
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp;
+  // Use a hash of the user-agent + accept-language as fallback identifier
+  const ua = request.headers.get("user-agent") || "";
+  const lang = request.headers.get("accept-language") || "";
+  return `ua:${ua.length}:${lang.length}`;
 }
