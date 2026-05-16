@@ -15,7 +15,8 @@ import {
   Spread,
 } from "@/lib/spreads";
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
-import { useReadingHistory } from "@/hooks/use-reading-history";
+import { useReadingHistory } from "@/hooks/useReadingHistory";
+import { useAutoSaveReading } from "@/hooks/useAutoSaveReading";
 import { useToast } from "@/hooks/use-toast";
 
 import {
@@ -93,6 +94,8 @@ function NewReadingPageContent() {
   const { saveReading } = useReadingHistory();
   const { toast } = useToast();
 
+  useAutoSaveReading(aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved);
+
   // Reset function - defined before effects that use it
   const performReset = useCallback(
     (keepUrlParams = false) => {
@@ -152,52 +155,6 @@ function NewReadingPageContent() {
       startAnalysis();
     }
   }, [step, drawnCards, startAnalysis]);
-
-  // Auto-save reading when AI interpretation completes
-  useEffect(() => {
-    if (
-      aiReading &&
-      !aiStreaming &&
-      step === "results" &&
-      drawnCardTypes.length > 0 &&
-      !readingSaved
-    ) {
-      const interpretationText = aiReading.reading || "";
-      const preview = interpretationText.substring(0, 150);
-      const cardData = drawnCardTypes.map((card, index) => ({
-        id: card.id,
-        name: card.name,
-        position: `Card ${index + 1}`,
-      }));
-
-      // Save reading and show toast
-      (async () => {
-        try {
-          await saveReading({
-            id: `reading-${Date.now()}`,
-            timestamp: Date.now(),
-            question,
-            spreadType: selectedSpread.label,
-            cards: cardData,
-            interpretationPreview: preview,
-            interpretationFull: interpretationText,
-          });
-
-          setReadingSaved(true);
-          toast({
-            description: "Reading saved",
-            duration: 2000,
-          });
-        } catch (error) {
-          console.error("Failed to save reading:", error);
-          toast({
-            description: "Failed to save reading",
-            duration: 2000,
-          });
-        }
-      })();
-    }
-  }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread, saveReading, toast]);
 
   // Handle setup continue
   const handleSetupContinue = useCallback((method: "virtual" | "physical") => {
