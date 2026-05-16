@@ -48,7 +48,7 @@ export default function SharedReadingPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // AI-related state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);

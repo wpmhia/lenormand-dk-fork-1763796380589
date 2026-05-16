@@ -64,7 +64,7 @@ export function getClientIP(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     const ips = forwarded.split(",").map(ip => ip.trim());
-    return ips[ips.length - 1] || "unknown";
+    return ips[0] || "unknown";
   }
   return request.headers.get("x-real-ip") || "unknown";
 }

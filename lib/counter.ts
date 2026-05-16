@@ -56,6 +56,8 @@ export async function getReadingCount(): Promise<number> {
     return count;
   }
   
+  cachedCount = memoryCounter;
+  cacheTimestamp = now;
   return memoryCounter;
 }
 

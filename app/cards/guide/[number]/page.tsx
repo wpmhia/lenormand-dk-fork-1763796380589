@@ -8,9 +8,9 @@ import { getCards, getCardById } from "@/lib/data";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface CardGuidePageProps {
-  params: {
+  params: Promise<{
     number: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -21,8 +21,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: CardGuidePageProps) {
+  const { number } = await params;
   const cards = await getCards();
-  const card = getCardById(cards, parseInt(params.number));
+  const card = getCardById(cards, parseInt(number));
 
   if (!card) {
     return {
@@ -49,8 +50,9 @@ export async function generateMetadata({ params }: CardGuidePageProps) {
 }
 
 export default async function CardGuidePage({ params }: CardGuidePageProps) {
+  const { number } = await params;
   const cards = await getCards();
-  const card = getCardById(cards, parseInt(params.number));
+  const card = getCardById(cards, parseInt(number));
 
   if (!card) {
     return (

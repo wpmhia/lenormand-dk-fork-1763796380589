@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -40,7 +39,7 @@ export function ReadingSetup({
   disabled = false,
   isLoading = false,
 }: ReadingSetupProps) {
-  const [charCount, setCharCount] = useState(question.length);
+  const charCount = question.length;
 
   return (
     <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
@@ -61,7 +60,6 @@ export function ReadingSetup({
             value={question}
             onChange={(e) => {
               onQuestionChange(e.target.value);
-              setCharCount(e.target.value.length);
             }}
             placeholder="What guidance do the cards have for me today?"
             className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:shadow-lg focus:ring-2 focus:ring-primary/20"
@@ -88,7 +86,6 @@ export function ReadingSetup({
                   type="button"
                   onClick={() => {
                     onQuestionChange(q);
-                    setCharCount(q.length);
                   }}
                   className="rounded-full bg-muted px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
                 >

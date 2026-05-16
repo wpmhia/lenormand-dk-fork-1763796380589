@@ -35,6 +35,7 @@ export function useAIAnalysis(
   const [followUpLoading, setFollowUpLoading] = useState(false);
   const [followUpStreaming, setFollowUpStreaming] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const followUpAbortControllerRef = useRef<AbortController | null>(null);
 
   const startAnalysis = useCallback(async () => {
     // Abort any previous request
@@ -67,7 +68,7 @@ export function useAIAnalysis(
 
         if (!response.ok) {
           const data = await response.json();
-          if (response.status === 429 && attempt < MAX_RETRIES - 1) {
+          if (response.status === 429 && attempt < MAX_RETRIES) {
             const retryAfter = parseInt(data.retryAfter || "5", 10);
             await new Promise(resolve => setTimeout(resolve, Math.min(retryAfter * 1000, 30000)));
             continue;
@@ -137,7 +138,7 @@ export function useAIAnalysis(
           return;
         }
         lastError = err;
-        if (attempt < MAX_RETRIES - 1) {
+        if (attempt < MAX_RETRIES) {
           await new Promise(resolve => setTimeout(resolve, INITIAL_RETRY_DELAY * Math.pow(2, attempt)));
         }
       }
@@ -166,8 +167,6 @@ export function useAIAnalysis(
     setFollowUpLoading(false);
     setFollowUpStreaming(false);
   }, []);
-
-  const followUpAbortControllerRef = useRef<AbortController | null>(null);
 
   const submitFollowUp = useCallback(async (followUpQuestion: string) => {
     if (!aiReading?.reading || drawnCards.length === 0) return;

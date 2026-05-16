@@ -32,6 +32,7 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
 
   useEffect(() => {
     let cancelled = false;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
     
     const handleRedirect = async () => {
       if (cancelled) return;
@@ -69,7 +70,7 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
       }
 
       const redirectPermanent = perm === "true" || perm === "1";
-      const timeout = setTimeout(() => {
+      timeout = setTimeout(() => {
         if (cancelled) return;
         if (redirectPermanent) {
           router.replace(url);
@@ -77,13 +78,14 @@ function RedirectContent({ searchParams }: RedirectClientProps) {
           router.push(url);
         }
       }, 1500);
-
-      return () => clearTimeout(timeout);
     };
 
     handleRedirect();
     
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (timeout) clearTimeout(timeout);
+    };
   }, [searchParams, router]);
 
   if (error) {

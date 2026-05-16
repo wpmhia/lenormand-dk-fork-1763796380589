@@ -29,9 +29,13 @@ export function AccordionSection({ context, index }: AccordionSectionProps) {
   return (
     <Card className="mb-8 border-border bg-card">
       <CardHeader>
-        <button
+        <div
           onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full items-center gap-3 transition-opacity hover:opacity-80"
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setIsOpen(!isOpen); } }}
+          role="button"
+          tabIndex={0}
+          aria-expanded={isOpen}
+          className="flex w-full cursor-pointer items-center gap-3 transition-opacity hover:opacity-80"
         >
           <div className="flex flex-1 items-center gap-3">
             {context.icon}
@@ -42,7 +46,7 @@ export function AccordionSection({ context, index }: AccordionSectionProps) {
           <ChevronDown
             className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
           />
-        </button>
+        </div>
         <p className="mt-2 text-sm text-muted-foreground">
           {context.description}
         </p>

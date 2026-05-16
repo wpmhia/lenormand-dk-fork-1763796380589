@@ -56,7 +56,7 @@ export default function CardsClient({
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<"number" | "name">("number");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Debounce search input to prevent filtering on every keystroke
   useEffect(() => {

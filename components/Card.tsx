@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useState, useEffect } from "react";
 
 interface CardProps {
   card: CardType;
@@ -36,6 +36,10 @@ function CardInner({
   selected = false,
 }: CardProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(false);
+  }, [card.imageUrl]);
   
   const handleClick = useCallback(() => {
     onClick?.();
