@@ -65,7 +65,24 @@ export async function POST(request: Request) {
       return { id: c.id, name: c.name, keywords: cardData?.keywords || [] };
     });
 
-    const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?");
+    // Build adjacent pair combo hints from traditional Lenormand combinations
+    const comboHints: { cardA: string; cardB: string; meaning: string }[] = [];
+    for (let i = 0; i < cards.length - 1; i++) {
+      const cardA = cardsMap.get(cards[i].id);
+      const cardB = cardsMap.get(cards[i + 1].id);
+      if (cardA && cardB) {
+        const forwardCombo = cardA.combos?.find(c => c.withCardId === cardB.id);
+        const reverseCombo = cardB.combos?.find(c => c.withCardId === cardA.id);
+        const meaning = [forwardCombo?.meaning, reverseCombo?.meaning]
+          .filter(Boolean)
+          .join(" — ");
+        if (meaning) {
+          comboHints.push({ cardA: cardA.name, cardB: cardB.name, meaning });
+        }
+      }
+    }
+
+    const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?", comboHints);
     const maxTokens = getTokenBudget(cardCount);
 
     const mistral = createMistral({
