@@ -8,6 +8,7 @@ import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
+import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -15,71 +16,71 @@ export async function OPTIONS() {
 
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const RATE_LIMIT = 5;
-const RATE_LIMIT_WINDOW = 60 * 1000;
+const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 
 export async function POST(request: Request) {
-  const ip = getClientIP(request);
-  const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
+  try {
+    const ip = getClientIP(request);
+    const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
 
-  if (!rateLimitResult.success) {
-    return new Response(
-      JSON.stringify({
-        error: "Rate limit exceeded",
-        retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000),
-      }),
-      {
-        status: 429,
-        headers: {
-          "Content-Type": "application/json",
-          "X-RateLimit-Limit": String(rateLimitResult.limit),
-          "X-RateLimit-Remaining": String(rateLimitResult.remaining),
-          "X-RateLimit-Reset": String(rateLimitResult.reset),
-          ...corsHeaders,
+    if (!rateLimitResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Rate limit exceeded",
+          retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000),
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "X-RateLimit-Limit": String(rateLimitResult.limit),
+            "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+            "X-RateLimit-Reset": String(rateLimitResult.reset),
+            ...corsHeaders,
+          },
         },
-      },
-    );
-  }
+      );
+    }
 
-  if (!MISTRAL_API_KEY) {
-    return new Response(JSON.stringify({ error: "AI not configured" }), {
-      status: 503,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
-  }
+    if (!MISTRAL_API_KEY) {
+      return new Response(JSON.stringify({ error: "AI not configured" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
-  const body = await request.json();
-  const { followUpQuestion, originalReading, cards } = body;
+    const body = await request.json();
+    const { followUpQuestion, originalReading, cards } = body;
 
-  if (!followUpQuestion || typeof followUpQuestion !== "string") {
-    return new Response(JSON.stringify({ error: "Follow-up question required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
-  }
+    if (!followUpQuestion || typeof followUpQuestion !== "string") {
+      return new Response(JSON.stringify({ error: "Follow-up question required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
-  if (!originalReading || typeof originalReading !== "string") {
-    return new Response(JSON.stringify({ error: "Original reading required" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
-  }
+    if (!originalReading || typeof originalReading !== "string") {
+      return new Response(JSON.stringify({ error: "Original reading required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
-  const cardCount = cards?.length || 3;
-  const maxTokens = getTokenBudget(cardCount);
+    const cardCount = cards?.length || 3;
+    const maxTokens = getTokenBudget(cardCount);
 
-  const prompt = `Original reading: "${originalReading}"
+    const prompt = `Original reading: "${originalReading}"
 
 Follow-up question: "${followUpQuestion}"
 
 Provide a brief, direct answer to the follow-up question based on the original reading and cards. Be specific and concise.`;
 
-  try {
     const mistral = createMistral({
       apiKey: MISTRAL_API_KEY,
     });
 
     const abortController = new AbortController();
-    const timeout = setTimeout(() => abortController.abort(), 25000);
+    const timeout = setTimeout(() => abortController.abort(), API_REQUEST_TIMEOUT_MS - 5000);
     request.signal.addEventListener("abort", () => abortController.abort(), { once: true });
 
     const result = await streamText({
@@ -93,7 +94,6 @@ Provide a brief, direct answer to the follow-up question based on the original r
 
     clearTimeout(timeout);
 
-    // Convert to our custom SSE format for backwards compatibility
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -129,7 +129,13 @@ Provide a brief, direct answer to the follow-up question based on the original r
       },
     });
   } catch (error: any) {
-    const isTimeout = error.name === "AbortError" || error.message?.includes("abort");
+    if (error.name === "SyntaxError") {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
     return new Response(
       JSON.stringify({ error: isTimeout ? "Response timed out" : "Processing failed" }),
       { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },

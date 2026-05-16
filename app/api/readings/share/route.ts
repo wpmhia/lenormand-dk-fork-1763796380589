@@ -2,18 +2,13 @@ export const runtime = "nodejs";
 
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+import { API_REQUEST_TIMEOUT_MS, ERROR_MESSAGES } from "@/lib/constants";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-const DEFAULT_HMAC_SECRET = "default-dev-key-change-in-production";
-const READING_HMAC_SECRET = getEnv("READING_HMAC_SECRET") || DEFAULT_HMAC_SECRET;
-
-// Warn once if using default secret
-if (!getEnv("READING_HMAC_SECRET")) {
-  console.warn("[SECURITY] READING_HMAC_SECRET not set. Using default key which is insecure for production.");
-}
+const READING_HMAC_SECRET = getEnv("READING_HMAC_SECRET");
 
 async function generateHMAC(data: string): Promise<string> {
   // Use Web Crypto API for Edge runtime compatibility
@@ -37,6 +32,13 @@ async function generateHMAC(data: string): Promise<string> {
  */
 export async function POST(request: Request) {
   try {
+    if (!READING_HMAC_SECRET) {
+      return new Response(
+        JSON.stringify({ error: "Sharing not configured" }),
+        { status: 503, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const body = await request.json();
     
     const json = JSON.stringify(body);
@@ -82,6 +84,13 @@ export async function POST(request: Request) {
  */
 export async function GET(request: Request) {
   try {
+    if (!READING_HMAC_SECRET) {
+      return new Response(
+        JSON.stringify({ error: "Sharing not configured" }),
+        { status: 503, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const encoded = searchParams.get("encoded");
 
