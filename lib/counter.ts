@@ -5,7 +5,7 @@ const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOK
   ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
   : null;
 
-let memoryCounter = 7700;
+let memoryCounter = parseInt(getEnv("DEFAULT_READING_COUNT") || "12900", 10);
 const KEY = "reading_count:total";
 
 let cachedCount: number | null = null;
