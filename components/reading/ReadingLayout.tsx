@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { Reading, Card as CardType } from "@/lib/types";
 import {
   GrandTableauPosition,
@@ -54,6 +55,29 @@ interface ReadingLayoutProps {
   getZoneIcon: (zone: string) => React.ReactNode;
 }
 
+interface CardCellProps {
+  card: CardType;
+  onCardClick: (card: CardType) => void;
+  size: "sm" | "md" | "lg";
+  className?: string;
+  positionLabel?: string;
+  positionDescription?: string;
+}
+
+function CardCell({ card, onCardClick, size, className, positionLabel, positionDescription }: CardCellProps) {
+  const handleClick = useCallback(() => onCardClick(card), [onCardClick, card]);
+  return (
+    <MemoizedCardWithTooltip
+      card={card}
+      size={size}
+      onClick={handleClick}
+      className={className}
+      positionLabel={positionLabel}
+      positionDescription={positionDescription}
+    />
+  );
+}
+
 export function ReadingLayout({
   reading,
   spreadId,
@@ -96,10 +120,10 @@ export function ReadingLayout({
                   <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                     {positionInfo.label}
                   </div>
-                  <MemoizedCardWithTooltip
+                  <CardCell
                     card={card!}
+                    onCardClick={onCardClick}
                     size="lg"
-                    onClick={() => onCardClick(card!)}
                     className="cursor-pointer"
                     positionLabel={positionInfo.label}
                     positionDescription={positionInfo.meaning}
@@ -272,24 +296,24 @@ export function ReadingLayout({
                           </div>
                         )}
 
-                      <MemoizedCardWithTooltip
-                        card={card!}
-                        size="sm"
-                        onClick={() => onCardClick(card!)}
-                        className="cursor-pointer"
-                        positionLabel={
-                          isSignificator
-                            ? "Significator (You)"
-                            : zone?.name || undefined
-                        }
-                        positionDescription={
-                          isSignificator
-                            ? "This card represents you in the reading"
-                            : zoneInfo.direction
-                              ? `${zone.description} - Distance: ${zoneInfo.distance}`
-                              : undefined
-                        }
-                      />
+                        <CardCell
+                          card={card!}
+                          onCardClick={onCardClick}
+                          size="sm"
+                          className="cursor-pointer"
+                          positionLabel={
+                            isSignificator
+                              ? "Significator (You)"
+                              : zone?.name || undefined
+                          }
+                          positionDescription={
+                            isSignificator
+                              ? "This card represents you in the reading"
+                              : zoneInfo.direction
+                                ? `${zone.description} - Distance: ${zoneInfo.distance}`
+                                : undefined
+                          }
+                        />
 
                       {/* Topic card badge - only in advanced mode */}
                       {showAdvancedAnalysis && topicInfo && (
@@ -419,10 +443,10 @@ export function ReadingLayout({
                   <div className="inline-flex items-center justify-center rounded-lg border-2 border-primary bg-primary/10 px-md py-sm text-sm font-semibold text-primary">
                     {positionInfo.label}
                   </div>
-                  <MemoizedCardWithTooltip
+                  <CardCell
                     card={card!}
+                    onCardClick={onCardClick}
                     size="lg"
-                    onClick={() => onCardClick(card!)}
                     className="cursor-pointer"
                     positionLabel={positionInfo.label}
                     positionDescription={positionInfo.meaning}

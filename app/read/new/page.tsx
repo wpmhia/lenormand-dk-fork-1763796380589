@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -19,13 +20,26 @@ import { useToast } from "@/hooks/use-toast";
 
 import {
   ReadingSetup,
-  PhysicalCardInput,
 } from "@/components/reading";
-import { Deck } from "@/components/Deck";
-import { ReadingViewer } from "@/components/ReadingViewer";
+
+const PhysicalCardInput = dynamic(() =>
+  import("@/components/reading").then((mod) => ({ default: mod.PhysicalCardInput })),
+  { ssr: false }
+);
+const Deck = dynamic(() =>
+  import("@/components/Deck").then((mod) => ({ default: mod.Deck })),
+  { ssr: false }
+);
+const ReadingViewer = dynamic(() =>
+  import("@/components/ReadingViewer").then((mod) => ({ default: mod.ReadingViewer })),
+  { ssr: false }
+);
+const AIReadingDisplay = dynamic(() =>
+  import("@/components/AIReadingDisplay").then((mod) => ({ default: mod.AIReadingDisplay })),
+  { ssr: false }
+);
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { AIReadingDisplay } from "@/components/AIReadingDisplay";
 
 type Step = "setup" | "drawing" | "results";
 type Method = "virtual" | "physical" | null;
