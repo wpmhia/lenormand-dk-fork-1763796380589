@@ -26,7 +26,8 @@ export function useInstallPrompt() {
   return useContext(InstallPromptContext);
 }
 
-const DISMISSED_KEY = "pwa_install_dismissed";
+const DISMISSED_KEY = "pwa_install_dismissed_until";
+const COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
 function getIsInstalled(): boolean {
   if (typeof window === "undefined") return false;
@@ -41,10 +42,16 @@ function getIsIOS(): boolean {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 }
 
+function isOnCooldown(): boolean {
+  if (typeof window === "undefined") return false;
+  const until = parseInt(localStorage.getItem(DISMISSED_KEY) || "0", 10);
+  return Date.now() < until;
+}
+
 export function InstallPromptProvider({ children }: { children: React.ReactNode }) {
   const [isInstalled, setIsInstalled] = useState(false);
   const [isInstallable, setIsInstallable] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const [isOnCooldownState, setIsOnCooldownState] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const deferredRef = useRef<any>(null);
@@ -53,7 +60,7 @@ export function InstallPromptProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     setIsInstalled(getIsInstalled());
     setIsIOS(getIsIOS());
-    setDismissed(localStorage.getItem(DISMISSED_KEY) === "true");
+    setIsOnCooldownState(isOnCooldown());
   }, []);
 
   useEffect(() => {
@@ -94,7 +101,7 @@ export function InstallPromptProvider({ children }: { children: React.ReactNode 
 
   const canShow =
     !isInstalled &&
-    !dismissed &&
+    !isOnCooldownState &&
     (isInstallable || isIOS);
 
   const showInstallPrompt = useCallback(() => {
@@ -108,8 +115,8 @@ export function InstallPromptProvider({ children }: { children: React.ReactNode 
   }, [canShow]);
 
   const dismiss = useCallback(() => {
-    localStorage.setItem(DISMISSED_KEY, "true");
-    setDismissed(true);
+    localStorage.setItem(DISMISSED_KEY, String(Date.now() + COOLDOWN_MS));
+    setIsOnCooldownState(true);
     setIsVisible(false);
     deferredRef.current = null;
     if ((window as any).umami) {
