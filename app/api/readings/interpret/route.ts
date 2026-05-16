@@ -73,13 +73,20 @@ export async function POST(request: Request) {
 
     await incrementReadingCount();
 
+    const abortController = new AbortController();
+    const timeout = setTimeout(() => abortController.abort(), 25000);
+    request.signal.addEventListener("abort", () => abortController.abort(), { once: true });
+
     const result = await streamText({
       model: mistral("mistral-small-latest"),
       system: buildSystemPrompt(),
       prompt,
       temperature: 0.75,
       maxOutputTokens: maxTokens,
+      abortSignal: abortController.signal,
     });
+
+    clearTimeout(timeout);
 
     // Convert to our custom SSE format for backwards compatibility
     const encoder = new TextEncoder();
