@@ -41,6 +41,7 @@ const AIReadingDisplay = dynamic(() =>
 );
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 type Step = "setup" | "drawing" | "results";
 type Method = "virtual" | "physical" | null;
@@ -425,8 +426,11 @@ function NewReadingPageContent() {
                    <Spade className="h-4 w-4" />
                    Start New Reading
                  </Button>
-               </div>
-             </div>
+                </div>
+
+                {/* Install prompt after completed reading */}
+                <InstallPrompt />
+              </div>
            )}
         </div>
       </div>

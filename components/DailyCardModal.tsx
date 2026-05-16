@@ -11,6 +11,7 @@ import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { parseReadingText } from "@/lib/reading-parser";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 interface DailyCardModalProps {
   open: boolean;
@@ -322,6 +323,9 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                 </p>
               )}
             </div>
+
+            {/* Install prompt after daily card */}
+            <InstallPrompt />
 
             {/* CTA */}
             <div className="pt-2">

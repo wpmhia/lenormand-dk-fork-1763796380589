@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 interface HomeClientProps {
   initialCount: number;
@@ -283,6 +284,9 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
           </Link>
         </div>
       </div>
+
+      {/* Install PWA Prompt */}
+      <InstallPrompt />
 
       {/* Daily Card Modal */}
       <Suspense fallback={null}>

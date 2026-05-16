@@ -1,0 +1,30 @@
+{
+  "name": "Lenormand Intelligence",
+  "short_name": "Lenormand",
+  "description": "Clear, practical Lenormand card readings powered by AI. Free spreads from single card to Grand Tableau.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0f1a",
+  "theme_color": "#8b5cf6",
+  "scope": "/",
+  "categories": ["lifestyle", "entertainment", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
