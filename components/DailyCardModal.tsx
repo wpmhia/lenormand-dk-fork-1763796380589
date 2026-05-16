@@ -24,12 +24,12 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   const [card, setCard] = useState<CardType | null>(null);
   const [insight, setInsight] = useState<string>("");
   const [insightLoading, setInsightLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const drawTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
-      // Cleanup on unmount
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -58,13 +58,15 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     setViewState("draw");
     setCard(null);
     setInsight("");
+    setGenerating(false);
   }, [open, cards]);
 
   const handleDraw = async () => {
+    if (generating) return;
     setViewState("drawing");
+    setGenerating(true);
     
-    // Simulate brief suspense with cancellable timeout
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       drawTimeoutRef.current = setTimeout(resolve, 800);
     });
     
@@ -73,6 +75,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     
     if (!drawnCard) {
       setViewState("draw");
+      setGenerating(false);
       return;
     }
     
@@ -83,6 +86,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     const cached = getDailyCardCache();
     if (cached?.cardId === cardId && cached.insight) {
       setInsight(cached.insight);
+      setGenerating(false);
       return;
     }
     
@@ -92,7 +96,9 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   };
 
   const generateInsight = async (cardData: CardType, cardId: number) => {
-    // Create new abort controller for this request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     abortControllerRef.current = new AbortController();
     
     try {
@@ -183,6 +189,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
       }
     } finally {
       setInsightLoading(false);
+      setGenerating(false);
       abortControllerRef.current = null;
     }
   };
