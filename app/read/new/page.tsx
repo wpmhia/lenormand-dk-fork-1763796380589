@@ -17,6 +17,7 @@ import {
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { useAutoSaveReading } from "@/hooks/useAutoSaveReading";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useToast } from "@/hooks/use-toast";
 
 import {
@@ -41,7 +42,6 @@ const AIReadingDisplay = dynamic(() =>
 );
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { InstallPrompt } from "@/components/InstallPrompt";
 
 type Step = "setup" | "drawing" | "results";
 type Method = "virtual" | "physical" | null;
@@ -94,8 +94,15 @@ function NewReadingPageContent() {
   // Reading history
   const { saveReading } = useReadingHistory();
   const { toast } = useToast();
+  const { showInstallPrompt } = useInstallPrompt();
 
   useAutoSaveReading(aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved);
+
+  useEffect(() => {
+    if (aiReading && !aiStreaming && step === "results" && drawnCardTypes.length > 0) {
+      showInstallPrompt();
+    }
+  }, [aiReading, aiStreaming, step, drawnCardTypes, showInstallPrompt]);
 
   // Reset function - defined before effects that use it
   const performReset = useCallback(
@@ -427,9 +434,6 @@ function NewReadingPageContent() {
                    Start New Reading
                  </Button>
                 </div>
-
-                {/* Install prompt after completed reading */}
-                <InstallPrompt />
               </div>
            )}
         </div>

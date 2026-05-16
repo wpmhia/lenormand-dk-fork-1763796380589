@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, lazy, Suspense, useMemo } from "react";
+import { useState, lazy, Suspense, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import heroImage from "@/public/images/hero-image.jpg";
@@ -9,6 +9,7 @@ import { ReadingCounter } from "@/components/ReadingCounter";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import {
   ArrowRight,
   Heart,
@@ -20,7 +21,6 @@ import {
 } from "lucide-react";
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
-import { InstallPrompt } from "@/components/InstallPrompt";
 
 interface HomeClientProps {
   initialCount: number;
@@ -30,6 +30,12 @@ interface HomeClientProps {
 
 export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
+  const { showInstallPrompt } = useInstallPrompt();
+
+  useEffect(() => {
+    const timer = setTimeout(() => showInstallPrompt(), 3000);
+    return () => clearTimeout(timer);
+  }, [showInstallPrompt]);
 
   const previewCards = useMemo(() => initialCards.slice(0, 6), [initialCards]);
 
@@ -284,9 +290,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
           </Link>
         </div>
       </div>
-
-      {/* Install PWA Prompt */}
-      <InstallPrompt />
 
       {/* Daily Card Modal */}
       <Suspense fallback={null}>
