@@ -11,7 +11,7 @@ import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { parseReadingText } from "@/lib/reading-parser";
 import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
-import { InstallPrompt } from "@/components/InstallPrompt";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 interface DailyCardModalProps {
   open: boolean;
@@ -29,6 +29,14 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   const [generating, setGenerating] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { showInstallPrompt } = useInstallPrompt();
+
+  useEffect(() => {
+    if (viewState === "result" && insight && !insightLoading) {
+      const timer = setTimeout(() => showInstallPrompt(), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [viewState, insight, insightLoading, showInstallPrompt]);
 
   useEffect(() => {
     return () => {
@@ -323,9 +331,6 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                 </p>
               )}
             </div>
-
-            {/* Install prompt after daily card */}
-            <InstallPrompt />
 
             {/* CTA */}
             <div className="pt-2">

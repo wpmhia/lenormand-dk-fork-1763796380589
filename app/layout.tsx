@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/header";
+import { InstallPromptBanner } from "@/components/InstallPromptBanner";
 import { Suspense } from "react";
 import { createSafeJsonLd } from "@/lib/sanitize";
 import { Providers } from "./providers";
@@ -238,6 +239,7 @@ export default function RootLayout({
               <Footer />
             </div>
             <Toaster />
+            <InstallPromptBanner />
           </Providers>
         </TooltipProvider>
       </body>
