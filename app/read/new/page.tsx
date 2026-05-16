@@ -242,7 +242,7 @@ function NewReadingPageContent() {
 
             {/* Progress Indicator */}
             <div
-              className="mt-8 flex items-center justify-center space-x-6"
+              className="mt-8 flex items-center justify-center space-x-3 sm:space-x-6"
               role="progressbar"
               aria-label="Reading progress"
             >
@@ -255,7 +255,7 @@ function NewReadingPageContent() {
                     aria-current={step === s ? "step" : undefined}
                   >
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold ${
+                      className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold sm:h-10 sm:w-10 sm:text-sm ${
                         step === s
                           ? "border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30"
                           : "border-muted-foreground bg-muted text-muted-foreground"
@@ -263,13 +263,13 @@ function NewReadingPageContent() {
                     >
                       {i + 1}
                     </div>
-                    <span className="ml-3 hidden text-sm font-medium sm:inline">
+                    <span className="ml-2 hidden text-sm font-medium sm:ml-3 sm:inline">
                       {getStepLabel(s)}
                     </span>
                   </div>
                   {i < 2 && (
                     <div
-                      className={`ml-6 h-0.5 w-12 rounded-full ${
+                      className={`ml-3 h-0.5 w-6 rounded-full sm:ml-6 sm:w-12 ${
                         ["drawing", "results"].includes(step) && i === 0
                           ? "bg-primary"
                           : step === "results" && i === 1

@@ -158,6 +158,7 @@ export function PhysicalCardInput({
 
         <Textarea
           id="physical-cards"
+          inputMode="numeric"
           value={input}
           onChange={(e) => {
             const newValue = e.target.value;
@@ -249,7 +250,7 @@ export function PhysicalCardInput({
 
         {/* Help Text */}
         <p className="text-xs text-muted-foreground">
-          💡 Use numbers (1-36) or names. Try &quot;rider&quot;, &quot;clover&quot;, &quot;ship&quot;. Press Ctrl+Enter to submit.
+          💡 Use numbers (1-36) or names. Try &quot;rider&quot;, &quot;clover&quot;, &quot;ship&quot;. Submit on mobile by tapping outside the field.
         </p>
       </div>
 

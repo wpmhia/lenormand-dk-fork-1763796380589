@@ -135,7 +135,9 @@ function ReadingItem({
             </p>
             {reading.cards.length > 0 && (
               <div className="mt-2 text-sm text-muted-foreground">
-                <p>Cards: {reading.cards.map((c) => c.name).join(", ")}</p>
+                <p className="line-clamp-2 text-sm text-muted-foreground">
+                  Cards: {reading.cards.slice(0, 5).map((c) => c.name).join(", ")}{reading.cards.length > 5 ? ` +${reading.cards.length - 5} more` : ""}
+                </p>
               </div>
             )}
           </div>

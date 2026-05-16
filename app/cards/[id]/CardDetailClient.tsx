@@ -179,18 +179,19 @@ export default function CardDetailClient({
 
         <div className="mb-16">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-8 grid h-12 w-full grid-cols-3">
-              <TabsTrigger value="overview" className="gap-2">
-                <BookOpen className="h-4 w-4" />
-                Overview
+            <TabsList className="mb-8 grid h-12 w-full grid-cols-3 max-sm:text-xs">
+              <TabsTrigger value="overview" className="gap-1 sm:gap-2">
+                <BookOpen className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Overview</span>
               </TabsTrigger>
-              <TabsTrigger value="meanings" className="gap-2">
-                <Heart className="h-4 w-4" />
-                Meanings
+              <TabsTrigger value="meanings" className="gap-1 sm:gap-2">
+                <Heart className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Meanings</span>
               </TabsTrigger>
-              <TabsTrigger value="combos" className="gap-2">
-                <Users className="h-4 w-4" />
-                Combinations ({combos.length})
+              <TabsTrigger value="combos" className="gap-1 sm:gap-2">
+                <Users className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Combos ({combos.length})</span>
+                <span className="sm:hidden">({combos.length})</span>
               </TabsTrigger>
             </TabsList>
 
@@ -460,22 +461,22 @@ export default function CardDetailClient({
           </Tabs>
         </div>
 
-        <div className="border-t border-border pt-8">
-          <div className="flex items-center justify-between">
+        <div className="border-t border-border pt-6 sm:pt-8">
+          <div className="flex items-center justify-between gap-2">
             <Link href={`/cards/${previousCardId}`}>
-              <Button variant="outline" size="lg" className="gap-2">
+              <Button variant="outline" size="default" className="gap-1 px-3 text-xs sm:gap-2 sm:px-6 sm:text-sm">
                 <ArrowLeft className="h-4 w-4" />
-                Previous Card
+                <span className="hidden sm:inline">Previous Card</span>
               </Button>
             </Link>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-xs text-muted-foreground sm:text-sm">
               Card {card.id} of 36
             </div>
 
             <Link href={`/cards/${nextCardId}`}>
-              <Button variant="outline" size="lg" className="gap-2">
-                Next Card
+              <Button variant="outline" size="default" className="gap-1 px-3 text-xs sm:gap-2 sm:px-6 sm:text-sm">
+                <span className="hidden sm:inline">Next Card</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>

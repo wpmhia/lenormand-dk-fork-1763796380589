@@ -80,28 +80,28 @@ export function GrandTableauLayout({
       </button>
 
       {showAdvancedAnalysis && significatorIndex !== -1 && (
-        <div className="mb-lg flex flex-wrap items-center justify-center gap-lg text-xs">
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-amber-600" />
-            <span className="text-muted-foreground">Left = Past</span>
+        <div className="mb-lg flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-lg">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Clock className="h-3 w-3 text-amber-600 sm:h-4 sm:w-4" />
+            <span>Left = Past</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Target className="h-4 w-4 text-blue-600" />
-            <span className="text-muted-foreground">Right = Future</span>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Target className="h-3 w-3 text-blue-600 sm:h-4 sm:w-4" />
+            <span>Right = Future</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:flex sm:items-center sm:gap-2">
             <Brain className="h-4 w-4 text-purple-600" />
-            <span className="text-muted-foreground">Above = Conscious</span>
+            <span>Above = Conscious</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:flex sm:items-center sm:gap-2">
             <Eye className="h-4 w-4 text-emerald-600" />
-            <span className="text-muted-foreground">Below = Unconscious</span>
+            <span>Below = Unconscious</span>
           </div>
         </div>
       )}
 
-      <div className="-mx-4 overflow-x-auto px-4 pb-2 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:px-0">
-        <div className="grid min-w-[320px] grid-cols-9 gap-1 sm:min-w-[600px] sm:gap-sm">
+      <div className="-mx-4 overflow-x-auto px-4 pb-2 [-webkit-overflow-scrolling:touch] [overscroll-behavior-x:contain] sm:mx-0 sm:px-0">
+        <div className="grid min-w-[752px] grid-cols-9 gap-1 sm:gap-sm">
           {validCards.map(({ card, index }) => {
             const pos = getGrandTableauPosition(index);
             const isSignificator = index === significatorIndex;

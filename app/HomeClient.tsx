@@ -60,9 +60,9 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
 
             <div className="flex flex-col items-center gap-4 md:items-start">
               {/* CTA Buttons */}
-              <div className="flex flex-col items-center gap-3 sm:flex-row">
-                <Link href="/read/new">
-                  <Button size="lg" className="gap-2">
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+                <Link href="/read/new" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full gap-2 sm:w-auto">
                     <Sparkles className="h-4 w-4" />
                     Get Your Reading
                   </Button>
@@ -71,7 +71,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                   variant="outline"
                   size="lg"
                   onClick={() => setShowDailyCard(true)}
-                  className="gap-2"
+                  className="w-full gap-2 sm:w-auto"
                 >
                   <Heart className="h-4 w-4" />
                   Daily Card
