@@ -199,23 +199,22 @@ export default function CardsClient({
 
       <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
         {filteredCardsMemo.map((card) => (
-          <Link
-            key={card.id}
-            href={`/cards/${card.id}`}
-            className="group block"
-          >
+          <div key={card.id} className="group block">
             <Card
               card={card}
               size="sm"
               className="mx-auto transition-transform group-hover:scale-105"
             />
-            <div className="mt-2 text-center">
+            <Link
+              href={`/cards/${card.id}`}
+              className="mt-2 block text-center"
+            >
               <div className="text-sm font-medium text-foreground transition-colors group-hover:text-primary">
                 {card.name}
               </div>
               <div className="text-xs text-muted-foreground">#{card.id}</div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         ))}
       </div>
 

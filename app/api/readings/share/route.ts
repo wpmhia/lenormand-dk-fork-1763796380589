@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     const json = JSON.stringify(body);
-    const base64 = btoa(json).replace(
+    const base64 = Buffer.from(json, "utf-8").toString("base64").replace(
       /[+/=]/g,
       (c) =>
         ({
@@ -125,7 +125,7 @@ export async function GET(request: Request) {
     );
     const padLength = (4 - (base64.length % 4)) % 4;
     const paddedBase64 = base64 + "=".repeat(padLength);
-    const json = atob(paddedBase64);
+    const json = Buffer.from(paddedBase64, "base64").toString("utf-8");
     const data = JSON.parse(json);
 
     return new Response(
