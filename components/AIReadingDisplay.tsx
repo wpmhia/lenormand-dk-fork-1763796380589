@@ -12,7 +12,7 @@ import { getCards } from "@/lib/data";
 const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
 
-function parseReadingText(text: string): React.ReactNode[] {
+export function parseReadingText(text: string): React.ReactNode[] {
   const lines = text.split('\n');
   const result: React.ReactNode[] = [];
   let key = 0;

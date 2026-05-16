@@ -9,6 +9,7 @@ import { Spade, ArrowRight, Loader2 } from "lucide-react";
 import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { parseReadingText } from "@/components/AIReadingDisplay";
 
 interface DailyCardModalProps {
   open: boolean;
@@ -306,9 +307,9 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
                   <span className="text-sm">Consulting the cards...</span>
                 </div>
               ) : insight ? (
-                <p className="text-sm leading-relaxed text-foreground/90 text-left">
-                  {insight}
-                </p>
+                <div className="text-sm leading-relaxed text-foreground/90 text-left space-y-1">
+                  {parseReadingText(insight)}
+                </div>
               ) : (
                 <p className="text-sm leading-relaxed text-muted-foreground italic">
                   {card.uprightMeaning}
