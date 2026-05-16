@@ -110,7 +110,8 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
       abortControllerRef.current.abort();
     }
     abortControllerRef.current = new AbortController();
-    
+    const timeoutId = setTimeout(() => abortControllerRef.current?.abort(), 15000);
+
     try {
       const response = await fetch("/api/readings/interpret", {
         method: "POST",
@@ -122,6 +123,8 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         }),
         signal: abortControllerRef.current.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         setInsight(cardData.uprightMeaning);

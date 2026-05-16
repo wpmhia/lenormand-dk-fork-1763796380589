@@ -26,7 +26,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
         >
           <div className="flex w-full items-center justify-between">
             <Laptop className="h-5 w-5 text-primary" />
-            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground transition-opacity group-hover:opacity-100 group-active:opacity-100 sm:opacity-0" />
           </div>
           <div>
             <div className="font-medium text-foreground">Virtual Deck</div>
@@ -44,7 +44,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
         >
           <div className="flex w-full items-center justify-between">
             <Heart className="h-5 w-5 text-primary" />
-            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground transition-opacity group-hover:opacity-100 group-active:opacity-100 sm:opacity-0" />
           </div>
           <div>
             <div className="font-medium text-foreground">Physical Cards</div>

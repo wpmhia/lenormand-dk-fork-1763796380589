@@ -58,10 +58,14 @@ export function useAIAnalysis(
     setError(null);
 
     let lastError: any = null;
-    abortControllerRef.current = new AbortController();
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
       try {
+        const timeoutMs = 30000;
+        abortControllerRef.current = new AbortController();
+        timeoutId = setTimeout(() => abortControllerRef.current?.abort(), timeoutMs);
+
         const cards = drawnCards.map((card) => {
           const cardData = getCardById(allCards, card.id);
           return { id: card.id, name: cardData?.name || `Card ${card.id}`, position: card.position };
@@ -73,6 +77,8 @@ export function useAIAnalysis(
           body: JSON.stringify({ question, cards, spreadId: selectedSpreadId }),
           signal: abortControllerRef.current.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           const data = await response.json();
@@ -141,8 +147,8 @@ export function useAIAnalysis(
         lastError = null;
         break;
       } catch (err: any) {
+        clearTimeout(timeoutId);
         if (err.name === "AbortError") {
-          // Don't set error on abort, just exit
           return;
         }
         lastError = err;
