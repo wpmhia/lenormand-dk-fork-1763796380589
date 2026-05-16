@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -102,7 +102,7 @@ function NewReadingPageContent() {
     [router, resetAnalysis],
   );
 
-  const cards = getCards();
+  const cards = useMemo(() => getCards(), []);
 
   // Load cards in useEffect to avoid setState during render
   useEffect(() => {

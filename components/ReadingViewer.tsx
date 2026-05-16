@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, memo } from "react";
 import { Reading, ReadingCard, Card as CardType } from "@/lib/types";
 import {
   getLinearAdjacentCards,
@@ -51,7 +51,7 @@ const getZoneIcon = (zone: string) => {
   }
 };
 
-export function ReadingViewer({
+export const ReadingViewer = memo(function ReadingViewer({
   reading,
   allCards,
   showShareButton = true,
@@ -214,4 +214,4 @@ export function ReadingViewer({
       )}
     </div>
   );
-}
+});

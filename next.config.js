@@ -6,12 +6,6 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   swcMinify: true,
   output: "standalone",
-  modularizeImports: {
-    "@/components/ui": {
-      transform: "use~/components/ui/{{member}}",
-      skipDefault: true,
-    },
-  },
   images: {
     remotePatterns: [
       {

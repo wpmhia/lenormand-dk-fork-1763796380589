@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -120,7 +120,7 @@ interface AIReadingDisplayProps {
   followUpResponse?: string | null;
 }
 
-export function AIReadingDisplay({
+export const AIReadingDisplay = memo(function AIReadingDisplay({
   aiReading,
   isLoading,
   isStreaming = false,
@@ -320,4 +320,4 @@ export function AIReadingDisplay({
       </CardContent>
     </Card>
   );
-}
+});
