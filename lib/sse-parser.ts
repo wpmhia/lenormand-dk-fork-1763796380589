@@ -54,7 +54,7 @@ export function processSSEChunk(
     if (!line) continue;
     
     // Handle case where multiple messages arrive without newlines between them
-    const subLines = line.split("data: ").filter(s => s.length > 0);
+    const subLines = line.split("data: ");
     for (const subLine of subLines) {
       const parsed = parseSSELine("data: " + subLine);
       if (parsed) {

@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
@@ -69,6 +70,8 @@ export async function POST(request: Request) {
       apiKey: MISTRAL_API_KEY,
     });
 
+    await incrementReadingCount();
+
     const result = await streamText({
       model: mistral("mistral-small-latest"),
       system: buildSystemPrompt(),
@@ -76,8 +79,6 @@ export async function POST(request: Request) {
       temperature: 0.75,
       maxOutputTokens: maxTokens,
     });
-
-    incrementReadingCount().catch(() => {});
 
     // Convert to our custom SSE format for backwards compatibility
     const encoder = new TextEncoder();

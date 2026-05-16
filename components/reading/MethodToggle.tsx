@@ -20,9 +20,9 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => onContinue("virtual")}
+          onClick={() => { onChange?.("virtual"); onContinue("virtual"); }}
           disabled={disabled}
-          className="group flex flex-col items-start gap-2 rounded-xl border-2 border-border bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          className={`group flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
         >
           <div className="flex w-full items-center justify-between">
             <Laptop className="h-5 w-5 text-primary" />
@@ -38,9 +38,9 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
         
         <button
           type="button"
-          onClick={() => onContinue("physical")}
+          onClick={() => { onChange?.("physical"); onContinue("physical"); }}
           disabled={disabled}
-          className="group flex flex-col items-start gap-2 rounded-xl border-2 border-border bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          className={`group flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
         >
           <div className="flex w-full items-center justify-between">
             <Heart className="h-5 w-5 text-primary" />

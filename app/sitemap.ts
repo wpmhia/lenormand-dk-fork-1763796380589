@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import { getCards } from "@/lib/data";
-import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://lenormand.dk";
@@ -14,8 +13,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const spreadUrls = COMPREHENSIVE_SPREADS.map((spread) => ({
-    url: `${baseUrl}/cards/guide/${spread.id}`,
+  const spreadUrls = cards.map((card) => ({
+    url: `${baseUrl}/cards/guide/${card.id}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.6,

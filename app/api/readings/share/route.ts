@@ -47,7 +47,7 @@ export async function POST(request: Request) {
           "+": "-",
           "/": "_",
           "=": "",
-        })[c] || c,
+        })[c] ?? c,
     );
 
     // Server-side HMAC only - secret never exposed to client

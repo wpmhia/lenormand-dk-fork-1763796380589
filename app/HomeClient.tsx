@@ -6,6 +6,7 @@ import Image from "next/image";
 import heroImage from "@/public/images/hero-image.jpg";
 import { Button } from "@/components/ui/button";
 import { ReadingCounter } from "@/components/ReadingCounter";
+import { ReadingTypeCard } from "@/components/ReadingTypeCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
 import {
@@ -295,5 +296,4 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
   );
 }
 
-// ReadingTypeCard component (inline since we're updating the file)
-import { ReadingTypeCard } from "@/components/ReadingTypeCard";
+

@@ -26,7 +26,7 @@ function sanitizeInput(input: string, maxLength: number): string {
     .slice(0, maxLength)
     .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
     .replace(/["]/g, '"')
-    .replace(/\\/g, "\\")
+    .replace(/\\/g, "\\\\")
     .replace(/\n|\r/g, " ");
 }
 
