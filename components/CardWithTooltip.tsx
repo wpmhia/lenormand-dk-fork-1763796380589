@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { memo } from "react";
+import { memo, useRef } from "react";
 
 interface CardWithTooltipProps {
   card: CardType;
@@ -32,13 +32,14 @@ function CardWithTooltipInner({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <MemoizedCard
-          card={card}
-          onClick={onClick}
-          showBack={showBack}
-          size={size}
-          className={cn("overflow-visible", className)}
-        />
+        <span className={cn("inline-block overflow-visible", className)}>
+          <MemoizedCard
+            card={card}
+            onClick={onClick}
+            showBack={showBack}
+            size={size}
+          />
+        </span>
       </TooltipTrigger>
       <TooltipContent className="z-50 max-w-xs overflow-visible border-border bg-card p-4 shadow-lg">
         <div className="space-y-3">

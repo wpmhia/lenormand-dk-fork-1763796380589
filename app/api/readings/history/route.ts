@@ -1,4 +1,5 @@
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { Redis } from "@upstash/redis";
 import { getEnv } from "@/lib/env";
@@ -44,8 +45,9 @@ export async function GET(request: Request) {
       );
     }
 
-    const readings = await redis.get<any[]>(readingsKey(sessionId));
-    const sorted = (readings || []).sort((a, b) => b.timestamp - a.timestamp);
+    const raw = await redis.get(readingsKey(sessionId));
+    const readings = Array.isArray(raw) ? raw : [];
+    const sorted = (readings).sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
 
     return new Response(
       JSON.stringify({ readings: sorted }),
@@ -101,11 +103,12 @@ export async function POST(request: Request) {
     };
 
     const key = readingsKey(sessionId);
-    const readings = await redis.get<any[]>(key) || [];
+    const raw = await redis.get(key);
+    let readings = Array.isArray(raw) ? raw : [];
     readings.push(newReading);
 
     if (readings.length > MAX_READINGS) {
-      readings.sort((a, b) => b.timestamp - a.timestamp);
+      readings.sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
       readings.splice(MAX_READINGS);
     }
 
@@ -151,8 +154,9 @@ export async function DELETE(request: Request) {
     }
 
     const key = readingsKey(sessionId);
-    const readings = await redis.get<any[]>(key) || [];
-    const filtered = readings.filter((r) => r.id !== id);
+    const raw = await redis.get(key);
+    const readings = Array.isArray(raw) ? raw : [];
+    const filtered = readings.filter((r: any) => r.id !== id);
 
     await redis.set(key, filtered);
 

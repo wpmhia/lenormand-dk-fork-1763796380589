@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
@@ -36,6 +36,14 @@ export function useAIAnalysis(
   const [followUpStreaming, setFollowUpStreaming] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const followUpAbortControllerRef = useRef<AbortController | null>(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+      followUpAbortControllerRef.current?.abort();
+    };
+  }, []);
 
   const startAnalysis = useCallback(async () => {
     // Abort any previous request

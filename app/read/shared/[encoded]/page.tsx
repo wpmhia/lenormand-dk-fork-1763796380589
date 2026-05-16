@@ -71,7 +71,8 @@ export default function SharedReadingPage({ params }: PageProps) {
         const decodedData = await decodeReadingFromUrl(params.encoded);
 
         if (!decodedData || !decodedData.cards || !decodedData.layoutType) {
-          notFound();
+          setError("This shared reading link is invalid or has expired.");
+          setLoading(false);
           return;
         }
 
@@ -90,7 +91,8 @@ export default function SharedReadingPage({ params }: PageProps) {
 
         setReading(reading);
       } catch (error) {
-        notFound();
+        setError("This shared reading link is invalid or has expired.");
+        setLoading(false);
         return;
       } finally {
         setLoading(false);
@@ -317,8 +319,18 @@ export default function SharedReadingPage({ params }: PageProps) {
   }
 
   if (!reading) {
-    notFound();
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center max-w-md px-4">
+          <XCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+          <h1 className="text-2xl font-bold text-foreground mb-2">Reading Not Found</h1>
+          <p className="text-muted-foreground mb-6">{error || "This shared reading link is invalid or has expired."}</p>
+          <Button onClick={() => window.location.href = "/"}>
+            Go Home
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (

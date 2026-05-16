@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card, ReadingCard } from "@/lib/types";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
@@ -18,6 +18,7 @@ export function useAutoSaveReading(
 ) {
   const { saveReading } = useReadingHistory();
   const { toast } = useToast();
+  const savedRef = useRef(false);
 
   useEffect(() => {
     if (
@@ -25,8 +26,10 @@ export function useAutoSaveReading(
       !aiStreaming &&
       step === "results" &&
       drawnCardTypes.length > 0 &&
-      !readingSaved
+      !readingSaved &&
+      !savedRef.current
     ) {
+      savedRef.current = true;
       const interpretationText = aiReading.reading || "";
       const preview = interpretationText.substring(0, 150);
       const cardData = drawnCardTypes.map((card, index) => ({
