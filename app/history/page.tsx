@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useReadingHistory } from "@/hooks/use-reading-history";
+import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
