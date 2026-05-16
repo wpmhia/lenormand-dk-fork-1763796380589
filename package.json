@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 8080",
+    "start": "sh -c '[ -f server.js ] && node server.js || node .next/standalone/server.js'",
     "lint": "next lint",
     "format": "prettier --write .",
     "test": "vitest",
