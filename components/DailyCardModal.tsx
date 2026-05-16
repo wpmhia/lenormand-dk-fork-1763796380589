@@ -9,7 +9,8 @@ import { Spade, ArrowRight, Loader2 } from "lucide-react";
 import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { parseReadingText } from "@/components/AIReadingDisplay";
+import { parseReadingText } from "@/lib/reading-parser";
+import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 
 interface DailyCardModalProps {
   open: boolean;
@@ -139,28 +140,26 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
             const { done, value } = await reader.read();
             if (done) break;
 
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || "";
+            const text = decoder.decode(value, { stream: true });
+            const { events, buffer: newBuffer } = processSSEChunk(text, buffer);
+            buffer = newBuffer;
 
-            for (const line of lines) {
-              if (line.startsWith("data: ")) {
-                const data = line.slice(6);
-                if (data === "[DONE]") continue;
-                try {
-                  const parsed = JSON.parse(data);
-                  if (parsed.type === "chunk" && parsed.content) {
-                    fullText += parsed.content;
-                  } else if (parsed.type === "done") {
-                    setInsight(fullText);
-                    setDailyCardCache(cardId, fullText);
-                    setInsightLoading(false);
-                    return;
-                  }
-                } catch {
-                  // Skip invalid JSON
-                }
+            for (const event of events) {
+              if (event.type === "chunk" && event.content) {
+                fullText += event.content;
+              } else if (event.type === "done") {
+                setInsight(fullText);
+                setDailyCardCache(cardId, fullText);
+                setInsightLoading(false);
+                return;
               }
+            }
+          }
+
+          // Process any remaining buffered data
+          for (const event of finalizeSSEStream(buffer)) {
+            if (event.type === "chunk" && event.content) {
+              fullText += event.content;
             }
           }
         } finally {

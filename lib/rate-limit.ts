@@ -1,4 +1,3 @@
-import { getEnv } from "./env";
 import { DEFAULT_RATE_LIMIT, DEFAULT_RATE_WINDOW_MS } from "./constants";
 
 const cache = new Map<string, { count: number; resetTime: number }>();

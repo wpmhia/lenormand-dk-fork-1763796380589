@@ -32,9 +32,15 @@ export const ENV_VARIABLES: EnvVariable[] = [
   },
   {
     name: "READING_HMAC_SECRET",
-    description: "Secret key for signing shared reading URLs (optional)",
+    description: "Secret key for signing shared reading URLs",
+    required: true,
+    instructions: "Generate a random 32+ character string. Sharing will be disabled if not set.",
+  },
+  {
+    name: "ALLOWED_ORIGIN",
+    description: "CORS allowed origin for cross-origin API requests",
     required: false,
-    instructions: "Generate a random string. If not set, a default dev key is used (not secure for production)",
+    instructions: "Set to your frontend domain for cross-origin API access. Defaults to same-origin only.",
   },
   {
     name: "NEXT_PUBLIC_SITE_NAME",

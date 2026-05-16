@@ -35,29 +35,6 @@ const SPREAD_POSITIONS: Record<string, Record<number, PositionInfo>> = {
         "The outcome or resolution; check the mirror relationship with the central card",
     },
   },
-  "structured-reading": {
-    0: {
-      label: "Subject",
-      meaning: "The opening element—who or what the story begins with",
-    },
-    1: {
-      label: "Verb",
-      meaning: "The action or descriptor—what is happening or being done",
-    },
-    2: {
-      label: "Object",
-      meaning: "The direct impact or target—what is being affected",
-    },
-    3: {
-      label: "Modifier",
-      meaning:
-        "The qualifier or condition—how, when, or under what circumstance",
-    },
-    4: {
-      label: "Outcome",
-      meaning: "The result or conclusion—where this leads",
-    },
-  },
   "sentence-5": {
     0: {
       label: "Subject",
@@ -78,74 +55,6 @@ const SPREAD_POSITIONS: Record<string, Record<number, PositionInfo>> = {
     4: {
       label: "Outcome",
       meaning: "Where this leads - the result or conclusion",
-    },
-  },
-  "week-ahead": {
-    0: {
-      label: "Monday",
-      meaning:
-        "New beginnings, fresh starts, and initial energy for the week",
-    },
-    1: {
-      label: "Tuesday",
-      meaning: "Challenges, obstacles, and work-related matters",
-    },
-    2: {
-      label: "Wednesday",
-      meaning: "Communication, connections, and mid-week transitions",
-    },
-    3: {
-      label: "Thursday",
-      meaning: "Progress, building momentum, and preparation",
-    },
-    4: {
-      label: "Friday",
-      meaning: "Social aspects, completion, and winding down",
-    },
-    5: {
-      label: "Saturday",
-      meaning: "Rest, reflection, and personal matters",
-    },
-    6: {
-      label: "Sunday",
-      meaning: "Closure, spiritual matters, and weekly review",
-    },
-  },
-  "relationship-double-significator": {
-    0: {
-      label: "Partner 1 - Past",
-      meaning:
-        "Left partner's past experiences and history affecting the relationship",
-    },
-    1: {
-      label: "Partner 1 - Present",
-      meaning:
-        "Left partner's current feelings, thoughts, and situation in the relationship",
-    },
-    2: {
-      label: "Partner 1 - Future",
-      meaning:
-        "Left partner's hopes, expectations, and vision for the relationship's future",
-    },
-    3: {
-      label: "Relationship Core",
-      meaning:
-        "The central dynamic, challenge, or connection that sits between both partners",
-    },
-    4: {
-      label: "Partner 2 - Past",
-      meaning:
-        "Right partner's past experiences and history affecting the relationship",
-    },
-    5: {
-      label: "Partner 2 - Present",
-      meaning:
-        "Right partner's current feelings, thoughts, and situation in the relationship",
-    },
-    6: {
-      label: "Partner 2 - Future",
-      meaning:
-        "Right partner's hopes, expectations, and vision for the relationship's future",
     },
   },
   comprehensive: {
