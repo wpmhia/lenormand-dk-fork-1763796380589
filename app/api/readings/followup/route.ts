@@ -85,7 +85,7 @@ Provide a brief, direct answer to the follow-up question based on the original r
 
     const result = await streamText({
       model: mistral("mistral-small-latest"),
-      system: buildSystemPrompt(),
+      system: buildSystemPrompt(cardCount),
       prompt,
       temperature: 0.75,
       maxOutputTokens: maxTokens,
