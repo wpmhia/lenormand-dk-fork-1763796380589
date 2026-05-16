@@ -28,7 +28,7 @@ export function InstallPromptBanner() {
       }`}
     >
       {/* Safe area padding for mobile */}
-      <div className="bg-gradient-to-t from-background via-background to-transparent px-0 pt-4 pb-safe-or-2">
+      <div className="bg-gradient-to-t from-background via-background to-transparent px-0 pt-4" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom, 0px))" }}>
         <div className="mx-auto max-w-md px-4">
           <div className="relative rounded-2xl border border-primary/20 bg-card shadow-xl shadow-primary/10">
             <button
