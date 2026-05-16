@@ -20,6 +20,7 @@ const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = 60 * 1000;
 const allCards = staticCardsData as Card[];
+const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
 
 export async function POST(request: Request) {
   const ip = getClientIP(request);
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
   const cardCount = cards.length;
 
   const cardsWithKeywords = cards.map((c: { id: number; name: string }) => {
-    const cardData = allCards.find((card: Card) => card.id === c.id);
+    const cardData = cardsMap.get(c.id);
     return { id: c.id, name: c.name, keywords: cardData?.keywords || [] };
   });
 
