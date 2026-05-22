@@ -16,7 +16,7 @@ export default function Error({
 
   useEffect(() => {
     console.error("Learn page error:", error, error.digest);
-  }, [error.message, error.digest]);
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
