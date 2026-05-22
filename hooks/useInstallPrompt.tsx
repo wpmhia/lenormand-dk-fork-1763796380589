@@ -42,6 +42,11 @@ function getIsIOS(): boolean {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 }
 
+function getIsMobile(): boolean {
+  if (typeof window === "undefined") return false;
+  return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 function isOnCooldown(): boolean {
   if (typeof window === "undefined") return false;
   const until = parseInt(localStorage.getItem(DISMISSED_KEY) || "0", 10);
@@ -54,12 +59,14 @@ export function InstallPromptProvider({ children }: { children: React.ReactNode 
   const [isOnCooldownState, setIsOnCooldownState] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const deferredRef = useRef<any>(null);
   const triggerCountRef = useRef(0);
 
   useEffect(() => {
     setIsInstalled(getIsInstalled());
     setIsIOS(getIsIOS());
+    setIsMobile(getIsMobile());
     setIsOnCooldownState(isOnCooldown());
   }, []);
 
@@ -102,6 +109,7 @@ export function InstallPromptProvider({ children }: { children: React.ReactNode 
   const canShow =
     !isInstalled &&
     !isOnCooldownState &&
+    isMobile &&
     (isInstallable || isIOS);
 
   const showInstallPrompt = useCallback(() => {
