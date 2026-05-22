@@ -16,7 +16,7 @@ export default function Error({
 
   useEffect(() => {
     console.error("Error:", error, error.digest);
-  }, [error.message, error.digest]);
+  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
