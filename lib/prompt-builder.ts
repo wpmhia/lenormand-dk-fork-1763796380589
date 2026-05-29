@@ -48,7 +48,7 @@ Do not use Tarot-style archetypes, spiritual lessons, shadow work, chakra langua
 ${isSingleCard
   ? `Read this card alone. Do NOT pair it with any other card — this is a single-card reading.
 The card has its own meaning; do not invent a second card to pair with it.`
-  : `The core technique is COMBINATION READING: every card is read in combination with the card that follows it. Cards do not have standalone meanings; their meaning is always modified by the adjacent card. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
+  : `The core technique is COMBINATION READING: every card is read in combination with the card that follows it. Each card has a base meaning, but in multi-card readings the final meaning comes from combinations, lines, houses, and surrounding cards. Do not interpret cards as isolated symbolic messages. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
 
 Read in pairs: Card 1 + Card 2, then Card 2 + Card 3, etc.`
 }
@@ -112,8 +112,8 @@ Name the strongest card combinations and end with a direct answer.`,
 4. DIRECTIONAL ZONES relative to the Significator:
    - Left of Significator = Past influences
    - Right of Significator = Future developments
-   - Above Significator = Conscious thoughts
-   - Below Significator = Unconscious forces
+   - Above Significator = Visible / known influences
+   - Below Significator = Hidden / underlying influences
 5. MIRRORING: Read cards that mirror across the Significator (same row, opposite column) as contrasting pairs.
 6. The bottom row (positions 27-35) = Cards of Fate — major life themes.
 7. Corner cards = the foundation or overall context. Center four cards = the heart of the matter.
@@ -121,6 +121,7 @@ Name the strongest card combinations and end with a direct answer.`,
 Write in paragraphs. Describe the card pairs around the Significator. Name at least 4-5 specific card pairs and how they interact. Include what the house placement adds. End with the answer.`,
 };
 
+/** @deprecated Use buildPromptFromContext instead. This legacy function generates prompts from flat card lists. */
 export function buildPrompt(cards: CardInput[], spreadId: string, question: string, comboHints?: ComboHint[]): string {
   const sanitizedQ = sanitizeInput(question, MAX_QUESTION_LENGTH);
   const qContext = `Question: "${sanitizedQ || "What do these cards reveal?"}"`;
@@ -283,8 +284,8 @@ function formatGrandTableau(
     "4. DIRECTIONAL ZONES relative to the significator:",
     "   - Left of significator = Past influences",
     "   - Right of significator = Future developments",
-    "   - Above significator = Conscious thoughts",
-    "   - Below significator = Unconscious forces",
+    "   - Above significator = Visible / known influences",
+    "   - Below significator = Hidden / underlying influences",
     "5. Read mirror pairs across the significator (same row, mirrored columns) as contrasting pairs.",
     "6. The bottom row = Cards of Fate — major life themes.",
     "7. Corner cards = foundation or overall context. Center four = heart of the matter.",

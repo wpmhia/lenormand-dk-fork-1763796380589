@@ -91,11 +91,11 @@ export function GrandTableauLayout({
           </div>
           <div className="hidden sm:flex sm:items-center sm:gap-2">
             <Brain className="h-4 w-4 text-purple-600" />
-            <span>Above = Conscious</span>
+            <span>Above = Visible</span>
           </div>
           <div className="hidden sm:flex sm:items-center sm:gap-2">
             <Eye className="h-4 w-4 text-emerald-600" />
-            <span>Below = Unconscious</span>
+            <span>Below = Hidden</span>
           </div>
         </div>
       )}
@@ -224,10 +224,10 @@ export function GrandTableauLayout({
       {showAdvancedAnalysis && diagonals && (
         <div className="mt-lg grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { key: "topLeft", label: "Conscious Influences", cards: diagonals.topLeft, color: "text-violet-600" },
-            { key: "bottomLeft", label: "Unconscious Influences", cards: diagonals.bottomLeft, color: "text-teal-600" },
-            { key: "topRight", label: "Conscious Possibilities", cards: diagonals.topRight, color: "text-indigo-600" },
-            { key: "bottomRight", label: "Unconscious Possibilities", cards: diagonals.bottomRight, color: "text-cyan-600" },
+            { key: "topLeft", label: "Visible Influences", cards: diagonals.topLeft, color: "text-violet-600" },
+            { key: "bottomLeft", label: "Hidden Influences", cards: diagonals.bottomLeft, color: "text-teal-600" },
+            { key: "topRight", label: "Visible Possibilities", cards: diagonals.topRight, color: "text-indigo-600" },
+            { key: "bottomRight", label: "Hidden Possibilities", cards: diagonals.bottomRight, color: "text-cyan-600" },
           ].map((diag) => (
             <div key={diag.key} className="rounded-lg border border-border bg-card p-md">
               <div className={`mb-2 flex items-center gap-2 text-sm font-medium ${diag.color}`}>
