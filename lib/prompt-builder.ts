@@ -202,6 +202,8 @@ function formatPetitTableau(
     "",
     "Read this as a Lenormand Petit Tableau, not a Tarot spread.",
     "",
+    "Do not assign past/present/future meanings to the rows.",
+    "",
     "Method:",
     "1. Start with the center card as the heart of the matter.",
     "2. Read the middle row as the main Lenormand line.",
