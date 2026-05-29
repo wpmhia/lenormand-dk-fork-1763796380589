@@ -3,7 +3,6 @@ const DAILY_CARD_CACHE_KEY = 'daily_card_cache_v2';
 export interface DailyCardCache {
   date: string;
   cardId: number;
-  insight: string;
   drawn: boolean;
 }
 
@@ -25,7 +24,7 @@ export function getDailyCardCache(): DailyCardCache | null {
   return null;
 }
 
-export function setDailyCardCache(cardId: number, insight: string): void {
+export function setDailyCardCache(cardId: number): void {
   if (typeof window === 'undefined') return;
   const today = new Date().toISOString().slice(0, 10);
   
@@ -33,7 +32,6 @@ export function setDailyCardCache(cardId: number, insight: string): void {
     localStorage.setItem(DAILY_CARD_CACHE_KEY, JSON.stringify({
       date: today,
       cardId,
-      insight,
       drawn: true
     }));
   } catch {
