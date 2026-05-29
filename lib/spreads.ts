@@ -26,7 +26,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   {
     id: "comprehensive",
     cards: 9,
-    label: "9-Card Petit Grand Tableau",
+    label: "Petit Tableau",
     description:
       "Deeper exploration of complex situations without overwhelming detail",
     isAuthentic: true,
@@ -34,7 +34,7 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   {
     id: "grand-tableau",
     cards: 36,
-    label: "36-Card Grand Tableau",
+    label: "Grand Tableau",
     description:
       "Complete life situation through full 4x9 grid - the most comprehensive reading",
     isAuthentic: true,
