@@ -63,7 +63,7 @@ export default function MarieAnnesSystemPage() {
           </p>
           <p>
             This page explores reading principles inspired by the historical
-            Lenormand tradition—practical, direct guidance drawn from the
+            Lenormand tradition-practical, direct guidance drawn from the
             symbolic language and techniques that became known as Lenormand
             divination.
           </p>
@@ -133,7 +133,7 @@ export default function MarieAnnesSystemPage() {
               <p className="mt-1 text-sm text-muted-foreground">
                 Some cards carry weight (Strong): Sun, Key, Ring. Others modify
                 (Weak): Clouds, Mice, Child. Her readings reflected this
-                hierarchy—strong cards as the foundation, weak cards as context.
+                hierarchy-strong cards as the foundation, weak cards as context.
               </p>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function MarieAnnesSystemPage() {
               <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
               <span>
                 <strong>Action-oriented:</strong> Never interpretation
-                alone—always prescribe action
+                alone-always prescribe action
               </span>
             </li>
             <li className="flex gap-2">
@@ -285,7 +285,7 @@ export default function MarieAnnesSystemPage() {
               <p className="text-sm text-muted-foreground">
                 What is the sequence of events? Where is the friction? What
                 breaks it? What&apos;s the outcome? Don&apos;t interpret each
-                card separately—see how they flow together.
+                card separately-see how they flow together.
               </p>
             </div>
 
@@ -323,7 +323,7 @@ export default function MarieAnnesSystemPage() {
             action-oriented answers. That&apos;s the soul of her system.
           </p>
           <p className="text-sm italic text-muted-foreground">
-            This app brings that methodology back—not as history, but as a
+            This app brings that methodology back-not as history, but as a
             living, practical tool for real guidance in the modern world.
           </p>
         </CardContent>

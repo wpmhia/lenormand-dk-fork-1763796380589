@@ -26,7 +26,7 @@ export default function SupportPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground text-center">
-              Lenormand Intelligence is completely free — no subscriptions, no limits, no catches.
+              Lenormand Intelligence is completely free - no subscriptions, no limits, no catches.
               If you find value in it, consider buying me a coffee to help cover costs.
             </p>
 

@@ -46,7 +46,7 @@ Lenormand is concrete, practical, external, predictive, and combination-based.
 Do not use Tarot-style archetypes, spiritual lessons, shadow work, chakra language, soul-purpose language, "the universe", "higher self", or vague mystical symbolism.
 
 ${isSingleCard
-  ? `Read this card alone. Do NOT pair it with any other card — this is a single-card reading.
+  ? `Read this card alone. Do NOT pair it with any other card - this is a single-card reading.
 The card has its own meaning; do not invent a second card to pair with it.`
   : `The core technique is COMBINATION READING: every card is read in combination with the card that follows it. Each card has a base meaning, but in multi-card readings the final meaning comes from combinations, lines, houses, and surrounding cards. Do not interpret cards as isolated symbolic messages. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
 
@@ -54,7 +54,7 @@ Read in pairs: Card 1 + Card 2, then Card 2 + Card 3, etc.`
 }
 
 CORE LENORMAND PRINCIPLES:
-- Cards are always upright — there are no reversals
+- Cards are always upright - there are no reversals
 - STRONG cards amplify; NEUTRAL cards describe the situation factually
 - Multi-card readings are read through combinations, not standalone card meanings
 - In grids, read rows, columns, diagonals, and the center card
@@ -70,8 +70,8 @@ ${!isSingleCard ? "- Name each card pair: \"Card A + Card B\"" : "- Name the car
 }
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
-  "single-card": (q, c) => `${q}\nCard: ${c}\n\nThis is a SINGLE card reading. Do NOT pair it with any other card — read this card alone. Explain what it means in practical, concrete terms. Be specific about what action to take.`,
-  "daily-card": (_, c) => `Daily card: ${c}. This is a SINGLE card reading — do NOT pair it with any other card. Read this card alone. What happens today? One sentence, practical and direct.`,
+  "single-card": (q, c) => `${q}\nCard: ${c}\n\nThis is a SINGLE card reading. Do NOT pair it with any other card - read this card alone. Explain what it means in practical, concrete terms. Be specific about what action to take.`,
+  "daily-card": (_, c) => `Daily card: ${c}. This is a SINGLE card reading - do NOT pair it with any other card. Read this card alone. What happens today? One sentence, practical and direct.`,
   "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as one Lenormand sentence. Use PAIR READING as the primary method:
 - Pair 1 (Card 1 + Card 2)
 - Pair 2 (Card 2 + Card 3)
@@ -103,10 +103,10 @@ Do not assign past/present/future meanings to the rows.
 Do not interpret one card at a time as isolated advice.
 Name the strongest card combinations and end with a direct answer.`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using authentic Lenormand Grand Tableau method:
-1. Find the MAN (29) or WOMAN (28) card — this is the Significator (the querent).
+1. Find the MAN (29) or WOMAN (28) card - this is the Significator (the querent).
 2. HOUSE SYSTEM: Each position in the 4x9 grid is a "house" named after the 36 cards in order:
    Position 0 = House of Rider, Position 1 = House of Clover, ..., Position 35 = House of Cross.
-   A card in a house reads as "Card X in the House of Y" — meaning is colored by the house topic.
+   A card in a house reads as "Card X in the House of Y" - meaning is colored by the house topic.
    e.g., Snake in the House of Rider means deception around news or messages.
 3. Read in PAIRS: every card modifies the card that follows it. Focus especially on pairs surrounding the Significator.
 4. DIRECTIONAL ZONES relative to the Significator:
@@ -115,7 +115,7 @@ Name the strongest card combinations and end with a direct answer.`,
    - Above Significator = Visible / known influences
    - Below Significator = Hidden / underlying influences
 5. MIRRORING: Read cards that mirror across the Significator (same row, opposite column) as contrasting pairs.
-6. The bottom row (positions 27-35) = Cards of Fate — major life themes.
+6. The bottom row (positions 27-35) = Cards of Fate - major life themes.
 7. Corner cards = the foundation or overall context. Center four cards = the heart of the matter.
 
 Write in paragraphs. Describe the card pairs around the Significator. Name at least 4-5 specific card pairs and how they interact. Include what the house placement adds. End with the answer.`,
@@ -190,7 +190,7 @@ function formatPetitTableau(
     `Row 2 / Middle Line: ${layout.rows.middle.map((c) => fmtCard(c.card)).join(" + ")}`,
     `Row 3 / Lower Line: ${layout.rows.bottom.map((c) => fmtCard(c.card)).join(" + ")}`,
     "",
-    `Center card: ${fmtCard(layout.center.card)} — heart of the tableau`,
+    `Center card: ${fmtCard(layout.center.card)} - heart of the tableau`,
     "",
     "Columns:",
     gridLines,
@@ -248,7 +248,7 @@ function formatGrandTableau(
     const w = layout.significators.woman;
     const row = Math.floor(w.index / 9) + 1;
     const col = (w.index % 9) + 1;
-    parts.push(`Woman (Card 28): position ${w.index}, Row ${row}, Column ${col} — ${fmtCard(w.card)}`);
+    parts.push(`Woman (Card 28): position ${w.index}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
   } else {
     parts.push("Woman (Card 28): not present in this spread");
   }
@@ -256,7 +256,7 @@ function formatGrandTableau(
     const m = layout.significators.man;
     const row = Math.floor(m.index / 9) + 1;
     const col = (m.index % 9) + 1;
-    parts.push(`Man (Card 29): position ${m.index}, Row ${row}, Column ${col} — ${fmtCard(m.card)}`);
+    parts.push(`Man (Card 29): position ${m.index}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
   } else {
     parts.push("Man (Card 29): not present in this spread");
   }
@@ -279,7 +279,7 @@ function formatGrandTableau(
     "",
     "Read using authentic Lenormand Grand Tableau method.",
     "1. Identify the significator (Woman/Man). Every card relates to the significator's position.",
-    "2. HOUSE SYSTEM: A card in a house reads as \"Card X in the House of Y\" — meaning is colored by the house topic.",
+    "2. HOUSE SYSTEM: A card in a house reads as \"Card X in the House of Y\" - meaning is colored by the house topic.",
     "3. Read in adjacent pairs from left to right in each row.",
     "4. DIRECTIONAL ZONES relative to the significator:",
     "   - Left of significator = Past influences",
@@ -287,7 +287,7 @@ function formatGrandTableau(
     "   - Above significator = Visible / known influences",
     "   - Below significator = Hidden / underlying influences",
     "5. Read mirror pairs across the significator (same row, mirrored columns) as contrasting pairs.",
-    "6. The bottom row = Cards of Fate — major life themes.",
+    "6. The bottom row = Cards of Fate - major life themes.",
     "7. Corner cards = foundation or overall context. Center four = heart of the matter.",
     "",
     "Write in paragraphs. Name specific card combinations with their house context. End with a clear answer.",

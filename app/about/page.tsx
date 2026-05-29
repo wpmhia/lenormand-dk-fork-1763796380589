@@ -69,9 +69,9 @@ export default function AboutPage() {
                   accessible to a new generation of seekers and practitioners.
                 </p>
                 <p>
-                  Our founders—experienced Lenormand readers, historians devoted
+                  Our founders-experienced Lenormand readers, historians devoted
                   to the deck&apos;s evolution, and engineers passionate about
-                  responsible AI—came together with a singular mission. We
+                  responsible AI-came together with a singular mission. We
                   painstakingly digitized decades of annotated readings, rare
                   spreads, classical texts, and practitioner notes. This living
                   archive became our training foundation.
@@ -87,7 +87,7 @@ export default function AboutPage() {
                 </p>
                 <p className="text-sm italic text-muted-foreground">
                   Every reading here carries the weight of tradition and the
-                  clarity of technology—neither overwhelming the other, but each
+                  clarity of technology-neither overwhelming the other, but each
                   amplifying what the other can offer.
                 </p>
               </div>
@@ -141,8 +141,8 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent className="text-foreground">
                 <p>
-                  We transform practitioner expertise—card meanings, spread
-                  logic, observed outcomes—into structured models that help AI
+                  We transform practitioner expertise-card meanings, spread
+                  logic, observed outcomes-into structured models that help AI
                   recognize patterns and offer actionable insights while
                   preserving the nuance of traditional practice.
                 </p>
@@ -179,7 +179,7 @@ export default function AboutPage() {
                 <p>
                   We maintain and continually expand our secure library of
                   spreads, translations, historical texts, and practitioner
-                  notes—a conservancy that strengthens both AI performance and
+                  notes-a conservancy that strengthens both AI performance and
                   human understanding of the craft.
                 </p>
               </CardContent>

@@ -127,7 +127,7 @@ function buildAdjacentPair(
   if (fullA && fullB) {
     const forward = fullA.combos?.find((c) => c.withCardId === fullB.id);
     const reverse = fullB.combos?.find((c) => c.withCardId === fullA.id);
-    const meaning = [forward?.meaning, reverse?.meaning].filter(Boolean).join(" — ");
+    const meaning = [forward?.meaning, reverse?.meaning].filter(Boolean).join(" - ");
     if (meaning) traditionalMeaning = meaning;
   }
 

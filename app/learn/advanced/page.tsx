@@ -385,7 +385,7 @@ export default function AdvancedPage() {
           <p className="leading-relaxed text-card-foreground">
             Marie-Anne Lenormand read the Grand Tableau in a precise five-step
             sequence. Each strip answers a different layer of the question.
-            Later strips refine earlier ones—they never contradict.
+            Later strips refine earlier ones-they never contradict.
           </p>
 
           <div className="space-y-4">
@@ -432,7 +432,7 @@ export default function AdvancedPage() {
 
             <div className="rounded-lg border-l-4 border-primary bg-muted p-4">
               <h4 className="mb-2 font-semibold text-foreground">
-                Strip E: Knights (Optional—Unseen Influences)
+                Strip E: Knights (Optional-Unseen Influences)
               </h4>
               <p className="mb-3 text-sm text-card-foreground">
                 Leap over one card in each of eight chess knight directions from

@@ -189,7 +189,7 @@ export default function LearnPage() {
               <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 A practical course in card meanings, combinations, lines, and
                 Grand Tableau technique. From beginner fundamentals to advanced
-                methods — learn the 36-card system step by step.
+                methods - learn the 36-card system step by step.
               </p>
 
               <div className="mx-auto flex w-fit items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
