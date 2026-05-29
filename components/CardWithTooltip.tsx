@@ -14,7 +14,7 @@ interface CardWithTooltipProps {
   card: CardType;
   onClick?: () => void;
   showBack?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "responsive";
   className?: string;
   positionLabel?: string;
   positionDescription?: string;

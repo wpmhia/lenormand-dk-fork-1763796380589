@@ -10,7 +10,7 @@ interface CardProps {
   card: CardType;
   onClick?: () => void;
   showBack?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "responsive";
   className?: string;
   selected?: boolean;
   priority?: boolean;
@@ -20,12 +20,14 @@ const sizeClasses: Record<string, string> = {
   sm: "w-20 h-32 text-xs",
   md: "w-28 h-40 text-sm sm:text-base",
   lg: "w-36 h-52 text-base",
+  responsive: "w-full aspect-[2.5/3.5] text-xs",
 };
 
 const sizeToPixels: Record<string, string> = {
   sm: "80px",
   md: "112px",
   lg: "144px",
+  responsive: "clamp(72px, 22vw, 130px)",
 };
 
 function CardInner({
