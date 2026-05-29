@@ -181,16 +181,15 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     const reading = buildDailyReading(card);
 
     return (
-      <div className="space-y-4 p-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
+      <div className="space-y-2 p-4">
         <div className="text-center">
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-xs font-medium text-muted-foreground">
             {getTodayDateString()}
           </p>
-          <p className="text-xs text-muted-foreground/70">Your Daily Card</p>
         </div>
 
-        <div className="relative mx-auto w-48">
-          <div className="aspect-[2/3] relative overflow-hidden rounded-xl shadow-2xl shadow-primary/20">
+        <div className="relative mx-auto w-32">
+          <div className="aspect-[2/3] relative overflow-hidden rounded-lg shadow-xl shadow-primary/20">
             <Image
               src={card.imageUrl || "/images/cards-placeholder.jpg"}
               alt={card.name}
@@ -201,26 +200,26 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
           </div>
         </div>
 
-        <div className="text-center space-y-1">
-          <h3 className="text-2xl font-bold text-foreground">{card.name}</h3>
-          <p className="text-sm text-muted-foreground">
+        <div className="text-center">
+          <h3 className="text-lg font-bold text-foreground">{card.name}</h3>
+          <p className="text-xs text-muted-foreground">
             {card.keywords.slice(0, 3).join(" • ")}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-          <Spade className="h-4 w-4 text-primary" />
+          <Spade className="h-3 w-3 text-primary" />
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-1">
           {reading.split("\n").map((line, i) => {
             const isBold = line === `Today's Card: ${card.name}` || line.endsWith(":");
             return (
               <p
                 key={i}
-                className={`text-sm leading-relaxed ${isBold ? "font-semibold text-foreground" : "text-foreground/85"}`}
+                className={`text-xs leading-relaxed ${isBold ? "font-semibold text-foreground" : "text-foreground/85"}`}
               >
                 {line}
               </p>
@@ -228,21 +227,19 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
           })}
         </div>
 
-        <div className="pt-2">
-          <Link href="/read/new" onClick={handleClose}>
-            <Button className="w-full gap-2" size="lg">
-              Do a Full Reading
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+        <Link href="/read/new" onClick={handleClose}>
+          <Button className="w-full gap-1 text-xs h-9" size="sm">
+            Do a Full Reading
+            <ArrowRight className="h-3 w-3" />
+          </Button>
+        </Link>
       </div>
     );
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] p-0 overflow-hidden border-0 bg-gradient-to-b from-card to-background">
+      <DialogContent className="sm:max-w-sm max-h-[95vh] p-0 border-0 bg-gradient-to-b from-card to-background">
         {viewState === "draw" && renderDrawState()}
         {viewState === "drawing" && renderDrawingState()}
         {viewState === "result" && renderResultState()}
