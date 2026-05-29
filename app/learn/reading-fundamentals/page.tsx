@@ -129,7 +129,7 @@ export default function ReadingFundamentalsPage() {
               </h3>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
-                  <strong>Time:</strong> 10–15 seconds
+                  <strong>Time:</strong> 10-15 seconds
                 </p>
                 <p>
                   <strong>Method:</strong> Read cards 1-2-3-4-5 as ONE
@@ -157,7 +157,7 @@ export default function ReadingFundamentalsPage() {
               </h3>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
-                  <strong>Time:</strong> 60–90 seconds
+                  <strong>Time:</strong> 60-90 seconds
                 </p>
                 <p>
                   <strong>Method:</strong> Start with the sentence, then layer

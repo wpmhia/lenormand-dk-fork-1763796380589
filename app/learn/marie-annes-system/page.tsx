@@ -46,7 +46,7 @@ export default function MarieAnnesSystemPage() {
         </CardHeader>
         <CardContent className="space-y-4 text-foreground">
           <p>
-            Marie-Anne Adelaide Lenormand (1772–1843) was the most celebrated
+            Marie-Anne Adelaide Lenormand (1772-1843) was the most celebrated
             fortune-teller of the Napoleonic era. She read for Empress
             Josephine, revolutionary leaders, and thousands of clients in her
             Paris salon. Her reputation for sharp, practical readings made her
