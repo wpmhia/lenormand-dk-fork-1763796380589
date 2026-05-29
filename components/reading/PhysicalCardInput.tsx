@@ -158,7 +158,10 @@ export function PhysicalCardInput({
 
         <Textarea
           id="physical-cards"
-          inputMode="numeric"
+          inputMode="text"
+          autoCapitalize="words"
+          autoCorrect="off"
+          spellCheck={false}
           value={input}
           onChange={(e) => {
             const newValue = e.target.value;
@@ -184,7 +187,7 @@ export function PhysicalCardInput({
               setTruncationWarning(null);
             }
           }}
-          placeholder={`Enter ${targetCount} card numbers (1-36) or names\n\nExamples: 1 5 12 • Rider, Clover, Ship • Birds, 20, 36`}
+          placeholder={`Enter ${targetCount} card numbers or names\n\nExamples:\n1, 5, 12\nRider, Clover, Ship\nBirds, 20, Cross`}
           className={`min-h-[120px] resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 ${
             hasErrors ? "border-destructive focus:border-destructive" : ""
           }`}
