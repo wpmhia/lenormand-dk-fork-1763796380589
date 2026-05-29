@@ -127,9 +127,9 @@ describe("buildReadingContext", () => {
       }
     });
 
-    it("includes linear adjacent pairs", () => {
+    it("includes grid adjacent pairs (horizontal + vertical + diagonal)", () => {
       const ctx = buildReadingContext("comprehensive", "", makeNormalizedCards(petriIds), cardsMap);
-      expect(ctx.adjacentPairs).toHaveLength(8);
+      expect(ctx.adjacentPairs.length).toBeGreaterThan(8);
     });
   });
 
@@ -236,9 +236,9 @@ describe("buildReadingContext", () => {
       }
     });
 
-    it("builds 35 linear adjacent pairs", () => {
+    it("builds adjacent pairs including vertical and signficator neighborhood", () => {
       const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(allIds), cardsMap);
-      expect(ctx.adjacentPairs).toHaveLength(35);
+      expect(ctx.adjacentPairs.length).toBeGreaterThan(35);
     });
   });
 

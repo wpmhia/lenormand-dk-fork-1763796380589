@@ -144,10 +144,13 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
   return prompt;
 }
 
-function fmtCard(card: { name: string; keywords?: string[] }): string {
+function fmtCard(card: { name: string; keywords?: string[]; timing?: string; strength?: string }): string {
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
   const keywords = card.keywords?.slice(0, 2).join(", ");
-  return keywords ? `${name} (${keywords})` : name;
+  const timing = card.timing ? `; timing: ${card.timing}` : "";
+  const strength = card.strength ? `; ${card.strength}` : "";
+  const suffix = `${keywords || ""}${timing}${strength}`;
+  return suffix ? `${name} (${suffix})` : name;
 }
 
 function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
@@ -213,7 +216,13 @@ function formatPetitTableau(
     "5. Read the three columns as vertical lines.",
     "6. Read both diagonals through the center card.",
     "7. Prioritize adjacent combinations over standalone card meanings.",
-    "8. Name the strongest card combinations and end with a direct answer.",
+    "8. Name the strongest card combinations.",
+    "",
+    "End with a short \"Prediction\" paragraph that includes:",
+    "- the most likely development",
+    "- the approximate timing if supported by cards",
+    "- one concrete sign the querent can watch for",
+    "- one practical action",
   ];
 
   return parts.join("\n");
@@ -275,6 +284,34 @@ function formatGrandTableau(
   const adj = fmtAdjacentPairs(adjacentPairs);
   if (adj) parts.push("", adj);
 
+  if (layout.mirrors.length > 0) {
+    parts.push("");
+    parts.push("Mirror pairs around significator:");
+    for (const m of layout.mirrors.slice(0, 8)) {
+      parts.push(`- ${fmtCard(m.cardA)} mirrored with ${fmtCard(m.cardB)}`);
+    }
+  }
+
+  if (layout.verticalPairs.length > 0) {
+    const sigIndices = [
+      layout.significators.woman?.index,
+      layout.significators.man?.index,
+    ].filter((s): s is number => s !== undefined);
+    const verticalAroundSig = layout.verticalPairs.filter((vp) =>
+      sigIndices.length === 0 || sigIndices.includes(vp.indexA) || sigIndices.includes(vp.indexB),
+    );
+    if (verticalAroundSig.length > 0) {
+      parts.push("");
+      parts.push("Vertical pairs through significator column:");
+      const vpText = verticalAroundSig
+        .map((vp) => {
+          const m = vp.traditionalMeaning ? `: ${vp.traditionalMeaning}` : "";
+          return `- ${fmtCard(vp.cardA)} + ${fmtCard(vp.cardB)}${m}`;
+        });
+      parts.push(...vpText);
+    }
+  }
+
   parts.push(
     "",
     "Read using authentic Lenormand Grand Tableau method.",
@@ -290,7 +327,15 @@ function formatGrandTableau(
     "6. The bottom row = Cards of Fate - major life themes.",
     "7. Corner cards = foundation or overall context. Center four = heart of the matter.",
     "",
-    "Write in paragraphs. Name specific card combinations with their house context. End with a clear answer.",
+    "Also include mirror pairs and vertical column pairs around the significator for contrast.",
+    "",
+    "End with a short \"Prediction\" paragraph that includes:",
+    "- the most likely development",
+    "- the approximate timing if supported by cards",
+    "- one concrete sign the querent can watch for",
+    "- one practical action",
+    "",
+    "Write in paragraphs. Name specific card combinations with their house context.",
   );
 
   return parts.join("\n");

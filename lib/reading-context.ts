@@ -134,6 +134,72 @@ function buildAdjacentPair(
   return { indexA: i, indexB: j, cardA, cardB, traditionalMeaning };
 }
 
+function buildPetitTableauPairs(
+  cards: NormalizedCard[],
+  cardsMap: Map<number, Card>,
+): AdjacentPair[] {
+  const gridPairs: [number, number][] = [
+    [0, 1], [1, 2], [3, 4], [4, 5], [6, 7], [7, 8],
+    [0, 3], [3, 6], [1, 4], [4, 7], [2, 5], [5, 8],
+    [0, 4], [4, 8], [2, 4], [4, 6],
+  ];
+  const seen = new Set<string>();
+  const result: AdjacentPair[] = [];
+  for (const [i, j] of gridPairs) {
+    const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(buildAdjacentPair(i, j, cards, cardsMap));
+  }
+  return result;
+}
+
+function buildGrandTableauPairs(
+  cards: NormalizedCard[],
+  cardsMap: Map<number, Card>,
+  layout: GrandTableauLayout,
+): AdjacentPair[] {
+  const all: AdjacentPair[] = [];
+  const seen = new Set<string>();
+
+  const add = (i: number, j: number) => {
+    const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
+    if (seen.has(key) || i === j) return;
+    seen.add(key);
+    all.push(buildAdjacentPair(i, j, cards, cardsMap));
+  };
+
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 8; c++) {
+      add(r * 9 + c, r * 9 + c + 1);
+    }
+  }
+
+  for (let c = 0; c < 9; c++) {
+    for (let r = 0; r < 3; r++) {
+      add(r * 9 + c, (r + 1) * 9 + c);
+    }
+  }
+
+  const sigs = [
+    layout.significators.woman?.index,
+    layout.significators.man?.index,
+  ].filter((s): s is number => s !== undefined);
+  for (const sigIdx of sigs) {
+    const row = Math.floor(sigIdx / 9);
+    const col = sigIdx % 9;
+    for (let dc = -1; dc <= 1; dc++) {
+      for (let dr = -1; dr <= 1; dr++) {
+        if (dr === 0 && dc === 0) continue;
+        const ni = (row + dr) * 9 + (col + dc);
+        if (ni >= 0 && ni < 36) add(sigIdx, ni);
+      }
+    }
+  }
+
+  return all;
+}
+
 function buildLinearAdjacentPairs(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
@@ -308,25 +374,29 @@ export function buildReadingContext(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
 ): ReadingContext {
-  const adjacentPairs = buildLinearAdjacentPairs(cards, cardsMap);
-
+  let adjacentPairs: AdjacentPair[];
   let layout: ReadingLayout;
   const layoutType = getLayoutType(spreadId);
 
   switch (layoutType) {
     case "single":
+      adjacentPairs = [];
       layout = { type: "single" };
       break;
     case "linear-sentence":
+      adjacentPairs = buildLinearAdjacentPairs(cards, cardsMap);
       layout = buildLinearSentenceLayout(cards);
       break;
     case "petit-tableau":
       layout = buildPetitTableauLayout(cards);
+      adjacentPairs = buildPetitTableauPairs(cards, cardsMap);
       break;
     case "grand-tableau":
       layout = buildGrandTableauLayout(cards, cardsMap);
+      adjacentPairs = buildGrandTableauPairs(cards, cardsMap, layout);
       break;
     default:
+      adjacentPairs = [];
       layout = { type: "single" };
   }
 
