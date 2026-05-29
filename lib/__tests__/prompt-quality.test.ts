@@ -75,21 +75,18 @@ describe("prompt quality: sentence-3", () => {
   const ctx = buildReadingContext("sentence-3", question, normalized([1, 2, 3]), cardsMap);
   const prompt = buildPromptFromContext(ctx);
 
-  it("includes Pair 1 and Pair 2", () => {
-    expect(prompt).toContain("Pair 1");
-    expect(prompt).toContain("Pair 2");
+  it("includes adjacent pairs reference", () => {
+    expect(prompt).toMatch(/Pairs:.*1\+2.*2\+3/);
   });
 
-  it("includes Full line", () => {
-    expect(prompt).toContain("Full line");
+  it("includes output contract sections", () => {
+    expect(prompt).toContain("### Reading");
+    expect(prompt).toContain("### Key Combinations");
+    expect(prompt).toContain("### Prediction");
   });
 
   it("includes at least one adjacent combination with traditional meaning", () => {
     expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
-  });
-
-  it("mentions pair reading as primary method", () => {
-    expect(prompt).toMatch(/PAIR READING|pair reading/);
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {
@@ -104,18 +101,14 @@ describe("prompt quality: sentence-5", () => {
   const ctx = buildReadingContext("sentence-5", question, normalized([1, 2, 3, 4, 5]), cardsMap);
   const prompt = buildPromptFromContext(ctx);
 
-  it("includes all 4 adjacent pairs", () => {
-    for (let i = 1; i <= 4; i++) {
-      expect(prompt).toContain(`Pair ${i}`);
-    }
+  it("includes all 4 pair references", () => {
+    expect(prompt).toMatch(/Pairs:.*1\+2.*2\+3.*3\+4.*4\+5/);
   });
 
-  it("includes full line", () => {
-    expect(prompt).toContain("Full line");
-  });
-
-  it("instructs not to give five separate interpretations", () => {
-    expect(prompt).toMatch(/do not give five separate card interpretations/i);
+  it("includes output contract sections", () => {
+    expect(prompt).toContain("### Reading");
+    expect(prompt).toContain("### Key Combinations");
+    expect(prompt).toContain("### Prediction");
   });
 
   it("includes adjacent combinations with meaning", () => {
@@ -161,17 +154,15 @@ describe("prompt quality: Petit Tableau (comprehensive)", () => {
 
   it("includes adjacent combinations with traditional meanings", () => {
     expect(prompt).toContain("Adjacent combinations");
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover): Lucky news - Lucky news");
-    expect(prompt).toContain("Clover (Clover) + Ship (Ship): Lucky journey - Lucky journey");
-    expect(prompt).toContain("House (House) + Tree (Tree): Home health - Home health");
+    expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
+    expect(prompt).toContain("Clover (Clover) + Ship (Ship)");
+    expect(prompt).toContain("House (House) + Tree (Tree)");
   });
 
-  it("instructs not to assign past/present/future row meanings", () => {
-    expect(prompt).toMatch(/do not assign past\/present\/future meanings/i);
-  });
-
-  it("mentions not a Tarot spread", () => {
-    expect(prompt).toMatch(/not a Tarot spread/i);
+  it("includes output contract sections", () => {
+    expect(prompt).toContain("### Reading");
+    expect(prompt).toContain("### Key Combinations");
+    expect(prompt).toContain("### Prediction");
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {
@@ -198,10 +189,9 @@ describe("prompt quality: Grand Tableau", () => {
     expect(prompt).toContain("Row 4:");
   });
 
-  it("includes Houses section", () => {
-    expect(prompt).toContain("Houses");
+  it("includes Houses section with key placements", () => {
+    expect(prompt).toContain("Houses (key placements)");
     expect(prompt).toMatch(/House of Rider/);
-    expect(prompt).toMatch(/House of Cross/);
   });
 
   it("includes Significators section", () => {
@@ -221,14 +211,20 @@ describe("prompt quality: Grand Tableau", () => {
     expect(prompt).toContain("Center four");
   });
 
-  it("includes Cards of Fate (bottom row)", () => {
+  it("includes Cards of Fate", () => {
     expect(prompt).toContain("Cards of Fate");
+  });
+
+  it("includes output contract sections", () => {
+    expect(prompt).toContain("### Grand Tableau Overview");
+    expect(prompt).toContain("### Around the Significator");
+    expect(prompt).toContain("### Houses and Mirrors");
+    expect(prompt).toContain("### Prediction");
   });
 
   it("includes adjacent combinations with traditional meanings", () => {
     expect(prompt).toContain("Adjacent combinations");
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover): Lucky news - Lucky news");
-    expect(prompt).toContain("Clover (Clover) + Ship (Ship): Lucky journey - Lucky journey");
+    expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {
