@@ -93,15 +93,15 @@ export default function LearnPage() {
       id: "spreads",
       title: "Spreads & Layouts",
       description:
-        "Discover powerful spreads from simple 3-card readings to the comprehensive Grand Tableau. Master diverse reading methods.",
+        "Build Lenormand sentences with 3-card lines, 5-card lines, the Petit Tableau, and the Grand Tableau. Focus on combinations, rows, columns, and houses.",
       icon: Compass,
       duration: "35 min",
       difficulty: "Intermediate",
       color: "from-primary to-primary/80",
       learningPoints: [
-        "Popular spreads",
-        "Layout techniques",
-        "Position meanings",
+        "Line and grid reading",
+        "Rows, columns, houses",
+        "Petit Tableau and Grand Tableau",
       ],
     },
     {
@@ -173,7 +173,7 @@ export default function LearnPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10"></div>
         <div className="container relative mx-auto max-w-6xl px-4 py-16">
           <div className="space-y-8 text-center">
-            <Badge className="badge-hero">✨ Master Lenormand Divination</Badge>
+            <Badge className="badge-hero">📖 Learn the Lenormand System</Badge>
 
             <div className="space-y-6">
               <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl">
@@ -182,20 +182,19 @@ export default function LearnPage() {
                   <div className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
                 </span>
                 <span className="block bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                  Wisdom Course
+                  Learning Course
                 </span>
               </h1>
 
               <p className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                Embark on a comprehensive journey through the ancient art of
-                Lenormand divination. From beginner fundamentals to advanced
-                techniques, master the 36-card system that has guided seekers
-                for centuries.
+                A practical course in card meanings, combinations, lines, and
+                Grand Tableau technique. From beginner fundamentals to advanced
+                methods — learn the 36-card system step by step.
               </p>
 
               <div className="mx-auto flex w-fit items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
                 <CheckCircle2 className="h-4 w-4" />
-                <span>Start your learning journey!</span>
+                <span>Track your course progress!</span>
               </div>
             </div>
 
@@ -203,7 +202,7 @@ export default function LearnPage() {
               <Link href="/learn/history-basics">
                 <Button className="btn-learn">
                   <Club className="mr-2 h-5 w-5" />
-                  Start Your Journey
+                  Start Learning
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -247,8 +246,8 @@ export default function LearnPage() {
             Your Learning Path
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            A structured journey from novice to master, designed to build your
-            confidence and intuition step by step.
+            A structured path from beginner to confident reader, designed to build your
+            understanding of card meanings, combinations, and reading structure.
           </p>
         </div>
 

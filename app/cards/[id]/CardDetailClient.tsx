@@ -90,6 +90,13 @@ export default function CardDetailClient({
             </p>
           </div>
 
+          <div className="mb-8 rounded-lg border border-amber-500/20 bg-amber-50/50 p-4 text-sm text-muted-foreground dark:bg-amber-950/20">
+            These are <strong>base meanings</strong>. In actual Lenormand
+            readings, the final meaning comes from combinations, line context,
+            houses, and surrounding cards. The surrounding cards decide which
+            expression is active.
+          </div>
+
           <div className="grid gap-8 lg:grid-cols-5">
             <div className="lg:col-span-1">
               {card.imageUrl && (
@@ -198,7 +205,7 @@ export default function CardDetailClient({
             <TabsContent value="overview" className="space-y-8">
               <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Core Essence</CardTitle>
+                  <CardTitle className="text-2xl">Base Meaning</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-lg leading-relaxed text-foreground">
@@ -292,12 +299,12 @@ export default function CardDetailClient({
                           </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          This card represents the{" "}
-                          <strong>female querent</strong> in the Grand Tableau.
-                          All reading flows from this card - cards to the left
-                          represent the past, cards above represent conscious
-                          thoughts, and diagonals show influences and
-                          possibilities.
+                           This card represents the{" "}
+                           <strong>female querent</strong> in the Grand Tableau.
+                           All reading flows from this card — cards to the left
+                           represent past influences, cards above represent visible
+                           or known influences, and diagonals show influences and
+                           possibilities.
                         </p>
                       </div>
                     )}
@@ -310,11 +317,11 @@ export default function CardDetailClient({
                           </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          This card represents the <strong>male querent</strong>{" "}
-                          in the Grand Tableau. All reading flows from this card
-                          - cards to the left represent the past, cards above
-                          represent conscious thoughts, and diagonals show
-                          influences and possibilities.
+                           This card represents the <strong>male querent</strong>{" "}
+                           in the Grand Tableau. All reading flows from this card
+                           — cards to the left represent past influences, cards above
+                           represent visible or known influences, and diagonals show
+                           influences and possibilities.
                         </p>
                       </div>
                     )}
@@ -379,18 +386,12 @@ export default function CardDetailClient({
                         </h4>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Card #{card.id} appears at position {card.id} in the 4×9
-                        Grand Tableau grid.
-                        {card.id <= 9 &&
-                          " In the first row, it relates to recent past and immediate concerns."}
-                        {card.id >= 10 &&
-                          card.id <= 18 &&
-                          " In the second row, it connects to present circumstances."}
-                        {card.id >= 19 &&
-                          card.id <= 27 &&
-                          " In the third row, it bridges present and future."}
-                        {card.id >= 28 &&
-                          " In the fourth row, it relates to future outcomes and longer-term trends."}
+                        Card #{card.id} names <strong>House {card.id}</strong> in
+                        the Grand Tableau. In an actual shuffled tableau, any card
+                        can occupy this position. When another card lands in this
+                        card&apos;s house, its meaning is colored by{" "}
+                        {card.name}&apos;s topic. The houses follow the card order:
+                        House 1 (Rider), House 2 (Clover), ..., House 36 (Cross).
                       </p>
                     </div>
                   </div>
@@ -407,11 +408,14 @@ export default function CardDetailClient({
                   />
 
                   <TwoColumnAspects
-                    positiveTitle="Positive Aspects"
+                    positiveTitle="When Favorable"
                     positiveAspects={meaning.positive}
-                    negativeTitle="Challenging Aspects"
+                    negativeTitle="When Difficult"
                     negativeAspects={meaning.negative}
                   />
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Surrounding cards decide which expression is active in a reading.
+                  </p>
 
                   {(meaning.relationships ||
                     meaning.careerFinance ||
