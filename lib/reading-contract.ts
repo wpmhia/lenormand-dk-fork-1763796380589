@@ -1,5 +1,8 @@
 import { Card } from "@/lib/types";
 import { MAX_QUESTION_LENGTH } from "@/lib/constants";
+import { SPREAD_DEFINITIONS, SpreadId } from "@/lib/spread-definitions";
+
+export type { SpreadId };
 
 export class ValidationError extends Error {
   constructor(message: string) {
@@ -8,16 +11,15 @@ export class ValidationError extends Error {
   }
 }
 
-export const VALID_SPREADS = {
-  "single-card": 1,
-  "daily-card": 1,
-  "sentence-3": 3,
-  "sentence-5": 5,
-  "comprehensive": 9,
-  "grand-tableau": 36,
-} as const;
+function buildValidSpreads(): Record<SpreadId, number> {
+  const result = {} as Record<SpreadId, number>;
+  for (const id of Object.keys(SPREAD_DEFINITIONS) as SpreadId[]) {
+    result[id] = SPREAD_DEFINITIONS[id].cardCount;
+  }
+  return result;
+}
 
-export type SpreadId = keyof typeof VALID_SPREADS;
+export const VALID_SPREADS = buildValidSpreads();
 
 export interface NormalizedCard {
   id: number;

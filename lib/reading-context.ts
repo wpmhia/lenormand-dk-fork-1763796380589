@@ -1,5 +1,6 @@
 import { Card } from "@/lib/types";
 import { NormalizedCard, SpreadId } from "@/lib/reading-contract";
+import { getLayoutType } from "@/lib/spread-definitions";
 import {
   GRAND_TABLEAU_TOPIC_CARDS,
   GRAND_TABLEAU_CORNERS,
@@ -310,16 +311,16 @@ export function buildReadingContext(
   const adjacentPairs = buildLinearAdjacentPairs(cards, cardsMap);
 
   let layout: ReadingLayout;
-  switch (spreadId) {
-    case "single-card":
-    case "daily-card":
+  const layoutType = getLayoutType(spreadId);
+
+  switch (layoutType) {
+    case "single":
       layout = { type: "single" };
       break;
-    case "sentence-3":
-    case "sentence-5":
+    case "linear-sentence":
       layout = buildLinearSentenceLayout(cards);
       break;
-    case "comprehensive":
+    case "petit-tableau":
       layout = buildPetitTableauLayout(cards);
       break;
     case "grand-tableau":

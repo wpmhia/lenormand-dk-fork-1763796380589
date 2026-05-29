@@ -1,3 +1,5 @@
+import { SPREAD_DEFINITIONS } from "@/lib/spread-definitions";
+
 export interface Spread {
   id: string;
   cards: number;
@@ -6,67 +8,22 @@ export interface Spread {
   isAuthentic?: boolean;
 }
 
-// Classic Spreads
+function defToSpread(id: string): Spread {
+  const d = SPREAD_DEFINITIONS[id as keyof typeof SPREAD_DEFINITIONS];
+  return { id: d.id, cards: d.cardCount, label: d.label, description: d.description, isAuthentic: d.isAuthentic };
+}
+
 export const AUTHENTIC_SPREADS: Spread[] = [
-  {
-    id: "single-card",
-    cards: 1,
-    label: "Single Card",
-    description: "Quick daily guidance - direct answer, immediate action",
-    isAuthentic: true,
-  },
-  {
-    id: "sentence-3",
-    cards: 3,
-    label: "3-Card Sentence",
-    description:
-      "Opening, turning point, and outcome with timing and action guidance",
-    isAuthentic: true,
-  },
-  {
-    id: "comprehensive",
-    cards: 9,
-    label: "Petit Tableau",
-    description:
-      "Deeper exploration of complex situations without overwhelming detail",
-    isAuthentic: true,
-  },
-  {
-    id: "grand-tableau",
-    cards: 36,
-    label: "Grand Tableau",
-    description:
-      "Complete life situation through full 4x9 grid - the most comprehensive reading",
-    isAuthentic: true,
-  },
-];
+  "single-card", "sentence-3", "comprehensive", "grand-tableau",
+].map(defToSpread);
 
-// Modern Spreads - Authentic Lenormand variations
 export const MODERN_SPREADS: Spread[] = [
-  {
-    id: "sentence-5",
-    cards: 5,
-    label: "5-Card Sentence Reading",
-    description: "Extended narrative using pair-reading technique - Lenormand's flexible approach for more complex situations",
-    isAuthentic: false,
-  },
-];
+  "sentence-5",
+].map(defToSpread);
 
-// All spreads in Lenormand-compliant order: 1 card → 3 cards → 5 cards → 9 cards → 36 cards
-// 3-Card Sentence is default (position 1)
 export const COMPREHENSIVE_SPREADS: Spread[] = [
-  // 1 Card
-  AUTHENTIC_SPREADS[0], // single-card
-  // 3 Cards (sentence-3 first as default)
-  AUTHENTIC_SPREADS[1], // sentence-3 (default)
-  // 5 Cards
-  MODERN_SPREADS[0], // sentence-5
-  // 9 Cards
-  AUTHENTIC_SPREADS[2], // petit-grand-tableau (9-card grid)
-  // 36 Cards
-  AUTHENTIC_SPREADS[3], // grand-tableau (4x9 grid)
-  // REMOVED: yes-no-maybe, past-present-future (not authentic Lenormand)
-];
+  "single-card", "sentence-3", "sentence-5", "comprehensive", "grand-tableau",
+].map(defToSpread);
 
 
 
