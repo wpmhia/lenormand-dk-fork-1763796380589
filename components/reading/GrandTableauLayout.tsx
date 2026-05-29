@@ -190,6 +190,35 @@ export function GrandTableauLayout({
         </div>
       </div>
 
+      <div className="mt-3 space-y-3 sm:hidden">
+        {significatorIndex !== -1 && validCards[significatorIndex] && (
+          <div className="rounded-lg border border-amber-500/30 bg-amber-50/30 p-3 dark:bg-amber-950/20">
+            <h4 className="mb-1 text-xs font-semibold text-foreground">Significator</h4>
+            <p className="text-xs text-muted-foreground">
+              {validCards[significatorIndex].card.name} at position {significatorIndex + 1}
+            </p>
+          </div>
+        )}
+        <div className="rounded-lg border border-border bg-card/50 p-3">
+          <h4 className="mb-1 text-xs font-semibold text-foreground">Corners</h4>
+          <p className="text-xs text-muted-foreground">
+            {GRAND_TABLEAU_CORNERS.map((i) => validCards[i]?.card.name).filter(Boolean).join(", ")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border bg-card/50 p-3">
+          <h4 className="mb-1 text-xs font-semibold text-foreground">Center Four</h4>
+          <p className="text-xs text-muted-foreground">
+            {GRAND_TABLEAU_CENTER_CARDS.map((i) => validCards[i]?.card.name).filter(Boolean).join(", ")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border bg-card/50 p-3">
+          <h4 className="mb-1 text-xs font-semibold text-foreground">Cards of Fate</h4>
+          <p className="text-xs text-muted-foreground">
+            {GRAND_TABLEAU_CARDS_OF_FATE.map((i) => validCards[i]?.card.name).filter(Boolean).join(", ")}
+          </p>
+        </div>
+      </div>
+
       {showAdvancedAnalysis && topicCards.length > 0 && (
         <div className="mt-lg rounded-lg border border-border bg-card p-md">
           <h4 className="mb-md flex items-center gap-2 text-sm font-semibold">

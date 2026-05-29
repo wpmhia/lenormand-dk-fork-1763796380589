@@ -7,7 +7,7 @@ import { MemoizedCardWithTooltip } from "@/components/CardWithTooltip";
 interface CardCellProps {
   card: Card;
   onCardClick: (card: Card) => void;
-  size: "sm" | "md" | "lg";
+  size: "sm" | "md" | "lg" | "responsive";
   className?: string;
   positionLabel?: string;
   positionDescription?: string;
