@@ -59,40 +59,40 @@ const SPREAD_POSITIONS: Record<string, Record<number, PositionInfo>> = {
   },
   comprehensive: {
     0: {
-      label: "Top Row - Past",
-      meaning: "What has already happened - the foundation and background of the situation",
+      label: "Upper Line",
+      meaning: "Context line — read with cards 1+2 and 2+3 as a Lenormand sentence",
     },
     1: {
-      label: "Top Row - Past",
-      meaning: "What has already happened - the foundation and background of the situation",
+      label: "Upper Line",
+      meaning: "Context line — part of the upper grid sentence with adjacent cards",
     },
     2: {
-      label: "Top Row - Past",
-      meaning: "What has already happened - the foundation and background of the situation",
+      label: "Upper Line",
+      meaning: "Context line — completes the upper row",
     },
     3: {
-      label: "Middle Row - Present",
-      meaning: "What is happening now - the current situation and active influences",
+      label: "Middle Line",
+      meaning: "Main line — read with the center card and adjacent cards",
     },
     4: {
-      label: "Center - Heart of Matter",
-      meaning: "The core issue, key person, or central energy - this card reveals what truly matters",
+      label: "Heart of the Matter",
+      meaning: "Center card — the focal point of the Petit Tableau grid",
     },
     5: {
-      label: "Middle Row - Present",
-      meaning: "What is happening now - the current situation and active influences",
+      label: "Middle Line",
+      meaning: "Main line — modifies or develops the center card's meaning",
     },
     6: {
-      label: "Bottom Row - Future",
-      meaning: "What is coming - the direction things are heading and likely outcomes",
+      label: "Lower Line",
+      meaning: "Underlying line — read with cards 7+8 and 8+9 as a Lenormand sentence",
     },
     7: {
-      label: "Bottom Row - Future",
-      meaning: "What is coming - the direction things are heading and likely outcomes",
+      label: "Lower Line",
+      meaning: "Underlying line — part of the lower grid sentence",
     },
     8: {
-      label: "Bottom Row - Future",
-      meaning: "What is coming - the direction things are heading and likely outcomes",
+      label: "Lower Line",
+      meaning: "Underlying line — completes the lower row",
     },
   },
 };
