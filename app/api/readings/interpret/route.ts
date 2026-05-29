@@ -86,15 +86,15 @@ export async function POST(request: Request) {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: chunk })}
 \n\n`));
           }
+
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
 \n\n`));
-          controller.close();
-        } catch (error) {
+        } catch {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
 \n\n`));
-          controller.close();
         } finally {
           clearTimeout(timeout);
+          controller.close();
         }
       },
     });
