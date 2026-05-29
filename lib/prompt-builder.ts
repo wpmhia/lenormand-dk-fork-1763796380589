@@ -51,37 +51,43 @@ ${isSingleCard
   : `Multi-card readings are read through combinations, lines, houses, and surrounding cards. Do not interpret cards as isolated symbolic messages.`
 }
 
-Be concrete and specific. Name the relevant card pairs. End with a clear answer.`;
+Be concrete and specific. Name the relevant card pairs.
+
+Formatting rules:
+- Use ## headings only.
+- Use plain paragraphs and one-level bullet lists.
+- Bold card pairs and labels with ** **.
+- No tables, HTML, nested bullets, emojis, or raw JSON.`;
 }
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. Combinations carry the meaning.
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence.
 
 Output:
-### Reading
-### Key Combinations
-### Prediction`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. Do not give five separate interpretations.
+## Reading
+## Key combinations
+## Prediction`,
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line.
 
 Output:
-### Reading
-### Key Combinations
-### Prediction`,
-  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau. Use center, middle line, rows, columns, diagonals, and adjacent combinations. Do not assign past/present/future to rows.
+## Reading
+## Key combinations
+## Prediction`,
+  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau. Use center, middle line, rows, columns, diagonals, and adjacent combinations.
 
 Output:
-### Reading
-### Key Combinations
-### Prediction`,
+## Reading
+## Key combinations
+## Prediction`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method. Focus on significator, surrounding pairs, directional zones, mirroring, corners, houses.
 
 Output:
-### Grand Tableau Overview
-### Around the Significator
-### Houses and Mirrors
-### Prediction`,
+## Grand Tableau overview
+## Around the significator
+## Houses and mirrors
+## Prediction`,
 };
 
 /** @deprecated Use buildPromptFromContext instead. This legacy function generates prompts from flat card lists. */
@@ -168,11 +174,17 @@ function formatPetitTableau(
     fmtAdjacentPairs(adjacentPairs),
     "",
     "Output:",
-    "### Reading",
-    "### Key Combinations",
-    "### Prediction",
+    "## Reading",
+    "## Key combinations",
+    "## Prediction",
     "",
-    "Prediction must include: likely development, timing if supported, observable sign, practical action.",
+    "Inside Prediction, use bold labels:",
+    "**Most likely development:** ...",
+    "**Likely timing:** ...",
+    "**Observable sign:** ...",
+    "**Practical action:** ...",
+    "",
+    "Use ## headings only. Plain paragraphs and one-level bullet lists. Bold card pairs and labels. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
 
   return parts.join("\n");
@@ -299,12 +311,18 @@ function formatGrandTableau(
   parts.push(
     "",
     "Output:",
-    "### Grand Tableau Overview",
-    "### Around the Significator",
-    "### Houses and Mirrors",
-    "### Prediction",
+    "## Grand Tableau overview",
+    "## Around the significator",
+    "## Houses and mirrors",
+    "## Prediction",
     "",
-    "Prediction must include: likely development, timing if supported, observable sign, practical action.",
+    "Inside Prediction, use bold labels:",
+    "**Most likely development:** ...",
+    "**Likely timing:** ...",
+    "**Observable sign:** ...",
+    "**Practical action:** ...",
+    "",
+    "Use ## headings only. Plain paragraphs and one-level bullet lists. Bold card pairs and labels. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );
 
   return parts.join("\n");
