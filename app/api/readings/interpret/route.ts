@@ -2,7 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-import { buildPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
+import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
+import { buildReadingContext } from "@/lib/reading-context";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
@@ -53,7 +54,8 @@ export async function POST(request: Request) {
     const validated = normalizeReadingRequest(body, cardsMap);
     const cardCount = validated.cards.length;
 
-    const prompt = buildPrompt(validated.cards, validated.spreadId, validated.question, validated.comboHints);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap);
+    const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
 
     const mistral = createMistral({

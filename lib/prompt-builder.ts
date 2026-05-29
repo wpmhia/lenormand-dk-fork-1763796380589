@@ -1,4 +1,5 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
+import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -137,6 +138,186 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
 
   if (comboHints && comboHints.length > 0) {
     prompt += `\n\nTraditional pair meanings for adjacent cards:\n${comboHints.map(h => `- ${h.cardA} + ${h.cardB}: ${h.meaning}`).join("\n")}`;
+  }
+
+  return prompt;
+}
+
+function fmtCard(card: { name: string; keywords?: string[] }): string {
+  const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
+  const keywords = card.keywords?.slice(0, 2).join(", ");
+  return keywords ? `${name} (${keywords})` : name;
+}
+
+function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
+  if (pairs.length === 0) return "";
+  return (
+    "\nAdjacent combinations:\n" +
+    pairs
+      .map((p) => {
+        const left = fmtCard(p.cardA);
+        const right = fmtCard(p.cardB);
+        const meaning = p.traditionalMeaning ? `: ${p.traditionalMeaning}` : "";
+        return `- ${left} + ${right}${meaning}`;
+      })
+      .join("\n")
+  );
+}
+
+function formatPetitTableau(
+  question: string,
+  layout: PetitTableauLayout,
+  adjacentPairs: AdjacentPair[],
+): string {
+  const q = sanitizeInput(question, MAX_QUESTION_LENGTH) || "What do these cards reveal?";
+
+  const gridLines = layout.rows.top
+    .map((_, c) => {
+      const upper = fmtCard(layout.rows.top[c].card);
+      const middle = fmtCard(layout.rows.middle[c].card);
+      const lower = fmtCard(layout.rows.bottom[c].card);
+      const colName = c === 0 ? "Left" : c === 1 ? "Middle" : "Right";
+      return `${colName}: ${upper} + ${middle} + ${lower}`;
+    })
+    .join("\n");
+
+  const parts = [
+    `Question: "${q}"`,
+    "",
+    "Petit Tableau 3x3 grid:",
+    `Row 1 / Upper Line: ${layout.rows.top.map((c) => fmtCard(c.card)).join(" + ")}`,
+    `Row 2 / Middle Line: ${layout.rows.middle.map((c) => fmtCard(c.card)).join(" + ")}`,
+    `Row 3 / Lower Line: ${layout.rows.bottom.map((c) => fmtCard(c.card)).join(" + ")}`,
+    "",
+    `Center card: ${fmtCard(layout.center.card)} — heart of the tableau`,
+    "",
+    "Columns:",
+    gridLines,
+    "",
+    "Diagonals:",
+    `Main: ${layout.diagonals.main.map((c) => fmtCard(c.card)).join(" + ")}`,
+    `Other: ${layout.diagonals.other.map((c) => fmtCard(c.card)).join(" + ")}`,
+    "",
+    fmtAdjacentPairs(adjacentPairs),
+    "",
+    "Read this as a Lenormand Petit Tableau, not a Tarot spread.",
+    "",
+    "Method:",
+    "1. Start with the center card as the heart of the matter.",
+    "2. Read the middle row as the main Lenormand line.",
+    "3. Read the upper row as a supporting line.",
+    "4. Read the lower row as an underlying line.",
+    "5. Read the three columns as vertical lines.",
+    "6. Read both diagonals through the center card.",
+    "7. Prioritize adjacent combinations over standalone card meanings.",
+    "8. Name the strongest card combinations and end with a direct answer.",
+  ];
+
+  return parts.join("\n");
+}
+
+function formatGrandTableau(
+  question: string,
+  layout: GrandTableauLayout,
+  adjacentPairs: AdjacentPair[],
+): string {
+  const q = sanitizeInput(question, MAX_QUESTION_LENGTH) || "What do these cards reveal?";
+  const parts: string[] = [];
+
+  parts.push(`Question: "${q}"`);
+  parts.push("");
+  parts.push("Grand Tableau 4x9 grid:");
+
+  for (let r = 0; r < 4; r++) {
+    parts.push(`Row ${r + 1}: ${layout.grid[r].map((c) => fmtCard(c.card)).join(", ")}`);
+  }
+
+  parts.push("");
+  parts.push("Houses:");
+  for (let i = 0; i < Math.min(layout.houses.length, 36); i++) {
+    const h = layout.houses[i];
+    parts.push(`Position ${h.position} (House of ${h.houseName}) → ${fmtCard(h.occupyingCard)}`);
+  }
+
+  parts.push("");
+  parts.push("Significators:");
+  if (layout.significators.woman) {
+    const w = layout.significators.woman;
+    const row = Math.floor(w.index / 9) + 1;
+    const col = (w.index % 9) + 1;
+    parts.push(`Woman (Card 28): position ${w.index}, Row ${row}, Column ${col} — ${fmtCard(w.card)}`);
+  } else {
+    parts.push("Woman (Card 28): not present in this spread");
+  }
+  if (layout.significators.man) {
+    const m = layout.significators.man;
+    const row = Math.floor(m.index / 9) + 1;
+    const col = (m.index % 9) + 1;
+    parts.push(`Man (Card 29): position ${m.index}, Row ${row}, Column ${col} — ${fmtCard(m.card)}`);
+  } else {
+    parts.push("Man (Card 29): not present in this spread");
+  }
+
+  parts.push("");
+  parts.push(
+    `Corners: ${layout.corners.map((c) => fmtCard(c.card)).join(", ")}`,
+  );
+  parts.push(
+    `Center four: ${layout.centerFour.map((c) => fmtCard(c.card)).join(", ")}`,
+  );
+  parts.push(
+    `Cards of Fate (bottom row): ${layout.cardsOfFate.map((c) => fmtCard(c.card)).join(", ")}`,
+  );
+
+  const adj = fmtAdjacentPairs(adjacentPairs);
+  if (adj) parts.push("", adj);
+
+  parts.push(
+    "",
+    "Read using authentic Lenormand Grand Tableau method.",
+    "1. Identify the significator (Woman/Man). Every card relates to the significator's position.",
+    "2. HOUSE SYSTEM: A card in a house reads as \"Card X in the House of Y\" — meaning is colored by the house topic.",
+    "3. Read in adjacent pairs from left to right in each row.",
+    "4. DIRECTIONAL ZONES relative to the significator:",
+    "   - Left of significator = Past influences",
+    "   - Right of significator = Future developments",
+    "   - Above significator = Conscious thoughts",
+    "   - Below significator = Unconscious forces",
+    "5. Read mirror pairs across the significator (same row, mirrored columns) as contrasting pairs.",
+    "6. The bottom row = Cards of Fate — major life themes.",
+    "7. Corner cards = foundation or overall context. Center four = heart of the matter.",
+    "",
+    "Write in paragraphs. Name specific card combinations with their house context. End with a clear answer.",
+  );
+
+  return parts.join("\n");
+}
+
+export function buildPromptFromContext(context: ReadingContext): string {
+  const { spreadId, question, adjacentPairs, layout } = context;
+
+  if (layout.type === "petit-tableau") {
+    return formatPetitTableau(question, layout, adjacentPairs);
+  }
+  if (layout.type === "grand-tableau") {
+    return formatGrandTableau(question, layout, adjacentPairs);
+  }
+
+  const q = sanitizeInput(question, MAX_QUESTION_LENGTH) || "What do these cards reveal?";
+  const qContext = `Question: "${q}"`;
+  const cardList = context.cards.map(fmtCard).join(", ");
+
+  let prompt = SPREAD_PROMPTS[spreadId]
+    ? SPREAD_PROMPTS[spreadId](qContext, cardList)
+    : `${qContext}\nCards: ${cardList}`;
+
+  if (adjacentPairs.length > 0) {
+    const hints = adjacentPairs
+      .filter((p) => p.traditionalMeaning)
+      .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)}: ${p.traditionalMeaning}`);
+    if (hints.length > 0) {
+      prompt += `\n\nTraditional pair meanings for adjacent cards:\n${hints.join("\n")}`;
+    }
   }
 
   return prompt;
