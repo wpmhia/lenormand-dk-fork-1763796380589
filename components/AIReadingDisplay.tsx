@@ -39,33 +39,71 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   cardCount,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
   const [showFollowUpInput, setShowFollowUpInput] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  function getPlainReadingText(reading: string): string {
+    return reading
+      .replace(/^#{1,6}\s+/gm, "")
+      .replace(/\*\*(.+?)\*\*/g, "$1")
+      .replace(/\*(.+?)\*/g, "$1")
+      .replace(/_(.+?)_/g, "$1")
+      .replace(/`(.+?)`/g, "$1")
+      .replace(/^\s*[-*]\s+/gm, "• ")
+      .replace(/^\d+\.\s+/gm, "")
+      .trim();
+  }
+
+  async function copyTextToClipboard(text: string): Promise<boolean> {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+      // Fall through to textarea fallback
+    }
+
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.top = "-9999px";
+      textarea.style.left = "-9999px";
+      textarea.style.opacity = "0";
+
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
-    try {
-      const plainText = aiReading.reading
-        .replace(/^#{1,6}\s+/gm, '')
-        .replace(/\*\*(.+?)\*\*/g, '$1')
-        .replace(/\*(.+?)\*/g, '$1')
-        .replace(/_(.+?)_/g, '$1')
-        .replace(/`(.+?)`/g, '$1')
-        .replace(/^\*\s+/gm, '')
-        .replace(/^\d+\.\s+/gm, '')
-        .trim();
-      
-      await navigator.clipboard.writeText(plainText);
-      setCopyClicked(true);
-      
-      if (copyTimeoutRef.current) {
-        clearTimeout(copyTimeoutRef.current);
-      }
-      copyTimeoutRef.current = setTimeout(() => setCopyClicked(false), 2000);
-    } catch (err) {
-      console.warn("Copy failed:", err);
+    const plainText = getPlainReadingText(aiReading.reading);
+    const ok = await copyTextToClipboard(plainText);
+
+    setCopyClicked(ok);
+    setCopyError(!ok);
+
+    if (copyTimeoutRef.current) {
+      clearTimeout(copyTimeoutRef.current);
     }
+    copyTimeoutRef.current = setTimeout(() => {
+      setCopyClicked(false);
+      setCopyError(false);
+    }, 2000);
   };
 
   const handleFollowUpSubmit = () => {
@@ -148,8 +186,16 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
             </span>
           </div>
           <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
-            {copyClicked ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            <span className="hidden sm:inline">{copyClicked ? "Copied" : "Copy"}</span>
+            {copyError ? (
+              <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+            ) : copyClicked ? (
+              <Check className="h-3.5 w-3.5" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
+            <span className="hidden sm:inline">
+              {copyError ? "Copy failed" : copyClicked ? "Copied" : "Copy"}
+            </span>
           </Button>
         </div>
 
