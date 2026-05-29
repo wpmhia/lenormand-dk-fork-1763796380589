@@ -181,15 +181,15 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
     const reading = buildDailyReading(card);
 
     return (
-      <div className="space-y-2 p-4">
+      <div className="space-y-3 p-4 sm:space-y-4 sm:p-6">
         <div className="text-center">
           <p className="text-xs font-medium text-muted-foreground">
             {getTodayDateString()}
           </p>
         </div>
 
-        <div className="relative mx-auto w-32">
-          <div className="aspect-[2/3] relative overflow-hidden rounded-lg shadow-xl shadow-primary/20">
+        <div className="relative mx-auto w-36 sm:w-48">
+          <div className="relative aspect-[2.5/3.5] max-h-[32dvh] overflow-hidden rounded-xl shadow-xl shadow-primary/20">
             <Image
               src={card.imageUrl || "/images/cards-placeholder.jpg"}
               alt={card.name}
@@ -239,7 +239,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-sm max-h-[95vh] p-0 border-0 bg-gradient-to-b from-card to-background">
+      <DialogContent className="w-[calc(100vw-1.5rem)] max-w-sm sm:max-w-md max-h-[calc(100dvh-1.5rem)] overflow-y-auto border-0 p-0 bg-gradient-to-b from-card to-background">
         {viewState === "draw" && renderDrawState()}
         {viewState === "drawing" && renderDrawingState()}
         {viewState === "result" && renderResultState()}
