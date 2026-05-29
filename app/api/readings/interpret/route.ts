@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     const validated = normalizeReadingRequest(body, cardsMap);
     const cardCount = validated.cards.length;
 
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
 

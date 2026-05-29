@@ -242,6 +242,36 @@ describe("buildReadingContext", () => {
     });
   });
 
+  describe("grand-tableau significator preference", () => {
+    const sigIds = Array.from({ length: 36 }, (_, i) => i + 1);
+
+    it("defaults to 'both' when preference not given", () => {
+      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(sigIds), cardsMap);
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.significatorPreference).toBe("both");
+        expect(ctx.layout.primarySignificator).toBeUndefined();
+      }
+    });
+
+    it("sets Woman as primary when preference is 'woman'", () => {
+      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(sigIds), cardsMap, "woman");
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.significatorPreference).toBe("woman");
+        expect(ctx.layout.primarySignificator).toBeDefined();
+        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
+      }
+    });
+
+    it("sets Man as primary when preference is 'man'", () => {
+      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(sigIds), cardsMap, "man");
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.significatorPreference).toBe("man");
+        expect(ctx.layout.primarySignificator).toBeDefined();
+        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+      }
+    });
+  });
+
   describe("no significator in grand-tableau", () => {
     it("leaves significators empty when Man/Woman not present", () => {
       const noSigIds = Array.from({ length: 36 }, (_, i) => (i + 1 >= 28 ? i + 3 : i + 1));

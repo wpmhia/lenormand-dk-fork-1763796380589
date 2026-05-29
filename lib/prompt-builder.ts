@@ -253,6 +253,20 @@ function formatGrandTableau(
 
   parts.push("");
   parts.push("Significators:");
+  const prefLabel =
+    layout.significatorPreference === "woman" ? "Woman" :
+    layout.significatorPreference === "man" ? "Man" : "Both / not specified";
+  parts.push(`Selected significator: ${prefLabel}`);
+
+  if (layout.primarySignificator) {
+    const p = layout.primarySignificator;
+    const row = Math.floor(p.index / 9) + 1;
+    const col = (p.index % 9) + 1;
+    parts.push(`Primary significator: ${fmtCard(p.card)} at position ${p.index}, Row ${row}, Column ${col}. Read the Tableau primarily around this card.`);
+  } else if (layout.significatorPreference !== "both") {
+    parts.push("Selected significator not found in this spread; use both significator cards if present.");
+  }
+
   if (layout.significators.woman) {
     const w = layout.significators.woman;
     const row = Math.floor(w.index / 9) + 1;

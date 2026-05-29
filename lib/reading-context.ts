@@ -98,6 +98,8 @@ export interface GrandTableauLayout {
     woman?: SignificatorInfo;
     man?: SignificatorInfo;
   };
+  primarySignificator?: SignificatorInfo;
+  significatorPreference: "woman" | "man" | "both";
   corners: GridCell[];
   centerFour: GridCell[];
   cardsOfFate: GridCell[];
@@ -280,6 +282,7 @@ const ALL_CARD_NAMES = [
 function buildGrandTableauLayout(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
+  significatorPreference: "woman" | "man" | "both" = "both",
 ): GrandTableauLayout {
   const grid: GridCell[][] = [];
   for (let r = 0; r < 4; r++) {
@@ -309,6 +312,13 @@ function buildGrandTableauLayout(
   if (manCards.length > 0) {
     const idx = cards.findIndex((c) => c.id === 29);
     significators.man = { index: idx, card: cards[idx] };
+  }
+
+  let primarySignificator: SignificatorInfo | undefined;
+  if (significatorPreference === "woman" && significators.woman) {
+    primarySignificator = significators.woman;
+  } else if (significatorPreference === "man" && significators.man) {
+    primarySignificator = significators.man;
   }
 
   const corners = GRAND_TABLEAU_CORNERS.map((i) => ({ index: i, card: cards[i] }));
@@ -359,6 +369,8 @@ function buildGrandTableauLayout(
     rows: grid,
     houses,
     significators,
+    primarySignificator,
+    significatorPreference,
     corners,
     centerFour,
     cardsOfFate,
@@ -373,6 +385,7 @@ export function buildReadingContext(
   question: string,
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
+  significatorPreference?: "woman" | "man" | "both",
 ): ReadingContext {
   let adjacentPairs: AdjacentPair[];
   let layout: ReadingLayout;
@@ -392,7 +405,7 @@ export function buildReadingContext(
       adjacentPairs = buildPetitTableauPairs(cards, cardsMap);
       break;
     case "grand-tableau":
-      layout = buildGrandTableauLayout(cards, cardsMap);
+      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference);
       adjacentPairs = buildGrandTableauPairs(cards, cardsMap, layout);
       break;
     default:

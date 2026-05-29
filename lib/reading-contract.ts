@@ -35,11 +35,14 @@ export interface ComboHint {
   meaning: string;
 }
 
+export type SignificatorPreference = "woman" | "man" | "both";
+
 export interface NormalizedReadingRequest {
   question: string;
   spreadId: SpreadId;
   cards: NormalizedCard[];
   comboHints: ComboHint[];
+  significatorPreference: SignificatorPreference;
 }
 
 export function buildAdjacentComboHints(
@@ -135,10 +138,17 @@ export function normalizeReadingRequest(
 
   const comboHints = cards.length > 1 ? buildAdjacentComboHints(cards, cardsMap) : [];
 
+  const rawPreference = (data as Record<string, unknown>).significatorPreference;
+  const significatorPreference: SignificatorPreference =
+    typeof rawPreference === "string" && ["woman", "man", "both"].includes(rawPreference)
+      ? (rawPreference as SignificatorPreference)
+      : "both";
+
   return {
     question: sanitizedQuestion,
     spreadId: spreadId as SpreadId,
     cards,
     comboHints,
+    significatorPreference,
   };
 }
