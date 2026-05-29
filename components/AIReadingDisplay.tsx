@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
 import { parseReadingText } from "@/lib/reading-parser";
+import { trackEvent } from "@/lib/analytics";
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
@@ -19,6 +20,8 @@ interface AIReadingDisplayProps {
   followUpLoading?: boolean;
   followUpStreaming?: boolean;
   followUpResponse?: string | null;
+  spreadId?: string;
+  cardCount?: number;
 }
 
 export const AIReadingDisplay = memo(function AIReadingDisplay({
@@ -31,6 +34,8 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   followUpLoading = false,
   followUpStreaming = false,
   followUpResponse = null,
+  spreadId,
+  cardCount,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
@@ -153,7 +158,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
         </div>
 
         {!isStreaming && aiReading?.reading && (
-          <FeedbackButtons reading={aiReading.reading} />
+          <FeedbackButtons reading={aiReading.reading} spreadId={spreadId} cardCount={cardCount} />
         )}
 
         {!isStreaming && !followUpResponse && (
@@ -267,7 +272,7 @@ function storeFeedback(id: string, rating: string) {
   }
 }
 
-function FeedbackButtons({ reading }: { reading: string }) {
+function FeedbackButtons({ reading, spreadId, cardCount }: { reading: string; spreadId?: string; cardCount?: number }) {
   const [submitted, setSubmitted] = useState(false);
   const readingId = useRef(Math.random().toString(36).slice(2, 10));
 
@@ -294,6 +299,12 @@ function FeedbackButtons({ reading }: { reading: string }) {
             type="button"
             onClick={() => {
               storeFeedback(readingId.current, opt.value);
+              trackEvent("reading_feedback", {
+                rating: opt.value,
+                spreadId: spreadId || "unknown",
+                cardCount: cardCount || 0,
+                readingLength: reading.length,
+              });
               setSubmitted(true);
             }}
             className="rounded-full border border-border bg-muted/50 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"

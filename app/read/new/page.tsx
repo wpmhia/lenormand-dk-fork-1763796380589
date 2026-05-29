@@ -419,6 +419,8 @@ function NewReadingPageContent() {
                   followUpLoading={followUpLoading}
                   followUpStreaming={followUpStreaming}
                   followUpResponse={followUpResponse}
+                  spreadId={selectedSpread.id}
+                  cardCount={selectedSpread.cards}
                 />
               </ErrorBoundary>
 
