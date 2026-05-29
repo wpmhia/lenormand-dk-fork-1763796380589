@@ -53,7 +53,7 @@ export function buildAdjacentComboHints(
       const reverseCombo = cardB.combos?.find(c => c.withCardId === cardA.id);
       const meaning = [forwardCombo?.meaning, reverseCombo?.meaning]
         .filter(Boolean)
-        .join(" — ");
+        .join(" - ");
       if (meaning) {
         hints.push({ cardA: cardA.name, cardB: cardB.name, meaning });
       }

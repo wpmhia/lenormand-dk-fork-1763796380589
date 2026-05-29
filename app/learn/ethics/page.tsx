@@ -265,7 +265,7 @@ export default function EthicsPage() {
             <p className="text-muted-foreground">
               Lenormand is a powerful tool for insight and guidance. Use it wisely, 
               ethically, and always with the highest good of all involved in mind. 
-              The cards reveal possibilities—not certainties—and should empower 
+              The cards reveal possibilities-not certainties-and should empower 
               people to make informed choices, not create dependency or fear.
             </p>
           </CardContent>

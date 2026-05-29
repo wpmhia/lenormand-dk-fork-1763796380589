@@ -161,9 +161,9 @@ describe("prompt quality: Petit Tableau (comprehensive)", () => {
 
   it("includes adjacent combinations with traditional meanings", () => {
     expect(prompt).toContain("Adjacent combinations");
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover): Lucky news — Lucky news");
-    expect(prompt).toContain("Clover (Clover) + Ship (Ship): Lucky journey — Lucky journey");
-    expect(prompt).toContain("House (House) + Tree (Tree): Home health — Home health");
+    expect(prompt).toContain("Rider (Rider) + Clover (Clover): Lucky news - Lucky news");
+    expect(prompt).toContain("Clover (Clover) + Ship (Ship): Lucky journey - Lucky journey");
+    expect(prompt).toContain("House (House) + Tree (Tree): Home health - Home health");
   });
 
   it("instructs not to assign past/present/future row meanings", () => {
@@ -227,8 +227,8 @@ describe("prompt quality: Grand Tableau", () => {
 
   it("includes adjacent combinations with traditional meanings", () => {
     expect(prompt).toContain("Adjacent combinations");
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover): Lucky news — Lucky news");
-    expect(prompt).toContain("Clover (Clover) + Ship (Ship): Lucky journey — Lucky journey");
+    expect(prompt).toContain("Rider (Rider) + Clover (Clover): Lucky news - Lucky news");
+    expect(prompt).toContain("Clover (Clover) + Ship (Ship): Lucky journey - Lucky journey");
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {

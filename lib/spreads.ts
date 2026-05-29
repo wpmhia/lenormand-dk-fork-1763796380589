@@ -100,22 +100,22 @@ export const DIRECTIONAL_ZONES: Record<string, DirectionalZone> = {
   "top-left": {
     name: "Visible Influences",
     description:
-      "Top-left diagonal — visible or known forces influencing the situation",
+      "Top-left diagonal - visible or known forces influencing the situation",
     color: "text-violet-600",
   },
   "bottom-left": {
     name: "Hidden Influences",
-    description: "Bottom-left diagonal — hidden or underlying influences",
+    description: "Bottom-left diagonal - hidden or underlying influences",
     color: "text-teal-600",
   },
   "top-right": {
     name: "Visible Possibilities",
-    description: "Top-right diagonal — potential outcomes that are becoming visible",
+    description: "Top-right diagonal - potential outcomes that are becoming visible",
     color: "text-indigo-600",
   },
   "bottom-right": {
     name: "Hidden Possibilities",
-    description: "Bottom-right diagonal — potential outcomes still hidden",
+    description: "Bottom-right diagonal - potential outcomes still hidden",
     color: "text-cyan-600",
   },
 };

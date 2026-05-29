@@ -292,7 +292,7 @@ export default function ReadingFundamentalsPage() {
               </p>
               <p>
                 <strong className="text-card-foreground">2. The Blend:</strong>{" "}
-                How the cards interact as a sequence—the Lenormand pair-reading technique 
+                How the cards interact as a sequence-the Lenormand pair-reading technique 
                 applied to your specific spread.
               </p>
               <p>

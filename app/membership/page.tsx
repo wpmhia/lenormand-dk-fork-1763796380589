@@ -149,7 +149,7 @@ export default function SupportPage() {
             <div>
               <h3 className="mb-2 font-semibold">Is this really free?</h3>
               <p className="text-sm text-muted-foreground">
-                Yes! Lenormand Intelligence is completely free for everyone. All features, all spreads, unlimited AI readings — no catch.
+                Yes! Lenormand Intelligence is completely free for everyone. All features, all spreads, unlimited AI readings - no catch.
               </p>
             </div>
             <div>

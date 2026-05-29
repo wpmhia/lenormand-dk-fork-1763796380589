@@ -129,7 +129,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
             </h2>
             <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">
-              All spreads are free — from single card to Grand Tableau
+              All spreads are free - from single card to Grand Tableau
             </p>
           </div>
           <div className="grid items-stretch gap-6 sm:grid-cols-3 lg:grid-cols-5">
@@ -157,7 +157,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             <ReadingTypeCard
               icon={<BookOpen className="h-5 w-5 text-primary" />}
               title="Petit Tableau"
-              description="9-card grid — deeper exploration"
+              description="9-card grid - deeper exploration"
               cardCount={9}
               spreadId="comprehensive"
             />
@@ -208,7 +208,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Choose any spread — from single card to Grand Tableau.
+              Choose any spread - from single card to Grand Tableau.
             </CardContent>
           </Card>
           <Card className="border-border bg-muted/50">

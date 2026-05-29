@@ -48,7 +48,7 @@ export function InstallPromptBanner() {
                   Add Lenormand.dk to your phone
                 </h3>
                 <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                  Open your readings faster from your home screen — no app store needed.
+                  Open your readings faster from your home screen - no app store needed.
                 </p>
               </div>
             </div>

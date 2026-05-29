@@ -301,7 +301,7 @@ export default function CardDetailClient({
                         <p className="text-sm text-muted-foreground">
                            This card represents the{" "}
                            <strong>female querent</strong> in the Grand Tableau.
-                           All reading flows from this card — cards to the left
+                           All reading flows from this card - cards to the left
                            represent past influences, cards above represent visible
                            or known influences, and diagonals show influences and
                            possibilities.
@@ -319,7 +319,7 @@ export default function CardDetailClient({
                         <p className="text-sm text-muted-foreground">
                            This card represents the <strong>male querent</strong>{" "}
                            in the Grand Tableau. All reading flows from this card
-                           — cards to the left represent past influences, cards above
+                           - cards to the left represent past influences, cards above
                            represent visible or known influences, and diagonals show
                            influences and possibilities.
                         </p>

@@ -10,7 +10,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* Opt-in tap scale — apply .tap-scale to simple buttons only */
+  /* Opt-in tap scale - apply .tap-scale to simple buttons only */
   .tap-scale:active {
     transform: scale(0.97);
     transition: transform 0.1s ease;
