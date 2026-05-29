@@ -14,6 +14,7 @@ import { decodeReadingFromUrl, getCardById } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { AIThinkingIndicator } from "@/components/ui/loading";
+import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 
 interface PageProps {
   params: {
@@ -174,42 +175,45 @@ export default function SharedReadingPage({ params }: PageProps) {
 
           const decoder = new TextDecoder();
           let accumulatedText = "";
+          let buffer = "";
 
           try {
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
 
-              const chunk = decoder.decode(value);
-              const lines = chunk.split("\n");
+              const chunk = decoder.decode(value, { stream: true });
+              const { events, buffer: newBuffer } = processSSEChunk(chunk, buffer);
+              buffer = newBuffer;
 
-              for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                  const data = line.slice(6);
-                  try {
-                    const parsed = JSON.parse(data);
-
-                    if (parsed.type === "chunk" && parsed.content) {
-                      accumulatedText += parsed.content;
-                      // Update UI with progressive text
-                      if (mountedRef.current) {
-                        setAiReading({
-                          reading: accumulatedText,
-                          source: "mistral",
-                        });
-                      }
-                    } else if (parsed.type === "done") {
-                      // Stream complete - truncation handled silently
-                      if (mountedRef.current) {
-                        setAiStreaming(false);
-                      }
-                      break;
-                    } else if (parsed.type === "error") {
-                      throw new Error(parsed.error || "Stream error");
-                    }
-                  } catch (e) {
-                    // Ignore parse errors for incomplete chunks
+              for (const event of events) {
+                if (event.type === "chunk" && event.content) {
+                  accumulatedText += event.content;
+                  if (mountedRef.current) {
+                    setAiReading({
+                      reading: accumulatedText,
+                      source: "mistral",
+                    });
                   }
+                } else if (event.type === "done") {
+                  if (mountedRef.current) {
+                    setAiStreaming(false);
+                  }
+                  break;
+                } else if (event.type === "error") {
+                  throw new Error(event.error || "Stream error");
+                }
+              }
+            }
+
+            for (const event of finalizeSSEStream(buffer)) {
+              if (event.type === "chunk" && event.content) {
+                accumulatedText += event.content;
+                if (mountedRef.current) {
+                  setAiReading({
+                    reading: accumulatedText,
+                    source: "mistral",
+                  });
                 }
               }
             }

@@ -75,8 +75,6 @@ export async function POST(request: Request) {
       abortSignal: abortController.signal,
     });
 
-    clearTimeout(timeout);
-
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -95,6 +93,8 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
 \n\n`));
           controller.close();
+        } finally {
+          clearTimeout(timeout);
         }
       },
     });
