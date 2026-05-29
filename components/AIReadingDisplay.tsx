@@ -181,9 +181,9 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
           <Link href="/how-readings-work" className="text-xs text-muted-foreground/60 hover:text-primary transition-colors">
             How this reading was made
           </Link>
-            <span className={`text-xs ${isStreaming ? "text-primary" : "text-muted-foreground"}`}>
-              {isStreaming ? "Reading..." : "Complete"}
-            </span>
+            {isStreaming && (
+              <span className="text-xs text-primary">Reading...</span>
+            )}
           </div>
           <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
             {copyError ? (
