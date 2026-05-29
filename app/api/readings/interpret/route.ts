@@ -11,7 +11,8 @@ import { Card } from "@/lib/types";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
-import { API_REQUEST_TIMEOUT_MS, ERROR_MESSAGES, DEFAULT_RATE_LIMIT, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
+import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
+import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -49,40 +50,10 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    const validated = normalizeReadingRequest(body, cardsMap);
+    const cardCount = validated.cards.length;
 
-    if (!body.cards || !Array.isArray(body.cards) || body.cards.length === 0) {
-      return new Response(JSON.stringify({ error: "Cards required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
-    const { question, cards, spreadId } = body;
-    const cardCount = cards.length;
-
-    const cardsWithKeywords = cards.map((c: { id: number; name: string }) => {
-      const cardData = cardsMap.get(c.id);
-      return { id: c.id, name: c.name, keywords: cardData?.keywords || [] };
-    });
-
-    // Build adjacent pair combo hints from traditional Lenormand combinations
-    const comboHints: { cardA: string; cardB: string; meaning: string }[] = [];
-    for (let i = 0; i < cards.length - 1; i++) {
-      const cardA = cardsMap.get(cards[i].id);
-      const cardB = cardsMap.get(cards[i + 1].id);
-      if (cardA && cardB) {
-        const forwardCombo = cardA.combos?.find(c => c.withCardId === cardB.id);
-        const reverseCombo = cardB.combos?.find(c => c.withCardId === cardA.id);
-        const meaning = [forwardCombo?.meaning, reverseCombo?.meaning]
-          .filter(Boolean)
-          .join(" — ");
-        if (meaning) {
-          comboHints.push({ cardA: cardA.name, cardB: cardB.name, meaning });
-        }
-      }
-    }
-
-    const prompt = buildPrompt(cardsWithKeywords, spreadId || "sentence-3", question || "What do the cards show?", cardCount > 1 ? comboHints : undefined);
+    const prompt = buildPrompt(validated.cards, validated.spreadId, validated.question, validated.comboHints);
     const maxTokens = getTokenBudget(cardCount);
 
     const mistral = createMistral({
@@ -138,8 +109,8 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
-    if (error.name === "SyntaxError") {
-      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+    if (error instanceof ValidationError || error.name === "SyntaxError") {
+      return new Response(JSON.stringify({ error: error.message }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
