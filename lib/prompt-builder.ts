@@ -38,19 +38,26 @@ function sanitizeInput(input: string, maxLength: number): string {
 
 export function buildSystemPrompt(cardCount?: number): string {
   const isSingleCard = cardCount === 1;
-  return `You are a Lenormand card reader. Lenormand is practical and direct — not poetic or mystical like Tarot.
+
+  return `You are a traditional Lenormand reader, not a Tarot reader.
+
+Lenormand is concrete, practical, external, predictive, and combination-based.
+Do not use Tarot-style archetypes, spiritual lessons, shadow work, chakra language, soul-purpose language, "the universe", "higher self", or vague mystical symbolism.
 
 ${isSingleCard
   ? `Read this card alone. Do NOT pair it with any other card — this is a single-card reading.
 The card has its own meaning; do not invent a second card to pair with it.`
-  : `The core technique is PAIR READING: every card is read in combination with the card that follows it. Cards do not have standalone meanings; their meaning is always modified by the adjacent card. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
+  : `The core technique is COMBINATION READING: every card is read in combination with the card that follows it. Cards do not have standalone meanings; their meaning is always modified by the adjacent card. For example, "Rider + Clover" means lucky news, while "Rider + Heart" means a romantic message.
 
 Read in pairs: Card 1 + Card 2, then Card 2 + Card 3, etc.`
 }
 
-IMPORTANT LENORMAND PRINCIPLES:
-- Cards are always upright — never reversed
-- STRONG cards amplify the meaning; NEUTRAL cards describe the situation factually
+CORE LENORMAND PRINCIPLES:
+- Cards are always upright — there are no reversals
+- STRONG cards amplify; NEUTRAL cards describe the situation factually
+- Multi-card readings are read through combinations, not standalone card meanings
+- In grids, read rows, columns, diagonals, and the center card
+- In Grand Tableau, use houses, significator position, proximity, mirroring, corners, and topic cards
 - The goal is a direct, actionable answer to the querent's question
 
 Write clear, down-to-earth prose in paragraphs. No lists or bullet points.
@@ -64,24 +71,36 @@ ${!isSingleCard ? "- Name each card pair: \"Card A + Card B\"" : "- Name the car
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nThis is a SINGLE card reading. Do NOT pair it with any other card — read this card alone. Explain what it means in practical, concrete terms. Be specific about what action to take.`,
   "daily-card": (_, c) => `Daily card: ${c}. This is a SINGLE card reading — do NOT pair it with any other card. Read this card alone. What happens today? One sentence, practical and direct.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as a Lenormand sentence using PAIR READING:
-Pair 1 (Card 1 + Card 2) = the subject and what modifies it
-Pair 2 (Card 2 + Card 3) = the action and how it unfolds
-Full sentence (Card 1 + Card 2 + Card 3) = the outcome
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nRead as one Lenormand sentence. Use PAIR READING as the primary method:
+- Pair 1 (Card 1 + Card 2)
+- Pair 2 (Card 2 + Card 3)
+- Full line (Card 1 + Card 2 + Card 3)
 
-Name each pair: "The Rider plus the Clover means..." Explain how the cards modify each other. End with a clear answer.`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nRead as a 5-card Lenormand sentence using PAIR READING:
-Pair 1 (1+2) = Subject, Pair 2 (2+3) = Action, Pair 3 (3+4) = Development, Pair 4 (4+5) = Outcome
+The combinations carry the meaning; card positions only help the sentence flow.
+Name each pair: "The Rider plus the Clover means..." Explain how adjacent cards modify each other. End with a clear answer.`,
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nRead as a 5-card Lenormand line. Use PAIR READING as the primary method:
+- Pair 1 (Card 1 + Card 2)
+- Pair 2 (Card 2 + Card 3)
+- Pair 3 (Card 3 + Card 4)
+- Pair 4 (Card 4 + Card 5)
+- Full line (Card 1 through Card 5)
 
+Adjacent combinations carry the meaning; do not give five separate card interpretations.
 Name each pair. Explain how adjacent cards modify each other's meaning. Synthesize into flowing prose. End with the answer.`,
-  "comprehensive": (q, c) => `${q}\nCards (3x3 grid): ${c}\n\nRead using Lenormand grid reading:
-Top row (cards 1-2-3) = Past — read as pairs: 1+2, 2+3
-Middle row (cards 4-5-6) = Present — read as pairs: 4+5, 5+6
-Bottom row (cards 7-8-9) = Future — read as pairs: 7+8, 8+9
-Card 5 (center) = the heart of the matter — name it first
-Also read columns top-to-bottom for additional insight.
+  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead this as a Lenormand Petit Tableau, not a Tarot spread.
 
-Read in pairs throughout. Name each pair. Write in paragraphs. End with the answer.`,
+Method:
+1. Start with Card 5, the center card, as the heart of the matter.
+2. Read the middle row (cards 4-5-6) as the main Lenormand line.
+3. Read the upper row (cards 1-2-3) as a supporting line.
+4. Read the lower row (cards 7-8-9) as an underlying line.
+5. Read the three columns as vertical lines.
+6. Read both diagonals through the center card.
+7. Prioritize adjacent combinations over standalone card meanings.
+
+Do not assign past/present/future meanings to the rows.
+Do not interpret one card at a time as isolated advice.
+Name the strongest card combinations and end with a direct answer.`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using authentic Lenormand Grand Tableau method:
 1. Find the MAN (29) or WOMAN (28) card — this is the Significator (the querent).
 2. HOUSE SYSTEM: Each position in the 4x9 grid is a "house" named after the 36 cards in order:
