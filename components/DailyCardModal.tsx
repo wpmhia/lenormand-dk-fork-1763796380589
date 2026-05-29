@@ -5,12 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Spade, ArrowRight, Loader2 } from "lucide-react";
+import { Spade, ArrowRight } from "lucide-react";
 import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { parseReadingText } from "@/lib/reading-parser";
-import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 interface DailyCardModalProps {
@@ -21,188 +18,95 @@ interface DailyCardModalProps {
 
 type ViewState = "draw" | "drawing" | "result";
 
+function buildDailyReading(card: CardType): string {
+  const parts: string[] = [];
+
+  parts.push(`Today's Card: ${card.name}`);
+  parts.push("");
+  parts.push(`Base meaning:`);
+  parts.push(card.uprightMeaning);
+  parts.push("");
+
+  if (card.meaning?.general) {
+    parts.push(`Daily focus:`);
+    parts.push(card.meaning.general);
+    parts.push("");
+  }
+
+  if (card.meaning?.positive?.length) {
+    parts.push(`Key aspects today:`);
+    for (const p of card.meaning.positive.slice(0, 3)) {
+      parts.push(`• ${p}`);
+    }
+    parts.push("");
+  }
+
+  if (card.meaning?.negative?.length) {
+    parts.push(`Watch for:`);
+    for (const n of card.meaning.negative.slice(0, 3)) {
+      parts.push(`• ${n}`);
+    }
+    parts.push("");
+  }
+
+  if (card.timing || card.meaning?.timing) {
+    parts.push(`Timing: ${card.timing || card.meaning.timing}`);
+    parts.push("");
+  }
+
+  parts.push(`Keywords: ${card.keywords.slice(0, 3).join(" • ")}`);
+
+  return parts.join("\n");
+}
+
 export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProps) {
   const [viewState, setViewState] = useState<ViewState>("draw");
   const [card, setCard] = useState<CardType | null>(null);
-  const [insight, setInsight] = useState<string>("");
-  const [insightLoading, setInsightLoading] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
   const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { showInstallPrompt } = useInstallPrompt();
 
   useEffect(() => {
-    if (viewState === "result" && insight && !insightLoading) {
+    if (viewState === "result" && card) {
       const timer = setTimeout(() => showInstallPrompt(), 1500);
       return () => clearTimeout(timer);
     }
-  }, [viewState, insight, insightLoading, showInstallPrompt]);
-
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      if (drawTimeoutRef.current) {
-        clearTimeout(drawTimeoutRef.current);
-      }
-    };
-  }, []);
+  }, [viewState, card, showInstallPrompt]);
 
   useEffect(() => {
     if (!open) return;
-    
-    // Check if already drawn today
+
     const cached = getDailyCardCache();
     if (cached?.drawn && cached.cardId) {
       const foundCard = cards.find((c) => c.id === cached.cardId);
       if (foundCard) {
         setCard(foundCard);
-        setInsight(cached.insight);
         setViewState("result");
         return;
       }
     }
-    
-    // Reset to draw state
+
     setViewState("draw");
     setCard(null);
-    setInsight("");
-    setGenerating(false);
   }, [open, cards]);
 
   const handleDraw = async () => {
-    if (generating) return;
     setViewState("drawing");
-    setGenerating(true);
-    
+
     await new Promise<void>((resolve) => {
       drawTimeoutRef.current = setTimeout(resolve, 800);
     });
-    
+
     const cardId = drawRandomCardId();
     const drawnCard = cards.find((c) => c.id === cardId);
-    
+
     if (!drawnCard) {
       setViewState("draw");
-      setGenerating(false);
       return;
     }
-    
+
     setCard(drawnCard);
+    setDailyCardCache(cardId);
     setViewState("result");
-    
-    // Check if we have cached insight for this card today
-    const cached = getDailyCardCache();
-    if (cached?.cardId === cardId && cached.insight) {
-      setInsight(cached.insight);
-      setGenerating(false);
-      return;
-    }
-    
-    // Generate new insight
-    setInsightLoading(true);
-    generateInsight(drawnCard, cardId);
-  };
-
-  const generateInsight = async (cardData: CardType, cardId: number) => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    abortControllerRef.current = new AbortController();
-    const timeoutId = setTimeout(() => abortControllerRef.current?.abort(), 15000);
-
-    try {
-      const response = await fetch("/api/readings/interpret", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: "What will happen today?",
-          cards: [{ id: cardData.id, name: cardData.name, position: 0, keywords: cardData.keywords }],
-          spreadId: "daily-card",
-        }),
-        signal: abortControllerRef.current.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        setInsight(cardData.uprightMeaning);
-        setDailyCardCache(cardId, cardData.uprightMeaning);
-        setInsightLoading(false);
-        return;
-      }
-
-      const contentType = response.headers.get("content-type");
-      if (contentType?.includes("text/event-stream")) {
-        const reader = response.body?.getReader();
-        if (!reader) {
-          setInsight(cardData.uprightMeaning);
-          setDailyCardCache(cardId, cardData.uprightMeaning);
-          setInsightLoading(false);
-          return;
-        }
-        
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let fullText = "";
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const text = decoder.decode(value, { stream: true });
-            const { events, buffer: newBuffer } = processSSEChunk(text, buffer);
-            buffer = newBuffer;
-
-            for (const event of events) {
-              if (event.type === "chunk" && event.content) {
-                fullText += event.content;
-              } else if (event.type === "done") {
-                setInsight(fullText);
-                setDailyCardCache(cardId, fullText);
-                setInsightLoading(false);
-                return;
-              }
-            }
-          }
-
-          // Process any remaining buffered data
-          for (const event of finalizeSSEStream(buffer)) {
-            if (event.type === "chunk" && event.content) {
-              fullText += event.content;
-            }
-          }
-        } finally {
-          reader.releaseLock();
-        }
-
-        // Fallback if stream ends without done signal
-        if (fullText) {
-          setInsight(fullText);
-          setDailyCardCache(cardId, fullText);
-        } else {
-          setInsight(cardData.uprightMeaning);
-          setDailyCardCache(cardId, cardData.uprightMeaning);
-        }
-      } else {
-        const data = await response.json();
-        const text = data.reading || cardData.uprightMeaning;
-        setInsight(text);
-        setDailyCardCache(cardId, text);
-      }
-    } catch (error) {
-      if ((error as Error).name !== "AbortError") {
-        console.error("Failed to generate insight:", error);
-        setInsight(cardData.uprightMeaning);
-        setDailyCardCache(cardId, cardData.uprightMeaning);
-      }
-    } finally {
-      setInsightLoading(false);
-      setGenerating(false);
-      abortControllerRef.current = null;
-    }
   };
 
   const handleClose = () => {
@@ -211,141 +115,137 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   if (!open) return null;
 
+  const renderDrawState = () => (
+    <div className="p-8 text-center space-y-6">
+      <div>
+        <p className="text-sm font-medium text-muted-foreground">
+          {getTodayDateString()}
+        </p>
+        <h3 className="text-xl font-bold text-foreground mt-1">
+          Your Daily Card
+        </h3>
+        <p className="text-sm text-muted-foreground mt-2">
+          Take a moment to focus on your day ahead, then draw your card.
+        </p>
+      </div>
+
+      <button
+        onClick={handleDraw}
+        className="relative mx-auto block transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl"
+        aria-label="Draw your daily card"
+      >
+        <div
+          className="lenormand-card overflow-hidden rounded-xl shadow-2xl shadow-primary/20"
+          style={{
+            width: "140px",
+            height: "200px",
+            backgroundImage: "url(/images/card-back.png)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundColor: "#1a1a1a",
+          }}
+        />
+      </button>
+
+      <p className="text-sm text-muted-foreground">
+        Click the deck to draw
+      </p>
+    </div>
+  );
+
+  const renderDrawingState = () => (
+    <div className="flex items-center justify-center p-16">
+      <div className="text-center space-y-4">
+        <div className="relative">
+          <div
+            className="lenormand-card overflow-hidden rounded-xl mx-auto animate-pulse"
+            style={{
+              width: "140px",
+              height: "200px",
+              backgroundImage: "url(/images/card-back.png)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundColor: "#1a1a1a",
+            }}
+          />
+        </div>
+        <p className="text-sm text-muted-foreground animate-pulse">
+          Drawing your card...
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderResultState = () => {
+    if (!card) return null;
+    const reading = buildDailyReading(card);
+
+    return (
+      <div className="space-y-4 p-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
+        <div className="text-center">
+          <p className="text-sm font-medium text-muted-foreground">
+            {getTodayDateString()}
+          </p>
+          <p className="text-xs text-muted-foreground/70">Your Daily Card</p>
+        </div>
+
+        <div className="relative mx-auto w-48">
+          <div className="aspect-[2/3] relative overflow-hidden rounded-xl shadow-2xl shadow-primary/20">
+            <Image
+              src={card.imageUrl || "/images/cards-placeholder.jpg"}
+              alt={card.name}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        </div>
+
+        <div className="text-center space-y-1">
+          <h3 className="text-2xl font-bold text-foreground">{card.name}</h3>
+          <p className="text-sm text-muted-foreground">
+            {card.keywords.slice(0, 3).join(" • ")}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+          <Spade className="h-4 w-4 text-primary" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        </div>
+
+        <div className="space-y-3">
+          {reading.split("\n").map((line, i) => {
+            const isBold = line === `Today's Card: ${card.name}` || line.endsWith(":");
+            return (
+              <p
+                key={i}
+                className={`text-sm leading-relaxed ${isBold ? "font-semibold text-foreground" : "text-foreground/85"}`}
+              >
+                {line}
+              </p>
+            );
+          })}
+        </div>
+
+        <div className="pt-2">
+          <Link href="/read/new" onClick={handleClose}>
+            <Button className="w-full gap-2" size="lg">
+              Do a Full Reading
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] p-0 overflow-hidden border-0 bg-gradient-to-b from-card to-background">
-        {viewState === "draw" && (
-          <div className="p-8 text-center space-y-6">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                {getTodayDateString()}
-              </p>
-              <h3 className="text-xl font-bold text-foreground mt-1">
-                Your Daily Card
-              </h3>
-              <p className="text-sm text-muted-foreground mt-2">
-                Take a moment to focus on your day ahead, then draw your card.
-              </p>
-            </div>
-
-            {/* Clickable Deck */}
-            <button
-              onClick={handleDraw}
-              className="relative mx-auto block transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl"
-              aria-label="Draw your daily card"
-            >
-              <div
-                className="card-mystical overflow-hidden rounded-xl shadow-2xl shadow-primary/20"
-                style={{
-                  width: "140px",
-                  height: "200px",
-                  backgroundImage: "url(/images/card-back.png)",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundColor: "#1a1a1a",
-                }}
-              />
-            </button>
-
-            <p className="text-sm text-muted-foreground">
-              Click the deck to draw
-            </p>
-          </div>
-        )}
-
-        {viewState === "drawing" && (
-          <div className="flex items-center justify-center p-16">
-            <div className="text-center space-y-4">
-              <div className="relative">
-                <div
-                  className="card-mystical overflow-hidden rounded-xl mx-auto animate-pulse"
-                  style={{
-                    width: "140px",
-                    height: "200px",
-                    backgroundImage: "url(/images/card-back.png)",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundColor: "#1a1a1a",
-                  }}
-                />
-              </div>
-              <p className="text-sm text-muted-foreground animate-pulse">
-                Drawing your card...
-              </p>
-            </div>
-          </div>
-        )}
-
-        {viewState === "result" && card && (
-          <div className="space-y-4 p-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
-            {/* Date */}
-            <div className="text-center">
-              <p className="text-sm font-medium text-muted-foreground">
-                {getTodayDateString()}
-              </p>
-              <p className="text-xs text-muted-foreground/70">Your Daily Card</p>
-            </div>
-
-            {/* Card Image */}
-            <div className="relative mx-auto w-48">
-              <div className="aspect-[2/3] relative overflow-hidden rounded-xl shadow-2xl shadow-primary/20">
-                <Image
-                  src={card.imageUrl || "/images/cards-placeholder.jpg"}
-                  alt={card.name}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-            </div>
-
-            {/* Card Info */}
-            <div className="text-center space-y-1">
-              <h3 className="text-2xl font-bold text-foreground">{card.name}</h3>
-              <p className="text-sm text-muted-foreground">
-                {card.keywords.slice(0, 3).join(" • ")}
-              </p>
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-              <Spade className="h-4 w-4 text-primary" />
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-            </div>
-
-            {/* AI Insight */}
-            <div className="text-center">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                Today&apos;s Prediction
-              </p>
-              {insightLoading ? (
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm">Consulting the cards...</span>
-                </div>
-              ) : insight ? (
-                <div className="text-sm leading-relaxed text-foreground/90 text-left space-y-1">
-                  {parseReadingText(insight)}
-                </div>
-              ) : (
-                <p className="text-sm leading-relaxed text-muted-foreground italic">
-                  {card.uprightMeaning}
-                </p>
-              )}
-            </div>
-
-            {/* CTA */}
-            <div className="pt-2">
-              <Link href="/read/new?spread=single-card" onClick={handleClose}>
-                <Button className="w-full gap-2" size="lg">
-                  Get Full Reading
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
+        {viewState === "draw" && renderDrawState()}
+        {viewState === "drawing" && renderDrawingState()}
+        {viewState === "result" && renderResultState()}
       </DialogContent>
     </Dialog>
   );
