@@ -68,7 +68,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   };
 
   const handleFollowUpKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleFollowUpSubmit();
     }
@@ -131,9 +131,16 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="flex items-center justify-end mb-4">
-          <Button variant="ghost" size="icon" onClick={handleCopy} aria-label="Copy reading">
-            {copyClicked ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-foreground">Lenormand Interpretation</span>
+            <span className={`text-xs ${isStreaming ? "text-primary" : "text-muted-foreground"}`}>
+              {isStreaming ? "Reading..." : "Complete"}
+            </span>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
+            {copyClicked ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">{copyClicked ? "Copied" : "Copy"}</span>
           </Button>
         </div>
 

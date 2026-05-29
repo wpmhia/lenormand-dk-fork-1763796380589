@@ -17,7 +17,13 @@ import { MemoizedCard } from "./Card";
 import { ReadingLayout } from "./reading/ReadingLayout";
 import { ReadingHeader } from "./reading/ReadingHeader";
 import { getPositionInfo } from "./reading/SpreadPositions";
-import { Clock, Target, Brain, Eye, Zap } from "lucide-react";
+import { Clock, Target, Brain, Eye, Zap, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ReadingViewerProps {
   reading: Reading;
@@ -145,73 +151,86 @@ export const ReadingViewer = memo(function ReadingViewer({
         </div>
       </div>
 
-      {selectedCard && (
-        <div className={`${disableAnimations ? '' : 'animate-in fade-in slide-in-from-bottom-8 duration-500'} rounded-lg border border-border bg-card p-xl shadow-elevation-1`}>
-          <h3 className="mb-lg text-xl font-semibold text-foreground">
-            Card Combinations
-          </h3>
-          <div className="space-y-md">
-            {(() => {
-              const readingCard = reading.cards.find(
-                (c) => c.id === selectedCard.id,
-              );
-              if (!readingCard) return null;
+      <Dialog open={!!selectedCard} onOpenChange={(open) => { if (!open) setSelectedCard(null); }}>
+        <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
+          {selectedCard && (() => {
+            const readingCard = reading.cards.find(
+              (c) => c.id === selectedCard.id,
+            );
+            const posInfo = spreadId ? getPositionInfo(readingCard?.position ?? 0, spreadId) : null;
 
-              const adjacentCards = getAdjacentCards(readingCard);
+            return (
+              <div className="space-y-4">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-xl">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                      {selectedCard.id}
+                    </span>
+                    {selectedCard.name}
+                  </DialogTitle>
+                </DialogHeader>
 
-              if (adjacentCards.length === 0) {
-                return (
-                  <div className="py-xl text-center text-muted-foreground/60">
-                    <p className="mb-md italic">
-                      No adjacent cards in this layout
-                    </p>
-                    <p className="text-sm">
-                      In larger spreads, this card would interact with nearby
-                      cards
-                    </p>
+                {posInfo && (
+                  <div className="rounded-lg bg-muted/50 p-3">
+                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{posInfo.label}</div>
+                    <div className="mt-0.5 text-sm text-foreground/80">{posInfo.meaning}</div>
                   </div>
-                );
-              }
+                )}
 
-              return adjacentCards.map((adjCard, index) => {
-                const card = getCardByIdMemo(adjCard.id);
-                if (!card) return null;
+                {readingCard && (() => {
+                  const adjacentCards = getAdjacentCards(readingCard);
+                  if (adjacentCards.length === 0) return null;
 
-                const combination = getCombinationMeaning(
-                  selectedCard,
-                  card,
-                  readingCard.position,
-                  adjCard.position,
-                );
-
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-md rounded-lg border border-border bg-card/50 p-md"
-                  >
-                    <div className="flex items-center gap-md">
-                      <MemoizedCard card={selectedCard} size="sm" />
-                      <span className="text-lg font-medium text-primary">
-                        +
-                      </span>
-                      <MemoizedCard card={card} size="sm" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="mb-sm font-medium text-muted-foreground">
-                        {selectedCard.name} + {card.name}
-                      </div>
-                      <div className="text-sm text-muted-foreground/80">
-                        {combination ||
-                          "These cards work together to create a unique meaning in your reading."}
+                  return (
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold text-foreground">Adjacent Combinations</h4>
+                      <div className="space-y-2">
+                        {adjacentCards.map((adjCard, index) => {
+                          const card = getCardByIdMemo(adjCard.id);
+                          if (!card) return null;
+                          const combination = getCombinationMeaning(selectedCard, card, readingCard.position, adjCard.position);
+                          return (
+                            <div key={index} className="flex items-center gap-2 rounded-lg border border-border bg-card/50 p-2.5">
+                              <div className="flex items-center gap-1.5">
+                                <MemoizedCard card={selectedCard} size="sm" />
+                                <span className="text-sm font-medium text-primary">+</span>
+                                <MemoizedCard card={card} size="sm" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-medium text-muted-foreground">{selectedCard.name} + {card.name}</div>
+                                <div className="text-xs text-muted-foreground/80 line-clamp-2">{combination || "These cards combine to create meaning in your reading."}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
+                  );
+                })()}
+
+                {selectedCard.keywords && selectedCard.keywords.length > 0 && (
+                  <div>
+                    <h4 className="mb-1.5 text-sm font-semibold text-foreground">Keywords</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedCard.keywords.slice(0, 5).map((kw) => (
+                        <span key={kw} className="rounded-md bg-primary/10 px-2 py-0.5 text-xs text-primary">{kw}</span>
+                      ))}
+                    </div>
                   </div>
-                );
-              });
-            })()}
-          </div>
-        </div>
-      )}
+                )}
+
+                <a
+                  href={`/learn/card-meanings/${selectedCard.id}`}
+                  className="block text-center text-sm text-primary hover:underline"
+                  onClick={() => setSelectedCard(null)}
+                >
+                  View full meaning of {selectedCard.name} →
+                </a>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 });

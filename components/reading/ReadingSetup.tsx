@@ -8,12 +8,12 @@ import { SpreadSelect, Spread } from "./SpreadSelect";
 import { MethodToggle } from "./MethodToggle";
 
 const SUGGESTED_QUESTIONS = [
-  "What guidance do the cards have for me today?",
-  "Will I find love soon?",
-  "How is my career developing?",
-  "What should I focus on this week?",
-  "What obstacles should I be aware of?",
-  "Is this the right path for me?",
+  "What is developing around this situation?",
+  "What should I know about this connection?",
+  "What is the likely next development?",
+  "What is influencing this matter now?",
+  "What practical action is shown?",
+  "What do the cards show about work or money?",
 ];
 
 interface ReadingSetupProps {
@@ -46,7 +46,7 @@ export function ReadingSetup({
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
           <Eye className="h-5 w-5" />
-          Your Sacred Question
+          Ask the Cards
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">

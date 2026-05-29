@@ -55,7 +55,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </span>
             </h1>
             <p className="mx-auto mb-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl">
-              Clear answers from the 36-card Lenormand system. AI-powered readings and learning.
+              Clear, practical readings from the 36-card Lenormand system. Combination-based readings, card meanings, and learning.
             </p>
 
             <div className="flex flex-col items-center gap-4 md:items-start">
@@ -108,7 +108,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             <div className="hero-image-cell flex min-h-[300px] items-center rounded-none bg-transparent p-0">
               <Image
                 src={heroImage}
-                alt="Mystical Lenormand cards arranged in a reading spread"
+                alt="Lenormand cards arranged in a traditional reading spread"
                 width={364}
                 height={500}
                 priority
@@ -120,19 +120,19 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         </div>
       </div>
 
-      {/* Reading Types */}
+      {/* Choose a Spread */}
       <div className="container-section px-4 py-16">
         <div className="relative mb-12 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 p-8 md:p-12">
           <div className="relative z-10 mb-8 text-center">
             <h2 className="relative mb-4 text-center text-4xl font-bold text-foreground">
-              Choose Your Reading Type
+              Choose a Spread
               <div className="absolute -bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
             </h2>
             <p className="mx-auto max-w-2xl text-center text-lg leading-relaxed text-muted-foreground">
               All spreads are free — from single card to Grand Tableau
             </p>
           </div>
-          <div className="grid items-stretch gap-6 sm:grid-cols-3">
+          <div className="grid items-stretch gap-6 sm:grid-cols-3 lg:grid-cols-5">
             <ReadingTypeCard
               icon={<Shield className="h-5 w-5 text-primary" />}
               title="Single Card"
@@ -154,35 +154,21 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               cardCount={5}
               spreadId="sentence-5"
             />
+            <ReadingTypeCard
+              icon={<BookOpen className="h-5 w-5 text-primary" />}
+              title="Petit Tableau"
+              description="9-card grid — deeper exploration"
+              cardCount={9}
+              spreadId="comprehensive"
+            />
+            <ReadingTypeCard
+              icon={<ArrowRight className="h-5 w-5 text-primary" />}
+              title="Grand Tableau"
+              description="All 36 cards"
+              cardCount={36}
+              spreadId="grand-tableau"
+            />
           </div>
-        </div>
-      </div>
-
-      {/* All Spreads Available */}
-      <div className="container-section bg-gradient-to-b from-background via-primary/5 to-background px-4 py-16">
-        <div className="relative mb-12 text-center">
-          <h2 className="mb-4 text-4xl font-bold text-foreground">
-            All Spreads Available
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            From single card to Grand Tableau
-          </p>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2">
-          <ReadingTypeCard
-            icon={<BookOpen className="h-5 w-5 text-primary" />}
-            title="9-Card Comprehensive"
-            description="Deep dive into complex situations"
-            cardCount={9}
-            spreadId="comprehensive"
-          />
-          <ReadingTypeCard
-            icon={<ArrowRight className="h-5 w-5 text-primary" />}
-            title="Grand Tableau"
-            description="All 36 cards"
-            cardCount={36}
-            spreadId="grand-tableau"
-          />
         </div>
       </div>
 
