@@ -12,39 +12,57 @@ import { Search } from "lucide-react";
 const CARD_CATEGORIES = {
   people: [
     "Rider",
-    "Gentleman",
-    "Lady",
-    "Lily",
+    "Man",
+    "Woman",
     "Child",
-    "Bear",
     "Fox",
+    "Bear",
     "Dog",
     "Stork",
     "Snake",
+    "Lily",
   ],
-  emotions: [
-    "Heart",
-    "Bouquet",
-    "Sun",
-    "Clouds",
+  messages: [
+    "Rider",
+    "Letter",
+    "Book",
+    "Birds",
     "Stars",
-    "Mice",
-    "Coffin",
-    "Ring",
-  ],
-  objects: [
-    "Clover",
-    "Ship",
-    "House",
-    "Tree",
-    "Mountain",
-    "Paths",
-    "Garden",
-    "Bouquet",
     "Key",
   ],
-  events: ["Ship", "Mountain", "Paths", "Rider", "Letter", "Whip", "Birds"],
-  nature: ["Tree", "Clover", "House", "Mountain", "Stork", "Dog"],
+  home: [
+    "House",
+    "Garden",
+    "Tree",
+    "Ship",
+    "Stork",
+    "Bouquet",
+    "Dog",
+  ],
+  relationships: [
+    "Heart",
+    "Ring",
+    "Bouquet",
+    "Lily",
+    "Birds",
+    "Woman",
+    "Man",
+  ],
+  work: ["Anchor", "Fish", "Key", "Fox", "Bear", "Garden"],
+  challenges: [
+    "Clouds",
+    "Mountain",
+    "Paths",
+    "Snake",
+    "Fox",
+    "Mice",
+    "Whip",
+    "Scythe",
+    "Coffin",
+    "Tower",
+    "Cross",
+  ],
+  health: ["Tree", "Coffin", "Stork", "Child", "Mice", "Cross"],
 };
 
 export default function CardsClient({
@@ -168,10 +186,12 @@ export default function CardsClient({
         >
           <option value="all">All Categories</option>
           <option value="people">People</option>
-          <option value="emotions">Emotions</option>
-          <option value="objects">Objects</option>
-          <option value="events">Events</option>
-          <option value="nature">Nature</option>
+          <option value="messages">Messages & Movement</option>
+          <option value="home">Home & Places</option>
+          <option value="relationships">Relationships</option>
+          <option value="work">Work & Money</option>
+          <option value="challenges">Challenges</option>
+          <option value="health">Health & Body</option>
         </select>
         <div className="flex gap-2">
           <Button
