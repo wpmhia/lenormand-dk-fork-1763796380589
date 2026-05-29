@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
+import Link from "next/link";
 import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
 import { parseReadingText } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
@@ -139,6 +140,9 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-foreground">Lenormand Interpretation</span>
+          <Link href="/how-readings-work" className="text-xs text-muted-foreground/60 hover:text-primary transition-colors">
+            How this reading was made
+          </Link>
             <span className={`text-xs ${isStreaming ? "text-primary" : "text-muted-foreground"}`}>
               {isStreaming ? "Reading..." : "Complete"}
             </span>

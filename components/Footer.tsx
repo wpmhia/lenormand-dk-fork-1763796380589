@@ -64,11 +64,16 @@ export function Footer() {
                   Support
                 </Link>
               </li>
-              <li>
-                <Link href="/privacy" className="text-muted-foreground transition-colors hover:text-primary">
-                  Privacy
-                </Link>
-              </li>
+               <li>
+                 <Link href="/how-readings-work" className="text-muted-foreground transition-colors hover:text-primary">
+                   How readings work
+                 </Link>
+               </li>
+               <li>
+                 <Link href="/privacy" className="text-muted-foreground transition-colors hover:text-primary">
+                   Privacy
+                 </Link>
+               </li>
               <li>
                 <Link href="/terms" className="text-muted-foreground transition-colors hover:text-primary">
                   Terms
