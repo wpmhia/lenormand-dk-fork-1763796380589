@@ -239,6 +239,31 @@ describe("prompt quality: Grand Tableau", () => {
   });
 });
 
+describe("prompt quality: Grand Tableau significator preference", () => {
+  const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+
+  it("shows selected significator: Woman when preference is woman", () => {
+    const ctx = buildReadingContext("grand-tableau", question, normalized(allIds), cardsMap, "woman");
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toMatch(/Selected significator: Woman/i);
+    expect(prompt).toMatch(/Primary significator.*Woman.*Read the Tableau primarily around this card/i);
+  });
+
+  it("shows selected significator: Man when preference is man", () => {
+    const ctx = buildReadingContext("grand-tableau", question, normalized(allIds), cardsMap, "man");
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toMatch(/Selected significator: Man/i);
+    expect(prompt).toMatch(/Primary significator.*Man.*Read the Tableau primarily around this card/i);
+  });
+
+  it("shows both when preference is both or not specified", () => {
+    const ctx = buildReadingContext("grand-tableau", question, normalized(allIds), cardsMap);
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
+    expect(prompt).not.toMatch(/Primary significator/i);
+  });
+});
+
 describe("system prompt purity", () => {
   it("explicitly says not a Tarot reader", () => {
     const sp = buildSystemPrompt(1);

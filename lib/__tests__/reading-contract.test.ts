@@ -146,6 +146,33 @@ describe("normalizeReadingRequest", () => {
     });
   });
 
+  describe("significatorPreference", () => {
+    it("defaults to 'both' when not provided", () => {
+      const result = normalizeReadingRequest(validBody(), cardsMap);
+      expect(result.significatorPreference).toBe("both");
+    });
+
+    it("accepts 'woman'", () => {
+      const result = normalizeReadingRequest(validBody({ significatorPreference: "woman" }), cardsMap);
+      expect(result.significatorPreference).toBe("woman");
+    });
+
+    it("accepts 'man'", () => {
+      const result = normalizeReadingRequest(validBody({ significatorPreference: "man" }), cardsMap);
+      expect(result.significatorPreference).toBe("man");
+    });
+
+    it("accepts 'both'", () => {
+      const result = normalizeReadingRequest(validBody({ significatorPreference: "both" }), cardsMap);
+      expect(result.significatorPreference).toBe("both");
+    });
+
+    it("rejects invalid value and defaults to 'both'", () => {
+      const result = normalizeReadingRequest(validBody({ significatorPreference: "cat" }), cardsMap);
+      expect(result.significatorPreference).toBe("both");
+    });
+  });
+
   describe("comboHints", () => {
     it("builds empty comboHints for single-card spread", () => {
       const body = validBody({ spreadId: "single-card", cards: [{ id: 1, name: "", position: 0 }] });
