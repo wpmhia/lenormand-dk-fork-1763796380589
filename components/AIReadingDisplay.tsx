@@ -152,6 +152,10 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
           )}
         </div>
 
+        {!isStreaming && aiReading?.reading && (
+          <FeedbackButtons reading={aiReading.reading} />
+        )}
+
         {!isStreaming && !followUpResponse && (
           <div className="mt-8 pt-6 border-t border-border/50">
             {!showFollowUpInput ? (
@@ -229,3 +233,75 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
     </Card>
   );
 });
+
+const FEEDBACK_KEY = "lenormand-reading-feedback";
+const FEEDBACK_OPTIONS = [
+  { value: "useful", label: "Useful" },
+  { value: "felt_accurate", label: "Felt accurate" },
+  { value: "too_vague", label: "Too vague" },
+  { value: "did_not_fit", label: "Did not fit" },
+] as const;
+
+function getStoredFeedbackIds(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(FEEDBACK_KEY);
+    if (!raw) return new Set();
+    const items = JSON.parse(raw);
+    return new Set(items.map((i: { id: string }) => i.id));
+  } catch {
+    return new Set();
+  }
+}
+
+function storeFeedback(id: string, rating: string) {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = localStorage.getItem(FEEDBACK_KEY);
+    const items = raw ? JSON.parse(raw) : [];
+    items.push({ id, rating, createdAt: new Date().toISOString() });
+    if (items.length > 100) items.splice(0, items.length - 100);
+    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(items));
+  } catch {
+    // Storage unavailable
+  }
+}
+
+function FeedbackButtons({ reading }: { reading: string }) {
+  const [submitted, setSubmitted] = useState(false);
+  const readingId = useRef(Math.random().toString(36).slice(2, 10));
+
+  const alreadySubmitted = getStoredFeedbackIds().has(readingId.current);
+  if (alreadySubmitted || submitted) {
+    return (
+      <div className="mt-6 pt-4 border-t border-border/50">
+        <p className="text-xs text-muted-foreground text-center">
+          Thanks for your feedback
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6 pt-4 border-t border-border/50">
+      <p className="text-xs text-muted-foreground text-center mb-3">
+        Was this reading helpful?
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        {FEEDBACK_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => {
+              storeFeedback(readingId.current, opt.value);
+              setSubmitted(true);
+            }}
+            className="rounded-full border border-border bg-muted/50 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
