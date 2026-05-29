@@ -11,91 +11,29 @@ import {
   Ship,
   Club,
 } from "lucide-react";
+import { SPREAD_DEFINITIONS, type SpreadDefinition } from "@/lib/spread-definitions";
 
 export interface PositionInfo {
   label: string;
   meaning: string;
 }
 
-const SPREAD_POSITIONS: Record<string, Record<number, PositionInfo>> = {
-  "sentence-3": {
-    0: {
-      label: "Opening Card",
-      meaning:
-        "The subject or starting point of the situation",
-    },
-    1: {
-      label: "Central Card",
-      meaning:
-        "The core action, challenge, or turning point",
-    },
-    2: {
-      label: "Closing Card",
-      meaning:
-        "The outcome or resolution; check the mirror relationship with the central card",
-    },
-  },
-  "sentence-5": {
-    0: {
-      label: "Subject",
-      meaning: "Who or what the reading is about - the main person or situation",
-    },
-    1: {
-      label: "Action",
-      meaning: "What is happening, being done, or influencing the subject",
-    },
-    2: {
-      label: "Focus",
-      meaning: "The heart of the matter - the central action or key event",
-    },
-    3: {
-      label: "Development",
-      meaning: "How the situation unfolds or what comes next",
-    },
-    4: {
-      label: "Outcome",
-      meaning: "Where this leads - the result or conclusion",
-    },
-  },
-  comprehensive: {
-    0: {
-      label: "Upper Line",
-      meaning: "Context line — read with cards 1+2 and 2+3 as a Lenormand sentence",
-    },
-    1: {
-      label: "Upper Line",
-      meaning: "Context line — part of the upper grid sentence with adjacent cards",
-    },
-    2: {
-      label: "Upper Line",
-      meaning: "Context line — completes the upper row",
-    },
-    3: {
-      label: "Middle Line",
-      meaning: "Main line — read with the center card and adjacent cards",
-    },
-    4: {
-      label: "Heart of the Matter",
-      meaning: "Center card — the focal point of the Petit Tableau grid",
-    },
-    5: {
-      label: "Middle Line",
-      meaning: "Main line — modifies or develops the center card's meaning",
-    },
-    6: {
-      label: "Lower Line",
-      meaning: "Underlying line — read with cards 7+8 and 8+9 as a Lenormand sentence",
-    },
-    7: {
-      label: "Lower Line",
-      meaning: "Underlying line — part of the lower grid sentence",
-    },
-    8: {
-      label: "Lower Line",
-      meaning: "Underlying line — completes the lower row",
-    },
-  },
-};
+function buildSpreadPositions(): Record<string, Record<number, PositionInfo>> {
+  const result: Record<string, Record<number, PositionInfo>> = {};
+  const entries = Object.entries(SPREAD_DEFINITIONS) as [string, SpreadDefinition][];
+  for (const [id, def] of entries) {
+    if (def.positions) {
+      const posMap: Record<number, PositionInfo> = {};
+      for (const p of def.positions) {
+        posMap[p.index] = { label: p.label, meaning: p.meaning };
+      }
+      result[id] = posMap;
+    }
+  }
+  return result;
+}
+
+const SPREAD_POSITIONS = buildSpreadPositions();
 
 export const getPositionInfo = (position: number, spreadId?: string): PositionInfo => {
   if (spreadId && SPREAD_POSITIONS[spreadId]) {
