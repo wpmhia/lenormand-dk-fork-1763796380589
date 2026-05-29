@@ -88,34 +88,34 @@ export const DIRECTIONAL_ZONES: Record<string, DirectionalZone> = {
     color: "text-blue-600",
   },
   above: {
-    name: "Conscious",
-    description: "Cards above the significator represent thoughts and ideas",
+    name: "Visible",
+    description: "Cards above the significator represent visible or known influences",
     color: "text-purple-600",
   },
   below: {
-    name: "Unconscious",
-    description: "Cards below the significator represent unconscious forces",
+    name: "Hidden",
+    description: "Cards below the significator represent hidden or underlying influences",
     color: "text-emerald-600",
   },
   "top-left": {
-    name: "Conscious Influences",
+    name: "Visible Influences",
     description:
-      "Top-left diagonal - conscious forces influencing the situation",
+      "Top-left diagonal — visible or known forces influencing the situation",
     color: "text-violet-600",
   },
   "bottom-left": {
-    name: "Unconscious Influences",
-    description: "Bottom-left diagonal - hidden influences from the past",
+    name: "Hidden Influences",
+    description: "Bottom-left diagonal — hidden or underlying influences",
     color: "text-teal-600",
   },
   "top-right": {
-    name: "Conscious Possibilities",
-    description: "Top-right diagonal - potential outcomes you're aware of",
+    name: "Visible Possibilities",
+    description: "Top-right diagonal — potential outcomes that are becoming visible",
     color: "text-indigo-600",
   },
   "bottom-right": {
-    name: "Unconscious Possibilities",
-    description: "Bottom-right diagonal - hidden potential outcomes",
+    name: "Hidden Possibilities",
+    description: "Bottom-right diagonal — potential outcomes still hidden",
     color: "text-cyan-600",
   },
 };
