@@ -26,17 +26,15 @@ export async function GET() {
         },
       }
     );
-  } catch {
+  } catch (err) {
+    console.error("Reading count unavailable, returning 0:", err);
     return new Response(
-      JSON.stringify({
-        error: "Counter unavailable",
-        count: 0,
-        formatted: "0",
-      }),
+      JSON.stringify({ count: 0, formatted: "0" }),
       {
-        status: 503,
+        status: 200,
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "private, no-cache, no-store",
           ...corsHeaders,
         },
       }
