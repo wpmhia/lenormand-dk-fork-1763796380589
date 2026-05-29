@@ -1,6 +1,7 @@
 "use client";
 
-import { Laptop, Heart, ArrowRight } from "lucide-react";
+import { Laptop, Heart } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface MethodToggleProps {
   value: "virtual" | "physical" | null;
@@ -10,23 +11,23 @@ interface MethodToggleProps {
 }
 
 export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
+  const methodLabel = value === "virtual" ? "Continue with Virtual Deck" : value === "physical" ? "Continue with Physical Cards" : null;
+
   return (
     <div className="space-y-4">
       <div className="text-sm font-medium text-foreground">
         Choose your method:
       </div>
-      
-      {/* Method Cards - single click to proceed */}
+
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => { onChange?.("virtual"); onContinue("virtual"); }}
+          onClick={() => onChange("virtual")}
           disabled={disabled}
-          className={`group flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
+          className={`flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
         >
           <div className="flex w-full items-center justify-between">
             <Laptop className="h-5 w-5 text-primary" />
-            <ArrowRight className="h-4 w-4 text-muted-foreground transition-opacity group-hover:opacity-100 group-active:opacity-100 sm:opacity-0" />
           </div>
           <div>
             <div className="font-medium text-foreground">Virtual Deck</div>
@@ -35,16 +36,15 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
             </div>
           </div>
         </button>
-        
+
         <button
           type="button"
-          onClick={() => { onChange?.("physical"); onContinue("physical"); }}
+          onClick={() => onChange("physical")}
           disabled={disabled}
-          className={`group flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
+          className={`flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
         >
           <div className="flex w-full items-center justify-between">
             <Heart className="h-5 w-5 text-primary" />
-            <ArrowRight className="h-4 w-4 text-muted-foreground transition-opacity group-hover:opacity-100 group-active:opacity-100 sm:opacity-0" />
           </div>
           <div>
             <div className="font-medium text-foreground">Physical Cards</div>
@@ -54,6 +54,16 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
           </div>
         </button>
       </div>
+
+      <Button
+        type="button"
+        onClick={() => value && onContinue(value)}
+        disabled={!value || disabled}
+        className="w-full"
+        size="lg"
+      >
+        {methodLabel || "Select a method"}
+      </Button>
     </div>
   );
 }
