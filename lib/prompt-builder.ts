@@ -54,40 +54,65 @@ ${isSingleCard
 Be concrete and specific. Name the relevant card pairs.
 
 Formatting rules:
-- Use ## headings only.
-- Use plain paragraphs and one-level bullet lists.
+- Use exactly the required headings. Do not rename, add, or omit headings.
+- Do not write text before the first heading.
+- Use one-level bullet lists only.
 - Bold card pairs and labels with ** **.
-- No tables, HTML, nested bullets, emojis, or raw JSON.`;
+- No tables, HTML, nested bullets, emojis, or raw JSON.
+- If timing is not clearly supported, write: **Likely timing:** Not clearly shown by these cards.`;
 }
+
+const OUTPUT_RULES = "Do not rename, add, or omit headings. Do not write text before the first heading. If no strong combination exists, still include ## Key combinations and explain the best available adjacent pair.";
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
   "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence.
 
-Output:
+Output (exactly these sections):
+
 ## Reading
+
 ## Key combinations
-## Prediction`,
+
+## Prediction
+
+${OUTPUT_RULES}`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line.
 
-Output:
+Output (exactly these sections):
+
 ## Reading
+
 ## Key combinations
-## Prediction`,
+
+## Prediction
+
+${OUTPUT_RULES}`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau. Use center, middle line, rows, columns, diagonals, and adjacent combinations.
 
-Output:
+Output (exactly these sections):
+
 ## Reading
+
 ## Key combinations
-## Prediction`,
+
+## Prediction
+
+${OUTPUT_RULES}`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method. Focus on significator, surrounding pairs, directional zones, mirroring, corners, houses.
 
-Output:
+Output (exactly these sections):
+
 ## Grand Tableau overview
+
 ## Around the significator
+
 ## Houses and mirrors
-## Prediction`,
+
+## Prediction
+
+${OUTPUT_RULES}`,
 };
 
 /** @deprecated Use buildPromptFromContext instead. This legacy function generates prompts from flat card lists. */
@@ -173,18 +198,21 @@ function formatPetitTableau(
     "",
     fmtAdjacentPairs(adjacentPairs),
     "",
-    "Output:",
+    "Output (exactly these sections):",
+    "",
     "## Reading",
+    "",
     "## Key combinations",
+    "",
     "## Prediction",
     "",
-    "Inside Prediction, use bold labels:",
+    "Inside ## Prediction, use exactly these bold labels in this order:",
     "**Most likely development:** ...",
-    "**Likely timing:** ...",
+    "**Likely timing:** ... (or: Not clearly shown by these cards)",
     "**Observable sign:** ...",
     "**Practical action:** ...",
     "",
-    "Use ## headings only. Plain paragraphs and one-level bullet lists. Bold card pairs and labels. No tables, HTML, nested bullets, emojis, or raw JSON.",
+    "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
 
   return parts.join("\n");
@@ -310,19 +338,23 @@ function formatGrandTableau(
 
   parts.push(
     "",
-    "Output:",
+    "Output (exactly these sections):",
+    "",
     "## Grand Tableau overview",
+    "",
     "## Around the significator",
+    "",
     "## Houses and mirrors",
+    "",
     "## Prediction",
     "",
-    "Inside Prediction, use bold labels:",
+    "Inside ## Prediction, use exactly these bold labels in this order:",
     "**Most likely development:** ...",
-    "**Likely timing:** ...",
+    "**Likely timing:** ... (or: Not clearly shown by these cards)",
     "**Observable sign:** ...",
     "**Practical action:** ...",
     "",
-    "Use ## headings only. Plain paragraphs and one-level bullet lists. Bold card pairs and labels. No tables, HTML, nested bullets, emojis, or raw JSON.",
+    "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );
 
   return parts.join("\n");

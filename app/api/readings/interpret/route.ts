@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       model: mistral("mistral-small-latest"),
       system: buildSystemPrompt(cardCount),
       prompt,
-      temperature: 0.75,
+      temperature: 0.2,
       maxOutputTokens: maxTokens,
       abortSignal: abortController.signal,
     });
