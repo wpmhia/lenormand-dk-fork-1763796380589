@@ -139,7 +139,7 @@ export function GrandTableauLayout({
                 className={hideCardsDuringTransition ? "opacity-0" : undefined}
               >
                 <MemoizedAnimatedCard
-                  delay={index * 0.08}
+                  delay={index * 0.03}
                   className={`flex flex-col items-center space-y-sm rounded-lg border-2 p-sm transition-all ${
                     isSignificator ? "bg-amber-50 dark:bg-amber-950/30" : ""
                   } ${borderClass}`}

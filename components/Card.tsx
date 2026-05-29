@@ -13,6 +13,7 @@ interface CardProps {
   size?: "sm" | "md" | "lg";
   className?: string;
   selected?: boolean;
+  priority?: boolean;
 }
 
 const sizeClasses: Record<string, string> = {
@@ -34,6 +35,7 @@ function CardInner({
   size = "md",
   className,
   selected = false,
+  priority = false,
 }: CardProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -110,8 +112,8 @@ function CardInner({
               isLoaded ? "opacity-100" : "opacity-0"
             )}
             sizes={sizeToPixels[size]}
-            loading={size === "sm" ? "lazy" : "eager"}
-            priority={size !== "sm"}
+            loading={priority ? "eager" : "lazy"}
+            priority={priority}
             onLoad={() => setIsLoaded(true)}
           />
         </div>
