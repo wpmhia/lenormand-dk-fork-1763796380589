@@ -62,12 +62,12 @@ Formatting rules:
 - If timing is not clearly supported, write: **Likely timing:** Not clearly shown by these cards.`;
 }
 
-const OUTPUT_RULES = "Do not rename, add, or omit headings. Do not write text before the first heading. If no strong combination exists, still include ## Key combinations and explain the best available adjacent pair.";
+const OUTPUT_RULES = "Do not rename, add, or omit headings. Do not write text before the first heading. If no strong combination exists, still include ## Key combinations and explain the available adjacent pairs.";
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence.
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. List both adjacent pairs in the Key combinations section, explaining the meaning of each.
 
 Output (exactly these sections):
 
@@ -78,7 +78,7 @@ Output (exactly these sections):
 ## Prediction
 
 ${OUTPUT_RULES}`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line.
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. List all four adjacent pairs in the Key combinations section, explaining the meaning of each pair.
 
 Output (exactly these sections):
 
