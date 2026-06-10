@@ -48,10 +48,10 @@ Do not add cards that were not drawn. Use timing only when supported by the card
 
 ${isSingleCard
   ? `Read this card alone. Do NOT pair it with any other card.`
-  : `Multi-card readings are read through combinations, lines, houses, and surrounding cards. Do not interpret cards as isolated symbolic messages.`
-}
+  : `Multi-card readings are read through combinations, lines, houses, and surrounding cards. Do not interpret cards as isolated symbolic messages.
 
-Be concrete and specific. Name the relevant card pairs.
+Be concrete and specific. Name the relevant card pairs.`
+}
 
 Formatting rules:
 - Use exactly the required headings. Do not rename, add, or omit headings.

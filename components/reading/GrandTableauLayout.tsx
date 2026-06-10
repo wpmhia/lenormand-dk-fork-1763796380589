@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { MemoizedAnimatedCard } from "@/components/AnimatedCard";
 import { CardCell } from "./CardCell";
-import { getZoneIcon } from "./SpreadPositions";
+import { getZoneIcon, getTopicIcon } from "./SpreadPositions";
 import {
   Clock,
   Target,
@@ -179,7 +179,7 @@ export function GrandTableauLayout({
 
                   {showAdvancedAnalysis && topicInfo && (
                     <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
-                      {getZoneIcon(topicInfo.type)}
+                      {getTopicIcon(topicInfo.type)}
                       <span>{topicInfo.label}</span>
                     </div>
                   )}
@@ -238,7 +238,7 @@ export function GrandTableauLayout({
                     cardElement?.scrollIntoView({ behavior: "smooth", block: "center" });
                   }}
                 >
-                  {getZoneIcon(tc.topic.type)}
+                  {getTopicIcon(tc.topic.type)}
                   <div>
                     <div className="text-xs font-medium">{card.name}</div>
                     <div className="text-[10px] text-muted-foreground">{tc.topic.label}</div>
