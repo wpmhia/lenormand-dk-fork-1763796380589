@@ -10,6 +10,11 @@ import {
   Fish,
   Ship,
   Club,
+  Clock,
+  Target,
+  Brain,
+  Eye,
+  Zap,
 } from "lucide-react";
 import { SPREAD_DEFINITIONS, type SpreadDefinition } from "@/lib/spread-definitions";
 
@@ -74,20 +79,21 @@ export const getTopicIcon = (type: string) => {
 };
 
 export const getZoneIcon = (zone: string) => {
+  const className = "h-3 w-3";
   switch (zone) {
     case "left":
-      return "Clock";
+      return <Clock className={className} />;
     case "right":
-      return "Target";
+      return <Target className={className} />;
     case "above":
-      return "Brain";
+      return <Brain className={className} />;
     case "below":
-      return "Eye";
+      return <Eye className={className} />;
     case "top-left":
     case "top-right":
     case "bottom-left":
     case "bottom-right":
-      return "Zap";
+      return <Zap className={className} />;
     default:
       return null;
   }
