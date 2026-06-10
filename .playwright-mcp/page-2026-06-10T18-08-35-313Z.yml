@@ -1,0 +1,191 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "New Lenormand Reading" [level=1] [ref=e38]: New Lenormand Reading
+          - paragraph [ref=e40]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e41]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: "1"
+              - generic [ref=e45]: Setup
+            - generic [ref=e48]:
+              - generic [ref=e49]: "2"
+              - generic [ref=e50]: Draw
+            - generic [ref=e53]:
+              - generic [ref=e54]: "3"
+              - generic [ref=e55]: Reading & AI Insights
+          - button "Back to Card Entry" [ref=e198] [cursor=pointer]:
+            - img [ref=e171]
+            - text: Back to Card Entry
+        - generic [ref=e199]:
+          - generic [ref=e200]:
+            - generic [ref=e203]: 5 Cards
+            - generic [ref=e205]:
+              - heading "Your Cards" [level=3] [ref=e206]
+              - generic [ref=e207]:
+                - generic [ref=e210]:
+                  - generic [ref=e211]: Subject
+                  - generic [ref=e212] [cursor=pointer]:
+                    - button "Fox card. Click to select" [ref=e213]:
+                      - img "Fox" [ref=e215]
+                    - generic [ref=e216]:
+                      - generic [ref=e217]: Fox
+                      - generic [ref=e218]: "#14"
+                - generic [ref=e221]:
+                  - generic [ref=e222]: Action
+                  - generic [ref=e223] [cursor=pointer]:
+                    - button "Sun card. Click to select" [ref=e224]:
+                      - img "Sun" [ref=e226]
+                    - generic [ref=e227]:
+                      - generic [ref=e228]: Sun
+                      - generic [ref=e229]: "#31"
+                - generic [ref=e232]:
+                  - generic [ref=e233]: Focus
+                  - generic [ref=e234] [cursor=pointer]:
+                    - button "Man card. Click to select" [ref=e235]:
+                      - img "Man" [ref=e237]
+                    - generic [ref=e238]:
+                      - generic [ref=e239]: Man
+                      - generic [ref=e240]: "#28"
+                - generic [ref=e243]:
+                  - generic [ref=e244]: Development
+                  - generic [ref=e245] [cursor=pointer]:
+                    - button "House card. Click to select" [ref=e246]:
+                      - img "House" [ref=e248]
+                    - generic [ref=e249]:
+                      - generic [ref=e250]: House
+                      - generic [ref=e251]: "#4"
+                - generic [ref=e254]:
+                  - generic [ref=e255]: Outcome
+                  - generic [ref=e256] [cursor=pointer]:
+                    - button "Stork card. Click to select" [ref=e257]:
+                      - img "Stork" [ref=e259]
+                    - generic [ref=e260]:
+                      - generic [ref=e261]: Stork
+                      - generic [ref=e262]: "#17"
+          - generic [ref=e264]:
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - generic [ref=e267]: Lenormand Interpretation
+                - link "How this reading was made" [ref=e268] [cursor=pointer]:
+                  - /url: /how-readings-work
+              - button "Copy" [ref=e270] [cursor=pointer]:
+                - img [ref=e271]
+                - generic [ref=e274]: Copy
+            - generic [ref=e276]:
+              - heading "Reading" [level=2] [ref=e277]
+              - heading "Key combinations" [level=2] [ref=e278]
+              - paragraph [ref=e279]:
+                - text: "-"
+                - strong [ref=e280]: Fox + Sun
+                - text: ": Cunning success, strategic victory, intelligent achievement"
+              - paragraph [ref=e281]:
+                - text: "-"
+                - strong [ref=e282]: House + Stork
+                - text: ": Family change, home transition, domestic movement"
+              - heading "Prediction" [level=2] [ref=e283]
+              - paragraph [ref=e284]:
+                - text: Your career path shows
+                - strong [ref=e285]: Fox + Sun
+                - text: in the near future (1-3 weeks), indicating a period of intelligent planning leading to success. You may use strategy or cleverness to achieve a goal, resulting in a satisfying outcome.
+              - paragraph [ref=e286]:
+                - text: The
+                - strong [ref=e287]: House + Stork
+                - text: combination suggests a possible change tied to home or family that could influence your work. This might involve relocating, adjusting domestic responsibilities, or a shift in household dynamics that indirectly supports your career progress.
+              - paragraph [ref=e292]:
+                - strong [ref=e293]: "Likely timing:"
+                - text: Near future (1-3 weeks)
+            - generic [ref=e294]:
+              - paragraph [ref=e295]: Was this reading helpful?
+              - generic [ref=e296]:
+                - button "Useful" [ref=e297] [cursor=pointer]
+                - button "Felt accurate" [ref=e298] [cursor=pointer]
+                - button "Too vague" [ref=e299] [cursor=pointer]
+                - button "Did not fit" [ref=e300] [cursor=pointer]
+            - button "Ask a follow-up" [ref=e302] [cursor=pointer]:
+              - img [ref=e303]
+              - text: Ask a follow-up
+          - button "Start New Reading" [ref=e289] [cursor=pointer]:
+            - img [ref=e290]
+            - text: Start New Reading
+    - contentinfo [ref=e97]:
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - link "Lenormand" [ref=e101] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e102]
+            - paragraph [ref=e103]: AI-Enhanced Divination
+          - generic [ref=e104]:
+            - heading "Explore" [level=4] [ref=e105]
+            - list [ref=e106]:
+              - listitem [ref=e107]:
+                - link "Home" [ref=e108] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e109]:
+                - link "Reading" [ref=e110] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e111]:
+                - link "History" [ref=e112] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e113]:
+                - link "Cards" [ref=e114] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e115]:
+                - link "Learn" [ref=e116] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e117]:
+            - heading "Links" [level=4] [ref=e118]
+            - list [ref=e119]:
+              - listitem [ref=e120]:
+                - link "About" [ref=e121] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e122]:
+                - link "Support" [ref=e123] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e124]:
+                - link "How readings work" [ref=e125] [cursor=pointer]:
+                  - /url: /how-readings-work
+              - listitem [ref=e126]:
+                - link "Privacy" [ref=e127] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e128]:
+                - link "Terms" [ref=e129] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e131]:
+          - text: Made by
+          - link "Humanstack" [ref=e132] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e133]

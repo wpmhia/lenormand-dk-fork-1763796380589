@@ -1,0 +1,178 @@
+- generic:
+  - link:
+    - /url: "#main-content"
+    - text: Skip to main content
+  - generic:
+    - banner:
+      - generic:
+        - generic:
+          - link:
+            - /url: /
+            - generic: Lenormand
+            - generic: Intelligence
+        - navigation:
+          - link:
+            - /url: /
+            - img
+            - generic: Home
+          - link:
+            - /url: /learn
+            - img
+            - generic: Learn
+          - link:
+            - /url: /cards
+            - img
+            - generic: Cards
+          - link:
+            - /url: /read/new?reset=true
+            - img
+            - generic: New Reading
+          - link:
+            - /url: /history
+            - img
+            - generic: History
+    - main:
+      - generic:
+        - generic:
+          - generic:
+            - heading [level=1]: New Lenormand Reading
+            - paragraph: Let the ancient cards reveal what your heart already knows
+            - progressbar:
+              - generic:
+                - generic:
+                  - generic: "1"
+                  - generic: Setup
+              - generic:
+                - generic:
+                  - generic: "2"
+                  - generic: Draw
+              - generic:
+                - generic:
+                  - generic: "3"
+                  - generic: Reading & AI Insights
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=3]:
+                  - img
+                  - text: Ask the Cards
+              - generic:
+                - generic:
+                  - text: Your Question
+                  - textbox:
+                    - /placeholder: What guidance do the cards have for me today?
+                  - generic: 0/500 characters
+                - generic:
+                  - paragraph: "Try one of these:"
+                  - generic:
+                    - button: What is developing around this situation?
+                    - button: What should I know about this connection?
+                    - button: What is the likely next development?
+                    - button: What is influencing this matter now?
+                    - button: What practical action is shown?
+                    - button: What do the cards show about work or money?
+                - generic:
+                  - text: "Choose Your Spread:"
+                  - combobox [expanded]:
+                    - generic: 3-Card Sentence
+                    - img
+                - generic:
+                  - generic: "Choose your method:"
+                  - generic:
+                    - button:
+                      - generic:
+                        - img
+                      - generic:
+                        - generic: Virtual Deck
+                        - generic: Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+                    - button:
+                      - generic:
+                        - img
+                      - generic:
+                        - generic: Physical Cards
+                        - generic: Use when you've already drawn cards from your physical Lenormand deck and want the AI interpretation.
+                  - button [disabled]: Select a method
+    - contentinfo:
+      - generic:
+        - generic:
+          - generic:
+            - link:
+              - /url: /
+              - heading [level=3]: Lenormand
+            - paragraph: AI-Enhanced Divination
+          - generic:
+            - heading [level=4]: Explore
+            - list:
+              - listitem:
+                - link:
+                  - /url: /
+                  - text: Home
+              - listitem:
+                - link:
+                  - /url: /read/new
+                  - text: Reading
+              - listitem:
+                - link:
+                  - /url: /history
+                  - text: History
+              - listitem:
+                - link:
+                  - /url: /cards
+                  - text: Cards
+              - listitem:
+                - link:
+                  - /url: /learn
+                  - text: Learn
+          - generic:
+            - heading [level=4]: Links
+            - list:
+              - listitem:
+                - link:
+                  - /url: /about
+                  - text: About
+              - listitem:
+                - link:
+                  - /url: /support
+                  - text: Support
+              - listitem:
+                - link:
+                  - /url: /how-readings-work
+                  - text: How readings work
+              - listitem:
+                - link:
+                  - /url: /privacy
+                  - text: Privacy
+              - listitem:
+                - link:
+                  - /url: /terms
+                  - text: Terms
+        - generic:
+          - paragraph:
+            - text: Made by
+            - link:
+              - /url: https://humanstack.dk
+              - text: Humanstack
+  - list
+  - alert
+  - listbox [ref=e134]:
+    - option "Single Card 1 cards • Quick daily guidance - direct answer, immediate action" [ref=e135]:
+      - generic [ref=e138]:
+        - generic [ref=e139]: Single Card
+        - generic [ref=e140]: 1 cards • Quick daily guidance - direct answer, immediate action
+    - option "3-Card Sentence 3 cards • Opening, turning point, and outcome with timing and action guidance" [active] [selected] [ref=e141]:
+      - img [ref=e144]
+      - generic [ref=e147]:
+        - generic [ref=e148]: 3-Card Sentence
+        - generic [ref=e149]: 3 cards • Opening, turning point, and outcome with timing and action guidance
+    - option "5-Card Sentence Reading 5 cards • Extended narrative using pair-reading technique - Lenormand's flexible approach for more complex situations" [ref=e150]:
+      - generic [ref=e153]:
+        - generic [ref=e154]: 5-Card Sentence Reading
+        - generic [ref=e155]: 5 cards • Extended narrative using pair-reading technique - Lenormand's flexible approach for more complex situations
+    - option "Petit Tableau 9 cards • Deeper exploration of complex situations without overwhelming detail" [ref=e156]:
+      - generic [ref=e159]:
+        - generic [ref=e160]: Petit Tableau
+        - generic [ref=e161]: 9 cards • Deeper exploration of complex situations without overwhelming detail
+    - option "Grand Tableau 36 cards • Complete life situation through full 4x9 grid - the most comprehensive reading" [ref=e162]:
+      - generic [ref=e165]:
+        - generic [ref=e166]: Grand Tableau
+        - generic [ref=e167]: 36 cards • Complete life situation through full 4x9 grid - the most comprehensive reading
