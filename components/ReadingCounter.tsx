@@ -12,18 +12,31 @@ export function ReadingCounter({
   initialCount = 0
 }: ReadingCounterProps) {
   const [count, setCount] = useState(initialCount);
-  const [isVisible, setIsVisible] = useState(false);
   const [displayCount, setDisplayCount] = useState(0);
   const counterRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
 
-  // Intersection Observer to trigger animation when in view
+  // Intersection Observer to trigger count-up animation when in view
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated.current) {
-          setIsVisible(true);
           hasAnimated.current = true;
+          const duration = 2000;
+          const steps = 60;
+          const stepTime = duration / steps;
+          const increment = count / steps;
+          let current = 0;
+
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= count) {
+              setDisplayCount(count);
+              clearInterval(timer);
+            } else {
+              setDisplayCount(Math.floor(current));
+            }
+          }, stepTime);
         }
       },
       { threshold: 0.3 }
@@ -34,30 +47,7 @@ export function ReadingCounter({
     }
 
     return () => observer.disconnect();
-  }, []);
-
-  // Animate the number counting up
-  useEffect(() => {
-    if (!isVisible) return;
-
-    const duration = 2000; // 2 seconds
-    const steps = 60;
-    const stepTime = duration / steps;
-    const increment = count / steps;
-    let current = 0;
-
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= count) {
-        setDisplayCount(count);
-        clearInterval(timer);
-      } else {
-        setDisplayCount(Math.floor(current));
-      }
-    }, stepTime);
-
-    return () => clearInterval(timer);
-  }, [isVisible, count]);
+  }, [count]);
 
   // Refresh count from API on mount and periodically
   useEffect(() => {
@@ -74,7 +64,7 @@ export function ReadingCounter({
     };
 
     fetchCount();
-    const interval = setInterval(fetchCount, 60000); // Refresh every 60s
+    const interval = setInterval(fetchCount, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -83,9 +73,7 @@ export function ReadingCounter({
   return (
     <div 
       ref={counterRef}
-      className={`relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 px-4 py-2 transition-all duration-700 ${
-        isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
-      }`}
+      className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 px-4 py-2"
     >
       {/* Animated sparkles */}
       <div className="relative">
