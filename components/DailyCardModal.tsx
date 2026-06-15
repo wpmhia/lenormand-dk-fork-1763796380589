@@ -5,10 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Spade, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
-import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 interface DailyCardModalProps {
   open: boolean;
@@ -18,59 +17,22 @@ interface DailyCardModalProps {
 
 type ViewState = "draw" | "drawing" | "result";
 
-function buildDailyReading(card: CardType): string {
-  const parts: string[] = [];
+function getTip(card: CardType): string | null {
+  const pos = card.meaning?.positive;
+  if (pos?.length) return pos[0];
+  return null;
+}
 
-  parts.push(`Today's Card: ${card.name}`);
-  parts.push("");
-  parts.push(`Base meaning:`);
-  parts.push(card.uprightMeaning);
-  parts.push("");
-
-  if (card.meaning?.general) {
-    parts.push(`Daily focus:`);
-    parts.push(card.meaning.general);
-    parts.push("");
-  }
-
-  if (card.meaning?.positive?.length) {
-    parts.push(`Key aspects today:`);
-    for (const p of card.meaning.positive.slice(0, 3)) {
-      parts.push(`• ${p}`);
-    }
-    parts.push("");
-  }
-
-  if (card.meaning?.negative?.length) {
-    parts.push(`Watch for:`);
-    for (const n of card.meaning.negative.slice(0, 3)) {
-      parts.push(`• ${n}`);
-    }
-    parts.push("");
-  }
-
-  if (card.timing || card.meaning?.timing) {
-    parts.push(`Timing: ${card.timing || card.meaning.timing}`);
-    parts.push("");
-  }
-
-  parts.push(`Keywords: ${card.keywords.slice(0, 3).join(" • ")}`);
-
-  return parts.join("\n");
+function getWatch(card: CardType): string | null {
+  const neg = card.meaning?.negative;
+  if (neg?.length) return neg[0];
+  return null;
 }
 
 export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProps) {
   const [viewState, setViewState] = useState<ViewState>("draw");
   const [card, setCard] = useState<CardType | null>(null);
   const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { showInstallPrompt } = useInstallPrompt();
-
-  useEffect(() => {
-    if (viewState === "result" && card) {
-      const timer = setTimeout(() => showInstallPrompt(), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [viewState, card, showInstallPrompt]);
 
   useEffect(() => {
     if (!open) return;
@@ -178,18 +140,19 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   const renderResultState = () => {
     if (!card) return null;
-    const reading = buildDailyReading(card);
+    const tip = getTip(card);
+    const watch = getWatch(card);
 
     return (
-      <div className="space-y-3 p-4 sm:space-y-4 sm:p-6">
+      <div className="space-y-4 p-5 sm:p-6">
         <div className="text-center">
           <p className="text-xs font-medium text-muted-foreground">
             {getTodayDateString()}
           </p>
         </div>
 
-        <div className="relative mx-auto w-36 sm:w-48">
-          <div className="relative aspect-[2.5/3.5] max-h-[32dvh] overflow-hidden rounded-xl shadow-xl shadow-primary/20">
+        <div className="relative mx-auto w-32 sm:w-40">
+          <div className="relative aspect-[2.5/3.5] overflow-hidden rounded-xl shadow-lg shadow-primary/20">
             <Image
               src={card.imageUrl || "/images/cards-placeholder.jpg"}
               alt={card.name}
@@ -202,35 +165,36 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
         <div className="text-center">
           <h3 className="text-lg font-bold text-foreground">{card.name}</h3>
-          <p className="text-xs text-muted-foreground">
-            {card.keywords.slice(0, 3).join(" • ")}
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {card.keywords.slice(0, 2).join(" • ")}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-          <Spade className="h-3 w-3 text-primary" />
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        <div className="rounded-lg bg-muted/50 px-4 py-3">
+          <p className="text-sm leading-relaxed text-foreground/90">
+            {card.uprightMeaning}
+          </p>
         </div>
 
-        <div className="space-y-1">
-          {reading.split("\n").map((line, i) => {
-            const isBold = line === `Today's Card: ${card.name}` || line.endsWith(":");
-            return (
-              <p
-                key={i}
-                className={`text-xs leading-relaxed ${isBold ? "font-semibold text-foreground" : "text-foreground/85"}`}
-              >
-                {line}
-              </p>
-            );
-          })}
-        </div>
+        {tip && (
+          <div className="flex items-start gap-2 text-sm text-foreground/85">
+            <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+            <span>{tip}</span>
+          </div>
+        )}
+
+        {watch && (
+          <div className="flex items-start gap-2 text-sm text-foreground/75">
+            <span className="mt-0.5 h-3.5 w-3.5 shrink-0 text-center text-xs text-muted-foreground">&#9888;</span>
+            <span>{watch}</span>
+          </div>
+        )}
 
         <Link href="/read/new" onClick={handleClose}>
-          <Button className="w-full gap-1 text-xs h-9" size="sm">
-            Do a Full Reading
-            <ArrowRight className="h-3 w-3" />
+          <Button className="w-full gap-1.5 text-sm h-10" size="sm">
+            <Sparkles className="h-4 w-4" />
+            Full Reading
+            <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
       </div>
