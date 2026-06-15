@@ -38,10 +38,10 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
         strategy="afterInteractive"
       />
       <nav aria-label="Breadcrumb" className="text-sm">
-        <ol className="flex items-center flex-wrap">
+        <ol className="flex flex-wrap items-center">
           {items.map((item, index) => {
             const isLast = index === items.length - 1;
-            
+
             return (
               <li key={item.url} className="flex items-center">
                 {index > 0 && (
@@ -50,13 +50,13 @@ export function BreadcrumbNav({ items }: BreadcrumbNavProps) {
                   </span>
                 )}
                 {isLast ? (
-                  <span className="font-medium text-foreground leading-5">
+                  <span className="font-medium leading-5 text-foreground">
                     {item.name}
                   </span>
                 ) : (
                   <Link
                     href={item.url}
-                    className="text-muted-foreground hover:text-primary transition-colors leading-5"
+                    className="leading-5 text-muted-foreground transition-colors hover:text-primary"
                   >
                     {item.name}
                   </Link>

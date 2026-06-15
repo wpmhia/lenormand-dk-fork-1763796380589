@@ -22,20 +22,18 @@ export default function Error({
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 text-center">
         <div className="space-y-2">
-          <AlertCircle className="mx-auto h-16 w-16 text-destructive" />
+          <AlertCircle className="text-destructive mx-auto h-16 w-16" />
           <h1 className="text-2xl font-bold text-foreground">
             Something interrupted the reading
           </h1>
           <p className="text-muted-foreground">
-            Even the best readings hit snags. Let&apos;s try again or start fresh.
+            Even the best readings hit snags. Let&apos;s try again or start
+            fresh.
           </p>
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button
-            onClick={reset}
-            className="w-full gap-2"
-          >
+          <Button onClick={reset} className="w-full gap-2">
             <RefreshCw className="h-4 w-4" />
             Try again
           </Button>

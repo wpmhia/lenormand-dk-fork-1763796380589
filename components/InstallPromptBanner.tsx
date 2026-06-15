@@ -24,11 +24,16 @@ export function InstallPromptBanner() {
       className={`fixed bottom-0 left-0 right-0 z-50 transition-all duration-500 ${
         mounted && isVisible
           ? "translate-y-0 opacity-100"
-          : "translate-y-full opacity-0 pointer-events-none"
+          : "pointer-events-none translate-y-full opacity-0"
       }`}
     >
       {/* Safe area padding for mobile */}
-      <div className="bg-gradient-to-t from-background via-background to-transparent px-0 pt-4" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom, 0px))" }}>
+      <div
+        className="bg-gradient-to-t from-background via-background to-transparent px-0 pt-4"
+        style={{
+          paddingBottom: "max(0.5rem, env(safe-area-inset-bottom, 0px))",
+        }}
+      >
         <div className="mx-auto max-w-md px-4">
           <div className="relative rounded-2xl border border-primary/20 bg-card shadow-xl shadow-primary/10">
             <button
@@ -48,7 +53,8 @@ export function InstallPromptBanner() {
                   Add Lenormand.dk to your phone
                 </h3>
                 <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                  Open your readings faster from your home screen - no app store needed.
+                  Open your readings faster from your home screen - no app store
+                  needed.
                 </p>
               </div>
             </div>
@@ -56,12 +62,17 @@ export function InstallPromptBanner() {
             <div className="px-4 pb-4">
               {isIOS ? (
                 <div className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-                  Tap <strong>Share</strong> <span className="text-sm">{"\u2191"}</span>, then{" "}
+                  Tap <strong>Share</strong>{" "}
+                  <span className="text-sm">{"\u2191"}</span>, then{" "}
                   <strong>Add to Home Screen</strong>.
                 </div>
               ) : (
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={install} className="flex-1 gap-1.5 text-xs">
+                  <Button
+                    size="sm"
+                    onClick={install}
+                    className="flex-1 gap-1.5 text-xs"
+                  >
                     <Smartphone className="h-3.5 w-3.5" />
                     Install app
                   </Button>

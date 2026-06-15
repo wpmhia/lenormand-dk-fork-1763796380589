@@ -7,7 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 import Link from "next/link";
-import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
+import {
+  RefreshCw,
+  Copy,
+  Check,
+  AlertCircle,
+  MessageCircle,
+} from "lucide-react";
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 
@@ -58,7 +64,11 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
 
   async function copyTextToClipboard(text: string): Promise<boolean> {
     try {
-      if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
         await navigator.clipboard.writeText(text);
         return true;
       }
@@ -111,8 +121,10 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
     onFollowUp(followUpQuestion.trim());
   };
 
-  const handleFollowUpKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+  const handleFollowUpKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleFollowUpSubmit();
     }
@@ -133,9 +145,11 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
     return (
       <Card className="border-destructive/50 bg-destructive/5">
         <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-          <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
-          <h3 className="mb-2 text-lg font-semibold text-foreground">Interpretation Unavailable</h3>
-          <p className="mb-6 text-sm text-muted-foreground max-w-md">{error}</p>
+          <AlertCircle className="text-destructive mb-4 h-12 w-12" />
+          <h3 className="mb-2 text-lg font-semibold text-foreground">
+            Interpretation Unavailable
+          </h3>
+          <p className="mb-6 max-w-md text-sm text-muted-foreground">{error}</p>
           <Button onClick={onRetry} size="lg" className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Try Again
@@ -149,9 +163,13 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
     return (
       <Card className="border-destructive/50 bg-destructive/5">
         <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-          <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
-          <h3 className="mb-2 text-lg font-semibold text-foreground">AI Reading Failed</h3>
-          <p className="mb-6 text-sm text-muted-foreground">The AI interpretation could not be generated. Please try again.</p>
+          <AlertCircle className="text-destructive mb-4 h-12 w-12" />
+          <h3 className="mb-2 text-lg font-semibold text-foreground">
+            AI Reading Failed
+          </h3>
+          <p className="mb-6 text-sm text-muted-foreground">
+            The AI interpretation could not be generated. Please try again.
+          </p>
           <Button onClick={onRetry} size="lg" className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Retry Reading
@@ -175,19 +193,29 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-foreground">Lenormand Interpretation</span>
-          <Link href="/how-readings-work" className="text-xs text-muted-foreground/60 hover:text-primary transition-colors">
-            How this reading was made
-          </Link>
+            <span className="text-sm font-semibold text-foreground">
+              Lenormand Interpretation
+            </span>
+            <Link
+              href="/how-readings-work"
+              className="text-xs text-muted-foreground/60 transition-colors hover:text-primary"
+            >
+              How this reading was made
+            </Link>
             {isStreaming && (
               <span className="text-xs text-primary">Reading...</span>
             )}
           </div>
-          <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopy}
+            className="gap-1.5"
+          >
             {copyError ? (
-              <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+              <AlertCircle className="text-destructive h-3.5 w-3.5" />
             ) : copyClicked ? (
               <Check className="h-3.5 w-3.5" />
             ) : (
@@ -208,15 +236,19 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
         </div>
 
         {!isStreaming && aiReading?.reading && (
-          <FeedbackButtons reading={aiReading.reading} spreadId={spreadId} cardCount={cardCount} />
+          <FeedbackButtons
+            reading={aiReading.reading}
+            spreadId={spreadId}
+            cardCount={cardCount}
+          />
         )}
 
         {!isStreaming && !followUpResponse && (
-          <div className="mt-8 pt-6 border-t border-border/50">
+          <div className="mt-8 border-t border-border/50 pt-6">
             {!showFollowUpInput ? (
               <button
                 onClick={() => setShowFollowUpInput(true)}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 <MessageCircle className="h-4 w-4" />
                 Ask a follow-up
@@ -228,7 +260,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
                   onChange={(e) => setFollowUpQuestion(e.target.value)}
                   onKeyDown={handleFollowUpKeyDown}
                   placeholder="What else should I know?"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+                  className="border-input focus:ring-ring w-full resize-none rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1"
                   rows={2}
                   disabled={followUpLoading || followUpStreaming}
                   autoFocus
@@ -248,7 +280,11 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
                   <Button
                     size="sm"
                     onClick={handleFollowUpSubmit}
-                    disabled={!followUpQuestion.trim() || followUpLoading || followUpStreaming}
+                    disabled={
+                      !followUpQuestion.trim() ||
+                      followUpLoading ||
+                      followUpStreaming
+                    }
                   >
                     {followUpLoading ? "..." : "Ask"}
                   </Button>
@@ -259,8 +295,8 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
         )}
 
         {(followUpResponse || followUpStreaming) && (
-          <div className="mt-8 pt-6 border-t border-border/50">
-            <div className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+          <div className="mt-8 border-t border-border/50 pt-6">
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
               <MessageCircle className="h-4 w-4 text-primary" />
               Follow-up
             </div>
@@ -322,15 +358,23 @@ function storeFeedback(id: string, rating: string) {
   }
 }
 
-function FeedbackButtons({ reading, spreadId, cardCount }: { reading: string; spreadId?: string; cardCount?: number }) {
+function FeedbackButtons({
+  reading,
+  spreadId,
+  cardCount,
+}: {
+  reading: string;
+  spreadId?: string;
+  cardCount?: number;
+}) {
   const [submitted, setSubmitted] = useState(false);
   const readingId = useRef(Math.random().toString(36).slice(2, 10));
 
   const alreadySubmitted = getStoredFeedbackIds().has(readingId.current);
   if (alreadySubmitted || submitted) {
     return (
-      <div className="mt-6 pt-4 border-t border-border/50">
-        <p className="text-xs text-muted-foreground text-center">
+      <div className="mt-6 border-t border-border/50 pt-4">
+        <p className="text-center text-xs text-muted-foreground">
           Thanks for your feedback
         </p>
       </div>
@@ -338,8 +382,8 @@ function FeedbackButtons({ reading, spreadId, cardCount }: { reading: string; sp
   }
 
   return (
-    <div className="mt-6 pt-4 border-t border-border/50">
-      <p className="text-xs text-muted-foreground text-center mb-3">
+    <div className="mt-6 border-t border-border/50 pt-4">
+      <p className="mb-3 text-center text-xs text-muted-foreground">
         Was this reading helpful?
       </p>
       <div className="flex flex-wrap justify-center gap-2">

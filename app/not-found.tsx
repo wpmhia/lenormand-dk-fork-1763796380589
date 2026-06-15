@@ -8,14 +8,15 @@ export default function NotFound() {
       <div className="w-full max-w-md space-y-8 text-center">
         {/* Elegant 404 with subtle animation */}
         <div className="space-y-2">
-          <h1 className="text-8xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent animate-pulse">
+          <h1 className="animate-pulse bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-8xl font-bold text-transparent">
             404
           </h1>
           <p className="text-2xl font-semibold text-foreground">
             This page wandered off
           </p>
           <p className="text-muted-foreground">
-            Sometimes even the cards lose their way. Let&apos;s get you back on track.
+            Sometimes even the cards lose their way. Let&apos;s get you back on
+            track.
           </p>
         </div>
 
