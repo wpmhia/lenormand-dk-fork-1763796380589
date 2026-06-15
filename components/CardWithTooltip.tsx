@@ -86,5 +86,4 @@ function CardWithTooltipInner({
   );
 }
 
-export const CardWithTooltip = CardWithTooltipInner;
 export const MemoizedCardWithTooltip = memo(CardWithTooltipInner);

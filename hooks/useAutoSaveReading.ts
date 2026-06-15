@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
-import { Card, ReadingCard } from "@/lib/types";
+import { Card } from "@/lib/types";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { useToast } from "@/hooks/use-toast";
 

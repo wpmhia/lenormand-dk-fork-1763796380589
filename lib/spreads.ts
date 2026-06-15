@@ -17,10 +17,6 @@ export const AUTHENTIC_SPREADS: Spread[] = [
   "single-card", "sentence-3", "comprehensive", "grand-tableau",
 ].map(defToSpread);
 
-export const MODERN_SPREADS: Spread[] = [
-  "sentence-5",
-].map(defToSpread);
-
 export const COMPREHENSIVE_SPREADS: Spread[] = [
   "single-card", "sentence-3", "sentence-5", "comprehensive", "grand-tableau",
 ].map(defToSpread);

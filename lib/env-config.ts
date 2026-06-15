@@ -69,8 +69,4 @@ export interface EnvVariable {
   required: boolean;
 }
 
-export function checkMissingEnvVars(): string[] {
-  return ENV_VARIABLES.filter(
-    (envVar) => envVar.required && !process.env[envVar.name],
-  ).map((envVar) => envVar.name);
-}
+
