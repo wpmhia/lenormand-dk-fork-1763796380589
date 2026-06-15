@@ -29,15 +29,15 @@ export interface NormalizedCard {
   strength?: string;
 }
 
-export interface ComboHint {
+interface ComboHint {
   cardA: string;
   cardB: string;
   meaning: string;
 }
 
-export type SignificatorPreference = "woman" | "man" | "both";
+type SignificatorPreference = "woman" | "man" | "both";
 
-export interface NormalizedReadingRequest {
+interface NormalizedReadingRequest {
   question: string;
   spreadId: SpreadId;
   cards: NormalizedCard[];
@@ -45,7 +45,7 @@ export interface NormalizedReadingRequest {
   significatorPreference: SignificatorPreference;
 }
 
-export function buildAdjacentComboHints(
+function buildAdjacentComboHints(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
 ): ComboHint[] {

@@ -7,27 +7,10 @@ export function getCards(): Card[] {
   return cards;
 }
 
-export type CardSummary = Card;
-export type CardLookup = Card;
+
 
 export function getCardById(allCards: Card[], id: number): Card | undefined {
   return allCards.find((card) => card.id === id);
-}
-
-export async function encodeReadingForUrl(reading: Reading): Promise<string> {
-  const response = await fetch("/api/readings/share", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      t: reading.title,
-      q: reading.question,
-      l: reading.layoutType,
-      c: reading.cards.map((card) => ({ i: card.id, p: card.position })),
-    }),
-  });
-  if (!response.ok) throw new Error("Failed to encode reading");
-  const { encoded } = await response.json();
-  return encoded;
 }
 
 export async function decodeReadingFromUrl(encoded: string): Promise<Partial<Reading> | null> {
@@ -48,19 +31,6 @@ export async function decodeReadingFromUrl(encoded: string): Promise<Partial<Rea
   } catch {
     return null;
   }
-}
-
-export function drawCards(allCards: Card[], count: number): ReadingCard[] {
-  if (count > allCards.length) {
-    throw new Error(`Cannot draw ${count} cards from a deck of ${allCards.length}`);
-  }
-  const available = [...allCards];
-  const drawn: Card[] = [];
-  for (let i = 0; i < count; i++) {
-    const idx = Math.floor(Math.random() * available.length);
-    drawn.push(available.splice(idx, 1)[0]);
-  }
-  return drawn.map((card, index) => ({ id: card.id, position: index }));
 }
 
 export function getCombinationMeaning(
@@ -105,22 +75,4 @@ export function getGrandTableauAdjacentCards(cards: ReadingCard[], currentIndex:
   return adjacent;
 }
 
-export function getReadingCombinations(
-  cards: ReadingCard[],
-  allCards: Card[],
-): Array<{ card1: Card; card2: Card; position1: number; position2: number; meaning: string | null }> {
-  const combinations: Array<{ card1: Card; card2: Card; position1: number; position2: number; meaning: string | null }> = [];
-  for (let i = 0; i < cards.length - 1; i++) {
-    const currentCard = cards[i];
-    const nextCard = cards[i + 1];
-    const card1 = getCardById(allCards, currentCard.id);
-    const card2 = getCardById(allCards, nextCard.id);
-    if (card1 && card2) {
-      const meaning = getCombinationMeaning(card1, card2, currentCard.position, nextCard.position);
-      if (meaning) {
-        combinations.push({ card1, card2, position1: currentCard.position, position2: nextCard.position, meaning });
-      }
-    }
-  }
-  return combinations;
-}
+

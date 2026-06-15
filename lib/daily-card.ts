@@ -39,24 +39,6 @@ export function setDailyCardCache(cardId: number): void {
   }
 }
 
-export function markCardDrawn(): void {
-  if (typeof window === 'undefined') return;
-  const today = new Date().toISOString().slice(0, 10);
-  
-  try {
-    const cached = localStorage.getItem(DAILY_CARD_CACHE_KEY);
-    if (cached) {
-      const data: DailyCardCache = JSON.parse(cached);
-      if (data.date === today) {
-        data.drawn = true;
-        localStorage.setItem(DAILY_CARD_CACHE_KEY, JSON.stringify(data));
-      }
-    }
-  } catch {
-    // Ignore errors
-  }
-}
-
 export function getTodayDateString(): string {
   const today = new Date();
   const options: Intl.DateTimeFormatOptions = { 

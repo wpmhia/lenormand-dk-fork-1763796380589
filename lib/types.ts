@@ -49,24 +49,6 @@ export interface Reading {
   deadlineDate?: Date;
 }
 
-export interface LayoutConfig {
-  name: string;
-  cardCount: number;
-  positions: Array<{
-    id: string;
-    x: number;
-    y: number;
-    label: string;
-    meaning: string;
-  }>;
-}
-
-export interface Locale {
-  [key: string]: string | Locale;
-}
-
-export type Language = "en" | "da";
-
 export interface CardSummary {
   id: number;
   name: string;
