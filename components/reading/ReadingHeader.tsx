@@ -14,7 +14,6 @@ import { Share2, User, HelpCircle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Reading } from "@/lib/types";
@@ -91,8 +90,7 @@ export function ReadingHeader({
         {reading.layoutType === 36 && (
           <div className="flex items-center gap-2">
             <span className="text-xs">Significator:</span>
-            <TooltipProvider>
-              <Tooltip>
+            <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-5 w-5 p-0">
                     <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" />
@@ -106,7 +104,6 @@ export function ReadingHeader({
                   </p>
                 </TooltipContent>
               </Tooltip>
-            </TooltipProvider>
             <Select
               value={significatorType}
               onValueChange={(value) =>

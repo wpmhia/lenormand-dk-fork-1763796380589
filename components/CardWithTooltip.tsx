@@ -59,7 +59,7 @@ function CardWithTooltipInner({
 
           <div>
             <p className="text-sm leading-relaxed text-foreground">
-              {card.uprightMeaning}
+              {card.meaning?.general || card.keywords.slice(0, 3).join(", ")}
             </p>
           </div>
 

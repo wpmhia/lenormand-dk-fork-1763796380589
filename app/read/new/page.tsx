@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Spade, ArrowLeft, Sparkles } from "lucide-react";
+import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,

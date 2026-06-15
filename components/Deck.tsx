@@ -105,7 +105,7 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           className={cn(
-            "relative rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-h-[120px] min-w-[140px] sm:min-h-[160px] sm:min-w-[112px]",
+            "relative rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-h-[120px] min-w-[120px] sm:min-h-[160px] sm:min-w-[140px]",
             !canDraw
               ? "cursor-not-allowed opacity-60"
               : "cursor-pointer hover:scale-105 active:scale-95 hover:shadow-lg"
