@@ -17,18 +17,6 @@ interface DailyCardModalProps {
 
 type ViewState = "draw" | "drawing" | "result";
 
-function getTip(card: CardType): string | null {
-  const pos = card.meaning?.positive;
-  if (pos?.length) return pos[0];
-  return null;
-}
-
-function getWatch(card: CardType): string | null {
-  const neg = card.meaning?.negative;
-  if (neg?.length) return neg[0];
-  return null;
-}
-
 export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProps) {
   const [viewState, setViewState] = useState<ViewState>("draw");
   const [card, setCard] = useState<CardType | null>(null);
@@ -140,8 +128,9 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   const renderResultState = () => {
     if (!card) return null;
-    const tip = getTip(card);
-    const watch = getWatch(card);
+
+    const tip = card.meaning?.positive?.[0] ?? null;
+    const watch = card.meaning?.negative?.[0] ?? null;
 
     return (
       <div className="space-y-4 p-5 sm:p-6">
@@ -164,31 +153,30 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         </div>
 
         <div className="text-center">
-          <h3 className="text-lg font-bold text-foreground">{card.name}</h3>
+          <h3 className="text-xl font-bold text-foreground">{card.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
             {card.keywords.slice(0, 2).join(" • ")}
           </p>
         </div>
 
-        <div className="rounded-lg bg-muted/50 px-4 py-3">
-          <p className="text-sm leading-relaxed text-foreground/90">
-            {card.uprightMeaning}
-          </p>
+        <div className="rounded-lg bg-muted/50 px-4 py-3 text-sm leading-relaxed text-foreground/90">
+          {card.meaning?.general}
         </div>
 
-        {tip && (
-          <div className="flex items-start gap-2 text-sm text-foreground/85">
-            <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-            <span>{tip}</span>
-          </div>
-        )}
-
-        {watch && (
-          <div className="flex items-start gap-2 text-sm text-foreground/75">
-            <span className="mt-0.5 h-3.5 w-3.5 shrink-0 text-center text-xs text-muted-foreground">&#9888;</span>
-            <span>{watch}</span>
-          </div>
-        )}
+        <div className="space-y-2">
+          {tip && (
+            <div className="flex items-start gap-2 text-sm text-foreground/85">
+              <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+              <span>{tip}</span>
+            </div>
+          )}
+          {watch && (
+            <div className="flex items-start gap-2 text-sm text-foreground/70">
+              <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center text-xs text-muted-foreground/60">&#9888;</span>
+              <span>{watch}</span>
+            </div>
+          )}
+        </div>
 
         <Link href="/read/new" onClick={handleClose}>
           <Button className="w-full gap-1.5 text-sm h-10" size="sm">
