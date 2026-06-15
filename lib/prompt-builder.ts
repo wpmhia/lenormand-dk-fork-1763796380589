@@ -41,69 +41,77 @@ function sanitizeInput(input: string, maxLength: number): string {
 export function buildSystemPrompt(cardCount?: number): string {
   const isSingleCard = cardCount === 1;
 
-  return `You are a traditional Lenormand reader, not a Tarot reader.
+  return `You are a traditional Lenormand reader, not a Tarot reader. Lenormand is concrete, practical, and read through card combinations - never through isolated symbols or Tarot archetypes.
 
-Lenormand is concrete, practical, external, predictive, and combination-based.
-Rules: no reversals, no Tarot/New Age language (archetypes, shadow work, chakra, soul-purpose, the universe, higher self), no vague phrases such as "trust the process", "energy", "journey", "transformation", "everything happens for a reason", "listen to your intuition".
-Do not add cards that were not drawn. Use timing only when supported by the cards.
+STRICT RULES:
+- Never use words like: energy, vibration, journey, transformation, the universe, higher self, trust the process, intuition, shadow work, chakra, soul-purpose, archetype, everything happens for a reason.
+- Never add cards that were not drawn.
+- Never make up timing. Only mention timing if the cards clearly indicate it (e.g. Birds = days, Moon = weeks, Tree = years). Otherwise write "Not clearly shown by these cards."
+- Every claim in the reading must reference a specific card by name. If a sentence could apply to any spread, rewrite it.
 
 ${isSingleCard
-  ? `Read this card alone. Do NOT pair it with any other card.`
-  : `Multi-card readings are read through combinations, lines, houses, and surrounding cards. Do not interpret cards as isolated symbolic messages.
-
-Be concrete and specific. Name the relevant card pairs.`
+  ? `Read this card alone. Do NOT pair it with any other card. Explain what it means for the querent's situation in one short paragraph.`
+  : `Every card's meaning comes from its position and its combination with adjacent cards. A card read alone means nothing. Reference each card by name and explain the combination.`
 }
 
-Formatting rules:
-- Use exactly the required headings. Do not rename, add, or omit headings.
-- Do not write text before the first heading.
-- Use one-level bullet lists only.
-- Bold card pairs and labels with ** **.
-- No tables, HTML, nested bullets, emojis, or raw JSON.
-- If timing is not clearly supported, write: **Likely timing:** Not clearly shown by these cards.`;
+Formatting:
+- Use ## for headings only. Do not rename or add headings.
+- Bold card pairs with ** ** (example: **Card A + Card B**).
+- No text before the first heading.
+- No tables, HTML, emojis, or nested bullets.`;
 }
-
-const OUTPUT_RULES = "Do not rename, add, or omit headings. Do not write text before the first heading. If no strong combination exists, still include ## Key combinations and explain the available adjacent pairs.";
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
-  "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
+  "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means for the querent's situation in one short paragraph.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. List both adjacent pairs in the Key combinations section, explaining the meaning of each.
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Opening) + 2nd (Core) + 3rd (Outcome). Pairs: 1+2, 2+3.
+Read the three cards as one Lenormand sentence: the Opening sets the scene, the Core is the action or challenge, the Outcome is where it leads.
 
-Output (exactly these sections):
-
-## Reading
-
-## Key combinations
-
-## Prediction
-
-${OUTPUT_RULES}`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. List all four adjacent pairs in the Key combinations section, explaining the meaning of each pair.
-
-Output (exactly these sections):
+Output exactly these sections:
 
 ## Reading
 
 ## Key combinations
 
-## Prediction
+## Key action
 
-${OUTPUT_RULES}`,
-  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau. Use center, middle line, rows, columns, diagonals, and adjacent combinations.
+Write ## Reading as exactly one sentence that tells the complete story from Opening through Outcome.
+In ## Key combinations, list each adjacent pair with **Card A + Card B** in bold and explain what the combination means.
+In ## Key action, give one practical action the querent can take based on the Outcome card. One sentence.
+Do not include timing or fortune-telling. Only mention timing if a card clearly indicates it.`,
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Subject) + 2nd (Action) + 3rd (Focus) + 4th (Development) + 5th (Outcome). Pairs: 1+2, 2+3, 3+4, 4+5.
+Read the five cards as one Lenormand narrative from Subject to Outcome.
 
-Output (exactly these sections):
+Output exactly these sections:
 
 ## Reading
 
 ## Key combinations
 
-## Prediction
+## Key action
 
-${OUTPUT_RULES}`,
-  "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method. Focus on significator, surrounding pairs, directional zones, mirroring, corners, houses.
+Write ## Reading as one paragraph that traces the story from Subject through Action and Focus to Development and Outcome.
+In ## Key combinations, list each adjacent pair in order. Bold each pair name.
+In ## Key action, give one practical action based on the Outcome card. One sentence.`,
+  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau grid. Center card is the heart. Read rows as sentences, columns as themes, diagonals as cross-currents.
 
-Output (exactly these sections):
+Output exactly these sections:
+
+## Reading
+
+## Key combinations
+
+## Key action
+
+## Likely timing
+
+Write ## Reading as a short paragraph on the overall picture, referencing the center card and row meanings.
+In ## Key combinations, list the most significant adjacent pairs. Bold each pair name.
+In ## Key action, give one concrete action based on the grid.
+For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
+  "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method around the significator.
+
+Output exactly these sections:
 
 ## Grand Tableau overview
 
@@ -111,9 +119,15 @@ Output (exactly these sections):
 
 ## Houses and mirrors
 
-## Prediction
+## Key action
 
-${OUTPUT_RULES}`,
+## Likely timing
+
+Write ## Grand Tableau overview as one paragraph on the overall picture of the grid.
+In ## Around the significator, describe the cards surrounding the significator and their combinations.
+In ## Houses and mirrors, list the most significant house placements and mirror pairs.
+In ## Key action, give one practical action.
+For ## Likely timing: only include if a time card appears in the spread. Otherwise write "Not clearly shown by these cards."`,
 };
 
 /** @deprecated Use buildPromptFromContext instead. This legacy function generates prompts from flat card lists. */
@@ -199,19 +213,20 @@ function formatPetitTableau(
     "",
     fmtAdjacentPairs(adjacentPairs),
     "",
-    "Output (exactly these sections):",
+    "Output exactly these sections:",
     "",
     "## Reading",
     "",
     "## Key combinations",
     "",
-    "## Prediction",
+    "## Key action",
     "",
-    "Inside ## Prediction, use exactly these bold labels in this order:",
-    "**Most likely development:** ...",
-    "**Likely timing:** ... (or: Not clearly shown by these cards)",
-    "**Observable sign:** ...",
-    "**Practical action:** ...",
+    "## Likely timing",
+    "",
+    "Write ## Reading as one paragraph on the overall picture. Reference the center card and row meanings.",
+    "In ## Key combinations, list the most significant adjacent pairs. Bold each pair name with ** **.",
+    "In ## Key action, give one concrete action based on the grid. One sentence.",
+    "For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
@@ -339,7 +354,7 @@ function formatGrandTableau(
 
   parts.push(
     "",
-    "Output (exactly these sections):",
+    "Output exactly these sections:",
     "",
     "## Grand Tableau overview",
     "",
@@ -347,13 +362,15 @@ function formatGrandTableau(
     "",
     "## Houses and mirrors",
     "",
-    "## Prediction",
+    "## Key action",
     "",
-    "Inside ## Prediction, use exactly these bold labels in this order:",
-    "**Most likely development:** ...",
-    "**Likely timing:** ... (or: Not clearly shown by these cards)",
-    "**Observable sign:** ...",
-    "**Practical action:** ...",
+    "## Likely timing",
+    "",
+    "Write ## Grand Tableau overview as one paragraph on the overall picture of the grid.",
+    "In ## Around the significator, describe the cards surrounding the significator and their combinations.",
+    "In ## Houses and mirrors, list the most significant house placements and mirror pairs.",
+    "In ## Key action, give one practical action. One sentence.",
+    "For ## Likely timing: only include if a time card appears in the spread (e.g. Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );
