@@ -8,14 +8,14 @@ export const ReadingMarkdown = memo(function ReadingMarkdown({ children }: { chi
       remarkPlugins={[remarkGfm]}
       components={{
         p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-        h1: ({ children }) => <h1 className="text-2xl font-bold mt-4 mb-2">{children}</h1>,
-        h2: ({ children }) => <h2 className="text-xl font-bold mt-4 mb-2">{children}</h2>,
-        h3: ({ children }) => <h3 className="text-lg font-bold mt-3 mb-1">{children}</h3>,
+        h1: ({ children }) => <h1 className="mb-2 mt-4 text-2xl font-bold">{children}</h1>,
+        h2: ({ children }) => <h2 className="mb-2 mt-4 text-xl font-bold">{children}</h2>,
+        h3: ({ children }) => <h3 className="mb-1 mt-3 text-lg font-bold">{children}</h3>,
         strong: ({ children }) => <strong className="font-bold">{children}</strong>,
         em: ({ children }) => <em className="italic">{children}</em>,
-        code: ({ children }) => <code className="bg-muted px-1 py-0.5 rounded text-sm">{children}</code>,
-        ul: ({ children }) => <ul className="mb-2 list-disc pl-5 space-y-1">{children}</ul>,
-        ol: ({ children }) => <ol className="mb-2 list-decimal pl-5 space-y-1">{children}</ol>,
+        code: ({ children }) => <code className="rounded bg-muted px-1 py-0.5 text-sm">{children}</code>,
+        ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 pl-5">{children}</ul>,
+        ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 pl-5">{children}</ol>,
         li: ({ children }) => <li>{children}</li>,
         blockquote: ({ children }) => (
           <blockquote className="mb-2 border-l-4 border-primary/30 pl-4 italic text-muted-foreground">

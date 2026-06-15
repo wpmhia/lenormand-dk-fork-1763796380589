@@ -113,11 +113,17 @@ export function PhysicalCardInput({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [parsedCards, targetCount, isSubmitting, onSubmit]);
+
+  // Cleanup truncation warning timeout on unmount
+  useEffect(() => {
+    return () => {
       if (truncationTimeoutRef.current) {
         clearTimeout(truncationTimeoutRef.current);
       }
     };
-  }, [parsedCards, targetCount, isSubmitting, onSubmit]);
+  }, []);
 
   const isComplete = parsedCards.length === targetCount;
   const hasErrors = errors.length > 0;

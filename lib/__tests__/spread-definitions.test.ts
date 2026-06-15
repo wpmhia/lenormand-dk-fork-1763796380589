@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { SPREAD_DEFINITIONS, SPREAD_IDS, getDefinition, getCardCount, getLayoutType } from "@/lib/spread-definitions";
+import { SPREAD_DEFINITIONS, SPREAD_IDS, getDefinition, getCardCount, getLayoutType, type SpreadDefinition } from "@/lib/spread-definitions";
 import { VALID_SPREADS, SpreadId } from "@/lib/reading-contract";
 import { COMPREHENSIVE_SPREADS } from "@/lib/spreads";
 import { getPositionInfo } from "@/components/reading/SpreadPositions";
@@ -81,7 +81,7 @@ describe("UI spread list consistency", () => {
 
 describe("position consistency", () => {
   it("every spread with positions has correct count of positions", () => {
-    for (const def of Object.values(SPREAD_DEFINITIONS)) {
+    for (const def of Object.values(SPREAD_DEFINITIONS) as SpreadDefinition[]) {
       if (def.positions) {
         expect(def.positions).toHaveLength(def.cardCount);
         const indices = def.positions.map((p) => p.index);
@@ -91,7 +91,7 @@ describe("position consistency", () => {
   });
 
   it("every position in SPREAD_DEFINITIONS is accessible via getPositionInfo", () => {
-    for (const def of Object.values(SPREAD_DEFINITIONS)) {
+    for (const def of Object.values(SPREAD_DEFINITIONS) as SpreadDefinition[]) {
       if (def.positions) {
         for (const pos of def.positions) {
           const info = getPositionInfo(pos.index, def.id);
@@ -103,7 +103,7 @@ describe("position consistency", () => {
   });
 
   it("spread without positions falls back to Position N label", () => {
-    for (const def of Object.values(SPREAD_DEFINITIONS)) {
+    for (const def of Object.values(SPREAD_DEFINITIONS) as SpreadDefinition[]) {
       if (!def.positions) {
         const info = getPositionInfo(0, def.id);
         expect(info.label).toBe("Position 1");
