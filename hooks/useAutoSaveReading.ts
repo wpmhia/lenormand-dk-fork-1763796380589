@@ -55,6 +55,7 @@ export function useAutoSaveReading(
         } catch (error) {
           console.error("Failed to save reading:", error);
           toast({ description: "Failed to save reading", duration: 2000 });
+          savedRef.current = false;
         }
       })();
     }

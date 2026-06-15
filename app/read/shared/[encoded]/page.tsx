@@ -1,14 +1,12 @@
 "use client";
 
-import { notFound } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { ReadingViewer } from "@/components/ReadingViewer";
 import { AIReadingDisplay } from "@/components/AIReadingDisplay";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calendar, User, Share2, Diamond, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
 import { decodeReadingFromUrl, getCardById } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
@@ -68,7 +66,6 @@ export default function SharedReadingPage({ params }: PageProps) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const cardsData = staticCardsData as CardType[];
         const decodedData = await decodeReadingFromUrl(params.encoded);
 
         if (!decodedData || !decodedData.cards || !decodedData.layoutType) {

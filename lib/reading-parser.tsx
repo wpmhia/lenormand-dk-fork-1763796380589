@@ -35,7 +35,7 @@ function processNode(children: React.ReactNode): React.ReactNode {
   });
 }
 
-export function ReadingMarkdown({ children }: { children: string }) {
+export const ReadingMarkdown = React.memo(function ReadingMarkdown({ children }: { children: string }) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -66,7 +66,7 @@ export function ReadingMarkdown({ children }: { children: string }) {
       {children}
     </ReactMarkdown>
   );
-}
+});
 
 export function parseReadingText(text: string): React.ReactNode {
   return <ReadingMarkdown>{text}</ReadingMarkdown>;
