@@ -42,7 +42,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
   return (
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
-      <div className="container-hero !py-2xl md:!py-[4.5rem]">
+      <div className="container-hero py-12 md:py-16 lg:py-20">
         <div className="relative flex flex-col items-center justify-center gap-10 md:flex-row md:items-center md:justify-center md:gap-16 lg:gap-20">
           <div className="relative z-10 max-w-lg text-center md:max-w-xl md:text-left lg:max-w-2xl">
             <h1 className="logo-font relative mb-4 pb-2 text-4xl font-bold leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
