@@ -17,7 +17,6 @@ import { MemoizedCard } from "./Card";
 import { ReadingLayout } from "./reading/ReadingLayout";
 import { ReadingHeader } from "./reading/ReadingHeader";
 import { getPositionInfo } from "./reading/SpreadPositions";
-import { Clock, Target, Brain, Eye, Zap, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -36,26 +35,6 @@ interface ReadingViewerProps {
   setCardRef?: (index: number) => (el: HTMLElement | null) => void;
   hideCardsDuringTransition?: boolean;
 }
-
-const getZoneIcon = (zone: string) => {
-  switch (zone) {
-    case "left":
-      return <Clock className="h-4 w-4" />;
-    case "right":
-      return <Target className="h-4 w-4" />;
-    case "above":
-      return <Brain className="h-4 w-4" />;
-    case "below":
-      return <Eye className="h-4 w-4" />;
-    case "top-left":
-    case "top-right":
-    case "bottom-left":
-    case "bottom-right":
-      return <Zap className="h-4 w-4" />;
-    default:
-      return null;
-  }
-};
 
 export const ReadingViewer = memo(function ReadingViewer({
   reading,
@@ -134,7 +113,6 @@ export const ReadingViewer = memo(function ReadingViewer({
           </h3>
           <ReadingLayout
             reading={reading}
-            allCards={allCards}
             spreadId={spreadId}
             setCardRef={setCardRef}
             hideCardsDuringTransition={hideCardsDuringTransition}
@@ -146,7 +124,6 @@ export const ReadingViewer = memo(function ReadingViewer({
             topicCards={topicCards}
             diagonals={diagonals}
             getCardByIdMemo={getCardByIdMemo}
-            getZoneIcon={getZoneIcon}
           />
         </div>
       </div>
