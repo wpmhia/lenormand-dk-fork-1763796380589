@@ -1,5 +1,6 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
+import { getDefinition } from "@/lib/spread-definitions";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -377,6 +378,18 @@ export function buildPromptFromContext(context: ReadingContext): string {
   let prompt = SPREAD_PROMPTS[spreadId]
     ? SPREAD_PROMPTS[spreadId](qContext, cardList)
     : `${qContext}\nCards: ${cardList}`;
+
+  const definition = getDefinition(spreadId);
+  if (definition?.positions) {
+    prompt += "\n\nPosition meanings:";
+    for (const pos of definition.positions) {
+      const card = context.cards[pos.index];
+      if (card) {
+        prompt += `\n- Position ${pos.index + 1} (${pos.label}): ${pos.meaning} -> This position holds ${fmtCard(card)}`;
+      }
+    }
+    prompt += "\n\nRead each card primarily through its position meaning before combining with adjacent cards.";
+  }
 
   if (adjacentPairs.length > 0) {
     const hints = adjacentPairs
