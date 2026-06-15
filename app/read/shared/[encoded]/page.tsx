@@ -32,7 +32,7 @@ function getSpreadIdFromLayoutType(layoutType: number): string {
     case 5:
       return "sentence-5";
     case 7:
-      return "week-ahead";
+      return "sentence-5";
     case 9:
       return "comprehensive";
     case 36:
