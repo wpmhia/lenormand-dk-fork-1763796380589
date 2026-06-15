@@ -276,7 +276,7 @@ export default function LearnPage() {
                       {module.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="card-content-no-padding relative z-10 space-y-4">
+                  <CardContent className="p-0 relative z-10 space-y-4">
                     <p className="text-sm leading-relaxed text-muted-foreground">
                       {module.description}
                     </p>

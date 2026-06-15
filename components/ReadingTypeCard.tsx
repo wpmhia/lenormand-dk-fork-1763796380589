@@ -50,7 +50,7 @@ export function ReadingTypeCard({
             )}
           </div>
         </CardHeader>
-        <CardContent className="card-content-no-padding relative z-10 flex flex-grow flex-col justify-between pt-0">
+        <CardContent className="p-0 relative z-10 flex flex-grow flex-col justify-between">
           <p className="text-sm leading-relaxed text-muted-foreground">
             {description}
           </p>

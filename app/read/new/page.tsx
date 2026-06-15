@@ -6,8 +6,7 @@ import dynamic from "next/dynamic";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
+import { AlertTriangle, Spade, ArrowLeft, Sparkles } from "lucide-react";
 import { getCards } from "@/lib/data";
 import {
   AUTHENTIC_SPREADS,
@@ -156,6 +155,19 @@ function NewReadingPageContent() {
       if (spread) setSelectedSpread(spread);
     }
   }, [searchParams]);
+
+  // Stable reading object to preserve ReadingViewer memo
+  const readingObj = useMemo(() => ({
+    id: "temp",
+    title: "Your Reading",
+    question,
+    layoutType: selectedSpread.cards,
+    cards: drawnCards,
+    slug: "temp",
+    isPublic: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }), [question, selectedSpread.cards, drawnCards]);
 
   // Auto-start AI analysis when entering results (one-shot per drawnCards)
   const analysisStartedRef = useRef(false);
@@ -391,17 +403,7 @@ function NewReadingPageContent() {
             <div className="step-enter space-y-6">
               {allCards.length > 0 ? (
                 <ReadingViewer
-                  reading={{
-                    id: "temp",
-                    title: "Your Reading",
-                    question,
-                    layoutType: selectedSpread.cards,
-                    cards: drawnCards,
-                    slug: "temp",
-                    isPublic: false,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                  }}
+                  reading={readingObj}
                   allCards={allCards}
                   spreadId={selectedSpread.id}
                 />
