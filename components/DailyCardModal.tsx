@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
@@ -129,9 +129,6 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   const renderResultState = () => {
     if (!card) return null;
 
-    const tip = card.meaning?.positive?.[0] ?? null;
-    const watch = card.meaning?.negative?.[0] ?? null;
-
     return (
       <div className="space-y-4 p-5 sm:p-6">
         <div className="text-center">
@@ -163,24 +160,8 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
           {card.meaning?.general}
         </div>
 
-        <div className="space-y-2">
-          {tip && (
-            <div className="flex items-start gap-2 text-sm text-foreground/85">
-              <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-              <span>{tip}</span>
-            </div>
-          )}
-          {watch && (
-            <div className="flex items-start gap-2 text-sm text-foreground/70">
-              <span className="mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center text-xs text-muted-foreground/60">&#9888;</span>
-              <span>{watch}</span>
-            </div>
-          )}
-        </div>
-
         <Link href="/read/new" onClick={handleClose}>
           <Button className="w-full gap-1.5 text-sm h-10" size="sm">
-            <Sparkles className="h-4 w-4" />
             Full Reading
             <ArrowRight className="h-4 w-4" />
           </Button>
