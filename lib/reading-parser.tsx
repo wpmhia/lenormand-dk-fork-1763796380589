@@ -1,95 +1,73 @@
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { getCards } from "@/lib/data";
 
 const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
 
-function parseRemainingText(text: string, segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'card'; content: string }[]) {
-  const pattern = /\*([^*]+)\*|`([^`]+)`|([A-Za-z][a-z]+(?: [A-Za-z][a-z]+)*)/gi;
-  let lastIndex = 0;
-  let match;
+const CARD_PATTERN = new RegExp(
+  `(${CARD_NAMES.sort((a, b) => b.length - a.length).map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
+  'gi'
+);
 
-  while ((match = pattern.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      segments.push({ type: 'text', content: text.slice(lastIndex, match.index) });
+function processNode(children: React.ReactNode): React.ReactNode {
+  return React.Children.toArray(children).flatMap(child => {
+    if (typeof child === 'string') {
+      const parts = child.split(CARD_PATTERN);
+      if (parts.length === 1) return child;
+
+      return parts.filter(Boolean).map((part, i) => {
+        const match = CARD_NAMES.find(name => name.toLowerCase() === part.toLowerCase());
+        if (match) {
+          return React.createElement('span', { key: i, className: 'text-primary font-medium' }, match);
+        }
+        return part;
+      });
     }
-
-    if (match[1]) {
-      segments.push({ type: 'italic', content: match[1] });
-    } else if (match[2]) {
-      segments.push({ type: 'code', content: match[2] });
-    } else if (match[3]) {
-      const word = match[3];
-      const isCardName = CARD_NAMES.some(name => name.toLowerCase() === word.toLowerCase());
-      if (isCardName) {
-        segments.push({ type: 'card', content: word });
-      } else {
-        segments.push({ type: 'text', content: word });
-      }
+    if (React.isValidElement(child) && child.props?.children) {
+      return React.cloneElement(child, {
+        ...child.props,
+        children: processNode(child.props.children)
+      });
     }
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < text.length) {
-    segments.push({ type: 'text', content: text.slice(lastIndex) });
-  }
-}
-
-function parseLineContent(text: string): React.ReactNode[] {
-  const segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'card'; content: string }[] = [];
-
-  let remaining = text;
-  let lastIndex = 0;
-  const boldRegex = /\*\*([^*]+)\*\*/g;
-  let match;
-
-  while ((match = boldRegex.exec(remaining)) !== null) {
-    if (match.index > lastIndex) {
-      const beforeText = remaining.slice(lastIndex, match.index);
-      if (beforeText) {
-        parseRemainingText(beforeText, segments);
-      }
-    }
-    segments.push({ type: 'bold', content: match[1] });
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < remaining.length) {
-    parseRemainingText(remaining.slice(lastIndex), segments);
-  }
-
-  return segments.map((seg, key) => {
-    switch (seg.type) {
-      case 'bold':
-        return <strong key={key} className="font-bold">{seg.content}</strong>;
-      case 'italic':
-        return <em key={key} className="italic">{seg.content}</em>;
-      case 'code':
-        return <code key={key} className="bg-muted px-1 py-0.5 rounded text-sm">{seg.content}</code>;
-      case 'card':
-        return <span key={key} className="text-primary font-medium">{seg.content}</span>;
-      default:
-        return <span key={key}>{seg.content}</span>;
-    }
+    return child;
   });
 }
 
-export function parseReadingText(text: string): React.ReactNode[] {
-  const lines = text.split('\n');
-  const result: React.ReactNode[] = [];
-  let key = 0;
+export function ReadingMarkdown({ children }: { children: string }) {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        p: ({ children }) => <p className="mb-2 last:mb-0">{processNode(children)}</p>,
+        h1: ({ children }) => <h1 className="text-2xl font-bold mt-4 mb-2">{processNode(children)}</h1>,
+        h2: ({ children }) => <h2 className="text-xl font-bold mt-4 mb-2">{processNode(children)}</h2>,
+        h3: ({ children }) => <h3 className="text-lg font-bold mt-3 mb-1">{processNode(children)}</h3>,
+        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+        em: ({ children }) => <em className="italic">{children}</em>,
+        code: ({ children }) => <code className="bg-muted px-1 py-0.5 rounded text-sm">{children}</code>,
+        ul: ({ children }) => <ul className="mb-2 list-disc pl-5 space-y-1">{children}</ul>,
+        ol: ({ children }) => <ol className="mb-2 list-decimal pl-5 space-y-1">{children}</ol>,
+        li: ({ children }) => <li className="text-foreground">{processNode(children)}</li>,
+        blockquote: ({ children }) => (
+          <blockquote className="mb-2 border-l-4 border-primary/30 pl-4 italic text-muted-foreground">
+            {children}
+          </blockquote>
+        ),
+        hr: () => <hr className="my-4 border-border" />,
+        a: ({ children, href }) => (
+          <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:opacity-80">
+            {children}
+          </a>
+        ),
+      }}
+    >
+      {children}
+    </ReactMarkdown>
+  );
+}
 
-  lines.forEach((line) => {
-    if (line.startsWith('# ')) {
-      result.push(<h1 key={key++} className="text-2xl font-bold mt-4 mb-2">{parseLineContent(line.slice(2))}</h1>);
-    } else if (line.startsWith('## ')) {
-      result.push(<h2 key={key++} className="text-xl font-bold mt-4 mb-2">{parseLineContent(line.slice(3))}</h2>);
-    } else if (line.startsWith('### ')) {
-      result.push(<h3 key={key++} className="text-lg font-bold mt-3 mb-1">{parseLineContent(line.slice(4))}</h3>);
-    } else if (line.trim()) {
-      result.push(<p key={key++} className="mb-2">{parseLineContent(line)}</p>);
-    }
-  });
-
-  return result;
+export function parseReadingText(text: string): React.ReactNode {
+  return <ReadingMarkdown>{text}</ReadingMarkdown>;
 }
