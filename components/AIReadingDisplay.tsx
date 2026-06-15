@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 import Link from "next/link";
 import { RefreshCw, Copy, Check, AlertCircle, MessageCircle } from "lucide-react";
-import { parseReadingText } from "@/lib/reading-parser";
+import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 
 interface AIReadingDisplayProps {
@@ -201,8 +201,8 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
 
         <div className="reading-content space-y-4 text-foreground">
           {aiReading?.reading && (
-            <div className="leading-relaxed whitespace-pre-wrap">
-              {parseReadingText(aiReading.reading)}
+            <div className="leading-relaxed">
+              <ReadingMarkdown>{aiReading.reading}</ReadingMarkdown>
             </div>
           )}
         </div>
@@ -271,8 +271,8 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
                   <span>Consulting the cards...</span>
                 </div>
               ) : (
-                <div className="leading-relaxed whitespace-pre-wrap">
-                  {parseReadingText(followUpResponse || "")}
+                <div className="leading-relaxed">
+                  <ReadingMarkdown>{followUpResponse || ""}</ReadingMarkdown>
                 </div>
               )}
             </div>
