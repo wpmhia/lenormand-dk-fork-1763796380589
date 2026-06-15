@@ -1,18 +1,11 @@
-"use client";
-
 import { Reading, Card } from "@/lib/types";
-import {
-  SignificatorType,
-} from "@/lib/spreads";
+import { SignificatorType } from "@/lib/spreads";
 import { SingleCardLayout } from "./SingleCardLayout";
 import { GrandTableauLayout } from "./GrandTableauLayout";
 import { LinearCardLayout } from "./LinearCardLayout";
-import { CardCell } from "./CardCell";
-import { getPositionInfo, getZoneIcon } from "./SpreadPositions";
 
 interface ReadingLayoutProps {
   reading: Reading;
-  allCards: Card[];
   spreadId?: string;
   setCardRef?: (index: number) => (el: HTMLElement | null) => void;
   hideCardsDuringTransition?: boolean;
@@ -33,10 +26,7 @@ interface ReadingLayoutProps {
     bottomRight: number[];
   } | null;
   getCardByIdMemo: (id: number) => Card | undefined;
-  getZoneIcon: (zone: string) => React.ReactNode;
 }
-
-export { CardCell, getPositionInfo, getZoneIcon };
 
 export function ReadingLayout({
   reading,
