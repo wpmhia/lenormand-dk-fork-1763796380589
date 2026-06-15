@@ -106,7 +106,7 @@ function CardInner({
             <div className="absolute inset-0 animate-pulse bg-muted" />
           )}
           <Image
-            src={card.imageUrl || ""}
+            src={card.imageUrl || "/images/cards-placeholder.jpg"}
             alt={card.name}
             fill
             className={cn(

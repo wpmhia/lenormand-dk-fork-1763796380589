@@ -58,13 +58,10 @@ function AnimatedCard({
   if (stagger) {
     return (
       <div
-        className={cn(
-          "stagger-reveal",
-          !isVisible && "opacity-0",
-          className
-        )}
+        className={cn("stagger-reveal", className)}
         style={{
           animationDelay: `${delay}s`,
+          ...(!isVisible ? { animationName: "none", opacity: 0 } : {}),
         }}
       >
         {children}
