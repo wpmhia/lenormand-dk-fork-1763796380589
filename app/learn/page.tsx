@@ -113,11 +113,7 @@ export default function LearnPage() {
       duration: "40 min",
       difficulty: "Advanced",
       color: "from-primary to-primary/80",
-      learningPoints: [
-        "Knight moves",
-        "Mirror positions",
-        "House systems",
-      ],
+      learningPoints: ["Knight moves", "Mirror positions", "House systems"],
     },
     {
       id: "advanced",
@@ -163,8 +159,6 @@ export default function LearnPage() {
         return "bg-muted/50 text-muted-foreground border-border/50";
     }
   };
-
-
 
   return (
     <div className="page-layout">
@@ -246,8 +240,9 @@ export default function LearnPage() {
             Your Learning Path
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            A structured path from beginner to confident reader, designed to build your
-            understanding of card meanings, combinations, and reading structure.
+            A structured path from beginner to confident reader, designed to
+            build your understanding of card meanings, combinations, and reading
+            structure.
           </p>
         </div>
 
@@ -276,7 +271,7 @@ export default function LearnPage() {
                       {module.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-0 relative z-10 space-y-4">
+                  <CardContent className="relative z-10 space-y-4 p-0">
                     <p className="text-sm leading-relaxed text-muted-foreground">
                       {module.description}
                     </p>
@@ -324,7 +319,8 @@ export default function LearnPage() {
                     Interactive Flashcards
                   </h3>
                   <p className="text-muted-foreground">
-                    Master all 36 Lenormand cards with spaced repetition. Test your knowledge of keywords, meanings, and card combinations.
+                    Master all 36 Lenormand cards with spaced repetition. Test
+                    your knowledge of keywords, meanings, and card combinations.
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-primary">
@@ -346,7 +342,8 @@ export default function LearnPage() {
                 </div>
                 <h3 className="mb-2 font-bold">Practice Readings</h3>
                 <p className="text-sm text-muted-foreground">
-                  5 guided exercises with sample interpretations to build your skills
+                  5 guided exercises with sample interpretations to build your
+                  skills
                 </p>
               </CardContent>
             </Card>
@@ -374,7 +371,8 @@ export default function LearnPage() {
                 </div>
                 <h3 className="mb-2 font-bold">Ethics & Guidelines</h3>
                 <p className="text-sm text-muted-foreground">
-                  Essential reading on responsible practices and important disclaimers
+                  Essential reading on responsible practices and important
+                  disclaimers
                 </p>
               </CardContent>
             </Card>

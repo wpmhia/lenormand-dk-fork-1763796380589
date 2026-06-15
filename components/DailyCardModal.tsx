@@ -6,7 +6,12 @@ import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { getDailyCardCache, setDailyCardCache, drawRandomCardId, getTodayDateString } from "@/lib/daily-card";
+import {
+  getDailyCardCache,
+  setDailyCardCache,
+  drawRandomCardId,
+  getTodayDateString,
+} from "@/lib/daily-card";
 import { Card as CardType } from "@/lib/types";
 
 interface DailyCardModalProps {
@@ -17,7 +22,11 @@ interface DailyCardModalProps {
 
 type ViewState = "draw" | "drawing" | "result";
 
-export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProps) {
+export function DailyCardModal({
+  open,
+  onOpenChange,
+  cards,
+}: DailyCardModalProps) {
   const [viewState, setViewState] = useState<ViewState>("draw");
   const [card, setCard] = useState<CardType | null>(null);
   const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,22 +75,22 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
   if (!open) return null;
 
   const renderDrawState = () => (
-    <div className="p-8 text-center space-y-6">
+    <div className="space-y-6 p-8 text-center">
       <div>
         <p className="text-sm font-medium text-muted-foreground">
           {getTodayDateString()}
         </p>
-        <h3 className="text-xl font-bold text-foreground mt-1">
+        <h3 className="mt-1 text-xl font-bold text-foreground">
           Your Daily Card
         </h3>
-        <p className="text-sm text-muted-foreground mt-2">
+        <p className="mt-2 text-sm text-muted-foreground">
           Take a moment to focus on your day ahead, then draw your card.
         </p>
       </div>
 
       <button
         onClick={handleDraw}
-        className="relative mx-auto block transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-xl"
+        className="relative mx-auto block rounded-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 active:scale-95"
         aria-label="Draw your daily card"
       >
         <div
@@ -97,18 +106,16 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         />
       </button>
 
-      <p className="text-sm text-muted-foreground">
-        Click the deck to draw
-      </p>
+      <p className="text-sm text-muted-foreground">Click the deck to draw</p>
     </div>
   );
 
   const renderDrawingState = () => (
     <div className="flex items-center justify-center p-16">
-      <div className="text-center space-y-4">
+      <div className="space-y-4 text-center">
         <div className="relative">
           <div
-            className="lenormand-card overflow-hidden rounded-xl mx-auto animate-pulse"
+            className="lenormand-card mx-auto animate-pulse overflow-hidden rounded-xl"
             style={{
               width: "140px",
               height: "200px",
@@ -119,7 +126,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
             }}
           />
         </div>
-        <p className="text-sm text-muted-foreground animate-pulse">
+        <p className="animate-pulse text-sm text-muted-foreground">
           Drawing your card...
         </p>
       </div>
@@ -151,7 +158,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
         <div className="text-center">
           <h3 className="text-xl font-bold text-foreground">{card.name}</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {card.keywords.slice(0, 2).join(" • ")}
           </p>
         </div>
@@ -161,7 +168,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
         </div>
 
         <Link href="/read/new" onClick={handleClose}>
-          <Button className="w-full gap-1.5 text-sm h-10" size="sm">
+          <Button className="h-10 w-full gap-1.5 text-sm" size="sm">
             Full Reading
             <ArrowRight className="h-4 w-4" />
           </Button>
@@ -172,7 +179,7 @@ export function DailyCardModal({ open, onOpenChange, cards }: DailyCardModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[calc(100vw-1.5rem)] max-w-sm sm:max-w-md max-h-[calc(100dvh-1.5rem)] overflow-y-auto border-0 p-0 bg-gradient-to-b from-card to-background">
+      <DialogContent className="max-h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-w-sm overflow-y-auto border-0 bg-gradient-to-b from-card to-background p-0 sm:max-w-md">
         {viewState === "draw" && renderDrawState()}
         {viewState === "drawing" && renderDrawingState()}
         {viewState === "result" && renderResultState()}

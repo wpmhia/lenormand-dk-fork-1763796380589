@@ -106,7 +106,9 @@ export const ReadingViewer = memo(function ReadingViewer({
         setShareClicked={setShareClicked}
       />
 
-      <div className={`${disableAnimations ? '' : 'animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500'} overflow-visible`}>
+      <div
+        className={`${disableAnimations ? "" : "animate-in fade-in slide-in-from-bottom-8 delay-150 duration-500"} overflow-visible`}
+      >
         <div className="overflow-visible rounded-lg border border-border bg-card p-xl shadow-elevation-1">
           <h3 className="mb-lg text-xl font-semibold text-foreground">
             Your Cards
@@ -118,7 +120,9 @@ export const ReadingViewer = memo(function ReadingViewer({
             hideCardsDuringTransition={hideCardsDuringTransition}
             showAdvancedAnalysis={showAdvancedAnalysis}
             significatorType={significatorType}
-            onToggleAnalysis={() => setShowAdvancedAnalysis(!showAdvancedAnalysis)}
+            onToggleAnalysis={() =>
+              setShowAdvancedAnalysis(!showAdvancedAnalysis)
+            }
             onCardClick={setSelectedCard}
             significatorIndex={significatorIndex}
             topicCards={topicCards}
@@ -128,84 +132,125 @@ export const ReadingViewer = memo(function ReadingViewer({
         </div>
       </div>
 
-      <Dialog open={!!selectedCard} onOpenChange={(open) => { if (!open) setSelectedCard(null); }}>
+      <Dialog
+        open={!!selectedCard}
+        onOpenChange={(open) => {
+          if (!open) setSelectedCard(null);
+        }}
+      >
         <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-lg">
-          {selectedCard && (() => {
-            const readingCard = reading.cards.find(
-              (c) => c.id === selectedCard.id,
-            );
-            const posInfo = spreadId ? getPositionInfo(readingCard?.position ?? 0, spreadId) : null;
+          {selectedCard &&
+            (() => {
+              const readingCard = reading.cards.find(
+                (c) => c.id === selectedCard.id,
+              );
+              const posInfo = spreadId
+                ? getPositionInfo(readingCard?.position ?? 0, spreadId)
+                : null;
 
-            return (
-              <div className="space-y-4">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-xl">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                      {selectedCard.id}
-                    </span>
-                    {selectedCard.name}
-                  </DialogTitle>
-                </DialogHeader>
+              return (
+                <div className="space-y-4">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-xl">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                        {selectedCard.id}
+                      </span>
+                      {selectedCard.name}
+                    </DialogTitle>
+                  </DialogHeader>
 
-                {posInfo && (
-                  <div className="rounded-lg bg-muted/50 p-3">
-                    <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{posInfo.label}</div>
-                    <div className="mt-0.5 text-sm text-foreground/80">{posInfo.meaning}</div>
-                  </div>
-                )}
-
-                {readingCard && (() => {
-                  const adjacentCards = getAdjacentCards(readingCard);
-                  if (adjacentCards.length === 0) return null;
-
-                  return (
-                    <div>
-                      <h4 className="mb-2 text-sm font-semibold text-foreground">Adjacent Combinations</h4>
-                      <div className="space-y-2">
-                        {adjacentCards.map((adjCard, index) => {
-                          const card = getCardByIdMemo(adjCard.id);
-                          if (!card) return null;
-                          const combination = getCombinationMeaning(selectedCard, card, readingCard.position, adjCard.position);
-                          return (
-                            <div key={index} className="flex items-center gap-2 rounded-lg border border-border bg-card/50 p-2.5">
-                              <div className="flex items-center gap-1.5">
-                                <MemoizedCard card={selectedCard} size="sm" />
-                                <span className="text-sm font-medium text-primary">+</span>
-                                <MemoizedCard card={card} size="sm" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="text-xs font-medium text-muted-foreground">{selectedCard.name} + {card.name}</div>
-                                <div className="text-xs text-muted-foreground/80 line-clamp-2">{combination || "These cards combine to create meaning in your reading."}</div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                  {posInfo && (
+                    <div className="rounded-lg bg-muted/50 p-3">
+                      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        {posInfo.label}
+                      </div>
+                      <div className="mt-0.5 text-sm text-foreground/80">
+                        {posInfo.meaning}
                       </div>
                     </div>
-                  );
-                })()}
+                  )}
 
-                {selectedCard.keywords && selectedCard.keywords.length > 0 && (
-                  <div>
-                    <h4 className="mb-1.5 text-sm font-semibold text-foreground">Keywords</h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedCard.keywords.slice(0, 5).map((kw) => (
-                        <span key={kw} className="rounded-md bg-primary/10 px-2 py-0.5 text-xs text-primary">{kw}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  {readingCard &&
+                    (() => {
+                      const adjacentCards = getAdjacentCards(readingCard);
+                      if (adjacentCards.length === 0) return null;
 
-                <a
-                  href={`/learn/card-meanings/${selectedCard.id}`}
-                  className="block text-center text-sm text-primary hover:underline"
-                  onClick={() => setSelectedCard(null)}
-                >
-                  View full meaning of {selectedCard.name} →
-                </a>
-              </div>
-            );
-          })()}
+                      return (
+                        <div>
+                          <h4 className="mb-2 text-sm font-semibold text-foreground">
+                            Adjacent Combinations
+                          </h4>
+                          <div className="space-y-2">
+                            {adjacentCards.map((adjCard, index) => {
+                              const card = getCardByIdMemo(adjCard.id);
+                              if (!card) return null;
+                              const combination = getCombinationMeaning(
+                                selectedCard,
+                                card,
+                                readingCard.position,
+                                adjCard.position,
+                              );
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-2 rounded-lg border border-border bg-card/50 p-2.5"
+                                >
+                                  <div className="flex items-center gap-1.5">
+                                    <MemoizedCard
+                                      card={selectedCard}
+                                      size="sm"
+                                    />
+                                    <span className="text-sm font-medium text-primary">
+                                      +
+                                    </span>
+                                    <MemoizedCard card={card} size="sm" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="text-xs font-medium text-muted-foreground">
+                                      {selectedCard.name} + {card.name}
+                                    </div>
+                                    <div className="line-clamp-2 text-xs text-muted-foreground/80">
+                                      {combination ||
+                                        "These cards combine to create meaning in your reading."}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                  {selectedCard.keywords &&
+                    selectedCard.keywords.length > 0 && (
+                      <div>
+                        <h4 className="mb-1.5 text-sm font-semibold text-foreground">
+                          Keywords
+                        </h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedCard.keywords.slice(0, 5).map((kw) => (
+                            <span
+                              key={kw}
+                              className="rounded-md bg-primary/10 px-2 py-0.5 text-xs text-primary"
+                            >
+                              {kw}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  <a
+                    href={`/learn/card-meanings/${selectedCard.id}`}
+                    className="block text-center text-sm text-primary hover:underline"
+                    onClick={() => setSelectedCard(null)}
+                  >
+                    View full meaning of {selectedCard.name} →
+                  </a>
+                </div>
+              );
+            })()}
         </DialogContent>
       </Dialog>
     </div>

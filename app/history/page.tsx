@@ -38,7 +38,9 @@ function HistoryPageContent() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="text-muted-foreground">Loading your reading history...</p>
+          <p className="text-muted-foreground">
+            Loading your reading history...
+          </p>
         </div>
       </div>
     );
@@ -51,12 +53,14 @@ function HistoryPageContent() {
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary mb-6"
+            className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Link>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Reading History</h1>
+          <h1 className="mb-2 text-3xl font-bold text-foreground">
+            Reading History
+          </h1>
           <p className="text-muted-foreground">
             {readings.length === 0
               ? "No readings yet"
@@ -67,14 +71,14 @@ function HistoryPageContent() {
         {/* Empty State */}
         {readings.length === 0 ? (
           <div className="rounded-lg border border-border bg-card p-8 text-center">
-            <h2 className="text-xl font-semibold text-foreground mb-2">
+            <h2 className="mb-2 text-xl font-semibold text-foreground">
               No readings yet
             </h2>
-            <p className="text-muted-foreground mb-6">
+            <p className="mb-6 text-muted-foreground">
               Start a new Lenormand reading and it will appear here.
             </p>
-            <Link 
-              href="/read/new" 
+            <Link
+              href="/read/new"
               className="inline-flex h-10 items-center justify-center rounded-md border border-primary bg-transparent px-8 py-2 text-sm font-medium text-primary transition-all hover:bg-primary hover:text-primary-foreground active:scale-95"
             >
               Start a Reading
@@ -118,15 +122,15 @@ function ReadingItem({
   formatDate: (timestamp: number) => string;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-card hover:bg-card/80 transition-colors">
-      <div className="p-4 cursor-pointer" onClick={onToggleExpand}>
+    <div className="rounded-lg border border-border bg-card transition-colors hover:bg-card/80">
+      <div className="cursor-pointer p-4" onClick={onToggleExpand}>
         <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-foreground truncate">
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-center gap-2">
+              <h3 className="truncate font-semibold text-foreground">
                 {reading.question || "Untitled Reading"}
               </h3>
-              <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded whitespace-nowrap">
+              <span className="whitespace-nowrap rounded bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
                 {reading.spreadType}
               </span>
             </div>
@@ -136,7 +140,14 @@ function ReadingItem({
             {reading.cards.length > 0 && (
               <div className="mt-2 text-sm text-muted-foreground">
                 <p className="line-clamp-2 text-sm text-muted-foreground">
-                  Cards: {reading.cards.slice(0, 5).map((c) => c.name).join(", ")}{reading.cards.length > 5 ? ` +${reading.cards.length - 5} more` : ""}
+                  Cards:{" "}
+                  {reading.cards
+                    .slice(0, 5)
+                    .map((c) => c.name)
+                    .join(", ")}
+                  {reading.cards.length > 5
+                    ? ` +${reading.cards.length - 5} more`
+                    : ""}
                 </p>
               </div>
             )}
@@ -147,7 +158,7 @@ function ReadingItem({
                 e.stopPropagation();
                 onToggleExpand();
               }}
-              className="p-2 hover:bg-muted rounded transition-colors"
+              className="rounded p-2 transition-colors hover:bg-muted"
               aria-label={isExpanded ? "Collapse" : "Expand"}
             >
               {isExpanded ? (
@@ -162,7 +173,7 @@ function ReadingItem({
                 onDelete();
               }}
               disabled={isDeleting}
-              className="p-2 hover:bg-destructive/10 hover:text-destructive rounded transition-colors disabled:opacity-50"
+              className="hover:bg-destructive/10 hover:text-destructive rounded p-2 transition-colors disabled:opacity-50"
               aria-label="Delete reading"
             >
               <Trash2 className="h-5 w-5" />
@@ -173,19 +184,19 @@ function ReadingItem({
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-border px-4 py-4 bg-muted/30">
+        <div className="border-t border-border bg-muted/30 px-4 py-4">
           <div className="space-y-3">
             <div>
-              <h4 className="text-sm font-semibold text-foreground mb-1">
+              <h4 className="mb-1 text-sm font-semibold text-foreground">
                 Interpretation
               </h4>
-              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
                 {reading.interpretationFull}
               </p>
             </div>
             {reading.notes && (
               <div>
-                <h4 className="text-sm font-semibold text-foreground mb-1">
+                <h4 className="mb-1 text-sm font-semibold text-foreground">
                   Notes
                 </h4>
                 <p className="text-sm text-muted-foreground">{reading.notes}</p>

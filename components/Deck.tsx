@@ -76,8 +76,8 @@ function DeckComponent({
           variant="outline"
           size="default"
           className={cn(
-            "transition-all duration-300 min-h-[48px]",
-            isShuffling && "scale-95"
+            "min-h-[48px] transition-all duration-300",
+            isShuffling && "scale-95",
           )}
         >
           <Shuffle
@@ -90,7 +90,9 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           loading={isDrawing || isProcessing}
-          loadingText={isProcessing ? "Processing..." : `Drawing ${drawCount}...`}
+          loadingText={
+            isProcessing ? "Processing..." : `Drawing ${drawCount}...`
+          }
           size="default"
           className="min-h-[48px]"
         >
@@ -105,17 +107,21 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           className={cn(
-            "relative rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 min-h-[120px] min-w-[120px] sm:min-h-[160px] sm:min-w-[140px]",
+            "relative min-h-[120px] min-w-[120px] rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:min-h-[160px] sm:min-w-[140px]",
             !canDraw
               ? "cursor-not-allowed opacity-60"
-              : "cursor-pointer hover:scale-105 active:scale-95 hover:shadow-lg"
+              : "cursor-pointer hover:scale-105 hover:shadow-lg active:scale-95",
           )}
-          aria-label={isDrawing ? "Drawing cards..." : `Click to draw ${drawCount} cards from deck of ${cards.length}`}
+          aria-label={
+            isDrawing
+              ? "Drawing cards..."
+              : `Click to draw ${drawCount} cards from deck of ${cards.length}`
+          }
           aria-disabled={!canDraw}
         >
           {/* Card Back Image */}
           <div
-            className="card-mystical overflow-hidden rounded-xl w-full h-full"
+            className="card-mystical h-full w-full overflow-hidden rounded-xl"
             style={{
               width: "112px",
               height: "160px",
@@ -137,12 +143,11 @@ function DeckComponent({
 
       {/* Status Text */}
       <p className="text-center text-sm text-muted-foreground">
-        {canDraw 
+        {canDraw
           ? `Click the deck or use Draw button to reveal ${drawCount} cards`
-          : isProcessing 
+          : isProcessing
             ? "Processing your reading..."
-            : "Deck empty"
-        }
+            : "Deck empty"}
       </p>
     </div>
   );

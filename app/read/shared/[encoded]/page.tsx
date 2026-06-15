@@ -115,15 +115,15 @@ export default function SharedReadingPage({ params }: PageProps) {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      
-       // Match server timeout: maxDuration = 10s, plus 2s buffer for network = 12s total
-       timeoutRef.current = setTimeout(() => {
-         if (mountedRef.current) {
-           setAiLoading(false);
-           setAiError("AI analysis timed out. The reading is still available.");
-         }
-         timeoutRef.current = null;
-       }, 12000);
+
+      // Match server timeout: maxDuration = 10s, plus 2s buffer for network = 12s total
+      timeoutRef.current = setTimeout(() => {
+        if (mountedRef.current) {
+          setAiLoading(false);
+          setAiError("AI analysis timed out. The reading is still available.");
+        }
+        timeoutRef.current = null;
+      }, 12000);
 
       try {
         const aiRequest = {
@@ -180,7 +180,10 @@ export default function SharedReadingPage({ params }: PageProps) {
               if (done) break;
 
               const chunk = decoder.decode(value, { stream: true });
-              const { events, buffer: newBuffer } = processSSEChunk(chunk, buffer);
+              const { events, buffer: newBuffer } = processSSEChunk(
+                chunk,
+                buffer,
+              );
               buffer = newBuffer;
 
               for (const event of events) {
@@ -229,7 +232,7 @@ export default function SharedReadingPage({ params }: PageProps) {
         } else {
           // Fallback: Handle JSON response
           const aiResult = await response.json();
-          
+
           if (mountedRef.current) {
             if (aiResult?.reading) {
               setAiReading(aiResult);
@@ -270,7 +273,7 @@ export default function SharedReadingPage({ params }: PageProps) {
             });
           }
         }
-       } finally {
+      } finally {
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
@@ -313,7 +316,10 @@ export default function SharedReadingPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background" aria-busy="true">
+      <div
+        className="flex min-h-screen items-center justify-center bg-background"
+        aria-busy="true"
+      >
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
       </div>
     );
@@ -322,13 +328,15 @@ export default function SharedReadingPage({ params }: PageProps) {
   if (!reading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center max-w-md px-4">
+        <div className="max-w-md px-4 text-center">
           <XCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-          <h1 className="text-2xl font-bold text-foreground mb-2">Reading Not Found</h1>
-          <p className="text-muted-foreground mb-6">{error || "This shared reading link is invalid or has expired."}</p>
-          <Button onClick={() => window.location.href = "/"}>
-            Go Home
-          </Button>
+          <h1 className="mb-2 text-2xl font-bold text-foreground">
+            Reading Not Found
+          </h1>
+          <p className="mb-6 text-muted-foreground">
+            {error || "This shared reading link is invalid or has expired."}
+          </p>
+          <Button onClick={() => (window.location.href = "/")}>Go Home</Button>
         </div>
       </div>
     );
@@ -374,14 +382,14 @@ export default function SharedReadingPage({ params }: PageProps) {
           )}
 
           {aiError && !aiLoading && (
-            <div className="bg-amber-50 border-amber-200 space-y-4 rounded-lg border p-6 text-center dark:bg-amber-950/30 dark:border-amber-800">
-              <div className="text-amber-700 font-medium dark:text-amber-400">
+            <div className="space-y-4 rounded-lg border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-800 dark:bg-amber-950/30">
+              <div className="font-medium text-amber-700 dark:text-amber-400">
                 Premium Spread
               </div>
               <div className="text-sm text-muted-foreground">{aiError}</div>
               <Button
-                onClick={() => window.location.href = '/support'}
-                className="bg-amber-500 hover:bg-amber-600 text-white"
+                onClick={() => (window.location.href = "/support")}
+                className="bg-amber-500 text-white hover:bg-amber-600"
               >
                 Unlock with Support Code
               </Button>

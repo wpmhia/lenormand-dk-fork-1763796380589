@@ -13,7 +13,13 @@ interface LinearCardLayoutProps {
   spreadId?: string;
 }
 
-export function LinearCardLayout({ validCards, setCardRef, hideCardsDuringTransition, onCardClick, spreadId }: LinearCardLayoutProps) {
+export function LinearCardLayout({
+  validCards,
+  setCardRef,
+  hideCardsDuringTransition,
+  onCardClick,
+  spreadId,
+}: LinearCardLayoutProps) {
   const cardCount = validCards.length;
   const isPetitTableau = cardCount === 9;
 
@@ -28,14 +34,14 @@ export function LinearCardLayout({ validCards, setCardRef, hideCardsDuringTransi
               ref={setCardRef ? setCardRef(index) : undefined}
               className={`flex flex-col items-center gap-1 sm:gap-2 ${hideCardsDuringTransition ? "opacity-0" : ""}`}
             >
-              <div className="text-[10px] font-medium text-primary text-center leading-tight sm:text-xs">
+              <div className="text-center text-[10px] font-medium leading-tight text-primary sm:text-xs">
                 {positionInfo.label}
               </div>
               <CardCell
                 card={card!}
                 onCardClick={onCardClick}
                 size="responsive"
-                className="cursor-pointer w-[clamp(72px,22vw,130px)]"
+                className="w-[clamp(72px,22vw,130px)] cursor-pointer"
                 positionLabel={positionInfo.label}
                 positionDescription={positionInfo.meaning}
               />
