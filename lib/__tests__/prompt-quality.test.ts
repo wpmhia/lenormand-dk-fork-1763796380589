@@ -82,7 +82,7 @@ describe("prompt quality: sentence-3", () => {
   it("includes output contract sections", () => {
     expect(prompt).toContain("## Reading");
     expect(prompt).toContain("## Key combinations");
-    expect(prompt).toContain("## Prediction");
+    expect(prompt).toContain("## Key action");
   });
 
   it("includes at least one adjacent combination with traditional meaning", () => {
@@ -94,6 +94,13 @@ describe("prompt quality: sentence-3", () => {
     for (const term of HARD_BANNED) {
       expect(lower).not.toContain(term);
     }
+  });
+
+  it("includes position meanings", () => {
+    expect(prompt).toContain("Position meanings");
+    expect(prompt).toContain("Opening");
+    expect(prompt).toContain("Core");
+    expect(prompt).toContain("Outcome");
   });
 });
 
@@ -108,7 +115,14 @@ describe("prompt quality: sentence-5", () => {
   it("includes output contract sections", () => {
     expect(prompt).toContain("## Reading");
     expect(prompt).toContain("## Key combinations");
-    expect(prompt).toContain("## Prediction");
+    expect(prompt).toContain("## Key action");
+  });
+
+  it("includes position meanings", () => {
+    expect(prompt).toContain("Position meanings");
+    expect(prompt).toContain("Subject");
+    expect(prompt).toContain("Action");
+    expect(prompt).toContain("Outcome");
   });
 
   it("includes adjacent combinations with meaning", () => {
@@ -162,7 +176,8 @@ describe("prompt quality: Petit Tableau (comprehensive)", () => {
   it("includes output contract sections", () => {
     expect(prompt).toContain("## Reading");
     expect(prompt).toContain("## Key combinations");
-    expect(prompt).toContain("## Prediction");
+    expect(prompt).toContain("## Key action");
+    expect(prompt).toContain("## Likely timing");
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {
@@ -219,7 +234,8 @@ describe("prompt quality: Grand Tableau", () => {
     expect(prompt).toContain("## Grand Tableau overview");
     expect(prompt).toContain("## Around the significator");
     expect(prompt).toContain("## Houses and mirrors");
-    expect(prompt).toContain("## Prediction");
+    expect(prompt).toContain("## Key action");
+    expect(prompt).toContain("## Likely timing");
   });
 
   it("includes adjacent combinations with traditional meanings", () => {
