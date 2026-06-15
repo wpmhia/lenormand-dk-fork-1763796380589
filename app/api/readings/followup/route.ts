@@ -92,8 +92,6 @@ Provide a brief, direct answer to the follow-up question based on the original r
       abortSignal: abortController.signal,
     });
 
-    clearTimeout(timeout);
-
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -112,6 +110,8 @@ Provide a brief, direct answer to the follow-up question based on the original r
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
 \n\n`));
           controller.close();
+        } finally {
+          clearTimeout(timeout);
         }
       },
     });

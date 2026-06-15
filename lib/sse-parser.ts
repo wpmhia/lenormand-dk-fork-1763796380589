@@ -54,22 +54,7 @@ export function processSSEChunk(
     if (!line) continue;
     
     // Handle case where multiple messages arrive without newlines between them
-    // Find all "data: " prefixes in the line (not inside JSON content)
-    const subLines: string[] = [];
-    let searchFrom = 0;
-    while (true) {
-      const idx = line.indexOf("data: ", searchFrom);
-      if (idx === -1) {
-        const remaining = line.slice(searchFrom);
-        if (remaining) subLines.push(remaining);
-        break;
-      }
-      if (idx > searchFrom) {
-        subLines.push(line.slice(searchFrom, idx));
-      }
-      subLines.push(line.slice(idx));
-      searchFrom = idx + 6;
-    }
+    const subLines: string[] = line.split(/(?=data: )/).filter(Boolean);
 
     for (const subLine of subLines) {
       const parsed = parseSSELine(subLine);

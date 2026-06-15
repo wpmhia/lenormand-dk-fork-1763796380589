@@ -157,10 +157,15 @@ function NewReadingPageContent() {
     }
   }, [searchParams]);
 
-  // Auto-start AI analysis when entering results
+  // Auto-start AI analysis when entering results (one-shot per drawnCards)
+  const analysisStartedRef = useRef(false);
   useEffect(() => {
-    if (step === "results" && drawnCards.length > 0) {
+    if (step === "results" && drawnCards.length > 0 && !analysisStartedRef.current) {
+      analysisStartedRef.current = true;
       startAnalysis();
+    }
+    if (step !== "results") {
+      analysisStartedRef.current = false;
     }
   }, [step, drawnCards, startAnalysis]);
 
@@ -227,7 +232,6 @@ function NewReadingPageContent() {
   };
 
   return (
-    <TooltipProvider>
       <div className="bg-ambience min-h-screen text-foreground">
         <div className="container relative z-10 mx-auto max-w-4xl px-4 py-8">
           {/* Header */}
@@ -440,7 +444,6 @@ function NewReadingPageContent() {
            )}
         </div>
       </div>
-    </TooltipProvider>
   );
 }
 

@@ -4,7 +4,7 @@ const allCards = getCards();
 const CARD_NAMES = allCards.map(c => c.name);
 
 function parseRemainingText(text: string, segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'card'; content: string }[]) {
-  const pattern = /\*([^*]+)\*|`([^`]+)`|([A-Z][a-z]+(?: [A-Z][a-z]+)*)/g;
+  const pattern = /\*([^*]+)\*|`([^`]+)`|([A-Za-z][a-z]+(?: [A-Za-z][a-z]+)*)/gi;
   let lastIndex = 0;
   let match;
 

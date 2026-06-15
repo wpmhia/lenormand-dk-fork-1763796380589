@@ -301,17 +301,14 @@ function buildGrandTableauLayout(
     occupyingCard: card,
   }));
 
-  const womanCards = cards.filter((c) => c.id === 28);
-  const manCards = cards.filter((c) => c.id === 29);
-
   const significators: { woman?: SignificatorInfo; man?: SignificatorInfo } = {};
-  if (womanCards.length > 0) {
-    const idx = cards.findIndex((c) => c.id === 28);
-    significators.woman = { index: idx, card: cards[idx] };
+  const womanIdx = cards.findIndex((c) => c.id === 28);
+  if (womanIdx !== -1) {
+    significators.woman = { index: womanIdx, card: cards[womanIdx] };
   }
-  if (manCards.length > 0) {
-    const idx = cards.findIndex((c) => c.id === 29);
-    significators.man = { index: idx, card: cards[idx] };
+  const manIdx = cards.findIndex((c) => c.id === 29);
+  if (manIdx !== -1) {
+    significators.man = { index: manIdx, card: cards[manIdx] };
   }
 
   let primarySignificator: SignificatorInfo | undefined;
