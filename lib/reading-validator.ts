@@ -111,6 +111,93 @@ export function validateReadingOutput(
   return { valid: issues.length === 0, issues };
 }
 
+export const ALLOWED_MARKDOWN_PATTERN = /^(#{1,3}\s|[-*]\s|\d+\.\s|\S)/m;
+
+export function validateReadingMarkdown(
+  reading: string,
+  spreadId: string,
+): ValidationResult {
+  const issues: ValidationIssue[] = [];
+  const lines = reading.split("\n");
+
+  const firstContentLine = lines.find((l) => l.trim().length > 0);
+  if (firstContentLine && !/^##\s/.test(firstContentLine)) {
+    issues.push({ type: "extra_section", message: "First non-empty line must be a ## heading" });
+  }
+
+  const headingPattern = /^(#{1,6})\s/;
+  for (const line of lines) {
+    const match = line.match(headingPattern);
+    if (match) {
+      const level = match[1].length;
+      if (level !== 2) {
+        issues.push({ type: "extra_section", message: `Only ## headings allowed, got ${"#".repeat(level)}` });
+      }
+    }
+    if (/<[a-z][\s>]/i.test(line)) {
+      issues.push({ type: "extra_section", message: "Raw HTML is not allowed" });
+    }
+    if (/\|.+\|/.test(line)) {
+      issues.push({ type: "extra_section", message: "Tables are not allowed" });
+    }
+  }
+
+  const expected = SPREAD_SECTIONS[spreadId];
+  if (expected) {
+    const actualHeadings = reading.match(/^#{1,3}\s+.+$/gm) || [];
+    const actualClean = actualHeadings.map((s) => s.replace(/^#+\s*/, "").trim().toLowerCase());
+    for (const exp of expected) {
+      const expClean = exp.replace(/^#+\s*/, "").trim().toLowerCase();
+      if (!actualClean.some((a) => a === expClean)) {
+        issues.push({ type: "missing_section", message: `Missing required section: "${exp}"` });
+      }
+    }
+    for (const actual of actualClean) {
+      const isAllowed = expected.some((a) => a.replace(/^#+\s*/, "").trim().toLowerCase() === actual);
+      if (!isAllowed) {
+        issues.push({ type: "extra_section", message: `Unexpected section: "${actual}"` });
+      }
+    }
+  }
+
+  const listCount = (reading.match(/^\s*[-*]\s/gm) || []).length;
+
+  return { valid: issues.length === 0, issues };
+}
+
+export function repairMarkdownToContract(reading: string, spreadId: string): string {
+  const expected = SPREAD_SECTIONS[spreadId];
+  if (!expected) return reading;
+
+  const lines = reading.split("\n");
+  const cleaned: string[] = [];
+  let inBadSection = false;
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^(#{1,6})\s+(.+)/);
+    if (headingMatch) {
+      const level = headingMatch[1].length;
+      const text = headingMatch[2].trim();
+      if (level === 2) {
+        cleaned.push(line);
+        inBadSection = false;
+      } else {
+        inBadSection = true;
+      }
+      continue;
+    }
+
+    if (inBadSection) continue;
+
+    if (/<[a-z][\s>]/i.test(line)) continue;
+    if (/\|.+\|/.test(line)) continue;
+
+    cleaned.push(line);
+  }
+
+  return cleaned.join("\n");
+}
+
 export function buildDeterministicFallback(
   drawnCards: { id: number; name: string; keywords: string[]; meaning?: { general: string } }[],
   spreadId: string,
