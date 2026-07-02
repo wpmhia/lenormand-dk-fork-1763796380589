@@ -73,13 +73,13 @@ Output exactly these sections:
 
 ## Reading
 
-## Key combinations
+## Combinations
 
-## Key action
+## Action
 
 Write ## Reading as exactly one sentence that tells the complete story from Opening through Outcome.
-In ## Key combinations, list each adjacent pair (e.g., Card A + Card B) and explain what the combination means.
-In ## Key action, give one practical action the querent can take based on the Outcome card. One sentence.
+In ## Combinations, list each adjacent pair (e.g., Card A + Card B) and explain what the combination means.
+In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
 Do not include timing or fortune-telling. Only mention timing if a card clearly indicates it.`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Subject) + 2nd (Action) + 3rd (Focus) + 4th (Development) + 5th (Outcome). Pairs: 1+2, 2+3, 3+4, 4+5.
 Read the five cards as one Lenormand narrative from Subject to Outcome.
@@ -88,28 +88,28 @@ Output exactly these sections:
 
 ## Reading
 
-## Key combinations
+## Combinations
 
-## Key action
+## Action
 
 Write ## Reading as one paragraph that traces the story from Subject through Action and Focus to Development and Outcome.
-In ## Key combinations, list each adjacent pair in order.
-In ## Key action, give one practical action based on the Outcome card. One sentence.`,
+In ## Combinations, list each adjacent pair in order.
+In ## Action, give one practical action based on the Outcome card. One sentence.`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau grid. Center card is the heart. Read rows as sentences, columns as themes, diagonals as cross-currents.
 
 Output exactly these sections:
 
 ## Reading
 
-## Key combinations
+## Combinations
 
-## Key action
+## Action
 
 ## Likely timing
 
 Write ## Reading as a short paragraph on the overall picture, referencing the center card and row meanings.
-In ## Key combinations, list the most significant adjacent pairs.
-In ## Key action, give one concrete action based on the grid.
+In ## Combinations, list the most significant adjacent pairs.
+In ## Action, give one concrete action based on the grid.
 For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method around the significator.
 
@@ -121,14 +121,14 @@ Output exactly these sections:
 
 ## Houses and mirrors
 
-## Key action
+## Action
 
 ## Likely timing
 
 Write ## Grand Tableau overview as one paragraph on the overall picture of the grid.
 In ## Around the significator, describe the cards surrounding the significator and their combinations.
 In ## Houses and mirrors, list the most significant house placements and mirror pairs.
-In ## Key action, give one practical action.
+In ## Action, give one practical action.
 For ## Likely timing: only include if a time card appears in the spread. Otherwise write "Not clearly shown by these cards."`,
 };
 
@@ -219,15 +219,15 @@ function formatPetitTableau(
     "",
     "## Reading",
     "",
-    "## Key combinations",
+    "## Combinations",
     "",
-    "## Key action",
+    "## Action",
     "",
     "## Likely timing",
     "",
     "Write ## Reading as one paragraph on the overall picture. Reference the center card and row meanings.",
-    "In ## Key combinations, list the most significant adjacent pairs.",
-    "In ## Key action, give one concrete action based on the grid. One sentence.",
+    "In ## Combinations, list the most significant adjacent pairs.",
+    "In ## Action, give one concrete action based on the grid. One sentence.",
     "For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
@@ -364,14 +364,14 @@ function formatGrandTableau(
     "",
     "## Houses and mirrors",
     "",
-    "## Key action",
+    "## Action",
     "",
     "## Likely timing",
     "",
     "Write ## Grand Tableau overview as one paragraph on the overall picture of the grid.",
     "In ## Around the significator, describe the cards surrounding the significator and their combinations.",
     "In ## Houses and mirrors, list the most significant house placements and mirror pairs.",
-    "In ## Key action, give one practical action. One sentence.",
+    "In ## Action, give one practical action. One sentence.",
     "For ## Likely timing: only include if a time card appears in the spread (e.g. Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",

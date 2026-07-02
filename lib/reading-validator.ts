@@ -36,10 +36,10 @@ export interface ValidationResult {
 const SPREAD_SECTIONS: Record<string, string[]> = {
   "single-card": ["## Reading"],
   "daily-card": [],
-  "sentence-3": ["## Reading", "## Key combinations", "## Key action"],
-  "sentence-5": ["## Reading", "## Key combinations", "## Key action"],
-  "comprehensive": ["## Reading", "## Key combinations", "## Key action", "## Likely timing"],
-  "grand-tableau": ["## Grand Tableau overview", "## Around the significator", "## Houses and mirrors", "## Key action", "## Likely timing"],
+  "sentence-3": ["## Reading", "## Combinations", "## Action"],
+  "sentence-5": ["## Reading", "## Combinations", "## Action"],
+  "comprehensive": ["## Reading", "## Combinations", "## Action", "## Likely timing"],
+  "grand-tableau": ["## Grand Tableau overview", "## Around the significator", "## Houses and mirrors", "## Action", "## Likely timing"],
 };
 
 export function validateReadingOutput(
@@ -58,10 +58,14 @@ export function validateReadingOutput(
   }
 
   const drawnSet = new Set(drawnCardIds);
+  const bodyWithoutHeadings = reading
+    .split("\n")
+    .filter((line) => !/^#{1,6}\s/.test(line))
+    .join("\n");
   const cardNamePattern = /\b(?:Rider|Clover|Ship|House|Tree|Clouds|Snake|Coffin|Bouquet|Scythe|Whip|Birds|Child|Fox|Bear|Stars|Stork|Dog|Tower|Garden|Mountain|Paths|Crossroads|Mice|Heart|Ring|Book|Letter|Man|Woman|Lily|Sun|Moon|Key|Fish|Anchor|Cross)\b/g;
   const mentionedCards = new Set<string>();
   let match;
-  while ((match = cardNamePattern.exec(reading)) !== null) {
+  while ((match = cardNamePattern.exec(bodyWithoutHeadings)) !== null) {
     mentionedCards.add(match[0].toLowerCase());
   }
 
@@ -237,5 +241,5 @@ export function buildDeterministicFallback(
   const lastKw = last.keywords?.slice(0, 2).join(", ") || last.name;
   const lastMeaning = last.meaning?.general ? ` (${last.meaning.general})` : "";
 
-  return `## Reading${qLine}${drawnCards.map((c, i) => `**${c.name}**`).join(" + ")} — ${drawnCards.map((c) => c.name).join(", ")} in sequence.\n\n## Key combinations\n\n${pairText}\n\n## Key action\n\nThe closing card is **${last.name}** — ${lastKw}${lastMeaning}. Focus on what this card suggests.`;
+  return `## Reading${qLine}${drawnCards.map((c, i) => `**${c.name}**`).join(" + ")} — ${drawnCards.map((c) => c.name).join(", ")} in sequence.\n\n## Combinations\n\n${pairText}\n\n## Action\n\nThe closing card is **${last.name}** — ${lastKw}${lastMeaning}. Focus on what this card suggests.`;
 }
