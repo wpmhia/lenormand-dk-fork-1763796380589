@@ -81,8 +81,8 @@ describe("prompt quality: sentence-3", () => {
 
   it("includes output contract sections", () => {
     expect(prompt).toContain("## Reading");
-    expect(prompt).toContain("## Key combinations");
-    expect(prompt).toContain("## Key action");
+    expect(prompt).toContain("## Combinations");
+    expect(prompt).toContain("## Action");
   });
 
   it("includes at least one adjacent combination with traditional meaning", () => {
@@ -114,8 +114,8 @@ describe("prompt quality: sentence-5", () => {
 
   it("includes output contract sections", () => {
     expect(prompt).toContain("## Reading");
-    expect(prompt).toContain("## Key combinations");
-    expect(prompt).toContain("## Key action");
+    expect(prompt).toContain("## Combinations");
+    expect(prompt).toContain("## Action");
   });
 
   it("includes position meanings", () => {
@@ -175,8 +175,8 @@ describe("prompt quality: Petit Tableau (comprehensive)", () => {
 
   it("includes output contract sections", () => {
     expect(prompt).toContain("## Reading");
-    expect(prompt).toContain("## Key combinations");
-    expect(prompt).toContain("## Key action");
+    expect(prompt).toContain("## Combinations");
+    expect(prompt).toContain("## Action");
     expect(prompt).toContain("## Likely timing");
   });
 
@@ -234,7 +234,7 @@ describe("prompt quality: Grand Tableau", () => {
     expect(prompt).toContain("## Grand Tableau overview");
     expect(prompt).toContain("## Around the significator");
     expect(prompt).toContain("## Houses and mirrors");
-    expect(prompt).toContain("## Key action");
+    expect(prompt).toContain("## Action");
     expect(prompt).toContain("## Likely timing");
   });
 
