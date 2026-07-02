@@ -4,7 +4,7 @@ export const maxDuration = 30;
 
 import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
-import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import staticCardsData from "@/public/data/cards.json";
@@ -12,7 +12,7 @@ import { Card } from "@/lib/types";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
-import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
+import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 import { validateReadingOutput, buildDeterministicFallback } from "@/lib/reading-validator";
 
@@ -41,7 +41,28 @@ const REPAIR_SYSTEM_PROMPT = `You are a Lenormand editor. Fix the reading below 
 export async function POST(request: Request) {
   try {
     const ip = getClientIP(request);
-    const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
+
+    const bodySize = checkBodySize(request);
+    if (bodySize !== null) {
+      return new Response(JSON.stringify({ error: "Request body too large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    const body = await request.json();
+    const validated = normalizeReadingRequest(body, cardsMap);
+    const cardCount = validated.cards.length;
+
+    if (!MISTRAL_API_KEY) {
+      return new Response(JSON.stringify({ error: "Service unavailable" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    const effectiveLimit = cardCount >= GRAND_TABLEAU_CARD_COUNT ? Math.min(RATE_LIMIT, 5) : RATE_LIMIT;
+    const rateLimitResult = await rateLimit(ip, effectiveLimit, RATE_LIMIT_WINDOW);
 
     if (!rateLimitResult.success) {
       return new Response(
@@ -55,17 +76,6 @@ export async function POST(request: Request) {
         },
       );
     }
-
-    if (!MISTRAL_API_KEY) {
-      return new Response(JSON.stringify({ error: "Service unavailable" }), {
-        status: 503,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
-    const body = await request.json();
-    const validated = normalizeReadingRequest(body, cardsMap);
-    const cardCount = validated.cards.length;
 
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildPromptFromContext(context);

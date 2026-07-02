@@ -4,7 +4,7 @@ export const maxDuration = 30;
 
 import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
-import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
@@ -65,12 +65,25 @@ export async function POST(request: Request) {
       });
     }
 
+    const bodySize = checkBodySize(request);
+    if (bodySize !== null) {
+      return new Response(JSON.stringify({ error: "Request body too large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     if (!originalReading || typeof originalReading !== "string") {
       return new Response(JSON.stringify({ error: "Original reading required" }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
+
+    const MAX_READING_LENGTH = 10000;
+    const safeOriginalReading = originalReading.length > MAX_READING_LENGTH
+      ? originalReading.slice(0, MAX_READING_LENGTH) + "..."
+      : originalReading;
 
     let contextPrompt = "";
     let cardCount = 3;
@@ -89,8 +102,8 @@ export async function POST(request: Request) {
 
     const maxTokens = getTokenBudget(cardCount);
     const prompt = contextPrompt
-      ? `Original reading context:\n${contextPrompt}\n\nOriginal AI reading: "${originalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nAnswer the follow-up question based on the Lenormand card positions and combinations. Be specific to the cards drawn.`
-      : `Original reading: "${originalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nProvide a brief, direct answer based on the original reading and cards.`;
+      ? `Original reading context:\n${contextPrompt}\n\nOriginal AI reading: "${safeOriginalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nAnswer the follow-up question based on the Lenormand card positions and combinations. Be specific to the cards drawn.`
+      : `Original reading: "${safeOriginalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nProvide a brief, direct answer based on the original reading and cards.`;
 
     const mistral = createMistral({
       apiKey: MISTRAL_API_KEY,
