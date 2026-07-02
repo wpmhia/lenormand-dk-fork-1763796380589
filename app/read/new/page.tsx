@@ -253,7 +253,7 @@ function NewReadingPageContent() {
               <div className="absolute -bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
             </h1>
             <p className="text-lg italic text-muted-foreground">
-              Let the ancient cards reveal what your heart already knows
+              Ask a clear question. Read the cards as a sentence.
             </p>
 
             {/* Progress Indicator */}
@@ -362,7 +362,7 @@ function NewReadingPageContent() {
                       <div className="absolute -bottom-1 left-1/2 h-0.5 w-20 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
                     </h2>
                     <p className="text-muted-foreground">
-                      Drawing {selectedSpread.cards} cards from the sacred deck
+                      Drawing {selectedSpread.cards} cards from the 36-card Lenormand deck
                     </p>
                   </div>
                   {loadingCards ? (

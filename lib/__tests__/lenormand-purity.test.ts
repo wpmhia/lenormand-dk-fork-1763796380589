@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildSystemPrompt, buildPrompt } from "@/lib/prompt-builder";
 import { getPositionInfo } from "@/components/reading/SpreadPositions";
+import cardsData from "@/public/data/cards.json";
 
 const HARD_BANNED = [
   "shadow work",
@@ -80,7 +81,43 @@ describe("Lenormand purity", () => {
     });
   });
 
-  describe("review terms in spread prompts", () => {
+  describe("card data integrity", () => {
+  it("no card meaning or combo contains banned New Age terms", () => {
+    const data = cardsData as any[];
+    const banned = [
+      "unique energy and insights",
+      "combined with",
+      "Kilimanjaro",
+      "internet router",
+      "masculine energy",
+      "feminine energy",
+    ];
+    for (const card of data) {
+      if (card?.meaning?.general) {
+        for (const b of banned) {
+          expect(card.meaning.general.toLowerCase()).not.toContain(b.toLowerCase());
+        }
+      }
+      if (card?.combos) {
+        for (const c of card.combos) {
+          const m = c.meaning || "";
+          for (const b of banned) {
+            expect(m.toLowerCase()).not.toContain(b.toLowerCase());
+          }
+        }
+      }
+    }
+  });
+
+  it("every card has a meaning.general", () => {
+    const data = cardsData as any[];
+    for (const card of data) {
+      expect(card.meaning?.general).toBeTruthy();
+    }
+  });
+});
+
+describe("review terms in spread prompts", () => {
     it("past/present/future appear only in Grand Tableau context or as anti-instructions", () => {
       for (const term of ["past", "present", "future"]) {
         for (const text of spreadPrompts) {

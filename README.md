@@ -6,7 +6,7 @@ A Lenormand card reading web application built with Next.js 14 and TypeScript.
 
 - 36 Lenormand cards with detailed meanings
 - Multiple reading spreads (3-card, 9-card, Grand Tableau)
-- AI-powered interpretations with DeepSeek
+- AI-powered interpretations with Mistral
 - Learning modules and card combinations
 - Responsive design with dark/light theme
 
@@ -34,8 +34,7 @@ npm install
 Create `.env` with:
 
 ```bash
-DEEPSEEK_API_KEY=sk-your-key
-DEEPSEEK_BASE_URL=https://api.deepseek.com
+MISTRAL_API_KEY=sk-your-key
 ```
 
 ### Development

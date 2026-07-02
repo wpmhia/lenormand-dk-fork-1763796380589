@@ -44,8 +44,8 @@ const cards: Card[] = [
   makeCard(25, "Ring"),
   makeCard(26, "Book"),
   makeCard(27, "Letter"),
-  makeCard(28, "Woman"),
-  makeCard(29, "Man"),
+  makeCard(28, "Man"),
+  makeCard(29, "Woman"),
   makeCard(30, "Lily"),
   makeCard(31, "Sun"),
   makeCard(32, "Moon"),
@@ -214,8 +214,8 @@ describe("prompt quality: Grand Tableau", () => {
   });
 
   it("finds Woman and Man significators", () => {
-    expect(prompt).toMatch(/Woman.*Card 28/);
-    expect(prompt).toMatch(/Man.*Card 29/);
+    expect(prompt).toMatch(/Woman.*Card 29/);
+    expect(prompt).toMatch(/Man.*Card 28/);
   });
 
   it("includes Corners", () => {

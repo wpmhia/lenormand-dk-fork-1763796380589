@@ -179,12 +179,12 @@ describe("buildReadingContext", () => {
     it("finds significator cards if present", () => {
       const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(allIds), cardsMap);
       if (ctx.layout.type === "grand-tableau") {
-        expect(ctx.layout.significators.woman).toBeDefined();
-        expect(ctx.layout.significators.woman!.index).toBe(27);
-        expect(ctx.layout.significators.woman!.card.id).toBe(28);
         expect(ctx.layout.significators.man).toBeDefined();
-        expect(ctx.layout.significators.man!.index).toBe(28);
-        expect(ctx.layout.significators.man!.card.id).toBe(29);
+        expect(ctx.layout.significators.man!.index).toBe(27);
+        expect(ctx.layout.significators.man!.card.id).toBe(28);
+        expect(ctx.layout.significators.woman).toBeDefined();
+        expect(ctx.layout.significators.woman!.index).toBe(28);
+        expect(ctx.layout.significators.woman!.card.id).toBe(29);
       }
     });
 
@@ -258,7 +258,7 @@ describe("buildReadingContext", () => {
       if (ctx.layout.type === "grand-tableau") {
         expect(ctx.layout.significatorPreference).toBe("woman");
         expect(ctx.layout.primarySignificator).toBeDefined();
-        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
+        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
       }
     });
 
@@ -267,7 +267,7 @@ describe("buildReadingContext", () => {
       if (ctx.layout.type === "grand-tableau") {
         expect(ctx.layout.significatorPreference).toBe("man");
         expect(ctx.layout.primarySignificator).toBeDefined();
-        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
       }
     });
   });
