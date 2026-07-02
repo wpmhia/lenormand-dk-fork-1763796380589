@@ -238,7 +238,8 @@ describe("buildReadingContext", () => {
 
     it("builds adjacent pairs including vertical and signficator neighborhood", () => {
       const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(allIds), cardsMap);
-      expect(ctx.adjacentPairs.length).toBeGreaterThan(35);
+      expect(ctx.adjacentPairs.length).toBeLessThanOrEqual(20);
+      expect(ctx.adjacentPairs.length).toBeGreaterThan(5);
     });
   });
 

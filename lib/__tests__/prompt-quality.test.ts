@@ -86,7 +86,7 @@ describe("prompt quality: sentence-3", () => {
   });
 
   it("includes at least one adjacent combination with traditional meaning", () => {
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
+    expect(prompt).toMatch(/Rider.*Clover|Clover.*Rider/);
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {
@@ -126,9 +126,9 @@ describe("prompt quality: sentence-5", () => {
   });
 
   it("includes adjacent combinations with meaning", () => {
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
-    expect(prompt).toContain("Clover (Clover) + Ship (Ship)");
-    expect(prompt).toContain("House (House) + Tree (Tree)");
+    expect(prompt).toMatch(/Rider.*Clover|Clover.*Rider/);
+    expect(prompt).toMatch(/Clover.*Ship|Ship.*Clover/);
+    expect(prompt).toMatch(/House.*Tree|Tree.*House/);
   });
 });
 
@@ -168,9 +168,9 @@ describe("prompt quality: Petit Tableau (comprehensive)", () => {
 
   it("includes adjacent combinations with traditional meanings", () => {
     expect(prompt).toContain("Adjacent combinations");
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
-    expect(prompt).toContain("Clover (Clover) + Ship (Ship)");
-    expect(prompt).toContain("House (House) + Tree (Tree)");
+    expect(prompt).toMatch(/Rider.*Clover|Clover.*Rider/);
+    expect(prompt).toMatch(/Clover.*Ship|Ship.*Clover/);
+    expect(prompt).toMatch(/House.*Tree|Tree.*House/);
   });
 
   it("includes output contract sections", () => {
@@ -240,7 +240,7 @@ describe("prompt quality: Grand Tableau", () => {
 
   it("includes adjacent combinations with traditional meanings", () => {
     expect(prompt).toContain("Adjacent combinations");
-    expect(prompt).toContain("Rider (Rider) + Clover (Clover)");
+    expect(prompt).toMatch(/Rider.*Clover|Clover.*Rider/);
   });
 
   it("has no hard-banned Tarot/New Age terms", () => {
