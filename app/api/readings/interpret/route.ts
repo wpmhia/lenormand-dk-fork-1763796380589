@@ -14,7 +14,7 @@ import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
-import { validateReadingOutput, buildDeterministicFallback } from "@/lib/reading-validator";
+import { validateReadingOutput, validateReadingMarkdown, repairMarkdownToContract, buildDeterministicFallback } from "@/lib/reading-validator";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -113,15 +113,18 @@ export async function POST(request: Request) {
 
     const drawnCardIds = validated.cards.map((c) => c.id);
     const validation = validateReadingOutput(fullText, drawnCardIds, validated.spreadId);
+    const mdValidation = validateReadingMarkdown(fullText, validated.spreadId);
 
     let finalText = fullText;
 
-    if (!validation.valid) {
+    if (!validation.valid || !mdValidation.valid) {
+      const allIssues = [...validation.issues, ...mdValidation.issues];
       try {
+        const repairIssueText = allIssues.map((i) => `- ${i.message}`).join("\n");
         const repairResult = await streamText({
           model: mistral("mistral-small-latest"),
           system: REPAIR_SYSTEM_PROMPT,
-          prompt: `Reading to fix:\n\n${fullText}\n\nDrawn card IDs: [${drawnCardIds.join(", ")}]`,
+          prompt: `Reading to fix (issues: ${repairIssueText}):\n\n${fullText}\n\nDrawn card IDs: [${drawnCardIds.join(", ")}]`,
           temperature: 0.1,
           maxOutputTokens: maxTokens,
           abortSignal: AbortSignal.timeout(15000),
@@ -131,14 +134,22 @@ export async function POST(request: Request) {
           repaired += chunk;
         }
         if (repaired.trim()) {
-          const repairValidation = validateReadingOutput(repaired, drawnCardIds, validated.spreadId);
-          if (repairValidation.valid) {
+          const contentOk = validateReadingOutput(repaired, drawnCardIds, validated.spreadId).valid;
+          const mdOk = validateReadingMarkdown(repaired, validated.spreadId).valid;
+          if (contentOk && mdOk) {
             finalText = repaired;
+          } else {
+            finalText = repairMarkdownToContract(fullText, validated.spreadId);
           }
         }
       } catch {
-        finalText = fullText;
+        finalText = repairMarkdownToContract(fullText, validated.spreadId);
       }
+    }
+
+    const finalMdOk = validateReadingMarkdown(finalText, validated.spreadId).valid;
+    if (!finalMdOk) {
+      finalText = repairMarkdownToContract(finalText, validated.spreadId);
     }
 
     const finalValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
