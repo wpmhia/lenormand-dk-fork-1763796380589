@@ -22,7 +22,7 @@ export const GRAND_TABLEAU_CARD_COUNT = 36;
 // ============================================================================
 
 /** Maximum question length for AI prompts */
-export const MAX_QUESTION_LENGTH = 500;
+export const MAX_QUESTION_LENGTH = 2000;
 
 /** Maximum card name length for sanitization */
 export const MAX_CARD_NAME_LENGTH = 100;
