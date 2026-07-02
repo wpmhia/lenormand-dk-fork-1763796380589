@@ -66,11 +66,11 @@ describe("normalizeReadingRequest", () => {
     });
 
     it("rejects empty cards array", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [] }), cardsMap)).toThrow(/non-empty/);
+      expect(() => normalizeReadingRequest(validBody({ cards: [] }), cardsMap)).toThrow(ValidationError);
     });
 
     it("rejects missing cards field", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: undefined }), cardsMap)).toThrow(/non-empty/);
+      expect(() => normalizeReadingRequest(validBody({ cards: undefined }), cardsMap)).toThrow(ValidationError);
     });
   });
 
@@ -88,8 +88,8 @@ describe("normalizeReadingRequest", () => {
     });
 
     it("rejects id outside valid range 1-36", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 0, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(/invalid id/);
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 37, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(/invalid id/);
+      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 0, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
+      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 37, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
     });
 
     it("rejects duplicate card ids", () => {
@@ -105,7 +105,7 @@ describe("normalizeReadingRequest", () => {
 
     it("rejects non-object card entry", () => {
       const body = validBody({ cards: [{ id: 1, name: "", position: 0 }, null, { id: 3, name: "", position: 2 }] });
-      expect(() => normalizeReadingRequest(body, cardsMap)).toThrow(/Card at index 1/);
+      expect(() => normalizeReadingRequest(body, cardsMap)).toThrow(ValidationError);
     });
   });
 
