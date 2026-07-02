@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Lenormand Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Lenormand
+          - generic [ref=e10]: Intelligence
+        - navigation [ref=e11]:
+          - link "Home" [ref=e12] [cursor=pointer]:
+            - /url: /
+            - img [ref=e13]
+            - generic [ref=e16]: Home
+          - link "Learn" [ref=e17] [cursor=pointer]:
+            - /url: /learn
+            - img [ref=e18]
+            - generic [ref=e20]: Learn
+          - link "Cards" [ref=e21] [cursor=pointer]:
+            - /url: /cards
+            - img [ref=e22]
+            - generic [ref=e24]: Cards
+          - link "New Reading" [ref=e25] [cursor=pointer]:
+            - /url: /read/new?reset=true
+            - img [ref=e26]
+            - generic [ref=e27]: New Reading
+          - link "History" [ref=e28] [cursor=pointer]:
+            - /url: /history
+            - img [ref=e29]
+            - generic [ref=e33]: History
+    - main [ref=e34]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "New Lenormand Reading" [level=1] [ref=e38]: New Lenormand Reading
+          - paragraph [ref=e40]: Let the ancient cards reveal what your heart already knows
+          - progressbar "Reading progress" [ref=e41]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: "1"
+              - generic [ref=e45]: Setup
+            - generic [ref=e48]:
+              - generic [ref=e49]: "2"
+              - generic [ref=e50]: Draw
+            - generic [ref=e53]:
+              - generic [ref=e54]: "3"
+              - generic [ref=e55]: Reading & AI Insights
+        - generic [ref=e57]:
+          - heading "Ask the Cards" [level=3] [ref=e59]:
+            - img [ref=e60]
+            - text: Ask the Cards
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - text: Your Question
+              - textbox "Your Question" [ref=e65]:
+                - /placeholder: What guidance do the cards have for me today?
+              - generic [ref=e66]: 0/500 characters
+            - generic [ref=e67]:
+              - paragraph [ref=e68]: "Try one of these:"
+              - generic [ref=e69]:
+                - button "What is developing around this situation?" [ref=e70] [cursor=pointer]
+                - button "What should I know about this connection?" [ref=e71] [cursor=pointer]
+                - button "What is the likely next development?" [ref=e72] [cursor=pointer]
+                - button "What is influencing this matter now?" [ref=e73] [cursor=pointer]
+                - button "What practical action is shown?" [ref=e74] [cursor=pointer]
+                - button "What do the cards show about work or money?" [ref=e75] [cursor=pointer]
+            - generic [ref=e76]:
+              - text: "Choose Your Spread:"
+              - combobox [ref=e77] [cursor=pointer]:
+                - generic: 3-Card Sentence
+                - img [ref=e78]
+              - combobox [ref=e80]
+            - generic [ref=e81]:
+              - generic [ref=e82]: "Choose your method:"
+              - generic [ref=e83]:
+                - button "Virtual Deck Best for quick readings. Cards are shuffled and drawn randomly by the computer." [ref=e84] [cursor=pointer]:
+                  - img [ref=e86]
+                  - generic [ref=e88]:
+                    - generic [ref=e89]: Virtual Deck
+                    - generic [ref=e90]: Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+                - button "Physical Cards Use when you've already drawn cards from your physical Lenormand deck and want the AI interpretation." [ref=e91] [cursor=pointer]:
+                  - img [ref=e93]
+                  - generic [ref=e95]:
+                    - generic [ref=e96]: Physical Cards
+                    - generic [ref=e97]: Use when you've already drawn cards from your physical Lenormand deck and want the AI interpretation.
+              - button "Select a method" [disabled]
+    - contentinfo [ref=e98]:
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - generic [ref=e101]:
+            - link "Lenormand" [ref=e102] [cursor=pointer]:
+              - /url: /
+              - heading "Lenormand" [level=3] [ref=e103]
+            - paragraph [ref=e104]: AI-Enhanced Divination
+          - generic [ref=e105]:
+            - heading "Explore" [level=4] [ref=e106]
+            - list [ref=e107]:
+              - listitem [ref=e108]:
+                - link "Home" [ref=e109] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e110]:
+                - link "Reading" [ref=e111] [cursor=pointer]:
+                  - /url: /read/new
+              - listitem [ref=e112]:
+                - link "History" [ref=e113] [cursor=pointer]:
+                  - /url: /history
+              - listitem [ref=e114]:
+                - link "Cards" [ref=e115] [cursor=pointer]:
+                  - /url: /cards
+              - listitem [ref=e116]:
+                - link "Learn" [ref=e117] [cursor=pointer]:
+                  - /url: /learn
+          - generic [ref=e118]:
+            - heading "Links" [level=4] [ref=e119]
+            - list [ref=e120]:
+              - listitem [ref=e121]:
+                - link "About" [ref=e122] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e123]:
+                - link "Support" [ref=e124] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=e125]:
+                - link "How readings work" [ref=e126] [cursor=pointer]:
+                  - /url: /how-readings-work
+              - listitem [ref=e127]:
+                - link "Privacy" [ref=e128] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e129]:
+                - link "Terms" [ref=e130] [cursor=pointer]:
+                  - /url: /terms
+        - paragraph [ref=e132]:
+          - text: Made by
+          - link "Humanstack" [ref=e133] [cursor=pointer]:
+            - /url: https://humanstack.dk
+  - region "Notifications (F8)":
+    - list
