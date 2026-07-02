@@ -380,14 +380,50 @@ function formatGrandTableau(
   return parts.join("\n");
 }
 
+function appendEvidence(prompt: string, context: ReadingContext): string {
+  let result = prompt;
+
+  if (context.timingEvidence.length > 0) {
+    result += "\n\nTiming evidence:";
+    for (const te of context.timingEvidence) {
+      result += `\n- ${te.cardName}: ${te.range}`;
+    }
+  } else {
+    result += "\n\nNo timing evidence detected.";
+  }
+
+  if (context.topicFocus.length > 0) {
+    result += "\n\nTopic focus:";
+    for (const tf of context.topicFocus.slice(0, 5)) {
+      result += `\n- ${tf.topic} — Card ${tf.cardName} at position ${tf.index + 1}`;
+    }
+  }
+
+  const weighted = [...context.adjacentPairs].sort((a, b) => b.weight - a.weight);
+  const topPairs = weighted.slice(0, 10).filter((p) => p.weight >= 2);
+
+  if (topPairs.length > 0) {
+    const BAD_COMBO_PATTERNS = ["unique energy", "combined with", "Kilimanjaro", "internet router"];
+    const hints = topPairs
+      .filter((p) => p.traditionalMeaning)
+      .filter((p) => !BAD_COMBO_PATTERNS.some((pat) => p.traditionalMeaning!.toLowerCase().includes(pat)))
+      .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)} (importance: ${p.weight}/10): ${p.traditionalMeaning}`);
+    if (hints.length > 0) {
+      result += `\n\nKey pair meanings (ordered by importance):\n${hints.join("\n")}`;
+    }
+  }
+
+  return result;
+}
+
 export function buildPromptFromContext(context: ReadingContext): string {
   const { spreadId, question, adjacentPairs, layout } = context;
 
   if (layout.type === "petit-tableau") {
-    return formatPetitTableau(question, layout, adjacentPairs);
+    return appendEvidence(formatPetitTableau(question, layout, adjacentPairs), context);
   }
   if (layout.type === "grand-tableau") {
-    return formatGrandTableau(question, layout, adjacentPairs);
+    return appendEvidence(formatGrandTableau(question, layout, adjacentPairs), context);
   }
 
   const q = sanitizeInput(question, MAX_QUESTION_LENGTH) || "What do these cards reveal?";
@@ -410,18 +446,7 @@ export function buildPromptFromContext(context: ReadingContext): string {
     prompt += "\n\nRead each card primarily through its position meaning before combining with adjacent cards.";
   }
 
-  if (adjacentPairs.length > 0) {
-    const BAD_COMBO_PATTERNS = ["unique energy", "combined with", "Kilimanjaro", "internet router"];
-    const hints = adjacentPairs
-      .filter((p) => p.traditionalMeaning)
-      .filter((p) => !BAD_COMBO_PATTERNS.some((pat) => p.traditionalMeaning!.toLowerCase().includes(pat)))
-      .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)}: ${p.traditionalMeaning}`);
-    if (hints.length > 0) {
-      prompt += `\n\nTraditional pair meanings for adjacent cards:\n${hints.join("\n")}`;
-    }
-  }
-
-  return prompt;
+  return appendEvidence(prompt, context);
 }
 
 export function sanitizeQuestion(question: string): string {

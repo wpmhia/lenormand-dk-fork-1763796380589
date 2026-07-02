@@ -14,6 +14,7 @@ export interface AdjacentPair {
   cardA: NormalizedCard;
   cardB: NormalizedCard;
   traditionalMeaning?: string;
+  weight: number;
 }
 
 export type ReadingLayout =
@@ -22,12 +23,27 @@ export type ReadingLayout =
   | PetitTableauLayout
   | GrandTableauLayout;
 
+export interface TimingEvidence {
+  cardId: number;
+  cardName: string;
+  range: string;
+}
+
+export interface TopicFocus {
+  topic: string;
+  cardId: number;
+  cardName: string;
+  index: number;
+}
+
 export interface ReadingContext {
   spreadId: SpreadId;
   question: string;
   cards: NormalizedCard[];
   adjacentPairs: AdjacentPair[];
   layout: ReadingLayout;
+  timingEvidence: TimingEvidence[];
+  topicFocus: TopicFocus[];
 }
 
 export interface SingleCardLayout {
@@ -119,6 +135,7 @@ function buildAdjacentPair(
   j: number,
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
+  weight: number = 1,
 ): AdjacentPair {
   const cardA = cards[i];
   const cardB = cards[j];
@@ -133,25 +150,30 @@ function buildAdjacentPair(
     if (meaning) traditionalMeaning = meaning;
   }
 
-  return { indexA: i, indexB: j, cardA, cardB, traditionalMeaning };
+  return { indexA: i, indexB: j, cardA, cardB, traditionalMeaning, weight };
 }
 
 function buildPetitTableauPairs(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
 ): AdjacentPair[] {
-  const gridPairs: [number, number][] = [
-    [0, 1], [1, 2], [3, 4], [4, 5], [6, 7], [7, 8],
-    [0, 3], [3, 6], [1, 4], [4, 7], [2, 5], [5, 8],
-    [0, 4], [4, 8], [2, 4], [4, 6],
+  const gridPairs: { a: number; b: number; weight: number }[] = [
+    { a: 0, b: 1, weight: 2 }, { a: 1, b: 2, weight: 2 },
+    { a: 3, b: 4, weight: 4 }, { a: 4, b: 5, weight: 4 },
+    { a: 6, b: 7, weight: 2 }, { a: 7, b: 8, weight: 2 },
+    { a: 0, b: 3, weight: 2 }, { a: 3, b: 6, weight: 2 },
+    { a: 1, b: 4, weight: 5 }, { a: 4, b: 7, weight: 5 },
+    { a: 2, b: 5, weight: 2 }, { a: 5, b: 8, weight: 2 },
+    { a: 0, b: 4, weight: 3 }, { a: 4, b: 8, weight: 3 },
+    { a: 2, b: 4, weight: 3 }, { a: 4, b: 6, weight: 3 },
   ];
   const seen = new Set<string>();
   const result: AdjacentPair[] = [];
-  for (const [i, j] of gridPairs) {
+  for (const { a: i, b: j, weight } of gridPairs) {
     const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    result.push(buildAdjacentPair(i, j, cards, cardsMap));
+    result.push(buildAdjacentPair(i, j, cards, cardsMap, weight));
   }
   return result;
 }
@@ -164,11 +186,38 @@ function buildGrandTableauPairs(
   const all: AdjacentPair[] = [];
   const seen = new Set<string>();
 
+  const sigIndices = new Set([
+    layout.primarySignificator?.index,
+    layout.significators.man?.index,
+    layout.significators.woman?.index,
+  ].filter((s): s is number => s !== undefined));
+
+  const sigRows = new Set<number>();
+  const sigCols = new Set<number>();
+  for (const si of sigIndices) {
+    sigRows.add(Math.floor(si / 9));
+    sigCols.add(si % 9);
+  }
+
+  const pairWeight = (i: number, j: number): number => {
+    const inSigRow = sigRows.has(Math.floor(i / 9)) || sigRows.has(Math.floor(j / 9));
+    const inSigCol = sigCols.has(i % 9) || sigCols.has(j % 9);
+    const isNearSig = sigIndices.has(i) && Math.abs(i - j) < 9;
+    const isSigPair = sigIndices.has(i) || sigIndices.has(j);
+
+    if (isNearSig) return 9;
+    if (isSigPair) return 7;
+    if (inSigRow && inSigCol) return 6;
+    if (inSigRow) return 5;
+    if (inSigCol) return 4;
+    return 2;
+  };
+
   const add = (i: number, j: number) => {
     const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
     if (seen.has(key) || i === j) return;
     seen.add(key);
-    all.push(buildAdjacentPair(i, j, cards, cardsMap));
+    all.push(buildAdjacentPair(i, j, cards, cardsMap, pairWeight(i, j)));
   };
 
   for (let r = 0; r < 4; r++) {
@@ -183,11 +232,7 @@ function buildGrandTableauPairs(
     }
   }
 
-  const sigs = [
-    layout.significators.woman?.index,
-    layout.significators.man?.index,
-  ].filter((s): s is number => s !== undefined);
-  for (const sigIdx of sigs) {
+  for (const sigIdx of sigIndices) {
     const row = Math.floor(sigIdx / 9);
     const col = sigIdx % 9;
     for (let dc = -1; dc <= 1; dc++) {
@@ -199,7 +244,7 @@ function buildGrandTableauPairs(
     }
   }
 
-  return all;
+  return all.sort((a, b) => b.weight - a.weight).slice(0, 20);
 }
 
 function buildLinearAdjacentPairs(
@@ -207,8 +252,10 @@ function buildLinearAdjacentPairs(
   cardsMap: Map<number, Card>,
 ): AdjacentPair[] {
   const pairs: AdjacentPair[] = [];
+  const mid = Math.floor(cards.length / 2);
   for (let i = 0; i < cards.length - 1; i++) {
-    pairs.push(buildAdjacentPair(i, i + 1, cards, cardsMap));
+    const weight = i === mid || i + 1 === mid ? 5 : 3;
+    pairs.push(buildAdjacentPair(i, i + 1, cards, cardsMap, weight));
   }
   return pairs;
 }
@@ -268,6 +315,55 @@ function buildPetitTableauLayout(
   };
 }
 
+const TIMING_CARDS: { id: number; range: string }[] = [
+  { id: 12, range: "days (Birds = short-term)" },
+  { id: 17, range: "weeks (Stork = change within weeks)" },
+  { id: 5, range: "years (Tree = long-term)" },
+  { id: 32, range: "phases (Moon = emotional cycles)" },
+  { id: 2, range: "soon / lucky chance (Clover = unexpected quick timing)" },
+  { id: 30, range: "mature timing (Lily = slow, patient timeline)" },
+];
+
+const QUESTION_TOPICS: Record<string, { cardIds: number[]; topic: string }[]> = {
+  love: [
+    { cardIds: [24], topic: "Heart — love" },
+    { cardIds: [25], topic: "Ring — commitment" },
+    { cardIds: [4], topic: "House — domestic life" },
+    { cardIds: [29, 28], topic: "Woman/Man — partner" },
+    { cardIds: [12], topic: "Birds — communication" },
+  ],
+  job: [
+    { cardIds: [14], topic: "Fox — current job" },
+    { cardIds: [15], topic: "Bear — boss/authority" },
+    { cardIds: [35], topic: "Anchor — career stability" },
+    { cardIds: [34], topic: "Fish — money" },
+    { cardIds: [1], topic: "Rider — new opportunity" },
+  ],
+  money: [
+    { cardIds: [34], topic: "Fish — money/finance" },
+    { cardIds: [35], topic: "Anchor — stability" },
+    { cardIds: [1], topic: "Rider — new income source" },
+    { cardIds: [9], topic: "Bouquet — gift/windfall" },
+  ],
+  health: [
+    { cardIds: [5], topic: "Tree — health" },
+    { cardIds: [8], topic: "Coffin — recovery or illness" },
+    { cardIds: [2], topic: "Clover — lucky recovery" },
+    { cardIds: [30], topic: "Lily — long-term wellness" },
+  ],
+  home: [
+    { cardIds: [4], topic: "House — home/family" },
+    { cardIds: [17], topic: "Stork — moving" },
+    { cardIds: [3], topic: "Ship — relocation" },
+    { cardIds: [23], topic: "Mice — loss/damage" },
+  ],
+  travel: [
+    { cardIds: [3], topic: "Ship — travel" },
+    { cardIds: [1], topic: "Rider — journey" },
+    { cardIds: [17], topic: "Stork — change of place" },
+  ],
+};
+
 const ALL_CARD_NAMES = [
   "Rider", "Clover", "Ship", "House", "Tree",
   "Clouds", "Snake", "Coffin", "Bouquet", "Scythe",
@@ -295,7 +391,7 @@ function buildGrandTableauLayout(
   }
 
   const houses: HousePlacement[] = cards.map((card, index) => ({
-    position: index,
+    position: index + 1,
     houseCardId: index + 1,
     houseName: ALL_CARD_NAMES[index],
     occupyingCard: card,
@@ -410,5 +506,41 @@ export function buildReadingContext(
       layout = { type: "single" };
   }
 
-  return { spreadId, question, cards, adjacentPairs, layout };
+  const timingEvidence: TimingEvidence[] = [];
+  for (const tc of TIMING_CARDS) {
+    const found = cards.find((c) => c.id === tc.id);
+    if (found) {
+      timingEvidence.push({ cardId: tc.id, cardName: found.name, range: tc.range });
+    }
+  }
+
+  const topicFocus: TopicFocus[] = [];
+  const lowerQ = question.toLowerCase();
+  for (const [category, topics] of Object.entries(QUESTION_TOPICS)) {
+    const match = matchQuestionTopic(lowerQ, category);
+    if (match) {
+      for (const t of topics) {
+        const found = cards.find((c) => t.cardIds.includes(c.id));
+        if (found) {
+          const idx = cards.findIndex((c) => c.id === found.id);
+          topicFocus.push({ topic: t.topic, cardId: found.id, cardName: found.name, index: idx >= 0 ? idx : 0 });
+        }
+      }
+    }
+    if (topicFocus.length > 0) break;
+  }
+
+  return { spreadId, question, cards, adjacentPairs, layout, timingEvidence, topicFocus };
+}
+
+function matchQuestionTopic(question: string, category: string): boolean {
+  const patterns: Record<string, string[]> = {
+    love: ["love", "relationship", "partner", "romance", "marri", "dating", "boyfriend", "girlfriend", "heart", "commit"],
+    job: ["job", "work", "career", "employ", "boss", "interview", "promot", "fir", "resign", "salary", "colleague"],
+    money: ["money", "finance", "income", "invest", "loan", "debt", "wealth", "budget", "afford", "pay"],
+    health: ["health", "ill", "sick", "disease", "pain", "heal", "recover", "doctor", "hospital", "wellness", "surgery"],
+    home: ["home", "house", "apartment", "move", "renovation", "roommate", "proper"],
+    travel: ["travel", "trip", "vacation", "journey", "flight", "visit", "holiday", "abroad"],
+  };
+  return patterns[category]?.some((kw) => question.includes(kw)) ?? false;
 }
