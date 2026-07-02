@@ -87,7 +87,7 @@ Provide a brief, direct answer to the follow-up question based on the original r
       model: mistral("mistral-small-latest"),
       system: buildSystemPrompt(cardCount),
       prompt,
-      temperature: 0.75,
+      temperature: 0.2,
       maxOutputTokens: maxTokens,
       abortSignal: abortController.signal,
     });

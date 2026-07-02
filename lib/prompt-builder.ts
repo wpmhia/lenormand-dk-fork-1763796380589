@@ -46,6 +46,8 @@ export function buildSystemPrompt(cardCount?: number): string {
 STRICT RULES:
 - Never use words like: energy, vibration, journey, transformation, the universe, higher self, trust the process, intuition, shadow work, chakra, soul-purpose, archetype, everything happens for a reason.
 - Never add cards that were not drawn.
+- Never use the words: energy, intuition, journey, transformation, archetype, soul, universe, even if they appear in the card data.
+- For Man/Woman, treat as person/significator, not masculine/feminine energy.
 - Never make up timing. Only mention timing if the cards clearly indicate it (e.g. Birds = days, Moon = weeks, Tree = years). Otherwise write "Not clearly shown by these cards."
 - Every claim in the reading must reference a specific card by name. If a sentence could apply to any spread, rewrite it.
 
@@ -260,8 +262,8 @@ function formatGrandTableau(
   if (layout.primarySignificator) {
     importantHouseIds.add(layout.primarySignificator.card.id);
   }
-  if (layout.significators.woman) importantHouseIds.add(28);
-  if (layout.significators.man) importantHouseIds.add(29);
+  if (layout.significators.man) importantHouseIds.add(28);
+  if (layout.significators.woman) importantHouseIds.add(29);
 
   const sigHouseIdx = layout.primarySignificator?.index ?? -1;
   if (sigHouseIdx >= 0) {
@@ -297,17 +299,17 @@ function formatGrandTableau(
     const w = layout.significators.woman;
     const row = Math.floor(w.index / 9) + 1;
     const col = (w.index % 9) + 1;
-    parts.push(`Woman (Card 28): position ${w.index}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
+    parts.push(`Woman (Card ${w.card.id}): position ${w.index}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
   } else {
-    parts.push("Woman (Card 28): not present in this spread");
+    parts.push("Woman (Card 29): not present in this spread");
   }
   if (layout.significators.man) {
     const m = layout.significators.man;
     const row = Math.floor(m.index / 9) + 1;
     const col = (m.index % 9) + 1;
-    parts.push(`Man (Card 29): position ${m.index}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
+    parts.push(`Man (Card ${m.card.id}): position ${m.index}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
   } else {
-    parts.push("Man (Card 29): not present in this spread");
+    parts.push("Man (Card 28): not present in this spread");
   }
 
   parts.push("");
@@ -409,8 +411,10 @@ export function buildPromptFromContext(context: ReadingContext): string {
   }
 
   if (adjacentPairs.length > 0) {
+    const BAD_COMBO_PATTERNS = ["unique energy", "combined with", "Kilimanjaro", "internet router"];
     const hints = adjacentPairs
       .filter((p) => p.traditionalMeaning)
+      .filter((p) => !BAD_COMBO_PATTERNS.some((pat) => p.traditionalMeaning!.toLowerCase().includes(pat)))
       .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)}: ${p.traditionalMeaning}`);
     if (hints.length > 0) {
       prompt += `\n\nTraditional pair meanings for adjacent cards:\n${hints.join("\n")}`;

@@ -302,13 +302,13 @@ function buildGrandTableauLayout(
   }));
 
   const significators: { woman?: SignificatorInfo; man?: SignificatorInfo } = {};
-  const womanIdx = cards.findIndex((c) => c.id === 28);
-  if (womanIdx !== -1) {
-    significators.woman = { index: womanIdx, card: cards[womanIdx] };
-  }
-  const manIdx = cards.findIndex((c) => c.id === 29);
+  const manIdx = cards.findIndex((c) => c.id === 28);
   if (manIdx !== -1) {
     significators.man = { index: manIdx, card: cards[manIdx] };
+  }
+  const womanIdx = cards.findIndex((c) => c.id === 29);
+  if (womanIdx !== -1) {
+    significators.woman = { index: womanIdx, card: cards[womanIdx] };
   }
 
   let primarySignificator: SignificatorInfo | undefined;

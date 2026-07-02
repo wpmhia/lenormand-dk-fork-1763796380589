@@ -157,7 +157,7 @@ const faqSchema = {
       name: "How many cards are in a Lenormand deck?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "A traditional Lenormand deck has exactly 36 cards, from the Rider (card 1) to the Key (card 36).",
+        text: "A traditional Lenormand deck has exactly 36 cards, from the Rider (card 1) to the Cross (card 36).",
       },
     },
     {
