@@ -11,7 +11,7 @@ export const ReadingMarkdown = memo(function ReadingMarkdown({ children }: { chi
         h1: ({ children }) => <h1 className="mb-2 mt-4 text-2xl font-bold">{children}</h1>,
         h2: ({ children }) => <h2 className="mb-2 mt-4 text-xl font-bold">{children}</h2>,
         h3: ({ children }) => <h3 className="mb-1 mt-3 text-lg font-bold">{children}</h3>,
-        strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+        strong: ({ children }) => <strong>{children}</strong>,
         em: ({ children }) => <em className="italic">{children}</em>,
         code: ({ children }) => <code className="rounded bg-muted px-1 py-0.5 text-sm">{children}</code>,
         ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 pl-5">{children}</ul>,

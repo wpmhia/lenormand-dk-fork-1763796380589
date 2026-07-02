@@ -56,7 +56,7 @@ ${isSingleCard
 
 Formatting:
 - Use ## for headings only. Do not rename or add headings.
-- Bold card pairs with ** ** (example: **Card A + Card B**).
+- Write card pairs as plain text (example: Card A + Card B).
 - No text before the first heading.
 - No tables, HTML, emojis, or nested bullets.`;
 }
@@ -76,7 +76,7 @@ Output exactly these sections:
 ## Key action
 
 Write ## Reading as exactly one sentence that tells the complete story from Opening through Outcome.
-In ## Key combinations, list each adjacent pair with **Card A + Card B** in bold and explain what the combination means.
+In ## Key combinations, list each adjacent pair (e.g., Card A + Card B) and explain what the combination means.
 In ## Key action, give one practical action the querent can take based on the Outcome card. One sentence.
 Do not include timing or fortune-telling. Only mention timing if a card clearly indicates it.`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Subject) + 2nd (Action) + 3rd (Focus) + 4th (Development) + 5th (Outcome). Pairs: 1+2, 2+3, 3+4, 4+5.
@@ -91,7 +91,7 @@ Output exactly these sections:
 ## Key action
 
 Write ## Reading as one paragraph that traces the story from Subject through Action and Focus to Development and Outcome.
-In ## Key combinations, list each adjacent pair in order. Bold each pair name.
+In ## Key combinations, list each adjacent pair in order.
 In ## Key action, give one practical action based on the Outcome card. One sentence.`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau grid. Center card is the heart. Read rows as sentences, columns as themes, diagonals as cross-currents.
 
@@ -106,7 +106,7 @@ Output exactly these sections:
 ## Likely timing
 
 Write ## Reading as a short paragraph on the overall picture, referencing the center card and row meanings.
-In ## Key combinations, list the most significant adjacent pairs. Bold each pair name.
+In ## Key combinations, list the most significant adjacent pairs.
 In ## Key action, give one concrete action based on the grid.
 For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method around the significator.
@@ -224,7 +224,7 @@ function formatPetitTableau(
     "## Likely timing",
     "",
     "Write ## Reading as one paragraph on the overall picture. Reference the center card and row meanings.",
-    "In ## Key combinations, list the most significant adjacent pairs. Bold each pair name with ** **.",
+    "In ## Key combinations, list the most significant adjacent pairs.",
     "In ## Key action, give one concrete action based on the grid. One sentence.",
     "For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
     "",
