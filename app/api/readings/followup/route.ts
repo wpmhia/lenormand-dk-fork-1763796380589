@@ -2,13 +2,17 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-import { buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
+import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
+import { buildReadingContext } from "@/lib/reading-context";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
+import staticCardsData from "@/public/data/cards.json";
+import { Card } from "@/lib/types";
+import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -17,6 +21,8 @@ export async function OPTIONS() {
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
+const allCards = staticCardsData as Card[];
+const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
 
 export async function POST(request: Request) {
   try {
@@ -50,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { followUpQuestion, originalReading, cards } = body;
+    const { followUpQuestion, originalReading, cards, spreadId, significatorPreference } = body;
 
     if (!followUpQuestion || typeof followUpQuestion !== "string") {
       return new Response(JSON.stringify({ error: "Follow-up question required" }), {
@@ -66,14 +72,25 @@ export async function POST(request: Request) {
       });
     }
 
-    const cardCount = cards?.length || 3;
+    let contextPrompt = "";
+    let cardCount = 3;
+
+    if (spreadId && cards && Array.isArray(cards) && cards.length > 0) {
+      try {
+        const validated = normalizeReadingRequest({ spreadId, cards, question: "", significatorPreference }, cardsMap);
+        cardCount = validated.cards.length;
+        const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
+        contextPrompt = buildPromptFromContext(context);
+      } catch {
+        cardCount = cards.length;
+        contextPrompt = `Cards: ${cards.map((c: {name?: string; id?: number}) => c.name || (c.id ? `Card ${c.id}` : "Unknown")).join(", ")}`;
+      }
+    }
+
     const maxTokens = getTokenBudget(cardCount);
-
-    const prompt = `Original reading: "${originalReading}"
-
-Follow-up question: "${followUpQuestion}"
-
-Provide a brief, direct answer to the follow-up question based on the original reading and cards. Be specific and concise.`;
+    const prompt = contextPrompt
+      ? `Original reading context:\n${contextPrompt}\n\nOriginal AI reading: "${originalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nAnswer the follow-up question based on the Lenormand card positions and combinations. Be specific to the cards drawn.`
+      : `Original reading: "${originalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nProvide a brief, direct answer based on the original reading and cards.`;
 
     const mistral = createMistral({
       apiKey: MISTRAL_API_KEY,

@@ -14,6 +14,7 @@ import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
+import { validateReadingOutput, buildDeterministicFallback } from "@/lib/reading-validator";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -24,6 +25,18 @@ const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
+
+const mistral = createMistral({
+  apiKey: MISTRAL_API_KEY || "",
+});
+
+const REPAIR_SYSTEM_PROMPT = `You are a Lenormand editor. Fix the reading below according to these rules:
+- Remove banned New Age or Tarot terms: energy, vibration, shadow work, higher self, soul lesson, chakra, archetype, the universe, spiritual journey, divine guidance, soul-purpose.
+- Remove any mention of cards that were NOT drawn.
+- Remove timing claims unless a timing card (Birds=days, Stork=weeks, Tree=years, Moon=phases) was drawn.
+- Keep all section headings exactly as they are.
+- Keep all valid card names and their meanings.
+- Output only the corrected reading, nothing else.`;
 
 export async function POST(request: Request) {
   try {
@@ -77,39 +90,53 @@ export async function POST(request: Request) {
       abortSignal: abortController.signal,
     });
 
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers" })}
-\n\n`));
+    let fullText = "";
+    for await (const chunk of result.textStream) {
+      fullText += chunk;
+    }
+    clearTimeout(timeout);
 
-        try {
-          for await (const chunk of result.textStream) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: chunk })}
-\n\n`));
-          }
+    if (!fullText.trim()) {
+      const fallback = buildDeterministicFallback(validated.cards, validated.spreadId, validated.question);
+      return streamTextAsSSE(fallback, corsHeaders, rateLimitResult);
+    }
 
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
-\n\n`));
-        } catch {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
-\n\n`));
-        } finally {
-          clearTimeout(timeout);
-          controller.close();
+    const drawnCardIds = validated.cards.map((c) => c.id);
+    const validation = validateReadingOutput(fullText, drawnCardIds, validated.spreadId);
+
+    let finalText = fullText;
+
+    if (!validation.valid) {
+      try {
+        const repairResult = await streamText({
+          model: mistral("mistral-small-latest"),
+          system: REPAIR_SYSTEM_PROMPT,
+          prompt: `Reading to fix:\n\n${fullText}\n\nDrawn card IDs: [${drawnCardIds.join(", ")}]`,
+          temperature: 0.1,
+          maxOutputTokens: maxTokens,
+          abortSignal: AbortSignal.timeout(15000),
+        });
+        let repaired = "";
+        for await (const chunk of repairResult.textStream) {
+          repaired += chunk;
         }
-      },
-    });
+        if (repaired.trim()) {
+          const repairValidation = validateReadingOutput(repaired, drawnCardIds, validated.spreadId);
+          if (repairValidation.valid) {
+            finalText = repaired;
+          }
+        }
+      } catch {
+        finalText = fullText;
+      }
+    }
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no",
-        ...corsHeaders,
-      },
-    });
+    const finalValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
+    if (!finalValidation.valid) {
+      finalText = buildDeterministicFallback(validated.cards, validated.spreadId, validated.question);
+    }
+
+    return streamTextAsSSE(finalText, corsHeaders, rateLimitResult);
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {
       return new Response(JSON.stringify({ error: error.message }), {
@@ -122,10 +149,40 @@ export async function POST(request: Request) {
       JSON.stringify({
         error: isTimeout ? "Response timed out" : "Processing failed",
         reading: isTimeout
-          ? "The AI took too long to respond. Tap to retry, or check the traditional card meanings below."
+          ? "The AI took too long to respond."
           : "Unable to generate a reading right now.",
       }),
       { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },
     );
   }
+}
+
+function streamTextAsSSE(text: string, headers: Record<string, string>, rateLimitResult: { limit: number; remaining: number }) {
+  const encoder = new TextEncoder();
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}
+\n\n`));
+
+      for (const sentence of sentences) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: sentence.trim() + " " })}
+\n\n`));
+      }
+
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
+\n\n`));
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+      "X-Accel-Buffering": "no",
+      ...headers,
+    },
+  });
 }
