@@ -16,7 +16,10 @@ export const BANNED_TERMS = [
   "soul purpose",
   "everything happens for a reason",
   "trust the process",
+  "these cards together tell a story",
 ];
+
+export const BANNED_QUESTION_PREFIX = /^Your question:.*\n\n/s;
 
 const TIMING_CARD_IDS = new Set([12, 17, 5, 32]);
 
@@ -203,30 +206,36 @@ export function buildDeterministicFallback(
   spreadId: string,
   question: string,
 ): string {
-  const count = drawnCards.length;
-  const cardLines = drawnCards
-    .map((c, i) => {
-      const keywords = c.keywords?.slice(0, 3).join(", ") || "";
-      const meaning = c.meaning?.general || "";
-      return `**${i + 1}. ${c.name}**${keywords ? ` — ${keywords}` : ""}${meaning ? `: ${meaning}` : ""}`;
-    })
-    .join("\n\n");
+  const q = question ? `Question: "${question}"` : "";
+  const qLine = q ? `\n_${q}_\n\n` : "\n\n";
 
-  const intro = question
-    ? `Your question: "${question}"\n\n`
-    : "";
+  if (drawnCards.length === 0) return `## Reading\n\nNo cards were drawn.`;
 
-  if (count <= 1) {
+  if (drawnCards.length === 1) {
     const c = drawnCards[0];
     const kw = c.keywords?.slice(0, 3).join(", ") || "";
-    return `${intro}## Reading\n\n${c.name} — ${kw}. ${c.meaning?.general || ""}`;
+    const note = c.meaning?.general || "";
+    return `## Reading${qLine}${c.name} — ${kw}${note ? `. ${note}` : ""}`;
   }
 
+  const cardList = drawnCards.map((c, i) => {
+    const kw = c.keywords?.slice(0, 2).join(", ");
+    return `${i + 1}. ${c.name}${kw ? ` (${kw})` : ""}`;
+  }).join("\n");
+
   const pairs = [];
-  for (let i = 0; i < count - 1; i++) {
-    pairs.push(`**${drawnCards[i].name} + ${drawnCards[i + 1].name}**`);
+  for (let i = 0; i < drawnCards.length - 1; i++) {
+    const a = drawnCards[i];
+    const b = drawnCards[i + 1];
+    const keywordsA = a.keywords?.slice(0, 2).join(", ") || a.name;
+    const keywordsB = b.keywords?.slice(0, 2).join(", ") || b.name;
+    pairs.push(`- **${a.name} + ${b.name}**: ${keywordsA} meets ${keywordsB}`);
   }
   const pairText = pairs.join("\n");
 
-  return `${intro}## Reading\n\nThese cards together tell a story. ${drawnCards.map((c) => c.name).join(" followed by ")}.\n\n## Key combinations\n\n${pairText}\n\n## Key action\n\nLook at the last card (${drawnCards[count - 1].name}) for practical guidance.`;
+  const last = drawnCards[drawnCards.length - 1];
+  const lastKw = last.keywords?.slice(0, 2).join(", ") || last.name;
+  const lastMeaning = last.meaning?.general ? ` (${last.meaning.general})` : "";
+
+  return `## Reading${qLine}${drawnCards.map((c, i) => `**${c.name}**`).join(" + ")} — ${drawnCards.map((c) => c.name).join(", ")} in sequence.\n\n## Key combinations\n\n${pairText}\n\n## Key action\n\nThe closing card is **${last.name}** — ${lastKw}${lastMeaning}. Focus on what this card suggests.`;
 }
