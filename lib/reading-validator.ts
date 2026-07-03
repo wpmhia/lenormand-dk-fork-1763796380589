@@ -227,27 +227,19 @@ export function buildDeterministicFallback(
     return `${i + 1}. ${c.name}${kw ? ` (${kw})` : ""}`;
   }).join("\n");
 
-  const cardNames = drawnCards.map((c) => c.name).join(" + ");
-  const readingSentence = `This reading points to ${drawnCards.map((c) => c.name).join(", ")} developing as a chain. With ${drawnCards[0].name} setting the scene, ${drawnCards[1].name} shaping what happens, and ${drawnCards[drawnCards.length - 1].name} as the likely outcome, the situation develops through the meanings of these specific cards.`;
+  const opener = question ? `This looks like a chain developing around "${question}"` : `This looks like a chain developing around the situation`;
+  const readingSentence = `${opener}. With ${drawnCards[0].name} setting the scene, ${drawnCards[1].name} shaping what happens, and ${drawnCards[drawnCards.length - 1].name} as the likely outcome, the development is real but not yet finished. The cards in between fill in the texture of what is likely to unfold.`;
 
   const pairs = [];
   for (let i = 0; i < drawnCards.length - 1; i++) {
     const a = drawnCards[i];
     const b = drawnCards[i + 1];
-    const meaning = comboMeaning(a, b);
-    pairs.push(`- **${a.name} + ${b.name}**: ${meaning}`);
+    pairs.push(`- **${a.name} + ${b.name}**: what begins with ${a.name.toLowerCase()} is shaped by ${b.name.toLowerCase()} - together they set the direction of the chain.`);
   }
   const pairText = pairs.join("\n");
 
   const last = drawnCards[drawnCards.length - 1];
   const lastKw = last.keywords?.slice(0, 2).join(", ") || last.name;
-  const lastMeaning = last.meaning?.general ? ` (${last.meaning.general})` : "";
 
-  return `## Reading${qLine}${readingSentence}\n\n## Combinations\n\n${pairText}\n\n## Action\n\nThe closing card is **${last.name}** — ${lastKw}${lastMeaning}. The action that follows this reading is whatever the closing card naturally suggests: respond to it in kind.`;
-}
-
-function comboMeaning(a: { name: string; keywords?: string[]; meaning?: { general: string } }, b: { name: string; keywords?: string[]; meaning?: { general: string } }): string {
-  const aKw = a.keywords?.[0]?.toLowerCase() || a.meaning?.general?.split(",")[0]?.toLowerCase() || a.name.toLowerCase();
-  const bKw = b.keywords?.[0]?.toLowerCase() || b.meaning?.general?.split(",")[0]?.toLowerCase() || b.name.toLowerCase();
-  return `${aKw} is met with ${bKw} - what begins with one is shaped by the other.`;
+  return `## Reading${qLine}${readingSentence}\n\n## Combinations\n\n${pairText}\n\n## Action\n\nMove in the direction the chain suggests and respond to the closing card (**${last.name}**) in kind - it points to how the situation is most likely to develop.`;
 }

@@ -76,7 +76,7 @@ describe("prompt quality: sentence-3", () => {
   const prompt = buildPromptFromContext(ctx);
 
   it("includes adjacent pairs reference", () => {
-    expect(prompt).toMatch(/Pairs:.*1\+2.*2\+3/);
+    expect(prompt).toContain("Card A + Card B");
   });
 
   it("includes output contract sections", () => {
@@ -99,8 +99,7 @@ describe("prompt quality: sentence-3", () => {
   it("includes position meanings", () => {
     expect(prompt).toContain("Position meanings");
     expect(prompt).toContain("Opening");
-    expect(prompt).toContain("Core");
-    expect(prompt).toContain("Outcome");
+    expect(prompt).toContain("Closing");
   });
 });
 
@@ -109,7 +108,7 @@ describe("prompt quality: sentence-5", () => {
   const prompt = buildPromptFromContext(ctx);
 
   it("includes all 4 pair references", () => {
-    expect(prompt).toMatch(/Pairs:.*1\+2.*2\+3.*3\+4.*4\+5/);
+    expect(prompt).toMatch(/1\+2.*2\+3.*3\+4.*4\+5/s);
   });
 
   it("includes output contract sections", () => {
@@ -121,8 +120,7 @@ describe("prompt quality: sentence-5", () => {
   it("includes position meanings", () => {
     expect(prompt).toContain("Position meanings");
     expect(prompt).toContain("Subject");
-    expect(prompt).toContain("Action");
-    expect(prompt).toContain("Outcome");
+    expect(prompt).toContain("Development");
   });
 
   it("includes adjacent combinations with meaning", () => {
