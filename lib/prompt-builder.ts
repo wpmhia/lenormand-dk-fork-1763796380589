@@ -78,10 +78,11 @@ Output exactly these sections:
 
 ## Action
 
-Write ## Reading as one short paragraph that tells the complete story from Opening through Outcome, using natural phrasing.
+Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a lesson about the cards.
+Write ## Reading as one short paragraph that says what is likely developing from the card chain, using natural phrasing.
 In ## Combinations, write exactly one bullet per adjacent pair: \`- Card A + Card B: meaning in this situation.\`
 In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
-Do not include timing or fortune-telling. Only mention timing if a card clearly indicates it.`,
+Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Subject) + 2nd (Action) + 3rd (Focus) + 4th (Development) + 5th (Outcome). Pairs: 1+2, 2+3, 3+4, 4+5.
 Read the five cards as one Lenormand narrative from Subject to Outcome.
 
