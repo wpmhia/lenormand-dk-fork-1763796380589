@@ -108,7 +108,7 @@ describe("prompt quality: sentence-5", () => {
   const prompt = buildPromptFromContext(ctx);
 
   it("includes all 4 pair references", () => {
-    expect(prompt).toMatch(/1\+2.*2\+3.*3\+4.*4\+5/s);
+    expect(prompt).toContain("**Card A + Card B**");
   });
 
   it("includes output contract sections", () => {

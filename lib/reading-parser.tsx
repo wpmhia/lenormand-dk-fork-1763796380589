@@ -1,7 +1,7 @@
 import { memo } from "react";
 import ReactMarkdown from "react-markdown";
 
-const COMBINATION_PATTERN = /^\s*-\s+\*\*([^*]+)\*\*:\s*(.+)$/;
+const COMBINATION_PATTERN = /^\s*(?:\*\*)?\s*([A-Za-z][A-Za-z ]+?\s+\+\s+[A-Za-z][A-Za-z ]+?)\s*(?:\*\*)?\s*:\s*(.+)$/;
 
 function extractCombination(children: React.ReactNode): { pair: string; meaning: string } | null {
   let text = "";
