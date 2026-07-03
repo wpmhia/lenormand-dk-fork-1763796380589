@@ -78,7 +78,7 @@ Output exactly these sections:
 ## Action
 
 Write ## Reading as exactly one sentence that tells the complete story from Opening through Outcome.
-In ## Combinations, list each adjacent pair (e.g., Card A + Card B) and explain what the combination means.
+In ## Combinations, write exactly one bullet per adjacent pair: `- Card A + Card B: meaning in this situation.`
 In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
 Do not include timing or fortune-telling. Only mention timing if a card clearly indicates it.`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Subject) + 2nd (Action) + 3rd (Focus) + 4th (Development) + 5th (Outcome). Pairs: 1+2, 2+3, 3+4, 4+5.
@@ -93,7 +93,7 @@ Output exactly these sections:
 ## Action
 
 Write ## Reading as one paragraph that traces the story from Subject through Action and Focus to Development and Outcome.
-In ## Combinations, list each adjacent pair in order.
+In ## Combinations, write exactly one bullet per adjacent pair: `- Card A + Card B: meaning in this situation.`
 In ## Action, give one practical action based on the Outcome card. One sentence.`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau grid. Center card is the heart. Read rows as sentences, columns as themes, diagonals as cross-currents.
 

@@ -180,14 +180,14 @@ export async function POST(request: Request) {
 
 function streamTextAsSSE(text: string, headers: Record<string, string>, rateLimitResult: { limit: number; remaining: number }) {
   const encoder = new TextEncoder();
-  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  const blocks = text.split(/\n{2,}/);
   const stream = new ReadableStream({
     start(controller) {
       controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}
 \n\n`));
 
-      for (const sentence of sentences) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: sentence.trim() + " " })}
+      for (const block of blocks) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: block.trim() + "\n\n" })}
 \n\n`));
       }
 
