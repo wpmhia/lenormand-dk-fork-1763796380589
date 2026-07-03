@@ -64,6 +64,34 @@ Formatting:
 - No tables, HTML, emojis, or nested bullets.`;
 }
 
+const PREDICTIVE_VOICE = `Voice: Write like a real reading, not like a card-meaning explanation.
+
+Start with a direct predictive sentence. Use one of these openers:
+- "This looks like..."
+- "The situation is likely to..."
+- "The answer is probably..."
+- "The development is..."
+
+Make ## Reading 3-5 sentences:
+1. Direct answer.
+2. Explain the card chain briefly.
+3. Name the complication or opportunity.
+4. Say what this means for the querent.
+
+Do not start with "Card A followed by Card B".
+Do not write "suggests a situation where".
+Do not sound like a dictionary.
+
+Bad example:
+"Fox followed by Sun suggests a situation where intelligence and strategy lead to success."
+
+Good example:
+"This looks like a clever strategy paying off, but Mice warns that the result may be reduced by small losses or stress."
+
+Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.
+
+For the action section, give a real practical action derived from the full chain, not just a generic suggestion from the closing card.`;
+
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means for the querent's situation in one short paragraph.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
@@ -78,11 +106,10 @@ Output exactly these sections:
 
 ## Action
 
-Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a lesson about the cards.
-Write ## Reading as one short paragraph that says what is likely developing from the card chain, using natural phrasing.
+${PREDICTIVE_VOICE}
+Write ## Reading as 3-5 sentences: open with a direct predictive sentence, explain the card chain briefly, name the complication or opportunity, and say what this means for the querent.
 In ## Combinations, write exactly one bullet per adjacent pair: \`- Card A + Card B: meaning in this situation.\`
-In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
-Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.`,
+In ## Action, give a real practical action derived from the full chain, not just the closing card.`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPositions: 1st (Subject) + 2nd (Action) + 3rd (Focus) + 4th (Development) + 5th (Outcome). Pairs: 1+2, 2+3, 3+4, 4+5.
 Read the five cards as one Lenormand narrative from Subject to Outcome.
 
@@ -94,11 +121,10 @@ Output exactly these sections:
 
 ## Action
 
-Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a lesson about the cards.
-Write ## Reading as one short paragraph that says what is likely developing from the card chain, using natural phrasing.
+${PREDICTIVE_VOICE}
+Write ## Reading as 3-5 sentences tracing Subject through Action, Focus, Development, and Outcome.
 In ## Combinations, write exactly one bullet per adjacent pair: \`- Card A + Card B: meaning in this situation.\`
-In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
-Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.`,
+In ## Action, give a real practical action derived from the full chain.`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau grid. Center card is the heart. Read rows as sentences, columns as themes, diagonals as cross-currents.
 
 Output exactly these sections:
@@ -111,10 +137,10 @@ Output exactly these sections:
 
 ## Likely timing
 
-Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a lesson about the cards.
-Write ## Reading as one short paragraph that says what is likely developing across the grid, using natural phrasing and referencing the center card.
+${PREDICTIVE_VOICE}
+Write ## Reading as 3-5 sentences saying what is likely developing across the grid, referencing the center card.
 In ## Combinations, write exactly one bullet per key adjacent pair: \`- Card A + Card B: meaning in this situation.\`
-In ## Action, give one concrete action based on the grid.
+In ## Action, give a real practical action based on the grid.
 For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method around the significator.
 
@@ -130,11 +156,11 @@ Output exactly these sections:
 
 ## Likely timing
 
-Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a structural analysis.
-Write ## Grand Tableau overview as one short paragraph that says what is likely developing across the whole grid, using natural phrasing.
+${PREDICTIVE_VOICE}
+Write ## Grand Tableau overview as 3-5 sentences saying what is likely developing across the whole grid.
 In ## Around the significator, describe what is happening around the significator and what is likely to develop from those combinations.
 In ## Houses and mirrors, list the most significant house placements and mirror pairs as bullets: \`- House X (Y) -> Card Z: meaning.\`
-In ## Action, give one practical action.
+In ## Action, give a real practical action derived from the full layout.
 For ## Likely timing: only include if a time card appears in the spread. Otherwise write "Not clearly shown by these cards."`,
 };
 
