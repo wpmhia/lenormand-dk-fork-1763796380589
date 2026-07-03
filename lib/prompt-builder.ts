@@ -94,9 +94,11 @@ Output exactly these sections:
 
 ## Action
 
-Write ## Reading as one paragraph that traces the story from Subject through Action and Focus to Development and Outcome.
+Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a lesson about the cards.
+Write ## Reading as one short paragraph that says what is likely developing from the card chain, using natural phrasing.
 In ## Combinations, write exactly one bullet per adjacent pair: \`- Card A + Card B: meaning in this situation.\`
-In ## Action, give one practical action based on the Outcome card. One sentence.`,
+In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
+Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau grid. Center card is the heart. Read rows as sentences, columns as themes, diagonals as cross-currents.
 
 Output exactly these sections:
@@ -109,8 +111,9 @@ Output exactly these sections:
 
 ## Likely timing
 
-Write ## Reading as a short paragraph on the overall picture, referencing the center card and row meanings.
-In ## Combinations, list the most significant adjacent pairs.
+Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a lesson about the cards.
+Write ## Reading as one short paragraph that says what is likely developing across the grid, using natural phrasing and referencing the center card.
+In ## Combinations, write exactly one bullet per key adjacent pair: \`- Card A + Card B: meaning in this situation.\`
 In ## Action, give one concrete action based on the grid.
 For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method around the significator.
@@ -127,9 +130,10 @@ Output exactly these sections:
 
 ## Likely timing
 
-Write ## Grand Tableau overview as one paragraph on the overall picture of the grid.
-In ## Around the significator, describe the cards surrounding the significator and their combinations.
-In ## Houses and mirrors, list the most significant house placements and mirror pairs.
+Voice: practical, predictive, direct. Do not explain the cards as dictionary meanings - answer the question directly. The reading should feel like a concrete Lenormand prediction, not a structural analysis.
+Write ## Grand Tableau overview as one short paragraph that says what is likely developing across the whole grid, using natural phrasing.
+In ## Around the significator, describe what is happening around the significator and what is likely to develop from those combinations.
+In ## Houses and mirrors, list the most significant house placements and mirror pairs as bullets: \`- House X (Y) -> Card Z: meaning.\`
 In ## Action, give one practical action.
 For ## Likely timing: only include if a time card appears in the spread. Otherwise write "Not clearly shown by these cards."`,
 };
@@ -292,7 +296,7 @@ function formatGrandTableau(
     const p = layout.primarySignificator;
     const row = Math.floor(p.index / 9) + 1;
     const col = (p.index % 9) + 1;
-    parts.push(`Primary significator: ${fmtCard(p.card)} at position ${p.index}, Row ${row}, Column ${col}. Read the Tableau primarily around this card.`);
+    parts.push(`Primary significator: ${fmtCard(p.card)} at position ${p.index + 1}, Row ${row}, Column ${col}. Read the Tableau primarily around this card.`);
   } else if (layout.significatorPreference !== "both") {
     parts.push("Selected significator not found in this spread; use both significator cards if present.");
   }
@@ -301,7 +305,7 @@ function formatGrandTableau(
     const w = layout.significators.woman;
     const row = Math.floor(w.index / 9) + 1;
     const col = (w.index % 9) + 1;
-    parts.push(`Woman (Card ${w.card.id}): position ${w.index}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
+    parts.push(`Woman (Card ${w.card.id}): position ${w.index + 1}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
   } else {
     parts.push("Woman (Card 29): not present in this spread");
   }
@@ -309,7 +313,7 @@ function formatGrandTableau(
     const m = layout.significators.man;
     const row = Math.floor(m.index / 9) + 1;
     const col = (m.index % 9) + 1;
-    parts.push(`Man (Card ${m.card.id}): position ${m.index}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
+    parts.push(`Man (Card ${m.card.id}): position ${m.index + 1}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
   } else {
     parts.push("Man (Card 28): not present in this spread");
   }
