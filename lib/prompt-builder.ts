@@ -76,23 +76,26 @@ Start with a direct answer to the question. Use one of these openers:
 - "The answer is probably..."
 - "The development is..."
 
-Make ## Reading 3-5 sentences:
-1. Direct answer to the question.
-2. Explain how the drawn cards support that answer.
-3. Name the complication or opportunity the cards highlight.
+If the question is yes/no, give a clear leaning in the first sentence: yes, no, not yet, or unclear - then explain why from the cards.
+
+Write ## Reading as 4-6 engaging sentences:
+1. Direct answer to the question (or clear yes/no leaning).
+2. Interpret the full card chain in relation to the question.
+3. Name the likely development, the complication, and the opportunity.
 4. Say what this means for the querent.
 
-Do not start with "Card A followed by Card B".
-Do not write "suggests a situation where".
-Do not define the cards like a dictionary.
-Each combination bullet must explain the pair in the context of the question, not as a standalone card definition.
-The action must come from the full answer, not just from the closing card.
+Do not merely summarize card meanings. Do not be overly cautious or generic. Do not start with "Card A followed by Card B". Do not write "suggests a situation where". Do not define the cards like a dictionary.
+
+For ## Combinations, write bullets with bold pair names in this exact format:
+- **Card A + Card B**: what this pair means for the question.
+
+Each combination bullet must explain the pair in the context of the question, not as a standalone card definition. The action must come from the full answer, not just from the closing card.
 
 Bad example:
 "Fox followed by Sun suggests a situation where intelligence and strategy lead to success."
 
 Good example:
-"This looks like a clever strategy paying off, but not without small losses. The cards point to a positive result, yet Mice warns that the gain may be reduced by stress, cost, delay, or something quietly draining the outcome."
+"The answer leans yes, but not cleanly. Fox + Sun brings a smart strategy paying off, yet Mice warns that the result may be reduced by stress, cost, delay, or something quietly draining the outcome. So the move can work - just protect the gain before small problems reduce it."
 
 Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.`;
 
@@ -108,8 +111,8 @@ const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string
 ## Action
 
 ${PREDICTIVE_VOICE}
-Write ## Reading as 3-5 sentences: open with a direct answer to the question, then explain how the three cards support it.
-In ## Combinations, write exactly two bullets, one per adjacent pair, each explaining the pair in the context of the question: \`- Card A + Card B: what this pair means for the question.\`
+Write ## Reading as 4-6 engaging sentences: open with a direct answer to the question (or a clear yes/no leaning if it is a yes/no question), then interpret the three cards in relation to the question, name the development, the complication, and what it means for the querent.
+In ## Combinations, write exactly two bullets in this exact format: \`- **Card A + Card B**: what this pair means for the question.\`
 In ## Action, give one practical sentence based on the answer, not just on the final card.`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nOutput exactly these sections:
 
@@ -120,8 +123,8 @@ In ## Action, give one practical sentence based on the answer, not just on the f
 ## Action
 
 ${PREDICTIVE_VOICE}
-Write ## Reading as 3-5 sentences: open with a direct answer to the question, then explain how the five cards support it as a development from Subject through Action, Focus, Development, and Outcome.
-In ## Combinations, write exactly four bullets, one per adjacent pair (1+2, 2+3, 3+4, 4+5), each explaining the pair in the context of the question.
+Write ## Reading as 4-6 engaging sentences: open with a direct answer to the question, then interpret the five cards as a development from Subject through Action, Focus, Development, and Outcome, in relation to the question. Name the development, the complication, and what it means for the querent.
+In ## Combinations, write exactly four bullets in this exact format: \`- **Card A + Card B**: what this pair means for the question.\`
 In ## Action, give one practical sentence based on the answer, derived from the full chain.`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nOutput exactly these sections:
 
@@ -134,8 +137,8 @@ In ## Action, give one practical sentence based on the answer, derived from the 
 ## Likely timing
 
 ${PREDICTIVE_VOICE}
-Write ## Reading as 3-5 sentences: open with a direct answer to the question, then explain how the Petit Tableau grid (center card, rows, columns, diagonals) supports that answer.
-In ## Combinations, write exactly one bullet per key adjacent pair, each explaining the pair in the context of the question: \`- Card A + Card B: what this pair means for the question.\`
+Write ## Reading as 4-6 engaging sentences: open with a direct answer to the question, then interpret the Petit Tableau grid (center card, rows, columns, diagonals) in relation to the question. Name the development, the complication, and what it means for the querent.
+In ## Combinations, write bullets in this exact format: \`- **Card A + Card B**: what this pair means for the question.\`
 In ## Action, give one practical sentence based on the answer, derived from the grid.
 For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nOutput exactly these sections:
@@ -151,7 +154,7 @@ For ## Likely timing: only include if a time card appears in the spread (Birds=d
 ## Likely timing
 
 ${PREDICTIVE_VOICE}
-Write ## Grand Tableau overview as 3-5 sentences: open with a direct answer to the question, then explain how the whole grid supports that answer.
+Write ## Grand Tableau overview as 4-6 engaging sentences: open with a direct answer to the question, then interpret the whole grid in relation to the question. Name the development, the complication, and what it means for the querent.
 In ## Around the significator, describe what is happening around the significator and what is likely to develop, in the context of the question.
 In ## Houses and mirrors, list the most significant house placements and mirror pairs as bullets, each explaining what the placement means for the question: \`- House X (Y) -> Card Z: meaning in the context of the question.\`
 In ## Action, give one practical sentence based on the answer, derived from the full layout.
