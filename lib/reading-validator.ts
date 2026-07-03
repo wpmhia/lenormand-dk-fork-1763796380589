@@ -227,13 +227,15 @@ export function buildDeterministicFallback(
     return `${i + 1}. ${c.name}${kw ? ` (${kw})` : ""}`;
   }).join("\n");
 
+  const cardNames = drawnCards.map((c) => c.name).join(" + ");
+  const readingSentence = `This reading points to ${drawnCards.map((c) => c.name).join(", ")} developing as a chain. With ${drawnCards[0].name} setting the scene, ${drawnCards[1].name} shaping what happens, and ${drawnCards[drawnCards.length - 1].name} as the likely outcome, the situation develops through the meanings of these specific cards.`;
+
   const pairs = [];
   for (let i = 0; i < drawnCards.length - 1; i++) {
     const a = drawnCards[i];
     const b = drawnCards[i + 1];
-    const keywordsA = a.keywords?.slice(0, 2).join(", ") || a.name;
-    const keywordsB = b.keywords?.slice(0, 2).join(", ") || b.name;
-    pairs.push(`- **${a.name} + ${b.name}**: ${keywordsA} meets ${keywordsB}`);
+    const meaning = comboMeaning(a, b);
+    pairs.push(`- **${a.name} + ${b.name}**: ${meaning}`);
   }
   const pairText = pairs.join("\n");
 
@@ -241,5 +243,11 @@ export function buildDeterministicFallback(
   const lastKw = last.keywords?.slice(0, 2).join(", ") || last.name;
   const lastMeaning = last.meaning?.general ? ` (${last.meaning.general})` : "";
 
-  return `## Reading${qLine}${drawnCards.map((c, i) => `**${c.name}**`).join(" + ")} — ${drawnCards.map((c) => c.name).join(", ")} in sequence.\n\n## Combinations\n\n${pairText}\n\n## Action\n\nThe closing card is **${last.name}** — ${lastKw}${lastMeaning}. Focus on what this card suggests.`;
+  return `## Reading${qLine}${readingSentence}\n\n## Combinations\n\n${pairText}\n\n## Action\n\nThe closing card is **${last.name}** — ${lastKw}${lastMeaning}. The action that follows this reading is whatever the closing card naturally suggests: respond to it in kind.`;
+}
+
+function comboMeaning(a: { name: string; keywords?: string[]; meaning?: { general: string } }, b: { name: string; keywords?: string[]; meaning?: { general: string } }): string {
+  const aKw = a.keywords?.[0]?.toLowerCase() || a.meaning?.general?.split(",")[0]?.toLowerCase() || a.name.toLowerCase();
+  const bKw = b.keywords?.[0]?.toLowerCase() || b.meaning?.general?.split(",")[0]?.toLowerCase() || b.name.toLowerCase();
+  return `${aKw} is met with ${bKw} - what begins with one is shaped by the other.`;
 }
