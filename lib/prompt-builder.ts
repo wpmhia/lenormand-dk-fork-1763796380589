@@ -50,6 +50,7 @@ STRICT RULES:
 - For Man/Woman, treat as person/significator, not masculine/feminine energy.
 - Never make up timing. Only mention timing if the cards clearly indicate it (e.g. Birds = days, Moon = weeks, Tree = years). Otherwise write "Not clearly shown by these cards."
 - Every claim in the reading must reference a specific card by name. If a sentence could apply to any spread, rewrite it.
+- Write naturally. Do not use possessive phrases like "Moon's emotions" or "Bouquet's gift" - describe what happens between the cards, not what they "own". Use phrasing like "shows", "points to", "brings", "suggests", "develops as", "leads to".
 
 ${isSingleCard
   ? `Read this card alone. Do NOT pair it with any other card. Explain what it means for the querent's situation in one short paragraph.`
@@ -77,7 +78,7 @@ Output exactly these sections:
 
 ## Action
 
-Write ## Reading as exactly one sentence that tells the complete story from Opening through Outcome.
+Write ## Reading as one short paragraph that tells the complete story from Opening through Outcome, using natural phrasing.
 In ## Combinations, write exactly one bullet per adjacent pair: \`- Card A + Card B: meaning in this situation.\`
 In ## Action, give one practical action the querent can take based on the Outcome card. One sentence.
 Do not include timing or fortune-telling. Only mention timing if a card clearly indicates it.`,
