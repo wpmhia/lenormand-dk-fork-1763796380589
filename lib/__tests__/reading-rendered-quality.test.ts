@@ -256,8 +256,8 @@ describe("golden: Prediction synthesis evidence is produced for every applicable
     expect(out.outcomeCard).toBeDefined();
     expect(out.developmentCard).toBeDefined();
     expect(out.timingEvidence.length).toBeGreaterThan(0);
-    expect(formatPredictionEvidenceBlock(out)).toContain("Primary outcome:");
-    expect(formatPredictionEvidenceBlock(out)).toContain("Strongest transition:");
+    expect(formatPredictionEvidenceBlock(out)).toContain("Primary outcome");
+    expect(formatPredictionEvidenceBlock(out)).toContain("Strongest transition");
   });
 
   it("uses deterministic timing output for the Birds card", () => {

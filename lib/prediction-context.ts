@@ -212,8 +212,11 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
 
 export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
   const lines: string[] = ["Prediction synthesis evidence:"];
+  lines.push(
+    "- Direction of travel: read the cards as a progression. The closing card and the closing pair carry the most weight on the final forecast; earlier cards explain how the situation develops toward that outcome. Positive earlier cards do not override a difficult final card, and a difficult final card does not erase earlier positives.",
+  );
   if (pe.outcomeCard) {
-    lines.push(`- Primary outcome: ${fmt(pe.outcomeCard)} at the closing position`);
+    lines.push(`- Primary outcome (closing): ${fmt(pe.outcomeCard)}`);
   }
   if (pe.developmentCard) {
     lines.push(`- Development path: ${fmt(pe.developmentCard)} (the card that drives the change)`);
@@ -223,7 +226,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
   }
   if (pe.primaryPair) {
     const meaning = pe.primaryPair.meaning ? ` → ${pe.primaryPair.meaning}` : "";
-    lines.push(`- Strongest transition: ${fmt(pe.primaryPair.a)} + ${fmt(pe.primaryPair.b)}${meaning}`);
+    lines.push(`- Strongest transition (closing pair): ${fmt(pe.primaryPair.a)} + ${fmt(pe.primaryPair.b)}${meaning}`);
   }
   if (pe.supportingPair) {
     const meaning = pe.supportingPair.meaning ? ` → ${pe.supportingPair.meaning}` : "";
