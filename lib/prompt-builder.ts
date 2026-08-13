@@ -205,37 +205,41 @@ Formatting rules:
 }
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
+Give one concise forward-looking synthesis answering what is most likely to happen next. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
 
-Use exactly these four bold labels, in this order, with one or two sentences each:
+Use exactly these four bold labels, in this order, with one sentence each:
 
-**Most likely development:** one primary forecast that answers the user's question. Do not list alternatives. Do not repeat the Reading.
+**Most likely development:** one primary forecast that answers the user's question. Do not list alternatives.
 **Likely timing:** copy the timing from the Prediction synthesis evidence verbatim. Do not invent dates or ranges.
 **Watch for:** one concrete external event or sign that would indicate the forecast is starting to unfold.
 **Practical action:** one useful next step based on the reading. No generic self-help language.
 
 Synthesize the Prediction ONLY from the Prediction synthesis evidence block. Do not introduce cards that are not in that evidence.`;
 
-const PREDICTIVE_VOICE_LINEAR = `Answer the user's actual question directly.
+const INTERPRETATION_INSTRUCTION = `## Interpretation
+Explain the situation revealed by the complete spread and how the cards interact. Describe the tension, direction, and relationships between the cards. Do not give the final predicted outcome or timing here. This section is interpretive; the forward-looking forecast belongs in ## Prediction.`;
 
-## Reading
-Write 3-5 natural sentences interpreting the complete line. Start with the answer. Explain the progression of the cards as one connected situation. Do not merely list card meanings.
-
-## Key combinations
-For each adjacent pair, write a bullet in this format:
+const CARDS_INSTRUCTION = `## Cards
+Show the strongest card combinations and position evidence supporting the interpretation above. For each pair, write a bullet in this format:
 - **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
+
+This section is evidence, not forecast. The forward-looking conclusion belongs in ## Prediction.`;
+
+const PREDICTIVE_VOICE_LINEAR = `Answer the user's actual question directly. Write the reading as a three-part arc: Interpretation → Cards → Prediction.
+
+${INTERPRETATION_INSTRUCTION}
+
+${CARDS_INSTRUCTION}
 
 ${PREDICTION_FIELDS_INSTRUCTION}
 
 Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
 
-const PREDICTIVE_VOICE_PETIT = `Answer the user's actual question directly. The Petit Tableau is a 3x3 grid; treat the center card as the heart and the middle line as the main narrative, with rows/columns/diagonals supporting it.
+const PREDICTIVE_VOICE_PETIT = `Answer the user's actual question directly. The Petit Tableau is a 3x3 grid; treat the center card as the heart and the middle line as the main narrative, with rows/columns/diagonals supporting it. Write the reading as a three-part arc: Interpretation → Cards → Prediction.
 
-## Reading
-Write 3-5 natural sentences interpreting the tableau. Start with the answer. Describe how the center card and the middle line develop the question. Do not merely list card meanings.
+${INTERPRETATION_INSTRUCTION}
 
-## Key combinations
-For each relevant pair the prompt lists under "Adjacent combinations", write a bullet in this format:
-- **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
+${CARDS_INSTRUCTION}
 
 ${PREDICTION_FIELDS_INSTRUCTION}
 
@@ -243,16 +247,13 @@ Voice: practical, predictive, direct. Write like a real reading, not a card-mean
 
 const PREDICTIVE_VOICE_GT = `Answer the user's actual question directly. The Grand Tableau is a 4x9 grid read around the significator; treat the significator's neighbourhood as the most actionable area, the topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) as life-theme anchors, and the Cards of Fate / corners as long-term signals.
 
-## Grand Tableau overview
-Write a paragraph that names the significator, summarises the four rows, the center four, and the Cards of Fate, and gives the first overall direction of the answer.
-
-## Around the significator
-For each card directly adjacent to the significator listed under "Adjacent combinations", write a bullet in this format:
-- **Significator + Card**: explain how this combination modifies the querent's situation right now.
+${INTERPRETATION_INSTRUCTION}
 
 ## Houses and mirrors
 For each topic-house placement listed above, write a bullet in this format:
 - **House of X**: explain what the card sitting on that house means for that life area.
+
+${CARDS_INSTRUCTION}
 
 ${PREDICTION_FIELDS_INSTRUCTION}
 
@@ -261,24 +262,24 @@ Voice: practical, predictive, direct. Write like a real reading, not a card-mean
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. List both adjacent pairs in the Key combinations section, explaining the meaning of each.
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. List both adjacent pairs in the Cards section, explaining the meaning of each.
 
 Output (exactly these sections):
 
-## Reading
+## Interpretation
 
-## Key combinations
+## Cards
 
 ## Prediction
 
 ${PREDICTIVE_VOICE_LINEAR}`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. List all four adjacent pairs in the Key combinations section, explaining the meaning of each pair.
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. List all four adjacent pairs in the Cards section, explaining the meaning of each pair.
 
 Output (exactly these sections):
 
-## Reading
+## Interpretation
 
-## Key combinations
+## Cards
 
 ## Prediction
 
@@ -287,9 +288,9 @@ ${PREDICTIVE_VOICE_LINEAR}`,
 
 Output (exactly these sections):
 
-## Reading
+## Interpretation
 
-## Key combinations
+## Cards
 
 ## Prediction
 
@@ -298,11 +299,11 @@ ${PREDICTIVE_VOICE_PETIT}`,
 
 Output (exactly these sections):
 
-## Grand Tableau overview
-
-## Around the significator
+## Interpretation
 
 ## Houses and mirrors
+
+## Cards
 
 ## Prediction
 
@@ -402,9 +403,9 @@ function formatPetitTableau(
     "",
     "Output (exactly these sections):",
     "",
-    "## Reading",
+    "## Interpretation",
     "",
-    "## Key combinations",
+    "## Cards",
     "",
     "## Prediction",
     "",
@@ -539,11 +540,11 @@ function formatGrandTableau(
     "",
     "Output (exactly these sections):",
     "",
-    "## Grand Tableau overview",
-    "",
-    "## Around the significator",
+    "## Interpretation",
     "",
     "## Houses and mirrors",
+    "",
+    "## Cards",
     "",
     "## Prediction",
     "",

@@ -25,21 +25,21 @@ const cardsMap = new Map<number, Card>(
   Array.from({ length: 36 }, (_, i) => [i + 1, makeCard(i + 1, `Card ${i + 1}`)] as const),
 );
 
-const GOLDEN_THREE_CARD = `## Reading
+const GOLDEN_THREE_CARD = `## Interpretation
 
-Communication is likely to open the next stage of this situation. You are likely to receive or exchange information that makes the possibility more concrete, but not everything is settled yet.
+Communication is likely to open the next stage of this situation. The cards show that information exchange is the active force, while a hidden detail still needs to surface. The direction is forward, but not yet settled.
 
-## Key combinations
+## Cards
 
 - **Birds + Letter**: News, calls, emails, discussion or correspondence becomes the immediate vehicle through which the situation develops.
 - **Letter + Book**: The message contains information that is not yet fully known: details, paperwork, conditions or something that still needs to be discovered.
 
 ## Prediction
 
-**Most likely development:** Communication appears to open the next stage of this situation. You are likely to receive or exchange information that makes the possibility substantially more concrete, but not everything is settled yet.
+**Most likely development:** Communication appears to open the next stage and a piece of news arrives that makes the possibility substantially more concrete.
 **Likely timing:** Within days.
 **Watch for:** A call, email, or message arrives that introduces new details.
-**Practical action:** Respond promptly to the first piece of communication; do not wait for full clarity before acting.`;
+**Practical action:** Respond promptly to the first piece of communication that arrives.`;
 
 describe("golden output: validateReadingOutput", () => {
   it("accepts a fluent 3-card reading with Prediction", () => {
@@ -83,8 +83,8 @@ describe("golden output: validateReadingMarkdown", () => {
     expect(result.valid).toBe(true);
   });
 
-  it("rejects markdown with a leading paragraph before ## Reading", () => {
-    const bad = "Some preamble.\n\n## Reading\n\nHello.\n\n## Key combinations\n\nx\n\n## Prediction\n\ny";
+  it("rejects markdown with a leading paragraph before ## Interpretation", () => {
+    const bad = "Some preamble.\n\n## Interpretation\n\nHello.\n\n## Cards\n\nx\n\n## Prediction\n\ny";
     const result = validateReadingMarkdown(bad, "sentence-3");
     expect(result.valid).toBe(false);
   });
@@ -95,20 +95,20 @@ describe("golden output: normalizeMarkdown is non-destructive", () => {
     const input = GOLDEN_THREE_CARD;
     const out = normalizeMarkdown(input);
     expect(out).toContain("Communication is likely to open the next stage");
-    expect(out).toContain("## Key combinations");
+    expect(out).toContain("## Cards");
     expect(out).toContain("## Prediction");
   });
 
   it("downgrades H1/H3 headings to ## without dropping text", () => {
-    const input = "# Reading\n\nHello.\n\n### Key combinations\n\nx\n\n## Prediction\n\ny";
+    const input = "# Interpretation\n\nHello.\n\n### Cards\n\nx\n\n## Prediction\n\ny";
     const out = normalizeMarkdown(input);
-    expect(out).toContain("## Reading");
-    expect(out).toContain("## Key combinations");
+    expect(out).toContain("## Interpretation");
+    expect(out).toContain("## Cards");
     expect(out).toContain("Hello.");
   });
 
   it("strips markdown tables without dropping surrounding text", () => {
-    const input = "## Reading\n\nHello.\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\n## Prediction\n\ny";
+    const input = "## Interpretation\n\nHello.\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\n## Prediction\n\ny";
     const out = normalizeMarkdown(input);
     expect(out).toContain("Hello.");
     expect(out).not.toMatch(/\|/);
@@ -126,8 +126,8 @@ describe("golden output: buildDeterministicFallback uses traditional pair meanin
       { indexA: 0, indexB: 1, cardAName: "Birds", cardBName: "Book", meaning: "Knowledge arriving through communication" },
     ];
     const out = buildDeterministicFallback(drawn, "sentence-3", "Will I hear back soon?", pairs);
-    expect(out).toContain("## Reading");
-    expect(out).toContain("## Key combinations");
+    expect(out).toContain("## Interpretation");
+    expect(out).toContain("## Cards");
     expect(out).toContain("## Prediction");
     expect(out).toContain("Knowledge arriving through communication");
     expect(out).toContain("**Most likely development:**");
@@ -136,18 +136,18 @@ describe("golden output: buildDeterministicFallback uses traditional pair meanin
     expect(out).toContain("**Practical action:**");
   });
 
-  it("returns a Reading block even with empty card list", () => {
+  it("returns an Interpretation block even with empty card list", () => {
     const out = buildDeterministicFallback([], "single-card", "");
-    expect(out).toContain("## Reading");
+    expect(out).toContain("## Interpretation");
     expect(out).toContain("No cards were drawn");
   });
 
   it("uses grand-tableau structure for a 36-card spread", () => {
     const drawn = Array.from({ length: 36 }, (_, i) => ({ id: i + 1, name: `Card ${i + 1}`, keywords: [`Card ${i + 1}`] }));
     const out = buildDeterministicFallback(drawn, "grand-tableau", "test");
-    expect(out).toContain("## Grand Tableau overview");
-    expect(out).toContain("## Around the significator");
+    expect(out).toContain("## Interpretation");
     expect(out).toContain("## Houses and mirrors");
+    expect(out).toContain("## Cards");
     expect(out).toContain("## Prediction");
   });
 });
