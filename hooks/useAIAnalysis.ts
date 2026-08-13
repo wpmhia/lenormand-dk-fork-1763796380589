@@ -1,14 +1,14 @@
+"use client";
+
 import { useState, useCallback, useRef, useEffect } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 import { SignificatorType } from "@/lib/spreads";
-import { streamReadingResponse } from "@/lib/stream-reading";
 
 interface UseAIAnalysisReturn {
   aiReading: AIReadingResponse | null;
   isLoading: boolean;
-  isStreaming: boolean;
   error: string | null;
   startAnalysis: () => void;
   resetAnalysis: () => void;
@@ -24,6 +24,15 @@ function significatorToPreference(value: SignificatorType): "woman" | "man" | "b
   return "both";
 }
 
+async function readErrorMessage(response: Response, fallback: string): Promise<string> {
+  try {
+    const data = await response.json();
+    return data.error || data.reading || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function useAIAnalysis(
   question: string,
   drawnCards: ReadingCard[],
@@ -34,7 +43,6 @@ export function useAIAnalysis(
 ): UseAIAnalysisReturn {
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [followUpResponse, setFollowUpResponse] = useState<string | null>(null);
   const [followUpLoading, setFollowUpLoading] = useState(false);
@@ -63,42 +71,39 @@ export function useAIAnalysis(
     if (!enabled || drawnCards.length === 0) return;
 
     setIsLoading(true);
-    setIsStreaming(true);
     setError(null);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    let fullReading = "";
-    await streamReadingResponse({
-      endpoint: "/api/readings/interpret",
-      body: {
-        question,
-        cards: mapCards(),
-        spreadId: selectedSpreadId,
-        significatorPreference: significatorToPreference(significatorType),
-      },
-      signal: controller.signal,
-      onChunk(text) {
-        fullReading += text;
-        setAiReading({ reading: fullReading, source: "mistral" });
-      },
-      onRetry() {
-        fullReading = "";
-      },
-      onDone() {
-        setIsStreaming(false);
-        if (!fullReading) setError("No reading received");
-      },
-      onError(err) {
-        setIsStreaming(false);
-        setError(err.message);
-      },
-    });
+    try {
+      const response = await fetch("/api/readings/interpret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question,
+          cards: mapCards(),
+          spreadId: selectedSpreadId,
+          significatorPreference: significatorToPreference(significatorType),
+        }),
+        signal: controller.signal,
+      });
 
-    setIsLoading(false);
-    setIsStreaming(false);
-    abortControllerRef.current = null;
+      if (!response.ok) {
+        throw new Error(await readErrorMessage(response, `Request failed (${response.status})`));
+      }
+
+      const data = await response.json();
+      const text: string = data.reading || "";
+      if (!text.trim()) throw new Error("No reading received");
+      setAiReading({ reading: text, source: data.source || "mistral" });
+    } catch (err: any) {
+      if (err.name === "AbortError") return;
+      setError(err.message || "Processing failed");
+    } finally {
+      setIsLoading(false);
+      abortControllerRef.current = null;
+    }
   }, [question, drawnCards, allCards, selectedSpreadId, enabled, mapCards, significatorType]);
 
   const resetAnalysis = useCallback(() => {
@@ -107,7 +112,6 @@ export function useAIAnalysis(
     setAiReading(null);
     setError(null);
     setIsLoading(false);
-    setIsStreaming(false);
     setFollowUpResponse(null);
     setFollowUpLoading(false);
     setFollowUpStreaming(false);
@@ -123,38 +127,53 @@ export function useAIAnalysis(
 
       setFollowUpLoading(true);
       setFollowUpStreaming(true);
+      setFollowUpResponse("");
 
       let fullResponse = "";
-      await streamReadingResponse({
-        endpoint: "/api/readings/followup",
-        body: {
-          followUpQuestion,
-          originalReading: aiReading.reading,
-          originalQuestion: question,
-          cards: mapCards(),
-          spreadId: selectedSpreadId,
-          significatorPreference: significatorToPreference(significatorType),
-        },
-        signal: controller.signal,
-        onChunk(text) {
-          fullResponse += text;
-          setFollowUpResponse(fullResponse);
-        },
-        onRetry() {
-          fullResponse = "";
-        },
-        onDone() {
-          setFollowUpStreaming(false);
-        },
-        onError() {
-          setFollowUpStreaming(false);
-          setFollowUpResponse("Sorry, I couldn't process your follow-up question. Please try again.");
-        },
-      });
+      try {
+        const response = await fetch("/api/readings/followup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            followUpQuestion,
+            originalReading: aiReading.reading,
+            originalQuestion: question,
+            cards: mapCards(),
+            spreadId: selectedSpreadId,
+            significatorPreference: significatorToPreference(significatorType),
+          }),
+          signal: controller.signal,
+        });
 
-      setFollowUpLoading(false);
-      setFollowUpStreaming(false);
-      followUpAbortControllerRef.current = null;
+        if (!response.ok || !response.body) {
+          throw new Error(await readErrorMessage(response, "Request failed"));
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const text = decoder.decode(value, { stream: true });
+            if (text) {
+              fullResponse += text;
+              setFollowUpResponse(fullResponse);
+            }
+          }
+        } finally {
+          reader.releaseLock();
+        }
+      } catch (err: any) {
+        if (err.name === "AbortError") return;
+        setFollowUpResponse(
+          fullResponse || "Sorry, I couldn't process your follow-up question. Please try again.",
+        );
+      } finally {
+        setFollowUpLoading(false);
+        setFollowUpStreaming(false);
+        followUpAbortControllerRef.current = null;
+      }
     },
     [aiReading, drawnCards, selectedSpreadId, mapCards, significatorType, question],
   );
@@ -162,7 +181,6 @@ export function useAIAnalysis(
   return {
     aiReading,
     isLoading,
-    isStreaming,
     error,
     startAnalysis,
     resetAnalysis,

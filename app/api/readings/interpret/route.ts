@@ -11,7 +11,7 @@ import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
-import { streamText } from "ai";
+import { generateText } from "ai";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 import {
@@ -81,48 +81,43 @@ export async function POST(request: Request) {
         }),
         {
           status: 429,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
+          headers: {
+            "Content-Type": "application/json",
+            "X-RateLimit-Limit": String(rateLimitResult.limit),
+            "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+            "X-RateLimit-Reset": String(rateLimitResult.reset),
+            ...corsHeaders,
+          },
         },
       );
     }
+
+    await incrementReadingCount();
 
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
 
-    const mistral = createMistral({
-      apiKey: MISTRAL_API_KEY,
-    });
-
-    await incrementReadingCount();
-
-    const abortController = new AbortController();
-    const timeout = setTimeout(() => abortController.abort(), API_REQUEST_TIMEOUT_MS - 5000);
-    request.signal.addEventListener("abort", () => abortController.abort(), { once: true });
-
-    const result = await streamText({
+    const result = await generateText({
       model: mistral(MISTRAL_PRODUCTION_MODEL),
       system: buildSystemPrompt(cardCount),
       prompt,
       temperature: 0.2,
       maxOutputTokens: maxTokens,
-      abortSignal: abortController.signal,
+      maxRetries: 1,
+      abortSignal: request.signal,
+      timeout: { totalMs: API_REQUEST_TIMEOUT_MS - 5000 },
     });
 
-    let fullText = "";
-    for await (const chunk of result.textStream) {
-      fullText += chunk;
-    }
-    clearTimeout(timeout);
+    const drawnCardIds = validated.cards.map((c) => c.id);
 
-    if (!fullText.trim()) {
+    if (!result.text.trim()) {
       const fb = buildFallbackCards(validated.cards, cardsMap);
       const fallback = buildDeterministicFallback(fb.cards, validated.spreadId, validated.question, fb.pairs);
-      return streamTextAsSSE(fallback, corsHeaders, rateLimitResult);
+      return jsonResponse({ reading: fallback, rateLimitResult, source: "fallback" });
     }
 
-    const drawnCardIds = validated.cards.map((c) => c.id);
-    let finalText = normalizeMarkdown(fullText);
+    let finalText = normalizeMarkdown(result.text);
 
     const finalCritical = [
       ...validateReadingOutput(finalText, drawnCardIds, validated.spreadId).issues.filter(isCriticalIssue),
@@ -134,7 +129,7 @@ export async function POST(request: Request) {
       finalText = buildDeterministicFallback(fb.cards, validated.spreadId, validated.question, fb.pairs);
     }
 
-    return streamTextAsSSE(finalText, corsHeaders, rateLimitResult);
+    return jsonResponse({ reading: finalText, rateLimitResult, source: "mistral" });
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {
       return new Response(JSON.stringify({ error: error.message }), {
@@ -155,34 +150,35 @@ export async function POST(request: Request) {
   }
 }
 
-function streamTextAsSSE(text: string, headers: Record<string, string>, rateLimitResult: { limit: number; remaining: number }) {
-  const encoder = new TextEncoder();
-  const blocks = text.split(/\n{2,}/);
-  const stream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}
-\n\n`));
-
-      for (const block of blocks) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: block.trim() + "\n\n" })}
-\n\n`));
-      }
-
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
-\n\n`));
-      controller.close();
+function jsonResponse({
+  reading,
+  rateLimitResult,
+  source,
+}: {
+  reading: string;
+  rateLimitResult: { limit: number; remaining: number; reset: number };
+  source: "mistral" | "fallback";
+}) {
+  return new Response(
+    JSON.stringify({
+      reading,
+      source,
+      rateLimit: {
+        limit: rateLimitResult.limit,
+        remaining: rateLimitResult.remaining,
+        reset: rateLimitResult.reset,
+      },
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "X-RateLimit-Limit": String(rateLimitResult.limit),
+        "X-RateLimit-Remaining": String(rateLimitResult.remaining),
+        "X-RateLimit-Reset": String(rateLimitResult.reset),
+        ...corsHeaders,
+      },
     },
-  });
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
-      "X-Accel-Buffering": "no",
-      ...headers,
-    },
-  });
+  );
 }
 
 interface FallbackCard {

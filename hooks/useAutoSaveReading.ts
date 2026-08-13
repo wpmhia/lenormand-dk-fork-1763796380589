@@ -9,7 +9,7 @@ import { getDefinition } from "@/lib/spread-definitions";
 
 export function useAutoSaveReading(
   aiReading: AIReadingResponse | null,
-  aiStreaming: boolean,
+  aiInProgress: boolean,
   step: string,
   drawnCardTypes: Card[],
   readingSaved: boolean,
@@ -33,7 +33,7 @@ export function useAutoSaveReading(
   useEffect(() => {
     if (
       aiReading &&
-      !aiStreaming &&
+      !aiInProgress &&
       step === "results" &&
       drawnCardTypes.length > 0 &&
       !readingSaved &&
@@ -44,7 +44,7 @@ export function useAutoSaveReading(
       const isGrandTableau = definition?.id === "grand-tableau";
       const isSingleCard = definition?.id === "single-card" || definition?.id === "daily-card";
 
-      const hasAnyReadingBody = /##\s*Reading[\s\S]*\S/.test(interpretationText)
+      const hasAnyReadingBody = /##\s*Interpretation[\s\S]*\S/.test(interpretationText)
         || /##\s*Grand Tableau overview[\s\S]*\S/.test(interpretationText);
       const hasPrediction = /##\s*Prediction[\s\S]*\S/.test(interpretationText);
 
@@ -85,5 +85,5 @@ export function useAutoSaveReading(
         }
       })();
     }
-  }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, spreadLabel, spreadId, saveReading, toast, setReadingSaved]);
+  }, [aiReading, aiInProgress, step, drawnCardTypes, readingSaved, question, spreadLabel, spreadId, saveReading, toast, setReadingSaved]);
 }

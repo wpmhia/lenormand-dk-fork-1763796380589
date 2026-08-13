@@ -76,7 +76,6 @@ function NewReadingPageContent() {
   const {
     aiReading,
     isLoading: aiLoading,
-    isStreaming: aiStreaming,
     error: aiError,
     startAnalysis,
     resetAnalysis,
@@ -92,19 +91,20 @@ function NewReadingPageContent() {
     step === "results",
     significatorType,
   );
+  const aiStreaming = aiLoading && !aiReading;
 
   // Reading history
   const { saveReading } = useReadingHistory();
   const { toast } = useToast();
   const { showInstallPrompt } = useInstallPrompt();
 
-  useAutoSaveReading(aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved, selectedSpread.id);
+  useAutoSaveReading(aiReading, aiLoading, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved, selectedSpread.id);
 
   useEffect(() => {
-    if (aiReading && !aiStreaming && step === "results" && drawnCardTypes.length > 0) {
+    if (aiReading && !aiLoading && step === "results" && drawnCardTypes.length > 0) {
       showInstallPrompt();
     }
-  }, [aiReading, aiStreaming, step, drawnCardTypes, showInstallPrompt]);
+  }, [aiReading, aiLoading, step, drawnCardTypes, showInstallPrompt]);
 
   // Reset function - defined before effects that use it
   const performReset = useCallback(
