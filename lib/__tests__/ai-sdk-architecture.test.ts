@@ -74,3 +74,24 @@ describe("client-side retry duplication is removed", () => {
     expect(src).not.toMatch(/maxRetries/);
   });
 });
+
+describe("interpret route: validation failures fail closed, not via fallback", () => {
+  const src = read("app/api/readings/interpret/route.ts");
+
+  it("does NOT call buildDeterministicFallback on validation failure", () => {
+    // The deterministic fallback was a defensive engineering measure, but for a product
+    // whose value is the quality of the interpretation, a bad fallback is worse than an
+    // explicit retryable error.
+    expect(src).not.toMatch(/buildDeterministicFallback/);
+  });
+
+  it("returns HTTP 502 with retryable: true when the validator rejects the answer", () => {
+    expect(src).toMatch(/generationFailedResponse/);
+    expect(src).toMatch(/retryable: true/);
+    expect(src).toMatch(/status: 502/);
+  });
+
+  it("logs the validator's critical issues to the server console (so we can debug)", () => {
+    expect(src).toMatch(/console\.error\(\"interpret: reading rejected by validator\"/);
+  });
+});

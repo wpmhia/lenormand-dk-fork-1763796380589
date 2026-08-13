@@ -264,15 +264,33 @@ export function validateReadingOutput(
   return { valid: issues.length === 0, issues };
 }
 
+/**
+ * Severity tiers:
+ *
+ * - `fatal`: cannot be safely auto-repaired. Reading must be rejected.
+ *   - `banned_term`: the model used Tarot/New Age vocabulary we cannot rewrite.
+ *   - `invented_card`: the model hallucinated a card name; we cannot fabricate.
+ *   - `unsupported_timing`: the model asserted a time range the cards don't allow.
+ *   - `missing_section`: the model omitted a required section.
+ *   - `empty_section`: the model wrote an empty required section.
+ *
+ * - `repairable`: harmless Markdown/structural formatting; the validator already
+ *   auto-repairs most of these via `normalizeMarkdown`, but if some slipped through,
+ *   the reading should still surface.
+ *   - `extra_section`: extra headings, wrong heading level, or unexpected prose
+ *     before the first heading. These are formatting quirks, not synthesis errors.
+ */
+export const ISSUE_SEVERITY: Record<ValidationIssue["type"], "fatal" | "repairable"> = {
+  banned_term: "fatal",
+  invented_card: "fatal",
+  unsupported_timing: "fatal",
+  missing_section: "fatal",
+  empty_section: "fatal",
+  extra_section: "repairable",
+};
+
 export function isCriticalIssue(issue: ValidationIssue): boolean {
-  return (
-    issue.type === "banned_term" ||
-    issue.type === "invented_card" ||
-    issue.type === "unsupported_timing" ||
-    issue.type === "empty_section" ||
-    issue.type === "missing_section" ||
-    issue.type === "extra_section"
-  );
+  return ISSUE_SEVERITY[issue.type] === "fatal";
 }
 
 export const ALLOWED_MARKDOWN_PATTERN = /^(#{1,3}\s|[-*]\s|\d+\.\s|\S)/m;
