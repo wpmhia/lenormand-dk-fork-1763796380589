@@ -4,6 +4,7 @@ import {
   validateReadingMarkdown,
   normalizeMarkdown,
   isCriticalIssue,
+  ISSUE_SEVERITY,
   buildDeterministicFallback,
 } from "@/lib/reading-validator";
 import type { Card } from "@/lib/types";
@@ -68,8 +69,26 @@ describe("golden output: validateReadingOutput", () => {
     expect(isCriticalIssue({ type: "unsupported_timing", message: "x" })).toBe(true);
   });
 
-  it("treats extra_section as critical (model must follow heading contract)", () => {
-    expect(isCriticalIssue({ type: "extra_section", message: "x" })).toBe(true);
+  it("treats extra_section as repairable, not fatal", () => {
+    // Extra headings, wrong heading levels, or unexpected prose before the first heading
+    // are formatting quirks that `normalizeMarkdown` already repairs. They should not
+    // fail a reading.
+    expect(isCriticalIssue({ type: "extra_section", message: "x" })).toBe(false);
+  });
+
+  it("keeps invented_card, unsupported_timing, banned_term, missing_section, and empty_section as fatal", () => {
+    for (const type of ["invented_card", "unsupported_timing", "banned_term", "missing_section", "empty_section"] as const) {
+      expect(isCriticalIssue({ type, message: "x" })).toBe(true);
+    }
+  });
+
+  it("exposes the severity tier for inspection", () => {
+    expect(ISSUE_SEVERITY.invented_card).toBe("fatal");
+    expect(ISSUE_SEVERITY.unsupported_timing).toBe("fatal");
+    expect(ISSUE_SEVERITY.banned_term).toBe("fatal");
+    expect(ISSUE_SEVERITY.missing_section).toBe("fatal");
+    expect(ISSUE_SEVERITY.empty_section).toBe("fatal");
+    expect(ISSUE_SEVERITY.extra_section).toBe("repairable");
   });
 
   it("treats missing_section as critical (model must include required headings)", () => {
