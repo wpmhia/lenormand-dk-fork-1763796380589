@@ -12,7 +12,6 @@ import { decodeReadingFromUrl, getCardById } from "@/lib/data";
 import staticCardsData from "@/public/data/cards.json";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { AIThinkingIndicator } from "@/components/ui/loading";
-import { processSSEChunk, finalizeSSEStream } from "@/lib/sse-parser";
 
 interface PageProps {
   params: {
@@ -52,7 +51,6 @@ export default function SharedReadingPage({ params }: PageProps) {
   // AI-related state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiStreaming, setAiStreaming] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiErrorDetails, setAiErrorDetails] = useState<{
     type?: string;
@@ -106,7 +104,6 @@ export default function SharedReadingPage({ params }: PageProps) {
       if (!mountedRef.current || !reading) return;
 
       setAiLoading(true);
-      setAiStreaming(false);
       setAiError(null);
       setAiErrorDetails(null);
       setAiAttempted(true);
@@ -116,14 +113,14 @@ export default function SharedReadingPage({ params }: PageProps) {
         clearTimeout(timeoutRef.current);
       }
 
-      // Match server timeout: maxDuration = 10s, plus 2s buffer for network = 12s total
+      // Match server timeout: maxDuration = 30s, but the SDK timeout is 25s, so cap the UI wait slightly longer
       timeoutRef.current = setTimeout(() => {
         if (mountedRef.current) {
           setAiLoading(false);
           setAiError("AI analysis timed out. The reading is still available.");
         }
         timeoutRef.current = null;
-      }, 12000);
+      }, 30000);
 
       try {
         const aiRequest = {
@@ -139,108 +136,27 @@ export default function SharedReadingPage({ params }: PageProps) {
 
         const response = await fetch("/api/readings/interpret", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(aiRequest),
         });
 
         if (!response.ok) {
-          const errorText = await response.text();
-          let errorData;
+          let errorMessage = "Server error";
           try {
-            errorData = JSON.parse(errorText);
+            const data = await response.json();
+            errorMessage = data.error || data.reading || errorMessage;
           } catch {
-            errorData = { error: errorText || "Server error" };
+            // fall through with default
           }
-          throw new Error(errorData.error || "Server error");
+          throw new Error(errorMessage);
         }
 
-        // Check if response is SSE stream
-        const contentType = response.headers.get("content-type");
-        if (contentType?.includes("text/event-stream")) {
-          // Handle SSE streaming response
-          const reader = response.body?.getReader();
-          if (!reader) {
-            throw new Error("No response body");
-          }
-
-          if (mountedRef.current) {
-            setAiLoading(false);
-            setAiStreaming(true);
-          }
-
-          const decoder = new TextDecoder();
-          let accumulatedText = "";
-          let buffer = "";
-
-          try {
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-
-              const chunk = decoder.decode(value, { stream: true });
-              const { events, buffer: newBuffer } = processSSEChunk(
-                chunk,
-                buffer,
-              );
-              buffer = newBuffer;
-
-              for (const event of events) {
-                if (event.type === "chunk" && event.content) {
-                  accumulatedText += event.content;
-                  if (mountedRef.current) {
-                    setAiReading({
-                      reading: accumulatedText,
-                      source: "mistral",
-                    });
-                  }
-                } else if (event.type === "done") {
-                  if (mountedRef.current) {
-                    setAiStreaming(false);
-                  }
-                  break;
-                } else if (event.type === "error") {
-                  throw new Error(event.error || "Stream error");
-                }
-              }
-            }
-
-            for (const event of finalizeSSEStream(buffer)) {
-              if (event.type === "chunk" && event.content) {
-                accumulatedText += event.content;
-                if (mountedRef.current) {
-                  setAiReading({
-                    reading: accumulatedText,
-                    source: "mistral",
-                  });
-                }
-              }
-            }
-          } finally {
-            reader.releaseLock();
-          }
-
-          if (mountedRef.current) {
-            setAiStreaming(false);
-            if (!accumulatedText) {
-              setAiError(
-                "AI service returned no analysis. The reading is still available.",
-              );
-            }
-          }
-        } else {
-          // Fallback: Handle JSON response
-          const aiResult = await response.json();
-
-          if (mountedRef.current) {
-            if (aiResult?.reading) {
-              setAiReading(aiResult);
-            } else {
-              setAiError(
-                "AI service returned no analysis. The reading is still available.",
-              );
-            }
+        const data = await response.json();
+        if (mountedRef.current) {
+          if (data?.reading) {
+            setAiReading(data);
+          } else {
+            setAiError("AI service returned no analysis. The reading is still available.");
           }
         }
       } catch (error) {
@@ -280,7 +196,6 @@ export default function SharedReadingPage({ params }: PageProps) {
         }
         if (mountedRef.current) {
           setAiLoading(false);
-          setAiStreaming(false);
         }
       }
     },
@@ -377,7 +292,7 @@ export default function SharedReadingPage({ params }: PageProps) {
             <AIReadingDisplay
               aiReading={aiReading}
               isLoading={false}
-              isStreaming={aiStreaming}
+              isStreaming={aiLoading && !aiReading}
               error={null}
               onRetry={() => performAIAnalysis(reading.cards)}
             />

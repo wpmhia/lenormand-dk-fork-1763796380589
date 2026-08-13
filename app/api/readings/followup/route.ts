@@ -7,10 +7,11 @@ import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
-import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
+import { FOLLOWUP_SYSTEM_PROMPT, FOLLOWUP_MAX_OUTPUT_TOKENS } from "@/lib/followup-prompt";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -23,23 +24,9 @@ const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
 
-export const FOLLOWUP_SYSTEM_PROMPT = `You answer follow-up questions about an existing Lenormand reading.
-
-Answer the user's follow-up directly in 1-2 short sentences. Usually stay under 40 words.
-
-If the question can be answered yes/no or with one clear likely outcome, state that conclusion immediately.
-
-If the follow-up substantially repeats the original question, do not repeat the reading. Reduce the existing conclusion to the clearest direct answer.
-
-Do not produce headings, sections, bullets, card-by-card explanations, or a new reading.
-Do not repeat the previous interpretation.
-Do not hedge between multiple possibilities unless the cards genuinely do not distinguish them.
-Do not use Tarot/New Age language.
-Do not invent cards that were not drawn.
-
-Use the existing cards and reading only as evidence for the answer.`;
-
-export const FOLLOWUP_MAX_OUTPUT_TOKENS = 150;
+const mistral = createMistral({
+  apiKey: MISTRAL_API_KEY || "",
+});
 
 export async function POST(request: Request) {
   try {
@@ -136,53 +123,19 @@ export async function POST(request: Request) {
     const conclusionLine = `Previous conclusion: "${safeOriginalReading}".`;
     const prompt = `${questionLine} ${cardLine} ${conclusionLine}\n\nFollow-up: "${followUpQuestion}"\n\nAnswer directly in 1-2 short sentences.`;
 
-    const mistral = createMistral({
-      apiKey: MISTRAL_API_KEY,
-    });
-
-    const abortController = new AbortController();
-    const timeout = setTimeout(() => abortController.abort(), API_REQUEST_TIMEOUT_MS - 5000);
-    request.signal.addEventListener("abort", () => abortController.abort(), { once: true });
-
-    const result = await streamText({
+    const result = streamText({
       model: mistral(MISTRAL_PRODUCTION_MODEL),
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
       temperature: 0.2,
       maxOutputTokens: FOLLOWUP_MAX_OUTPUT_TOKENS,
-      abortSignal: abortController.signal,
+      maxRetries: 1,
+      abortSignal: request.signal,
+      timeout: { totalMs: 15_000 },
     });
 
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "headers", limit: rateLimitResult.limit, remaining: rateLimitResult.remaining })}
-\n\n`));
-
-        try {
-          for await (const chunk of result.textStream) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "chunk", content: chunk })}
-\n\n`));
-          }
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}
-\n\n`));
-          controller.close();
-        } catch (error) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "error", error: "Stream interrupted" })}
-\n\n`));
-          controller.close();
-        } finally {
-          clearTimeout(timeout);
-        }
-      },
-    });
-
-    return new Response(stream, {
+    return result.toTextStreamResponse({
       headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-        "X-Accel-Buffering": "no",
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),

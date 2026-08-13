@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   FOLLOWUP_SYSTEM_PROMPT,
   FOLLOWUP_MAX_OUTPUT_TOKENS,
-} from "@/app/api/readings/followup/route";
+} from "@/lib/followup-prompt";
 
 describe("follow-up system prompt", () => {
   it("caps output at 1-2 sentences", () => {
