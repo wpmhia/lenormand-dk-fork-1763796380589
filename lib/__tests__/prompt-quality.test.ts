@@ -308,114 +308,103 @@ describe("prompt quality: question appears in prompt", () => {
   });
 });
 
-describe("regression: outcome question with positive lead and difficult close", () => {
+describe("regression: linear hierarchy is in the prediction evidence block, not in PREDICTION_FIELDS_INSTRUCTION", () => {
   // Cards: Ship Sun Bouquet Stork Clouds — "What will be the outcome of my year-end review?"
   // The closing Clouds should anchor the forecast; Sun/Bouquet should not turn the
   // prediction positive. Earlier cards describe what happens along the way.
   const yearEndReviewCards = normalized([3, 31, 9, 17, 6]); // Ship Sun Bouquet Stork Clouds
   const ctx = buildReadingContext("sentence-5", "What will be the outcome of my year-end review?", yearEndReviewCards, cardsMap);
   const prompt = buildPromptFromContext(ctx);
-  const systemPrompt = buildSystemPrompt(yearEndReviewCards.length);
 
-  it("prediction evidence block labels the closing card as the primary outcome", () => {
+  it("prediction evidence block labels Clouds as the primary outcome and Stork+Clouds as the strongest transition", () => {
     expect(prompt).toMatch(/Primary outcome.*Clouds/);
     expect(prompt).toMatch(/Strongest transition.*Stork.*Clouds/);
   });
 
-  it("prediction evidence block tells the model the closing card carries the most weight", () => {
-    expect(prompt).toMatch(/Direction of travel/i);
-    expect(prompt).toMatch(/closing card.*most weight|most weight.*closing card/i);
-  });
-
-  it("prediction instruction forbids softening negative combinations", () => {
-    expect(prompt + systemPrompt).toMatch(/Do not soften a negative combination/i);
-  });
-
-  it("prediction instruction explicitly forbids inventing specific events not supported by the cards", () => {
-    expect(prompt + systemPrompt).toMatch(/Do not invent specific events/);
-  });
-
-  it("prediction instruction tells the model positive earlier cards don't override a difficult final card", () => {
-    expect(prompt).toMatch(/Positive earlier cards do not override a difficult final card/);
-  });
-
-  it("prediction instruction tells the model a difficult final card doesn't erase earlier positives", () => {
-    expect(prompt).toMatch(/difficult final card does not erase earlier positives/i);
-  });
-
-  it("uses Cards 1-4 to explain how the situation develops toward the outcome", () => {
-    expect(prompt).toMatch(/Cards 1-4 explain how the situation develops/);
+  it("prediction evidence block emits the linear hierarchy directive", () => {
+    expect(prompt).toMatch(/Linear spread hierarchy/);
+    expect(prompt).toMatch(/closing card and the closing pair dominate/);
   });
 });
 
-describe("regression: invented specifics rule", () => {
-  // Five-card spread with no Letter, Book, Tower, or Ring.
-  // The model must NOT hallucinate paperwork, legal, contracts, promotions, raises.
-  const cards = normalized([3, 31, 9, 17, 6]); // Ship Sun Bouquet Stork Clouds
-  const systemPrompt = buildSystemPrompt(cards.length);
+describe("regression: linear spread uses per-spread hierarchy, not memorized card numbers", () => {
+  // Verifies that the linear spread's progression rule is local to linear prompts
+  // and does not bleed into Petit/GT evidence blocks.
+  it("linear sentence-5 prompt contains the closing-card/closing-pair directive", () => {
+    const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([1, 2, 3, 4, 5]), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Linear spread hierarchy/);
+    expect(block).toMatch(/closing card and the closing pair dominate/);
+  });
 
-  it("system prompt forbids inventing documents the cards do not show", () => {
-    expect(systemPrompt).toMatch(/Do not invent specific events, documents, people/);
-    expect(systemPrompt).toMatch(/Letter, Book, Tower/);
-    expect(systemPrompt).toMatch(/official paperwork/);
+  it("Petit Tableau evidence block does NOT contain linear-specific language", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "What does my month look like?", normalized(ids), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Petit Tableau hierarchy/);
+    expect(block).toMatch(/center card is the heart/);
+    expect(block).not.toMatch(/closing card and the closing pair dominate/);
+    expect(block).not.toMatch(/Strongest transition \(closing pair\)/);
+  });
+
+  it("Grand Tableau evidence block does NOT contain linear-specific language", () => {
+    const ids = Array.from({ length: 36 }, (_, i) => i + 1);
+    const ctx = buildReadingContext("grand-tableau", "Full picture?", normalized(ids), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Grand Tableau hierarchy/);
+    expect(block).toMatch(/significator/);
+    expect(block).not.toMatch(/closing card and the closing pair dominate/);
+    expect(block).not.toMatch(/Strongest transition \(closing pair\)/);
   });
 });
 
-describe("regression: prediction evidence block includes the new direction-of-travel rule", () => {
-  const cards = normalized([3, 31, 9, 17, 6]);
-  const pe = buildPredictionContext(buildReadingContext("sentence-5", "Will the deal close?", cards, cardsMap));
-  const block = formatPredictionEvidenceBlock(pe);
-
-  it("includes the direction-of-travel instruction", () => {
-    expect(block).toMatch(/Direction of travel/i);
-  });
-
-  it("explicitly says positive earlier cards do not override a difficult final card", () => {
-    expect(block).toMatch(/Positive earlier cards do not override/i);
-  });
-
-  it("renames the strongest transition to indicate it is the closing pair", () => {
-    expect(block).toMatch(/Strongest transition \(closing pair\)/);
-  });
-});
-
-describe("system prompt: interpretive discipline is the core principle", () => {
+describe("regression: global system prompt no longer hard-codes linear-specific rules or memorized examples", () => {
   const cards = normalized([3, 31, 9, 17, 6]);
   const systemPrompt = buildSystemPrompt(cards.length);
 
-  it("states the overarching discipline rule prominently", () => {
-    expect(systemPrompt).toMatch(/Core principle[\s\S]*interpretive discipline/);
-    expect(systemPrompt).toMatch(/Follow the reading method consistently even when another interpretation would sound more reassuring/);
+  it("does not contain layout-specific progression language", () => {
+    // The global system prompt must not say "closing card and the closing pair carry the most weight"
+    // (that is now the linear spread's job). It only states the general discipline.
+    expect(systemPrompt).not.toMatch(/closing card and the closing pair carry the most weight/);
+    expect(systemPrompt).not.toMatch(/Card 5.*closing pair/);
+    expect(systemPrompt).not.toMatch(/Cards 1-4 explain/);
   });
 
-  it("lists the six practical manifestations of the principle", () => {
-    expect(systemPrompt).toMatch(/Respect position before sentiment/);
-    expect(systemPrompt).toMatch(/Respect progression/);
-    expect(systemPrompt).toMatch(/Preserve polarity and severity/);
-    expect(systemPrompt).toMatch(/Stay grounded/);
-    expect(systemPrompt).toMatch(/Answer the question actually asked/);
-    expect(systemPrompt).toMatch(/Don't hedge away the signal/);
+  it("does not contain memorized pair examples as rules", () => {
+    // The old "Corollaries" section named Fox + Whip / Ring + Scythe / Letter, Book, Tower by name.
+    // The new system prompt names no specific pair as an example — it states the general principle.
+    expect(systemPrompt).not.toMatch(/Fox \+ Whip/);
+    expect(systemPrompt).not.toMatch(/Ring \+ Scythe/);
+    expect(systemPrompt).not.toMatch(/Letter, Book, Tower/);
   });
 
-  it("organizes the specific rules as corollaries of the principle", () => {
-    expect(systemPrompt).toMatch(/Core principle[\s\S]*Corollaries:/);
+  it("does not contain memorized document examples as rules", () => {
+    expect(systemPrompt).not.toMatch(/official paperwork/);
+    expect(systemPrompt).not.toMatch(/legal requirements/);
   });
 
-  it("places the progression rule and the no-softening rule in the Corollaries section", () => {
-    const corollariesIndex = systemPrompt.indexOf("Corollaries:");
-    const languageIndex = systemPrompt.indexOf("Language:");
-    expect(corollariesIndex).toBeGreaterThan(0);
-    expect(languageIndex).toBeGreaterThan(corollariesIndex);
-    const corollariesSection = systemPrompt.slice(corollariesIndex, languageIndex);
-    expect(corollariesSection).toMatch(/closing card and the closing pair carry the most weight/);
-    expect(corollariesSection).toMatch(/Do not soften a negative combination/);
-    expect(corollariesSection).toMatch(/Do not invent specific events/);
+  it("does NOT use the old hierarchy label structure", () => {
+    expect(systemPrompt).not.toMatch(/Core principle — interpretive discipline/);
+    expect(systemPrompt).not.toMatch(/Corollaries:/);
   });
 
-  it("places banned-phrase rules in the Language section, not as core rules", () => {
-    const languageIndex = systemPrompt.indexOf("Language:");
-    const languageSection = systemPrompt.slice(languageIndex);
-    expect(languageSection).toMatch(/No reversals, no Tarot\/New Age language/);
-    expect(languageSection).toMatch(/shadow work/);
+  it("states the three neutral disciplines", () => {
+    expect(systemPrompt).toMatch(/Method discipline/);
+    expect(systemPrompt).toMatch(/Evidence discipline/);
+    expect(systemPrompt).toMatch(/Grounding discipline/);
+  });
+
+  it("still forbids invented cards and unsupported specifics (now in Grounding discipline)", () => {
+    expect(systemPrompt).toMatch(/Do not add cards that were not drawn/);
+    expect(systemPrompt).toMatch(/only when they are established by the question\/context or supported by the drawn cards/);
+  });
+
+  it("preserves language and formatting sections as separate concerns", () => {
+    expect(systemPrompt).toMatch(/Language:/);
+    expect(systemPrompt).toMatch(/Formatting rules:/);
+    expect(systemPrompt).toMatch(/No reversals, no Tarot\/New Age language/);
   });
 });

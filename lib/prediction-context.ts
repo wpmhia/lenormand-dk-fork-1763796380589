@@ -9,7 +9,10 @@ export interface PredictionEvidenceLine {
   value: string;
 }
 
+export type PredictionLayoutType = "linear-sentence" | "petit-tableau" | "grand-tableau" | "single";
+
 export interface PredictionContext {
+  layoutType: PredictionLayoutType;
   outcomeCard: NormalizedCard | null;
   developmentCard: NormalizedCard | null;
   coreDriverCard: NormalizedCard | null;
@@ -21,6 +24,17 @@ export interface PredictionContext {
   timingEvidence: PredictionEvidenceLine[];
   notes: string[];
 }
+
+const LAYOUT_HIERARCHY: Record<PredictionLayoutType, string> = {
+  "linear-sentence":
+    "Linear spread hierarchy: the closing card and the closing pair dominate the final forecast. Earlier cards show how the situation develops toward that outcome; they do not override a difficult final card, and a difficult final card does not erase earlier positives.",
+  "petit-tableau":
+    "Petit Tableau hierarchy: the center card is the heart; the middle line carries the main narrative. Rows, columns, and diagonals qualify the read but do not override center + middle line.",
+  "grand-tableau":
+    "Grand Tableau hierarchy: the significator and its surrounding pairs are the most actionable area. Topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) anchor the long-term life themes. The Cards of Fate and corners carry long-term signals but do not override significator + house evidence.",
+  "single":
+    "Single-card hierarchy: the drawn card alone is the full reading.",
+};
 
 function fmt(n: NormalizedCard | null | undefined): string {
   if (!n) return "(none)";
@@ -54,6 +68,7 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
   const developmentCard = cards.length >= 2 ? secondLast : null;
 
   return {
+    layoutType: "linear-sentence",
     outcomeCard: last ?? null,
     developmentCard,
     coreDriverCard: middle,
@@ -95,6 +110,7 @@ function buildPetitPrediction(cards: NormalizedCard[], layout: PetitTableauLayou
   }
 
   return {
+    layoutType: "petit-tableau",
     outcomeCard: outcome,
     developmentCard: development,
     coreDriverCard: center,
@@ -152,6 +168,7 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
   if (cardsOfFate) sigLines.push({ label: "Cards of Fate (bottom row)", value: cardsOfFate });
 
   return {
+    layoutType: "grand-tableau",
     outcomeCard: outcome ?? null,
     developmentCard: development ?? null,
     coreDriverCard: sig?.card ?? null,
@@ -194,6 +211,7 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
     base = buildLinearPrediction(cards, layout, adjacentPairs);
   } else {
     base = {
+      layoutType: "single",
       outcomeCard: cards[cards.length - 1] ?? null,
       developmentCard: null,
       coreDriverCard: cards[0] ?? null,
@@ -212,21 +230,45 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
 
 export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
   const lines: string[] = ["Prediction synthesis evidence:"];
-  lines.push(
-    "- Direction of travel: read the cards as a progression. The closing card and the closing pair carry the most weight on the final forecast; earlier cards explain how the situation develops toward that outcome. Positive earlier cards do not override a difficult final card, and a difficult final card does not erase earlier positives.",
-  );
+  lines.push(`- Hierarchy: ${LAYOUT_HIERARCHY[pe.layoutType]}`);
   if (pe.outcomeCard) {
-    lines.push(`- Primary outcome (closing): ${fmt(pe.outcomeCard)}`);
+    const label = pe.layoutType === "linear-sentence"
+      ? "Primary outcome (closing card)"
+      : pe.layoutType === "petit-tableau"
+        ? "Primary outcome (center / closing of middle line)"
+        : pe.layoutType === "grand-tableau"
+          ? "Primary outcome (significator area / cards of fate)"
+          : "Primary outcome";
+    lines.push(`- ${label}: ${fmt(pe.outcomeCard)}`);
   }
   if (pe.developmentCard) {
-    lines.push(`- Development path: ${fmt(pe.developmentCard)} (the card that drives the change)`);
+    const label = pe.layoutType === "linear-sentence"
+      ? "Development path (second-to-last card)"
+      : pe.layoutType === "petit-tableau"
+        ? "Development path (first card of middle line)"
+        : "Development path";
+    lines.push(`- ${label}: ${fmt(pe.developmentCard)}`);
   }
   if (pe.coreDriverCard) {
-    lines.push(`- Core driver: ${fmt(pe.coreDriverCard)}`);
+    const label = pe.layoutType === "linear-sentence"
+      ? "Central situation (middle card)"
+      : pe.layoutType === "petit-tableau"
+        ? "Center card (heart of the tableau)"
+        : pe.layoutType === "grand-tableau"
+          ? "Significator (anchor of the read)"
+          : "Core driver";
+    lines.push(`- ${label}: ${fmt(pe.coreDriverCard)}`);
   }
   if (pe.primaryPair) {
+    const label = pe.layoutType === "linear-sentence"
+      ? "Strongest transition (closing pair)"
+      : pe.layoutType === "petit-tableau"
+        ? "Strongest transition (top-weighted pair in the tableau)"
+        : pe.layoutType === "grand-tableau"
+          ? "Strongest transition (top-weighted pair involving the significator)"
+          : "Strongest transition";
     const meaning = pe.primaryPair.meaning ? ` → ${pe.primaryPair.meaning}` : "";
-    lines.push(`- Strongest transition (closing pair): ${fmt(pe.primaryPair.a)} + ${fmt(pe.primaryPair.b)}${meaning}`);
+    lines.push(`- ${label}: ${fmt(pe.primaryPair.a)} + ${fmt(pe.primaryPair.b)}${meaning}`);
   }
   if (pe.supportingPair) {
     const meaning = pe.supportingPair.meaning ? ` → ${pe.supportingPair.meaning}` : "";
