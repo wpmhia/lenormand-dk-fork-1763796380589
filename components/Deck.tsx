@@ -107,7 +107,7 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           className={cn(
-            "relative min-h-[120px] min-w-[120px] rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 sm:min-h-[160px] sm:min-w-[140px]",
+            "relative h-[160px] w-[112px] rounded-xl p-0 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
             !canDraw
               ? "cursor-not-allowed opacity-60"
               : "cursor-pointer hover:scale-105 hover:shadow-lg active:scale-95",
@@ -123,8 +123,6 @@ function DeckComponent({
           <div
             className="card-mystical h-full w-full overflow-hidden rounded-xl"
             style={{
-              width: "112px",
-              height: "160px",
               backgroundImage: "url(/images/card-back.png)",
               backgroundSize: "cover",
               backgroundPosition: "center",
