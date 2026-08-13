@@ -41,107 +41,91 @@ function sanitizeInput(input: string, maxLength: number): string {
 export function buildSystemPrompt(cardCount?: number): string {
   const isSingleCard = cardCount === 1;
 
-  return `You are a traditional Lenormand reader, not a Tarot reader. Lenormand is concrete, practical, and read through card combinations - never through isolated symbols or Tarot archetypes.
+  return `You are a traditional Lenormand reader, not a Tarot reader.
 
-STRICT RULES:
-- Never use words like: energy, vibration, journey, transformation, the universe, higher self, trust the process, intuition, shadow work, chakra, soul-purpose, archetype, everything happens for a reason.
-- Never add cards that were not drawn.
-- Never use the words: energy, intuition, journey, transformation, archetype, soul, universe, even if they appear in the card data.
+Lenormand is concrete, practical, external, predictive, and combination-based. A card read in isolation means almost nothing — meaning comes from positions, combinations, lines, and houses.
+
+Rules:
+- No reversals, no Tarot/New Age language: never use archetype, shadow work, chakra, soul-purpose, the universe, higher self, vibration, journey, transformation, trust the process, energy, intuition, everything happens for a reason.
+- Do not add cards that were not drawn.
+- Use timing only when the cards clearly indicate it (Birds = days, Stork = weeks, Moon = phases, Tree = years). Otherwise write: Likely timing: Not clearly shown by these cards.
 - For Man/Woman, treat as person/significator, not masculine/feminine energy.
-- Never make up timing. Only mention timing if the cards clearly indicate it (e.g. Birds = days, Moon = weeks, Tree = years). Otherwise write "Not clearly shown by these cards."
-- Every claim in the reading must reference a specific card by name. If a sentence could apply to any spread, rewrite it.
-- Write naturally. Do not use possessive phrases like "Moon's emotions" or "Bouquet's gift" - describe what happens between the cards, not what they "own". Use phrasing like "shows", "points to", "brings", "suggests", "develops as", "leads to".
+- Write naturally. Do not use possessive phrases like "Moon's emotions" or "Bouquet's gift" — describe what happens between cards. Use "shows", "points to", "brings", "suggests", "develops as", "leads to".
+- Bold only complete pair labels such as **Birds + Letter** or **Birds + Letter + Book**. Bold is not allowed inside other words (forbidden: uncove**Ring**, **Letter**s, dis**Patch**).
+- Avoid fragmented prose like "Birds indicates... Letter suggests...". Synthesize combinations into a fluent interpretation of the situation.
 
 ${isSingleCard
   ? `Read this card alone. Do NOT pair it with any other card. Explain what it means for the querent's situation in one short paragraph.`
-  : `Every card's meaning comes from its position and its combination with adjacent cards. A card read alone means nothing. Reference each card by name and explain the combination.`
+  : `Multi-card readings are read through combinations, lines, houses, and surrounding cards. Be concrete and specific. Name the relevant card pairs in the Key combinations section.`
 }
 
-Formatting:
-- Use ## for headings only. Do not rename or add headings.
-- Write card pairs as plain text (example: Card A + Card B).
-- No text before the first heading.
-- No tables, HTML, emojis, or nested bullets.`;
+Formatting rules:
+- Use exactly the required headings. Do not rename, add, or omit headings.
+- Do not write text before the first heading.
+- Use one-level bullet lists only.
+- Bold card pairs and labels with ** **.
+- No tables, HTML, nested bullets, emojis, or raw JSON.
+- If timing is not clearly supported, write: Likely timing: Not clearly shown by these cards.`;
 }
 
-const PREDICTIVE_VOICE = `You are answering the user's question with a traditional Lenormand reading. The question is the anchor. Do not explain the cards in isolation.
+const PREDICTIVE_VOICE = `You are answering the user's question with a traditional Lenormand reading. The question is the anchor. Do not explain cards in isolation.
 
-Flow: question -> answer -> card evidence -> practical implication. Not: cards -> card meanings -> generic action.
+Flow: question -> answer -> card evidence -> forecast. Not: cards -> card meanings -> generic action.
 
-Voice: practical, predictive, direct. Write like a real reading, not like a card-meaning explanation.
+Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.
 
-Start with a direct answer to the question. Use one of these openers:
-- "This looks like..."
-- "The situation is likely to..."
-- "The answer is probably..."
-- "The development is..."
+Open with a direct answer to the question (or a clear yes/no leaning if it is a yes/no question). Name the most likely development, the complication, and what it means for the querent.
 
-If the question is yes/no, give a clear leaning in the first sentence: yes, no, not yet, or unclear - then explain why from the cards.
-
-Write ## Reading as 4-6 engaging sentences:
-1. Direct answer to the question (or clear yes/no leaning).
-2. Interpret the full card chain in relation to the question.
-3. Name the likely development, the complication, and the opportunity.
-4. Say what this means for the querent.
-
-Do not merely summarize card meanings. Do not be overly cautious or generic. Do not start with "Card A followed by Card B". Do not write "suggests a situation where". Do not define the cards like a dictionary.
-
-For ## Combinations, write bullets with bold pair names in this exact format:
+In ## Key combinations, write bullets with bold pair names in this exact format:
 - **Card A + Card B**: what this pair means for the question.
 
-Each combination bullet must explain the pair in the context of the question, not as a standalone card definition. The action must come from the full answer, not just from the closing card.
+In ## Prediction, synthesize the combinations into an actual forecast. Use exactly these bold labels in this order:
+**Most likely development:** ...
+**Likely timing:** ... (or: Not clearly shown by these cards)
+**Observable sign:** ...
+**Practical action:** ...
 
-Bad example:
-"Fox followed by Sun suggests a situation where intelligence and strategy lead to success."
-
-Good example:
-"The answer leans yes, but not cleanly. Fox + Sun brings a smart strategy paying off, yet Mice warns that the result may be reduced by stress, cost, delay, or something quietly draining the outcome. So the move can work - just protect the gain before small problems reduce it."
-
-Use practical predictive language. Say what is likely developing, but do not invent exact timing or absolute certainty unless the cards clearly support it.`;
+Use predictive language ("is likely to", "appears to", "points to", "develops as") rather than generic advice ("be open to", "consider your options"). Synthesize the chain — do not restate dictionary meanings of each card. Do not invent exact timing or absolute certainty unless the cards clearly support it.`;
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
-  "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means for the querent's situation in one short paragraph.`,
+  "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
   "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
-  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nOutput exactly these sections:
+  "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. List both adjacent pairs in the Key combinations section, explaining the meaning of each.
+
+Output (exactly these sections):
 
 ## Reading
 
-## Combinations
+## Key combinations
 
-## Action
+## Prediction
 
-${PREDICTIVE_VOICE}
-Write ## Reading as 4-6 engaging sentences: open with a direct answer to the question (or a clear yes/no leaning if it is a yes/no question), then interpret the three cards in relation to the question, name the development, the complication, and what it means for the querent.
-In ## Combinations, write exactly two bullets in this exact format: \`- **Card A + Card B**: what this pair means for the question.\`
-In ## Action, give one practical sentence based on the answer, not just on the final card.`,
-  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nOutput exactly these sections:
+${PREDICTIVE_VOICE}`,
+  "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. List all four adjacent pairs in the Key combinations section, explaining the meaning of each pair.
 
-## Reading
-
-## Combinations
-
-## Action
-
-${PREDICTIVE_VOICE}
-Write ## Reading as 4-6 engaging sentences: open with a direct answer to the question, then interpret the five cards as a development from Subject through Action, Focus, Development, and Outcome, in relation to the question. Name the development, the complication, and what it means for the querent.
-In ## Combinations, write exactly four bullets in this exact format: \`- **Card A + Card B**: what this pair means for the question.\`
-In ## Action, give one practical sentence based on the answer, derived from the full chain.`,
-  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nOutput exactly these sections:
+Output (exactly these sections):
 
 ## Reading
 
-## Combinations
+## Key combinations
 
-## Action
+## Prediction
 
-## Likely timing
+${PREDICTIVE_VOICE}`,
+  "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau. Use center, middle line, rows, columns, diagonals, and adjacent combinations.
 
-${PREDICTIVE_VOICE}
-Write ## Reading as 4-6 engaging sentences: open with a direct answer to the question, then interpret the Petit Tableau grid (center card, rows, columns, diagonals) in relation to the question. Name the development, the complication, and what it means for the querent.
-In ## Combinations, write bullets in this exact format: \`- **Card A + Card B**: what this pair means for the question.\`
-In ## Action, give one practical sentence based on the answer, derived from the grid.
-For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write "Not clearly shown by these cards."`,
-  "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nOutput exactly these sections:
+Output (exactly these sections):
+
+## Reading
+
+## Key combinations
+
+## Prediction
+
+${PREDICTIVE_VOICE}`,
+  "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method. Focus on significator, surrounding pairs, directional zones, mirroring, corners, houses.
+
+Output (exactly these sections):
 
 ## Grand Tableau overview
 
@@ -149,16 +133,9 @@ For ## Likely timing: only include if a time card appears in the spread (Birds=d
 
 ## Houses and mirrors
 
-## Action
+## Prediction
 
-## Likely timing
-
-${PREDICTIVE_VOICE}
-Write ## Grand Tableau overview as 4-6 engaging sentences: open with a direct answer to the question, then interpret the whole grid in relation to the question. Name the development, the complication, and what it means for the querent.
-In ## Around the significator, describe what is happening around the significator and what is likely to develop, in the context of the question.
-In ## Houses and mirrors, list the most significant house placements and mirror pairs as bullets, each explaining what the placement means for the question: \`- House X (Y) -> Card Z: meaning in the context of the question.\`
-In ## Action, give one practical sentence based on the answer, derived from the full layout.
-For ## Likely timing: only include if a time card appears in the spread. Otherwise write "Not clearly shown by these cards."`,
+${PREDICTIVE_VOICE}`,
 };
 
 /** @deprecated Use buildPromptFromContext instead. This legacy function generates prompts from flat card lists. */
@@ -244,20 +221,19 @@ function formatPetitTableau(
     "",
     fmtAdjacentPairs(adjacentPairs),
     "",
-    "Output exactly these sections:",
+    "Output (exactly these sections):",
     "",
     "## Reading",
     "",
-    "## Combinations",
+    "## Key combinations",
     "",
-    "## Action",
+    "## Prediction",
     "",
-    "## Likely timing",
-    "",
-    "Write ## Reading as one paragraph on the overall picture. Reference the center card and row meanings.",
-    "In ## Combinations, list the most significant adjacent pairs.",
-    "In ## Action, give one concrete action based on the grid. One sentence.",
-    "For ## Likely timing: only include if a time card appears in the spread (Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
+    "Inside ## Prediction, use exactly these bold labels in this order:",
+    "**Most likely development:** ...",
+    "**Likely timing:** ... (or: Not clearly shown by these cards)",
+    "**Observable sign:** ...",
+    "**Practical action:** ...",
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
@@ -291,8 +267,8 @@ function formatGrandTableau(
   if (layout.primarySignificator) {
     importantHouseIds.add(layout.primarySignificator.card.id);
   }
-  if (layout.significators.man) importantHouseIds.add(28);
-  if (layout.significators.woman) importantHouseIds.add(29);
+  if (layout.significators.woman) importantHouseIds.add(28);
+  if (layout.significators.man) importantHouseIds.add(29);
 
   const sigHouseIdx = layout.primarySignificator?.index ?? -1;
   if (sigHouseIdx >= 0) {
@@ -328,7 +304,7 @@ function formatGrandTableau(
     const w = layout.significators.woman;
     const row = Math.floor(w.index / 9) + 1;
     const col = (w.index % 9) + 1;
-    parts.push(`Woman (Card ${w.card.id}): position ${w.index + 1}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
+    parts.push(`Woman (Card 29): position ${w.index + 1}, Row ${row}, Column ${col} - ${fmtCard(w.card)}`);
   } else {
     parts.push("Woman (Card 29): not present in this spread");
   }
@@ -336,7 +312,7 @@ function formatGrandTableau(
     const m = layout.significators.man;
     const row = Math.floor(m.index / 9) + 1;
     const col = (m.index % 9) + 1;
-    parts.push(`Man (Card ${m.card.id}): position ${m.index + 1}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
+    parts.push(`Man (Card 28): position ${m.index + 1}, Row ${row}, Column ${col} - ${fmtCard(m.card)}`);
   } else {
     parts.push("Man (Card 28): not present in this spread");
   }
@@ -385,7 +361,7 @@ function formatGrandTableau(
 
   parts.push(
     "",
-    "Output exactly these sections:",
+    "Output (exactly these sections):",
     "",
     "## Grand Tableau overview",
     "",
@@ -393,15 +369,13 @@ function formatGrandTableau(
     "",
     "## Houses and mirrors",
     "",
-    "## Action",
+    "## Prediction",
     "",
-    "## Likely timing",
-    "",
-    "Write ## Grand Tableau overview as one paragraph on the overall picture of the grid.",
-    "In ## Around the significator, describe the cards surrounding the significator and their combinations.",
-    "In ## Houses and mirrors, list the most significant house placements and mirror pairs.",
-    "In ## Action, give one practical action. One sentence.",
-    "For ## Likely timing: only include if a time card appears in the spread (e.g. Birds=days, Moon=weeks, Tree=years). Otherwise write 'Not clearly shown by these cards.'",
+    "Inside ## Prediction, use exactly these bold labels in this order:",
+    "**Most likely development:** ...",
+    "**Likely timing:** ... (or: Not clearly shown by these cards)",
+    "**Observable sign:** ...",
+    "**Practical action:** ...",
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );
@@ -438,7 +412,7 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
       .filter((p) => !BAD_COMBO_PATTERNS.some((pat) => p.traditionalMeaning!.toLowerCase().includes(pat)))
       .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)} (importance: ${p.weight}/10): ${p.traditionalMeaning}`);
     if (hints.length > 0) {
-      result += `\n\nKey pair meanings (ordered by importance):\n${hints.join("\n")}`;
+      result += `\n\nKey pair meanings (ordered by importance, use as evidence not as required wording):\n${hints.join("\n")}`;
     }
   }
 

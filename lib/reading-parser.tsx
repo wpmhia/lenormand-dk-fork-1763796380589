@@ -1,21 +1,7 @@
 import { memo } from "react";
+import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
-
-const COMBINATION_PATTERN = /^\s*(?:\*\*)?\s*([A-Za-z][A-Za-z ]+?\s+\+\s+[A-Za-z][A-Za-z ]+?)\s*(?:\*\*)?\s*:\s*(.+)$/;
-
-function extractCombination(children: React.ReactNode): { pair: string; meaning: string } | null {
-  let text = "";
-  if (typeof children === "string") {
-    text = children;
-  } else if (Array.isArray(children)) {
-    text = children.map((c) => (typeof c === "string" ? c : "")).join("");
-  } else {
-    return null;
-  }
-  const match = text.match(COMBINATION_PATTERN);
-  if (!match) return null;
-  return { pair: match[1].trim(), meaning: match[2].trim() };
-}
+import { extractCombinationFromChildren } from "@/lib/reading-combination";
 
 export const ReadingMarkdown = memo(function ReadingMarkdown({ children }: { children: string }) {
   return (
@@ -26,7 +12,7 @@ export const ReadingMarkdown = memo(function ReadingMarkdown({ children }: { chi
         strong: ({ children }) => <strong>{children}</strong>,
         ul: ({ children }) => <ul className="mb-2 list-none space-y-3 pl-0">{children}</ul>,
         li: ({ children, ...props }) => {
-          const combo = extractCombination(children);
+          const combo = extractCombinationFromChildren(children);
           if (combo) {
             return (
               <li className="list-none" {...props}>
@@ -50,6 +36,6 @@ export const ReadingMarkdown = memo(function ReadingMarkdown({ children }: { chi
   );
 });
 
-export function parseReadingText(text: string): React.ReactNode {
+export function parseReadingText(text: string): ReactNode {
   return <ReadingMarkdown>{text}</ReadingMarkdown>;
 }

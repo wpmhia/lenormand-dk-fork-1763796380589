@@ -1,5 +1,4 @@
 import { Card } from "@/lib/types";
-import { getCardById } from "@/lib/data";
 
 export const BANNED_TERMS = [
   "energy",
@@ -36,10 +35,10 @@ export interface ValidationResult {
 const SPREAD_SECTIONS: Record<string, string[]> = {
   "single-card": ["## Reading"],
   "daily-card": [],
-  "sentence-3": ["## Reading", "## Combinations", "## Action"],
-  "sentence-5": ["## Reading", "## Combinations", "## Action"],
-  "comprehensive": ["## Reading", "## Combinations", "## Action", "## Likely timing"],
-  "grand-tableau": ["## Grand Tableau overview", "## Around the significator", "## Houses and mirrors", "## Action", "## Likely timing"],
+  "sentence-3": ["## Reading", "## Key combinations", "## Prediction"],
+  "sentence-5": ["## Reading", "## Key combinations", "## Prediction"],
+  "comprehensive": ["## Reading", "## Key combinations", "## Prediction"],
+  "grand-tableau": ["## Grand Tableau overview", "## Around the significator", "## Houses and mirrors", "## Prediction"],
 };
 
 export function validateReadingOutput(
@@ -118,6 +117,10 @@ export function validateReadingOutput(
   return { valid: issues.length === 0, issues };
 }
 
+export function isCriticalIssue(issue: ValidationIssue): boolean {
+  return issue.type === "banned_term" || issue.type === "invented_card" || issue.type === "unsupported_timing";
+}
+
 export const ALLOWED_MARKDOWN_PATTERN = /^(#{1,3}\s|[-*]\s|\d+\.\s|\S)/m;
 
 export function validateReadingMarkdown(
@@ -172,41 +175,58 @@ export function validateReadingMarkdown(
   return { valid: issues.length === 0, issues };
 }
 
-export function repairMarkdownToContract(reading: string, spreadId: string): string {
-  const expected = SPREAD_SECTIONS[spreadId];
-  if (!expected) return reading;
-
+export function normalizeMarkdown(reading: string): string {
   const lines = reading.split("\n");
-  const cleaned: string[] = [];
-  let inBadSection = false;
+  const out: string[] = [];
 
-  for (const line of lines) {
-    const headingMatch = line.match(/^(#{1,6})\s+(.+)/);
-    if (headingMatch) {
-      const level = headingMatch[1].length;
-      const text = headingMatch[2].trim();
-      if (level === 2) {
-        cleaned.push(line);
-        inBadSection = false;
-      } else {
-        inBadSection = true;
+  for (const rawLine of lines) {
+    const line = rawLine.replace(/[ \t]+$/g, "");
+    const headingMatch = line.match(/^(#{1,6})(\s+(.+))?$/);
+
+    if (headingMatch && headingMatch[3]) {
+      while (out.length > 0 && out[out.length - 1].trim() === "") out.pop();
+      const headingText = headingMatch[3].trim();
+      out.push(`## ${headingText}`);
+      continue;
+    }
+
+    if (/\|.+\|/.test(line)) {
+      continue;
+    }
+
+    if (/<[a-z][\s>]/i.test(line)) {
+      continue;
+    }
+
+    if (line.trim() === "") {
+      if (out.length > 0 && out[out.length - 1].trim() !== "") {
+        out.push("");
       }
       continue;
     }
 
-    if (inBadSection) continue;
-
-    if (/<[a-z][\s>]/i.test(line)) continue;
-    if (/\|.+\|/.test(line)) continue;
-
-    cleaned.push(line);
+    out.push(line);
   }
 
-  return cleaned.join("\n");
+  while (out.length > 0 && out[out.length - 1].trim() === "") out.pop();
+
+  return out.join("\n");
+}
+
+export function repairMarkdownToContract(reading: string, _spreadId: string): string {
+  return normalizeMarkdown(reading);
+}
+
+interface NormalizedFallbackCard {
+  id: number;
+  name: string;
+  keywords: string[];
+  meaning?: { general: string };
+  traditionalPairMeaning?: string;
 }
 
 export function buildDeterministicFallback(
-  drawnCards: { id: number; name: string; keywords: string[]; meaning?: { general: string } }[],
+  drawnCards: NormalizedFallbackCard[],
   spreadId: string,
   question: string,
 ): string {
@@ -218,28 +238,47 @@ export function buildDeterministicFallback(
   if (drawnCards.length === 1) {
     const c = drawnCards[0];
     const kw = c.keywords?.slice(0, 3).join(", ") || "";
-    const note = c.meaning?.general || "";
-    return `## Reading${qLine}${c.name} — ${kw}${note ? `. ${note}` : ""}`;
+    const note = c.meaning?.general || c.traditionalPairMeaning || "";
+    const opener = question
+      ? `This is the situation you are sitting with regarding "${question}".`
+      : `This is what the drawn card says about the situation.`;
+    return `## Reading${qLine}${opener} **${c.name}** is the focus${kw ? ` — ${kw}` : ""}${note ? `. ${note}` : ""}.`;
   }
 
-  const cardList = drawnCards.map((c, i) => {
-    const kw = c.keywords?.slice(0, 2).join(", ");
-    return `${i + 1}. ${c.name}${kw ? ` (${kw})` : ""}`;
-  }).join("\n");
-
-  const opener = question ? `This looks like a chain developing around "${question}"` : `This looks like a chain developing around the situation`;
-  const readingSentence = `${opener}. With ${drawnCards[0].name} setting the scene, ${drawnCards[1].name} shaping what happens, and ${drawnCards[drawnCards.length - 1].name} as the likely outcome, the development is real but not yet finished. The cards in between fill in the texture of what is likely to unfold.`;
-
-  const pairs = [];
+  const pairBullets: string[] = [];
   for (let i = 0; i < drawnCards.length - 1; i++) {
     const a = drawnCards[i];
     const b = drawnCards[i + 1];
-    pairs.push(`- **${a.name} + ${b.name}**: what begins with ${a.name.toLowerCase()} is shaped by ${b.name.toLowerCase()} - together they set the direction of the chain.`);
+    const meaning = a.traditionalPairMeaning || b.traditionalPairMeaning || `${a.name} combined with ${b.name} sets the direction of this stretch of the line.`;
+    pairBullets.push(`- **${a.name} + ${b.name}**: ${meaning}`);
   }
-  const pairText = pairs.join("\n");
 
   const last = drawnCards[drawnCards.length - 1];
   const lastKw = last.keywords?.slice(0, 2).join(", ") || last.name;
+  const lastMeaning = last.meaning?.general || last.traditionalPairMeaning || "";
 
-  return `## Reading${qLine}${readingSentence}\n\n## Combinations\n\n${pairText}\n\n## Action\n\nMove in the direction the chain suggests and respond to the closing card (**${last.name}**) in kind - it points to how the situation is most likely to develop.`;
+  const chainNames = drawnCards.map((c) => c.name).join(", ");
+  const opener = question
+    ? `This reading addresses "${question}".`
+    : `This reading addresses the situation at hand.`;
+  const reading = `${opener} Reading **${chainNames}** as one Lenormand chain, what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}** and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) shows where the line is most likely to land. Each adjacent pair below shows what changes between one card and the next.`;
+
+  const timingLine = drawnCards.some((c) => TIMING_CARD_IDS.has(c.id))
+    ? "**Likely timing:** Reflect the timing card(s) drawn above — Birds = days, Stork = weeks, Moon = phases, Tree = years."
+    : "**Likely timing:** Not clearly shown by these cards.";
+
+  return [
+    `## Reading${qLine}${reading}`,
+    "",
+    "## Key combinations",
+    "",
+    pairBullets.join("\n"),
+    "",
+    "## Prediction",
+    "",
+    `**Most likely development:** The chain points toward **${last.name}** (${lastKw}) as the closing tendency of this situation${lastMeaning ? ` — ${lastMeaning}` : ""}.`,
+    timingLine,
+    "**Observable sign:** Watch for the practical situation described by the closing pair to start showing up in concrete form.",
+    `**Practical action:** Move in the direction **${last.name}** suggests and respond to **${drawnCards[drawnCards.length - 1].name}** in kind.`,
+  ].join("\n");
 }

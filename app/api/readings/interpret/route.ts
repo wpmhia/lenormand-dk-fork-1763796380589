@@ -14,7 +14,14 @@ import { createMistral } from "@ai-sdk/mistral";
 import { streamText } from "ai";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
-import { validateReadingOutput, validateReadingMarkdown, repairMarkdownToContract, buildDeterministicFallback } from "@/lib/reading-validator";
+import {
+  validateReadingOutput,
+  validateReadingMarkdown,
+  normalizeMarkdown,
+  buildDeterministicFallback,
+  isCriticalIssue,
+  ValidationIssue,
+} from "@/lib/reading-validator";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -25,6 +32,8 @@ const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
+
+const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 
 const mistral = createMistral({
   apiKey: MISTRAL_API_KEY || "",
@@ -92,7 +101,7 @@ export async function POST(request: Request) {
     request.signal.addEventListener("abort", () => abortController.abort(), { once: true });
 
     const result = await streamText({
-      model: mistral("mistral-small-latest"),
+      model: mistral(MISTRAL_PRODUCTION_MODEL),
       system: buildSystemPrompt(cardCount),
       prompt,
       temperature: 0.2,
@@ -107,7 +116,34 @@ export async function POST(request: Request) {
     clearTimeout(timeout);
 
     if (!fullText.trim()) {
-      const fallback = buildDeterministicFallback(validated.cards, validated.spreadId, validated.question);
+      const fallback = buildDeterministicFallback(
+        validated.cards.map((c) => {
+          const full = cardsMap.get(c.id);
+          let traditionalPairMeaning: string | undefined;
+          if (full && validated.cards.length > 1) {
+            for (const other of validated.cards) {
+              if (other.id === c.id) continue;
+              const fwd = full.combos?.find((x) => x.withCardId === other.id);
+              const otherFull = cardsMap.get(other.id);
+              const rev = otherFull?.combos?.find((x) => x.withCardId === c.id);
+              const meaning = [fwd?.meaning, rev?.meaning].filter(Boolean).join(" - ");
+              if (meaning) {
+                traditionalPairMeaning = meaning;
+                break;
+              }
+            }
+          }
+          return {
+            id: c.id,
+            name: c.name,
+            keywords: c.keywords,
+            meaning: full?.meaning,
+            traditionalPairMeaning,
+          };
+        }),
+        validated.spreadId,
+        validated.question,
+      );
       return streamTextAsSSE(fallback, corsHeaders, rateLimitResult);
     }
 
@@ -115,16 +151,21 @@ export async function POST(request: Request) {
     const validation = validateReadingOutput(fullText, drawnCardIds, validated.spreadId);
     const mdValidation = validateReadingMarkdown(fullText, validated.spreadId);
 
-    let finalText = fullText;
+    const criticalIssues: ValidationIssue[] = [
+      ...validation.issues.filter(isCriticalIssue),
+      ...mdValidation.issues.filter(isCriticalIssue),
+    ];
 
-    if (!validation.valid || !mdValidation.valid) {
-      const allIssues = [...validation.issues, ...mdValidation.issues];
+    let finalText = fullText;
+    let usedRepair = false;
+
+    if (criticalIssues.length > 0) {
       try {
-        const repairIssueText = allIssues.map((i) => `- ${i.message}`).join("\n");
+        const repairIssueText = criticalIssues.map((i) => `- ${i.message}`).join("\n");
         const repairResult = await streamText({
-          model: mistral("mistral-small-latest"),
+          model: mistral(MISTRAL_PRODUCTION_MODEL),
           system: REPAIR_SYSTEM_PROMPT,
-          prompt: `Reading to fix (issues: ${repairIssueText}):\n\n${fullText}\n\nDrawn card IDs: [${drawnCardIds.join(", ")}]`,
+          prompt: `Reading to fix (critical issues: ${repairIssueText}):\n\n${fullText}\n\nDrawn card IDs: [${drawnCardIds.join(", ")}]`,
           temperature: 0.1,
           maxOutputTokens: maxTokens,
           abortSignal: AbortSignal.timeout(15000),
@@ -134,27 +175,57 @@ export async function POST(request: Request) {
           repaired += chunk;
         }
         if (repaired.trim()) {
-          const contentOk = validateReadingOutput(repaired, drawnCardIds, validated.spreadId).valid;
-          const mdOk = validateReadingMarkdown(repaired, validated.spreadId).valid;
-          if (contentOk && mdOk) {
+          const repairedCritical = [
+            ...validateReadingOutput(repaired, drawnCardIds, validated.spreadId).issues.filter(isCriticalIssue),
+            ...validateReadingMarkdown(repaired, validated.spreadId).issues.filter(isCriticalIssue),
+          ];
+          if (repairedCritical.length === 0) {
             finalText = repaired;
-          } else {
-            finalText = repairMarkdownToContract(fullText, validated.spreadId);
+            usedRepair = true;
           }
         }
       } catch {
-        finalText = repairMarkdownToContract(fullText, validated.spreadId);
       }
     }
 
-    const finalMdOk = validateReadingMarkdown(finalText, validated.spreadId).valid;
-    if (!finalMdOk) {
-      finalText = repairMarkdownToContract(finalText, validated.spreadId);
+    if (!usedRepair) {
+      finalText = normalizeMarkdown(finalText);
     }
 
-    const finalValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
-    if (!finalValidation.valid) {
-      finalText = buildDeterministicFallback(validated.cards, validated.spreadId, validated.question);
+    const finalCritical = [
+      ...validateReadingOutput(finalText, drawnCardIds, validated.spreadId).issues.filter(isCriticalIssue),
+      ...validateReadingMarkdown(finalText, validated.spreadId).issues.filter(isCriticalIssue),
+    ];
+
+    if (finalCritical.length > 0) {
+      finalText = buildDeterministicFallback(
+        validated.cards.map((c) => {
+          const full = cardsMap.get(c.id);
+          let traditionalPairMeaning: string | undefined;
+          if (full && validated.cards.length > 1) {
+            for (const other of validated.cards) {
+              if (other.id === c.id) continue;
+              const fwd = full.combos?.find((x) => x.withCardId === other.id);
+              const otherFull = cardsMap.get(other.id);
+              const rev = otherFull?.combos?.find((x) => x.withCardId === c.id);
+              const meaning = [fwd?.meaning, rev?.meaning].filter(Boolean).join(" - ");
+              if (meaning) {
+                traditionalPairMeaning = meaning;
+                break;
+              }
+            }
+          }
+          return {
+            id: c.id,
+            name: c.name,
+            keywords: c.keywords,
+            meaning: full?.meaning,
+            traditionalPairMeaning,
+          };
+        }),
+        validated.spreadId,
+        validated.question,
+      );
     }
 
     return streamTextAsSSE(finalText, corsHeaders, rateLimitResult);
