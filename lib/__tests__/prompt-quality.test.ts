@@ -265,11 +265,28 @@ describe("prompt quality: Grand Tableau significator preference", () => {
     expect(prompt).toMatch(/Primary significator.*Man.*Read the Tableau primarily around this card/i);
   });
 
-  it("shows both when preference is both or not specified", () => {
-    const ctx = buildReadingContext("grand-tableau", question, normalized(allIds), cardsMap);
+  it("defaults to Woman as primary when preference is both and the question has no clear topic", () => {
+    const neutralQuestion = "What will the coming year bring?";
+    const ctx = buildReadingContext("grand-tableau", neutralQuestion, normalized(allIds), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
-    expect(prompt).not.toMatch(/Primary significator/i);
+    expect(prompt).toMatch(/Primary significator.*Woman/i);
+  });
+
+  it("selects Man as primary when preference is both and the question is job/career-oriented", () => {
+    const jobQuestion = "Will my career move forward this year?";
+    const ctx = buildReadingContext("grand-tableau", jobQuestion, normalized(allIds), cardsMap);
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
+    expect(prompt).toMatch(/Primary significator.*Man/i);
+  });
+
+  it("selects Woman as primary when preference is both and the question is love-oriented", () => {
+    const loveQuestion = "Will my relationship become more committed?";
+    const ctx = buildReadingContext("grand-tableau", loveQuestion, normalized(allIds), cardsMap);
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
+    expect(prompt).toMatch(/Primary significator.*Woman/i);
   });
 });
 
@@ -406,5 +423,90 @@ describe("regression: global system prompt no longer hard-codes linear-specific 
     expect(systemPrompt).toMatch(/Language:/);
     expect(systemPrompt).toMatch(/Formatting rules:/);
     expect(systemPrompt).toMatch(/No reversals, no Tarot\/New Age language/);
+  });
+});
+
+describe("GT prediction evidence: no silent substitution when no significator is drawn", () => {
+  it("explicitly notes 'No significator card' when neither Man nor Woman is in the spread", () => {
+    const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+    const noSigIds = allIds.map((id) => (id === 28 || id === 29 ? id + 8 : id));
+    const cards = noSigIds.map((id) => ({
+      id, name: cardsMap.get(id)?.name ?? `Card ${id}`, keywords: [],
+    }));
+    const ctx = buildReadingContext("grand-tableau", "", cards, cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/No significator card/);
+    expect(pe.coreDriverCard).toBeNull();
+  });
+
+  it("always populates coreDriverCard when at least one significator is drawn (no silent fallback)", () => {
+    const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+    const ctx = buildReadingContext("grand-tableau", "Will I move?", cards, cardsMap);
+    const pe = buildPredictionContext(ctx);
+    expect(pe.coreDriverCard).not.toBeNull();
+  });
+});
+
+describe("Petit evidence labels distinguish 'Directional outcome' from 'Center card'", () => {
+  it("labels outcomeCard as 'Directional outcome (right end of middle line)'", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "What will the month bring?", normalized(ids), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Directional outcome \(right end of middle line\)/);
+    expect(block).not.toMatch(/Primary outcome \(center/);
+  });
+
+  it("labels coreDriverCard as 'Center card (heart of tableau)'", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "What will the month bring?", normalized(ids), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Center card \(heart of tableau\)/);
+  });
+
+  it("labels developmentCard as 'Development path (left end of middle line)'", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "What will the month bring?", normalized(ids), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Development path \(left end of middle line\)/);
+  });
+});
+
+describe("GT prediction evidence labels for outcome and development", () => {
+  it("labels outcomeCard as 'Primary outcome (significator area / cards of fate)'", () => {
+    const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+    const ctx = buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Primary outcome \(significator area \/ cards of fate\)/);
+  });
+
+  it("labels coreDriverCard as 'Significator (anchor of the read)'", () => {
+    const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+    const ctx = buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Significator \(anchor of the read\)/);
+  });
+});
+
+describe("linear sentence evidence labels", () => {
+  it("labels outcomeCard as 'Primary outcome (closing card)'", () => {
+    const cards = normalized([3, 31, 9, 17, 6]); // Ship Sun Bouquet Stork Clouds
+    const ctx = buildReadingContext("sentence-5", "Will the deal close?", cards, cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Primary outcome \(closing card\)/);
+  });
+
+  it("labels coreDriverCard as 'Central situation (middle card)'", () => {
+    const cards = normalized([3, 31, 9, 17, 6]);
+    const ctx = buildReadingContext("sentence-5", "Will the deal close?", cards, cardsMap);
+    const pe = buildPredictionContext(ctx);
+    const block = formatPredictionEvidenceBlock(pe);
+    expect(block).toMatch(/Central situation \(middle card\)/);
   });
 });

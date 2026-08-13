@@ -130,17 +130,24 @@ function buildPetitPrediction(cards: NormalizedCard[], layout: PetitTableauLayou
 
 function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayout, pairs: AdjacentPair[]): PredictionContext {
   const sig = layout.primarySignificator;
-  const outcome = sig ? layout.grid[Math.min(3, layout.grid.length - 1)][Math.min(8, layout.grid[Math.min(3, layout.grid.length - 1)].length - 1)]?.card : cards[cards.length - 1];
-  const development = sig
-    ? layout.grid[Math.floor(sig.index / 9)][Math.min(8, (sig.index % 9) + 1)]?.card
-    : cards[cards.length - 1];
+  const bottomRow = layout.grid[Math.min(3, layout.grid.length - 1)] ?? [];
+  const cardsOfFateLast = bottomRow[Math.min(8, bottomRow.length - 1)]?.card;
+  const cardsOfFateFirst = bottomRow[0]?.card;
 
-  const significantPairs = pairs
-    .filter((p) => sig && (p.cardA.id === sig.card.id || p.cardB.id === sig.card.id))
-    .sort((a, b) => b.weight - a.weight);
+  // Outcome = last Cards of Fate (position 36).
+  // Development = first Cards of Fate (position 33).
+  // These are anchor positions, not the significator's neighbourhood.
+  // The significator's neighbourhood is represented separately via primaryPair.
+  const outcome = cardsOfFateLast ?? cards[cards.length - 1] ?? null;
+  const development = cardsOfFateFirst ?? cards[cards.length - 4] ?? cards[Math.min(32, cards.length - 1)] ?? null;
 
-  const primary = significantPairs[0];
-  const supporting = significantPairs[1] ?? [...pairs].sort((a, b) => b.weight - a.weight)[0];
+  const significantPairs = sig
+    ? pairs
+        .filter((p) => p.cardA.id === sig.card.id || p.cardB.id === sig.card.id)
+        .sort((a, b) => b.weight - a.weight)
+    : [];
+  const primary = significantPairs[0] ?? [...pairs].sort((a, b) => b.weight - a.weight)[0] ?? null;
+  const supporting = significantPairs[1] ?? [...pairs].sort((a, b) => b.weight - a.weight)[1] ?? null;
 
   const houseLines: PredictionEvidenceLine[] = [];
   for (const house of layout.houses) {
@@ -161,16 +168,23 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
     const col = (sig.index % 9) + 1;
     sigLines.push({
       label: `Primary significator: ${sig.card.name}`,
-      value: `position ${sig.index + 1}, row ${row}, column ${col}`,
+      value: `position ${sig.index + 1}, row ${row}, column ${col} (source: ${layout.primarySignificatorSource ?? "explicit"})`,
     });
   }
   const cardsOfFate = layout.cardsOfFate.map((c) => fmt(c.card)).join(", ");
   if (cardsOfFate) sigLines.push({ label: "Cards of Fate (bottom row)", value: cardsOfFate });
 
+  const notes: string[] = [];
+  if (!sig) {
+    notes.push(
+      "No significator card (Man/Woman) was drawn in this spread. The hierarchy above still applies: topic houses anchor long-term life themes, but the most actionable axis is topic houses + strongest weighted pair, not a person's neighbourhood.",
+    );
+  }
+
   return {
     layoutType: "grand-tableau",
-    outcomeCard: outcome ?? null,
-    developmentCard: development ?? null,
+    outcomeCard: outcome,
+    developmentCard: development,
     coreDriverCard: sig?.card ?? null,
     primaryPair: primary
       ? { a: primary.cardA, b: primary.cardB, meaning: primary.traditionalMeaning || pairMeaning(primary.cardA, primary.cardB, pairs) }
@@ -185,7 +199,7 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
       value: `${tc.label} at position ${tc.index + 1} — ${fmt(tc.card)}`,
     })),
     timingEvidence: [],
-    notes: [],
+    notes,
   };
 }
 
@@ -235,7 +249,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
     const label = pe.layoutType === "linear-sentence"
       ? "Primary outcome (closing card)"
       : pe.layoutType === "petit-tableau"
-        ? "Primary outcome (center / closing of middle line)"
+        ? "Directional outcome (right end of middle line)"
         : pe.layoutType === "grand-tableau"
           ? "Primary outcome (significator area / cards of fate)"
           : "Primary outcome";
@@ -245,7 +259,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
     const label = pe.layoutType === "linear-sentence"
       ? "Development path (second-to-last card)"
       : pe.layoutType === "petit-tableau"
-        ? "Development path (first card of middle line)"
+        ? "Development path (left end of middle line)"
         : "Development path";
     lines.push(`- ${label}: ${fmt(pe.developmentCard)}`);
   }
@@ -253,7 +267,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
     const label = pe.layoutType === "linear-sentence"
       ? "Central situation (middle card)"
       : pe.layoutType === "petit-tableau"
-        ? "Center card (heart of the tableau)"
+        ? "Center card (heart of tableau)"
         : pe.layoutType === "grand-tableau"
           ? "Significator (anchor of the read)"
           : "Core driver";
@@ -263,7 +277,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
     const label = pe.layoutType === "linear-sentence"
       ? "Strongest transition (closing pair)"
       : pe.layoutType === "petit-tableau"
-        ? "Strongest transition (top-weighted pair in the tableau)"
+        ? "Strongest transition (top-weighted pair; middle line + center column)"
         : pe.layoutType === "grand-tableau"
           ? "Strongest transition (top-weighted pair involving the significator)"
           : "Strongest transition";
