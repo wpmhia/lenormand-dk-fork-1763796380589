@@ -96,32 +96,27 @@ describe("prompt-builder: system prompt forbids relationship inference", () => {
 });
 
 describe("prompt-builder: Reading and Prediction have non-overlapping jobs", () => {
-  it("system prompt tells the model that ## Reading must not include timing, observable signs, or practical action", () => {
+  it("uses a simple June-style contract with three sections, no pseudo-headings inside instructions", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/Do NOT include timing, observable signs, or practical action here/i);
-    expect(prompt).toMatch(/Do not repeat or paraphrase what the Reading already said/i);
+    expect(prompt).toMatch(/## Reading\s+Write 3-5 natural sentences/i);
+    expect(prompt).toMatch(/## Key combinations/i);
+    expect(prompt).toMatch(/## Prediction\s+Give a concise concrete forecast/i);
   });
 
-  it("defines ## Reading as interpretation of what the cards mean together", () => {
+  it("does not include the four mandatory Prediction sublabels (Most likely development/Likely timing/Observable sign/Practical action)", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/## Reading — interpret what the cards mean together/i);
+    expect(prompt).not.toContain("**Most likely development:**");
+    expect(prompt).not.toContain("**Observable sign:**");
+    expect(prompt).not.toContain("**Practical action:**");
   });
 
-  it("defines ## Prediction as a concrete forecast, not a restatement", () => {
+  it("does not include pseudo-heading meta-explanations about section roles", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/## Prediction — the concrete forecast, not a restatement of the Reading/i);
-  });
-
-  it("still requires the same prediction bold labels", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toContain("**Most likely development:**");
-    expect(prompt).toContain("**Likely timing:**");
-    expect(prompt).toContain("**Observable sign:**");
-    expect(prompt).toContain("**Practical action:**");
+    expect(prompt).not.toMatch(/## Reading — interpret what the cards mean together/i);
+    expect(prompt).not.toMatch(/## Prediction — the concrete forecast/i);
   });
 });
 

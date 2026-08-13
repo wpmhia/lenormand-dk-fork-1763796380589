@@ -1,5 +1,5 @@
 import { Card } from "@/lib/types";
-import { PRIMARY_TIMING_CARD_IDS, getTimingCard, TimingCardDefinition } from "@/lib/timing";
+import { TIMING_CARD_IDS, getTimingCard, TimingCardDefinition } from "@/lib/timing";
 
 export const BANNED_TERMS = [
   "energy",
@@ -21,10 +21,8 @@ export const BANNED_TERMS = [
 
 export const BANNED_QUESTION_PREFIX = /^Your question:.*\n\n/s;
 
-const TIMING_CARD_IDS = PRIMARY_TIMING_CARD_IDS;
-
 export interface ValidationIssue {
-  type: "banned_term" | "invented_card" | "unsupported_timing" | "missing_section" | "extra_section";
+  type: "banned_term" | "invented_card" | "unsupported_timing" | "missing_section" | "extra_section" | "empty_section";
   message: string;
 }
 
@@ -41,6 +39,31 @@ const SPREAD_SECTIONS: Record<string, string[]> = {
   "comprehensive": ["## Reading", "## Key combinations", "## Prediction"],
   "grand-tableau": ["## Grand Tableau overview", "## Around the significator", "## Houses and mirrors", "## Prediction"],
 };
+
+const MIN_WORDS_PER_SECTION: Record<string, number> = {
+  reading: 12,
+  prediction: 6,
+  "grand tableau overview": 12,
+  "around the significator": 6,
+  "houses and mirrors": 4,
+  "key combinations": 0,
+};
+
+function getSectionBody(reading: string, heading: string): string {
+  const headingLower = heading.replace(/^#+\s*/, "").trim().toLowerCase();
+  const lines = reading.split("\n");
+  const startIdx = lines.findIndex((l) => {
+    const m = l.match(/^#{1,6}\s+(.+)/);
+    return m ? m[1].trim().toLowerCase() === headingLower : false;
+  });
+  if (startIdx === -1) return "";
+  const bodyLines: string[] = [];
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    if (/^#{1,6}\s+/.test(lines[i])) break;
+    bodyLines.push(lines[i]);
+  }
+  return bodyLines.join("\n").trim();
+}
 
 export function validateReadingOutput(
   reading: string,
@@ -85,7 +108,7 @@ export function validateReadingOutput(
     }
   }
 
-  const timingPattern = /\b(\d+)\s*(day|days|week|weeks|month|months|year|years)\b/i;
+  const timingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
   const timingMatch = reading.match(timingPattern);
   if (timingMatch) {
     const hasTimingCard = drawnCardIds.some((id) => TIMING_CARD_IDS.has(id));
@@ -113,13 +136,42 @@ export function validateReadingOutput(
         issues.push({ type: "extra_section", message: `Unexpected section: "${actual}"` });
       }
     }
+
+    for (const expected of allowed) {
+      const body = getSectionBody(reading, expected);
+      const expectedLower = expected.replace(/^#+\s*/, "").trim().toLowerCase();
+
+      if (expectedLower === "key combinations") {
+        const bulletCount = (body.match(/^\s*[-*]\s/gm) || []).length;
+        if (bulletCount < 1) {
+          issues.push({
+            type: "empty_section",
+            message: `Section "${expected}" contains no bullet points`,
+          });
+        }
+      } else {
+        const wordCount = body.split(/\s+/).filter((w) => /[a-zA-Z]/.test(w)).length;
+        const minWords = MIN_WORDS_PER_SECTION[expectedLower] ?? 8;
+        if (wordCount < minWords) {
+          issues.push({
+            type: "empty_section",
+            message: `Section "${expected}" is empty or too short (${wordCount} words)`,
+          });
+        }
+      }
+    }
   }
 
   return { valid: issues.length === 0, issues };
 }
 
 export function isCriticalIssue(issue: ValidationIssue): boolean {
-  return issue.type === "banned_term" || issue.type === "invented_card" || issue.type === "unsupported_timing";
+  return (
+    issue.type === "banned_term" ||
+    issue.type === "invented_card" ||
+    issue.type === "unsupported_timing" ||
+    issue.type === "empty_section"
+  );
 }
 
 export const ALLOWED_MARKDOWN_PATTERN = /^(#{1,3}\s|[-*]\s|\d+\.\s|\S)/m;

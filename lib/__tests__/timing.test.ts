@@ -4,9 +4,8 @@ import { buildPromptFromContext, buildSystemPrompt } from "@/lib/prompt-builder"
 import { Card } from "@/lib/types";
 import {
   TIMING_CARDS,
-  PRIMARY_TIMING_CARD_IDS,
+  TIMING_CARD_IDS,
   buildTimingEvidencePrompt,
-  isPrimaryTimingCardId,
   isTimingCardId,
   getTimingCard,
   NO_TIMING_INSTRUCTION,
@@ -39,30 +38,34 @@ function idsToContext(ids: number[]) {
 }
 
 describe("timing: shared definition is the single source of truth", () => {
-  it("treats Birds, Stork, Tree, Moon as primary timing cards", () => {
-    expect(isPrimaryTimingCardId(12)).toBe(true);
-    expect(isPrimaryTimingCardId(17)).toBe(true);
-    expect(isPrimaryTimingCardId(32)).toBe(true);
-    expect(isPrimaryTimingCardId(5)).toBe(true);
+  it("treats Birds, Stork, Tree, Moon as the only timing cards", () => {
+    expect(isTimingCardId(12)).toBe(true);
+    expect(isTimingCardId(17)).toBe(true);
+    expect(isTimingCardId(32)).toBe(true);
+    expect(isTimingCardId(5)).toBe(true);
   });
 
-  it("treats Clover and Lily as soft timing signals (timing cards but not primary)", () => {
-    expect(isTimingCardId(2)).toBe(true);
-    expect(isTimingCardId(30)).toBe(true);
-    expect(isPrimaryTimingCardId(2)).toBe(false);
-    expect(isPrimaryTimingCardId(30)).toBe(false);
+  it("does not treat Clover or Lily as timing cards (they were never primary)", () => {
+    expect(isTimingCardId(2)).toBe(false);
+    expect(isTimingCardId(30)).toBe(false);
   });
 
   it("does not treat Rider or Ship as timing cards", () => {
     expect(isTimingCardId(1)).toBe(false);
     expect(isTimingCardId(3)).toBe(false);
-    expect(isPrimaryTimingCardId(1)).toBe(false);
   });
 
   it("exposes per-card prompt guidance for each timing card", () => {
     for (const def of Object.values(TIMING_CARDS)) {
       expect(def.promptGuidance.length).toBeGreaterThan(20);
       expect(def.range.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("TIMING_CARD_IDS set is consistent with TIMING_CARDS registry", () => {
+    expect(TIMING_CARD_IDS.size).toBe(Object.keys(TIMING_CARDS).length);
+    for (const id of TIMING_CARD_IDS) {
+      expect(TIMING_CARDS[id]).toBeDefined();
     }
   });
 });
@@ -87,15 +90,10 @@ describe("timing: buildTimingEvidencePrompt output", () => {
     expect(out.toLowerCase()).toContain("week");
   });
 
-  it("primary cards override soft signals", () => {
-    const out = buildTimingEvidencePrompt([
-      { cardId: 17, cardName: "Stork", range: "weeks" },
-      { cardId: 2, cardName: "Clover", range: "soon" },
-    ]);
-    expect(out).toContain("Stork");
-    expect(out).toContain("Clover");
-    expect(out).toContain("primary");
-    expect(out).toContain("Soft timing signals");
+  it("ignores non-timing cards (Clover is no longer a soft signal)", () => {
+    const out = buildTimingEvidencePrompt([{ cardId: 2, cardName: "Clover", range: "soon" }]);
+    expect(out).toContain(NO_TIMING_INSTRUCTION);
+    expect(out).not.toContain("Clover");
   });
 });
 
@@ -107,7 +105,7 @@ describe("timing: prompt does not embed per-card timing strings from cards.json"
     expect(prompt).not.toMatch(/timing:\s*Near future/i);
   });
 
-  it("does not include 'timing: Near' anywhere in the prompt", () => {
+  it("does not include '; timing:' anywhere in the prompt", () => {
     const ctx = idsToContext([1, 3, 4]);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).not.toMatch(/;\s*timing:/i);
@@ -127,12 +125,21 @@ describe("timing: prompt does not embed per-card timing strings from cards.json"
     expect(prompt).toContain("No timing evidence detected");
     expect(prompt).toContain("Not clearly shown by these cards");
   });
+
+  it("does not surface Clover as a timing signal even when drawn alongside other cards", () => {
+    const ctx = idsToContext([1, 2, 11]);
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).not.toMatch(/Clover.*soft timing/i);
+    expect(prompt).not.toMatch(/Clover.*lucky chance/i);
+    expect(prompt).toContain("No timing evidence detected");
+  });
 });
 
 describe("timing: system prompt is consistent with the shared definition", () => {
-  it("does not include timing instructions in the system prompt (timing is context-driven)", () => {
+  it("system prompt mentions timing and points to Timing evidence section", () => {
     const sp = buildSystemPrompt(3);
     expect(sp).toMatch(/not a Tarot reader/i);
     expect(sp).toMatch(/timing/i);
+    expect(sp).toMatch(/Timing evidence/i);
   });
 });

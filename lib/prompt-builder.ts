@@ -49,6 +49,25 @@ function fmtPersonCard(card: { name: string; strength?: string }): string {
   return strength ? `${name} (specific person/significator${strength})` : `${name} (specific person/significator)`;
 }
 
+const BAD_COMBO_PHRASES = [
+  "unique energy",
+  "combined with",
+  "kilimanjaro",
+  "internet router",
+  "positive energy",
+  "heated",
+  "passion",
+  "lucky ",
+  "fortunate ",
+  "blessed ",
+];
+
+function isUsableComboMeaning(meaning: string | undefined): boolean {
+  if (!meaning) return false;
+  const lower = meaning.toLowerCase();
+  return !BAD_COMBO_PHRASES.some((pat) => lower.includes(pat));
+}
+
 export function buildSystemPrompt(cardCount?: number): string {
   const isSingleCard = cardCount === 1;
 
@@ -80,27 +99,19 @@ Formatting rules:
 - If timing is not clearly supported, write: Likely timing: Not clearly shown by these cards.`;
 }
 
-const PREDICTIVE_VOICE = `You are answering the user's question with a traditional Lenormand reading. The question is the anchor. Do not explain cards in isolation.
+const PREDICTIVE_VOICE = `Answer the user's actual question directly.
 
-Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.
+## Reading
+Write 3-5 natural sentences interpreting the complete line. Start with the answer. Explain the progression of the cards as one connected situation. Do not merely list card meanings.
 
-The three sections below have distinct jobs. Do not duplicate content across them.
+## Key combinations
+For each adjacent pair, write a bullet in this format:
+- **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
 
-## Reading — interpret what the cards mean together, and why.
-Open with a direct answer to the question (or a clear yes/no leaning if it is a yes/no question). Then interpret how the cards and combinations answer the question: walk through the chain naturally, name the development and the complication as the cards show them, and explain what the line means for the querent. Do NOT include timing, observable signs, or practical action here — those belong in ## Prediction.
+## Prediction
+Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
 
-## Key combinations — the strongest pair evidence.
-Write bullets with bold pair names in this exact format:
-- **Card A + Card B**: what this pair means for the question.
-
-## Prediction — the concrete forecast, not a restatement of the Reading.
-Do not repeat or paraphrase what the Reading already said. Move the interpretation forward with the specific forecast:
-**Most likely development:** ...
-**Likely timing:** ... (or: Not clearly shown by these cards)
-**Observable sign:** ...
-**Practical action:** ...
-
-Use predictive language ("is likely to", "appears to", "points to", "develops as") rather than generic advice ("be open to", "consider your options"). Synthesize the chain — do not restate dictionary meanings of each card. Do not invent exact timing or absolute certainty unless the cards clearly support it.`;
+Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
   "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
@@ -249,12 +260,6 @@ function formatPetitTableau(
     "",
     "## Prediction",
     "",
-    "Inside ## Prediction, use exactly these bold labels in this order:",
-    "**Most likely development:** ...",
-    "**Likely timing:** ... (or: Not clearly shown by these cards)",
-    "**Observable sign:** ...",
-    "**Practical action:** ...",
-    "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
 
@@ -391,12 +396,6 @@ function formatGrandTableau(
     "",
     "## Prediction",
     "",
-    "Inside ## Prediction, use exactly these bold labels in this order:",
-    "**Most likely development:** ...",
-    "**Likely timing:** ... (or: Not clearly shown by these cards)",
-    "**Observable sign:** ...",
-    "**Practical action:** ...",
-    "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );
 
@@ -419,13 +418,11 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   const topPairs = weighted.slice(0, 10).filter((p) => p.weight >= 2);
 
   if (topPairs.length > 0) {
-    const BAD_COMBO_PATTERNS = ["unique energy", "combined with", "Kilimanjaro", "internet router"];
     const hints = topPairs
-      .filter((p) => p.traditionalMeaning)
-      .filter((p) => !BAD_COMBO_PATTERNS.some((pat) => p.traditionalMeaning!.toLowerCase().includes(pat)))
+      .filter((p) => isUsableComboMeaning(p.traditionalMeaning))
       .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)} (importance: ${p.weight}/10): ${p.traditionalMeaning}`);
     if (hints.length > 0) {
-      result += `\n\nKey pair meanings (ordered by importance, use as evidence not as required wording):\n${hints.join("\n")}`;
+      result += `\n\nKey pair meanings (use as evidence, interpret in relation to the question — do not copy verbatim):\n${hints.join("\n")}`;
     }
   }
 
