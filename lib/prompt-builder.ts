@@ -46,8 +46,7 @@ const PERSON_CARD_PROMPT_NOTE = `- Man and Woman represent specific people/signi
 
 function fmtPersonCard(card: { name: string; strength?: string }): string {
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
-  const strength = card.strength ? `; ${card.strength}` : "";
-  return strength ? `${name} (specific person/significator${strength})` : `${name} (specific person/significator)`;
+  return `${name} (specific person/significator)`;
 }
 
 const BAD_COMBO_PHRASES = [
@@ -218,12 +217,15 @@ Formatting rules:
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
 Give one concise forward-looking synthesis answering what is most likely to happen next. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
 
-Use exactly these four bold labels, in this order, with one sentence each:
+Required labels (always include, in this order, with one sentence each):
 
 **Most likely development:** one primary forecast that answers the user's question. Do not list alternatives.
-**Likely timing:** copy the timing from the Prediction synthesis evidence verbatim. Do not invent dates or ranges.
-**Watch for:** one concrete external event or sign that would indicate the forecast is starting to unfold.
-**Practical action:** one useful next step based on the reading. No generic self-help language.
+**Likely timing:** copy the timing from the Prediction synthesis evidence verbatim. If the Timing evidence says "Not clearly shown by these cards", write "Not clearly shown by these cards." Do not invent dates or ranges.
+
+Optional labels — include ONLY when the cards and question actually support a concrete claim. Do not invent specifics to fill these in. If you cannot defend a claim from the drawn cards and the question, omit the label entirely:
+
+**Watch for:** include only if the cards identify a concrete external event or sign (a specific message, contract, encounter, document, etc.) that the cards establish is part of the forecast. Skip if no card establishes a concrete external sign.
+**Practical action:** include only if a specific card establishes a concrete action the querent can take (e.g. Letter = write something; Key = open a discussion; Rider = act quickly). Skip if no card establishes a specific action. Do not give generic self-help.
 
 Synthesize the Prediction ONLY from the Prediction synthesis evidence block (which already states this spread's hierarchy). Do not introduce cards that are not in that evidence.`;
 
@@ -359,15 +361,23 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
   return prompt;
 }
 
+/**
+ * Formats a card for the AI prompt.
+ *
+ * NOTE: `strength` is intentionally NOT included. It is an internal classification
+ * metadata field, not a metaphysical intensity. A Coffin does not become "neutral"
+ * and a Cross does not become "weak" because of a database field. Strength metadata
+ * is still kept on the Card type for UI / learning purposes, but it must not leak
+ * into synthesis prompts, or Mistral will fabricate prose like
+ * "the weak energy of the opening cards" out of nothing.
+ */
 function fmtCard(card: { name: string; keywords?: string[]; strength?: string }): string {
   if (PERSON_CARD_NAMES.has(card.name)) {
     return fmtPersonCard(card);
   }
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
   const keywords = card.keywords?.slice(0, 2).join(", ");
-  const strength = card.strength ? `; ${card.strength}` : "";
-  const suffix = `${keywords || ""}${strength}`;
-  return suffix ? `${name} (${suffix})` : name;
+  return keywords ? `${name} (${keywords})` : name;
 }
 
 export { fmtCard, PERSON_CARD_NAMES };

@@ -84,14 +84,28 @@ export function buildPredictionTimingLine(timingEvidence: TimingEvidence[]): str
 
 export const PREDICTION_TIMING_LABEL = "Likely timing";
 
+// Required labels — always present in every Prediction. Without these, the section is
+// structurally incomplete and the validator rejects it as empty.
 export const REQUIRED_PREDICTION_FIELDS = [
   "Most likely development",
   "Likely timing",
+] as const;
+
+// Optional labels — present only when the cards and question actually support a
+// concrete external sign or specific action. The validator does not require these.
+export const OPTIONAL_PREDICTION_FIELDS = [
   "Watch for",
   "Practical action",
 ] as const;
 
+export const ALL_PREDICTION_FIELDS = [
+  ...REQUIRED_PREDICTION_FIELDS,
+  ...OPTIONAL_PREDICTION_FIELDS,
+] as const;
+
 export type RequiredPredictionField = (typeof REQUIRED_PREDICTION_FIELDS)[number];
+export type OptionalPredictionField = (typeof OPTIONAL_PREDICTION_FIELDS)[number];
+export type AllPredictionField = (typeof ALL_PREDICTION_FIELDS)[number];
 
 export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[]): string {
   const recognised: TimingCardDefinition[] = [];

@@ -202,7 +202,7 @@ describe("golden: validateReadingMarkdown + structural checks work together", ()
   });
 });
 
-describe("golden: Prediction contract requires the four mandatory labels", () => {
+describe("golden: Prediction contract requires the required labels (Most likely development, Likely timing)", () => {
   const readingWithoutLabels = `## Interpretation
 
 A meaningful sentence about Birds and Letter and how they develop together.
@@ -220,11 +220,11 @@ Just some prose without any required labels at all.`;
     const labelIssues = result.issues.filter(
       (i) => i.type === "empty_section" && i.message.includes("## Prediction is missing required label"),
     );
-    expect(labelIssues.length).toBeGreaterThanOrEqual(4);
+    expect(labelIssues.length).toBeGreaterThanOrEqual(2);
     expect(result.valid).toBe(false);
   });
 
-  it("accepts Prediction with all four labels and at least 2 words per label", () => {
+  it("accepts Prediction with the two required labels (Watch for and Practical action are now optional)", () => {
     const good = `## Interpretation
 
 A meaningful sentence about Birds and Letter and how they develop together.
@@ -245,6 +245,51 @@ A meaningful sentence about Birds and Letter and how they develop together.
     );
     expect(labelIssues).toEqual([]);
     expect(result.valid).toBe(true);
+  });
+
+  it("accepts Prediction that omits optional Watch for and Practical action when evidence cannot support them", () => {
+    const minimal = `## Interpretation
+
+A meaningful sentence about Cross, Snake and Coffin and how they develop together as a difficult line.
+
+## Cards
+
+- **Cross + Snake**: burden becomes complication.
+- **Snake + Coffin**: complication reaches an ending.
+
+## Prediction
+
+**Most likely development:** The line leans against the path the question asks about; the route encounters complications and closes rather than becoming established.
+**Likely timing:** Not clearly shown by these cards.`;
+    const result = validateReadingOutput(minimal, [36, 7, 8], "sentence-3");
+    const labelIssues = result.issues.filter(
+      (i) => i.type === "empty_section" && i.message.includes("## Prediction is missing required label"),
+    );
+    expect(labelIssues).toEqual([]);
+    expect(result.valid).toBe(true);
+  });
+
+  it("rejects an empty optional label when it IS included (defends against empty filler)", () => {
+    const withEmptyOptional = `## Interpretation
+
+A meaningful sentence about Cross, Snake and Coffin and how they develop together.
+
+## Cards
+
+- **Cross + Snake**: burden becomes complication.
+
+## Prediction
+
+**Most likely development:** The cards lean against the current path.
+**Likely timing:** Not clearly shown by these cards.
+**Watch for:** 
+**Practical action:** `;
+    const result = validateReadingOutput(withEmptyOptional, [36, 7], "sentence-3");
+    const emptyOptional = result.issues.filter(
+      (i) => i.type === "empty_section" && i.message.includes("has too little content"),
+    );
+    expect(emptyOptional.length).toBeGreaterThan(0);
+    expect(result.valid).toBe(false);
   });
 });
 
