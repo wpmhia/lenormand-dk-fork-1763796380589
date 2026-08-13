@@ -1,4 +1,5 @@
 import { Card } from "@/lib/types";
+import { PRIMARY_TIMING_CARD_IDS, getTimingCard, TimingCardDefinition } from "@/lib/timing";
 
 export const BANNED_TERMS = [
   "energy",
@@ -20,7 +21,7 @@ export const BANNED_TERMS = [
 
 export const BANNED_QUESTION_PREFIX = /^Your question:.*\n\n/s;
 
-const TIMING_CARD_IDS = new Set([12, 17, 5, 32]);
+const TIMING_CARD_IDS = PRIMARY_TIMING_CARD_IDS;
 
 export interface ValidationIssue {
   type: "banned_term" | "invented_card" | "unsupported_timing" | "missing_section" | "extra_section";
@@ -263,8 +264,16 @@ export function buildDeterministicFallback(
     : `This reading addresses the situation at hand.`;
   const reading = `${opener} Reading **${chainNames}** as one Lenormand chain, what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}** and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) shows where the line is most likely to land. Each adjacent pair below shows what changes between one card and the next.`;
 
-  const timingLine = drawnCards.some((c) => TIMING_CARD_IDS.has(c.id))
-    ? "**Likely timing:** Reflect the timing card(s) drawn above — Birds = days, Stork = weeks, Moon = phases, Tree = years."
+  const primaryTimingCards: TimingCardDefinition[] = [];
+  for (const c of drawnCards) {
+    const def = getTimingCard(c.id);
+    if (def) primaryTimingCards.push(def);
+  }
+
+  const timingLine = primaryTimingCards.length > 0
+    ? primaryTimingCards.length === 1
+      ? `**Likely timing:** ${primaryTimingCards[0].promptGuidance}`
+      : `**Likely timing:** ${primaryTimingCards.map((t) => t.name).join(" and ")} are both drawn — ${primaryTimingCards[0].promptGuidance}`
     : "**Likely timing:** Not clearly shown by these cards.";
 
   return [

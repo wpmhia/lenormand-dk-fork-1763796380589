@@ -1,6 +1,7 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
 import { getDefinition } from "@/lib/spread-definitions";
+import { buildTimingEvidencePrompt } from "@/lib/timing";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -161,12 +162,11 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
   return prompt;
 }
 
-function fmtCard(card: { name: string; keywords?: string[]; timing?: string; strength?: string }): string {
+function fmtCard(card: { name: string; keywords?: string[]; strength?: string }): string {
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
   const keywords = card.keywords?.slice(0, 2).join(", ");
-  const timing = card.timing ? `; timing: ${card.timing}` : "";
   const strength = card.strength ? `; ${card.strength}` : "";
-  const suffix = `${keywords || ""}${timing}${strength}`;
+  const suffix = `${keywords || ""}${strength}`;
   return suffix ? `${name} (${suffix})` : name;
 }
 
@@ -386,14 +386,7 @@ function formatGrandTableau(
 function appendEvidence(prompt: string, context: ReadingContext): string {
   let result = prompt;
 
-  if (context.timingEvidence.length > 0) {
-    result += "\n\nTiming evidence:";
-    for (const te of context.timingEvidence) {
-      result += `\n- ${te.cardName}: ${te.range}`;
-    }
-  } else {
-    result += "\n\nNo timing evidence detected.";
-  }
+  result += `\n\n${buildTimingEvidencePrompt(context.timingEvidence)}`;
 
   if (context.topicFocus.length > 0) {
     result += "\n\nTopic focus:";

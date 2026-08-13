@@ -45,7 +45,6 @@ export interface NormalizedCard {
   id: number;
   name: string;
   keywords: string[];
-  timing?: string;
   strength?: string;
 }
 
@@ -135,7 +134,6 @@ export function normalizeReadingRequest(
       id: cardData.id,
       name: cardData.name,
       keywords: cardData.keywords || [],
-      timing: cardData.timing,
       strength: cardData.strength,
     });
   }

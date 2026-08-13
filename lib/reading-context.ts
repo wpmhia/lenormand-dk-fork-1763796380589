@@ -7,6 +7,7 @@ import {
   GRAND_TABLEAU_CARDS_OF_FATE,
   GRAND_TABLEAU_CENTER_CARDS,
 } from "@/lib/spreads";
+import { TIMING_CARDS as SHARED_TIMING_CARDS } from "@/lib/timing";
 
 export interface AdjacentPair {
   indexA: number;
@@ -315,14 +316,7 @@ function buildPetitTableauLayout(
   };
 }
 
-const TIMING_CARDS: { id: number; range: string }[] = [
-  { id: 12, range: "days (Birds = short-term)" },
-  { id: 17, range: "weeks (Stork = change within weeks)" },
-  { id: 5, range: "years (Tree = long-term)" },
-  { id: 32, range: "phases (Moon = emotional cycles)" },
-  { id: 2, range: "soon / lucky chance (Clover = unexpected quick timing)" },
-  { id: 30, range: "mature timing (Lily = slow, patient timeline)" },
-];
+const TIMING_CARDS = SHARED_TIMING_CARDS;
 
 const QUESTION_TOPICS: Record<string, { cardIds: number[]; topic: string }[]> = {
   love: [
@@ -507,7 +501,7 @@ export function buildReadingContext(
   }
 
   const timingEvidence: TimingEvidence[] = [];
-  for (const tc of TIMING_CARDS) {
+  for (const tc of Object.values(TIMING_CARDS)) {
     const found = cards.find((c) => c.id === tc.id);
     if (found) {
       timingEvidence.push({ cardId: tc.id, cardName: found.name, range: tc.range });
