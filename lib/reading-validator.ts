@@ -1,5 +1,5 @@
 import { Card } from "@/lib/types";
-import { buildPredictionTimingLine, getTimingCard, NO_TIMING_OUTPUT, REQUIRED_PREDICTION_FIELDS, TimingCardDefinition } from "@/lib/timing";
+import { buildPredictionTimingLine, getTimingCard, NO_TIMING_OUTPUT, REQUIRED_PREDICTION_FIELDS, OPTIONAL_PREDICTION_FIELDS, TimingCardDefinition } from "@/lib/timing";
 
 export const BANNED_PHRASES = [
   "spiritual journey",
@@ -256,6 +256,23 @@ export function validateReadingOutput(
               message: `**${field}:** in ## Prediction has too little content (${words.length} words)`,
             });
           }
+        }
+      }
+      // OPTIONAL_PREDICTION_FIELDS ("Watch for", "Practical action") are NOT required.
+      // If the model includes them, the validator only checks that they are not empty;
+      // missing them entirely is acceptable when the cards do not establish a concrete
+      // external sign or specific action.
+      for (const field of OPTIONAL_PREDICTION_FIELDS) {
+        const re = new RegExp(`\\*\\*${field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}:`, "i");
+        if (!re.test(predictionBody)) continue;
+        const after = predictionBody.split(re)[1] || "";
+        const untilNextLabel = after.split(/\n\s*\*\*(?:Most likely development|Likely timing|Watch for|Practical action):/i)[0] || "";
+        const words = untilNextLabel.split(/\s+/).filter((w) => /[a-zA-Z]/.test(w));
+        if (words.length < 2) {
+          issues.push({
+            type: "empty_section",
+            message: `**${field}:** in ## Prediction has too little content (${words.length} words)`,
+          });
         }
       }
     }
