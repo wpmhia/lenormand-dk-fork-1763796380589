@@ -378,3 +378,44 @@ describe("regression: prediction evidence block includes the new direction-of-tr
     expect(block).toMatch(/Strongest transition \(closing pair\)/);
   });
 });
+
+describe("system prompt: interpretive discipline is the core principle", () => {
+  const cards = normalized([3, 31, 9, 17, 6]);
+  const systemPrompt = buildSystemPrompt(cards.length);
+
+  it("states the overarching discipline rule prominently", () => {
+    expect(systemPrompt).toMatch(/Core principle[\s\S]*interpretive discipline/);
+    expect(systemPrompt).toMatch(/Follow the reading method consistently even when another interpretation would sound more reassuring/);
+  });
+
+  it("lists the six practical manifestations of the principle", () => {
+    expect(systemPrompt).toMatch(/Respect position before sentiment/);
+    expect(systemPrompt).toMatch(/Respect progression/);
+    expect(systemPrompt).toMatch(/Preserve polarity and severity/);
+    expect(systemPrompt).toMatch(/Stay grounded/);
+    expect(systemPrompt).toMatch(/Answer the question actually asked/);
+    expect(systemPrompt).toMatch(/Don't hedge away the signal/);
+  });
+
+  it("organizes the specific rules as corollaries of the principle", () => {
+    expect(systemPrompt).toMatch(/Core principle[\s\S]*Corollaries:/);
+  });
+
+  it("places the progression rule and the no-softening rule in the Corollaries section", () => {
+    const corollariesIndex = systemPrompt.indexOf("Corollaries:");
+    const languageIndex = systemPrompt.indexOf("Language:");
+    expect(corollariesIndex).toBeGreaterThan(0);
+    expect(languageIndex).toBeGreaterThan(corollariesIndex);
+    const corollariesSection = systemPrompt.slice(corollariesIndex, languageIndex);
+    expect(corollariesSection).toMatch(/closing card and the closing pair carry the most weight/);
+    expect(corollariesSection).toMatch(/Do not soften a negative combination/);
+    expect(corollariesSection).toMatch(/Do not invent specific events/);
+  });
+
+  it("places banned-phrase rules in the Language section, not as core rules", () => {
+    const languageIndex = systemPrompt.indexOf("Language:");
+    const languageSection = systemPrompt.slice(languageIndex);
+    expect(languageSection).toMatch(/No reversals, no Tarot\/New Age language/);
+    expect(languageSection).toMatch(/shadow work/);
+  });
+});
