@@ -250,7 +250,49 @@ describe("buildReadingContext", () => {
       const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(sigIds), cardsMap);
       if (ctx.layout.type === "grand-tableau") {
         expect(ctx.layout.significatorPreference).toBe("both");
-        expect(ctx.layout.primarySignificator).toBeUndefined();
+        // With both Man+Woman drawn and a non-topic question, default to Woman.
+        expect(ctx.layout.primarySignificator).toBeDefined();
+        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+        expect(ctx.layout.primarySignificatorSource).toBe("default");
+      }
+    });
+
+    it("selects Man as primary when 'both' and question is job/career-oriented", () => {
+      const ctx = buildReadingContext(
+        "grand-tableau",
+        "Will my career move forward this year?",
+        makeNormalizedCards(sigIds),
+        cardsMap,
+      );
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.primarySignificator).toBeDefined();
+        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
+        expect(ctx.layout.primarySignificatorSource).toBe("topic-fallback");
+      }
+    });
+
+    it("selects Woman as primary when 'both' and question is love-oriented", () => {
+      const ctx = buildReadingContext(
+        "grand-tableau",
+        "Will my relationship become more committed?",
+        makeNormalizedCards(sigIds),
+        cardsMap,
+      );
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.primarySignificator).toBeDefined();
+        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+        expect(ctx.layout.primarySignificatorSource).toBe("topic-fallback");
+      }
+    });
+
+    it("selects the only drawn significator when only one is present", () => {
+      const onlyManIds = sigIds.map((id) => (id === 29 ? 30 : id));
+      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(onlyManIds), cardsMap);
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.significators.woman).toBeUndefined();
+        expect(ctx.layout.significators.man).toBeDefined();
+        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
+        expect(ctx.layout.primarySignificatorSource).toBe("default");
       }
     });
 
@@ -260,6 +302,7 @@ describe("buildReadingContext", () => {
         expect(ctx.layout.significatorPreference).toBe("woman");
         expect(ctx.layout.primarySignificator).toBeDefined();
         expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+        expect(ctx.layout.primarySignificatorSource).toBe("explicit");
       }
     });
 
@@ -269,6 +312,7 @@ describe("buildReadingContext", () => {
         expect(ctx.layout.significatorPreference).toBe("man");
         expect(ctx.layout.primarySignificator).toBeDefined();
         expect(ctx.layout.primarySignificator!.card.id).toBe(28);
+        expect(ctx.layout.primarySignificatorSource).toBe("explicit");
       }
     });
   });
@@ -288,5 +332,38 @@ describe("buildReadingContext", () => {
         expect(ctx.layout.mirrors).toHaveLength(0);
       }
     });
+  });
+});
+
+describe("Petit Tableau pair weights match the prose hierarchy", () => {
+  it("middle line pairs (3+4, 4+5) and center column pairs (1+4, 4+7) are both weight 5", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "", makeNormalizedCards(ids), cardsMap);
+    expect(ctx.adjacentPairs.length).toBeGreaterThan(0);
+    const midLineClosing = ctx.adjacentPairs.find((p) => (p.indexA === 3 && p.indexB === 4) || (p.indexA === 4 && p.indexB === 3));
+    const centerColTop = ctx.adjacentPairs.find((p) => (p.indexA === 1 && p.indexB === 4) || (p.indexA === 4 && p.indexB === 1));
+    const centerColBottom = ctx.adjacentPairs.find((p) => (p.indexA === 4 && p.indexB === 7) || (p.indexA === 7 && p.indexB === 4));
+    expect(midLineClosing).toBeDefined();
+    expect(centerColTop).toBeDefined();
+    expect(centerColBottom).toBeDefined();
+    expect(midLineClosing!.weight).toBe(5);
+    expect(centerColTop!.weight).toBe(5);
+    expect(centerColBottom!.weight).toBe(5);
+  });
+
+  it("diagonal pairs (0+4, 4+8, 2+4, 4+6) are supporting axes (weight 3)", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "", makeNormalizedCards(ids), cardsMap);
+    const mainDiag = ctx.adjacentPairs.find((p) => (p.indexA === 0 && p.indexB === 4) || (p.indexA === 4 && p.indexB === 0));
+    expect(mainDiag).toBeDefined();
+    expect(mainDiag!.weight).toBe(3);
+  });
+
+  it("outer-row pairs (0+1, 1+2, 6+7, 7+8) are qualifier pairs (weight 2)", () => {
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ctx = buildReadingContext("comprehensive", "", makeNormalizedCards(ids), cardsMap);
+    const topRowPair = ctx.adjacentPairs.find((p) => (p.indexA === 0 && p.indexB === 1) || (p.indexA === 1 && p.indexB === 0));
+    expect(topRowPair).toBeDefined();
+    expect(topRowPair!.weight).toBe(2);
   });
 });

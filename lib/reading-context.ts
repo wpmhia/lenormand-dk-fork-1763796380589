@@ -116,6 +116,7 @@ export interface GrandTableauLayout {
     man?: SignificatorInfo;
   };
   primarySignificator?: SignificatorInfo;
+  primarySignificatorSource?: "explicit" | "topic-fallback" | "default";
   significatorPreference: "woman" | "man" | "both";
   corners: GridCell[];
   centerFour: GridCell[];
@@ -158,9 +159,12 @@ function buildPetitTableauPairs(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
 ): AdjacentPair[] {
+  // Middle line pairs and center-column pairs are the primary narrative axes (weight 5).
+  // Diagonals are supporting axes (weight 3). Outer rows and outer columns are qualifier
+  // pairs (weight 2). This weight table is what the prose hierarchy says.
   const gridPairs: { a: number; b: number; weight: number }[] = [
     { a: 0, b: 1, weight: 2 }, { a: 1, b: 2, weight: 2 },
-    { a: 3, b: 4, weight: 4 }, { a: 4, b: 5, weight: 4 },
+    { a: 3, b: 4, weight: 5 }, { a: 4, b: 5, weight: 5 },
     { a: 6, b: 7, weight: 2 }, { a: 7, b: 8, weight: 2 },
     { a: 0, b: 3, weight: 2 }, { a: 3, b: 6, weight: 2 },
     { a: 1, b: 4, weight: 5 }, { a: 4, b: 7, weight: 5 },
@@ -374,6 +378,7 @@ function buildGrandTableauLayout(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
   significatorPreference: "woman" | "man" | "both" = "both",
+  question: string = "",
 ): GrandTableauLayout {
   const grid: GridCell[][] = [];
   for (let r = 0; r < 4; r++) {
@@ -403,10 +408,45 @@ function buildGrandTableauLayout(
   }
 
   let primarySignificator: SignificatorInfo | undefined;
+  let primarySignificatorSource: "explicit" | "topic-fallback" | "default" | undefined;
   if (significatorPreference === "woman" && significators.woman) {
     primarySignificator = significators.woman;
+    primarySignificatorSource = "explicit";
   } else if (significatorPreference === "man" && significators.man) {
     primarySignificator = significators.man;
+    primarySignificatorSource = "explicit";
+  } else if (significatorPreference === "both") {
+    // Both Man and Woman present in this spread:
+    //   - If only one is drawn, that one is the primary.
+    //   - If both are drawn, prefer the explicit woman preference for the querent's "you"
+    //     when the question is love/relationship oriented; prefer man for job/career;
+    //     otherwise default to woman (Lenormand convention: the querent card).
+    if (significators.woman && !significators.man) {
+      primarySignificator = significators.woman;
+      primarySignificatorSource = "default";
+    } else if (significators.man && !significators.woman) {
+      primarySignificator = significators.man;
+      primarySignificatorSource = "default";
+    } else if (significators.woman && significators.man) {
+      const lowerQ = question.toLowerCase();
+      const isLove = matchQuestionTopic(lowerQ, "love");
+      const isJob = matchQuestionTopic(lowerQ, "job");
+      if (isJob && !isLove) {
+        primarySignificator = significators.man;
+        primarySignificatorSource = "topic-fallback";
+      } else {
+        primarySignificator = significators.woman;
+        primarySignificatorSource = isLove ? "topic-fallback" : "default";
+      }
+    }
+    // else: neither drawn — primarySignificator stays undefined; the prediction evidence
+    // will explicitly note "no significator card in spread".
+  } else if (significatorPreference === "woman" && significators.man && !significators.woman) {
+    primarySignificator = significators.man;
+    primarySignificatorSource = "default";
+  } else if (significatorPreference === "man" && significators.woman && !significators.man) {
+    primarySignificator = significators.woman;
+    primarySignificatorSource = "default";
   }
 
   const corners = GRAND_TABLEAU_CORNERS.map((i) => ({ index: i, card: cards[i] }));
@@ -458,6 +498,7 @@ function buildGrandTableauLayout(
     houses,
     significators,
     primarySignificator,
+    primarySignificatorSource,
     significatorPreference,
     corners,
     centerFour,
@@ -493,7 +534,7 @@ export function buildReadingContext(
       adjacentPairs = buildPetitTableauPairs(cards, cardsMap);
       break;
     case "grand-tableau":
-      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference);
+      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference, question);
       adjacentPairs = buildGrandTableauPairs(cards, cardsMap, layout);
       break;
     default:

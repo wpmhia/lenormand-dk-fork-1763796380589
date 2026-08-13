@@ -238,7 +238,7 @@ This section is evidence, not forecast. The forward-looking conclusion belongs i
 
 const LINEAR_HIERARCHY_NOTE = `For an outcome question, the closing card and the closing pair dominate the forecast. Cards 1 through the second-to-last show how the situation develops toward that outcome. Positive earlier cards do not override a difficult final card, and a difficult final card does not erase earlier positives; those positives may describe events, recognition, or circumstances occurring before/alongside the difficult outcome.`;
 
-const PETIT_HIERARCHY_NOTE = `For an outcome question, the center card is the heart of the tableau and the middle line carries the main narrative. Rows, columns, and diagonals qualify the read but do not override center + middle line. The closing card of the middle line and the strongest pair shown in the Prediction synthesis evidence are the most actionable.`;
+const PETIT_HIERARCHY_NOTE = `For an outcome question, the center card is the heart of the tableau. The middle line and the center column together carry the primary narrative. Diagonals are supporting axes; outer rows and outer columns are qualifier pairs. The closing card of the middle line (the rightmost middle-line card) is the directional outcome, and the strongest pair shown in the Prediction synthesis evidence is the most actionable pair.`;
 
 const GT_HIERARCHY_NOTE = `For an outcome question, the significator's surroundings are the most actionable area. Topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) anchor long-term life themes. The Cards of Fate and corners carry long-term signals but do not override significator + house evidence.`;
 
