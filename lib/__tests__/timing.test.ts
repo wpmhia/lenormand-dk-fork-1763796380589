@@ -21,7 +21,6 @@ function makeCard(id: number, name: string): Card {
     meaning: { general: "", positive: [], negative: [] },
     combos: [],
     imageUrl: null,
-    timing: "Near future (1-3 weeks)",
     strength: "NEUTRAL",
   };
 }

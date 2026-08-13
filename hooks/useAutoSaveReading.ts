@@ -5,6 +5,7 @@ import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card } from "@/lib/types";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
 import { useToast } from "@/hooks/use-toast";
+import { getDefinition } from "@/lib/spread-definitions";
 
 export function useAutoSaveReading(
   aiReading: AIReadingResponse | null,
@@ -15,6 +16,7 @@ export function useAutoSaveReading(
   question: string,
   spreadLabel: string,
   setReadingSaved: (v: boolean) => void,
+  spreadId?: string,
 ) {
   const { saveReading } = useReadingHistory();
   const { toast } = useToast();
@@ -38,7 +40,20 @@ export function useAutoSaveReading(
       !savedRef.current
     ) {
       const interpretationText = aiReading.reading || "";
-      const complete = /##\s*Prediction[\s\S]*\S/.test(interpretationText) || interpretationText.length > 400;
+      const definition = spreadId ? getDefinition(spreadId) : undefined;
+      const isGrandTableau = definition?.id === "grand-tableau";
+      const isSingleCard = definition?.id === "single-card" || definition?.id === "daily-card";
+
+      const hasAnyReadingBody = /##\s*Reading[\s\S]*\S/.test(interpretationText)
+        || /##\s*Grand Tableau overview[\s\S]*\S/.test(interpretationText);
+      const hasPrediction = /##\s*Prediction[\s\S]*\S/.test(interpretationText);
+
+      const complete = isGrandTableau
+        ? hasAnyReadingBody
+        : isSingleCard
+          ? interpretationText.trim().length >= 80
+          : hasPrediction;
+
       if (!complete) return;
 
       savedRef.current = true;
@@ -70,5 +85,5 @@ export function useAutoSaveReading(
         }
       })();
     }
-  }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, spreadLabel, saveReading, toast, setReadingSaved]);
+  }, [aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, spreadLabel, spreadId, saveReading, toast, setReadingSaved]);
 }

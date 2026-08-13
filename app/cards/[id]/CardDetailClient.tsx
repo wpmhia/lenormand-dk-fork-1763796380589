@@ -28,6 +28,7 @@ import {
   GRAND_TABLEAU_CARDS_OF_FATE,
   SIGNIFICATOR_CARDS,
 } from "@/lib/spreads";
+import { getCardTimingKnowledge } from "@/lib/timing";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -160,7 +161,7 @@ export default function CardDetailClient({
                     </CardContent>
                   </Card>
                 )}
-                {card.timing && (
+                {getCardTimingKnowledge(card.id) && (
                   <Card className="border-border">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
@@ -172,7 +173,7 @@ export default function CardDetailClient({
                             Timing
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            {card.timing}
+                            {getCardTimingKnowledge(card.id)?.learningLabel}
                           </p>
                         </div>
                       </div>
@@ -228,7 +229,7 @@ export default function CardDetailClient({
                     </CardContent>
                   </Card>
                 )}
-                {card.timing && (
+                {getCardTimingKnowledge(card.id) && (
                   <Card>
                     <CardHeader className="pb-3">
                       <CardTitle className="flex items-center gap-2 text-lg">
@@ -237,7 +238,7 @@ export default function CardDetailClient({
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-muted-foreground">{card.timing}</p>
+                      <p className="text-muted-foreground">{getCardTimingKnowledge(card.id)?.learningLabel}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -419,7 +420,7 @@ export default function CardDetailClient({
 
                   {(meaning.relationships ||
                     meaning.careerFinance ||
-                    meaning.timing) && (
+                    getCardTimingKnowledge(card.id)) && (
                     <div className="border-t border-border pt-8">
                       <h2 className="mb-6 text-2xl font-bold text-foreground">
                         In Different Contexts
@@ -438,7 +439,7 @@ export default function CardDetailClient({
                         <ContextualMeaning
                           icon={<Calendar className="h-5 w-5" />}
                           title="Timing & Seasons"
-                          content={meaning.timing}
+                          content={getCardTimingKnowledge(card.id)?.aiLabel}
                         />
                       </div>
                     </div>

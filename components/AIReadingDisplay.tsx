@@ -13,9 +13,11 @@ import {
   Check,
   AlertCircle,
   MessageCircle,
+  Share2,
 } from "lucide-react";
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
+import type { Card as CardType } from "@/lib/types";
 
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
@@ -29,6 +31,9 @@ interface AIReadingDisplayProps {
   followUpResponse?: string | null;
   spreadId?: string;
   cardCount?: number;
+  question?: string;
+  drawnCards?: { id: number; name: string }[];
+  allCards?: CardType[];
 }
 
 export const AIReadingDisplay = memo(function AIReadingDisplay({
@@ -43,18 +48,71 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   followUpResponse = null,
   spreadId,
   cardCount,
+  question,
+  drawnCards,
+  allCards,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
   const [copyError, setCopyError] = useState(false);
+  const [shareClicked, setShareClicked] = useState(false);
+  const [shareError, setShareError] = useState(false);
   const [followUpQuestion, setFollowUpQuestion] = useState("");
   const [showFollowUpInput, setShowFollowUpInput] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const shareTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   function getPlainReadingText(reading: string): string {
     return reading
       .replace(/\*\*(.+?)\*\*/g, "$1")
       .replace(/^\s*[-*]\s+/gm, "  • ")
       .trim();
+  }
+
+  function buildSharePayload() {
+    const cards = (drawnCards ?? []).map((c, idx) => {
+      const full = allCards?.find((a) => a.id === c.id);
+      return {
+        i: c.id,
+        p: idx,
+        n: c.name,
+        cn: full?.name || c.name,
+      };
+    });
+    return {
+      t: "Lenormand Reading",
+      q: question || "",
+      l: cardCount ?? cards.length,
+      c: cards,
+      a: aiReading?.reading || "",
+      s: spreadId || "",
+    };
+  }
+
+  async function handleShare(): Promise<boolean> {
+    if (shareError) setShareError(false);
+    try {
+      const res = await fetch("/api/readings/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildSharePayload()),
+      });
+      if (!res.ok) throw new Error("Share failed");
+      const data = await res.json();
+      if (!data.encoded) throw new Error("Share failed");
+      const url = `${window.location.origin}/read/shared/${encodeURIComponent(data.encoded)}`;
+      const copied = await copyTextToClipboard(url);
+      if (!copied) throw new Error("Clipboard failed");
+      setShareClicked(true);
+      trackEvent("reading_share", { spreadId: spreadId || "unknown" });
+      if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+      shareTimeoutRef.current = setTimeout(() => setShareClicked(false), 2000);
+      return true;
+    } catch {
+      setShareError(true);
+      if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+      shareTimeoutRef.current = setTimeout(() => setShareError(false), 2000);
+      return false;
+    }
   }
 
   async function copyTextToClipboard(text: string): Promise<boolean> {
@@ -203,23 +261,44 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
               <span className="text-xs text-primary">Reading...</span>
             )}
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className="gap-1.5"
-          >
-            {copyError ? (
-              <AlertCircle className="text-destructive h-3.5 w-3.5" />
-            ) : copyClicked ? (
-              <Check className="h-3.5 w-3.5" />
-            ) : (
-              <Copy className="h-3.5 w-3.5" />
-            )}
-            <span className="hidden sm:inline">
-              {copyError ? "Copy failed" : copyClicked ? "Copied" : "Copy"}
-            </span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="gap-1.5"
+              aria-label={shareError ? "Sharing failed" : shareClicked ? "Share link copied to clipboard" : "Share reading"}
+            >
+              {shareError ? (
+                <AlertCircle className="text-destructive h-3.5 w-3.5" />
+              ) : shareClicked ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Share2 className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">
+                {shareError ? "Share failed" : shareClicked ? "Link copied" : "Share"}
+              </span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopy}
+              className="gap-1.5"
+              aria-label={copyError ? "Copy failed" : copyClicked ? "Interpretation copied to clipboard" : "Copy interpretation"}
+            >
+              {copyError ? (
+                <AlertCircle className="text-destructive h-3.5 w-3.5" />
+              ) : copyClicked ? (
+                <Check className="h-3.5 w-3.5" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">
+                {copyError ? "Copy failed" : copyClicked ? "Copied" : "Copy"}
+              </span>
+            </Button>
+          </div>
         </div>
 
         <div className="reading-content space-y-4 text-foreground">

@@ -98,7 +98,7 @@ function NewReadingPageContent() {
   const { toast } = useToast();
   const { showInstallPrompt } = useInstallPrompt();
 
-  useAutoSaveReading(aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved);
+  useAutoSaveReading(aiReading, aiStreaming, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved, selectedSpread.id);
 
   useEffect(() => {
     if (aiReading && !aiStreaming && step === "results" && drawnCardTypes.length > 0) {
@@ -433,6 +433,9 @@ function NewReadingPageContent() {
                   followUpResponse={followUpResponse}
                   spreadId={selectedSpread.id}
                   cardCount={selectedSpread.cards}
+                  question={question}
+                  drawnCards={drawnCardTypes.map((c) => ({ id: c.id, name: c.name }))}
+                  allCards={allCards}
                 />
               </ErrorBoundary>
 
