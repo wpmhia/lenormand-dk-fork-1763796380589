@@ -2,7 +2,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-import { buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
@@ -11,7 +10,7 @@ import { streamText } from "ai";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
-import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
+import { normalizeReadingRequest } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -23,6 +22,24 @@ const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
+
+export const FOLLOWUP_SYSTEM_PROMPT = `You answer follow-up questions about an existing Lenormand reading.
+
+Answer the user's follow-up directly in 1-2 short sentences. Usually stay under 40 words.
+
+If the question can be answered yes/no or with one clear likely outcome, state that conclusion immediately.
+
+If the follow-up substantially repeats the original question, do not repeat the reading. Reduce the existing conclusion to the clearest direct answer.
+
+Do not produce headings, sections, bullets, card-by-card explanations, or a new reading.
+Do not repeat the previous interpretation.
+Do not hedge between multiple possibilities unless the cards genuinely do not distinguish them.
+Do not use Tarot/New Age language.
+Do not invent cards that were not drawn.
+
+Use the existing cards and reading only as evidence for the answer.`;
+
+export const FOLLOWUP_MAX_OUTPUT_TOKENS = 150;
 
 export async function POST(request: Request) {
   try {
@@ -104,23 +121,20 @@ export async function POST(request: Request) {
     const safeOriginalQuestion = typeof originalQuestion === "string" ? originalQuestion : "";
 
     let cardNames: string[] = [];
-    let cardCount = 3;
 
     if (spreadId && Array.isArray(cards) && cards.length > 0) {
       try {
         const validated = normalizeReadingRequest({ spreadId, cards, question: safeOriginalQuestion, significatorPreference }, cardsMap);
-        cardCount = validated.cards.length;
         cardNames = validated.cards.map((c) => c.name);
       } catch {
-        cardCount = cards.length;
         cardNames = cards.map((c: { name?: string; id?: number }) => c.name || (c.id ? `Card ${c.id}` : "Unknown"));
       }
     }
 
-    const maxTokens = getTokenBudget(cardCount);
-    const cardLine = cardNames.length > 0 ? `Cards drawn: ${cardNames.join(", ")}.` : "";
+    const cardLine = cardNames.length > 0 ? `Cards: ${cardNames.join(", ")}.` : "";
     const questionLine = safeOriginalQuestion ? `Original question: "${safeOriginalQuestion}".` : "";
-    const prompt = `You are continuing a Lenormand reading conversation. The previous reading was: "${safeOriginalReading}".\n\n${cardLine} ${questionLine}\n\nFollow-up question: "${followUpQuestion}"\n\nAnswer the follow-up question in 2-4 short sentences, referring to the same drawn cards and the same original question. Stay consistent with the original reading. Be concrete and specific to the cards. Do not use Tarot/New Age language. Do not invent cards that were not drawn.`;
+    const conclusionLine = `Previous conclusion: "${safeOriginalReading}".`;
+    const prompt = `${questionLine} ${cardLine} ${conclusionLine}\n\nFollow-up: "${followUpQuestion}"\n\nAnswer directly in 1-2 short sentences.`;
 
     const mistral = createMistral({
       apiKey: MISTRAL_API_KEY,
@@ -132,10 +146,10 @@ export async function POST(request: Request) {
 
     const result = await streamText({
       model: mistral(MISTRAL_PRODUCTION_MODEL),
-      system: buildSystemPrompt(cardCount),
+      system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
       temperature: 0.2,
-      maxOutputTokens: maxTokens,
+      maxOutputTokens: FOLLOWUP_MAX_OUTPUT_TOKENS,
       abortSignal: abortController.signal,
     });
 
