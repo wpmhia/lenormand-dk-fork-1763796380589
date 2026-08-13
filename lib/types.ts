@@ -4,7 +4,6 @@ export interface CardMeaning {
   negative: string[];
   relationships?: string;
   careerFinance?: string;
-  timing?: string;
 }
 
 export interface Card {
@@ -17,7 +16,6 @@ export interface Card {
   combos: CardCombo[];
   imageUrl: string | null;
   emoji?: string;
-  timing?: string;
   strength?: "STRONG" | "NEUTRAL" | "WEAK";
   historicalMeaning?: string;
 }

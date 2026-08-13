@@ -18,13 +18,13 @@ import {
   List,
 } from "lucide-react";
 import { useState, useCallback, useMemo, useEffect } from "react";
+import { CARD_TIMING_KNOWLEDGE, getCardTimingKnowledge } from "@/lib/timing";
 
 const cardMeanings = [
   {
     number: 1,
     name: "The Rider",
     keywords: ["News", "Messages", "Communication", "Speed"],
-    timing: "Within days",
     location: "On the move, via message",
     associations: ["Letters", "Visitors", "Quick changes", "News from afar"],
   },
@@ -32,7 +32,6 @@ const cardMeanings = [
     number: 2,
     name: "The Clover",
     keywords: ["Luck", "Opportunity", "Happiness", "Risk"],
-    timing: "Within a week",
     location: "Brief moment, small luck",
     associations: [
       "Good fortune",
@@ -45,7 +44,6 @@ const cardMeanings = [
     number: 3,
     name: "The Ship",
     keywords: ["Travel", "Journey", "Distance", "Progress"],
-    timing: "Within 1-2 weeks",
     location: "Distance, travel, abroad",
     associations: [
       "Long journeys",
@@ -58,7 +56,6 @@ const cardMeanings = [
     number: 4,
     name: "The House",
     keywords: ["Home", "Family", "Security", "Foundation"],
-    timing: "Lasting, stable",
     location: "At home, family gathering",
     associations: [
       "Family matters",
@@ -71,7 +68,6 @@ const cardMeanings = [
     number: 5,
     name: "The Tree",
     keywords: ["Health", "Growth", "Nature", "Longevity"],
-    timing: "Slow, long-term growth",
     location: "Over months, roots deepen",
     associations: [
       "Physical health",
@@ -84,7 +80,6 @@ const cardMeanings = [
     number: 6,
     name: "The Clouds",
     keywords: ["Confusion", "Uncertainty", "Secrets", "Thoughts"],
-    timing: "Unclear timing",
     location: "Uncertain, pending clarity",
     associations: ["Mental fog", "Hidden information", "Doubts", "Indecision"],
   },
@@ -92,7 +87,6 @@ const cardMeanings = [
     number: 7,
     name: "The Snake",
     keywords: ["Deception", "Wisdom", "Healing", "Transformation"],
-    timing: "Deceptive delay",
     location: "Through complication, indirect path",
     associations: [
       "Betrayal",
@@ -105,7 +99,6 @@ const cardMeanings = [
     number: 8,
     name: "The Coffin",
     keywords: ["Endings", "Transformation", "Grief", "Release"],
-    timing: "Ending, finalizing",
     location: "Closure, conclusion imminent",
     associations: [
       "Death of situation",
@@ -118,7 +111,6 @@ const cardMeanings = [
     number: 9,
     name: "The Bouquet",
     keywords: ["Gifts", "Celebration", "Beauty", "Gratitude"],
-    timing: "Soon, joyful",
     location: "Social gathering, celebration",
     associations: ["Presents", "Romance", "Social events", "Appreciation"],
   },
@@ -126,7 +118,6 @@ const cardMeanings = [
     number: 10,
     name: "The Scythe",
     keywords: ["Cutting", "Decisions", "Sudden change", "Surgery"],
-    timing: "Sudden, immediate",
     location: "Sharp, unexpected moment",
     associations: [
       "Breaking free",
@@ -139,7 +130,6 @@ const cardMeanings = [
     number: 11,
     name: "The Whip",
     keywords: ["Conflict", "Arguments", "Discipline", "Repetition"],
-    timing: "Repetitive cycle",
     location: "Argument, tension, conflict zone",
     associations: [
       "Quarrels",
@@ -152,7 +142,6 @@ const cardMeanings = [
     number: 12,
     name: "The Birds",
     keywords: ["Communication", "Conversation", "Worry", "Thoughts"],
-    timing: "Quick conversation",
     location: "Dialogue, phone call, group chat",
     associations: ["Phone calls", "Gossip", "Anxiety", "Mental chatter"],
   },
@@ -160,7 +149,6 @@ const cardMeanings = [
     number: 13,
     name: "The Child",
     keywords: ["New beginnings", "Innocence", "Youth", "Potential"],
-    timing: "Small beginnings",
     location: "Fresh start, new situation",
     associations: ["Children", "New projects", "Fresh starts", "Naivety"],
   },
@@ -168,7 +156,6 @@ const cardMeanings = [
     number: 14,
     name: "The Fox",
     keywords: ["Cunning", "Deception", "Intelligence", "Caution"],
-    timing: "Strategic delay",
     location: "Workplace, through self-interest",
     associations: [
       "Trickery",
@@ -181,7 +168,6 @@ const cardMeanings = [
     number: 15,
     name: "The Bear",
     keywords: ["Strength", "Protection", "Authority", "Wealth"],
-    timing: "Powerful, controlling",
     location: "Authority figure, leadership role",
     associations: [
       "Power",
@@ -194,7 +180,6 @@ const cardMeanings = [
     number: 16,
     name: "The Stars",
     keywords: ["Hope", "Inspiration", "Spirituality", "Guidance"],
-    timing: "Night-time, evening",
     location: "Internet, digital realm, guidance",
     associations: [
       "Dreams",
@@ -207,7 +192,6 @@ const cardMeanings = [
     number: 17,
     name: "The Stork",
     keywords: ["Change", "Movement", "New life", "Progress"],
-    timing: "Change coming",
     location: "Relocation, transition period",
     associations: [
       "Pregnancy",
@@ -220,7 +204,6 @@ const cardMeanings = [
     number: 18,
     name: "The Dog",
     keywords: ["Loyalty", "Friendship", "Trust", "Protection"],
-    timing: "Loyal, steadfast",
     location: "Close relationship, reliable friend",
     associations: [
       "True friends",
@@ -233,7 +216,6 @@ const cardMeanings = [
     number: 19,
     name: "The Tower",
     keywords: ["Authority", "Government", "Isolation", "Structure"],
-    timing: "Institutional pace",
     location: "Government, company, authority",
     associations: [
       "Official matters",
@@ -246,7 +228,6 @@ const cardMeanings = [
     number: 20,
     name: "The Garden",
     keywords: ["Public life", "Community", "Gatherings", "Growth"],
-    timing: "Public, social",
     location: "Social media, public event, gathering",
     associations: [
       "Social events",
@@ -259,7 +240,6 @@ const cardMeanings = [
     number: 21,
     name: "The Mountain",
     keywords: ["Obstacles", "Challenges", "Patience", "Perspective"],
-    timing: "Slow, delayed",
     location: "Obstacle blocking path",
     associations: [
       "Difficulties",
@@ -272,7 +252,6 @@ const cardMeanings = [
     number: 22,
     name: "The Crossroads",
     keywords: ["Choices", "Decisions", "Direction", "Opportunity"],
-    timing: "Decision point",
     location: "Choice moment, fork in path",
     associations: [
       "Multiple paths",
@@ -285,7 +264,6 @@ const cardMeanings = [
     number: 23,
     name: "The Mice",
     keywords: ["Loss", "Theft", "Stress", "Small problems"],
-    timing: "Gradual erosion",
     location: "Stress accumulating, small losses",
     associations: [
       "Financial loss",
@@ -298,7 +276,6 @@ const cardMeanings = [
     number: 24,
     name: "The Heart",
     keywords: ["Love", "Emotions", "Relationships", "Passion"],
-    timing: "Emotional reality",
     location: "Intimate space, close to heart",
     associations: [
       "Romantic love",
@@ -311,7 +288,6 @@ const cardMeanings = [
     number: 25,
     name: "The Ring",
     keywords: ["Commitment", "Contracts", "Cycles", "Partnership"],
-    timing: "Cyclical, contracted",
     location: "Commitment ceremony, bound agreement",
     associations: [
       "Marriage",
@@ -324,7 +300,6 @@ const cardMeanings = [
     number: 26,
     name: "The Book",
     keywords: ["Knowledge", "Secrets", "Learning", "Mystery"],
-    timing: "Hidden, secret",
     location: "Confidential, documents, education",
     associations: [
       "Education",
@@ -337,7 +312,6 @@ const cardMeanings = [
     number: 27,
     name: "The Letter",
     keywords: ["Communication", "Documents", "News", "Information"],
-    timing: "Written, formal",
     location: "Inbox, email, official correspondence",
     associations: [
       "Important mail",
@@ -350,7 +324,6 @@ const cardMeanings = [
     number: 28,
     name: "The Man",
     keywords: ["First person", "Primary position", "Querent", "Central focus"],
-    timing: "Present moment",
     location: "The first person in the reading (primary perspective)",
     associations: [
       "The questioner",
@@ -368,7 +341,6 @@ const cardMeanings = [
       "Other figure",
       "Related person",
     ],
-    timing: "Present moment",
     location: "The second person in the reading (secondary perspective)",
     associations: [
       "Secondary subject",
@@ -381,7 +353,6 @@ const cardMeanings = [
     number: 30,
     name: "The Lilies",
     keywords: ["Peace", "Harmony", "Purity", "Spirituality"],
-    timing: "Peaceful, elder",
     location: "Home comfort, winter season",
     associations: [
       "Calm",
@@ -394,7 +365,6 @@ const cardMeanings = [
     number: 31,
     name: "The Sun",
     keywords: ["Success", "Happiness", "Clarity", "Vitality"],
-    timing: "Daytime, success",
     location: "Bright, visible, public domain",
     associations: ["Achievement", "Joy", "Good health", "Positive outcomes"],
   },
@@ -402,7 +372,6 @@ const cardMeanings = [
     number: 32,
     name: "The Moon",
     keywords: ["Emotions", "Intuition", "Imagination", "Cycles"],
-    timing: "Evening, cycles",
     location: "Night, emotions, recognition",
     associations: ["Feelings", "Psychic abilities", "Creativity", "Night time"],
   },
@@ -410,7 +379,6 @@ const cardMeanings = [
     number: 33,
     name: "The Key",
     keywords: ["Solutions", "Answers", "Unlocking", "Success"],
-    timing: "Immediate solution",
     location: "Unlock, answer appears",
     associations: [
       "Finding answers",
@@ -423,7 +391,6 @@ const cardMeanings = [
     number: 34,
     name: "The Fish",
     keywords: ["Abundance", "Wealth", "Emotions", "Fertility"],
-    timing: "Flowing, business",
     location: "Money flow, business transaction",
     associations: [
       "Money",
@@ -436,7 +403,6 @@ const cardMeanings = [
     number: 35,
     name: "The Anchor",
     keywords: ["Stability", "Security", "Patience", "Grounding"],
-    timing: "Long-term stability",
     location: "Secure port, lasting foundation",
     associations: [
       "Reliability",
@@ -449,7 +415,6 @@ const cardMeanings = [
     number: 36,
     name: "The Cross",
     keywords: ["Burden", "Sacrifice", "Faith", "Destiny"],
-    timing: "Burden, destiny",
     location: "Weight upon you, fate's moment",
     associations: [
       "Heavy responsibilities",
@@ -663,7 +628,7 @@ export default function CardMeaningsPage() {
                           Timing:
                         </h4>
                         <p className="text-xs text-muted-foreground">
-                          {card.timing}
+                          {getCardTimingKnowledge(card.number)?.learningLabel || "Not a timing card on its own."}
                         </p>
                       </div>
                       <div>
@@ -729,7 +694,7 @@ export default function CardMeaningsPage() {
                             ))}
                           </div>
                           <p className="mt-2 text-xs text-muted-foreground">
-                            <strong>Timing:</strong> {card.timing}
+                            <strong>Timing:</strong> {getCardTimingKnowledge(card.number)?.learningLabel || "Not a timing card on its own."}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             <strong>Location:</strong> {card.location}

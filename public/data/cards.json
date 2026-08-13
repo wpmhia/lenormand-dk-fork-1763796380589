@@ -155,12 +155,10 @@
         "Communication mishaps"
       ],
       "relationships": "News about a romantic interest or relationship development. A messenger bringing information about love matters or a young man with romantic significance.",
-      "careerFinance": "Business communications, job announcements, or important workplace news. Good for contract negotiations and professional advancement.",
-      "timing": "Within 1-3 weeks; news arriving imminently"
+      "careerFinance": "Business communications, job announcements, or important workplace news. Good for contract negotiations and professional advancement."
     },
     "historicalMeaning": "The Rider traditionally represents a messenger or courier bringing news from afar. In historical contexts, this was one of the most important cards as communication was vital.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 2,
@@ -326,12 +324,10 @@
         "Shallow good fortune"
       ],
       "relationships": "A pleasant romantic surprise or lucky meeting. Romance blossoms unexpectedly or a positive turn in relationship matters.",
-      "careerFinance": "Small financial gains, lucky business deals, or unexpected professional opportunities. Prosperity through fortunate circumstances.",
-      "timing": "Within 1-2 weeks; swift positive developments"
+      "careerFinance": "Small financial gains, lucky business deals, or unexpected professional opportunities. Prosperity through fortunate circumstances."
     },
     "historicalMeaning": "The Clover is one of the most positive cards in the deck, bringing hope and relief. Historically, four-leaf clovers were collected for their legendary luck.",
-    "strength": "STRONG",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "STRONG"
   },
   {
     "id": 3,
@@ -493,12 +489,10 @@
         "Unwanted distance"
       ],
       "relationships": "Distance in relationships or travel affecting romantic matters. A journey that separates or brings people together.",
-      "careerFinance": "Business travel, relocation for work, or career advancement through movement. Commerce and trade opportunities.",
-      "timing": "Travel or change within 2-4 weeks"
+      "careerFinance": "Business travel, relocation for work, or career advancement through movement. Commerce and trade opportunities."
     },
     "historicalMeaning": "The Ship represents historical trade routes and travel. Traditionally, ships brought wealth through commerce and represented both danger and opportunity.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 4,
@@ -664,12 +658,10 @@
         "Homelessness or displacement"
       ],
       "relationships": "Family involvement in relationships or domestic partnership. Marriage or commitment regarding home and family.",
-      "careerFinance": "Family business, working from home, or career stability. Real estate and property investments.",
-      "timing": "Long-term stability; developments over weeks or months"
+      "careerFinance": "Family business, working from home, or career stability. Real estate and property investments."
     },
     "historicalMeaning": "The House represents the estate or family seat. Historically, a person's home was their greatest asset and symbol of status.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 5,
@@ -835,12 +827,10 @@
         "Setbacks to development"
       ],
       "relationships": "Long-term relationship growth or family lineage. Deep roots in partnership or generational matters.",
-      "careerFinance": "Slow but steady career growth, long-term investment, or family business succession. Established businesses.",
-      "timing": "Long-term; months or years for full development"
+      "careerFinance": "Slow but steady career growth, long-term investment, or family business succession. Established businesses."
     },
     "historicalMeaning": "The Tree represents the family tree and ancestral roots. It symbolizes stability rooted in history and natural cycles of life.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 6,
@@ -1006,12 +996,10 @@
         "Mental fog"
       ],
       "relationships": "Unclear romantic situation or miscommunication between partners. Confusion about feelings or intentions.",
-      "careerFinance": "Unclear business situation or confused financial matters. Delayed clarity in professional dealings.",
-      "timing": "Confusion lifting within 1-3 weeks"
+      "careerFinance": "Unclear business situation or confused financial matters. Delayed clarity in professional dealings."
     },
     "historicalMeaning": "Clouds traditionally obscured the sun, representing divine judgment and mystery. They symbolize the unknown and uncertain future.",
-    "strength": "WEAK",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "WEAK"
   },
   {
     "id": 7,
@@ -1177,12 +1165,10 @@
         "Poisoned situation"
       ],
       "relationships": "Betrayal in love or deception by a romantic interest. Jealousy, temptation, or infidelity concerns.",
-      "careerFinance": "Deception in business or hidden competitor. Betrayal by colleagues or unclear business practices.",
-      "timing": "Deception or transformation within 1-2 weeks"
+      "careerFinance": "Deception in business or hidden competitor. Betrayal by colleagues or unclear business practices."
     },
     "historicalMeaning": "The Snake has dual symbolism: wisdom and danger. Ancient traditions saw snakes as both healer and destroyer.",
-    "strength": "WEAK",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "WEAK"
   },
   {
     "id": 8,
@@ -1348,12 +1334,10 @@
         "Trapped by past"
       ],
       "relationships": "End of a relationship or transformation of feelings. A chapter closing in love matters.",
-      "careerFinance": "Job ending or business closure. Career transformation or retirement approaching.",
-      "timing": "Conclusion within 1-3 weeks; transformation beginning"
+      "careerFinance": "Job ending or business closure. Career transformation or retirement approaching."
     },
     "historicalMeaning": "Death and transformation in Lenormand represent natural cycles. The coffin was the final container, symbolizing completeness.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 9,
@@ -1519,12 +1503,10 @@
         "Insincere appreciation"
       ],
       "relationships": "Romance, gifts, and romantic celebration. Positive social events involving love interests.",
-      "careerFinance": "Professional recognition, bonuses, or promotions. Business success and appreciation.",
-      "timing": "Celebration and gifts within 1-3 weeks"
+      "careerFinance": "Professional recognition, bonuses, or promotions. Business success and appreciation."
     },
     "historicalMeaning": "Flowers and bouquets were valuable gifts historically, symbolizing social status and romantic interest. Gifts represented obligation and appreciation.",
-    "strength": "STRONG",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "STRONG"
   },
   {
     "id": 10,
@@ -1690,12 +1672,10 @@
         "Abrupt change"
       ],
       "relationships": "Decisive relationship moment or sudden separation. Important choice regarding romantic future.",
-      "careerFinance": "Job loss or career cut, but also important business decision. Harvest of financial efforts.",
-      "timing": "Swift change within 1-2 weeks"
+      "careerFinance": "Job loss or career cut, but also important business decision. Harvest of financial efforts."
     },
     "historicalMeaning": "The Scythe harvests crops and also represents death and danger. It symbolizes both reaping rewards and the sharp edge of fate.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 11,
@@ -1861,12 +1841,10 @@
         "Tension ongoing"
       ],
       "relationships": "Arguments with romantic interest or passionate conflicts. Sexual tension or intimate conflict.",
-      "careerFinance": "Workplace conflict or difficult negotiations. Need for assertiveness in professional dealings.",
-      "timing": "Conflict or discipline within 1-2 weeks"
+      "careerFinance": "Workplace conflict or difficult negotiations. Need for assertiveness in professional dealings."
     },
     "historicalMeaning": "The Whip represents both discipline and cruelty. Historically, it was used for punishment and also for driving progress.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 12,
@@ -2032,12 +2010,10 @@
         "Worried thoughts"
       ],
       "relationships": "Discussions about relationship or social butterfly behavior. Communication with romantic interest.",
-      "careerFinance": "Workplace discussions, meetings, or professional communication. Networking and social business.",
-      "timing": "Communication within 1-3 weeks; ongoing social activity"
+      "careerFinance": "Workplace discussions, meetings, or professional communication. Networking and social business."
     },
     "historicalMeaning": "Birds were auguries in ancient times, representing messages from the divine. Multiple birds symbolized increased activity and communication.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 13,
@@ -2203,12 +2179,10 @@
         "Stunted growth"
       ],
       "relationships": "New romance beginning or pregnancy. Innocent approach to love or childlike joy in relationship.",
-      "careerFinance": "New job or business venture starting. Entry-level position or fresh career beginning.",
-      "timing": "New beginning within 1-4 weeks"
+      "careerFinance": "New job or business venture starting. Entry-level position or fresh career beginning."
     },
     "historicalMeaning": "The Child represents rebirth and regeneration. Children were symbols of hope and future potential in traditional societies.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 14,
@@ -2374,12 +2348,10 @@
         "Clever trap"
       ],
       "relationships": "Clever romantic approach or someone being manipulative in love. Need for caution with new romantic interest.",
-      "careerFinance": "Clever business strategy or professional cunning. Success through intelligent maneuvering.",
-      "timing": "Clever development within 1-3 weeks"
+      "careerFinance": "Clever business strategy or professional cunning. Success through intelligent maneuvering."
     },
     "historicalMeaning": "The Fox represents cunning and survival. Historically, foxes were symbols of intelligence but also of trickery and danger.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 15,
@@ -2545,12 +2517,10 @@
         "Vulnerable position"
       ],
       "relationships": "Strong protective partner or overbearing behavior. Powerful attraction or jealous possessiveness.",
-      "careerFinance": "Strong professional position or boss figure. Power in business dealings.",
-      "timing": "Strength manifesting within 1-4 weeks"
+      "careerFinance": "Strong professional position or boss figure. Power in business dealings."
     },
     "historicalMeaning": "The Bear was a symbol of untamed nature and strength. It represented both protection and danger in ancient symbolism.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 16,
@@ -2716,12 +2686,10 @@
         "Guidance unclear"
       ],
       "relationships": "Wished-for romance coming true or romantic aspirations. Meeting ideal partner.",
-      "careerFinance": "Career dreams manifesting or desired opportunity arriving. Business wishes coming true.",
-      "timing": "Wishes manifesting within 2-4 weeks or longer"
+      "careerFinance": "Career dreams manifesting or desired opportunity arriving. Business wishes coming true."
     },
     "historicalMeaning": "Stars were navigation guides and symbols of destiny. The wish-granting star represents hope and divine guidance.",
-    "strength": "NEUTRAL",
-    "timing": "Variable"
+    "strength": "NEUTRAL"
   },
   {
     "id": 17,
@@ -2887,12 +2855,10 @@
         "Stalled progress"
       ],
       "relationships": "Change in romantic situation or transition to new relationship phase. Movement in love matters.",
-      "careerFinance": "Job change or career transition. Relocation for work or business shift.",
-      "timing": "Change within 1-3 weeks; transition period"
+      "careerFinance": "Job change or career transition. Relocation for work or business shift."
     },
     "historicalMeaning": "Storks symbolized delivery and change in many cultures. They represented bringing new situations and transitions.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 18,
@@ -3058,12 +3024,10 @@
         "Disloyalty"
       ],
       "relationships": "Loyal romantic partner or deep friendship in love. Trustworthy bond between partners.",
-      "careerFinance": "Reliable business partner or loyal colleague. Trustworthy professional relationship.",
-      "timing": "Loyalty and friendship developing over time"
+      "careerFinance": "Reliable business partner or loyal colleague. Trustworthy professional relationship."
     },
     "historicalMeaning": "Dogs were symbols of loyalty and protection. They represented faithful companions and guardians in traditional symbolism.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 19,
@@ -3229,12 +3193,10 @@
         "Rigid boundaries"
       ],
       "relationships": "Distant relationship or relationship under strict rules. Possible separation or isolation.",
-      "careerFinance": "Strict professional environment or government/corporate structure. Authority figure in business.",
-      "timing": "Long-term structural issues or establishment"
+      "careerFinance": "Strict professional environment or government/corporate structure. Authority figure in business."
     },
     "historicalMeaning": "The Tower represents fortification and security. It symbolized both protection and imprisonment depending on context.",
-    "strength": "NEUTRAL",
-    "timing": "Variable"
+    "strength": "NEUTRAL"
   },
   {
     "id": 20,
@@ -3400,12 +3362,10 @@
         "Awakening to reality"
       ],
       "relationships": "Fated meeting or important romantic decision. Destiny in love matters.",
-      "careerFinance": "Career-defining moment or important business judgment. Destiny in professional matters.",
-      "timing": "Important crossroads immediately or within 1-3 weeks"
+      "careerFinance": "Career-defining moment or important business judgment. Destiny in professional matters."
     },
     "historicalMeaning": "The Judgment card represents cosmic justice and important turning points. It symbolizes the moment of reckoning and revelation.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 21,
@@ -3571,12 +3531,10 @@
         "Surrender to challenge"
       ],
       "relationships": "Relationship obstacles or challenges to overcome. Difficult period in love.",
-      "careerFinance": "Career obstacles or difficult business situation. Financial challenges requiring perseverance.",
-      "timing": "Challenge period lasting weeks or months"
+      "careerFinance": "Career obstacles or difficult business situation. Financial challenges requiring perseverance."
     },
     "historicalMeaning": "Mountains represented barriers and tests in traditional symbolism. They symbolized both danger and the testing of character.",
-    "strength": "NEUTRAL",
-    "timing": "Long-term (weeks/months)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 22,
@@ -3738,12 +3696,10 @@
         "Lost direction"
       ],
       "relationships": "Choice in romantic matters or important relationship decision. Choosing between partners.",
-      "careerFinance": "Career decision or business direction choice. Multiple professional opportunities.",
-      "timing": "Decision required within 1-3 weeks"
+      "careerFinance": "Career decision or business direction choice. Multiple professional opportunities."
     },
     "historicalMeaning": "Crossroads were traditionally seen as magical and dangerous places. They represented important decisions and life changes.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 23,
@@ -3901,12 +3857,10 @@
         "Burden overwhelming"
       ],
       "relationships": "Loss in relationship or worry about romantic situation. Stress affecting partnership.",
-      "careerFinance": "Financial loss or stress about money. Work-related anxiety and pressure.",
-      "timing": "Stress and worry period lasting 1-4 weeks"
+      "careerFinance": "Financial loss or stress about money. Work-related anxiety and pressure."
     },
     "historicalMeaning": "Rats were symbols of loss, plague, and decay. They represented the gnawing worry and damage of unseen threats.",
-    "strength": "WEAK",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "WEAK"
   },
   {
     "id": 24,
@@ -4072,12 +4026,10 @@
         "Heart conflict"
       ],
       "relationships": "Romantic love and passionate attraction. Deep emotional connection or new romance.",
-      "careerFinance": "Career of passion or work you love. Emotional investment in business.",
-      "timing": "Love development within weeks or ongoing"
+      "careerFinance": "Career of passion or work you love. Emotional investment in business."
     },
     "historicalMeaning": "The Heart represents the center of emotion and life force. It symbolized love, passion, and the soul itself.",
-    "strength": "STRONG",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "STRONG"
   },
   {
     "id": 25,
@@ -4243,12 +4195,10 @@
         "Trapped by agreement"
       ],
       "relationships": "Engagement, marriage, or serious commitment. Binding romantic agreement.",
-      "careerFinance": "Business contract or binding agreement. Professional commitment or partnership.",
-      "timing": "Commitment or contract within 1-4 weeks or longer"
+      "careerFinance": "Business contract or binding agreement. Professional commitment or partnership."
     },
     "historicalMeaning": "Rings symbolized eternal bonds and unbreakable promises. They were symbols of commitment and sacred obligation.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 26,
@@ -4414,12 +4364,10 @@
         "Ignorance persisting"
       ],
       "relationships": "Secret in relationship or learning about partner. Hidden information about romantic situation.",
-      "careerFinance": "Professional education or career advancement through knowledge. Business secrets.",
-      "timing": "Knowledge or secrets revealed within 1-3 weeks"
+      "careerFinance": "Professional education or career advancement through knowledge. Business secrets."
     },
     "historicalMeaning": "Books were symbols of wisdom and hidden knowledge. They represented both learning and the carefully guarded secrets of institutions.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 27,
@@ -4585,12 +4533,10 @@
         "Illness persisting"
       ],
       "relationships": "Health affecting relationship or medical concerns. Partner's health situation.",
-      "careerFinance": "Medical career or health-related business. Insurance or medical finance.",
-      "timing": "Medical treatment or health matters within weeks"
+      "careerFinance": "Medical career or health-related business. Insurance or medical finance."
     },
     "historicalMeaning": "Medicine and injections represented intervention and healing. They symbolized the ability to address problems at their root.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 28,
@@ -4623,12 +4569,10 @@
         "Immature behavior"
       ],
       "relationships": "A significant man in romantic context or the querent if male. Partner or romantic interest.",
-      "careerFinance": "Male boss, colleague, or business partner. Masculine authority in professional matters.",
-      "timing": "Represents a person rather than timing"
+      "careerFinance": "Male boss, colleague, or business partner. Masculine authority in professional matters."
     },
     "historicalMeaning": "The Man card specifically represents one of the significators in traditional Lenormand readings. It identifies a key person in the situation.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 29,
@@ -4661,12 +4605,10 @@
         "Immature behavior"
       ],
       "relationships": "A significant woman in romantic context or the querent if female. Partner or romantic interest.",
-      "careerFinance": "Female boss, colleague, or business partner. Feminine authority in professional matters.",
-      "timing": "Represents a person rather than timing"
+      "careerFinance": "Female boss, colleague, or business partner. Feminine authority in professional matters."
     },
     "historicalMeaning": "The Woman card specifically represents one of the significators in traditional Lenormand readings. She identifies a key person in the situation.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 30,
@@ -4832,12 +4774,10 @@
         "Naive approach"
       ],
       "relationships": "Mature love or spiritual connection. Wisdom in relationship matters.",
-      "careerFinance": "Wise business decision or ethical business practice. Mature professional approach.",
-      "timing": "Wisdom and peace developing over time"
+      "careerFinance": "Wise business decision or ethical business practice. Mature professional approach."
     },
     "historicalMeaning": "Lilies represented purity and wisdom in spiritual traditions. They symbolized peace achieved through understanding and ethical living.",
-    "strength": "NEUTRAL",
-    "timing": "Long-term (weeks/months)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 31,
@@ -5011,12 +4951,10 @@
         "Unclear outcome"
       ],
       "relationships": "Happy romance or successful relationship. Joy and success in love.",
-      "careerFinance": "Career success or business achievement. Financial victory and prosperity.",
-      "timing": "Success manifesting within weeks or longer"
+      "careerFinance": "Career success or business achievement. Financial victory and prosperity."
     },
     "historicalMeaning": "The Sun represented clarity, success, and divine favor. It symbolized the peak of achievement and the light of victory.",
-    "strength": "STRONG",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "STRONG"
   },
   {
     "id": 32,
@@ -5062,12 +5000,10 @@
         "Emotional turmoil"
       ],
       "relationships": "Intuitive connection or emotional depth in relationship. Dreams and fantasies about love.",
-      "careerFinance": "Creative work or intuitive business decision. Imagination in professional matters.",
-      "timing": "Dreams and intuition revealing truth within days or weeks"
+      "careerFinance": "Creative work or intuitive business decision. Imagination in professional matters."
     },
     "historicalMeaning": "The Moon represented the hidden, the subconscious, and feminine mystery. It symbolized intuition and the depths of emotion.",
-    "strength": "NEUTRAL",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 33,
@@ -5109,12 +5045,10 @@
         "Door locked"
       ],
       "relationships": "Solution to relationship problem or key to understanding partner. Access to deeper connection.",
-      "careerFinance": "Business solution or opportunity opening. Key to financial success.",
-      "timing": "Solution or opportunity within 1-3 weeks"
+      "careerFinance": "Business solution or opportunity opening. Key to financial success."
     },
     "historicalMeaning": "Keys represented access to knowledge, property, and power. They symbolized the solution to problems and the opening of new possibilities.",
-    "strength": "NEUTRAL",
-    "timing": "Variable"
+    "strength": "NEUTRAL"
   },
   {
     "id": 34,
@@ -5156,12 +5090,10 @@
         "Success uncertain"
       ],
       "relationships": "Prosperous partnership or financial security in relationship. Abundance of love.",
-      "careerFinance": "Financial prosperity or business abundance. Successful ventures and wealth growth.",
-      "timing": "Prosperity manifesting within weeks or months"
+      "careerFinance": "Financial prosperity or business abundance. Successful ventures and wealth growth."
     },
     "historicalMeaning": "Fish symbolized fertility, abundance, and the flow of wealth. They represented the abundance of the waters and nature's provision.",
-    "strength": "STRONG",
-    "timing": "Near future (1-3 weeks)"
+    "strength": "STRONG"
   },
   {
     "id": 35,
@@ -5207,12 +5139,10 @@
         "Anchored to problems"
       ],
       "relationships": "Stable relationship foundation or grounding in love. Security and commitment.",
-      "careerFinance": "Career stability or secure financial foundation. Steady business success.",
-      "timing": "Stability developing over time or long-term"
+      "careerFinance": "Career stability or secure financial foundation. Steady business success."
     },
     "historicalMeaning": "The Anchor represented security and safe harbor. It symbolized stability in the midst of life's storms.",
-    "strength": "NEUTRAL",
-    "timing": "Long-term (weeks/months)"
+    "strength": "NEUTRAL"
   },
   {
     "id": 36,
@@ -5374,11 +5304,9 @@
         "Suffering continues"
       ],
       "relationships": "Karmic relationship or destined meeting. Spiritual lessons through love.",
-      "careerFinance": "Karmic career path or destined profession. Business lessons and spiritual growth.",
-      "timing": "Fate and destiny ongoing; lessons unfolding over time"
+      "careerFinance": "Karmic career path or destined profession. Business lessons and spiritual growth."
     },
     "historicalMeaning": "The Cross represented faith, sacrifice, and divine purpose. It symbolized the burden of destiny and spiritual transformation.",
-    "strength": "WEAK",
-    "timing": "Long-term (weeks/months)"
+    "strength": "WEAK"
   }
 ]

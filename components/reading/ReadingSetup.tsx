@@ -8,11 +8,8 @@ import { SpreadSelect, Spread } from "./SpreadSelect";
 import { MethodToggle } from "./MethodToggle";
 
 const SUGGESTED_QUESTIONS = [
-  "What is developing around this situation?",
-  "What should I know about this connection?",
   "What is the likely next development?",
-  "What is influencing this matter now?",
-  "What practical action is shown?",
+  "What should I know about this connection?",
   "What do the cards show about work or money?",
 ];
 
@@ -49,7 +46,7 @@ export function ReadingSetup({
           Ask the Cards
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {/* Question Input */}
         <div className="space-y-3">
           <label htmlFor="question" className="text-sm font-medium text-foreground">
@@ -78,8 +75,8 @@ export function ReadingSetup({
         {/* Suggested Questions */}
         {question.length === 0 && (
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Try one of these:</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="text-xs text-muted-foreground">Try one:</p>
+            <div className="flex gap-2 overflow-x-auto pb-1">
               {SUGGESTED_QUESTIONS.map((q) => (
                 <button
                   key={q}
@@ -87,7 +84,7 @@ export function ReadingSetup({
                   onClick={() => {
                     onQuestionChange(q);
                   }}
-                  className="rounded-full bg-muted px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
+                  className="shrink-0 whitespace-nowrap rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
                 >
                   {q}
                 </button>

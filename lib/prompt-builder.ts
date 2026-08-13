@@ -180,7 +180,7 @@ export function buildSystemPrompt(cardCount?: number): string {
 Lenormand is concrete, practical, external, predictive, and combination-based. A card read in isolation means almost nothing — meaning comes from positions, combinations, lines, and houses.
 
 Rules:
-- No reversals, no Tarot/New Age language: never use archetype, shadow work, chakra, soul-purpose, the universe, higher self, vibration, journey, transformation, trust the process, energy, intuition, everything happens for a reason.
+- No reversals, no Tarot/New Age language. Never use the following multi-word phrases or single tokens in their New Age sense: "archetype", "shadow work", "chakra", "soul-purpose", "the universe", "higher self", "vibration", "trust the process", "everything happens for a reason". Never use the following phrases at all: "spiritual journey", "healing journey", "soul journey", "personal transformation", "positive energy", "shadow self". Avoid the word "energy" standing alone (say "force", "weight", "influence" instead). You may still use ordinary Lenormand vocabulary such as "journey", "transformation", "intuition" when they describe a concrete, practical situation in the cards.
 - Do not add cards that were not drawn.
 - Use timing only when the cards clearly indicate it. The prompt below contains a "Timing evidence" section. Use only that. If it says "No timing evidence detected", write: Likely timing: Not clearly shown by these cards.
 - For Man/Woman, treat as person/significator, not masculine/feminine energy.
@@ -203,7 +203,7 @@ Formatting rules:
 - If timing is not clearly supported, write: Likely timing: Not clearly shown by these cards.`;
 }
 
-const PREDICTIVE_VOICE = `Answer the user's actual question directly.
+const PREDICTIVE_VOICE_LINEAR = `Answer the user's actual question directly.
 
 ## Reading
 Write 3-5 natural sentences interpreting the complete line. Start with the answer. Explain the progression of the cards as one connected situation. Do not merely list card meanings.
@@ -211,6 +211,38 @@ Write 3-5 natural sentences interpreting the complete line. Start with the answe
 ## Key combinations
 For each adjacent pair, write a bullet in this format:
 - **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
+
+## Prediction
+Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
+
+Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
+
+const PREDICTIVE_VOICE_PETIT = `Answer the user's actual question directly. The Petit Tableau is a 3x3 grid; treat the center card as the heart and the middle line as the main narrative, with rows/columns/diagonals supporting it.
+
+## Reading
+Write 3-5 natural sentences interpreting the tableau. Start with the answer. Describe how the center card and the middle line develop the question. Do not merely list card meanings.
+
+## Key combinations
+For each relevant pair the prompt lists under "Adjacent combinations", write a bullet in this format:
+- **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
+
+## Prediction
+Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
+
+Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
+
+const PREDICTIVE_VOICE_GT = `Answer the user's actual question directly. The Grand Tableau is a 4x9 grid read around the significator; treat the significator's neighbourhood as the most actionable area, the topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) as life-theme anchors, and the Cards of Fate / corners as long-term signals.
+
+## Grand Tableau overview
+Write a paragraph that names the significator, summarises the four rows, the center four, and the Cards of Fate, and gives the first overall direction of the answer.
+
+## Around the significator
+For each card directly adjacent to the significator listed under "Adjacent combinations", write a bullet in this format:
+- **Significator + Card**: explain how this combination modifies the querent's situation right now.
+
+## Houses and mirrors
+For each topic-house placement listed above, write a bullet in this format:
+- **House of X**: explain what the card sitting on that house means for that life area.
 
 ## Prediction
 Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
@@ -230,7 +262,7 @@ Output (exactly these sections):
 
 ## Prediction
 
-${PREDICTIVE_VOICE}`,
+${PREDICTIVE_VOICE_LINEAR}`,
   "sentence-5": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3, 3+4, 4+5. Read as one Lenormand line. List all four adjacent pairs in the Key combinations section, explaining the meaning of each pair.
 
 Output (exactly these sections):
@@ -241,7 +273,7 @@ Output (exactly these sections):
 
 ## Prediction
 
-${PREDICTIVE_VOICE}`,
+${PREDICTIVE_VOICE_LINEAR}`,
   "comprehensive": (q, c) => `${q}\nCards (3x3 Petit Tableau): ${c}\n\nRead as a Petit Tableau. Use center, middle line, rows, columns, diagonals, and adjacent combinations.
 
 Output (exactly these sections):
@@ -252,7 +284,7 @@ Output (exactly these sections):
 
 ## Prediction
 
-${PREDICTIVE_VOICE}`,
+${PREDICTIVE_VOICE_PETIT}`,
   "grand-tableau": (q, c) => `${q}\n36 cards (4x9 grid): ${c}\n\nRead using Grand Tableau method. Focus on significator, surrounding pairs, directional zones, mirroring, corners, houses.
 
 Output (exactly these sections):
@@ -265,7 +297,7 @@ Output (exactly these sections):
 
 ## Prediction
 
-${PREDICTIVE_VOICE}`,
+${PREDICTIVE_VOICE_GT}`,
 };
 
 /** @deprecated Use buildPromptFromContext instead. This legacy function generates prompts from flat card lists. */
@@ -365,7 +397,7 @@ function formatPetitTableau(
     "",
     "## Prediction",
     "",
-    PREDICTIVE_VOICE,
+    PREDICTIVE_VOICE_PETIT,
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
@@ -504,7 +536,7 @@ function formatGrandTableau(
     "",
     "## Prediction",
     "",
-    PREDICTIVE_VOICE,
+    PREDICTIVE_VOICE_GT,
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );

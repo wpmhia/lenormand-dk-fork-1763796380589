@@ -1,22 +1,29 @@
 import { Card } from "@/lib/types";
 import { getTimingCard, TimingCardDefinition } from "@/lib/timing";
 
-export const BANNED_TERMS = [
-  "energy",
-  "vibration",
+export const BANNED_PHRASES = [
+  "spiritual journey",
+  "healing journey",
+  "soul journey",
+  "personal transformation",
   "shadow work",
+  "shadow self",
   "higher self",
   "soul lesson",
-  "chakra",
-  "archetype",
-  "the universe",
-  "spiritual journey",
-  "divine guidance",
   "soul-purpose",
   "soul purpose",
+  "chakra",
+  "the universe",
+  "divine guidance",
+  "vibration",
   "everything happens for a reason",
   "trust the process",
   "these cards together tell a story",
+  "positive energy",
+];
+
+export const BANNED_BARE_TERMS = [
+  "archetype",
 ];
 
 export const BANNED_QUESTION_PREFIX = /^Your question:.*\n\n/s;
@@ -73,8 +80,14 @@ export function validateReadingOutput(
   const issues: ValidationIssue[] = [];
   const lower = reading.toLowerCase();
 
-  for (const term of BANNED_TERMS) {
-    const regex = new RegExp(`\\b${term.replace(/[-]/g, "\\b.*?\\b")}\\b`, "i");
+  for (const phrase of BANNED_PHRASES) {
+    if (lower.includes(phrase)) {
+      issues.push({ type: "banned_term", message: `Contains banned phrase: "${phrase}"` });
+    }
+  }
+
+  for (const term of BANNED_BARE_TERMS) {
+    const regex = new RegExp(`\\b${term}\\b`, "i");
     if (regex.test(lower)) {
       issues.push({ type: "banned_term", message: `Contains banned term: "${term}"` });
     }
