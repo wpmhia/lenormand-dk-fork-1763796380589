@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildPromptFromContext, buildSystemPrompt } from "@/lib/prompt-builder";
+import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { Card } from "@/lib/types";
 
 function makeCard(id: number, name: string, combos?: { withCardId: number; meaning: string }[]): Card {
@@ -304,5 +305,76 @@ describe("prompt quality: question appears in prompt", () => {
     const ctx = buildReadingContext("grand-tableau", question, normalized(allIds), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toContain(question);
+  });
+});
+
+describe("regression: outcome question with positive lead and difficult close", () => {
+  // Cards: Ship Sun Bouquet Stork Clouds — "What will be the outcome of my year-end review?"
+  // The closing Clouds should anchor the forecast; Sun/Bouquet should not turn the
+  // prediction positive. Earlier cards describe what happens along the way.
+  const yearEndReviewCards = normalized([3, 31, 9, 17, 6]); // Ship Sun Bouquet Stork Clouds
+  const ctx = buildReadingContext("sentence-5", "What will be the outcome of my year-end review?", yearEndReviewCards, cardsMap);
+  const prompt = buildPromptFromContext(ctx);
+  const systemPrompt = buildSystemPrompt(yearEndReviewCards.length);
+
+  it("prediction evidence block labels the closing card as the primary outcome", () => {
+    expect(prompt).toMatch(/Primary outcome.*Clouds/);
+    expect(prompt).toMatch(/Strongest transition.*Stork.*Clouds/);
+  });
+
+  it("prediction evidence block tells the model the closing card carries the most weight", () => {
+    expect(prompt).toMatch(/Direction of travel/i);
+    expect(prompt).toMatch(/closing card.*most weight|most weight.*closing card/i);
+  });
+
+  it("prediction instruction forbids softening negative combinations", () => {
+    expect(prompt + systemPrompt).toMatch(/Do not soften a negative combination/i);
+  });
+
+  it("prediction instruction explicitly forbids inventing specific events not supported by the cards", () => {
+    expect(prompt + systemPrompt).toMatch(/Do not invent specific events/);
+  });
+
+  it("prediction instruction tells the model positive earlier cards don't override a difficult final card", () => {
+    expect(prompt).toMatch(/Positive earlier cards do not override a difficult final card/);
+  });
+
+  it("prediction instruction tells the model a difficult final card doesn't erase earlier positives", () => {
+    expect(prompt).toMatch(/difficult final card does not erase earlier positives/i);
+  });
+
+  it("uses Cards 1-4 to explain how the situation develops toward the outcome", () => {
+    expect(prompt).toMatch(/Cards 1-4 explain how the situation develops/);
+  });
+});
+
+describe("regression: invented specifics rule", () => {
+  // Five-card spread with no Letter, Book, Tower, or Ring.
+  // The model must NOT hallucinate paperwork, legal, contracts, promotions, raises.
+  const cards = normalized([3, 31, 9, 17, 6]); // Ship Sun Bouquet Stork Clouds
+  const systemPrompt = buildSystemPrompt(cards.length);
+
+  it("system prompt forbids inventing documents the cards do not show", () => {
+    expect(systemPrompt).toMatch(/Do not invent specific events, documents, people/);
+    expect(systemPrompt).toMatch(/Letter, Book, Tower/);
+    expect(systemPrompt).toMatch(/official paperwork/);
+  });
+});
+
+describe("regression: prediction evidence block includes the new direction-of-travel rule", () => {
+  const cards = normalized([3, 31, 9, 17, 6]);
+  const pe = buildPredictionContext(buildReadingContext("sentence-5", "Will the deal close?", cards, cardsMap));
+  const block = formatPredictionEvidenceBlock(pe);
+
+  it("includes the direction-of-travel instruction", () => {
+    expect(block).toMatch(/Direction of travel/i);
+  });
+
+  it("explicitly says positive earlier cards do not override a difficult final card", () => {
+    expect(block).toMatch(/Positive earlier cards do not override/i);
+  });
+
+  it("renames the strongest transition to indicate it is the closing pair", () => {
+    expect(block).toMatch(/Strongest transition \(closing pair\)/);
   });
 });

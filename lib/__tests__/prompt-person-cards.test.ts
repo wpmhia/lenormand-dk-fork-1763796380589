@@ -117,8 +117,8 @@ describe("prompt-builder: Reading and Prediction have non-overlapping jobs", () 
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toContain("Prediction synthesis evidence:");
-    expect(prompt).toMatch(/Primary outcome:/);
-    expect(prompt).toMatch(/Strongest transition:/);
+    expect(prompt).toMatch(/Primary outcome/);
+    expect(prompt).toMatch(/Strongest transition/);
   });
 
   it("does not include pseudo-heading meta-explanations about section roles", () => {
