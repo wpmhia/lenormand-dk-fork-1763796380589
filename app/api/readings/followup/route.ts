@@ -21,6 +21,7 @@ export async function OPTIONS() {
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
+const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
 
@@ -114,7 +115,7 @@ export async function POST(request: Request) {
     request.signal.addEventListener("abort", () => abortController.abort(), { once: true });
 
     const result = await streamText({
-      model: mistral("mistral-small-latest"),
+      model: mistral(MISTRAL_PRODUCTION_MODEL),
       system: buildSystemPrompt(cardCount),
       prompt,
       temperature: 0.2,
