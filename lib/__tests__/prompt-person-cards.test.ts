@@ -99,8 +99,8 @@ describe("prompt-builder: Reading and Prediction have non-overlapping jobs", () 
   it("uses a simple contract with three sections, no pseudo-headings inside instructions", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/## Reading\s+Write 3-5 natural sentences/i);
-    expect(prompt).toMatch(/## Key combinations/i);
+    expect(prompt).toMatch(/## Interpretation/i);
+    expect(prompt).toMatch(/## Cards/i);
     expect(prompt).toMatch(/## Prediction/i);
   });
 
@@ -124,8 +124,8 @@ describe("prompt-builder: Reading and Prediction have non-overlapping jobs", () 
   it("does not include pseudo-heading meta-explanations about section roles", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).not.toMatch(/## Reading — interpret what the cards mean together/i);
-    expect(prompt).not.toMatch(/## Prediction — the concrete forecast/i);
+    expect(prompt).not.toMatch(/## Interpretation — explain the situation/i);
+    expect(prompt).not.toMatch(/## Prediction — the forward-looking forecast/i);
   });
 });
 

@@ -39,21 +39,19 @@ export interface ValidationResult {
 }
 
 const SPREAD_SECTIONS: Record<string, string[]> = {
-  "single-card": ["## Reading"],
+  "single-card": ["## Interpretation"],
   "daily-card": [],
-  "sentence-3": ["## Reading", "## Key combinations", "## Prediction"],
-  "sentence-5": ["## Reading", "## Key combinations", "## Prediction"],
-  "comprehensive": ["## Reading", "## Key combinations", "## Prediction"],
-  "grand-tableau": ["## Grand Tableau overview", "## Around the significator", "## Houses and mirrors", "## Prediction"],
+  "sentence-3": ["## Interpretation", "## Cards", "## Prediction"],
+  "sentence-5": ["## Interpretation", "## Cards", "## Prediction"],
+  "comprehensive": ["## Interpretation", "## Cards", "## Prediction"],
+  "grand-tableau": ["## Interpretation", "## Houses and mirrors", "## Cards", "## Prediction"],
 };
 
 const MIN_WORDS_PER_SECTION: Record<string, number> = {
-  reading: 12,
+  interpretation: 12,
   prediction: 6,
-  "grand tableau overview": 12,
-  "around the significator": 6,
   "houses and mirrors": 4,
-  "key combinations": 0,
+  cards: 0,
 };
 
 function getSectionBody(reading: string, heading: string): string {
@@ -213,7 +211,7 @@ export function validateReadingOutput(
       const body = getSectionBody(reading, expected);
       const expectedLower = expected.replace(/^#+\s*/, "").trim().toLowerCase();
 
-      if (expectedLower === "key combinations") {
+      if (expectedLower === "cards") {
         const bulletCount = (body.match(/^\s*[-*]\s/gm) || []).length;
         if (bulletCount < 1) {
           issues.push({
@@ -392,7 +390,7 @@ export function buildDeterministicFallback(
   const q = question ? `Question: "${question}"` : "";
   const qLine = q ? `\n_${q}_\n\n` : "\n\n";
 
-  if (drawnCards.length === 0) return `## Reading\n\nNo cards were drawn.`;
+  if (drawnCards.length === 0) return `## Interpretation\n\nNo cards were drawn.`;
 
   if (drawnCards.length === 1) {
     const c = drawnCards[0];
@@ -401,7 +399,7 @@ export function buildDeterministicFallback(
     const opener = question
       ? `This is the situation you are sitting with regarding "${question}".`
       : `This is what the drawn card says about the situation.`;
-    return `## Reading${qLine}${opener} **${c.name}** is the focus${kw ? ` — ${kw}` : ""}${note ? `. ${note}` : ""}.`;
+    return `## Interpretation${qLine}${opener} **${c.name}** is the focus${kw ? ` — ${kw}` : ""}${note ? `. ${note}` : ""}.`;
   }
 
   if (spreadId === "grand-tableau" && drawnCards.length === 36) {
@@ -462,7 +460,7 @@ function buildLinearFallback(
   const opener = question
     ? `This reading addresses "${question}".`
     : `This reading addresses the situation at hand.`;
-  const reading = `${opener} Reading **${chainNames}** as one Lenormand chain, what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}** and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) shows where the line is most likely to land. Each adjacent pair below shows what changes between one card and the next.`;
+  const interpretation = `${opener} The spread **${chainNames}** reads as one Lenormand chain: what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}**, and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) is where the line is heading. The relevant combinations are listed below as evidence; the forward-looking forecast is in the final section.`;
 
   const closingPairNames = drawnCards.length >= 2
     ? `${drawnCards[drawnCards.length - 2].name} + ${last.name}`
@@ -471,9 +469,9 @@ function buildLinearFallback(
   const predictionBlock = buildPredictionBlock(drawnCards, last.name, lastKw, lastMeaning, closingPairNames);
 
   return [
-    `## Reading${qLine}${reading}`,
+    `## Interpretation${qLine}${interpretation}`,
     "",
-    "## Key combinations",
+    "## Cards",
     "",
     pairBullets.join("\n"),
     "",
@@ -541,7 +539,7 @@ function buildGrandTableauFallback(
     ? `This Grand Tableau addresses "${question}".`
     : `This Grand Tableau addresses the full life situation.`;
 
-  const overview = `${opener} Reading all **${drawnCards.length}** drawn cards in the 4×9 grid, the situation is read primarily around the significator at ${sigName}${sigIdx >= 0 ? `, Row ${sigRow}, Column ${sigCol}` : ""}. The tableau's corners, center four, and Cards of Fate are listed below as anchors; the pairs surrounding the significator carry the most immediate information, and topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) show where the main life themes sit.`;
+  const overview = `${opener} Reading all **${drawnCards.length}** drawn cards in the 4×9 grid, the situation is read primarily around the significator at ${sigName}${sigIdx >= 0 ? `, Row ${sigRow}, Column ${sigCol}` : ""}. The corners, center four, and Cards of Fate anchor the tableau; the pairs around the significator carry the most immediate information, and topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) show where the main life themes sit. The forward-looking forecast is in the final section.`;
 
   const primaryTimingCards: TimingCardDefinition[] = [];
   for (const c of drawnCards) {
@@ -567,19 +565,19 @@ function buildGrandTableauFallback(
   ].join("\n");
 
   return [
-    `## Grand Tableau overview${qLine}${overview}`,
+    `## Interpretation${qLine}${overview}`,
     "",
     cornersLine,
     centerLine,
     fateLine,
     "",
-    "## Around the significator",
-    "",
-    aroundBullets.length > 0 ? aroundBullets.join("\n") : `- No significator found in this spread; read the tableau as a whole.`,
-    "",
     "## Houses and mirrors",
     "",
     houseBullets.length > 0 ? houseBullets.join("\n") : "- No topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) appeared in the spread.",
+    "",
+    "## Cards",
+    "",
+    aroundBullets.length > 0 ? aroundBullets.join("\n") : `- No significator found in this spread; read the tableau as a whole.`,
     "",
     "## Prediction",
     "",
