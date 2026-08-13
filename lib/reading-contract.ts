@@ -119,7 +119,8 @@ export function normalizeReadingRequest(
   const seen = new Set<number>();
   const cards: NormalizedCard[] = [];
 
-  for (const rawCard of data.cards) {
+  for (let i = 0; i < data.cards.length; i++) {
+    const rawCard = data.cards[i];
     if (seen.has(rawCard.id)) {
       throw new ValidationError(`Duplicate card id: ${rawCard.id}`);
     }
@@ -130,11 +131,41 @@ export function normalizeReadingRequest(
       throw new ValidationError(`Card id ${rawCard.id} not found`);
     }
 
+    if (rawCard.position !== undefined) {
+      if (!Number.isInteger(rawCard.position) || rawCard.position < 0 || rawCard.position >= expectedCount) {
+        throw new ValidationError(`Card id ${rawCard.id} has invalid position ${rawCard.position} for spread requiring ${expectedCount} cards`);
+      }
+    }
+
     cards.push({
       id: cardData.id,
       name: cardData.name,
       keywords: cardData.keywords || [],
       strength: cardData.strength,
+    });
+  }
+
+  const positionMap = new Map<number, number>();
+  for (let i = 0; i < data.cards.length; i++) {
+    const pos = data.cards[i].position;
+    if (pos === undefined) continue;
+    if (positionMap.has(pos)) {
+      throw new ValidationError(`Duplicate position ${pos} on cards ${positionMap.get(pos)} and ${data.cards[i].id}`);
+    }
+    positionMap.set(pos, data.cards[i].id);
+  }
+
+  const hasAnyPosition = data.cards.some((c) => c.position !== undefined);
+  if (hasAnyPosition) {
+    for (let p = 0; p < expectedCount; p++) {
+      if (!positionMap.has(p)) {
+        throw new ValidationError(`Position ${p} is missing for spread "${data.spreadId}"`);
+      }
+    }
+    cards.sort((a, b) => {
+      const pa = data.cards.find((c) => c.id === a.id)?.position ?? 0;
+      const pb = data.cards.find((c) => c.id === b.id)?.position ?? 0;
+      return pa - pb;
     });
   }
 

@@ -358,6 +358,8 @@ export default function SharedReadingPage({ params }: PageProps) {
           showShareButton={true}
           onShare={handleShare}
           showReadingHeader={false}
+          significatorType="none"
+          onSignificatorChange={() => {}}
         />
 
         {/* Card meanings now accessed via hover on spread cards - removed redundant section */}

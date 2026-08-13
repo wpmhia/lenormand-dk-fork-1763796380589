@@ -102,6 +102,28 @@ describe("golden: unsupported_timing regex catches range expressions", () => {
     const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
     expect(timingIssue).toBeUndefined();
   });
+
+  it("flags '2 years' when only Birds is drawn (mismatched range)", () => {
+    const reading = `## Reading\n\nA meaningful sentence about Birds and Letter and how they develop together.\n\n## Key combinations\n\n- **Birds + Letter**: news.\n\n## Prediction\n\nThis develops over 2 years.`;
+    const result = validateReadingOutput(reading, [12, 27], "sentence-3");
+    const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
+    expect(timingIssue).toBeDefined();
+    expect(timingIssue?.message).toMatch(/outside the range/i);
+  });
+
+  it("flags 'within weeks' when only Birds (days) is drawn", () => {
+    const reading = `## Reading\n\nA meaningful sentence about Birds and Letter and how they develop together.\n\n## Key combinations\n\n- **Birds + Letter**: news.\n\n## Prediction\n\nThis resolves within weeks.`;
+    const result = validateReadingOutput(reading, [12, 27], "sentence-3");
+    const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
+    expect(timingIssue).toBeDefined();
+  });
+
+  it("flags 'over the coming weeks' (nonnumeric) when no timing card is drawn", () => {
+    const reading = `## Reading\n\nA meaningful sentence about Rider Clover Ship.\n\n## Key combinations\n\n- **Rider + Clover**: news.\n\n## Prediction\n\nThis develops over the coming weeks.`;
+    const result = validateReadingOutput(reading, [1, 2, 3], "sentence-3");
+    const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
+    expect(timingIssue).toBeDefined();
+  });
 });
 
 describe("golden: Clover+Whip+Paths spread never produces '1-3 weeks'", () => {

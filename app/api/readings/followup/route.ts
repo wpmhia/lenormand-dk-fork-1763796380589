@@ -2,8 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
-import { buildReadingContext } from "@/lib/reading-context";
+import { buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
@@ -56,20 +55,36 @@ export async function POST(request: Request) {
       });
     }
 
-    const body = await request.json();
-    const { followUpQuestion, originalReading, cards, spreadId, significatorPreference } = body;
+    const bodySize = checkBodySize(request);
+    if (bodySize !== null) {
+      return new Response(JSON.stringify({ error: "Request body too large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
-    if (!followUpQuestion || typeof followUpQuestion !== "string") {
-      return new Response(JSON.stringify({ error: "Follow-up question required" }), {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    const bodySize = checkBodySize(request);
-    if (bodySize !== null) {
-      return new Response(JSON.stringify({ error: "Request body too large" }), {
-        status: 413,
+    const { followUpQuestion, originalReading, originalQuestion, cards, spreadId, significatorPreference } = body as {
+      followUpQuestion?: unknown;
+      originalReading?: unknown;
+      originalQuestion?: unknown;
+      cards?: unknown;
+      spreadId?: unknown;
+      significatorPreference?: unknown;
+    };
+
+    if (!followUpQuestion || typeof followUpQuestion !== "string") {
+      return new Response(JSON.stringify({ error: "Follow-up question required" }), {
+        status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
@@ -86,25 +101,26 @@ export async function POST(request: Request) {
       ? originalReading.slice(0, MAX_READING_LENGTH) + "..."
       : originalReading;
 
-    let contextPrompt = "";
+    const safeOriginalQuestion = typeof originalQuestion === "string" ? originalQuestion : "";
+
+    let cardNames: string[] = [];
     let cardCount = 3;
 
-    if (spreadId && cards && Array.isArray(cards) && cards.length > 0) {
+    if (spreadId && Array.isArray(cards) && cards.length > 0) {
       try {
-        const validated = normalizeReadingRequest({ spreadId, cards, question: "", significatorPreference }, cardsMap);
+        const validated = normalizeReadingRequest({ spreadId, cards, question: safeOriginalQuestion, significatorPreference }, cardsMap);
         cardCount = validated.cards.length;
-        const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
-        contextPrompt = buildPromptFromContext(context);
+        cardNames = validated.cards.map((c) => c.name);
       } catch {
         cardCount = cards.length;
-        contextPrompt = `Cards: ${cards.map((c: {name?: string; id?: number}) => c.name || (c.id ? `Card ${c.id}` : "Unknown")).join(", ")}`;
+        cardNames = cards.map((c: { name?: string; id?: number }) => c.name || (c.id ? `Card ${c.id}` : "Unknown"));
       }
     }
 
     const maxTokens = getTokenBudget(cardCount);
-    const prompt = contextPrompt
-      ? `Original reading context:\n${contextPrompt}\n\nOriginal AI reading: "${safeOriginalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nAnswer the follow-up question based on the Lenormand card positions and combinations. Be specific to the cards drawn.`
-      : `Original reading: "${safeOriginalReading}"\n\nFollow-up question: "${followUpQuestion}"\n\nProvide a brief, direct answer based on the original reading and cards.`;
+    const cardLine = cardNames.length > 0 ? `Cards drawn: ${cardNames.join(", ")}.` : "";
+    const questionLine = safeOriginalQuestion ? `Original question: "${safeOriginalQuestion}".` : "";
+    const prompt = `You are continuing a Lenormand reading conversation. The previous reading was: "${safeOriginalReading}".\n\n${cardLine} ${questionLine}\n\nFollow-up question: "${followUpQuestion}"\n\nAnswer the follow-up question in 2-4 short sentences, referring to the same drawn cards and the same original question. Stay consistent with the original reading. Be concrete and specific to the cards. Do not use Tarot/New Age language. Do not invent cards that were not drawn.`;
 
     const mistral = createMistral({
       apiKey: MISTRAL_API_KEY,

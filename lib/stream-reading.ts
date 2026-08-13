@@ -7,6 +7,7 @@ export interface StreamOptions {
   onChunk: (text: string) => void;
   onDone?: () => void;
   onError?: (error: Error) => void;
+  onRetry?: (attempt: number) => void;
   maxRetries?: number;
 }
 
@@ -17,11 +18,14 @@ export async function streamReadingResponse({
   onChunk,
   onDone,
   onError,
+  onRetry,
   maxRetries = 2,
 }: StreamOptions): Promise<void> {
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (attempt > 0) onRetry?.(attempt);
+
     try {
       const response = await fetch(endpoint, {
         method: "POST",
@@ -63,6 +67,8 @@ export async function streamReadingResponse({
                 onChunk(event.content);
               } else if (event.type === "done") {
                 onDone?.();
+                lastError = null;
+                return;
               } else if (event.type === "error") {
                 throw new Error(event.error || "Stream error");
               }
@@ -85,7 +91,7 @@ export async function streamReadingResponse({
 
       onDone?.();
       lastError = null;
-      break;
+      return;
     } catch (err: any) {
       if (err.name === "AbortError") return;
       lastError = err;

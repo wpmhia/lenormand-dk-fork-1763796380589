@@ -19,6 +19,14 @@ export function useAutoSaveReading(
   const { saveReading } = useReadingHistory();
   const { toast } = useToast();
   const savedRef = useRef(false);
+  const previousAiReadingRef = useRef<AIReadingResponse | null>(null);
+
+  useEffect(() => {
+    if (previousAiReadingRef.current && !aiReading) {
+      savedRef.current = false;
+    }
+    previousAiReadingRef.current = aiReading;
+  }, [aiReading]);
 
   useEffect(() => {
     if (
@@ -29,8 +37,11 @@ export function useAutoSaveReading(
       !readingSaved &&
       !savedRef.current
     ) {
-      savedRef.current = true;
       const interpretationText = aiReading.reading || "";
+      const complete = /##\s*Prediction[\s\S]*\S/.test(interpretationText) || interpretationText.length > 400;
+      if (!complete) return;
+
+      savedRef.current = true;
       const preview = interpretationText.substring(0, 150);
       const cardData = drawnCardTypes.map((card, index) => ({
         id: card.id,

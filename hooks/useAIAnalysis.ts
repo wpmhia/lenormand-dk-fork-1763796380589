@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
+import { SignificatorType } from "@/lib/spreads";
 import { streamReadingResponse } from "@/lib/stream-reading";
 
 interface UseAIAnalysisReturn {
@@ -17,12 +18,19 @@ interface UseAIAnalysisReturn {
   submitFollowUp: (question: string) => void;
 }
 
+function significatorToPreference(value: SignificatorType): "woman" | "man" | "both" {
+  if (value === "anima") return "woman";
+  if (value === "animus") return "man";
+  return "both";
+}
+
 export function useAIAnalysis(
   question: string,
   drawnCards: ReadingCard[],
   allCards: CardType[],
   selectedSpreadId: string,
-  enabled: boolean = true
+  enabled: boolean = true,
+  significatorType: SignificatorType = "none"
 ): UseAIAnalysisReturn {
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +63,7 @@ export function useAIAnalysis(
     if (!enabled || drawnCards.length === 0) return;
 
     setIsLoading(true);
-    setIsStreaming(false);
+    setIsStreaming(true);
     setError(null);
 
     const controller = new AbortController();
@@ -64,17 +72,26 @@ export function useAIAnalysis(
     let fullReading = "";
     await streamReadingResponse({
       endpoint: "/api/readings/interpret",
-      body: { question, cards: mapCards(), spreadId: selectedSpreadId },
+      body: {
+        question,
+        cards: mapCards(),
+        spreadId: selectedSpreadId,
+        significatorPreference: significatorToPreference(significatorType),
+      },
       signal: controller.signal,
       onChunk(text) {
         fullReading += text;
         setAiReading({ reading: fullReading, source: "mistral" });
+      },
+      onRetry() {
+        fullReading = "";
       },
       onDone() {
         setIsStreaming(false);
         if (!fullReading) setError("No reading received");
       },
       onError(err) {
+        setIsStreaming(false);
         setError(err.message);
       },
     });
@@ -82,7 +99,7 @@ export function useAIAnalysis(
     setIsLoading(false);
     setIsStreaming(false);
     abortControllerRef.current = null;
-  }, [question, drawnCards, allCards, selectedSpreadId, enabled, mapCards]);
+  }, [question, drawnCards, allCards, selectedSpreadId, enabled, mapCards, significatorType]);
 
   const resetAnalysis = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -105,7 +122,7 @@ export function useAIAnalysis(
       followUpAbortControllerRef.current = controller;
 
       setFollowUpLoading(true);
-      setFollowUpStreaming(false);
+      setFollowUpStreaming(true);
 
       let fullResponse = "";
       await streamReadingResponse({
@@ -113,18 +130,24 @@ export function useAIAnalysis(
         body: {
           followUpQuestion,
           originalReading: aiReading.reading,
+          originalQuestion: question,
           cards: mapCards(),
           spreadId: selectedSpreadId,
+          significatorPreference: significatorToPreference(significatorType),
         },
         signal: controller.signal,
         onChunk(text) {
           fullResponse += text;
           setFollowUpResponse(fullResponse);
         },
+        onRetry() {
+          fullResponse = "";
+        },
         onDone() {
           setFollowUpStreaming(false);
         },
         onError() {
+          setFollowUpStreaming(false);
           setFollowUpResponse("Sorry, I couldn't process your follow-up question. Please try again.");
         },
       });
@@ -133,7 +156,7 @@ export function useAIAnalysis(
       setFollowUpStreaming(false);
       followUpAbortControllerRef.current = null;
     },
-    [aiReading, drawnCards, selectedSpreadId, mapCards],
+    [aiReading, drawnCards, selectedSpreadId, mapCards, significatorType, question],
   );
 
   return {

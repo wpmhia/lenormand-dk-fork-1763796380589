@@ -117,8 +117,8 @@ export const DIRECTIONAL_ZONES: Record<string, DirectionalZone> = {
 };
 
 export const SIGNIFICATOR_CARDS = {
-  anima: 28,
-  animus: 29,
+  anima: 29,
+  animus: 28,
 };
 
 export function getGrandTableauPosition(index: number): GrandTableauPosition {

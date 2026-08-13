@@ -203,10 +203,11 @@ function buildGrandTableauPairs(
   const pairWeight = (i: number, j: number): number => {
     const inSigRow = sigRows.has(Math.floor(i / 9)) || sigRows.has(Math.floor(j / 9));
     const inSigCol = sigCols.has(i % 9) || sigCols.has(j % 9);
-    const isNearSig = sigIndices.has(i) && Math.abs(i - j) < 9;
-    const isSigPair = sigIndices.has(i) || sigIndices.has(j);
+    const eitherIsSig = sigIndices.has(i) || sigIndices.has(j);
+    const isAdjacentToSig = eitherIsSig && Math.abs(i - j) < 9;
+    const isSigPair = eitherIsSig;
 
-    if (isNearSig) return 9;
+    if (isAdjacentToSig) return 9;
     if (isSigPair) return 7;
     if (inSigRow && inSigCol) return 6;
     if (inSigRow) return 5;
@@ -320,10 +321,10 @@ const TIMING_CARDS = SHARED_TIMING_CARDS;
 
 const QUESTION_TOPICS: Record<string, { cardIds: number[]; topic: string }[]> = {
   love: [
-    { cardIds: [24], topic: "Heart — love" },
-    { cardIds: [25], topic: "Ring — commitment" },
-    { cardIds: [4], topic: "House — domestic life" },
-    { cardIds: [29, 28], topic: "Woman/Man — partner" },
+    { cardIds: [24], topic: "Heart — emotional core" },
+    { cardIds: [25], topic: "Ring — commitment / agreement" },
+    { cardIds: [4], topic: "House — domestic situation" },
+    { cardIds: [29, 28], topic: "Woman/Man — a person relevant to the question" },
     { cardIds: [12], topic: "Birds — communication" },
   ],
   job: [
@@ -528,13 +529,22 @@ export function buildReadingContext(
 }
 
 function matchQuestionTopic(question: string, category: string): boolean {
-  const patterns: Record<string, string[]> = {
-    love: ["love", "relationship", "partner", "romance", "marri", "dating", "boyfriend", "girlfriend", "heart", "commit"],
-    job: ["job", "work", "career", "employ", "boss", "interview", "promot", "fir", "resign", "salary", "colleague"],
-    money: ["money", "finance", "income", "invest", "loan", "debt", "wealth", "budget", "afford", "pay"],
-    health: ["health", "ill", "sick", "disease", "pain", "heal", "recover", "doctor", "hospital", "wellness", "surgery"],
-    home: ["home", "house", "apartment", "move", "renovation", "roommate", "proper"],
-    travel: ["travel", "trip", "vacation", "journey", "flight", "visit", "holiday", "abroad"],
-  };
-  return patterns[category]?.some((kw) => question.includes(kw)) ?? false;
+  const wordBoundary = (kw: string) => new RegExp(`\\b${kw}\\b`, "i");
+  const matches = (kws: string[]) => kws.some((kw) => wordBoundary(kw).test(question));
+  switch (category) {
+    case "love":
+      return matches(["love", "relationship", "partner", "romance", "marri", "dating", "boyfriend", "girlfriend", "heart", "commit"]);
+    case "job":
+      return matches(["job", "work", "career", "employ", "boss", "interview", "promotion", "promoted", "promote", "firing", "fired", "fire", "layoff", "resign", "salary", "colleague"]);
+    case "money":
+      return matches(["money", "finance", "income", "invest", "loan", "debt", "wealth", "budget", "afford", "pay"]);
+    case "health":
+      return matches(["health", "illness", "sick", "disease", "pain", "heal", "recover", "doctor", "hospital", "wellness", "surgery"]);
+    case "home":
+      return matches(["home", "house", "apartment", "move", "renovation", "roommate", "property"]);
+    case "travel":
+      return matches(["travel", "trip", "vacation", "journey", "flight", "visit", "holiday", "abroad"]);
+    default:
+      return false;
+  }
 }

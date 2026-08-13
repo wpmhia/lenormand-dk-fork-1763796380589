@@ -1,5 +1,5 @@
 import { Card } from "@/lib/types";
-import { TIMING_CARD_IDS, getTimingCard, TimingCardDefinition } from "@/lib/timing";
+import { getTimingCard, TimingCardDefinition } from "@/lib/timing";
 
 export const BANNED_TERMS = [
   "energy",
@@ -85,18 +85,27 @@ export function validateReadingOutput(
     .split("\n")
     .filter((line) => !/^#{1,6}\s/.test(line))
     .join("\n");
-  const cardNamePattern = /\b(?:Rider|Clover|Ship|House|Tree|Clouds|Snake|Coffin|Bouquet|Scythe|Whip|Birds|Child|Fox|Bear|Stars|Stork|Dog|Tower|Garden|Mountain|Paths|Crossroads|Mice|Heart|Ring|Book|Letter|Man|Woman|Lily|Sun|Moon|Key|Fish|Anchor|Cross)\b/g;
+  const cardNamePattern = /\b([A-Za-z][a-z]+)\b/g;
+  const knownCardNames = new Set([
+    "rider", "clover", "ship", "house", "tree", "clouds", "snake", "coffin", "bouquet", "scythe",
+    "whip", "birds", "child", "fox", "bear", "stars", "stork", "dog", "tower", "garden",
+    "mountain", "paths", "crossroads", "mice", "heart", "ring", "book", "letter", "man",
+    "woman", "lily", "sun", "moon", "key", "fish", "anchor", "cross",
+  ]);
   const mentionedCards = new Set<string>();
   let match;
   while ((match = cardNamePattern.exec(bodyWithoutHeadings)) !== null) {
-    mentionedCards.add(match[0].toLowerCase());
+    const lower = match[1].toLowerCase();
+    if (knownCardNames.has(lower)) {
+      mentionedCards.add(lower);
+    }
   }
 
   const nameToId: Record<string, number> = {
     rider: 1, clover: 2, ship: 3, house: 4, tree: 5, clouds: 6, snake: 7,
     coffin: 8, bouquet: 9, scythe: 10, whip: 11, birds: 12, child: 13,
     fox: 14, bear: 15, stars: 16, stork: 17, dog: 18, tower: 19,
-    garden: 20, mountain: 21, crossroads: 22, mice: 23, heart: 24,
+    garden: 20, mountain: 21, crossroads: 22, paths: 22, mice: 23, heart: 24,
     ring: 25, book: 26, letter: 27, man: 28, woman: 29, lily: 30,
     sun: 31, moon: 32, key: 33, fish: 34, anchor: 35, cross: 36,
   };
@@ -108,15 +117,65 @@ export function validateReadingOutput(
     }
   }
 
-  const timingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
-  const timingMatch = reading.match(timingPattern);
-  if (timingMatch) {
-    const hasTimingCard = drawnCardIds.some((id) => TIMING_CARD_IDS.has(id));
-    if (!hasTimingCard) {
+  const numericTimingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
+  const numericTimingMatch = reading.match(numericTimingPattern);
+
+  const nonnumericTimingPattern = /\b(?:within|in|over|coming|next|next few|last|past|the coming|the next)\s+(?:days?|weeks?|months?|years?|fortnight)\b|\bin\s+the\s+(?:short|long)\s+term\b|\bshort[\s-]?term\b|\blong[\s-]?term\b|\bsoon\b|\bvery soon\b/i;
+  const nonnumericTimingMatch = reading.match(nonnumericTimingPattern);
+
+  const drawnTimingCards = drawnCardIds
+    .map((id) => getTimingCard(id))
+    .filter((def): def is NonNullable<typeof def> => def !== undefined);
+
+  const rangeFromUnit = (unit: string): "days" | "weeks" | "months" | "years" =>
+    unit.startsWith("day") ? "days"
+    : unit.startsWith("week") ? "weeks"
+    : unit.startsWith("month") ? "months"
+    : "years";
+
+  if (numericTimingMatch) {
+    const phrase = numericTimingMatch[0].toLowerCase();
+    const range = phrase.includes("year") ? "years"
+      : phrase.includes("month") ? "months"
+      : phrase.includes("week") ? "weeks"
+      : "days";
+
+    if (drawnTimingCards.length === 0) {
       issues.push({
         type: "unsupported_timing",
-        message: `States timing "${timingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
+        message: `States timing "${numericTimingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
       });
+    } else {
+      const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.range));
+      if (!allowedRanges.has(range)) {
+        issues.push({
+          type: "unsupported_timing",
+          message: `States timing "${numericTimingMatch[0]}" which is outside the range indicated by drawn timing card(s) (${drawnTimingCards.map((tc) => tc.name).join(", ")} → ${[...allowedRanges].join("/")})`,
+        });
+      }
+    }
+  }
+
+  if (nonnumericTimingMatch) {
+    const unitMatch = nonnumericTimingMatch[0].match(/(days?|weeks?|months?|years?|fortnight)/i);
+    const termMatch = nonnumericTimingMatch[0].match(/\b(short|long)[\s-]?term\b/i);
+    const range = termMatch ? (termMatch[1].toLowerCase() === "short" ? "days" : "years")
+      : unitMatch ? rangeFromUnit(unitMatch[1].toLowerCase())
+      : "days";
+
+    if (drawnTimingCards.length === 0) {
+      issues.push({
+        type: "unsupported_timing",
+        message: `States timing "${nonnumericTimingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
+      });
+    } else {
+      const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.range));
+      if (!allowedRanges.has(range)) {
+        issues.push({
+          type: "unsupported_timing",
+          message: `States timing "${nonnumericTimingMatch[0]}" which is outside the range indicated by drawn timing card(s) (${drawnTimingCards.map((tc) => tc.name).join(", ")} → ${[...allowedRanges].join("/")})`,
+        });
+      }
     }
   }
 
@@ -170,7 +229,9 @@ export function isCriticalIssue(issue: ValidationIssue): boolean {
     issue.type === "banned_term" ||
     issue.type === "invented_card" ||
     issue.type === "unsupported_timing" ||
-    issue.type === "empty_section"
+    issue.type === "empty_section" ||
+    issue.type === "missing_section" ||
+    issue.type === "extra_section"
   );
 }
 
@@ -275,13 +336,21 @@ interface NormalizedFallbackCard {
   name: string;
   keywords: string[];
   meaning?: { general: string };
-  traditionalPairMeaning?: string;
+}
+
+export interface FallbackPair {
+  indexA: number;
+  indexB: number;
+  cardAName: string;
+  cardBName: string;
+  meaning: string;
 }
 
 export function buildDeterministicFallback(
   drawnCards: NormalizedFallbackCard[],
   spreadId: string,
   question: string,
+  pairs?: FallbackPair[],
 ): string {
   const q = question ? `Question: "${question}"` : "";
   const qLine = q ? `\n_${q}_\n\n` : "\n\n";
@@ -291,24 +360,39 @@ export function buildDeterministicFallback(
   if (drawnCards.length === 1) {
     const c = drawnCards[0];
     const kw = c.keywords?.slice(0, 3).join(", ") || "";
-    const note = c.meaning?.general || c.traditionalPairMeaning || "";
+    const note = c.meaning?.general || "";
     const opener = question
       ? `This is the situation you are sitting with regarding "${question}".`
       : `This is what the drawn card says about the situation.`;
     return `## Reading${qLine}${opener} **${c.name}** is the focus${kw ? ` — ${kw}` : ""}${note ? `. ${note}` : ""}.`;
   }
 
+  if (spreadId === "grand-tableau" && drawnCards.length === 36) {
+    return buildGrandTableauFallback(drawnCards, question, qLine, pairs);
+  }
+
+  return buildLinearFallback(drawnCards, question, qLine, pairs);
+}
+
+function buildLinearFallback(
+  drawnCards: NormalizedFallbackCard[],
+  question: string,
+  qLine: string,
+  pairs?: FallbackPair[],
+): string {
   const pairBullets: string[] = [];
   for (let i = 0; i < drawnCards.length - 1; i++) {
     const a = drawnCards[i];
     const b = drawnCards[i + 1];
-    const meaning = a.traditionalPairMeaning || b.traditionalPairMeaning || `${a.name} combined with ${b.name} sets the direction of this stretch of the line.`;
+    const meaning = pairs?.find(
+      (p) => p.indexA === i && p.indexB === i + 1,
+    )?.meaning || `${a.name} combined with ${b.name} sets the direction of this stretch of the line.`;
     pairBullets.push(`- **${a.name} + ${b.name}**: ${meaning}`);
   }
 
   const last = drawnCards[drawnCards.length - 1];
   const lastKw = last.keywords?.slice(0, 2).join(", ") || last.name;
-  const lastMeaning = last.meaning?.general || last.traditionalPairMeaning || "";
+  const lastMeaning = last.meaning?.general || "";
 
   const chainNames = drawnCards.map((c) => c.name).join(", ");
   const opener = question
@@ -341,5 +425,99 @@ export function buildDeterministicFallback(
     timingLine,
     "**Observable sign:** Watch for the practical situation described by the closing pair to start showing up in concrete form.",
     `**Practical action:** Move in the direction **${last.name}** suggests and respond to **${drawnCards[drawnCards.length - 1].name}** in kind.`,
+  ].join("\n");
+}
+
+function buildGrandTableauFallback(
+  drawnCards: NormalizedFallbackCard[],
+  question: string,
+  qLine: string,
+  pairs?: FallbackPair[],
+): string {
+  const findPair = (a: number, b: number): string | undefined =>
+    pairs?.find((p) => p.indexA === a && p.indexB === b)?.meaning;
+
+  const womanIdx = drawnCards.findIndex((c) => c.id === 29);
+  const manIdx = drawnCards.findIndex((c) => c.id === 28);
+  const sigIdx = womanIdx >= 0 ? womanIdx : manIdx;
+  const sig = sigIdx >= 0 ? drawnCards[sigIdx] : null;
+  const sigName = sig?.name || "Significator";
+  const sigRow = sigIdx >= 0 ? Math.floor(sigIdx / 9) + 1 : 0;
+  const sigCol = sigIdx >= 0 ? (sigIdx % 9) + 1 : 0;
+
+  const aroundBullets: string[] = [];
+  if (sigIdx >= 0 && sig) {
+    const sigNameLocal = sig.name;
+    const row = Math.floor(sigIdx / 9);
+    const col = sigIdx % 9;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        const ni = (row + dr) * 9 + (col + dc);
+        if (ni < 0 || ni >= 36) continue;
+        const nb = drawnCards[ni];
+        if (!nb) continue;
+        const a = Math.min(sigIdx, ni);
+        const b = Math.max(sigIdx, ni);
+        const meaning = findPair(a, b) || `${sigNameLocal} next to ${nb.name}: practical direct influence on the querent.`;
+        aroundBullets.push(`- **${sigNameLocal} + ${nb.name}**: ${meaning}`);
+      }
+    }
+  }
+
+  const houseBullets: string[] = [];
+  const houseTopicIds = new Set([5, 4, 24, 14, 15, 35, 34, 3]);
+  for (let i = 0; i < drawnCards.length; i++) {
+    const c = drawnCards[i];
+    if (!houseTopicIds.has(c.id)) continue;
+    const houseCardName = c.name;
+    const sigPair = sigIdx >= 0 ? findPair(Math.min(sigIdx, i), Math.max(sigIdx, i)) : undefined;
+    houseBullets.push(`- **House of ${houseCardName}** (position ${i + 1}): ${sigPair || `direct placement on the ${houseCardName} house${sigIdx >= 0 ? `, linked to ${sigName}` : ""}.`}`);
+  }
+
+  const corners = [drawnCards[0], drawnCards[8], drawnCards[27], drawnCards[35]];
+  const cornersLine = `Corners: ${corners.map((c) => c.name).join(", ")}.`;
+  const centerFour = [drawnCards[13], drawnCards[14], drawnCards[22], drawnCards[23]];
+  const centerLine = `Center four: ${centerFour.map((c) => c.name).join(", ")}.`;
+  const cardsOfFate = [drawnCards[32], drawnCards[33], drawnCards[34], drawnCards[35]];
+  const fateLine = `Cards of Fate (bottom row): ${cardsOfFate.map((c) => c.name).join(", ")}.`;
+
+  const opener = question
+    ? `This Grand Tableau addresses "${question}".`
+    : `This Grand Tableau addresses the full life situation.`;
+
+  const overview = `${opener} Reading all **${drawnCards.length}** drawn cards in the 4×9 grid, the situation is read primarily around the significator at ${sigName}${sigIdx >= 0 ? `, Row ${sigRow}, Column ${sigCol}` : ""}. The tableau's corners, center four, and Cards of Fate are listed below as anchors; the pairs surrounding the significator carry the most immediate information, and topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) show where the main life themes sit.`;
+
+  const primaryTimingCards: TimingCardDefinition[] = [];
+  for (const c of drawnCards) {
+    const def = getTimingCard(c.id);
+    if (def) primaryTimingCards.push(def);
+  }
+
+  const timingLine = primaryTimingCards.length > 0
+    ? primaryTimingCards.length === 1
+      ? `**Likely timing:** ${primaryTimingCards[0].promptGuidance}`
+      : `**Likely timing:** ${primaryTimingCards.map((t) => t.name).join(" and ")} are both drawn — ${primaryTimingCards[0].promptGuidance}`
+    : "**Likely timing:** Not clearly shown by these cards.";
+
+  return [
+    `## Grand Tableau overview${qLine}${overview}`,
+    "",
+    cornersLine,
+    centerLine,
+    fateLine,
+    "",
+    "## Around the significator",
+    "",
+    aroundBullets.length > 0 ? aroundBullets.join("\n") : `- No significator found in this spread; read the tableau as a whole.`,
+    "",
+    "## Houses and mirrors",
+    "",
+    houseBullets.length > 0 ? houseBullets.join("\n") : "- No topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) appeared in the spread.",
+    "",
+    "## Prediction",
+    "",
+    timingLine,
+    "**Practical action:** Treat the immediate significator neighbourhood as the most actionable area of the reading; the topic houses indicate where the longer-term pressure or support sits.",
   ].join("\n");
 }

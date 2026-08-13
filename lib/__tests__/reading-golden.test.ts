@@ -68,12 +68,12 @@ describe("golden output: validateReadingOutput", () => {
     expect(isCriticalIssue({ type: "unsupported_timing", message: "x" })).toBe(true);
   });
 
-  it("does not treat extra_section as critical (formatting only)", () => {
-    expect(isCriticalIssue({ type: "extra_section", message: "x" })).toBe(false);
+  it("treats extra_section as critical (model must follow heading contract)", () => {
+    expect(isCriticalIssue({ type: "extra_section", message: "x" })).toBe(true);
   });
 
-  it("does not treat missing_section as critical (LLM may continue anyway)", () => {
-    expect(isCriticalIssue({ type: "missing_section", message: "x" })).toBe(false);
+  it("treats missing_section as critical (model must include required headings)", () => {
+    expect(isCriticalIssue({ type: "missing_section", message: "x" })).toBe(true);
   });
 });
 
@@ -117,17 +117,19 @@ describe("golden output: normalizeMarkdown is non-destructive", () => {
 });
 
 describe("golden output: buildDeterministicFallback uses traditional pair meanings", () => {
-  it("uses provided traditional pair meaning verbatim in the bullets", () => {
+  it("uses provided pair meaning verbatim in the bullets for the correct pair", () => {
     const drawn = [
-      { id: 12, name: "Birds", keywords: ["communication"], meaning: undefined, traditionalPairMeaning: "Lucky knowledge" },
-      { id: 26, name: "Book", keywords: ["knowledge"], meaning: undefined, traditionalPairMeaning: "Learning something new" },
+      { id: 12, name: "Birds", keywords: ["communication"] },
+      { id: 26, name: "Book", keywords: ["knowledge"] },
     ];
-    const out = buildDeterministicFallback(drawn, "sentence-3", "Will I hear back soon?");
+    const pairs = [
+      { indexA: 0, indexB: 1, cardAName: "Birds", cardBName: "Book", meaning: "Knowledge arriving through communication" },
+    ];
+    const out = buildDeterministicFallback(drawn, "sentence-3", "Will I hear back soon?", pairs);
     expect(out).toContain("## Reading");
     expect(out).toContain("## Key combinations");
     expect(out).toContain("## Prediction");
-    expect(out).toContain("Lucky knowledge");
-    expect(out).toContain("Learning something new");
+    expect(out).toContain("Knowledge arriving through communication");
     expect(out).toContain("**Most likely development:**");
     expect(out).toContain("**Likely timing:**");
     expect(out).toContain("**Observable sign:**");
@@ -138,5 +140,14 @@ describe("golden output: buildDeterministicFallback uses traditional pair meanin
     const out = buildDeterministicFallback([], "single-card", "");
     expect(out).toContain("## Reading");
     expect(out).toContain("No cards were drawn");
+  });
+
+  it("uses grand-tableau structure for a 36-card spread", () => {
+    const drawn = Array.from({ length: 36 }, (_, i) => ({ id: i + 1, name: `Card ${i + 1}`, keywords: [`Card ${i + 1}`] }));
+    const out = buildDeterministicFallback(drawn, "grand-tableau", "test");
+    expect(out).toContain("## Grand Tableau overview");
+    expect(out).toContain("## Around the significator");
+    expect(out).toContain("## Houses and mirrors");
+    expect(out).toContain("## Prediction");
   });
 });
