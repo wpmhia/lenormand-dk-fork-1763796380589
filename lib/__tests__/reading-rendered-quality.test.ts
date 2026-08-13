@@ -333,3 +333,69 @@ describe("golden: prompt mandates the three-part arc", () => {
     expect(prompt).toMatch(/Do not repeat the Interpretation/);
   });
 });
+
+describe("golden: timing validation only scans the Prediction section", () => {
+  it("does not flag 'long-term stability' in the Interpretation section (Lily + Anchor case)", () => {
+    // Lily + Anchor — no timing card drawn. The Mistral reading could legitimately
+    // describe "long-term professional stability" in Interpretation. That phrase is
+    // descriptive, not a timing claim, so it must not trigger unsupported_timing.
+    const reading = `## Interpretation
+
+This line points to long-term professional stability. The drawn cards describe a steady outcome that does not require a specific timeframe.
+
+## Cards
+
+- **Lily + Anchor**: peace and stability over the long arc.
+
+## Prediction
+
+**Most likely development:** A stable, secure outcome is the primary tendency of this line.
+**Likely timing:** Not clearly shown by these cards.
+**Watch for:** The development begins to appear in concrete form.
+**Practical action:** Move toward the stable outcome in a calm way.`;
+    const result = validateReadingOutput(reading, [30, 35], "sentence-3");
+    const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
+    expect(timingIssue).toBeUndefined();
+    expect(result.valid).toBe(true);
+  });
+
+  it("does not flag 'within weeks' or 'soon' in the Interpretation or Cards sections", () => {
+    const reading = `## Interpretation
+
+This line develops soon around a short-cycle discussion. The drawn cards describe an active period in the next while.
+
+## Cards
+
+- **Birds + Letter**: communication within days.
+
+## Prediction
+
+**Most likely development:** A concrete conversation is the primary tendency of this line.
+**Likely timing:** Not clearly shown by these cards.
+**Watch for:** A call or message arrives.
+**Practical action:** Respond to the first message.`;
+    const result = validateReadingOutput(reading, [12, 27], "sentence-3");
+    const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
+    expect(timingIssue).toBeUndefined();
+  });
+
+  it("STILL flags timing inside the Prediction section (so the four-label contract is enforced)", () => {
+    const reading = `## Interpretation
+
+A meaningful sentence about the cards and the situation.
+
+## Cards
+
+- **Birds + Letter**: communication.
+
+## Prediction
+
+**Most likely development:** This resolves within 2 years.
+**Likely timing:** Not clearly shown by these cards.
+**Watch for:** The development begins to appear.
+**Practical action:** Respond when you see it.`;
+    const result = validateReadingOutput(reading, [12, 27], "sentence-3");
+    const timingIssue = result.issues.find((i) => i.type === "unsupported_timing");
+    expect(timingIssue).toBeDefined();
+  });
+});

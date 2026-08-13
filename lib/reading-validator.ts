@@ -128,11 +128,16 @@ export function validateReadingOutput(
     }
   }
 
+  // Timing validation only applies inside the Prediction section.
+  // The Interpretation and Cards sections can freely describe stability, change, etc.
+  // ("long-term stability" is descriptive, not a timing claim).
+  // The dedicated "Likely timing:" label inside Prediction is where timing is asserted.
+  const predictionSection = getSectionBody(reading, "## Prediction");
   const numericTimingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
-  const numericTimingMatch = reading.match(numericTimingPattern);
+  const numericTimingMatch = predictionSection.match(numericTimingPattern);
 
   const nonnumericTimingPattern = /\b(?:within|in|over|coming|next|next few|last|past|the coming|the next)\s+(?:days?|weeks?|months?|years?|fortnight)\b|\bin\s+the\s+(?:short|long)\s+term\b|\bshort[\s-]?term\b|\blong[\s-]?term\b|\bsoon\b|\bvery soon\b/i;
-  const nonnumericTimingMatch = reading.match(nonnumericTimingPattern);
+  const nonnumericTimingMatch = predictionSection.match(nonnumericTimingPattern);
 
   const drawnTimingCards = drawnCardIds
     .map((id) => getTimingCard(id))
@@ -154,14 +159,14 @@ export function validateReadingOutput(
     if (drawnTimingCards.length === 0) {
       issues.push({
         type: "unsupported_timing",
-        message: `States timing "${numericTimingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
+        message: `States timing "${numericTimingMatch[0]}" in Prediction but no timing card (Birds, Stork, Tree, Moon) was drawn`,
       });
     } else {
       const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.validatorRange));
       if (!allowedRanges.has(range)) {
         issues.push({
           type: "unsupported_timing",
-          message: `States timing "${numericTimingMatch[0]}" which is outside the range indicated by drawn timing card(s) (${drawnTimingCards.map((tc) => tc.name).join(", ")} → ${[...allowedRanges].join("/")})`,
+          message: `States timing "${numericTimingMatch[0]}" in Prediction which is outside the range indicated by drawn timing card(s) (${drawnTimingCards.map((tc) => tc.name).join(", ")} → ${[...allowedRanges].join("/")})`,
         });
       }
     }
@@ -177,14 +182,14 @@ export function validateReadingOutput(
     if (drawnTimingCards.length === 0) {
       issues.push({
         type: "unsupported_timing",
-        message: `States timing "${nonnumericTimingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
+        message: `States timing "${nonnumericTimingMatch[0]}" in Prediction but no timing card (Birds, Stork, Tree, Moon) was drawn`,
       });
     } else {
       const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.validatorRange));
       if (!allowedRanges.has(range)) {
         issues.push({
           type: "unsupported_timing",
-          message: `States timing "${nonnumericTimingMatch[0]}" which is outside the range indicated by drawn timing card(s) (${drawnTimingCards.map((tc) => tc.name).join(", ")} → ${[...allowedRanges].join("/")})`,
+          message: `States timing "${nonnumericTimingMatch[0]}" in Prediction which is outside the range indicated by drawn timing card(s) (${drawnTimingCards.map((tc) => tc.name).join(", ")} → ${[...allowedRanges].join("/")})`,
         });
       }
     }
@@ -415,6 +420,7 @@ function buildPredictionBlock(
   primaryKw: string,
   primaryMeaning: string,
   closingPairNames: string,
+  hasClosingPairMeaning: boolean,
 ): string {
   const primaryTimingCards: TimingCardDefinition[] = [];
   for (const c of drawnCards) {
@@ -428,11 +434,19 @@ function buildPredictionBlock(
   }));
   const timingLine = `**Likely timing:** ${buildPredictionTimingLine(timingEvidence)}`;
 
+  const developmentLine = primaryMeaning
+    ? `**Most likely development:** The closing card **${primaryCardName}** (${primaryKw}) is the primary tendency of this situation — ${primaryMeaning}.`
+    : `**Most likely development:** The closing card **${primaryCardName}** (${primaryKw}) is the primary tendency of this situation.`;
+  const watchForLine = hasClosingPairMeaning
+    ? `**Watch for:** The development described by the closing pair (**${closingPairNames}**) begins to appear in practical form.`
+    : `**Watch for:** The development begins to appear in practical form.`;
+  const actionLine = `**Practical action:** This is a deterministic fallback, not an AI reading. Draw again or ask a follow-up question for a fuller interpretation.`;
+
   return [
-    `**Most likely development:** The chain points toward **${primaryCardName}** (${primaryKw}) as the closing tendency of this situation${primaryMeaning ? ` — ${primaryMeaning}` : ""}.`,
+    developmentLine,
     timingLine,
-    `**Watch for:** Watch for the practical situation described by the closing pair (**${closingPairNames}**) to start showing up in concrete form.`,
-    `**Practical action:** Move in the direction **${primaryCardName}** suggests and respond to it in kind.`,
+    watchForLine,
+    actionLine,
   ].join("\n");
 }
 
@@ -446,10 +460,15 @@ function buildLinearFallback(
   for (let i = 0; i < drawnCards.length - 1; i++) {
     const a = drawnCards[i];
     const b = drawnCards[i + 1];
-    const meaning = pairs?.find(
+    const pairMeaning = pairs?.find(
       (p) => p.indexA === i && p.indexB === i + 1,
-    )?.meaning || `${a.name} combined with ${b.name} sets the direction of this stretch of the line.`;
-    pairBullets.push(`- **${a.name} + ${b.name}**: ${meaning}`);
+    )?.meaning;
+    if (pairMeaning) {
+      pairBullets.push(`- **${a.name} + ${b.name}**: ${pairMeaning}`);
+    } else {
+      // Don't invent filler. State plainly that no canonical combination meaning exists for this pair.
+      pairBullets.push(`- **${a.name} + ${b.name}**: (no specific combination meaning available)`);
+    }
   }
 
   const last = drawnCards[drawnCards.length - 1];
@@ -458,15 +477,25 @@ function buildLinearFallback(
 
   const chainNames = drawnCards.map((c) => c.name).join(", ");
   const opener = question
-    ? `This reading addresses "${question}".`
-    : `This reading addresses the situation at hand.`;
-  const interpretation = `${opener} The spread **${chainNames}** reads as one Lenormand chain: what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}**, and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) is where the line is heading. The relevant combinations are listed below as evidence; the forward-looking forecast is in the final section.`;
+    ? `This fallback addresses "${question}".`
+    : `This fallback addresses the situation at hand.`;
+  const interpretation = `${opener} The spread **${chainNames}** reads as one Lenormand chain: what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}**, and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) is where the line is heading. The combinations below are evidence; the forecast is in the final section. This is a deterministic fallback reading, not an AI-generated interpretation.`;
 
+  const closingPairIndex = drawnCards.length - 2;
+  const closingPair = pairs?.find(
+    (p) => p.indexA === closingPairIndex && p.indexB === closingPairIndex + 1,
+  );
   const closingPairNames = drawnCards.length >= 2
     ? `${drawnCards[drawnCards.length - 2].name} + ${last.name}`
     : last.name;
-
-  const predictionBlock = buildPredictionBlock(drawnCards, last.name, lastKw, lastMeaning, closingPairNames);
+  const predictionBlock = buildPredictionBlock(
+    drawnCards,
+    last.name,
+    lastKw,
+    lastMeaning,
+    closingPairNames,
+    Boolean(closingPair?.meaning),
+  );
 
   return [
     `## Interpretation${qLine}${interpretation}`,
@@ -512,8 +541,12 @@ function buildGrandTableauFallback(
         if (!nb) continue;
         const a = Math.min(sigIdx, ni);
         const b = Math.max(sigIdx, ni);
-        const meaning = findPair(a, b) || `${sigNameLocal} next to ${nb.name}: practical direct influence on the querent.`;
-        aroundBullets.push(`- **${sigNameLocal} + ${nb.name}**: ${meaning}`);
+        const meaning = findPair(a, b);
+        if (meaning) {
+          aroundBullets.push(`- **${sigNameLocal} + ${nb.name}**: ${meaning}`);
+        } else {
+          aroundBullets.push(`- **${sigNameLocal} + ${nb.name}**: (no specific combination meaning available)`);
+        }
       }
     }
   }
@@ -525,7 +558,11 @@ function buildGrandTableauFallback(
     if (!houseTopicIds.has(c.id)) continue;
     const houseCardName = c.name;
     const sigPair = sigIdx >= 0 ? findPair(Math.min(sigIdx, i), Math.max(sigIdx, i)) : undefined;
-    houseBullets.push(`- **House of ${houseCardName}** (position ${i + 1}): ${sigPair || `direct placement on the ${houseCardName} house${sigIdx >= 0 ? `, linked to ${sigName}` : ""}.`}`);
+    houseBullets.push(
+      sigPair
+        ? `- **House of ${houseCardName}** (position ${i + 1}): ${sigPair}`
+        : `- **House of ${houseCardName}** (position ${i + 1}): (no specific combination meaning available)`,
+    );
   }
 
   const corners = [drawnCards[0], drawnCards[8], drawnCards[27], drawnCards[35]];
@@ -536,10 +573,10 @@ function buildGrandTableauFallback(
   const fateLine = `Cards of Fate (bottom row): ${cardsOfFate.map((c) => c.name).join(", ")}.`;
 
   const opener = question
-    ? `This Grand Tableau addresses "${question}".`
-    : `This Grand Tableau addresses the full life situation.`;
+    ? `This Grand Tableau fallback addresses "${question}".`
+    : `This Grand Tableau fallback addresses the full life situation.`;
 
-  const overview = `${opener} Reading all **${drawnCards.length}** drawn cards in the 4×9 grid, the situation is read primarily around the significator at ${sigName}${sigIdx >= 0 ? `, Row ${sigRow}, Column ${sigCol}` : ""}. The corners, center four, and Cards of Fate anchor the tableau; the pairs around the significator carry the most immediate information, and topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) show where the main life themes sit. The forward-looking forecast is in the final section.`;
+  const overview = `${opener} Reading all **${drawnCards.length}** drawn cards in the 4×9 grid${sigIdx >= 0 ? `, with the significator at **${sigName}** (Row ${sigRow}, Column ${sigCol})` : ""}. The corners, center four, and Cards of Fate anchor the tableau; the pairs around the significator carry the most immediate information, and topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) show where the main life themes sit. The forecast is in the final section. This is a deterministic fallback reading, not an AI-generated interpretation.`;
 
   const primaryTimingCards: TimingCardDefinition[] = [];
   for (const c of drawnCards) {
@@ -558,10 +595,10 @@ function buildGrandTableauFallback(
   const cardsOfFateNames = drawnCards.slice(32, 36).map((c) => c.name).join(", ");
 
   const predictionBlock = [
-    `**Most likely development:** The reading points toward ${primaryName} (${primaryKw}) as the closing tendency of this tableau. ${sigIdx >= 0 ? `Read the immediate neighbours of ${sigName} as the most actionable signals.` : "No significator is present; treat the bottom-row Cards of Fate as the long-term signal."}`,
+    `**Most likely development:** The closing tendency of this tableau points toward **${primaryName}** (${primaryKw}). ${sigIdx >= 0 ? `The immediate neighbours of ${sigName} are the most actionable signals.` : "No significator card was drawn; the bottom-row Cards of Fate carry the long-term signal."}`,
     `**Likely timing:** ${buildPredictionTimingLine(timingEvidence)}`,
-    `**Watch for:** Watch for the practical situation described by the cards of fate (${cardsOfFateNames || "the bottom row"}) to start showing up in concrete form.`,
-    `**Practical action:** Treat the immediate significator neighbourhood as the most actionable area of the reading; the topic houses indicate where the longer-term pressure or support sits.`,
+    `**Watch for:** The development described by the cards of fate (${cardsOfFateNames || "the bottom row"}) begins to appear in practical form.`,
+    `**Practical action:** This is a deterministic fallback, not an AI reading. Draw again or ask a follow-up question for a fuller interpretation.`,
   ].join("\n");
 
   return [

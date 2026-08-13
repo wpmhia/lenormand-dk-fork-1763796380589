@@ -114,19 +114,33 @@ export async function POST(request: Request) {
     if (!result.text.trim()) {
       const fb = buildFallbackCards(validated.cards, cardsMap);
       const fallback = buildDeterministicFallback(fb.cards, validated.spreadId, validated.question, fb.pairs);
-      return jsonResponse({ reading: fallback, rateLimitResult, source: "fallback" });
+      return jsonResponse({
+        reading: fallback,
+        rateLimitResult,
+        source: "fallback",
+        fallbackReason: "empty-mistral-output",
+      });
     }
 
     let finalText = normalizeMarkdown(result.text);
 
+    const outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
+    const markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
     const finalCritical = [
-      ...validateReadingOutput(finalText, drawnCardIds, validated.spreadId).issues.filter(isCriticalIssue),
-      ...validateReadingMarkdown(finalText, validated.spreadId).issues.filter(isCriticalIssue),
+      ...outputValidation.issues.filter(isCriticalIssue),
+      ...markdownValidation.issues.filter(isCriticalIssue),
     ];
 
     if (finalCritical.length > 0) {
+      // Validation rejected the Mistral answer; record why and substitute the fallback.
       const fb = buildFallbackCards(validated.cards, cardsMap);
       finalText = buildDeterministicFallback(fb.cards, validated.spreadId, validated.question, fb.pairs);
+      return jsonResponse({
+        reading: finalText,
+        rateLimitResult,
+        source: "fallback",
+        fallbackReason: finalCritical.map((i) => i.message).join("; "),
+      });
     }
 
     return jsonResponse({ reading: finalText, rateLimitResult, source: "mistral" });
@@ -154,15 +168,18 @@ function jsonResponse({
   reading,
   rateLimitResult,
   source,
+  fallbackReason,
 }: {
   reading: string;
   rateLimitResult: { limit: number; remaining: number; reset: number };
   source: "mistral" | "fallback";
+  fallbackReason?: string;
 }) {
   return new Response(
     JSON.stringify({
       reading,
       source,
+      ...(fallbackReason ? { fallbackReason } : {}),
       rateLimit: {
         limit: rateLimitResult.limit,
         remaining: rateLimitResult.remaining,
