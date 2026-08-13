@@ -148,6 +148,6 @@ describe("prompt-builder: timing only via Timing evidence section", () => {
   it("system prompt tells the model to use the 'Timing evidence' section as the only timing source", () => {
     const sp = buildSystemPrompt(3);
     expect(sp).toMatch(/Timing evidence/i);
-    expect(sp).toMatch(/Use only that/i);
+    expect(sp).toMatch(/only when the prompt supplies/);
   });
 });
