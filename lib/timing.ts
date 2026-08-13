@@ -1,9 +1,13 @@
 import { TimingEvidence } from "@/lib/reading-context";
 
+export type TimingRangeKey = "days" | "weeks" | "months" | "long-term";
+
 export interface TimingCardDefinition {
   id: number;
   name: string;
-  range: string;
+  range: TimingRangeKey;
+  output: string;
+  validatorRange: "days" | "weeks" | "months" | "years";
   promptGuidance: string;
 }
 
@@ -12,6 +16,8 @@ export const TIMING_CARDS: Record<number, TimingCardDefinition> = {
     id: 12,
     name: "Birds",
     range: "days",
+    output: "Within days or very soon.",
+    validatorRange: "days",
     promptGuidance:
       "Birds are present. Likely timing: within days or very soon — communication, news, or short-cycle development.",
   },
@@ -19,6 +25,8 @@ export const TIMING_CARDS: Record<number, TimingCardDefinition> = {
     id: 17,
     name: "Stork",
     range: "weeks",
+    output: "Over the coming weeks.",
+    validatorRange: "weeks",
     promptGuidance:
       "Stork is present. Likely timing: over the coming weeks — a change, transition, or relocation cycle is starting.",
   },
@@ -26,13 +34,17 @@ export const TIMING_CARDS: Record<number, TimingCardDefinition> = {
     id: 32,
     name: "Moon",
     range: "months",
+    output: "Within the current lunar cycle, roughly a month.",
+    validatorRange: "months",
     promptGuidance:
       "Moon is present. Likely timing: around an upcoming lunar phase or emotional cycle — about a month, but tied to the querent's rhythm.",
   },
   5: {
     id: 5,
     name: "Tree",
-    range: "years",
+    range: "long-term",
+    output: "Long-term; likely months to years.",
+    validatorRange: "years",
     promptGuidance:
       "Tree is present. Likely timing: develops slowly; think in months to years rather than weeks. Long-term, organic progress.",
   },
@@ -48,8 +60,38 @@ export function isTimingCardId(id: number): boolean {
 
 export const TIMING_CARD_IDS: ReadonlySet<number> = new Set(Object.keys(TIMING_CARDS).map(Number));
 
+export const NO_TIMING_OUTPUT = "Not clearly shown by these cards.";
+
 export const NO_TIMING_INSTRUCTION =
   "No timing evidence detected. Do not infer a time range — write: Likely timing: Not clearly shown by these cards.";
+
+/**
+ * Build the deterministic timing line for the Prediction contract.
+ * This is what the model is told to repeat verbatim in **Likely timing:**.
+ */
+export function buildPredictionTimingLine(timingEvidence: TimingEvidence[]): string {
+  const recognised: TimingCardDefinition[] = [];
+  for (const te of timingEvidence) {
+    const def = getTimingCard(te.cardId);
+    if (def) recognised.push(def);
+  }
+
+  if (recognised.length === 0) return NO_TIMING_OUTPUT;
+  if (recognised.length === 1) return recognised[0].output;
+  const joined = recognised.map((d) => d.name).join(" and ");
+  return `${joined}: ${recognised.map((d) => d.output).join(" / ")}`;
+}
+
+export const PREDICTION_TIMING_LABEL = "Likely timing";
+
+export const REQUIRED_PREDICTION_FIELDS = [
+  "Most likely development",
+  "Likely timing",
+  "Watch for",
+  "Practical action",
+] as const;
+
+export type RequiredPredictionField = (typeof REQUIRED_PREDICTION_FIELDS)[number];
 
 export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[]): string {
   const recognised: TimingCardDefinition[] = [];

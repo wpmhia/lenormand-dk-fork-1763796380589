@@ -96,20 +96,29 @@ describe("prompt-builder: system prompt forbids relationship inference", () => {
 });
 
 describe("prompt-builder: Reading and Prediction have non-overlapping jobs", () => {
-  it("uses a simple June-style contract with three sections, no pseudo-headings inside instructions", () => {
+  it("uses a simple contract with three sections, no pseudo-headings inside instructions", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toMatch(/## Reading\s+Write 3-5 natural sentences/i);
     expect(prompt).toMatch(/## Key combinations/i);
-    expect(prompt).toMatch(/## Prediction\s+Give a concise concrete forecast/i);
+    expect(prompt).toMatch(/## Prediction/i);
   });
 
-  it("does not include the four mandatory Prediction sublabels (Most likely development/Likely timing/Observable sign/Practical action)", () => {
+  it("includes the four mandatory Prediction labels (Most likely development/Likely timing/Watch for/Practical action)", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).not.toContain("**Most likely development:**");
-    expect(prompt).not.toContain("**Observable sign:**");
-    expect(prompt).not.toContain("**Practical action:**");
+    expect(prompt).toContain("**Most likely development:**");
+    expect(prompt).toContain("**Likely timing:**");
+    expect(prompt).toContain("**Watch for:**");
+    expect(prompt).toContain("**Practical action:**");
+  });
+
+  it("includes a structured Prediction synthesis evidence block", () => {
+    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toContain("Prediction synthesis evidence:");
+    expect(prompt).toMatch(/Primary outcome:/);
+    expect(prompt).toMatch(/Strongest transition:/);
   });
 
   it("does not include pseudo-heading meta-explanations about section roles", () => {
