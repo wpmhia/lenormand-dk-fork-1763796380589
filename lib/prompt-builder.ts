@@ -55,11 +55,115 @@ const BAD_COMBO_PHRASES = [
   "kilimanjaro",
   "internet router",
   "positive energy",
+  "positive change",
+  "positive transformation",
+  "positive surprise",
+  "positive announcement",
+  "positive recognition",
   "heated",
   "passion",
+  "passionate opportunity",
+  "passionate news",
+  "passionate voyage",
+  "passionate journey",
+  "passionate conflict",
+  "passionate decision",
+  "passionate argument",
+  "passionate advice",
+  "passionate communication",
+  "passionate chance",
   "lucky ",
   "fortunate ",
   "blessed ",
+  "blessing",
+  "lucky journey",
+  "lucky health",
+  "lucky conflict",
+  "lucky recovery",
+  "lucky commitment",
+  "lucky solution",
+  "lucky stability",
+  "lucky love",
+  "lucky authority",
+  "lucky strength",
+  "lucky gift",
+  "lucky change",
+  "lucky message",
+  "lucky home",
+  "lucky clarity",
+  "lucky ending",
+  "lucky escape",
+  "lucky decision",
+  "lucky friendship",
+  "lucky communication",
+  "lucky new beginning",
+  "lucky work",
+  "lucky wishes",
+  "lucky social",
+  "lucky overcoming",
+  "lucky choice",
+  "lucky knowledge",
+  "lucky wisdom",
+  "lucky success",
+  "lucky intuition",
+  "lucky abundance",
+  "lucky faith",
+  "fortunate journey",
+  "fortunate travel",
+  "fortunate home",
+  "fortunate family",
+  "fortunate health",
+  "fortunate recovery",
+  "fortunate clarity",
+  "fortunate resolution",
+  "fortunate escape",
+  "fortunate ending",
+  "fortunate closure",
+  "fortunate surprise",
+  "fortunate decision",
+  "fortunate conflict",
+  "fortunate communication",
+  "fortunate gossip",
+  "fortunate new beginning",
+  "fortunate creativity",
+  "fortunate work",
+  "fortunate strategy",
+  "fortunate strength",
+  "fortunate protection",
+  "fortunate wishes",
+  "fortunate change",
+  "fortunate movement",
+  "fortunate friendship",
+  "fortunate loyalty",
+  "fortunate authority",
+  "fortunate institution",
+  "fortunate social",
+  "fortunate community",
+  "fortunate overcoming",
+  "fortunate endurance",
+  "fortunate choice",
+  "fortunate recovery",
+  "fortunate loss",
+  "fortunate love",
+  "fortunate relationship",
+  "fortunate commitment",
+  "fortunate marriage",
+  "fortunate knowledge",
+  "fortunate learning",
+  "fortunate message",
+  "fortunate wisdom",
+  "fortunate maturity",
+  "fortunate success",
+  "fortunate happiness",
+  "fortunate intuition",
+  "fortunate solution",
+  "fortunate opportunity",
+  "fortunate abundance",
+  "fortunate wealth",
+  "fortunate stability",
+  "fortunate security",
+  "fortunate faith",
+  "fortunate sacrifice",
 ];
 
 function isUsableComboMeaning(meaning: string | undefined): boolean {
@@ -206,6 +310,7 @@ function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
   return (
     "\nAdjacent combinations:\n" +
     pairs
+      .filter((p) => isUsableComboMeaning(p.traditionalMeaning))
       .map((p) => {
         const left = fmtCard(p.cardA);
         const right = fmtCard(p.cardB);
@@ -260,6 +365,8 @@ function formatPetitTableau(
     "",
     "## Prediction",
     "",
+    PREDICTIVE_VOICE,
+    "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   ];
 
@@ -292,8 +399,8 @@ function formatGrandTableau(
   if (layout.primarySignificator) {
     importantHouseIds.add(layout.primarySignificator.card.id);
   }
-  if (layout.significators.woman) importantHouseIds.add(28);
-  if (layout.significators.man) importantHouseIds.add(29);
+  if (layout.significators.woman) importantHouseIds.add(29);
+  if (layout.significators.man) importantHouseIds.add(28);
 
   const sigHouseIdx = layout.primarySignificator?.index ?? -1;
   if (sigHouseIdx >= 0) {
@@ -376,6 +483,7 @@ function formatGrandTableau(
       parts.push("");
       parts.push("Vertical pairs through significator column:");
       const vpText = verticalAroundSig
+        .filter((vp) => isUsableComboMeaning(vp.traditionalMeaning))
         .map((vp) => {
           const m = vp.traditionalMeaning ? `: ${vp.traditionalMeaning}` : "";
           return `- ${fmtCard(vp.cardA)} + ${fmtCard(vp.cardB)}${m}`;
@@ -395,6 +503,8 @@ function formatGrandTableau(
     "## Houses and mirrors",
     "",
     "## Prediction",
+    "",
+    PREDICTIVE_VOICE,
     "",
     "Do not rename, add, or omit headings. Do not write text before the first heading. Use one-level bullets only. No tables, HTML, nested bullets, emojis, or raw JSON.",
   );

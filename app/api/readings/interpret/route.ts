@@ -20,7 +20,7 @@ import {
   normalizeMarkdown,
   buildDeterministicFallback,
   isCriticalIssue,
-  ValidationIssue,
+  FallbackPair,
 } from "@/lib/reading-validator";
 
 export async function OPTIONS() {
@@ -39,14 +39,6 @@ const mistral = createMistral({
   apiKey: MISTRAL_API_KEY || "",
 });
 
-const REPAIR_SYSTEM_PROMPT = `You are a Lenormand editor. Fix the reading below according to these rules:
-- Remove banned New Age or Tarot terms: energy, vibration, shadow work, higher self, soul lesson, chakra, archetype, the universe, spiritual journey, divine guidance, soul-purpose.
-- Remove any mention of cards that were NOT drawn.
-- Remove timing claims unless a timing card (Birds=days, Stork=weeks, Tree=years, Moon=phases) was drawn.
-- Keep all section headings exactly as they are.
-- Keep all valid card names and their meanings.
-- Output only the corrected reading, nothing else.`;
-
 export async function POST(request: Request) {
   try {
     const ip = getClientIP(request);
@@ -59,7 +51,15 @@ export async function POST(request: Request) {
       });
     }
 
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
     const validated = normalizeReadingRequest(body, cardsMap);
     const cardCount = validated.cards.length;
 
@@ -116,81 +116,13 @@ export async function POST(request: Request) {
     clearTimeout(timeout);
 
     if (!fullText.trim()) {
-      const fallback = buildDeterministicFallback(
-        validated.cards.map((c) => {
-          const full = cardsMap.get(c.id);
-          let traditionalPairMeaning: string | undefined;
-          if (full && validated.cards.length > 1) {
-            for (const other of validated.cards) {
-              if (other.id === c.id) continue;
-              const fwd = full.combos?.find((x) => x.withCardId === other.id);
-              const otherFull = cardsMap.get(other.id);
-              const rev = otherFull?.combos?.find((x) => x.withCardId === c.id);
-              const meaning = [fwd?.meaning, rev?.meaning].filter(Boolean).join(" - ");
-              if (meaning) {
-                traditionalPairMeaning = meaning;
-                break;
-              }
-            }
-          }
-          return {
-            id: c.id,
-            name: c.name,
-            keywords: c.keywords,
-            meaning: full?.meaning,
-            traditionalPairMeaning,
-          };
-        }),
-        validated.spreadId,
-        validated.question,
-      );
+      const fb = buildFallbackCards(validated.cards, cardsMap);
+      const fallback = buildDeterministicFallback(fb.cards, validated.spreadId, validated.question, fb.pairs);
       return streamTextAsSSE(fallback, corsHeaders, rateLimitResult);
     }
 
     const drawnCardIds = validated.cards.map((c) => c.id);
-    const validation = validateReadingOutput(fullText, drawnCardIds, validated.spreadId);
-    const mdValidation = validateReadingMarkdown(fullText, validated.spreadId);
-
-    const criticalIssues: ValidationIssue[] = [
-      ...validation.issues.filter(isCriticalIssue),
-      ...mdValidation.issues.filter(isCriticalIssue),
-    ];
-
-    let finalText = fullText;
-    let usedRepair = false;
-
-    if (criticalIssues.length > 0) {
-      try {
-        const repairIssueText = criticalIssues.map((i) => `- ${i.message}`).join("\n");
-        const repairResult = await streamText({
-          model: mistral(MISTRAL_PRODUCTION_MODEL),
-          system: REPAIR_SYSTEM_PROMPT,
-          prompt: `Reading to fix (critical issues: ${repairIssueText}):\n\n${fullText}\n\nDrawn card IDs: [${drawnCardIds.join(", ")}]`,
-          temperature: 0.1,
-          maxOutputTokens: maxTokens,
-          abortSignal: AbortSignal.timeout(15000),
-        });
-        let repaired = "";
-        for await (const chunk of repairResult.textStream) {
-          repaired += chunk;
-        }
-        if (repaired.trim()) {
-          const repairedCritical = [
-            ...validateReadingOutput(repaired, drawnCardIds, validated.spreadId).issues.filter(isCriticalIssue),
-            ...validateReadingMarkdown(repaired, validated.spreadId).issues.filter(isCriticalIssue),
-          ];
-          if (repairedCritical.length === 0) {
-            finalText = repaired;
-            usedRepair = true;
-          }
-        }
-      } catch {
-      }
-    }
-
-    if (!usedRepair) {
-      finalText = normalizeMarkdown(finalText);
-    }
+    let finalText = normalizeMarkdown(fullText);
 
     const finalCritical = [
       ...validateReadingOutput(finalText, drawnCardIds, validated.spreadId).issues.filter(isCriticalIssue),
@@ -198,34 +130,8 @@ export async function POST(request: Request) {
     ];
 
     if (finalCritical.length > 0) {
-      finalText = buildDeterministicFallback(
-        validated.cards.map((c) => {
-          const full = cardsMap.get(c.id);
-          let traditionalPairMeaning: string | undefined;
-          if (full && validated.cards.length > 1) {
-            for (const other of validated.cards) {
-              if (other.id === c.id) continue;
-              const fwd = full.combos?.find((x) => x.withCardId === other.id);
-              const otherFull = cardsMap.get(other.id);
-              const rev = otherFull?.combos?.find((x) => x.withCardId === c.id);
-              const meaning = [fwd?.meaning, rev?.meaning].filter(Boolean).join(" - ");
-              if (meaning) {
-                traditionalPairMeaning = meaning;
-                break;
-              }
-            }
-          }
-          return {
-            id: c.id,
-            name: c.name,
-            keywords: c.keywords,
-            meaning: full?.meaning,
-            traditionalPairMeaning,
-          };
-        }),
-        validated.spreadId,
-        validated.question,
-      );
+      const fb = buildFallbackCards(validated.cards, cardsMap);
+      finalText = buildDeterministicFallback(fb.cards, validated.spreadId, validated.question, fb.pairs);
     }
 
     return streamTextAsSSE(finalText, corsHeaders, rateLimitResult);
@@ -277,4 +183,92 @@ function streamTextAsSSE(text: string, headers: Record<string, string>, rateLimi
       ...headers,
     },
   });
+}
+
+interface FallbackCard {
+  id: number;
+  name: string;
+  keywords: string[];
+  meaning?: { general: string };
+}
+
+function findPairMeaning(
+  aId: number,
+  bId: number,
+  cardsMap: Map<number, Card>,
+): string | undefined {
+  const a = cardsMap.get(aId);
+  const b = cardsMap.get(bId);
+  if (!a || !b) return undefined;
+  const fwd = a.combos?.find((c) => c.withCardId === bId);
+  const rev = b.combos?.find((c) => c.withCardId === aId);
+  return [fwd?.meaning, rev?.meaning].filter(Boolean).join(" - ") || undefined;
+}
+
+function buildFallbackCards(
+  drawnCards: { id: number; name: string; keywords: string[] }[],
+  cardsMap: Map<number, Card>,
+): { cards: FallbackCard[]; pairs: FallbackPair[] } {
+  const cards: FallbackCard[] = drawnCards.map((c) => {
+    const full = cardsMap.get(c.id);
+    return {
+      id: c.id,
+      name: c.name,
+      keywords: c.keywords,
+      meaning: full?.meaning,
+    };
+  });
+
+  const pairs: FallbackPair[] = [];
+  const seen = new Set<string>();
+  const pushPair = (i: number, j: number) => {
+    const a = Math.min(i, j);
+    const b = Math.max(i, j);
+    const key = `${a}-${b}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    const meaning = findPairMeaning(cards[a].id, cards[b].id, cardsMap)
+      || `${cards[a].name} combined with ${cards[b].name} sets the direction of this stretch of the line.`;
+    pairs.push({
+      indexA: a,
+      indexB: b,
+      cardAName: cards[a].name,
+      cardBName: cards[b].name,
+      meaning,
+    });
+  };
+
+  if (cards.length === 36) {
+    for (let r = 0; r < 4; r++) {
+      for (let c = 0; c < 8; c++) {
+        pushPair(r * 9 + c, r * 9 + c + 1);
+      }
+    }
+    for (let c = 0; c < 9; c++) {
+      for (let r = 0; r < 3; r++) {
+        pushPair(r * 9 + c, (r + 1) * 9 + c);
+      }
+    }
+    const sigIndices = [
+      cards.findIndex((c) => c.id === 28),
+      cards.findIndex((c) => c.id === 29),
+    ].filter((i) => i >= 0);
+    for (const sigIdx of sigIndices) {
+      const row = Math.floor(sigIdx / 9);
+      const col = sigIdx % 9;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const ni = (row + dr) * 9 + (col + dc);
+          if (ni >= 0 && ni < 36) pushPair(sigIdx, ni);
+        }
+      }
+    }
+  } else {
+    for (let i = 0; i < cards.length - 1; i++) {
+      pushPair(i, i + 1);
+    }
+  }
+
+  return { cards, pairs };
 }

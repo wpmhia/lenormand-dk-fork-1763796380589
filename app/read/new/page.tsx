@@ -12,6 +12,7 @@ import {
   AUTHENTIC_SPREADS,
   COMPREHENSIVE_SPREADS,
   Spread,
+  SignificatorType,
 } from "@/lib/spreads";
 import { useAIAnalysis } from "@/hooks/useAIAnalysis";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
@@ -69,6 +70,7 @@ function NewReadingPageContent() {
   // Dialog state
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
   const [readingSaved, setReadingSaved] = useState(false);
+  const [significatorType, setSignificatorType] = useState<SignificatorType>("none");
 
   // AI Analysis
   const {
@@ -88,6 +90,7 @@ function NewReadingPageContent() {
     allCards,
     selectedSpread.id,
     step === "results",
+    significatorType,
   );
 
   // Reading history
@@ -114,6 +117,7 @@ function NewReadingPageContent() {
       setSelectedSpread(AUTHENTIC_SPREADS[1]);
       setError("");
       setReadingSaved(false);
+      setSignificatorType("none");
 
       resetAnalysis();
 
@@ -406,6 +410,8 @@ function NewReadingPageContent() {
                   reading={readingObj}
                   allCards={allCards}
                   spreadId={selectedSpread.id}
+                  significatorType={significatorType}
+                  onSignificatorChange={setSignificatorType}
                 />
               ) : (
                 <div className="p-4 text-center text-muted-foreground">

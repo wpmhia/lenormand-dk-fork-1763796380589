@@ -34,6 +34,8 @@ interface ReadingViewerProps {
   disableAnimations?: boolean;
   setCardRef?: (index: number) => (el: HTMLElement | null) => void;
   hideCardsDuringTransition?: boolean;
+  significatorType: SignificatorType;
+  onSignificatorChange: (value: SignificatorType) => void;
 }
 
 export const ReadingViewer = memo(function ReadingViewer({
@@ -46,11 +48,11 @@ export const ReadingViewer = memo(function ReadingViewer({
   disableAnimations = false,
   setCardRef,
   hideCardsDuringTransition = false,
+  significatorType,
+  onSignificatorChange,
 }: ReadingViewerProps) {
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [shareClicked, setShareClicked] = useState(false);
-  const [significatorType, setSignificatorType] =
-    useState<SignificatorType>("none");
   const [showAdvancedAnalysis, setShowAdvancedAnalysis] = useState(false);
 
   const cardIndex = useMemo(
@@ -98,7 +100,7 @@ export const ReadingViewer = memo(function ReadingViewer({
         reading={reading}
         spreadId={spreadId}
         significatorType={significatorType}
-        onSignificatorChange={setSignificatorType}
+        onSignificatorChange={onSignificatorChange}
         onShare={onShare}
         showShareButton={showShareButton}
         showReadingHeader={showReadingHeader}

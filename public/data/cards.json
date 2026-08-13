@@ -26,7 +26,7 @@
       },
       {
         "withCardId": 5,
-        "meaning": "The bonsai tree your friend promised to give you is on its way"
+        "meaning": "News about health, growth, or a long-term matter"
       },
       {
         "withCardId": 6,
@@ -106,7 +106,7 @@
       },
       {
         "withCardId": 27,
-        "meaning": "That emergency room visit bill is on the way"
+        "meaning": "News arriving by message, letter, or written communication"
       },
       {
         "withCardId": 30,
@@ -177,135 +177,135 @@
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Lucky news, fortunate message, good news arriving"
+        "meaning": "Good news arriving; a small but welcome piece of information"
       },
       {
         "withCardId": 3,
-        "meaning": "Lucky journey, fortunate travel, successful trip"
+        "meaning": "A short, pleasant journey; a brief trip abroad"
       },
       {
         "withCardId": 4,
-        "meaning": "Lucky home, fortunate family situation, blessed household"
+        "meaning": "Contentment at home; a happy domestic moment"
       },
       {
         "withCardId": 5,
-        "meaning": "Lucky health, fortunate recovery, good medical news"
+        "meaning": "Health improving; a small recovery or boost in well-being"
       },
       {
         "withCardId": 6,
-        "meaning": "Lucky clarity, fortunate resolution, confusion clearing luckily"
+        "meaning": "A small doubt or temporary uncertainty, soon cleared"
       },
       {
         "withCardId": 7,
-        "meaning": "Lucky escape from deception, fortunate avoidance of betrayal"
+        "meaning": "A small deception or minor setback disguised as luck"
       },
       {
         "withCardId": 8,
-        "meaning": "Lucky ending, fortunate closure, positive transformation"
+        "meaning": "End of a fortunate streak; luck running its course"
       },
       {
         "withCardId": 9,
-        "meaning": "Lucky gift, fortunate surprise, blessed appreciation"
+        "meaning": "A welcome gift or pleasant surprise"
       },
       {
         "withCardId": 10,
-        "meaning": "Lucky decision, fortunate cutting of ties, positive change"
+        "meaning": "A decision that cuts short a lucky opportunity"
       },
       {
         "withCardId": 11,
-        "meaning": "Lucky conflict resolution, fortunate passion, positive energy"
+        "meaning": "A minor argument; luck tested by conflict"
       },
       {
         "withCardId": 12,
-        "meaning": "Lucky communication, fortunate gossip, positive social news"
+        "meaning": "Cheerful chat; a pleasant social exchange"
       },
       {
         "withCardId": 13,
-        "meaning": "Lucky new beginning, fortunate creativity, blessed child"
+        "meaning": "Small joy, naivety, or a fresh lucky start"
       },
       {
         "withCardId": 14,
-        "meaning": "Lucky work opportunity, fortunate strategy, successful cunning"
+        "meaning": "Work opportunity, but watch for hidden self-interest"
       },
       {
         "withCardId": 15,
-        "meaning": "Lucky strength, fortunate protection, blessed power"
+        "meaning": "Fortunate business outcome; protected success"
       },
       {
         "withCardId": 16,
-        "meaning": "Lucky wishes coming true, fortunate guidance, blessed hope"
+        "meaning": "A wish coming true; hopeful guidance"
       },
       {
         "withCardId": 17,
-        "meaning": "Lucky change, fortunate movement, blessed transition"
+        "meaning": "A pleasant change or small transformation"
       },
       {
         "withCardId": 18,
-        "meaning": "Lucky friendship, fortunate loyalty, blessed companionship"
+        "meaning": "Loyal friendship and reliable good company"
       },
       {
         "withCardId": 19,
-        "meaning": "Lucky authority, fortunate institution, blessed structure"
+        "meaning": "A short-lived opportunity through authority or institution"
       },
       {
         "withCardId": 20,
-        "meaning": "Lucky social gathering, fortunate community, blessed public event"
+        "meaning": "A pleasant social gathering or public event"
       },
       {
         "withCardId": 21,
-        "meaning": "Lucky overcoming of obstacles, fortunate endurance, blessed stability"
+        "meaning": "A small obstacle to luck; brief delay"
       },
       {
         "withCardId": 22,
-        "meaning": "Lucky choice, fortunate decision, blessed direction"
+        "meaning": "A choice between two small opportunities"
       },
       {
         "withCardId": 23,
-        "meaning": "Lucky recovery from loss, fortunate stress relief, blessed recovery"
+        "meaning": "Eroded luck; a small loss wearing down good fortune"
       },
       {
         "withCardId": 24,
-        "meaning": "Lucky love, fortunate relationship, blessed romance"
+        "meaning": "Happiness in love; a cheerful emotional moment"
       },
       {
         "withCardId": 25,
-        "meaning": "Lucky commitment, fortunate marriage, blessed union"
+        "meaning": "Engagement, joyful commitment, or celebration"
       },
       {
         "withCardId": 26,
-        "meaning": "Lucky knowledge, fortunate learning, blessed education"
+        "meaning": "A fortunate secret revealed; a small discovery"
       },
       {
         "withCardId": 27,
-        "meaning": "Lucky message, fortunate communication, blessed information"
+        "meaning": "A pleasant message or welcome correspondence"
       },
       {
         "withCardId": 30,
-        "meaning": "Lucky wisdom, fortunate maturity, blessed peace"
+        "meaning": "Peaceful happiness; serene contentment"
       },
       {
         "withCardId": 31,
-        "meaning": "Lucky success, fortunate happiness, blessed achievement"
+        "meaning": "Great happiness and overall success"
       },
       {
         "withCardId": 32,
-        "meaning": "Lucky intuition, fortunate creativity, blessed dreams"
+        "meaning": "Recognition or emotional reward"
       },
       {
         "withCardId": 33,
-        "meaning": "Lucky solution, fortunate opportunity, blessed discovery"
+        "meaning": "A solution found; a key to a small problem"
       },
       {
         "withCardId": 34,
-        "meaning": "Lucky abundance, fortunate wealth, blessed prosperity"
+        "meaning": "Financial gain or a profitable opportunity"
       },
       {
         "withCardId": 35,
-        "meaning": "Lucky stability, fortunate security, blessed grounding"
+        "meaning": "Lasting luck; a fortunate stable outcome"
       },
       {
         "withCardId": 36,
-        "meaning": "Lucky faith, fortunate sacrifice rewarded, blessed burden lifted"
+        "meaning": "A small burden eased by faith or grace"
       }
     ],
     "imageUrl": "/images/cards/02-clover.png",
@@ -519,7 +519,7 @@
       },
       {
         "withCardId": 2,
-        "meaning": "Lucky home, fortunate family, blessed household, successful domestic life"
+        "meaning": "A small happy surprise at home"
       },
       {
         "withCardId": 3,
@@ -690,7 +690,7 @@
       },
       {
         "withCardId": 2,
-        "meaning": "Lucky health, fortunate recovery, blessed wellness, successful healing"
+        "meaning": "A small health improvement or pleasant wellness news"
       },
       {
         "withCardId": 3,
@@ -1370,135 +1370,135 @@
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Gift of news, welcome message, appreciative communication, blessed announcement"
+        "meaning": "A welcome piece of news or pleasant message"
       },
       {
         "withCardId": 2,
-        "meaning": "Gift of luck, fortunate surprise, appreciative opportunity, blessed chance"
+        "meaning": "A fortunate small surprise; a happy chance"
       },
       {
         "withCardId": 3,
-        "meaning": "Travel gift, journey surprise, appreciative voyage, blessed trip"
+        "meaning": "A trip gift, journey souvenir, or vacation present"
       },
       {
         "withCardId": 4,
-        "meaning": "Home gift, family appreciation, domestic surprise, blessed household"
+        "meaning": "A gift received at home or from family"
       },
       {
         "withCardId": 5,
-        "meaning": "Health gift, wellness appreciation, medical surprise, blessed recovery"
+        "meaning": "A boost to health; a wellness gift"
       },
       {
         "withCardId": 6,
-        "meaning": "Clarity gift, resolution appreciation, confusion surprise, blessed understanding"
+        "meaning": "A small confusion about a gift or compliment"
       },
       {
         "withCardId": 7,
-        "meaning": "Wisdom gift, transformation appreciation, deception surprise, blessed revelation"
+        "meaning": "Insincere gift; charm masking an intention"
       },
       {
         "withCardId": 8,
-        "meaning": "New beginning gift, closure appreciation, ending surprise, blessed rebirth"
+        "meaning": "End of a joyful period; a gift that concludes something"
       },
       {
         "withCardId": 10,
-        "meaning": "Change gift, decision appreciation, cutting surprise, blessed transformation"
+        "meaning": "A gift that cuts short a situation; a sudden goodbye present"
       },
       {
         "withCardId": 11,
-        "meaning": "Harmony gift, resolution appreciation, conflict surprise, blessed peace"
+        "meaning": "A pleasant moment after a disagreement; reconciliation gift"
       },
       {
         "withCardId": 12,
-        "meaning": "Communication gift, social appreciation, gossip surprise, blessed talk"
+        "meaning": "A cheerful message or social compliment"
       },
       {
         "withCardId": 13,
-        "meaning": "New life gift, creativity appreciation, innocence surprise, blessed beginning"
+        "meaning": "A gift to or from a child; a fresh kind gesture"
       },
       {
         "withCardId": 14,
-        "meaning": "Success gift, strategy appreciation, work surprise, blessed achievement"
+        "meaning": "A work-related gift; be cautious of hidden motive"
       },
       {
         "withCardId": 15,
-        "meaning": "Strength gift, protection appreciation, authority surprise, blessed power"
+        "meaning": "A generous gift from authority or protection"
       },
       {
         "withCardId": 16,
-        "meaning": "Hope gift, guidance appreciation, wishes surprise, blessed dreams"
+        "meaning": "A wish granted; an answered hope"
       },
       {
         "withCardId": 17,
-        "meaning": "Change gift, transition appreciation, movement surprise, blessed return"
+        "meaning": "A gift marking a change or transition"
       },
       {
         "withCardId": 18,
-        "meaning": "Friendship gift, loyalty appreciation, trust surprise, blessed companion"
+        "meaning": "A loyal friend brings a gift"
       },
       {
         "withCardId": 19,
-        "meaning": "Freedom gift, authority appreciation, structure surprise, blessed liberation"
+        "meaning": "A short-lived gift from an institution"
       },
       {
         "withCardId": 20,
-        "meaning": "Community gift, gathering appreciation, social surprise, blessed group"
+        "meaning": "A gift received in a public or social setting"
       },
       {
         "withCardId": 21,
-        "meaning": "Victory gift, endurance appreciation, obstacle surprise, blessed overcoming"
+        "meaning": "A small obstacle delays the gift"
       },
       {
         "withCardId": 22,
-        "meaning": "Choice gift, decision appreciation, direction surprise, blessed path"
+        "meaning": "Choosing between offers or gifts"
       },
       {
         "withCardId": 23,
-        "meaning": "Recovery gift, stress appreciation, loss surprise, blessed healing"
+        "meaning": "A gift lost or worn away; an offer that fades"
       },
       {
         "withCardId": 24,
-        "meaning": "Love gift, emotion appreciation, relationship surprise, blessed romance"
+        "meaning": "A loving gift; an emotional expression of appreciation"
       },
       {
         "withCardId": 25,
-        "meaning": "Commitment gift, union appreciation, contract surprise, blessed marriage"
+        "meaning": "A gift marking commitment; engagement or wedding present"
       },
       {
         "withCardId": 26,
-        "meaning": "Knowledge gift, learning appreciation, education surprise, blessed wisdom"
+        "meaning": "A small but welcome discovery; an appreciated secret revealed"
       },
       {
         "withCardId": 27,
-        "meaning": "Message gift, information appreciation, letter surprise, blessed communication"
+        "meaning": "A pleasant written message or invitation"
       },
       {
         "withCardId": 30,
-        "meaning": "Peace gift, maturity appreciation, ethics surprise, blessed wisdom"
+        "meaning": "A peaceful, mature offering; calm gratitude"
       },
       {
         "withCardId": 31,
-        "meaning": "Success gift, happiness appreciation, victory surprise, blessed achievement"
+        "meaning": "A great success accompanied by recognition"
       },
       {
         "withCardId": 32,
-        "meaning": "Creativity gift, intuition appreciation, dream surprise, blessed emotion"
+        "meaning": "An emotionally meaningful gift; creative recognition"
       },
       {
         "withCardId": 33,
-        "meaning": "Solution gift, opportunity appreciation, discovery surprise, blessed access"
+        "meaning": "The key gift; an offer that unlocks a situation"
       },
       {
         "withCardId": 34,
-        "meaning": "Abundance gift, prosperity appreciation, wealth surprise, blessed business"
+        "meaning": "A financial gift or valuable present"
       },
       {
         "withCardId": 35,
-        "meaning": "Stability gift, security appreciation, grounding surprise, blessed patience"
+        "meaning": "A gift that brings lasting stability"
       },
       {
         "withCardId": 36,
-        "meaning": "Faith gift, sacrifice appreciation, burden surprise, blessed destiny"
+        "meaning": "A meaningful karmic gift; relief from a small burden"
       }
     ],
     "imageUrl": "/images/cards/09-bouquet.png",
@@ -1716,7 +1716,7 @@
       },
       {
         "withCardId": 2,
-        "meaning": "Lucky conflict resolution, fortunate argument, passionate opportunity, disciplined chance"
+        "meaning": "A small argument ending with a lucky turn"
       },
       {
         "withCardId": 3,
@@ -4683,135 +4683,135 @@
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Pure news, peaceful message, wise announcement, mature communication, ethical information"
+        "meaning": "Calm, mature news; a thoughtful message"
       },
       {
         "withCardId": 2,
-        "meaning": "Pure luck, peaceful fortune, wise opportunity, mature chance, ethical blessing"
+        "meaning": "A modest but peaceful stroke of luck"
       },
       {
         "withCardId": 3,
-        "meaning": "Pure journey, peaceful travel, wise voyage, mature movement, ethical exploration"
+        "meaning": "A calm, well-considered journey"
       },
       {
         "withCardId": 4,
-        "meaning": "Pure home, peaceful residence, wise household, mature domestic life, ethical family"
+        "meaning": "A serene home atmosphere; peace at home"
       },
       {
         "withCardId": 5,
-        "meaning": "Pure health, peaceful wellness, wise recovery, mature healing, ethical medical care"
+        "meaning": "Long-term wellness; lasting health improvement"
       },
       {
         "withCardId": 6,
-        "meaning": "Pure confusion, peaceful uncertainty, wise doubt, mature clarity issues, ethical uncertainty"
+        "meaning": "A wise doubt; clarity emerging from confusion"
       },
       {
         "withCardId": 7,
-        "meaning": "Pure betrayal, peaceful deception, wise treachery, mature lies, ethical betrayal"
+        "meaning": "A betrayal softened by wisdom; recognizing deceit"
       },
       {
         "withCardId": 8,
-        "meaning": "Pure ending, peaceful closure, wise transformation, mature rebirth, ethical conclusion"
+        "meaning": "A peaceful ending; mature closure"
       },
       {
         "withCardId": 9,
-        "meaning": "Pure gift, peaceful appreciation, wise surprise, mature gratitude, ethical blessing"
+        "meaning": "A sincere gift or heartfelt gesture"
       },
       {
         "withCardId": 10,
-        "meaning": "Pure change, peaceful transformation, wise decision, mature harvest, ethical shift"
+        "meaning": "A considered decision; a peaceful but decisive cut"
       },
       {
         "withCardId": 11,
-        "meaning": "Pure conflict, peaceful argument, wise passion, mature discipline, ethical dispute"
+        "meaning": "A calm resolution to conflict; mature disagreement"
       },
       {
         "withCardId": 12,
-        "meaning": "Pure communication, peaceful gossip, wise social activity, mature talk, ethical information"
+        "meaning": "A thoughtful conversation; wise social exchange"
       },
       {
         "withCardId": 13,
-        "meaning": "Pure new beginning, peaceful creativity, wise innocence, mature youth, ethical start"
+        "meaning": "A gentle new beginning; an innocent fresh start"
       },
       {
         "withCardId": 14,
-        "meaning": "Pure cunning, peaceful strategy, wise intelligence, mature work, ethical tactics"
+        "meaning": "Patient strategy over haste; wisdom in work"
       },
       {
         "withCardId": 15,
-        "meaning": "Pure strength, peaceful protection, wise authority, mature power, ethical force"
+        "meaning": "Wise use of authority; measured power"
       },
       {
         "withCardId": 16,
-        "meaning": "Pure wishes, peaceful hopes, wise guidance, mature dreams, ethical aspirations"
+        "meaning": "A wish guided by wisdom; mature hope"
       },
       {
         "withCardId": 17,
-        "meaning": "Pure change, peaceful transition, wise movement, mature return, ethical shift"
+        "meaning": "A peaceful change; a transition handled with grace"
       },
       {
         "withCardId": 18,
-        "meaning": "Pure friendship, peaceful loyalty, wise companionship, mature trust, ethical alliance"
+        "meaning": "A trustworthy, wise companion"
       },
       {
         "withCardId": 19,
-        "meaning": "Pure authority, peaceful institution, wise structure, mature rules, ethical power"
+        "meaning": "An institution led with wisdom; calm structure"
       },
       {
         "withCardId": 20,
-        "meaning": "Pure gathering, peaceful community, wise social event, mature group, ethical assembly"
+        "meaning": "A peaceful gathering; a harmonious group"
       },
       {
         "withCardId": 21,
-        "meaning": "Pure obstacles, peaceful challenges, wise endurance, mature difficulties, ethical barriers"
+        "meaning": "An obstacle met with patience and maturity"
       },
       {
         "withCardId": 22,
-        "meaning": "Pure choice, peaceful decision, wise direction, mature path, ethical selection"
+        "meaning": "A wisely considered choice"
       },
       {
         "withCardId": 23,
-        "meaning": "Pure loss, peaceful stress, wise recovery, mature healing, ethical support"
+        "meaning": "Stress eased by wisdom; serene recovery"
       },
       {
         "withCardId": 24,
-        "meaning": "Pure love, peaceful romance, wise emotions, mature relationship, ethical love"
+        "meaning": "Mature love; an ethical and wise emotional bond"
       },
       {
         "withCardId": 25,
-        "meaning": "Pure commitment, peaceful marriage, wise union, mature contract, ethical partnership"
+        "meaning": "A thoughtful commitment; a wise marriage"
       },
       {
         "withCardId": 26,
-        "meaning": "Pure knowledge, peaceful learning, wise wisdom, mature education, ethical understanding"
+        "meaning": "Wisdom gained through learning"
       },
       {
         "withCardId": 27,
-        "meaning": "Pure message, peaceful communication, wise letter, mature information, ethical document"
+        "meaning": "A measured, mature message"
       },
       {
         "withCardId": 31,
-        "meaning": "Pure success, peaceful happiness, wise achievement, mature victory, ethical joy"
+        "meaning": "Lasting happiness through wise choices"
       },
       {
         "withCardId": 32,
-        "meaning": "Pure intuition, peaceful creativity, wise dreams, mature emotion, ethical imagination"
+        "meaning": "Emotional wisdom; intuitive maturity"
       },
       {
         "withCardId": 33,
-        "meaning": "Pure solution, peaceful opportunity, wise discovery, mature access, ethical breakthrough"
+        "meaning": "A wise solution; a calm breakthrough"
       },
       {
         "withCardId": 34,
-        "meaning": "Pure abundance, peaceful prosperity, wise wealth, mature business, ethical flow"
+        "meaning": "Sustainable prosperity; ethical wealth"
       },
       {
         "withCardId": 35,
-        "meaning": "Pure stability, peaceful security, wise grounding, mature patience, ethical stability"
+        "meaning": "Enduring stability through patience"
       },
       {
         "withCardId": 36,
-        "meaning": "Pure faith, peaceful sacrifice, wise destiny, mature burden, ethical burden"
+        "meaning": "Wisdom in bearing a burden; karmic maturity"
       }
     ],
     "imageUrl": "/images/cards/30-lilies.png",
@@ -4850,15 +4850,147 @@
       "clarity",
       "energy"
     ],
-    "uprightMeaning": "Success, happiness, joy, clarity, positive energy",
+    "uprightMeaning": "Success, happiness, joy, clarity, achievement",
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Success news - positive announcement"
+        "meaning": "Great news; a successful announcement"
       },
       {
         "withCardId": 2,
-        "meaning": "Lucky success - fortunate achievement"
+        "meaning": "A small lucky break that ends in real success"
+      },
+      {
+        "withCardId": 3,
+        "meaning": "A successful and rewarding journey"
+      },
+      {
+        "withCardId": 4,
+        "meaning": "Joy and success at home"
+      },
+      {
+        "withCardId": 5,
+        "meaning": "Strong health and vitality"
+      },
+      {
+        "withCardId": 6,
+        "meaning": "Clarity after confusion; the truth revealed"
+      },
+      {
+        "withCardId": 7,
+        "meaning": "Deception exposed; a hidden threat revealed"
+      },
+      {
+        "withCardId": 8,
+        "meaning": "A difficult period ends; recovery from a setback"
+      },
+      {
+        "withCardId": 9,
+        "meaning": "A celebrated gift; recognition and reward"
+      },
+      {
+        "withCardId": 10,
+        "meaning": "A successful, decisive cut; clear action"
+      },
+      {
+        "withCardId": 11,
+        "meaning": "Conflict resolved; a satisfying outcome"
+      },
+      {
+        "withCardId": 12,
+        "meaning": "Cheerful news; a happy message"
+      },
+      {
+        "withCardId": 13,
+        "meaning": "A childlike joy; a new beginning with success"
+      },
+      {
+        "withCardId": 14,
+        "meaning": "Work rewarded; cunning crowned with success"
+      },
+      {
+        "withCardId": 15,
+        "meaning": "Power and authority crowned with success"
+      },
+      {
+        "withCardId": 16,
+        "meaning": "A wish fulfilled; the brightest outcome"
+      },
+      {
+        "withCardId": 17,
+        "meaning": "A successful change; joyful transition"
+      },
+      {
+        "withCardId": 18,
+        "meaning": "Loyal support leading to success"
+      },
+      {
+        "withCardId": 19,
+        "meaning": "Institutional success; achievement recognized publicly"
+      },
+      {
+        "withCardId": 20,
+        "meaning": "A successful public event; joyful gathering"
+      },
+      {
+        "withCardId": 21,
+        "meaning": "Obstacles overcome; victory over difficulty"
+      },
+      {
+        "withCardId": 22,
+        "meaning": "A successful choice; the right path chosen"
+      },
+      {
+        "withCardId": 23,
+        "meaning": "A small loss recovers; better times return"
+      },
+      {
+        "withCardId": 24,
+        "meaning": "Happy love; great emotional success"
+      },
+      {
+        "withCardId": 25,
+        "meaning": "Joyful commitment; a celebrated union"
+      },
+      {
+        "withCardId": 26,
+        "meaning": "Knowledge rewarded; success in learning"
+      },
+      {
+        "withCardId": 27,
+        "meaning": "A successful written communication or document"
+      },
+      {
+        "withCardId": 28,
+        "meaning": "A successful man or male figure's triumph"
+      },
+      {
+        "withCardId": 29,
+        "meaning": "A successful woman or female figure's triumph"
+      },
+      {
+        "withCardId": 30,
+        "meaning": "Lasting happiness through wise choices"
+      },
+      {
+        "withCardId": 32,
+        "meaning": "Recognition and emotional success together"
+      },
+      {
+        "withCardId": 33,
+        "meaning": "The key to real success; the answer found"
+      },
+      {
+        "withCardId": 34,
+        "meaning": "Significant financial success or windfall"
+      },
+      {
+        "withCardId": 35,
+        "meaning": "Lasting and stable success"
+      },
+      {
+        "withCardId": 36,
+        "meaning": "A karmic reward; success after effort"
       }
     ],
     "imageUrl": "/images/cards/31-sun.png",

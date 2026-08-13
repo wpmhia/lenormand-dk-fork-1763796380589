@@ -25,14 +25,14 @@ export const TIMING_CARDS: Record<number, TimingCardDefinition> = {
   32: {
     id: 32,
     name: "Moon",
-    range: "phases",
+    range: "months",
     promptGuidance:
       "Moon is present. Likely timing: around an upcoming lunar phase or emotional cycle — about a month, but tied to the querent's rhythm.",
   },
   5: {
     id: 5,
     name: "Tree",
-    range: "long-term",
+    range: "years",
     promptGuidance:
       "Tree is present. Likely timing: develops slowly; think in months to years rather than weeks. Long-term, organic progress.",
   },
