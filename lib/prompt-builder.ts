@@ -39,6 +39,16 @@ function sanitizeInput(input: string, maxLength: number): string {
     .replace(/\n|\r/g, " ");
 }
 
+const PERSON_CARD_NAMES = new Set(["Man", "Woman"]);
+
+const PERSON_CARD_PROMPT_NOTE = `- Man and Woman represent specific people/significators in the querent's life. Never infer husband, wife, boyfriend, girlfriend, father, mother, partner, or any other exact relationship unless the user's question explicitly establishes it. Refer to them as "the man / a man" or "the woman / a woman", or simply by card name.`;
+
+function fmtPersonCard(card: { name: string; strength?: string }): string {
+  const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
+  const strength = card.strength ? `; ${card.strength}` : "";
+  return strength ? `${name} (specific person/significator${strength})` : `${name} (specific person/significator)`;
+}
+
 export function buildSystemPrompt(cardCount?: number): string {
   const isSingleCard = cardCount === 1;
 
@@ -49,11 +59,12 @@ Lenormand is concrete, practical, external, predictive, and combination-based. A
 Rules:
 - No reversals, no Tarot/New Age language: never use archetype, shadow work, chakra, soul-purpose, the universe, higher self, vibration, journey, transformation, trust the process, energy, intuition, everything happens for a reason.
 - Do not add cards that were not drawn.
-- Use timing only when the cards clearly indicate it (Birds = days, Stork = weeks, Moon = phases, Tree = years). Otherwise write: Likely timing: Not clearly shown by these cards.
+- Use timing only when the cards clearly indicate it. The prompt below contains a "Timing evidence" section. Use only that. If it says "No timing evidence detected", write: Likely timing: Not clearly shown by these cards.
 - For Man/Woman, treat as person/significator, not masculine/feminine energy.
 - Write naturally. Do not use possessive phrases like "Moon's emotions" or "Bouquet's gift" — describe what happens between cards. Use "shows", "points to", "brings", "suggests", "develops as", "leads to".
 - Bold only complete pair labels such as **Birds + Letter** or **Birds + Letter + Book**. Bold is not allowed inside other words (forbidden: uncove**Ring**, **Letter**s, dis**Patch**).
 - Avoid fragmented prose like "Birds indicates... Letter suggests...". Synthesize combinations into a fluent interpretation of the situation.
+${PERSON_CARD_PROMPT_NOTE}
 
 ${isSingleCard
   ? `Read this card alone. Do NOT pair it with any other card. Explain what it means for the querent's situation in one short paragraph.`
@@ -71,16 +82,19 @@ Formatting rules:
 
 const PREDICTIVE_VOICE = `You are answering the user's question with a traditional Lenormand reading. The question is the anchor. Do not explain cards in isolation.
 
-Flow: question -> answer -> card evidence -> forecast. Not: cards -> card meanings -> generic action.
-
 Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.
 
-Open with a direct answer to the question (or a clear yes/no leaning if it is a yes/no question). Name the most likely development, the complication, and what it means for the querent.
+The three sections below have distinct jobs. Do not duplicate content across them.
 
-In ## Key combinations, write bullets with bold pair names in this exact format:
+## Reading — interpret what the cards mean together, and why.
+Open with a direct answer to the question (or a clear yes/no leaning if it is a yes/no question). Then interpret how the cards and combinations answer the question: walk through the chain naturally, name the development and the complication as the cards show them, and explain what the line means for the querent. Do NOT include timing, observable signs, or practical action here — those belong in ## Prediction.
+
+## Key combinations — the strongest pair evidence.
+Write bullets with bold pair names in this exact format:
 - **Card A + Card B**: what this pair means for the question.
 
-In ## Prediction, synthesize the combinations into an actual forecast. Use exactly these bold labels in this order:
+## Prediction — the concrete forecast, not a restatement of the Reading.
+Do not repeat or paraphrase what the Reading already said. Move the interpretation forward with the specific forecast:
 **Most likely development:** ...
 **Likely timing:** ... (or: Not clearly shown by these cards)
 **Observable sign:** ...
@@ -145,6 +159,9 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
   const qContext = `Question: "${sanitizedQ || "What do these cards reveal?"}"`;
   const cardList = cards.map((c) => {
     const name = sanitizeInput(c.name, MAX_CARD_NAME_LENGTH);
+    if (PERSON_CARD_NAMES.has(name)) {
+      return `${name} (specific person/significator)`;
+    }
     const keywords = c.keywords?.slice(0, 3).join(", ");
     return keywords ? `${name} (${keywords})` : name;
   }).join(", ");
@@ -163,6 +180,9 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
 }
 
 function fmtCard(card: { name: string; keywords?: string[]; strength?: string }): string {
+  if (PERSON_CARD_NAMES.has(card.name)) {
+    return fmtPersonCard(card);
+  }
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
   const keywords = card.keywords?.slice(0, 2).join(", ");
   const strength = card.strength ? `; ${card.strength}` : "";
