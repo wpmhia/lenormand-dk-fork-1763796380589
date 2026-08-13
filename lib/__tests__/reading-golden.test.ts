@@ -37,8 +37,8 @@ Communication is likely to open the next stage of this situation. You are likely
 ## Prediction
 
 **Most likely development:** Communication appears to open the next stage of this situation. You are likely to receive or exchange information that makes the possibility substantially more concrete, but not everything is settled yet.
-**Likely timing:** Within days to a few weeks.
-**Observable sign:** A call, email, or message arrives that introduces new details.
+**Likely timing:** Within days.
+**Watch for:** A call, email, or message arrives that introduces new details.
 **Practical action:** Respond promptly to the first piece of communication; do not wait for full clarity before acting.`;
 
 describe("golden output: validateReadingOutput", () => {
@@ -132,7 +132,7 @@ describe("golden output: buildDeterministicFallback uses traditional pair meanin
     expect(out).toContain("Knowledge arriving through communication");
     expect(out).toContain("**Most likely development:**");
     expect(out).toContain("**Likely timing:**");
-    expect(out).toContain("**Observable sign:**");
+    expect(out).toContain("**Watch for:**");
     expect(out).toContain("**Practical action:**");
   });
 

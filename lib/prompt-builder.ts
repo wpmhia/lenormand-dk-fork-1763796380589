@@ -2,6 +2,7 @@ import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
 import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
+import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -203,6 +204,17 @@ Formatting rules:
 - If timing is not clearly supported, write: Likely timing: Not clearly shown by these cards.`;
 }
 
+const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
+
+Use exactly these four bold labels, in this order, with one or two sentences each:
+
+**Most likely development:** one primary forecast that answers the user's question. Do not list alternatives. Do not repeat the Reading.
+**Likely timing:** copy the timing from the Prediction synthesis evidence verbatim. Do not invent dates or ranges.
+**Watch for:** one concrete external event or sign that would indicate the forecast is starting to unfold.
+**Practical action:** one useful next step based on the reading. No generic self-help language.
+
+Synthesize the Prediction ONLY from the Prediction synthesis evidence block. Do not introduce cards that are not in that evidence.`;
+
 const PREDICTIVE_VOICE_LINEAR = `Answer the user's actual question directly.
 
 ## Reading
@@ -212,8 +224,7 @@ Write 3-5 natural sentences interpreting the complete line. Start with the answe
 For each adjacent pair, write a bullet in this format:
 - **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
 
-## Prediction
-Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
+${PREDICTION_FIELDS_INSTRUCTION}
 
 Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
 
@@ -226,8 +237,7 @@ Write 3-5 natural sentences interpreting the tableau. Start with the answer. Des
 For each relevant pair the prompt lists under "Adjacent combinations", write a bullet in this format:
 - **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
 
-## Prediction
-Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
+${PREDICTION_FIELDS_INSTRUCTION}
 
 Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
 
@@ -244,8 +254,7 @@ For each card directly adjacent to the significator listed under "Adjacent combi
 For each topic-house placement listed above, write a bullet in this format:
 - **House of X**: explain what the card sitting on that house means for that life area.
 
-## Prediction
-Give a concise concrete forecast based on the reading. Include timing only when explicit timing evidence is supplied below. Do not invent exact dates.
+${PREDICTION_FIELDS_INSTRUCTION}
 
 Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
 
@@ -336,6 +345,8 @@ function fmtCard(card: { name: string; keywords?: string[]; strength?: string })
   const suffix = `${keywords || ""}${strength}`;
   return suffix ? `${name} (${suffix})` : name;
 }
+
+export { fmtCard, PERSON_CARD_NAMES };
 
 function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
   if (pairs.length === 0) return "";
@@ -546,6 +557,11 @@ function formatGrandTableau(
 
 function appendEvidence(prompt: string, context: ReadingContext): string {
   let result = prompt;
+
+  if (context.layout.type !== "single") {
+    const predictionBlock = formatPredictionEvidenceBlock(buildPredictionContext(context));
+    result += `\n\n${predictionBlock}`;
+  }
 
   result += `\n\n${buildTimingEvidencePrompt(context.timingEvidence)}`;
 

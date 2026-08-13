@@ -1,5 +1,5 @@
 import { Card } from "@/lib/types";
-import { getTimingCard, TimingCardDefinition } from "@/lib/timing";
+import { buildPredictionTimingLine, getTimingCard, NO_TIMING_OUTPUT, REQUIRED_PREDICTION_FIELDS, TimingCardDefinition } from "@/lib/timing";
 
 export const BANNED_PHRASES = [
   "spiritual journey",
@@ -159,7 +159,7 @@ export function validateReadingOutput(
         message: `States timing "${numericTimingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
       });
     } else {
-      const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.range));
+      const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.validatorRange));
       if (!allowedRanges.has(range)) {
         issues.push({
           type: "unsupported_timing",
@@ -182,7 +182,7 @@ export function validateReadingOutput(
         message: `States timing "${nonnumericTimingMatch[0]}" but no timing card (Birds, Stork, Tree, Moon) was drawn`,
       });
     } else {
-      const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.range));
+      const allowedRanges = new Set(drawnTimingCards.map((tc) => tc.validatorRange));
       if (!allowedRanges.has(range)) {
         issues.push({
           type: "unsupported_timing",
@@ -229,6 +229,30 @@ export function validateReadingOutput(
             type: "empty_section",
             message: `Section "${expected}" is empty or too short (${wordCount} words)`,
           });
+        }
+      }
+    }
+
+    const predictionAllowed = allowed.some((a) => a.replace(/^#+\s*/, "").trim().toLowerCase() === "prediction");
+    if (predictionAllowed) {
+      const predictionBody = getSectionBody(reading, "## Prediction");
+      for (const field of REQUIRED_PREDICTION_FIELDS) {
+        const re = new RegExp(`\\*\\*${field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}:`, "i");
+        if (!re.test(predictionBody)) {
+          issues.push({
+            type: "empty_section",
+            message: `## Prediction is missing required label "**${field}:**"`,
+          });
+        } else {
+          const after = predictionBody.split(re)[1] || "";
+          const untilNextLabel = after.split(/\n\s*\*\*(?:Most likely development|Likely timing|Watch for|Practical action):/i)[0] || "";
+          const words = untilNextLabel.split(/\s+/).filter((w) => /[a-zA-Z]/.test(w));
+          if (words.length < 2) {
+            issues.push({
+              type: "empty_section",
+              message: `**${field}:** in ## Prediction has too little content (${words.length} words)`,
+            });
+          }
         }
       }
     }
@@ -387,6 +411,33 @@ export function buildDeterministicFallback(
   return buildLinearFallback(drawnCards, question, qLine, pairs);
 }
 
+function buildPredictionBlock(
+  drawnCards: NormalizedFallbackCard[],
+  primaryCardName: string,
+  primaryKw: string,
+  primaryMeaning: string,
+  closingPairNames: string,
+): string {
+  const primaryTimingCards: TimingCardDefinition[] = [];
+  for (const c of drawnCards) {
+    const def = getTimingCard(c.id);
+    if (def) primaryTimingCards.push(def);
+  }
+  const timingEvidence = primaryTimingCards.map((def) => ({
+    cardId: def.id,
+    cardName: def.name,
+    range: def.validatorRange,
+  }));
+  const timingLine = `**Likely timing:** ${buildPredictionTimingLine(timingEvidence)}`;
+
+  return [
+    `**Most likely development:** The chain points toward **${primaryCardName}** (${primaryKw}) as the closing tendency of this situation${primaryMeaning ? ` — ${primaryMeaning}` : ""}.`,
+    timingLine,
+    `**Watch for:** Watch for the practical situation described by the closing pair (**${closingPairNames}**) to start showing up in concrete form.`,
+    `**Practical action:** Move in the direction **${primaryCardName}** suggests and respond to it in kind.`,
+  ].join("\n");
+}
+
 function buildLinearFallback(
   drawnCards: NormalizedFallbackCard[],
   question: string,
@@ -413,17 +464,11 @@ function buildLinearFallback(
     : `This reading addresses the situation at hand.`;
   const reading = `${opener} Reading **${chainNames}** as one Lenormand chain, what begins with **${drawnCards[0].name}** develops through **${drawnCards[1].name}** and the closing card **${last.name}** (${lastKw}${lastMeaning ? ` — ${lastMeaning}` : ""}) shows where the line is most likely to land. Each adjacent pair below shows what changes between one card and the next.`;
 
-  const primaryTimingCards: TimingCardDefinition[] = [];
-  for (const c of drawnCards) {
-    const def = getTimingCard(c.id);
-    if (def) primaryTimingCards.push(def);
-  }
+  const closingPairNames = drawnCards.length >= 2
+    ? `${drawnCards[drawnCards.length - 2].name} + ${last.name}`
+    : last.name;
 
-  const timingLine = primaryTimingCards.length > 0
-    ? primaryTimingCards.length === 1
-      ? `**Likely timing:** ${primaryTimingCards[0].promptGuidance}`
-      : `**Likely timing:** ${primaryTimingCards.map((t) => t.name).join(" and ")} are both drawn — ${primaryTimingCards[0].promptGuidance}`
-    : "**Likely timing:** Not clearly shown by these cards.";
+  const predictionBlock = buildPredictionBlock(drawnCards, last.name, lastKw, lastMeaning, closingPairNames);
 
   return [
     `## Reading${qLine}${reading}`,
@@ -434,10 +479,7 @@ function buildLinearFallback(
     "",
     "## Prediction",
     "",
-    `**Most likely development:** The chain points toward **${last.name}** (${lastKw}) as the closing tendency of this situation${lastMeaning ? ` — ${lastMeaning}` : ""}.`,
-    timingLine,
-    "**Observable sign:** Watch for the practical situation described by the closing pair to start showing up in concrete form.",
-    `**Practical action:** Move in the direction **${last.name}** suggests and respond to **${drawnCards[drawnCards.length - 1].name}** in kind.`,
+    predictionBlock,
   ].join("\n");
 }
 
@@ -507,11 +549,22 @@ function buildGrandTableauFallback(
     if (def) primaryTimingCards.push(def);
   }
 
-  const timingLine = primaryTimingCards.length > 0
-    ? primaryTimingCards.length === 1
-      ? `**Likely timing:** ${primaryTimingCards[0].promptGuidance}`
-      : `**Likely timing:** ${primaryTimingCards.map((t) => t.name).join(" and ")} are both drawn — ${primaryTimingCards[0].promptGuidance}`
-    : "**Likely timing:** Not clearly shown by these cards.";
+  const timingEvidence = primaryTimingCards.map((def) => ({
+    cardId: def.id,
+    cardName: def.name,
+    range: def.validatorRange,
+  }));
+
+  const primaryName = sig?.name || (drawnCards[drawnCards.length - 1]?.name ?? "the closing card");
+  const primaryKw = sig?.keywords?.slice(0, 2).join(", ") || primaryName;
+  const cardsOfFateNames = drawnCards.slice(32, 36).map((c) => c.name).join(", ");
+
+  const predictionBlock = [
+    `**Most likely development:** The reading points toward ${primaryName} (${primaryKw}) as the closing tendency of this tableau. ${sigIdx >= 0 ? `Read the immediate neighbours of ${sigName} as the most actionable signals.` : "No significator is present; treat the bottom-row Cards of Fate as the long-term signal."}`,
+    `**Likely timing:** ${buildPredictionTimingLine(timingEvidence)}`,
+    `**Watch for:** Watch for the practical situation described by the cards of fate (${cardsOfFateNames || "the bottom row"}) to start showing up in concrete form.`,
+    `**Practical action:** Treat the immediate significator neighbourhood as the most actionable area of the reading; the topic houses indicate where the longer-term pressure or support sits.`,
+  ].join("\n");
 
   return [
     `## Grand Tableau overview${qLine}${overview}`,
@@ -530,7 +583,6 @@ function buildGrandTableauFallback(
     "",
     "## Prediction",
     "",
-    timingLine,
-    "**Practical action:** Treat the immediate significator neighbourhood as the most actionable area of the reading; the topic houses indicate where the longer-term pressure or support sits.",
+    predictionBlock,
   ].join("\n");
 }
