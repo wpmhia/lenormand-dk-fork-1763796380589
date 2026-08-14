@@ -116,7 +116,7 @@ export interface GrandTableauLayout {
     man?: SignificatorInfo;
   };
   primarySignificator?: SignificatorInfo;
-  primarySignificatorSource?: "explicit" | "topic-fallback" | "default";
+  primarySignificatorSource?: "explicit" | "referent" | "default";
   significatorPreference: "woman" | "man" | "both";
   corners: GridCell[];
   centerFour: GridCell[];
@@ -408,7 +408,7 @@ function buildGrandTableauLayout(
   }
 
   let primarySignificator: SignificatorInfo | undefined;
-  let primarySignificatorSource: "explicit" | "topic-fallback" | "default" | undefined;
+  let primarySignificatorSource: "explicit" | "referent" | "default" | undefined;
   if (significatorPreference === "woman" && significators.woman) {
     primarySignificator = significators.woman;
     primarySignificatorSource = "explicit";
