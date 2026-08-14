@@ -18,6 +18,13 @@ export interface PredictionContext {
   coreDriverCard: NormalizedCard | null;
   primaryPair: { a: NormalizedCard; b: NormalizedCard; meaning?: string } | null;
   supportingPair: { a: NormalizedCard; b: NormalizedCard; meaning?: string } | null;
+  /**
+   * Full ordered progression of adjacent pairs for linear spreads. Each pair's
+   * meaning has already been passed through `getUsablePairMeaning` so the same
+   * contamination blacklist as the prompt applies. For non-linear layouts this
+   * stays empty (pairs are surfaced via the per-topic evidence lines).
+   */
+  allPairs: { a: NormalizedCard; b: NormalizedCard; meaning?: string; weight: number }[];
   significatorEvidence: PredictionEvidenceLine[];
   houseEvidence: PredictionEvidenceLine[];
   topicEvidence: PredictionEvidenceLine[];
@@ -65,6 +72,24 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     (p) => Math.min(p.indexA, p.indexB) === 0 && Math.max(p.indexA, p.indexB) === 1,
   );
 
+  // Full ordered progression of every adjacent pair in the line. The closing pair is
+  // also surfaced via primaryPair so the formatter can highlight it; otherwise every
+  // pair has the same shape. Meaning goes through getUsablePairMeaning so the
+  // contamination blacklist applies uniformly.
+  const orderedPairs = [...pairs]
+    .filter((p) => Math.min(p.indexA, p.indexB) >= 0 && Math.max(p.indexA, p.indexB) < cards.length)
+    .sort((a, b) => {
+      const aLo = Math.min(a.indexA, a.indexB);
+      const bLo = Math.min(b.indexA, b.indexB);
+      return bLo - aLo; // higher position first (= closer to closing)
+    });
+  const allPairs = orderedPairs.map((p) => ({
+    a: p.cardA,
+    b: p.cardB,
+    meaning: p.traditionalMeaning,
+    weight: p.weight,
+  }));
+
   const developmentCard = cards.length >= 2 ? secondLast : null;
 
   return {
@@ -78,6 +103,7 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     supportingPair: cards.length >= 2
       ? { a: cards[0], b: cards[1], meaning: firstPair?.traditionalMeaning || pairMeaning(cards[0], cards[1], pairs) }
       : null,
+    allPairs,
     significatorEvidence: [],
     houseEvidence: [],
     topicEvidence: [],
@@ -120,6 +146,7 @@ function buildPetitPrediction(cards: NormalizedCard[], layout: PetitTableauLayou
     supportingPair: supporting
       ? { a: supporting.cardA, b: supporting.cardB, meaning: supporting.traditionalMeaning || pairMeaning(supporting.cardA, supporting.cardB, pairs) }
       : null,
+    allPairs: [],
     significatorEvidence: [],
     houseEvidence: [],
     topicEvidence,
@@ -192,6 +219,7 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
     supportingPair: supporting
       ? { a: supporting.cardA, b: supporting.cardB, meaning: supporting.traditionalMeaning || pairMeaning(supporting.cardA, supporting.cardB, pairs) }
       : null,
+    allPairs: [],
     significatorEvidence: sigLines,
     houseEvidence: houseLines,
     topicEvidence: layout.topicCards.slice(0, 4).map((tc) => ({
@@ -231,6 +259,7 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
       coreDriverCard: cards[0] ?? null,
       primaryPair: null,
       supportingPair: null,
+      allPairs: [],
       significatorEvidence: [],
       houseEvidence: [],
       topicEvidence: [],
@@ -272,6 +301,19 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
           ? "Significator (anchor of the read)"
           : "Core driver";
     lines.push(`- ${label}: ${fmt(pe.coreDriverCard)}`);
+  }
+  if (pe.layoutType === "linear-sentence" && pe.allPairs.length > 0) {
+    // Full ordered progression. The closing pair (the last in the line) carries
+    // the strongest weight; earlier pairs show how the situation develops toward it.
+    lines.push(`- Full ordered progression (${pe.allPairs.length} adjacent pairs):`);
+    for (let i = 0; i < pe.allPairs.length; i++) {
+      const p = pe.allPairs[i];
+      const meaning = p.meaning ? ` → ${p.meaning}` : "";
+      const pos = `positions ${Math.min(p.a.id, p.b.id) + 1}+${Math.max(p.a.id, p.b.id) + 1}`;
+      const isClosing = i === pe.allPairs.length - 1;
+      const marker = isClosing ? " [STRONGEST — closing pair]" : "";
+      lines.push(`    - pair ${i + 1} (${pos})${marker}: ${fmt(p.a)} + ${fmt(p.b)}${meaning}`);
+    }
   }
   if (pe.primaryPair) {
     const label = pe.layoutType === "linear-sentence"

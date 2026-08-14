@@ -416,11 +416,14 @@ function buildGrandTableauLayout(
     primarySignificator = significators.man;
     primarySignificatorSource = "explicit";
   } else if (significatorPreference === "both") {
-    // Both Man and Woman present in this spread:
-    //   - If only one is drawn, that one is the primary.
-    //   - If both are drawn, prefer the explicit woman preference for the querent's "you"
-    //     when the question is love/relationship oriented; prefer man for job/career;
-    //     otherwise default to woman (Lenormand convention: the querent card).
+    // "both" preference means the user wants the model to read from both Man and Woman
+    // cards if both are present. To pick a primary when both are drawn we look at the
+    // question's gender-specific referent language ("he", "him", "his", "husband",
+    // "boyfriend"; "she", "her", "wife", "girlfriend"). We explicitly do NOT switch on
+    // topic (job/love): inferring the significator's sex from a career topic is
+    // methodologically indefensible — a question about Mahican's career must not anchor
+    // the entire GT around the Man card simply because careers have historically been
+    // male-coded.
     if (significators.woman && !significators.man) {
       primarySignificator = significators.woman;
       primarySignificatorSource = "default";
@@ -429,14 +432,18 @@ function buildGrandTableauLayout(
       primarySignificatorSource = "default";
     } else if (significators.woman && significators.man) {
       const lowerQ = question.toLowerCase();
-      const isLove = matchQuestionTopic(lowerQ, "love");
-      const isJob = matchQuestionTopic(lowerQ, "job");
-      if (isJob && !isLove) {
+      const maleReferent = /\b(he|him|his|husband|boyfriend|fiance|gentleman|male)\b/.test(lowerQ);
+      const femaleReferent = /\b(she|her|hers|wife|girlfriend|fiancee|lady|female)\b/.test(lowerQ);
+      if (maleReferent && !femaleReferent) {
         primarySignificator = significators.man;
-        primarySignificatorSource = "topic-fallback";
-      } else {
+        primarySignificatorSource = "referent";
+      } else if (femaleReferent && !maleReferent) {
         primarySignificator = significators.woman;
-        primarySignificatorSource = isLove ? "topic-fallback" : "default";
+        primarySignificatorSource = "referent";
+      } else {
+        // No gender-specific referent in the question: default to Woman (querent default).
+        primarySignificator = significators.woman;
+        primarySignificatorSource = "default";
       }
     }
     // else: neither drawn — primarySignificator stays undefined; the prediction evidence
@@ -574,17 +581,52 @@ function matchQuestionTopic(question: string, category: string): boolean {
   const matches = (kws: string[]) => kws.some((kw) => wordBoundary(kw).test(question));
   switch (category) {
     case "love":
-      return matches(["love", "relationship", "partner", "romance", "marri", "dating", "boyfriend", "girlfriend", "heart", "commit"]);
+      return matches([
+        "love", "relationship", "partner", "romance", "marriage", "married", "marry",
+        "dating", "boyfriend", "girlfriend", "heart", "commitment", "committed",
+      ]);
     case "job":
-      return matches(["job", "work", "career", "employ", "boss", "interview", "promotion", "promoted", "promote", "firing", "fired", "fire", "layoff", "resign", "salary", "colleague"]);
+      return matches([
+        // General employment (full word families so 'employed', 'employment' match too)
+        "job", "jobs", "work", "working", "works", "career", "careers",
+        "employ", "employed", "employment", "employer", "employers",
+        "boss", "interview", "interviews", "colleague", "colleagues", "workplace",
+        "promotion", "promoted", "promote", "firing", "fired", "fire",
+        "layoff", "resign", "resigned", "salary",
+        // Professional / qualified contexts that the old matcher missed entirely
+        "profession", "professional", "position", "role", "post",
+        "qualification", "qualified", "qualify", "credentials",
+        "license", "licence", "licensed",
+        "medical", "doctor", "nurse", "nursing", "physician", "clinical",
+        "hospital", "specialty", "specialist",
+        "law", "legal", "attorney", "lawyer",
+        "teaching", "academic", "professor",
+        "practice", "practicing", "practise",
+      ]);
     case "money":
-      return matches(["money", "finance", "income", "invest", "loan", "debt", "wealth", "budget", "afford", "pay"]);
+      return matches([
+        "money", "finance", "financial", "income",
+        "invest", "investing", "investment", "investor",
+        "loan", "loans", "debt", "debts",
+        "wealth", "wealthy", "budget", "budgets", "afford", "pay", "paid",
+      ]);
     case "health":
-      return matches(["health", "illness", "sick", "disease", "pain", "heal", "recover", "doctor", "hospital", "wellness", "surgery"]);
+      return matches([
+        "health", "healthy", "illness", "ill", "sick", "sickness",
+        "disease", "diseases", "pain", "heal", "healing",
+        "recover", "recovery", "doctor", "doctors",
+        "hospital", "wellness", "surgery", "surgical",
+      ]);
     case "home":
-      return matches(["home", "house", "apartment", "move", "renovation", "roommate", "property"]);
+      return matches([
+        "home", "house", "apartment", "move", "moving",
+        "renovation", "roommate", "property",
+      ]);
     case "travel":
-      return matches(["travel", "trip", "vacation", "journey", "flight", "visit", "holiday", "abroad"]);
+      return matches([
+        "travel", "traveling", "trip", "vacation", "journey",
+        "flight", "visit", "visiting", "holiday", "abroad", "overseas",
+      ]);
     default:
       return false;
   }
