@@ -257,7 +257,10 @@ describe("buildReadingContext", () => {
       }
     });
 
-    it("selects Man as primary when 'both' and question is job/career-oriented", () => {
+    it("does NOT infer Man from a job/career-oriented question (regression: gender stereotype)", () => {
+      // A career question must not automatically anchor the GT around the Man card.
+      // Previously the engine did this; the audit identified it as methodologically
+      // indefensible.
       const ctx = buildReadingContext(
         "grand-tableau",
         "Will my career move forward this year?",
@@ -266,12 +269,13 @@ describe("buildReadingContext", () => {
       );
       if (ctx.layout.type === "grand-tableau") {
         expect(ctx.layout.primarySignificator).toBeDefined();
-        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
-        expect(ctx.layout.primarySignificatorSource).toBe("topic-fallback");
+        // Default (no topic-based inference): primary is Woman (querent default).
+        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+        expect(ctx.layout.primarySignificatorSource).toBe("default");
       }
     });
 
-    it("selects Woman as primary when 'both' and question is love-oriented", () => {
+    it("does NOT infer Woman from a love-oriented question when 'both' is selected", () => {
       const ctx = buildReadingContext(
         "grand-tableau",
         "Will my relationship become more committed?",
@@ -280,8 +284,35 @@ describe("buildReadingContext", () => {
       );
       if (ctx.layout.type === "grand-tableau") {
         expect(ctx.layout.primarySignificator).toBeDefined();
+        // Default (no topic-based inference): primary is Woman.
         expect(ctx.layout.primarySignificator!.card.id).toBe(29);
-        expect(ctx.layout.primarySignificatorSource).toBe("topic-fallback");
+        expect(ctx.layout.primarySignificatorSource).toBe("default");
+      }
+    });
+
+    it("uses male referent pronouns (he/him/his/husband) to pick Man when 'both'", () => {
+      const ctx = buildReadingContext(
+        "grand-tableau",
+        "Will he find work that suits him?",
+        makeNormalizedCards(sigIds),
+        cardsMap,
+      );
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.primarySignificator!.card.id).toBe(28);
+        expect(ctx.layout.primarySignificatorSource).toBe("referent");
+      }
+    });
+
+    it("uses female referent pronouns (she/her/wife) to pick Woman when 'both'", () => {
+      const ctx = buildReadingContext(
+        "grand-tableau",
+        "Will she be ready to take on a new role?",
+        makeNormalizedCards(sigIds),
+        cardsMap,
+      );
+      if (ctx.layout.type === "grand-tableau") {
+        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
+        expect(ctx.layout.primarySignificatorSource).toBe("referent");
       }
     });
 
