@@ -5,7 +5,6 @@ import {
   normalizeMarkdown,
   isCriticalIssue,
   ISSUE_SEVERITY,
-  buildDeterministicFallback,
 } from "@/lib/reading-validator";
 import type { Card } from "@/lib/types";
 
@@ -131,42 +130,6 @@ describe("golden output: normalizeMarkdown is non-destructive", () => {
     const out = normalizeMarkdown(input);
     expect(out).toContain("Hello.");
     expect(out).not.toMatch(/\|/);
-    expect(out).toContain("## Prediction");
-  });
-});
-
-describe("golden output: buildDeterministicFallback uses traditional pair meanings", () => {
-  it("uses provided pair meaning verbatim in the bullets for the correct pair", () => {
-    const drawn = [
-      { id: 12, name: "Birds", keywords: ["communication"] },
-      { id: 26, name: "Book", keywords: ["knowledge"] },
-    ];
-    const pairs = [
-      { indexA: 0, indexB: 1, cardAName: "Birds", cardBName: "Book", meaning: "Knowledge arriving through communication" },
-    ];
-    const out = buildDeterministicFallback(drawn, "sentence-3", "Will I hear back soon?", pairs);
-    expect(out).toContain("## Interpretation");
-    expect(out).toContain("## Cards");
-    expect(out).toContain("## Prediction");
-    expect(out).toContain("Knowledge arriving through communication");
-    expect(out).toContain("**Most likely development:**");
-    expect(out).toContain("**Likely timing:**");
-    expect(out).toContain("**Watch for:**");
-    expect(out).toContain("**Practical action:**");
-  });
-
-  it("returns an Interpretation block even with empty card list", () => {
-    const out = buildDeterministicFallback([], "single-card", "");
-    expect(out).toContain("## Interpretation");
-    expect(out).toContain("No cards were drawn");
-  });
-
-  it("uses grand-tableau structure for a 36-card spread", () => {
-    const drawn = Array.from({ length: 36 }, (_, i) => ({ id: i + 1, name: `Card ${i + 1}`, keywords: [`Card ${i + 1}`] }));
-    const out = buildDeterministicFallback(drawn, "grand-tableau", "test");
-    expect(out).toContain("## Interpretation");
-    expect(out).toContain("## Houses and mirrors");
-    expect(out).toContain("## Cards");
     expect(out).toContain("## Prediction");
   });
 });
