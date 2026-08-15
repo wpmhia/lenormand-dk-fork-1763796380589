@@ -194,8 +194,13 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdn.buymeacoffee.com" />
         <Script
           defer
-          src="https://cloud.umami.is/script.js"
-          data-website-id="15461d07-3bb4-43f2-8a57-3f68da93c7d7"
+          src="https://gstat.up.railway.app/script.js"
+          data-website-id="725954cf-c348-4e03-9516-bf3afd9dbaef"
+        />
+        <Script
+          defer
+          src="https://gstat.up.railway.app/recorder.js"
+          data-website-id="725954cf-c348-4e03-9516-bf3afd9dbaef"
         />
         <Script
           id="schema-org"
