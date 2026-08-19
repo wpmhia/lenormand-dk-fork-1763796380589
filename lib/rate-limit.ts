@@ -84,13 +84,13 @@ export async function rateLimit(
 }
 
 export function getClientIP(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const ips = forwarded.split(",").map((s) => s.trim());
-    return ips[0] || "unknown";
-  }
   const realIp = request.headers.get("x-real-ip");
   if (realIp) return realIp;
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const ips = forwarded.split(",").map((s) => s.trim()).filter(Boolean);
+    return ips.at(-1) || "unknown";
+  }
   const ua = request.headers.get("user-agent") || "";
   const lang = request.headers.get("accept-language") || "";
   return `ua:${ua.length}:${lang.length}`;

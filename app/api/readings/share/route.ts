@@ -5,6 +5,7 @@ export const maxDuration = 10;
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { API_REQUEST_TIMEOUT_MS, ERROR_MESSAGES } from "@/lib/constants";
+import { timingSafeEqual } from "node:crypto";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -25,7 +26,7 @@ async function generateHMAC(data: string): Promise<string> {
   const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
   const hashArray = Array.from(new Uint8Array(signature));
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-  return hashHex.slice(0, 16);
+  return hashHex;
 }
 
 /**
@@ -120,7 +121,12 @@ export async function GET(request: Request) {
 
     // Verify HMAC signature server-side
     const computedHmac = await generateHMAC(base64WithPad);
-    if (computedHmac !== providedHmac) {
+    const computedBytes = Buffer.from(computedHmac, "hex");
+    const providedBytes = Buffer.from(providedHmac, "hex");
+    if (
+      computedBytes.length !== providedBytes.length ||
+      !timingSafeEqual(computedBytes, providedBytes)
+    ) {
       return new Response(
         JSON.stringify({ error: "Invalid signature" }),
         {
