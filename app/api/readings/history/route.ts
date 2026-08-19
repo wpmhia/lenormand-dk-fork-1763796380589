@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { Redis } from "@upstash/redis";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
+import { checkBodySize } from "@/lib/rate-limit";
 
 const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN")
   ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
@@ -13,7 +14,8 @@ const READINGS_KEY = "user_readings";
 const MAX_READINGS = 30;
 
 function getSessionId(request: Request): string | null {
-  const sessionId = request.headers.get("X-Session-Id");
+  const cookie = request.headers.get("cookie") || "";
+  const sessionId = cookie.match(/(?:^|;\s*)reading_session=([^;]+)/)?.[1];
   if (sessionId && /^[a-f0-9-]{8,64}$/i.test(sessionId)) {
     return sessionId;
   }
@@ -75,10 +77,30 @@ export async function POST(request: Request) {
       );
     }
 
+    if (checkBodySize(request, 25000) !== null) {
+      return new Response(JSON.stringify({ error: "Request body too large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     const body = await request.json();
     const { id, timestamp, question, spreadType, cards, interpretationPreview, interpretationFull } = body;
 
-    if (!id || !timestamp || !cards) {
+    if (
+      typeof id !== "string" ||
+      !/^[a-zA-Z0-9_-]{1,100}$/.test(id) ||
+      typeof timestamp !== "number" ||
+      !Number.isSafeInteger(timestamp) ||
+      !Array.isArray(cards) ||
+      cards.length < 1 ||
+      cards.length > 36 ||
+      cards.some((card) => !card || !Number.isInteger(card.id) || !Number.isInteger(card.position)) ||
+      (typeof question !== "undefined" && (typeof question !== "string" || question.length > 500)) ||
+      (typeof spreadType !== "undefined" && (typeof spreadType !== "string" || spreadType.length > 100)) ||
+      (typeof interpretationPreview !== "undefined" && (typeof interpretationPreview !== "string" || interpretationPreview.length > 500)) ||
+      (typeof interpretationFull !== "undefined" && (typeof interpretationFull !== "string" || interpretationFull.length > 20000))
+    ) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
