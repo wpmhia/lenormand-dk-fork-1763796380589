@@ -54,8 +54,9 @@ export function PhysicalCardInput({
       let card: CardType | undefined;
 
       // Try number first
-      const num = parseInt(cardInput, 10);
-      if (!isNaN(num)) {
+      const isNumericInput = /^\d+$/.test(cardInput);
+      const num = isNumericInput ? Number(cardInput) : NaN;
+      if (isNumericInput) {
         if (num < 1 || num > 36) {
           errors.push(`"${cardInput}" is not valid (must be 1-36)`);
           return;

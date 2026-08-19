@@ -96,19 +96,27 @@ export function useAIAnalysis(
       const data = await response.json();
       const text: string = data.reading || "";
       if (!text.trim()) throw new Error("No reading received");
-      setAiReading({ reading: text, source: data.source || "mistral" });
+      if (abortControllerRef.current === controller) {
+        setAiReading({ reading: text, source: data.source || "mistral" });
+      }
     } catch (err: any) {
       if (err.name === "AbortError") return;
-      setError(err.message || "Processing failed");
+      if (abortControllerRef.current === controller) {
+        setError(err.message || "Processing failed");
+      }
     } finally {
-      setIsLoading(false);
-      abortControllerRef.current = null;
+      if (abortControllerRef.current === controller) {
+        setIsLoading(false);
+        abortControllerRef.current = null;
+      }
     }
   }, [question, drawnCards, allCards, selectedSpreadId, enabled, mapCards, significatorType]);
 
   const resetAnalysis = useCallback(() => {
     abortControllerRef.current?.abort();
     followUpAbortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    followUpAbortControllerRef.current = null;
     setAiReading(null);
     setError(null);
     setIsLoading(false);
@@ -156,7 +164,7 @@ export function useAIAnalysis(
             const { done, value } = await reader.read();
             if (done) break;
             const text = decoder.decode(value, { stream: true });
-            if (text) {
+            if (text && followUpAbortControllerRef.current === controller) {
               fullResponse += text;
               setFollowUpResponse(fullResponse);
             }
@@ -166,13 +174,17 @@ export function useAIAnalysis(
         }
       } catch (err: any) {
         if (err.name === "AbortError") return;
-        setFollowUpResponse(
-          fullResponse || "Sorry, I couldn't process your follow-up question. Please try again.",
-        );
+        if (followUpAbortControllerRef.current === controller) {
+          setFollowUpResponse(
+            fullResponse || "Sorry, I couldn't process your follow-up question. Please try again.",
+          );
+        }
       } finally {
-        setFollowUpLoading(false);
-        setFollowUpStreaming(false);
-        followUpAbortControllerRef.current = null;
+        if (followUpAbortControllerRef.current === controller) {
+          setFollowUpLoading(false);
+          setFollowUpStreaming(false);
+          followUpAbortControllerRef.current = null;
+        }
       }
     },
     [aiReading, drawnCards, selectedSpreadId, mapCards, significatorType, question],
