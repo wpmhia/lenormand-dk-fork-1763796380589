@@ -144,6 +144,17 @@ describe("prediction evidence positions", () => {
     expect(evidence).not.toContain("positions 25+");
     expect(evidence).toMatch(/positions 2\+3\).*\[STRONGEST — closing pair\]/);
   });
+
+  it("ranks Grand Tableau evidence by two-dimensional proximity", () => {
+    const ids = Array.from({ length: 36 }, (_, i) => i + 1);
+    ids[7] = 5;
+    ids[8] = 29;
+    ids[9] = 4;
+    const ctx = buildReadingContext("grand-tableau", "health", normalized(ids), cardsMap, "woman");
+    const prediction = buildPredictionContext(ctx);
+
+    expect(prediction.topicEvidence[0]?.value).toContain("position 8");
+  });
 });
 
 describe("prompt quality: Petit Tableau (comprehensive)", () => {

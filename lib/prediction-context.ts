@@ -48,6 +48,14 @@ function fmt(n: NormalizedCard | null | undefined): string {
   return fmtCard(n);
 }
 
+function grandTableauDistance(a: number, b: number): number {
+  const ar = Math.floor(a / 9);
+  const ac = a % 9;
+  const br = Math.floor(b / 9);
+  const bc = b % 9;
+  return Math.max(Math.abs(ar - br), Math.abs(ac - bc));
+}
+
 function pairMeaning(a: NormalizedCard, b: NormalizedCard, pairs: AdjacentPair[]): string | undefined {
   for (const p of pairs) {
     if ((p.cardA.id === a.id && p.cardB.id === b.id) ||
@@ -184,7 +192,10 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
       layout.topicCards.some((tc) => tc.cardId === house.houseCardId)
       || (sig && house.occupyingCard.id === sig.card.id),
     )
-    .sort((a, b) => Math.abs(a.position - 1 - sigIndex) - Math.abs(b.position - 1 - sigIndex));
+    .sort((a, b) =>
+      grandTableauDistance(a.position - 1, sigIndex) -
+      grandTableauDistance(b.position - 1, sigIndex),
+    );
   const houseLines: PredictionEvidenceLine[] = [];
   for (const house of importantHouses) {
     const isImportant =
@@ -232,7 +243,10 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
     significatorEvidence: sigLines,
     houseEvidence: houseLines,
      topicEvidence: [...layout.topicCards]
-       .sort((a, b) => Math.abs(a.index - sigIndex) - Math.abs(b.index - sigIndex))
+       .sort((a, b) =>
+         grandTableauDistance(a.index, sigIndex) -
+         grandTableauDistance(b.index, sigIndex),
+       )
        .slice(0, 4)
        .map((tc) => ({
        label: `Topic: ${tc.topic}`,
