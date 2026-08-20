@@ -3346,7 +3346,7 @@
     ],
     "imageUrl": "/images/cards/20-garden.png",
     "meaning": {
-      "general": "The Judgement card brings destiny and important crossroads. It represents major decisions, judgment moments, and life-changing realizations.",
+      "general": "The Garden brings public life and social connection. It represents gatherings, community, visibility, and shared spaces.",
       "positive": [
         "Positive judgment",
         "Destiny revealed",
@@ -3716,127 +3716,127 @@
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Choice news, decision announcement, directional message, optional information"
+        "meaning": "Mice with Rider: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 2,
-        "meaning": "Choice luck, decision opportunity, directional chance, optional fortune"
+        "meaning": "Mice with Clover: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 4,
-        "meaning": "Choice home, decision family, directional household, optional domestic life"
+        "meaning": "Mice with House: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 5,
-        "meaning": "Choice health, decision wellness, directional recovery, optional healing"
+        "meaning": "Mice with Tree: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 6,
-        "meaning": "Choice confusion, decision uncertainty, directional doubt, optional clarity"
+        "meaning": "Mice with Clouds: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 7,
-        "meaning": "Choice betrayal, decision deception, directional wisdom, optional revelation"
+        "meaning": "Mice with Snake: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 8,
-        "meaning": "Choice ending, decision transformation, directional rebirth, optional closure"
+        "meaning": "Mice with Coffin: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 9,
-        "meaning": "Choice gift, decision surprise, directional appreciation, optional gratitude"
+        "meaning": "Mice with Bouquet: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 10,
-        "meaning": "Choice change, decision transformation, directional harvest, optional decision"
+        "meaning": "Mice with Scythe: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 11,
-        "meaning": "Choice conflict, decision argument, directional passion, optional discipline"
+        "meaning": "Mice with Whip: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 12,
-        "meaning": "Choice communication, decision gossip, directional talk, optional social activity"
+        "meaning": "Mice with Birds: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 13,
-        "meaning": "Choice new beginning, decision innocence, directional creativity, optional youth"
+        "meaning": "Mice with Child: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 14,
-        "meaning": "Choice cunning, decision intelligence, directional strategy, optional caution"
+        "meaning": "Mice with Fox: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 15,
-        "meaning": "Choice power, decision authority, directional strength, optional protection"
+        "meaning": "Mice with Bear: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 16,
-        "meaning": "Choice hope, decision guidance, directional wishes, optional destiny"
+        "meaning": "Mice with Stars: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 17,
-        "meaning": "Choice change, decision transition, directional movement, optional return"
+        "meaning": "Mice with Stork: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 18,
-        "meaning": "Choice friendship, decision loyalty, directional trust, optional companionship"
+        "meaning": "Mice with Dog: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 19,
-        "meaning": "Choice authority, decision structure, directional rules, optional freedom"
+        "meaning": "Mice with Tower: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 20,
-        "meaning": "Choice community, decision gathering, directional social event, optional group"
+        "meaning": "Mice with Garden: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 21,
-        "meaning": "Choice obstacle, decision challenge, directional endurance, optional difficulty"
+        "meaning": "Mice with Mountain: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 24,
-        "meaning": "Choice love, decision romance, directional relationship, optional emotion"
+        "meaning": "Mice with Heart: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 25,
-        "meaning": "Choice commitment, decision union, directional marriage, optional contract"
+        "meaning": "Mice with Ring: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 26,
-        "meaning": "Choice knowledge, decision learning, directional wisdom, optional education"
+        "meaning": "Mice with Book: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 27,
-        "meaning": "Choice message, decision communication, directional letter, optional information"
+        "meaning": "Mice with Letter: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 30,
-        "meaning": "Choice wisdom, decision maturity, directional ethics, optional peace"
+        "meaning": "Mice with Lily: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 31,
-        "meaning": "Choice success, decision victory, directional achievement, optional happiness"
+        "meaning": "Mice with Sun: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 32,
-        "meaning": "Choice intuition, decision creativity, directional dreams, optional emotion"
+        "meaning": "Mice with Moon: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 33,
-        "meaning": "Choice solution, decision opportunity, directional discovery, optional access"
+        "meaning": "Mice with Key: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 34,
-        "meaning": "Choice abundance, decision wealth, directional prosperity, optional business"
+        "meaning": "Mice with Fish: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 35,
-        "meaning": "Choice stability, decision security, directional grounding, optional patience"
+        "meaning": "Mice with Anchor: loss, worry, and gradual erosion affecting the surrounding situation"
       },
       {
         "withCardId": 36,
-        "meaning": "Choice faith, decision sacrifice, directional destiny, optional burden"
+        "meaning": "Mice with Cross: loss, worry, and gradual erosion affecting the surrounding situation"
       }
     ],
     "imageUrl": "/images/cards/23-mice.png",
@@ -4517,7 +4517,7 @@
     ],
     "imageUrl": "/images/cards/27-letter.png",
     "meaning": {
-      "general": "The Syringe brings medicine and healing. It represents medical attention, medication, healthcare, and physical remedies.",
+      "general": "The Letter brings written communication and documents. It represents messages, news, paperwork, and information arriving.",
       "positive": [
         "Healing received",
         "Medicine effective",
@@ -5159,131 +5159,131 @@
     "combos": [
       {
         "withCardId": 1,
-        "meaning": "Authoritative news, institutional message, isolated announcement, structured information"
+        "meaning": "Cross with Rider: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 2,
-        "meaning": "Authoritative luck, institutional opportunity, isolated chance, structured fortune"
+        "meaning": "Cross with Clover: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 3,
-        "meaning": "Authoritative journey, institutional travel, isolated voyage, structured movement"
+        "meaning": "Cross with Ship: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 4,
-        "meaning": "Authoritative home, institutional family, isolated household, structured domestic life"
+        "meaning": "Cross with House: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 5,
-        "meaning": "Authoritative health, institutional wellness, isolated recovery, structured healing"
+        "meaning": "Cross with Tree: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 6,
-        "meaning": "Authoritative confusion, institutional uncertainty, isolated doubt, structured clarity"
+        "meaning": "Cross with Clouds: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 7,
-        "meaning": "Authoritative betrayal, institutional deception, isolated wisdom, structured revelation"
+        "meaning": "Cross with Snake: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 8,
-        "meaning": "Authoritative ending, institutional transformation, isolated rebirth, structured closure"
+        "meaning": "Cross with Coffin: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 9,
-        "meaning": "Authoritative gift, institutional surprise, isolated appreciation, structured gratitude"
+        "meaning": "Cross with Bouquet: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 10,
-        "meaning": "Authoritative change, institutional transformation, isolated harvest, structured decision"
+        "meaning": "Cross with Scythe: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 11,
-        "meaning": "Authoritative conflict, institutional argument, isolated passion, structured discipline"
+        "meaning": "Cross with Whip: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 12,
-        "meaning": "Authoritative communication, institutional gossip, isolated talk, structured social activity"
+        "meaning": "Cross with Birds: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 13,
-        "meaning": "Authoritative new beginning, institutional innocence, isolated creativity, structured youth"
+        "meaning": "Cross with Child: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 14,
-        "meaning": "Authoritative cunning, institutional intelligence, isolated strategy, structured caution"
+        "meaning": "Cross with Fox: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 15,
-        "meaning": "Authoritative power, institutional authority, isolated strength, structured protection"
+        "meaning": "Cross with Bear: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 16,
-        "meaning": "Authoritative hope, institutional guidance, isolated wishes, structured destiny"
+        "meaning": "Cross with Stars: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 17,
-        "meaning": "Authoritative change, institutional transition, isolated movement, structured return"
+        "meaning": "Cross with Stork: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 18,
-        "meaning": "Authoritative friendship, institutional loyalty, isolated trust, structured companionship"
+        "meaning": "Cross with Dog: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 20,
-        "meaning": "Authoritative community, institutional gathering, isolated social event, structured group"
+        "meaning": "Cross with Garden: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 21,
-        "meaning": "Authoritative obstacle, institutional challenge, isolated endurance, structured difficulty"
+        "meaning": "Cross with Mountain: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 22,
-        "meaning": "Authoritative choice, institutional decision, isolated direction, structured path"
+        "meaning": "Cross with Paths: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 23,
-        "meaning": "Authoritative loss, institutional stress, isolated recovery, structured healing"
+        "meaning": "Cross with Mice: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 24,
-        "meaning": "Authoritative love, institutional romance, isolated relationship, structured emotion"
+        "meaning": "Cross with Heart: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 25,
-        "meaning": "Authoritative commitment, institutional union, isolated marriage, structured contract"
+        "meaning": "Cross with Ring: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 26,
-        "meaning": "Authoritative knowledge, institutional learning, isolated wisdom, structured education"
+        "meaning": "Cross with Book: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 27,
-        "meaning": "Authoritative message, institutional communication, isolated letter, structured information"
+        "meaning": "Cross with Letter: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 30,
-        "meaning": "Authoritative wisdom, institutional maturity, isolated ethics, structured peace"
+        "meaning": "Cross with Lily: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 31,
-        "meaning": "Authoritative success, institutional victory, isolated achievement, structured happiness"
+        "meaning": "Cross with Sun: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 32,
-        "meaning": "Authoritative intuition, institutional creativity, isolated dreams, structured emotion"
+        "meaning": "Cross with Moon: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 33,
-        "meaning": "Authoritative solution, institutional opportunity, isolated discovery, structured access"
+        "meaning": "Cross with Key: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 34,
-        "meaning": "Authoritative abundance, institutional wealth, isolated prosperity, structured business"
+        "meaning": "Cross with Fish: burden, duty, and difficult consequences affecting the surrounding situation"
       },
       {
         "withCardId": 35,
-        "meaning": "Authoritative stability, institutional security, isolated grounding, structured patience"
+        "meaning": "Cross with Anchor: burden, duty, and difficult consequences affecting the surrounding situation"
       }
     ],
     "imageUrl": "/images/cards/36-cross.png",

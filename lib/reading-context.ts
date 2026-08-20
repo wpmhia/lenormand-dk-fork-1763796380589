@@ -191,11 +191,14 @@ function buildGrandTableauPairs(
   const all: AdjacentPair[] = [];
   const seen = new Set<string>();
 
-  const sigIndices = new Set([
-    layout.primarySignificator?.index,
-    layout.significators.man?.index,
-    layout.significators.woman?.index,
-  ].filter((s): s is number => s !== undefined));
+  const activeSignificators = layout.significatorPreference === "both"
+    ? [layout.significators.man, layout.significators.woman]
+    : [layout.primarySignificator];
+  const sigIndices = new Set(
+    activeSignificators
+      .filter((s): s is SignificatorInfo => s !== undefined)
+      .map((s) => s.index),
+  );
 
   const sigRows = new Set<number>();
   const sigCols = new Set<number>();
@@ -208,7 +211,16 @@ function buildGrandTableauPairs(
     const inSigRow = sigRows.has(Math.floor(i / 9)) || sigRows.has(Math.floor(j / 9));
     const inSigCol = sigCols.has(i % 9) || sigCols.has(j % 9);
     const eitherIsSig = sigIndices.has(i) || sigIndices.has(j);
-    const isAdjacentToSig = eitherIsSig && Math.abs(i - j) < 9;
+    const isAdjacentToSig = [...sigIndices].some((sigIndex) => {
+      const sigRow = Math.floor(sigIndex / 9);
+      const sigCol = sigIndex % 9;
+      const iRow = Math.floor(i / 9);
+      const iCol = i % 9;
+      const jRow = Math.floor(j / 9);
+      const jCol = j % 9;
+      return (i === sigIndex && Math.max(Math.abs(jRow - sigRow), Math.abs(jCol - sigCol)) === 1)
+        || (j === sigIndex && Math.max(Math.abs(iRow - sigRow), Math.abs(iCol - sigCol)) === 1);
+    });
     const isSigPair = eitherIsSig;
 
     if (isAdjacentToSig) return 9;
@@ -244,8 +256,11 @@ function buildGrandTableauPairs(
     for (let dc = -1; dc <= 1; dc++) {
       for (let dr = -1; dr <= 1; dr++) {
         if (dr === 0 && dc === 0) continue;
-        const ni = (row + dr) * 9 + (col + dc);
-        if (ni >= 0 && ni < 36) add(sigIdx, ni);
+        const nextRow = row + dr;
+        const nextCol = col + dc;
+        if (nextRow >= 0 && nextRow < 4 && nextCol >= 0 && nextCol < 9) {
+          add(sigIdx, nextRow * 9 + nextCol);
+        }
       }
     }
   }
@@ -260,7 +275,11 @@ function buildLinearAdjacentPairs(
   const pairs: AdjacentPair[] = [];
   const mid = Math.floor(cards.length / 2);
   for (let i = 0; i < cards.length - 1; i++) {
-    const weight = i === mid || i + 1 === mid ? 5 : 3;
+    const weight = i === cards.length - 2
+      ? 6
+      : i === mid || i + 1 === mid
+        ? 5
+        : 3;
     pairs.push(buildAdjacentPair(i, i + 1, cards, cardsMap, weight));
   }
   return pairs;
@@ -550,16 +569,24 @@ export function buildReadingContext(
   }
 
   const timingEvidence: TimingEvidence[] = [];
-  for (const tc of Object.values(TIMING_CARDS)) {
-    const found = cards.find((c) => c.id === tc.id);
-    if (found) {
-      timingEvidence.push({ cardId: tc.id, cardName: found.name, range: tc.range });
+  if (layoutType !== "grand-tableau") {
+    for (const tc of Object.values(TIMING_CARDS)) {
+      const found = cards.find((c) => c.id === tc.id);
+      if (found) {
+        timingEvidence.push({ cardId: tc.id, cardName: found.name, range: tc.range });
+      }
     }
   }
 
   const topicFocus: TopicFocus[] = [];
   const lowerQ = question.toLowerCase();
-  for (const [category, topics] of Object.entries(QUESTION_TOPICS)) {
+  const hasHealthQuestion = matchQuestionTopic(lowerQ, "health");
+  const topicEntries = Object.entries(QUESTION_TOPICS).sort(([a], [b]) => {
+    if (hasHealthQuestion && a === "health") return -1;
+    if (hasHealthQuestion && b === "health") return 1;
+    return 0;
+  });
+  for (const [category, topics] of topicEntries) {
     const match = matchQuestionTopic(lowerQ, category);
     if (match) {
       for (const t of topics) {
