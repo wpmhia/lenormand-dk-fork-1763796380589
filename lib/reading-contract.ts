@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Card } from "@/lib/types";
 import { MAX_QUESTION_LENGTH } from "@/lib/constants";
 import { SPREAD_DEFINITIONS, SpreadId } from "@/lib/spread-definitions";
+import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export type { SpreadId };
 
@@ -81,9 +82,7 @@ function buildAdjacentComboHints(
     const cardA = cardsMap.get(cards[i].id);
     const cardB = cardsMap.get(cards[i + 1].id);
     if (cardA && cardB) {
-      const forwardCombo = cardA.combos?.find((c) => c.withCardId === cardB.id);
-      const reverseCombo = cardB.combos?.find((c) => c.withCardId === cardA.id);
-      const meaning = forwardCombo?.meaning || reverseCombo?.meaning;
+      const meaning = getCanonicalLenormandPairMeaning(cardA.id, cardB.id);
       if (meaning) {
         hints.push({ cardA: cardA.name, cardB: cardB.name, meaning });
       }
