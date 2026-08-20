@@ -83,7 +83,7 @@ function buildAdjacentComboHints(
     if (cardA && cardB) {
       const forwardCombo = cardA.combos?.find((c) => c.withCardId === cardB.id);
       const reverseCombo = cardB.combos?.find((c) => c.withCardId === cardA.id);
-      const meaning = [forwardCombo?.meaning, reverseCombo?.meaning].filter(Boolean).join(" - ");
+      const meaning = forwardCombo?.meaning || reverseCombo?.meaning;
       if (meaning) {
         hints.push({ cardA: cardA.name, cardB: cardB.name, meaning });
       }

@@ -96,7 +96,6 @@ export function validateReadingOutput(
     .split("\n")
     .filter((line) => !/^#{1,6}\s/.test(line))
     .join("\n");
-  const cardNamePattern = /\b([A-Za-z][a-z]+)\b/g;
   const knownCardNames = new Set([
     "rider", "clover", "ship", "house", "tree", "clouds", "snake", "coffin", "bouquet", "scythe",
     "whip", "birds", "child", "fox", "bear", "stars", "stork", "dog", "tower", "garden",
@@ -104,12 +103,20 @@ export function validateReadingOutput(
     "woman", "lily", "sun", "moon", "key", "fish", "anchor", "cross",
   ]);
   const mentionedCards = new Set<string>();
+  const cardAlternation = [...knownCardNames].join("|");
+  const explicitCardPattern = new RegExp(`\\b(${cardAlternation})\\s*\\+\\s*(${cardAlternation})\\b|\\b(${cardAlternation})\\s+card\\b`, "gi");
   let match;
-  while ((match = cardNamePattern.exec(bodyWithoutHeadings)) !== null) {
-    const lower = match[1].toLowerCase();
-    if (knownCardNames.has(lower)) {
-      mentionedCards.add(lower);
-    }
+  while ((match = explicitCardPattern.exec(bodyWithoutHeadings)) !== null) {
+    if (match[1]) mentionedCards.add(match[1].toLowerCase());
+    if (match[2]) mentionedCards.add(match[2].toLowerCase());
+    if (match[3]) mentionedCards.add(match[3].toLowerCase());
+  }
+  const cardAlternationCapitalized = [...knownCardNames]
+    .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+    .join("|");
+  const namedCardPattern = new RegExp(`\\b(?:[Tt]he|[Cc]ard)\\s+(${cardAlternationCapitalized})\\b`, "g");
+  while ((match = namedCardPattern.exec(bodyWithoutHeadings)) !== null) {
+    mentionedCards.add(match[1].toLowerCase());
   }
 
   const nameToId: Record<string, number> = {
@@ -137,9 +144,10 @@ export function validateReadingOutput(
   const nonnumericTimingPattern = /\b(?:within|in|over|coming|next|next few|last|past|the coming|the next)\s+(?:days?|weeks?|months?|years?|fortnight)\b|\bin\s+the\s+(?:short|long|near)\s+term\b|\bnear term\b|\bsoon\b|\bvery soon\b|\bshortly\b/i;
   const nonnumericTimingMatch = timingText.match(nonnumericTimingPattern);
 
-  const drawnTimingCards = drawnCardIds
-    .map((id) => getTimingCard(id))
-    .filter((def): def is NonNullable<typeof def> => def !== undefined);
+  const drawnTimingCards = spreadId === "grand-tableau"
+    ? []
+    : drawnCardIds.map((id) => getTimingCard(id))
+      .filter((def): def is NonNullable<typeof def> => def !== undefined);
 
   const rangeFromUnit = (unit: string): "days" | "weeks" | "months" | "years" =>
     unit.startsWith("day") ? "days"
