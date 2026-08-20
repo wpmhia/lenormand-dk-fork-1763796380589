@@ -169,7 +169,9 @@ const BAD_COMBO_PHRASES = [
 function isUsableComboMeaning(meaning: string | undefined): boolean {
   if (!meaning) return false;
   const lower = meaning.toLowerCase();
-  return !BAD_COMBO_PHRASES.some((pat) => lower.includes(pat));
+  // Filter only clear contamination or New Age/Tarot language. Positive or
+  // passionate Lenormand combinations are not inherently invalid evidence.
+  return !/(unique energy|positive energy|\benergy\b|combined with|kilimanjaro|internet router|judg(?:e)?ment card|tarot|archetype)/i.test(lower);
 }
 
 export function buildSystemPrompt(cardCount?: number): string {
@@ -182,6 +184,7 @@ Lenormand is concrete, practical, external, predictive, and combination-based. A
 Synthesis disciplines (apply to all spreads):
 
 - Method discipline. Apply the reading method defined for this spread consistently. Do not override the spread's positional or directional hierarchy because another interpretation sounds more reassuring, more interesting, or more plausible.
+- Lenormand discipline. Treat cards as words in a sentence and nodes in a tableau. Lead with card combinations and positional relationships; do not turn an isolated card into a Tarot-style archetype, psychological profile, or universal outcome.
 - Evidence discipline. Preserve the direction, polarity, and severity of the cards. Don't soften a difficult combination into a reassuring one, and don't magnify a mild one into a crisis. If the evidence leans adverse, say so clearly while preserving appropriate uncertainty.
 - Grounding discipline. Introduce concrete specifics (people, documents, events, organizations, places, costs, outcomes) only when they are established by the question/context or supported by the drawn cards. Do not add cards that were not drawn.
 
