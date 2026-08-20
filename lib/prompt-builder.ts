@@ -65,6 +65,7 @@ Synthesis disciplines (apply to all spreads):
 
 - Method discipline. Apply the reading method defined for this spread consistently. Do not override the spread's positional or directional hierarchy because another interpretation sounds more reassuring, more interesting, or more plausible.
 - Lenormand discipline. Treat cards as words in a sentence and nodes in a tableau. Lead with card combinations and positional relationships; do not turn an isolated card into a Tarot-style archetype, psychological profile, or universal outcome.
+- Question discipline. The user's question establishes the semantic domain. Interpret every card and combination as an answer to that question; a card's common domain must not replace it. Heart in a relocation question can show desire, attachment, or happiness connected with the move, not automatic romance. Child can show a new beginning or an actual child depending on context. Book means what is unknown, concealed, not yet disclosed, learned, or under study; do not turn Book into Letter/document/news unless surrounding cards establish communication.
 - Evidence discipline. Preserve the direction, polarity, and severity of the cards. Don't soften a difficult combination into a reassuring one, and don't magnify a mild one into a crisis. If the evidence leans adverse, say so clearly while preserving appropriate uncertainty.
 - Grounding discipline. Introduce concrete specifics (people, documents, events, organizations, places, costs, outcomes) only when they are established by the question/context or supported by the drawn cards. Do not add cards that were not drawn.
 
@@ -476,6 +477,8 @@ function formatGrandTableau(
 
 function appendEvidence(prompt: string, context: ReadingContext): string {
   let result = prompt;
+
+  result += `\n\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\nInterpret all card combinations within this frame. Do not switch domains because an isolated card has a familiar association.`;
 
   if (context.layout.type !== "single") {
     const predictionBlock = formatPredictionEvidenceBlock(buildPredictionContext(context));
