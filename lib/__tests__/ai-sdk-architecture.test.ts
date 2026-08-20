@@ -7,7 +7,7 @@ describe("interpret route uses AI SDK correctly", () => {
   const src = read("app/api/readings/interpret/route.ts");
 
   it("uses generateText, not streamText, for initial readings", () => {
-    expect(src).toMatch(/import \{ generateText \} from "ai"/);
+    expect(src).toMatch(/import \{ generateText(?:, Output)? \} from "ai"/);
     expect(src).not.toMatch(/import \{ streamText \} from "ai"/);
   });
 
