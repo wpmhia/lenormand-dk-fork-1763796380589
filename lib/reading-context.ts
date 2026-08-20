@@ -8,6 +8,7 @@ import {
   GRAND_TABLEAU_CENTER_CARDS,
 } from "@/lib/spreads";
 import { TIMING_CARDS as SHARED_TIMING_CARDS } from "@/lib/timing";
+import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export interface AdjacentPair {
   indexA: number;
@@ -187,9 +188,7 @@ function buildAdjacentPair(
   let traditionalMeaning: string | undefined;
 
   if (fullA && fullB) {
-    const forward = fullA.combos?.find((c) => c.withCardId === fullB.id);
-    const reverse = fullB.combos?.find((c) => c.withCardId === fullA.id);
-    traditionalMeaning = forward?.meaning || reverse?.meaning;
+    traditionalMeaning = getCanonicalLenormandPairMeaning(fullA.id, fullB.id);
   }
 
   return { indexA: i, indexB: j, cardA, cardB, traditionalMeaning, weight };
