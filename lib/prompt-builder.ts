@@ -3,7 +3,6 @@ import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayo
 import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
-import { getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 
 export function getTokenBudget(cardCount: number): number {
@@ -49,10 +48,6 @@ const PERSON_CARD_PROMPT_NOTE = `- Man and Woman represent specific people/signi
 function fmtPersonCard(card: { name: string; strength?: string }): string {
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
   return `${name} (specific person/significator)`;
-}
-
-function isUsableComboMeaning(meaning: string | undefined): boolean {
-  return getUsableLenormandPairMeaning(meaning) !== undefined;
 }
 
 export function buildSystemPrompt(cardCount?: number): string {
@@ -262,8 +257,7 @@ function fmtCard(card: { name: string; keywords?: string[]; strength?: string })
     return fmtPersonCard(card);
   }
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
-  const keywords = card.keywords?.slice(0, 5).join(", ");
-  return keywords ? `${name} (${keywords})` : name;
+  return name;
 }
 
 export { fmtCard, PERSON_CARD_NAMES };
@@ -273,13 +267,10 @@ function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
   return (
     "\nAdjacent combinations:\n" +
     pairs
-      .filter((p) => isUsableComboMeaning(p.traditionalMeaning))
       .map((p) => {
         const left = fmtCard(p.cardA);
         const right = fmtCard(p.cardB);
-         const usableMeaning = getUsableLenormandPairMeaning(p.traditionalMeaning);
-         const meaning = usableMeaning ? `: ${usableMeaning}` : "";
-        return `- ${left} + ${right}${meaning}`;
+        return `- ${left} + ${right}`;
       })
       .join("\n")
   );
@@ -447,12 +438,7 @@ function formatGrandTableau(
       parts.push("");
       parts.push("Vertical pairs through significator column:");
       const vpText = verticalAroundSig
-        .filter((vp) => isUsableComboMeaning(vp.traditionalMeaning))
-        .map((vp) => {
-           const usableMeaning = getUsableLenormandPairMeaning(vp.traditionalMeaning);
-           const m = usableMeaning ? `: ${usableMeaning}` : "";
-          return `- ${fmtCard(vp.cardA)} + ${fmtCard(vp.cardB)}${m}`;
-        });
+        .map((vp) => `- ${fmtCard(vp.cardA)} + ${fmtCard(vp.cardB)}`);
       parts.push(...vpText);
     }
   }
@@ -494,21 +480,6 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
     result += "\n\nTopic focus:";
     for (const tf of context.topicFocus.slice(0, 5)) {
       result += `\n- ${tf.topic} — Card ${tf.cardName} at position ${tf.index + 1}`;
-    }
-  }
-
-  const weighted = [...context.adjacentPairs].sort((a, b) => b.weight - a.weight);
-  const topPairs = weighted.slice(0, 10).filter((p) => p.weight >= 2);
-
-  if (topPairs.length > 0) {
-    const hints = topPairs
-      .filter((p) => isUsableComboMeaning(p.traditionalMeaning))
-       .map((p) => {
-         const meaning = getUsableLenormandPairMeaning(p.traditionalMeaning);
-         return `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)} (importance: ${p.weight}/10): ${meaning}`;
-       });
-    if (hints.length > 0) {
-      result += `\n\nKey pair meanings (use as evidence, interpret in relation to the question — do not copy verbatim):\n${hints.join("\n")}`;
     }
   }
 
