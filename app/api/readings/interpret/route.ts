@@ -118,14 +118,35 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, "empty-output");
     }
 
-    const finalText = normalizeMarkdown(result.text);
+    let finalText = normalizeMarkdown(result.text);
 
-    const outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
-    const markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
-    const finalCritical = [
+    let outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
+    let markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
+    let finalCritical = [
       ...outputValidation.issues.filter(isCriticalIssue),
       ...markdownValidation.issues.filter(isCriticalIssue),
     ];
+
+    if (finalCritical.length > 0) {
+      const repair = await generateText({
+        model: mistral(MISTRAL_PRODUCTION_MODEL),
+        system: `${buildSystemPrompt(cardCount)}\n\nVALIDATION OVERRIDE: Regenerate the reading from scratch. Output only the required headings and content. Mention only drawn cards, use no timing unless supported, and avoid all Tarot/New Age language.`,
+        prompt,
+        temperature: 0.1,
+        maxOutputTokens: maxTokens,
+        maxRetries: 0,
+        abortSignal: request.signal,
+        timeout: { totalMs: 8_000 },
+      });
+
+      finalText = normalizeMarkdown(repair.text);
+      outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
+      markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
+      finalCritical = [
+        ...outputValidation.issues.filter(isCriticalIssue),
+        ...markdownValidation.issues.filter(isCriticalIssue),
+      ];
+    }
 
     if (finalCritical.length > 0) {
       console.error("interpret: reading rejected by validator", {
