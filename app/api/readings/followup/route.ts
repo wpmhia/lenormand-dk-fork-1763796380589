@@ -14,6 +14,7 @@ import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { FOLLOWUP_SYSTEM_PROMPT, FOLLOWUP_MAX_OUTPUT_TOKENS } from "@/lib/followup-prompt";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
+import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -127,7 +128,7 @@ export async function POST(request: Request) {
     const history = (followUpHistory as { role: "user" | "assistant"; content: string }[])
       .map((turn) => `${turn.role}: ${turn.content}`)
       .join("\n");
-    const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
+    const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\n\n${buildLenormandEvidencePack(context)}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
 
     const result = streamText({
       model: mistral(MISTRAL_PRODUCTION_MODEL),
