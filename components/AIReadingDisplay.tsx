@@ -155,7 +155,10 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   const handleCopy = async () => {
     if (!aiReading?.reading) return;
     const plainText = getPlainReadingText(aiReading.reading);
-    const ok = await copyTextToClipboard(plainText);
+    const copyContent = question?.trim()
+      ? `Question: ${question.trim()}\n\n${plainText}`
+      : plainText;
+    const ok = await copyTextToClipboard(copyContent);
 
     setCopyClicked(ok);
     setCopyError(!ok);
@@ -302,6 +305,14 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
         </div>
 
         <div className="reading-content space-y-4 text-foreground">
+          {question?.trim() && (
+            <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Question
+              </p>
+              <p className="text-sm text-foreground">{question.trim()}</p>
+            </div>
+          )}
           {aiReading?.reading && (
             <div className="leading-relaxed">
               <ReadingMarkdown>{aiReading.reading}</ReadingMarkdown>
