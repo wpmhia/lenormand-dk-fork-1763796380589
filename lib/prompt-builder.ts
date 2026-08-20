@@ -261,7 +261,7 @@ function fmtCard(card: { name: string; keywords?: string[]; strength?: string })
     return fmtPersonCard(card);
   }
   const name = sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
-  const keywords = card.keywords?.slice(0, 2).join(", ");
+  const keywords = card.keywords?.slice(0, 5).join(", ");
   return keywords ? `${name} (${keywords})` : name;
 }
 

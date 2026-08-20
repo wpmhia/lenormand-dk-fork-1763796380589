@@ -128,16 +128,14 @@ export function validateReadingOutput(
     }
   }
 
-  // Timing validation only applies inside the Prediction section.
-  // The Interpretation and Cards sections can freely describe stability, change, etc.
-  // ("long-term stability" is descriptive, not a timing claim).
-  // The dedicated "Likely timing:" label inside Prediction is where timing is asserted.
-  const predictionSection = getSectionBody(reading, "## Prediction");
+  // Timing claims are unsupported wherever they appear, not just in Prediction.
+  // A timing card must support any explicit time range in the complete reading.
+  const timingText = reading;
   const numericTimingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
-  const numericTimingMatch = predictionSection.match(numericTimingPattern);
+  const numericTimingMatch = timingText.match(numericTimingPattern);
 
-  const nonnumericTimingPattern = /\b(?:within|in|over|coming|next|next few|last|past|the coming|the next)\s+(?:days?|weeks?|months?|years?|fortnight)\b|\bin\s+the\s+(?:short|long)\s+term\b|\bshort[\s-]?term\b|\blong[\s-]?term\b|\bsoon\b|\bvery soon\b/i;
-  const nonnumericTimingMatch = predictionSection.match(nonnumericTimingPattern);
+  const nonnumericTimingPattern = /\b(?:within|in|over|coming|next|next few|last|past|the coming|the next)\s+(?:days?|weeks?|months?|years?|fortnight)\b|\bin\s+the\s+(?:short|long|near)\s+term\b|\bnear term\b|\bsoon\b|\bvery soon\b|\bshortly\b/i;
+  const nonnumericTimingMatch = timingText.match(nonnumericTimingPattern);
 
   const drawnTimingCards = drawnCardIds
     .map((id) => getTimingCard(id))
