@@ -1,21 +1,16 @@
 "use client";
 
 import { Laptop, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface MethodToggleProps {
   value: "virtual" | "physical" | null;
   onChange: (method: "virtual" | "physical") => void;
-  onContinue: (method: "virtual" | "physical") => void;
   disabled?: boolean;
 }
 
-export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
-  const methodLabel = value === "virtual" ? "Continue with Virtual Deck" : value === "physical" ? "Continue with Physical Cards" : null;
-
+export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
   const selectMethod = (method: "virtual" | "physical") => {
     onChange(method);
-    onContinue(method);
   };
 
   return (
@@ -60,15 +55,6 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
         </button>
       </div>
 
-      <Button
-        type="button"
-        onClick={() => value && onContinue(value)}
-        disabled={!value || disabled}
-        className="w-full"
-        size="lg"
-      >
-        {methodLabel || "Select a method"}
-      </Button>
     </div>
   );
 }

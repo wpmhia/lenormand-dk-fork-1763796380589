@@ -185,16 +185,6 @@ function NewReadingPageContent() {
     }
   }, [step, drawnCards, startAnalysis]);
 
-  // Handle setup continue
-  const handleSetupContinue = useCallback((method: "virtual" | "physical") => {
-    if (!question.trim()) {
-      setError("Please enter a question to guide your reading.");
-      return;
-    }
-    setMethod(method);
-    setStep("drawing");
-  }, [question]);
-
   // Handle back navigation
   const handleBack = useCallback(() => {
     if (step === "drawing") {
@@ -232,6 +222,15 @@ function NewReadingPageContent() {
     },
     [allCards],
   );
+
+  const handleMethodChange = useCallback((selectedMethod: "virtual" | "physical") => {
+    if (!question.trim()) {
+      setError("Please enter a question to guide your reading.");
+      return;
+    }
+    setMethod(selectedMethod);
+    setStep("drawing");
+  }, [question]);
 
   // Get step label for progress
   const getStepLabel = (stepName: Step): string => {
@@ -349,8 +348,7 @@ function NewReadingPageContent() {
                 spread={selectedSpread}
                 onSpreadChange={setSelectedSpread}
                 method={method}
-                onMethodChange={setMethod}
-                onContinue={handleSetupContinue}
+                onMethodChange={handleMethodChange}
               />
             </div>
           )}
