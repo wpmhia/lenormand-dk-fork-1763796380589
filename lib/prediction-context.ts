@@ -20,8 +20,7 @@ export interface PredictionContext {
   supportingPair: { a: NormalizedCard; b: NormalizedCard; meaning?: string } | null;
   /**
    * Full ordered progression of adjacent pairs for linear spreads. Each pair's
-   * meaning has already been passed through `getUsablePairMeaning` so the same
-   * contamination blacklist as the prompt applies. For non-linear layouts this
+   * meaning is selected from the canonical pair evidence. For non-linear layouts this
    * stays empty (pairs are surfaced via the per-topic evidence lines).
    */
   allPairs: { a: NormalizedCard; b: NormalizedCard; indexA: number; indexB: number; meaning?: string; weight: number }[];
@@ -322,7 +321,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
         ? "Center card (heart of tableau)"
         : pe.layoutType === "grand-tableau"
           ? "Significator (anchor of the read)"
-          : "Core driver";
+          : "Primary card in the spread";
     lines.push(`- ${label}: ${fmt(pe.coreDriverCard)}`);
   }
   if (pe.layoutType === "linear-sentence" && pe.allPairs.length > 0) {
