@@ -13,6 +13,11 @@ interface MethodToggleProps {
 export function MethodToggle({ value, onChange, onContinue, disabled }: MethodToggleProps) {
   const methodLabel = value === "virtual" ? "Continue with Virtual Deck" : value === "physical" ? "Continue with Physical Cards" : null;
 
+  const selectMethod = (method: "virtual" | "physical") => {
+    onChange(method);
+    onContinue(method);
+  };
+
   return (
     <div className="space-y-4">
       <div className="text-sm font-medium text-foreground">
@@ -22,7 +27,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => onChange("virtual")}
+           onClick={() => selectMethod("virtual")}
           disabled={disabled}
           className={`flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
         >
@@ -39,7 +44,7 @@ export function MethodToggle({ value, onChange, onContinue, disabled }: MethodTo
 
         <button
           type="button"
-          onClick={() => onChange("physical")}
+           onClick={() => selectMethod("physical")}
           disabled={disabled}
           className={`flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
         >
