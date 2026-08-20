@@ -24,7 +24,7 @@ export interface PredictionContext {
    * contamination blacklist as the prompt applies. For non-linear layouts this
    * stays empty (pairs are surfaced via the per-topic evidence lines).
    */
-  allPairs: { a: NormalizedCard; b: NormalizedCard; meaning?: string; weight: number }[];
+  allPairs: { a: NormalizedCard; b: NormalizedCard; indexA: number; indexB: number; meaning?: string; weight: number }[];
   significatorEvidence: PredictionEvidenceLine[];
   houseEvidence: PredictionEvidenceLine[];
   topicEvidence: PredictionEvidenceLine[];
@@ -52,7 +52,7 @@ function pairMeaning(a: NormalizedCard, b: NormalizedCard, pairs: AdjacentPair[]
   for (const p of pairs) {
     if ((p.cardA.id === a.id && p.cardB.id === b.id) ||
         (p.cardA.id === b.id && p.cardB.id === a.id)) {
-      if (p.traditionalMeaning && !/blessed|fortunate|lucky|positive energy|passionate/i.test(p.traditionalMeaning)) {
+      if (p.traditionalMeaning) {
         return p.traditionalMeaning;
       }
     }
@@ -63,9 +63,7 @@ function pairMeaning(a: NormalizedCard, b: NormalizedCard, pairs: AdjacentPair[]
 function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLayout, pairs: AdjacentPair[]): PredictionContext {
   const last = cards.length >= 1 ? cards[cards.length - 1] : null;
   const secondLast = cards.length >= 2 ? cards[cards.length - 2] : null;
-  // Central card exists only when there are 5 or more cards in the line. For shorter
-  // lines this stays null — no silent substitution of the closing card.
-  const middle = cards.length >= 5 ? cards[2] : null;
+  const middle = cards.length % 2 === 1 ? cards[Math.floor(cards.length / 2)] : null;
 
   const lastPair: AdjacentPair | undefined = pairs.find(
     (p) => Math.min(p.indexA, p.indexB) === cards.length - 2 && Math.max(p.indexA, p.indexB) === cards.length - 1,
@@ -83,16 +81,18 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     .sort((a, b) => {
       const aLo = Math.min(a.indexA, a.indexB);
       const bLo = Math.min(b.indexA, b.indexB);
-      return bLo - aLo; // higher position first (= closer to closing)
+       return aLo - bLo;
     });
   const allPairs = orderedPairs.map((p) => ({
     a: p.cardA,
     b: p.cardB,
+    indexA: p.indexA,
+    indexB: p.indexB,
     meaning: p.traditionalMeaning,
     weight: p.weight,
   }));
 
-  const developmentCard = cards.length >= 2 ? secondLast : null;
+  const developmentCard = middle;
 
   return {
     layoutType: "linear-sentence",
@@ -161,7 +161,7 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
   const sig = layout.primarySignificator;
   const bottomRow = layout.grid[Math.min(3, layout.grid.length - 1)] ?? [];
   const cardsOfFateLast = bottomRow[Math.min(8, bottomRow.length - 1)]?.card ?? null;
-  const cardsOfFateFirst = bottomRow[0]?.card ?? null;
+  const cardsOfFateFirst = bottomRow[4]?.card ?? null;
 
   // Outcome = last Cards of Fate (position 36). Development = first Cards of Fate
   // (position 33). These are anchor positions, not the significator's neighbourhood.
@@ -179,8 +179,15 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
   const primary = significantPairs[0] ?? [...pairs].sort((a, b) => b.weight - a.weight)[0] ?? null;
   const supporting = significantPairs[1] ?? [...pairs].sort((a, b) => b.weight - a.weight)[1] ?? null;
 
+  const sigIndex = sig?.index ?? 18;
+  const importantHouses = layout.houses
+    .filter((house) =>
+      layout.topicCards.some((tc) => tc.cardId === house.houseCardId)
+      || (sig && house.occupyingCard.id === sig.card.id),
+    )
+    .sort((a, b) => Math.abs(a.position - 1 - sigIndex) - Math.abs(b.position - 1 - sigIndex));
   const houseLines: PredictionEvidenceLine[] = [];
-  for (const house of layout.houses) {
+  for (const house of importantHouses) {
     const isImportant =
       layout.topicCards.some((tc) => tc.cardId === house.houseCardId) ||
       (sig && house.occupyingCard.id === sig.card.id);
@@ -225,10 +232,13 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
     allPairs: [],
     significatorEvidence: sigLines,
     houseEvidence: houseLines,
-    topicEvidence: layout.topicCards.slice(0, 4).map((tc) => ({
-      label: `Topic: ${tc.topic}`,
-      value: `${tc.label} at position ${tc.index + 1} — ${fmt(tc.card)}`,
-    })),
+     topicEvidence: [...layout.topicCards]
+       .sort((a, b) => Math.abs(a.index - sigIndex) - Math.abs(b.index - sigIndex))
+       .slice(0, 4)
+       .map((tc) => ({
+       label: `Topic: ${tc.topic}`,
+       value: `${tc.label} at position ${tc.index + 1} — ${fmt(tc.card)}`,
+       })),
     timingEvidence: [],
     notes,
   };
@@ -285,8 +295,8 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
     lines.push(`- ${label}: ${fmt(pe.outcomeCard)}`);
   }
   if (pe.developmentCard) {
-    const label = pe.layoutType === "linear-sentence"
-      ? "Development path (second-to-last card)"
+      const label = pe.layoutType === "linear-sentence"
+      ? "Development path (central card)"
       : pe.layoutType === "petit-tableau"
         ? "Development path (left end of middle line)"
         : "Development path";
@@ -309,7 +319,7 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
     for (let i = 0; i < pe.allPairs.length; i++) {
       const p = pe.allPairs[i];
       const meaning = p.meaning ? ` → ${p.meaning}` : "";
-      const pos = `positions ${Math.min(p.a.id, p.b.id) + 1}+${Math.max(p.a.id, p.b.id) + 1}`;
+      const pos = `positions ${Math.min(p.indexA, p.indexB) + 1}+${Math.max(p.indexA, p.indexB) + 1}`;
       const isClosing = i === pe.allPairs.length - 1;
       const marker = isClosing ? " [STRONGEST — closing pair]" : "";
       lines.push(`    - pair ${i + 1} (${pos})${marker}: ${fmt(p.a)} + ${fmt(p.b)}${meaning}`);

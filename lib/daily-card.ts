@@ -1,5 +1,13 @@
 const DAILY_CARD_CACHE_KEY = 'daily_card_cache_v2';
 
+function getLocalDateKey(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export interface DailyCardCache {
   date: string;
   cardId: number;
@@ -8,7 +16,7 @@ export interface DailyCardCache {
 
 export function getDailyCardCache(): DailyCardCache | null {
   if (typeof window === 'undefined') return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDateKey();
   
   try {
     const cached = localStorage.getItem(DAILY_CARD_CACHE_KEY);
@@ -26,7 +34,7 @@ export function getDailyCardCache(): DailyCardCache | null {
 
 export function setDailyCardCache(cardId: number): void {
   if (typeof window === 'undefined') return;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDateKey();
   
   try {
     localStorage.setItem(DAILY_CARD_CACHE_KEY, JSON.stringify({
@@ -50,5 +58,7 @@ export function getTodayDateString(): string {
 }
 
 export function drawRandomCardId(): number {
-  return Math.floor(Math.random() * 36) + 1;
+  const values = new Uint32Array(1);
+  crypto.getRandomValues(values);
+  return Math.floor((values[0] / 2 ** 32) * 36) + 1;
 }

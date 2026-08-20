@@ -241,6 +241,28 @@ describe("buildReadingContext", () => {
       expect(ctx.adjacentPairs.length).toBeLessThanOrEqual(20);
       expect(ctx.adjacentPairs.length).toBeGreaterThan(5);
     });
+
+    it("keeps significator neighbours inside the grid at an edge", () => {
+      const ids = [29, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 34, 35, 36];
+      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(ids), cardsMap, "woman");
+      const sigIndex = 0;
+      const sigPairs = ctx.adjacentPairs.filter((p) => p.indexA === sigIndex || p.indexB === sigIndex);
+
+      expect(sigPairs.length).toBeGreaterThan(0);
+      for (const pair of sigPairs) {
+        const other = pair.indexA === sigIndex ? pair.indexB : pair.indexA;
+        const row = Math.floor(other / 9);
+        const col = other % 9;
+        expect(row).toBeGreaterThanOrEqual(0);
+        expect(row).toBeLessThanOrEqual(1);
+        expect(col).toBeLessThanOrEqual(1);
+      }
+    });
+
+    it("does not use timing-card presence as GT timing evidence", () => {
+      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(allIds), cardsMap);
+      expect(ctx.timingEvidence).toEqual([]);
+    });
   });
 
   describe("grand-tableau significator preference", () => {

@@ -131,6 +131,21 @@ describe("prompt quality: sentence-5", () => {
   });
 });
 
+describe("prediction evidence positions", () => {
+  it("uses the central card and spread positions for a three-card sentence", () => {
+    const ctx = buildReadingContext("sentence-3", question, normalized([24, 1, 36]), cardsMap);
+    const prediction = buildPredictionContext(ctx);
+    const evidence = formatPredictionEvidenceBlock(prediction);
+
+    expect(prediction.coreDriverCard?.id).toBe(1);
+    expect(prediction.developmentCard?.id).toBe(1);
+    expect(evidence).toContain("positions 1+2");
+    expect(evidence).toContain("positions 2+3");
+    expect(evidence).not.toContain("positions 25+");
+    expect(evidence).toMatch(/positions 2\+3\).*\[STRONGEST — closing pair\]/);
+  });
+});
+
 describe("prompt quality: Petit Tableau (comprehensive)", () => {
   const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const ctx = buildReadingContext("comprehensive", question, normalized(ids), cardsMap);
