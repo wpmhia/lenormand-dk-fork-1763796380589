@@ -159,9 +159,8 @@ function buildPetitPrediction(cards: NormalizedCard[], layout: PetitTableauLayou
 
 function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayout, pairs: AdjacentPair[]): PredictionContext {
   const sig = layout.primarySignificator;
-  const bottomRow = layout.grid[Math.min(3, layout.grid.length - 1)] ?? [];
-  const cardsOfFateLast = bottomRow[Math.min(8, bottomRow.length - 1)]?.card ?? null;
-  const cardsOfFateFirst = bottomRow[4]?.card ?? null;
+  const cardsOfFateFirst = layout.cardsOfFate[0]?.card ?? null;
+  const cardsOfFateLast = layout.cardsOfFate[layout.cardsOfFate.length - 1]?.card ?? null;
 
   // Outcome = last Cards of Fate (position 36). Development = first Cards of Fate
   // (position 33). These are anchor positions, not the significator's neighbourhood.

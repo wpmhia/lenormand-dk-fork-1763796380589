@@ -580,7 +580,9 @@ export function buildReadingContext(
 
   const topicFocus: TopicFocus[] = [];
   const lowerQ = question.toLowerCase();
-  const hasHealthQuestion = matchQuestionTopic(lowerQ, "health");
+  const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(lowerQ);
+  const explicitHealth = /\b(illness|disease|pain|symptom|diagnosis|treatment|surgery|recovery|health|wellness|medical condition)\b/i.test(lowerQ);
+  const hasHealthQuestion = explicitHealth && !explicitCareer;
   const topicEntries = Object.entries(QUESTION_TOPICS).sort(([a], [b]) => {
     if (hasHealthQuestion && a === "health") return -1;
     if (hasHealthQuestion && b === "health") return 1;

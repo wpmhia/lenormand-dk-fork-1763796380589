@@ -15,17 +15,13 @@ import {
   Grid3X3,
   Crown,
   Zap,
-  MessageSquare,
   Users,
-  Spade,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card as CardType } from "@/lib/types";
 import {
   GRAND_TABLEAU_TOPIC_CARDS,
-  GRAND_TABLEAU_CORNERS,
-  GRAND_TABLEAU_CARDS_OF_FATE,
   SIGNIFICATOR_CARDS,
 } from "@/lib/spreads";
 import { getCardTimingKnowledge } from "@/lib/timing";
@@ -341,40 +337,6 @@ export default function CardDetailClient({
                           as a <strong>focus point</strong> for that life area.
                           Read the surrounding 8 cards as a mini 9-card spread
                           to understand this aspect of life.
-                        </p>
-                      </div>
-                    )}
-
-                    {GRAND_TABLEAU_CORNERS.includes(card.id) && (
-                      <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-950/30">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Spade className="h-5 w-5 text-purple-600" />
-                          <h4 className="font-semibold text-foreground">
-                            Corner Card
-                          </h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          This card sits at a <strong>corner position</strong>{" "}
-                          (positions 1, 8, 25, or 32) providing context and
-                          framing the overall reading. It represents the
-                          external environment and surrounding circumstances.
-                        </p>
-                      </div>
-                    )}
-
-                    {GRAND_TABLEAU_CARDS_OF_FATE.includes(card.id) && (
-                      <div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/30">
-                        <div className="mb-2 flex items-center gap-2">
-                          <MessageSquare className="h-5 w-5 text-red-600" />
-                          <h4 className="font-semibold text-foreground">
-                            Card of Fate
-                          </h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          This card is among the final 4 cards (positions
-                          32-35), known as the <strong>Cards of Fate</strong>.
-                          These cards provide predictive insight for
-                          approximately 8-12 weeks from the present.
                         </p>
                       </div>
                     )}
