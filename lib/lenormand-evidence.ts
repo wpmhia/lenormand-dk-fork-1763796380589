@@ -1,5 +1,6 @@
 import { ReadingContext } from "@/lib/reading-context";
 import { NormalizedCard } from "@/lib/reading-contract";
+import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
 const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"], string>> & { general: string }> = {
   13: { general: "a new beginning or something young", relocation: "a fresh start", love: "a new beginning" },
@@ -12,18 +13,6 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   29: { general: "a woman or a person represented by the Woman card" },
   35: { general: "stability, security, or an established base", relocation: "the established home base or practical security" },
 };
-
-const PAIR_SENSES: Record<string, string> = {
-  "14:35": "work or employment tied to stability; security that may require caution",
-  "23:35": "stability being eroded or worry affecting the established situation",
-  "13:22": "a new beginning becoming a concrete choice between directions",
-  "24:13": "a strongly desired fresh start",
-  "26:28": "an unresolved or undisclosed factor around a man or decision-maker",
-};
-
-function pairKey(a: number, b: number): string {
-  return `${Math.min(a, b)}:${Math.max(a, b)}`;
-}
 
 function cardSense(card: NormalizedCard, domain: ReadingContext["questionDomain"]): string {
   const senses = CARD_SENSES[card.id];
@@ -46,7 +35,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
   if (pairs.length > 0) {
     lines.push("Question-relevant adjacent pairs:");
     for (const pair of pairs) {
-      const meaning = PAIR_SENSES[pairKey(pair.cardA.id, pair.cardB.id)];
+      const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id);
       lines.push(`- Positions ${pair.indexA + 1}+${pair.indexB + 1} ${pair.cardA.name} + ${pair.cardB.name}: ${meaning || "relationship present; no canonical pair meaning supplied"}`);
     }
   }
