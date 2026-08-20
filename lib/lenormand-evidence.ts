@@ -1,6 +1,7 @@
 import { ReadingContext } from "@/lib/reading-context";
 import { NormalizedCard } from "@/lib/reading-contract";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
+import { buildReadingTrace } from "@/lib/reading-trace";
 
 const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"], string>> & { general: string }> = {
   1: { general: "news, arrival, or movement" },
@@ -38,11 +39,14 @@ function cardSense(card: NormalizedCard, domain: ReadingContext["questionDomain"
 }
 
 export function buildLenormandEvidencePack(context: ReadingContext): string {
+  const trace = buildReadingTrace(context);
   const lines = [
     "Deterministic Lenormand evidence pack:",
     `Question domain: ${context.questionDomain}`,
     `Question frame: ${context.questionFrame}`,
     `Cards by position: ${context.cards.map((card, index) => `${index + 1} ${card.name}`).join(" — ")}`,
+    `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
+    `Timing evidence supported: ${trace.timing.supported ? "yes" : "no"}`,
     "Card senses selected for this question:",
     ...context.cards.map((card, index) => `- Position ${index + 1} ${card.name}: ${cardSense(card, context.questionDomain)}`),
   ];
