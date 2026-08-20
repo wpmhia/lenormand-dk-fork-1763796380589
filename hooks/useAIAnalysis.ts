@@ -18,6 +18,11 @@ interface UseAIAnalysisReturn {
   submitFollowUp: (question: string) => void;
 }
 
+interface FollowUpTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
 function significatorToPreference(value: SignificatorType): "woman" | "man" | "both" {
   if (value === "anima") return "woman";
   if (value === "animus") return "man";
@@ -47,6 +52,7 @@ export function useAIAnalysis(
   const [followUpResponse, setFollowUpResponse] = useState<string | null>(null);
   const [followUpLoading, setFollowUpLoading] = useState(false);
   const [followUpStreaming, setFollowUpStreaming] = useState(false);
+  const [followUpHistory, setFollowUpHistory] = useState<FollowUpTurn[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
   const followUpAbortControllerRef = useRef<AbortController | null>(null);
 
@@ -123,6 +129,7 @@ export function useAIAnalysis(
     setFollowUpResponse(null);
     setFollowUpLoading(false);
     setFollowUpStreaming(false);
+    setFollowUpHistory([]);
   }, []);
 
   const submitFollowUp = useCallback(
@@ -138,17 +145,18 @@ export function useAIAnalysis(
       setFollowUpResponse("");
 
       let fullResponse = "";
+      const conversation = [...followUpHistory, { role: "user" as const, content: followUpQuestion }];
       try {
         const response = await fetch("/api/readings/followup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             followUpQuestion,
-            originalReading: aiReading.reading,
             originalQuestion: question,
             cards: mapCards(),
             spreadId: selectedSpreadId,
             significatorPreference: significatorToPreference(significatorType),
+            followUpHistory: conversation,
           }),
           signal: controller.signal,
         });
@@ -169,6 +177,9 @@ export function useAIAnalysis(
               setFollowUpResponse(fullResponse);
             }
           }
+          if (followUpAbortControllerRef.current === controller && fullResponse.trim()) {
+            setFollowUpHistory([...conversation, { role: "assistant", content: fullResponse.trim() }]);
+          }
         } finally {
           reader.releaseLock();
         }
@@ -187,7 +198,7 @@ export function useAIAnalysis(
         }
       }
     },
-    [aiReading, drawnCards, selectedSpreadId, mapCards, significatorType, question],
+    [aiReading, drawnCards, selectedSpreadId, mapCards, significatorType, question, followUpHistory],
   );
 
   return {

@@ -12,6 +12,8 @@ import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { FOLLOWUP_SYSTEM_PROMPT, FOLLOWUP_MAX_OUTPUT_TOKENS } from "@/lib/followup-prompt";
+import { buildReadingContext } from "@/lib/reading-context";
+import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -77,13 +79,13 @@ export async function POST(request: Request) {
       });
     }
 
-    const { followUpQuestion, originalReading, originalQuestion, cards, spreadId, significatorPreference } = body as {
+    const { followUpQuestion, originalQuestion, cards, spreadId, significatorPreference, followUpHistory } = body as {
       followUpQuestion?: unknown;
-      originalReading?: unknown;
       originalQuestion?: unknown;
       cards?: unknown;
       spreadId?: unknown;
       significatorPreference?: unknown;
+      followUpHistory?: unknown;
     };
 
     if (!followUpQuestion || typeof followUpQuestion !== "string") {
@@ -93,35 +95,39 @@ export async function POST(request: Request) {
       });
     }
 
-    if (!originalReading || typeof originalReading !== "string") {
-      return new Response(JSON.stringify({ error: "Original reading required" }), {
+    const safeOriginalQuestion = typeof originalQuestion === "string" ? originalQuestion : "";
+
+    if (!Array.isArray(followUpHistory) || followUpHistory.length > 12 || followUpHistory.some((turn) =>
+      !turn || (turn.role !== "user" && turn.role !== "assistant") || typeof turn.content !== "string" || turn.content.length > 1200
+    )) {
+      return new Response(JSON.stringify({ error: "Invalid follow-up history" }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    const MAX_READING_LENGTH = 10000;
-    const safeOriginalReading = originalReading.length > MAX_READING_LENGTH
-      ? originalReading.slice(0, MAX_READING_LENGTH) + "..."
-      : originalReading;
-
-    const safeOriginalQuestion = typeof originalQuestion === "string" ? originalQuestion : "";
-
-    let cardNames: string[] = [];
-
-    if (spreadId && Array.isArray(cards) && cards.length > 0) {
-      try {
-        const validated = normalizeReadingRequest({ spreadId, cards, question: safeOriginalQuestion, significatorPreference }, cardsMap);
-        cardNames = validated.cards.map((c) => c.name);
-      } catch {
-        cardNames = cards.map((c: { name?: string; id?: number }) => c.name || (c.id ? `Card ${c.id}` : "Unknown"));
-      }
+    let validated;
+    try {
+      validated = normalizeReadingRequest({ spreadId, cards, question: safeOriginalQuestion, significatorPreference }, cardsMap);
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid fixed spread" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
-    const cardLine = cardNames.length > 0 ? `Cards: ${cardNames.join(", ")}.` : "";
-    const questionLine = safeOriginalQuestion ? `Original question: "${safeOriginalQuestion}".` : "";
-    const conclusionLine = `Previous conclusion: "${safeOriginalReading}".`;
-    const prompt = `${questionLine} ${cardLine} ${conclusionLine}\n\nFollow-up: "${followUpQuestion}"\n\nAnswer directly in 1-2 short sentences.`;
+    const activeQuestion = `${safeOriginalQuestion}\nActive follow-up: ${followUpQuestion}`;
+    const context = buildReadingContext(validated.spreadId, activeQuestion, validated.cards, cardsMap, validated.significatorPreference);
+    const predictionEvidence = formatPredictionEvidenceBlock(buildPredictionContext(context));
+    const fixedCards = validated.cards.map((card, index) => `${index + 1} ${card.name}`).join(" — ");
+    const progression = context.adjacentPairs
+      .filter((pair) => pair.indexB === pair.indexA + 1)
+      .map((pair) => `${pair.cardA.name} + ${pair.cardB.name}`)
+      .join("; ");
+    const history = (followUpHistory as { role: "user" | "assistant"; content: string }[])
+      .map((turn) => `${turn.role}: ${turn.content}`)
+      .join("\n");
+    const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
 
     const result = streamText({
       model: mistral(MISTRAL_PRODUCTION_MODEL),
