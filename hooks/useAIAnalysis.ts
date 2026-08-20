@@ -145,7 +145,7 @@ export function useAIAnalysis(
       setFollowUpResponse("");
 
       let fullResponse = "";
-      const conversation = [...followUpHistory, { role: "user" as const, content: followUpQuestion }];
+      const priorHistory = followUpHistory.slice(-10);
       try {
         const response = await fetch("/api/readings/followup", {
           method: "POST",
@@ -156,7 +156,7 @@ export function useAIAnalysis(
             cards: mapCards(),
             spreadId: selectedSpreadId,
             significatorPreference: significatorToPreference(significatorType),
-            followUpHistory: conversation,
+            followUpHistory: priorHistory,
           }),
           signal: controller.signal,
         });
@@ -178,7 +178,11 @@ export function useAIAnalysis(
             }
           }
           if (followUpAbortControllerRef.current === controller && fullResponse.trim()) {
-            setFollowUpHistory([...conversation, { role: "assistant", content: fullResponse.trim() }]);
+            setFollowUpHistory([
+              ...priorHistory,
+              { role: "user" as const, content: followUpQuestion },
+              { role: "assistant" as const, content: fullResponse.trim() },
+            ].slice(-12));
           }
         } finally {
           reader.releaseLock();
