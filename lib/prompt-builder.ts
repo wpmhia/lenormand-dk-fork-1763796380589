@@ -4,6 +4,7 @@ import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
+import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -480,6 +481,7 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   let result = prompt;
 
   result += `\n\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\nInterpret all card combinations within this frame. Do not switch domains because an isolated card has a familiar association.`;
+  result += `\n\n${buildLenormandEvidencePack(context)}\nSynthesis must use this evidence pack as the authoritative semantic basis. Do not add meanings that are not present in it.`;
 
   if (context.layout.type !== "single") {
     const predictionBlock = formatPredictionEvidenceBlock(buildPredictionContext(context));
