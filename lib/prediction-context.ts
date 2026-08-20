@@ -3,6 +3,7 @@ import type { NormalizedCard } from "@/lib/reading-contract";
 import { buildPredictionTimingLine } from "@/lib/timing";
 import { GRAND_TABLEAU_TOPIC_CARDS } from "@/lib/spreads";
 import { fmtCard } from "@/lib/prompt-builder";
+import { getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export interface PredictionEvidenceLine {
   label: string;
@@ -59,8 +60,9 @@ function pairMeaning(a: NormalizedCard, b: NormalizedCard, pairs: AdjacentPair[]
   for (const p of pairs) {
     if ((p.cardA.id === a.id && p.cardB.id === b.id) ||
         (p.cardA.id === b.id && p.cardB.id === a.id)) {
-      if (p.traditionalMeaning) {
-        return p.traditionalMeaning;
+      const meaning = getUsableLenormandPairMeaning(p.traditionalMeaning);
+      if (meaning) {
+        return meaning;
       }
     }
   }
@@ -95,7 +97,7 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     b: p.cardB,
     indexA: p.indexA,
     indexB: p.indexB,
-    meaning: p.traditionalMeaning,
+    meaning: getUsableLenormandPairMeaning(p.traditionalMeaning),
     weight: p.weight,
   }));
 
@@ -107,10 +109,10 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     developmentCard,
     coreDriverCard: middle,
     primaryPair: last && secondLast
-      ? { a: secondLast, b: last, meaning: lastPair?.traditionalMeaning || pairMeaning(secondLast, last, pairs) }
+       ? { a: secondLast, b: last, meaning: getUsableLenormandPairMeaning(lastPair?.traditionalMeaning) || pairMeaning(secondLast, last, pairs) }
       : null,
     supportingPair: cards.length >= 2
-      ? { a: cards[0], b: cards[1], meaning: firstPair?.traditionalMeaning || pairMeaning(cards[0], cards[1], pairs) }
+       ? { a: cards[0], b: cards[1], meaning: getUsableLenormandPairMeaning(firstPair?.traditionalMeaning) || pairMeaning(cards[0], cards[1], pairs) }
       : null,
     allPairs,
     significatorEvidence: [],
@@ -150,10 +152,10 @@ function buildPetitPrediction(cards: NormalizedCard[], layout: PetitTableauLayou
     developmentCard: development,
     coreDriverCard: center,
     primaryPair: primary
-      ? { a: primary.cardA, b: primary.cardB, meaning: primary.traditionalMeaning || pairMeaning(primary.cardA, primary.cardB, pairs) }
+       ? { a: primary.cardA, b: primary.cardB, meaning: getUsableLenormandPairMeaning(primary.traditionalMeaning) || pairMeaning(primary.cardA, primary.cardB, pairs) }
       : null,
     supportingPair: supporting
-      ? { a: supporting.cardA, b: supporting.cardB, meaning: supporting.traditionalMeaning || pairMeaning(supporting.cardA, supporting.cardB, pairs) }
+       ? { a: supporting.cardA, b: supporting.cardB, meaning: getUsableLenormandPairMeaning(supporting.traditionalMeaning) || pairMeaning(supporting.cardA, supporting.cardB, pairs) }
       : null,
     allPairs: [],
     significatorEvidence: [],
@@ -233,10 +235,10 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
     developmentCard: development,
     coreDriverCard: sig?.card ?? null,
     primaryPair: primary
-      ? { a: primary.cardA, b: primary.cardB, meaning: primary.traditionalMeaning || pairMeaning(primary.cardA, primary.cardB, pairs) }
+       ? { a: primary.cardA, b: primary.cardB, meaning: getUsableLenormandPairMeaning(primary.traditionalMeaning) || pairMeaning(primary.cardA, primary.cardB, pairs) }
       : null,
     supportingPair: supporting
-      ? { a: supporting.cardA, b: supporting.cardB, meaning: supporting.traditionalMeaning || pairMeaning(supporting.cardA, supporting.cardB, pairs) }
+       ? { a: supporting.cardA, b: supporting.cardB, meaning: getUsableLenormandPairMeaning(supporting.traditionalMeaning) || pairMeaning(supporting.cardA, supporting.cardB, pairs) }
       : null,
     allPairs: [],
     significatorEvidence: sigLines,

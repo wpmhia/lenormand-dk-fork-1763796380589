@@ -3,6 +3,7 @@ import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayo
 import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
+import { getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -49,129 +50,8 @@ function fmtPersonCard(card: { name: string; strength?: string }): string {
   return `${name} (specific person/significator)`;
 }
 
-const BAD_COMBO_PHRASES = [
-  "unique energy",
-  "combined with",
-  "kilimanjaro",
-  "internet router",
-  "positive energy",
-  "positive change",
-  "positive transformation",
-  "positive surprise",
-  "positive announcement",
-  "positive recognition",
-  "heated",
-  "passion",
-  "passionate opportunity",
-  "passionate news",
-  "passionate voyage",
-  "passionate journey",
-  "passionate conflict",
-  "passionate decision",
-  "passionate argument",
-  "passionate advice",
-  "passionate communication",
-  "passionate chance",
-  "lucky ",
-  "fortunate ",
-  "blessed ",
-  "blessing",
-  "lucky journey",
-  "lucky health",
-  "lucky conflict",
-  "lucky recovery",
-  "lucky commitment",
-  "lucky solution",
-  "lucky stability",
-  "lucky love",
-  "lucky authority",
-  "lucky strength",
-  "lucky gift",
-  "lucky change",
-  "lucky message",
-  "lucky home",
-  "lucky clarity",
-  "lucky ending",
-  "lucky escape",
-  "lucky decision",
-  "lucky friendship",
-  "lucky communication",
-  "lucky new beginning",
-  "lucky work",
-  "lucky wishes",
-  "lucky social",
-  "lucky overcoming",
-  "lucky choice",
-  "lucky knowledge",
-  "lucky wisdom",
-  "lucky success",
-  "lucky intuition",
-  "lucky abundance",
-  "lucky faith",
-  "fortunate journey",
-  "fortunate travel",
-  "fortunate home",
-  "fortunate family",
-  "fortunate health",
-  "fortunate recovery",
-  "fortunate clarity",
-  "fortunate resolution",
-  "fortunate escape",
-  "fortunate ending",
-  "fortunate closure",
-  "fortunate surprise",
-  "fortunate decision",
-  "fortunate conflict",
-  "fortunate communication",
-  "fortunate gossip",
-  "fortunate new beginning",
-  "fortunate creativity",
-  "fortunate work",
-  "fortunate strategy",
-  "fortunate strength",
-  "fortunate protection",
-  "fortunate wishes",
-  "fortunate change",
-  "fortunate movement",
-  "fortunate friendship",
-  "fortunate loyalty",
-  "fortunate authority",
-  "fortunate institution",
-  "fortunate social",
-  "fortunate community",
-  "fortunate overcoming",
-  "fortunate endurance",
-  "fortunate choice",
-  "fortunate recovery",
-  "fortunate loss",
-  "fortunate love",
-  "fortunate relationship",
-  "fortunate commitment",
-  "fortunate marriage",
-  "fortunate knowledge",
-  "fortunate learning",
-  "fortunate message",
-  "fortunate wisdom",
-  "fortunate maturity",
-  "fortunate success",
-  "fortunate happiness",
-  "fortunate intuition",
-  "fortunate solution",
-  "fortunate opportunity",
-  "fortunate abundance",
-  "fortunate wealth",
-  "fortunate stability",
-  "fortunate security",
-  "fortunate faith",
-  "fortunate sacrifice",
-];
-
 function isUsableComboMeaning(meaning: string | undefined): boolean {
-  if (!meaning) return false;
-  const lower = meaning.toLowerCase();
-  // Filter only clear contamination or New Age/Tarot language. Positive or
-  // passionate Lenormand combinations are not inherently invalid evidence.
-  return !/(unique energy|positive energy|\benergy\b|combined with|kilimanjaro|internet router|judg(?:e)?ment card|tarot|archetype)/i.test(lower);
+  return getUsableLenormandPairMeaning(meaning) !== undefined;
 }
 
 export function buildSystemPrompt(cardCount?: number): string {
@@ -394,7 +274,8 @@ function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
       .map((p) => {
         const left = fmtCard(p.cardA);
         const right = fmtCard(p.cardB);
-        const meaning = p.traditionalMeaning ? `: ${p.traditionalMeaning}` : "";
+         const usableMeaning = getUsableLenormandPairMeaning(p.traditionalMeaning);
+         const meaning = usableMeaning ? `: ${usableMeaning}` : "";
         return `- ${left} + ${right}${meaning}`;
       })
       .join("\n")
@@ -565,7 +446,8 @@ function formatGrandTableau(
       const vpText = verticalAroundSig
         .filter((vp) => isUsableComboMeaning(vp.traditionalMeaning))
         .map((vp) => {
-          const m = vp.traditionalMeaning ? `: ${vp.traditionalMeaning}` : "";
+           const usableMeaning = getUsableLenormandPairMeaning(vp.traditionalMeaning);
+           const m = usableMeaning ? `: ${usableMeaning}` : "";
           return `- ${fmtCard(vp.cardA)} + ${fmtCard(vp.cardB)}${m}`;
         });
       parts.push(...vpText);
@@ -615,7 +497,10 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   if (topPairs.length > 0) {
     const hints = topPairs
       .filter((p) => isUsableComboMeaning(p.traditionalMeaning))
-      .map((p) => `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)} (importance: ${p.weight}/10): ${p.traditionalMeaning}`);
+       .map((p) => {
+         const meaning = getUsableLenormandPairMeaning(p.traditionalMeaning);
+         return `- ${fmtCard(p.cardA)} + ${fmtCard(p.cardB)} (importance: ${p.weight}/10): ${meaning}`;
+       });
     if (hints.length > 0) {
       result += `\n\nKey pair meanings (use as evidence, interpret in relation to the question — do not copy verbatim):\n${hints.join("\n")}`;
     }
