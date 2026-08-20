@@ -20,7 +20,6 @@ interface ReadingSetupProps {
   onSpreadChange: (spread: Spread) => void;
   method: "virtual" | "physical" | null;
   onMethodChange: (method: "virtual" | "physical") => void;
-  onContinue: (method: "virtual" | "physical") => void;
   disabled?: boolean;
   isLoading?: boolean;
 }
@@ -32,7 +31,6 @@ export function ReadingSetup({
   onSpreadChange,
   method,
   onMethodChange,
-  onContinue,
   disabled = false,
   isLoading = false,
 }: ReadingSetupProps) {
@@ -104,7 +102,6 @@ export function ReadingSetup({
         <MethodToggle
           value={method}
           onChange={onMethodChange}
-          onContinue={onContinue}
           disabled={disabled}
         />
       </CardContent>
