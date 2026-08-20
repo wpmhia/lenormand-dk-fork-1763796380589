@@ -66,6 +66,7 @@ Synthesis disciplines (apply to all spreads):
 - Method discipline. Apply the reading method defined for this spread consistently. Do not override the spread's positional or directional hierarchy because another interpretation sounds more reassuring, more interesting, or more plausible.
 - Lenormand discipline. Treat cards as words in a sentence and nodes in a tableau. Lead with card combinations and positional relationships; do not turn an isolated card into a Tarot-style archetype, psychological profile, or universal outcome.
 - Question discipline. The user's question establishes the semantic domain. Interpret every card and combination as an answer to that question; a card's common domain must not replace it. Heart in a relocation question can show desire, attachment, or happiness connected with the move, not automatic romance. Child can show a new beginning or an actual child depending on context. Book means what is unknown, concealed, not yet disclosed, learned, or under study; do not turn Book into Letter/document/news unless surrounding cards establish communication.
+- Question-anchored synthesis. The sequence is question → cards → answer. Every sentence in Interpretation, Cards, and Prediction must explain what the cards mean for the user's actual situation. Do not narrate an abstract symbolic story and attach the question afterward. Start with the real-world implication, then name the card pair as evidence. Never introduce another life domain because a card commonly carries that association: Heart does not create romance in a relocation question, Ring does not create marriage in an employment question, and Book does not create study or education in a moving question.
 - Evidence discipline. Preserve the direction, polarity, and severity of the cards. Don't soften a difficult combination into a reassuring one, and don't magnify a mild one into a crisis. If the evidence leans adverse, say so clearly while preserving appropriate uncertainty.
 - Grounding discipline. Introduce concrete specifics (people, documents, events, organizations, places, costs, outcomes) only when they are established by the question/context or supported by the drawn cards. Do not add cards that were not drawn.
 
@@ -99,7 +100,7 @@ Formatting rules:
 }
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
-Give one concise forward-looking synthesis answering what is most likely to happen next. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
+Give one concise forward-looking synthesis answering what is most likely to happen next in the user's specific situation. Lead with the practical answer to the question, not a generic card narrative. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
 
 Required labels (always include, in this order, with one sentence each):
 
@@ -114,11 +115,11 @@ Optional labels — include ONLY when the cards and question actually support a 
 Synthesize the Prediction ONLY from the Prediction synthesis evidence block (which already states this spread's hierarchy). Do not introduce cards that are not in that evidence.`;
 
 const INTERPRETATION_INSTRUCTION = `## Interpretation
-Explain the situation revealed by the complete spread and how the cards interact. Describe the tension, direction, and relationships between the cards. Do not give the final predicted outcome or timing here. This section is interpretive; the forward-looking forecast belongs in ## Prediction.`;
+Answer the user's question through the complete spread. Explain what the sequence of cards says about the specific situation asked about, including its direction, obstacles, people, decisions, or unresolved factors. Every paragraph must stay inside that subject. Do not begin with dictionary definitions or an abstract symbolic story and translate it to the question afterward. Do not give the final predicted outcome or timing here; the forward-looking forecast belongs in ## Prediction.`;
 
 const CARDS_INSTRUCTION = `## Cards
-Show the strongest card combinations and position evidence supporting the interpretation above. For each pair, write a bullet in this format:
-- **Card A + Card B**: explain this combination specifically in relation to the user's question. Never copy the supplied reference wording verbatim — interpret it.
+Show the strongest card combinations and position evidence supporting the interpretation above. This is not a card-meaning glossary. Each bullet must answer: "What does this pair say about the user's question?" Start with the real-world implication, then name the pair as evidence:
+- **Card A + Card B**: describe what this combination means for the user's actual situation. Never start with isolated dictionary definitions, and never copy the supplied reference wording verbatim — interpret it.
 
 This section is evidence, not forecast. The forward-looking conclusion belongs in ## Prediction.`;
 
