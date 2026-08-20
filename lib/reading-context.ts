@@ -40,11 +40,52 @@ export interface TopicFocus {
 export interface ReadingContext {
   spreadId: SpreadId;
   question: string;
+  questionDomain: QuestionDomain;
+  questionFrame: string;
   cards: NormalizedCard[];
   adjacentPairs: AdjacentPair[];
   layout: ReadingLayout;
   timingEvidence: TimingEvidence[];
   topicFocus: TopicFocus[];
+}
+
+export type QuestionDomain = "relocation" | "health" | "career" | "love" | "money" | "home" | "travel" | "general";
+
+export interface QuestionFrame {
+  domain: QuestionDomain;
+  instruction: string;
+}
+
+export function getQuestionFrame(question: string): QuestionFrame {
+  const q = question.toLowerCase();
+  const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(q);
+  const explicitHealth = /\b(illness|disease|pain|symptom|diagnosis|treatment|surgery|recovery|health|wellness|medical condition)\b/i.test(q);
+
+  if (/\b(move|moving|relocat|return to|back to|migrat|immigrat|abroad|country|settle)\b/i.test(q)) {
+    return {
+      domain: "relocation",
+      instruction: "This is a relocation or return-home question. Answer whether the move, return, or change of residence is likely, using cards for desire, choice, practical movement, people involved, and unresolved conditions.",
+    };
+  }
+  if (explicitHealth && !explicitCareer) {
+    return { domain: "health", instruction: "This is a health question. Keep the interpretation concrete and situational: symptoms, treatment, recovery, diagnosis, or care." };
+  }
+  if (explicitCareer) {
+    return { domain: "career", instruction: "This is a career or employment question. Interpret cards through work, roles, applications, decisions, and professional circumstances." };
+  }
+  if (/\b(love|relationship|partner|romance|marriage|dating|boyfriend|girlfriend)\b/i.test(q)) {
+    return { domain: "love", instruction: "This is a relationship question. Interpret the line through the people, contact, commitment, and circumstances described by the question." };
+  }
+  if (/\b(money|finance|income|loan|debt|salary|wealth|budget)\b/i.test(q)) {
+    return { domain: "money", instruction: "This is a money question. Interpret the line through finances, resources, payments, and practical material circumstances." };
+  }
+  if (/\b(home|house|apartment|property|renovation|roommate)\b/i.test(q)) {
+    return { domain: "home", instruction: "This is a home question. Interpret the line through residence, family, property, and domestic circumstances." };
+  }
+  if (/\b(travel|trip|vacation|journey|flight|abroad|overseas)\b/i.test(q)) {
+    return { domain: "travel", instruction: "This is a travel question. Interpret the line through movement, routes, visits, and practical travel circumstances." };
+  }
+  return { domain: "general", instruction: "Use the user's question as the semantic frame. Do not let a card's common domain replace the concrete situation being asked about." };
 }
 
 export interface SingleCardLayout {
@@ -578,6 +619,7 @@ export function buildReadingContext(
     }
   }
 
+  const questionFrame = getQuestionFrame(question);
   const topicFocus: TopicFocus[] = [];
   const lowerQ = question.toLowerCase();
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(lowerQ);
@@ -602,7 +644,17 @@ export function buildReadingContext(
     if (topicFocus.length > 0) break;
   }
 
-  return { spreadId, question, cards, adjacentPairs, layout, timingEvidence, topicFocus };
+  return {
+    spreadId,
+    question,
+    questionDomain: questionFrame.domain,
+    questionFrame: questionFrame.instruction,
+    cards,
+    adjacentPairs,
+    layout,
+    timingEvidence,
+    topicFocus,
+  };
 }
 
 function matchQuestionTopic(question: string, category: string): boolean {

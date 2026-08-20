@@ -404,6 +404,24 @@ describe("regression: linear spread uses per-spread hierarchy, not memorized car
   });
 });
 
+describe("regression: question frame controls polysemous card meanings", () => {
+  it("keeps a Netherlands return question in the relocation domain", () => {
+    const ctx = buildReadingContext(
+      "sentence-5",
+      "Will we move back to the Netherlands?",
+      normalized([24, 13, 22, 28, 26]),
+      cardsMap,
+    );
+    const prompt = buildPromptFromContext(ctx);
+
+    expect(ctx.questionDomain).toBe("relocation");
+    expect(prompt).toContain("Question frame (relocation)");
+    expect(prompt).toContain("move, return, or change of residence");
+    expect(prompt.toLowerCase()).not.toContain("romantic relationship");
+    expect(prompt.toLowerCase()).not.toContain("dating");
+  });
+});
+
 describe("regression: global system prompt no longer hard-codes linear-specific rules or memorized examples", () => {
   const cards = normalized([3, 31, 9, 17, 6]);
   const systemPrompt = buildSystemPrompt(cards.length);
