@@ -10,11 +10,12 @@ describe("canonical Lenormand evidence registry", () => {
     expect(new Set(keys).size).toBe(630);
     expect(canonicalPairs.every((pair) => pair.cards[0] < pair.cards[1])).toBe(true);
     expect(canonicalPairs.every((pair) => pair.cards[0] >= 1 && pair.cards[1] <= 36)).toBe(true);
+    expect(canonicalPairs.filter((pair) => pair.reviewStatus === "researched")).toHaveLength(35);
   });
 
   it("returns only reviewed meanings and leaves gaps empty", () => {
-    expect(getCanonicalLenormandPairMeaning(14, 35)).toContain("work or employment");
-    expect(getCanonicalLenormandPairMeaning(35, 14)).toContain("work or employment");
+    expect(getCanonicalLenormandPairMeaning(14, 35)).toContain("work problems");
+    expect(getCanonicalLenormandPairMeaning(35, 14)).toContain("work problems");
     expect(getCanonicalLenormandPairMeaning(1, 36)).toBeUndefined();
   });
 });

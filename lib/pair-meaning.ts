@@ -4,9 +4,9 @@ const CONTAMINATION_PATTERN = /unique energy|positive energy|\benergy\b|combined
 const TEMPLATE_PATTERN = /affecting the surrounding situation|\b(?:cunning|strategic|intelligent|cautious)\s+(?:stability|security|grounding|patience)\b|^\w+\s+with\s+\w+:/i;
 
 const CANONICAL_PAIR_MEANINGS = new Map(
-  (canonicalPairs as { cards: [number, number]; senses: string[] }[]).map((pair) => [
+  (canonicalPairs as unknown as { cards: [number, number]; senses: { meaning: string }[] }[]).map((pair) => [
     pairKey(pair.cards[0], pair.cards[1]),
-    pair.senses[0],
+    pair.senses[0]?.meaning,
   ]),
 );
 
