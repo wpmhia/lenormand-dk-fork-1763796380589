@@ -189,8 +189,7 @@ function buildAdjacentPair(
   if (fullA && fullB) {
     const forward = fullA.combos?.find((c) => c.withCardId === fullB.id);
     const reverse = fullB.combos?.find((c) => c.withCardId === fullA.id);
-    const meaning = [forward?.meaning, reverse?.meaning].filter(Boolean).join(" - ");
-    if (meaning) traditionalMeaning = meaning;
+    traditionalMeaning = forward?.meaning || reverse?.meaning;
   }
 
   return { indexA: i, indexB: j, cardA, cardB, traditionalMeaning, weight };
@@ -630,7 +629,7 @@ export function buildReadingContext(
     if (hasHealthQuestion && b === "health") return 1;
     return 0;
   });
-  for (const [category, topics] of topicEntries) {
+  if (layoutType !== "linear-sentence") for (const [category, topics] of topicEntries) {
     const match = matchQuestionTopic(lowerQ, category);
     if (match) {
       for (const t of topics) {
