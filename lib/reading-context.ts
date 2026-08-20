@@ -61,7 +61,7 @@ export function getQuestionFrame(question: string): QuestionFrame {
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(q);
   const explicitHealth = /\b(illness|disease|pain|symptom|diagnosis|treatment|surgery|recovery|health|wellness|medical condition)\b/i.test(q);
 
-  if (/\b(move|moving|relocat|return to|back to|migrat|immigrat|abroad|country|settle)\b/i.test(q)) {
+  if (/\b(move|moving|relocat(?:e|ed|es|ing|ion)|return to|back to|migrat(?:e|ed|es|ing|ion)|immigrat(?:e|ed|es|ing|ion)|abroad|country|settle)\b/i.test(q)) {
     return {
       domain: "relocation",
       instruction: "This is a relocation or return-home question. Answer whether the move, return, or change of residence is likely, using cards for desire, choice, practical movement, people involved, and unresolved conditions.",
