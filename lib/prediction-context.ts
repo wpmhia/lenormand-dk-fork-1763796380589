@@ -37,7 +37,7 @@ const LAYOUT_HIERARCHY: Record<PredictionLayoutType, string> = {
   "petit-tableau":
     "Petit Tableau hierarchy: the center card is the heart; the middle line carries the main narrative. Rows, columns, and diagonals qualify the read but do not override center + middle line.",
   "grand-tableau":
-    "Grand Tableau hierarchy: the significator and its surrounding pairs are the most actionable area. Topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) anchor the long-term life themes. The Cards of Fate and corners carry long-term signals but do not override significator + house evidence.",
+    "Grand Tableau hierarchy: significator surroundings, relevant houses, proximity, and spatial relationships are the actionable evidence. The fourth row remains ordinary 9x4 tableau positions.",
   "single":
     "Single-card hierarchy: the drawn card alone is the full reading.",
 };
@@ -154,16 +154,10 @@ function buildPetitPrediction(cards: NormalizedCard[], layout: PetitTableauLayou
 
 function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayout, pairs: AdjacentPair[]): PredictionContext {
   const sig = layout.primarySignificator;
-  const cardsOfFateFirst = layout.cardsOfFate[0]?.card ?? null;
-  const cardsOfFateLast = layout.cardsOfFate[layout.cardsOfFate.length - 1]?.card ?? null;
-
-  // Outcome = last Cards of Fate (position 36). Development = first Cards of Fate
-  // (position 33). These are anchor positions, not the significator's neighbourhood.
-  // If a Cards of Fate anchor is absent (e.g. truncated grid), the field stays null —
-  // do NOT silently substitute another card. The Prediction evidence block will simply
-  // not emit that line.
-  const outcome = cardsOfFateLast;
-  const development = cardsOfFateFirst;
+  // A 9x4 tableau has no separate fate/cartouche row. These forecast fields
+  // must emerge from significator, house, proximity, and question evidence.
+  const outcome = null;
+  const development = null;
 
   const significantPairs = sig
     ? pairs
@@ -205,9 +199,6 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
       value: `position ${sig.index + 1}, row ${row}, column ${col} (source: ${layout.primarySignificatorSource ?? "explicit"})`,
     });
   }
-  const cardsOfFate = layout.cardsOfFate.map((c) => fmt(c.card)).join(", ");
-  if (cardsOfFate) sigLines.push({ label: "Cards of Fate (bottom row)", value: cardsOfFate });
-
   const notes: string[] = [];
   if (!sig) {
     notes.push(
@@ -283,14 +274,17 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
 
 export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
   const lines: string[] = ["Prediction synthesis evidence:"];
-  lines.push(`- Hierarchy: ${LAYOUT_HIERARCHY[pe.layoutType]}`);
+  lines.push(`- Hierarchy: ${pe.layoutType === "grand-tableau" ? "significator surroundings, relevant houses, proximity, and spatial relationships" : LAYOUT_HIERARCHY[pe.layoutType]}`);
+  if (pe.layoutType === "grand-tableau" && !pe.coreDriverCard) {
+    lines.push("- No primary significator: use Man/Woman only as relational person anchors.");
+  }
   if (pe.outcomeCard) {
     const label = pe.layoutType === "linear-sentence"
       ? "Primary outcome (closing card)"
       : pe.layoutType === "petit-tableau"
         ? "Directional outcome (right end of middle line)"
         : pe.layoutType === "grand-tableau"
-          ? "Primary outcome (significator area / cards of fate)"
+          ? "Primary outcome (spatial evidence)"
           : "Primary outcome";
     lines.push(`- ${label}: ${fmt(pe.outcomeCard)}`);
   }

@@ -52,7 +52,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
   ];
 
   const pairs = context.adjacentPairs
-    .filter((pair) => pair.indexB === pair.indexA + 1)
+    .filter((pair) => context.layout.type !== "linear-sentence" || pair.indexB === pair.indexA + 1)
     .sort((a, b) => b.weight - a.weight);
   if (pairs.length > 0) {
     lines.push("Question-relevant adjacent pairs:");

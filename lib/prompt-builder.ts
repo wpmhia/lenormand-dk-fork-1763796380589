@@ -123,7 +123,7 @@ const LINEAR_HIERARCHY_NOTE = `For an outcome question, the closing card and the
 
 const PETIT_HIERARCHY_NOTE = `For an outcome question, the center card is the heart of the tableau. The middle line and the center column together carry the primary narrative. Diagonals are supporting axes; outer rows and outer columns are qualifier pairs. The closing card of the middle line (the rightmost middle-line card) is the directional outcome, and the strongest pair shown in the Prediction synthesis evidence is the most actionable pair.`;
 
-const GT_HIERARCHY_NOTE = `For an outcome question, the significator's surroundings are the most actionable area. Topic houses (Heart, House, Fish, Tree, Ship, Fox, Bear, Anchor) anchor long-term life themes. The Cards of Fate and corners carry long-term signals but do not override significator + house evidence.`;
+const GT_HIERARCHY_NOTE = `For an outcome question, the significator's surroundings are the most actionable area. Topic houses and proximity anchor long-term themes. In this documented 9x4 method, positions 33-36 are ordinary fourth-row positions, not a separate Fate row or universal outcome.`;
 
 const PREDICTIVE_VOICE_LINEAR = `Answer the user's actual question directly. Write the reading as a three-part arc: Interpretation → Cards → Prediction.
 
@@ -412,7 +412,7 @@ function formatGrandTableau(
     `Center four: ${layout.centerFour.map((c) => fmtCard(c.card)).join(", ")}`,
   );
   parts.push(
-    `Cards of Fate (bottom row): ${layout.cardsOfFate.map((c) => fmtCard(c.card)).join(", ")}`,
+    `Fourth row positions 33-36 are ordinary 9x4 tableau positions; they do not act as a separate fate row or universal outcome.`,
   );
 
   const adj = fmtAdjacentPairs(adjacentPairs);

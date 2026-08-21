@@ -62,7 +62,9 @@ export function getQuestionFrame(question: string): QuestionFrame {
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(q);
   const explicitHealth = /\b(illness|disease|pain|symptom|diagnosis|treatment|surgery|recovery|health|wellness|medical condition)\b/i.test(q);
 
-  if (/\b(move|moving|relocat(?:e|ed|es|ing|ion)|return to|back to|migrat(?:e|ed|es|ing|ion)|immigrat(?:e|ed|es|ing|ion)|abroad|country|settle)\b/i.test(q)) {
+  if (/\b(?:move|moving|relocat(?:e|ed|es|ing|ion)|migrat(?:e|ed|es|ing|ion)|immigrat(?:e|ed|es|ing|ion))\b/i.test(q)
+    || /\b(?:move|return)\s+(?:back\s+)?to\s+[A-Z][\w-]+/i.test(question)
+    || /\b(?:move|settle)\s+(?:back\s+)?(?:home|abroad|overseas)\b/i.test(q)) {
     return {
       domain: "relocation",
       instruction: "This is a relocation or return-home question. Answer whether the move, return, or change of residence is likely, using cards for desire, choice, practical movement, people involved, and unresolved conditions.",
@@ -499,9 +501,10 @@ function buildGrandTableauLayout(
         primarySignificator = significators.woman;
         primarySignificatorSource = "referent";
       } else {
-        // No gender-specific referent in the question: default to Woman (querent default).
-        primarySignificator = significators.woman;
-        primarySignificatorSource = "default";
+        // With both selected and no person referent, keep both as relational
+        // anchors instead of inventing a primary gendered querent.
+        primarySignificator = undefined;
+        primarySignificatorSource = undefined;
       }
     }
     // else: neither drawn — primarySignificator stays undefined; the prediction evidence
