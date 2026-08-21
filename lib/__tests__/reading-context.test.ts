@@ -272,10 +272,9 @@ describe("buildReadingContext", () => {
       const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(sigIds), cardsMap);
       if (ctx.layout.type === "grand-tableau") {
         expect(ctx.layout.significatorPreference).toBe("both");
-        // With both Man+Woman drawn and a non-topic question, default to Woman.
-        expect(ctx.layout.primarySignificator).toBeDefined();
-        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
-        expect(ctx.layout.primarySignificatorSource).toBe("default");
+        // With both drawn and no person referent, there is no invented primary.
+        expect(ctx.layout.primarySignificator).toBeUndefined();
+        expect(ctx.layout.primarySignificatorSource).toBeUndefined();
       }
     });
 
@@ -290,10 +289,8 @@ describe("buildReadingContext", () => {
         cardsMap,
       );
       if (ctx.layout.type === "grand-tableau") {
-        expect(ctx.layout.primarySignificator).toBeDefined();
-        // Default (no topic-based inference): primary is Woman (querent default).
-        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
-        expect(ctx.layout.primarySignificatorSource).toBe("default");
+        expect(ctx.layout.primarySignificator).toBeUndefined();
+        expect(ctx.layout.primarySignificatorSource).toBeUndefined();
       }
     });
 
@@ -305,10 +302,8 @@ describe("buildReadingContext", () => {
         cardsMap,
       );
       if (ctx.layout.type === "grand-tableau") {
-        expect(ctx.layout.primarySignificator).toBeDefined();
-        // Default (no topic-based inference): primary is Woman.
-        expect(ctx.layout.primarySignificator!.card.id).toBe(29);
-        expect(ctx.layout.primarySignificatorSource).toBe("default");
+        expect(ctx.layout.primarySignificator).toBeUndefined();
+        expect(ctx.layout.primarySignificatorSource).toBeUndefined();
       }
     });
 

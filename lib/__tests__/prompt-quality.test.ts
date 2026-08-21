@@ -250,8 +250,8 @@ describe("prompt quality: Grand Tableau", () => {
     expect(prompt).toContain("Center four");
   });
 
-  it("includes Cards of Fate", () => {
-    expect(prompt).toContain("Cards of Fate");
+  it("documents the ordinary fourth row in a 9x4 tableau", () => {
+    expect(prompt).toContain("ordinary 9x4 tableau positions");
   });
 
   it("includes output contract sections", () => {
@@ -291,28 +291,28 @@ describe("prompt quality: Grand Tableau significator preference", () => {
     expect(prompt).toMatch(/Primary significator.*Man.*Read the Tableau primarily around this card/i);
   });
 
-  it("defaults to Woman as primary when preference is both and the question has no clear topic", () => {
+  it("does not invent a primary when both are selected without a person referent", () => {
     const neutralQuestion = "What will the coming year bring?";
     const ctx = buildReadingContext("grand-tableau", neutralQuestion, normalized(allIds), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
-    expect(prompt).toMatch(/Primary significator.*Woman/i);
+    expect(prompt).not.toContain("Primary significator:");
   });
 
-  it("selects Man as primary when preference is both and the question is job/career-oriented", () => {
+  it("does not infer a primary Man from a career topic", () => {
     const jobQuestion = "Will my career move forward this year?";
     const ctx = buildReadingContext("grand-tableau", jobQuestion, normalized(allIds), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
-    expect(prompt).toMatch(/Primary significator.*Man/i);
+    expect(prompt).not.toContain("Primary significator:");
   });
 
-  it("selects Woman as primary when preference is both and the question is love-oriented", () => {
+  it("does not infer a primary Woman from a relationship topic", () => {
     const loveQuestion = "Will my relationship become more committed?";
     const ctx = buildReadingContext("grand-tableau", loveQuestion, normalized(allIds), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toMatch(/Selected significator: Both \/ not specified/i);
-    expect(prompt).toMatch(/Primary significator.*Woman/i);
+    expect(prompt).not.toContain("Primary significator:");
   });
 });
 
@@ -397,7 +397,7 @@ describe("regression: linear spread uses per-spread hierarchy, not memorized car
     const ctx = buildReadingContext("grand-tableau", "Full picture?", normalized(ids), cardsMap);
     const pe = buildPredictionContext(ctx);
     const block = formatPredictionEvidenceBlock(pe);
-    expect(block).toMatch(/Grand Tableau hierarchy/);
+    expect(block).toMatch(/significator surroundings/);
     expect(block).toMatch(/significator/);
     expect(block).not.toMatch(/closing card and the closing pair dominate/);
     expect(block).not.toMatch(/Strongest transition \(closing pair\)/);
@@ -484,11 +484,10 @@ describe("GT prediction evidence: no silent substitution when no significator is
     expect(pe.coreDriverCard).toBeNull();
   });
 
-  it("always populates coreDriverCard when at least one significator is drawn (no silent fallback)", () => {
-    const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+  it("does not invent a core driver when both person cards lack a referent", () => {
     const ctx = buildReadingContext("grand-tableau", "Will I move?", cards, cardsMap);
     const pe = buildPredictionContext(ctx);
-    expect(pe.coreDriverCard).not.toBeNull();
+    expect(pe.coreDriverCard).toBeNull();
   });
 });
 
@@ -520,20 +519,20 @@ describe("Petit evidence labels distinguish 'Directional outcome' from 'Center c
 });
 
 describe("GT prediction evidence labels for outcome and development", () => {
-  it("labels outcomeCard as 'Primary outcome (significator area / cards of fate)'", () => {
+  it("does not claim a primary outcome from an implicit gendered significator", () => {
     const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
     const ctx = buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap);
     const pe = buildPredictionContext(ctx);
     const block = formatPredictionEvidenceBlock(pe);
-    expect(block).toMatch(/Primary outcome \(significator area \/ cards of fate\)/);
+    expect(block).toMatch(/No primary significator/i);
   });
 
-  it("labels coreDriverCard as 'Significator (anchor of the read)'", () => {
+  it("does not claim a significator anchor without a primary", () => {
     const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
     const ctx = buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap);
     const pe = buildPredictionContext(ctx);
     const block = formatPredictionEvidenceBlock(pe);
-    expect(block).toMatch(/Significator \(anchor of the read\)/);
+    expect(block).not.toMatch(/Significator \(anchor of the read\)/);
   });
 });
 
