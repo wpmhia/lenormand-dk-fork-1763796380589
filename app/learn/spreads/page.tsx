@@ -111,7 +111,7 @@ const spreads = [
           { name: "Opening", description: "The situation's beginning or foundation" },
           { name: "Development", description: "What unfolds or emerges" },
           { name: "Focus", description: "The central theme or key energy (pay special attention to this card)" },
-          { name: "Influence", description: "External factors or approaching energies" },
+          { name: "Influence", description: "External factors and positional influences" },
           { name: "Outcome", description: "Where the situation leads" },
         ],
       },
@@ -217,11 +217,11 @@ const spreads = [
              description:
                "Central cards around middle of grid - reveal what's at the heart of the situation",
            },
-           {
-             name: "Cards of Fate",
-             description:
-               "Cards 32 (Sun), 33 (Moon), 34 (Key), 35 (Fish) - when prominent, indicate destiny points",
-           },
+            {
+              name: "Fourth-row positions",
+              description:
+                "Positions 33–36 are ordinary fourth-row positions in this documented 9×4 method; interpret them through houses and relationships.",
+            },
            {
              name: "Topic Cards",
              description:
@@ -493,7 +493,7 @@ export default function SpreadsPage() {
                   ))}
                 </div>
                 <p className="mt-3 text-xs text-primary dark:text-primary/80">
-                  4 rows × 9 columns (historical &quot;salon&quot; formation)
+                  4 rows × 9 columns (documented 9×4 formation; not a universal historical claim)
                 </p>
               </div>
             </div>
@@ -501,101 +501,19 @@ export default function SpreadsPage() {
         </CardContent>
       </Card>
 
-      {/* Cards of Fate */}
       <Card className="mb-8 border-border bg-card">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl text-foreground">
             <Star className="mr-3 h-6 w-6 text-amber-500" />
-            The Cards of Fate (Destiny Zone)
+            Fourth-row positions in a 9×4 tableau
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent>
           <p className="leading-relaxed text-muted-foreground">
-            In traditional Lenormand, four cards carry special weight as
-            <strong className="text-amber-600">
-              &quot;Cards of Fate&quot;
-            </strong>
-            . When multiple appear together in a reading, they create a powerful
-            <strong>destiny zone</strong>.
+            Positions 33–36 are ordinary cells in the fourth row. They do not form a
+            separate fate row or universal outcome zone; read them through their
+            houses, positions, and relationships with the question and significator.
           </p>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border border-amber-500/30 bg-amber-500/5">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <Sun className="h-5 w-5 text-amber-500" />
-                  <h4 className="text-sm font-semibold text-foreground">
-                    32. The Sun
-                  </h4>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-2 text-sm font-medium text-foreground">
-                  Success, happiness, clarity, vitality
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Role:</strong> Provides illumination, positive outcome
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-primary/30 bg-primary/5">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <Moon className="h-5 w-5 text-primary" />
-                  <h4 className="text-sm font-semibold text-foreground">
-                    33. The Moon
-                  </h4>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-2 text-sm font-medium text-foreground">
-                  Emotions, intuition, dreams, cycles
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Role:</strong> Influences timing, adds emotional depth
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-primary/30 bg-primary/5">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <Key className="h-5 w-5 text-primary" />
-                  <h4 className="text-sm font-semibold text-foreground">
-                    33. The Key
-                  </h4>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-2 text-sm font-medium text-foreground">
-                  Solutions, answers, unlocking, access
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Role:</strong> Opens doors, provides answers
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-primary/30 bg-primary/5">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <Fish className="h-5 w-5 text-primary" />
-                  <h4 className="text-sm font-semibold text-foreground">
-                    34. The Fish
-                  </h4>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-2 text-sm font-medium text-foreground">
-                  Abundance, wealth, business, multiplication
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Role:</strong> Financial matters, prosperity
-                </p>
-              </CardContent>
-            </Card>
-          </div>
         </CardContent>
       </Card>
     </ModulePageClient>

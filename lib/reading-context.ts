@@ -4,7 +4,6 @@ import { getLayoutType } from "@/lib/spread-definitions";
 import {
   GRAND_TABLEAU_TOPIC_CARDS,
   GRAND_TABLEAU_CORNERS,
-  GRAND_TABLEAU_CARDS_OF_FATE,
   GRAND_TABLEAU_CENTER_CARDS,
 } from "@/lib/spreads";
 import { TIMING_CARDS as SHARED_TIMING_CARDS } from "@/lib/timing";
@@ -164,7 +163,6 @@ export interface GrandTableauLayout {
   significatorPreference: "woman" | "man" | "both";
   corners: GridCell[];
   centerFour: GridCell[];
-  cardsOfFate: GridCell[];
   topicCards: {
     index: number;
     cardId: number;
@@ -519,7 +517,6 @@ function buildGrandTableauLayout(
 
   const corners = GRAND_TABLEAU_CORNERS.map((i) => ({ index: i, card: cards[i] }));
   const centerFour = GRAND_TABLEAU_CENTER_CARDS.map((i) => ({ index: i, card: cards[i] }));
-  const cardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.map((i) => ({ index: i, card: cards[i] }));
 
   const topicCards = cards
     .map((card, index) => {
@@ -543,12 +540,15 @@ function buildGrandTableauLayout(
   for (const sigIdx of sigIndices) {
     const sigRow = Math.floor(sigIdx / 9);
     const sigCol = sigIdx % 9;
-    for (let d = 1; d <= Math.max(sigCol, 8 - sigCol); d++) {
-      const left = sigCol - d;
-      const right = sigCol + d;
-      if (left >= 0 && right <= 8) {
-        const idxA = sigRow * 9 + left;
-        const idxB = sigRow * 9 + right;
+    for (const [rowStep, colStep] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+      for (let d = 1; d <= 8; d++) {
+        const rowA = sigRow - rowStep * d;
+        const colA = sigCol - colStep * d;
+        const rowB = sigRow + rowStep * d;
+        const colB = sigCol + colStep * d;
+        if (rowA < 0 || rowA >= 4 || colA < 0 || colA >= 9 || rowB < 0 || rowB >= 4 || colB < 0 || colB >= 9) continue;
+        const idxA = rowA * 9 + colA;
+        const idxB = rowB * 9 + colB;
         mirrors.push({
           indexA: idxA,
           indexB: idxB,
@@ -570,7 +570,6 @@ function buildGrandTableauLayout(
     significatorPreference,
     corners,
     centerFour,
-    cardsOfFate,
     topicCards,
     verticalPairs,
     mirrors,

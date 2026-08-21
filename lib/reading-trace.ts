@@ -14,11 +14,11 @@ export interface ReadingTrace {
 
 export function buildReadingTrace(context: ReadingContext): ReadingTrace {
   const observations = context.cards.map((card, index) => `card:${card.id}:position:${index + 1}`);
-  const linearPairs = context.adjacentPairs
-    .filter((pair) => pair.indexB === pair.indexA + 1)
+  const spatialPairs = context.adjacentPairs
+    .filter((pair) => context.layout.type !== "linear-sentence" || pair.indexB === pair.indexA + 1)
     .sort((a, b) => b.weight - a.weight);
 
-  const semanticEvidence = linearPairs.map((pair) => {
+  const semanticEvidence = spatialPairs.map((pair) => {
     const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id);
     return {
       id: `pair:${Math.min(pair.cardA.id, pair.cardB.id)}-${Math.max(pair.cardA.id, pair.cardB.id)}`,
@@ -33,8 +33,8 @@ export function buildReadingTrace(context: ReadingContext): ReadingTrace {
     observations,
     semanticEvidence,
     hierarchy: {
-      strongest: linearPairs[0] ? `pair:${linearPairs[0].indexA + 1}+${linearPairs[0].indexB + 1}` : "none",
-      secondary: linearPairs[1] ? `pair:${linearPairs[1].indexA + 1}+${linearPairs[1].indexB + 1}` : "none",
+      strongest: spatialPairs[0] ? `pair:${spatialPairs[0].indexA + 1}+${spatialPairs[0].indexB + 1}` : "none",
+      secondary: spatialPairs[1] ? `pair:${spatialPairs[1].indexA + 1}+${spatialPairs[1].indexB + 1}` : "none",
     },
     timing: { supported: context.timingEvidence.length > 0 },
   };

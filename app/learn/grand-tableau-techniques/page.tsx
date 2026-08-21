@@ -21,7 +21,7 @@ import {
 export const metadata = {
   title: "Grand Tableau Techniques | Lenormand Course",
   description:
-    "Master the 36-card Grand Tableau with knight moves, mirrors, houses, and advanced interpretation techniques.",
+    "Study the 36-card Grand Tableau with houses, significators, mirrors, and optional advanced techniques.",
 };
 
 const knightDirections = [
@@ -75,7 +75,7 @@ export default function GrandTableauTechniquesPage() {
       moduleNumber={5}
       totalModules={8}
       title="Grand Tableau Mastery"
-      description="Master the 36-card Grand Tableau with knight moves, mirrors, houses, and advanced interpretation techniques."
+      description="Study the 36-card Grand Tableau with houses, significators, mirrors, and optional advanced techniques."
       duration="40 minutes"
       difficulty="Advanced"
       icon={<Compass className="h-8 w-8 text-white" />}
@@ -96,7 +96,7 @@ export default function GrandTableauTechniquesPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="leading-relaxed text-muted-foreground">
-            The Knight&apos;s Move is a traditional Lenormand reading technique
+            The Knight&apos;s Move is a later/advanced Lenormand reading technique
             used primarily in Grand Tableau readings. Named after the chess
             knight&apos;s L-shaped movement, this technique reveals how cards
             influence each other across the tableau.
@@ -114,7 +114,7 @@ export default function GrandTableauTechniquesPage() {
                     2 positions in one direction + 1 position perpendicular
                   </strong>
                   , forming an L-shape. In the 4×9 Grand Tableau grid, each card
-                  can influence 2-8 other cards via knight&apos;s move.
+                  can reach up to 6 board positions via knight&apos;s move.
                 </p>
                 <div className="rounded-lg bg-card p-3">
                   <p className="mb-2 text-xs font-medium text-muted-foreground">
@@ -188,8 +188,7 @@ export default function GrandTableauTechniquesPage() {
                 flows into the target
               </li>
               <li>
-                <strong>Cards of Fate (31-35)</strong> carry extra weight when
-                knighting
+                <strong>Fourth-row positions</strong> do not receive extra weight; knighting is secondary
               </li>
               <li>
                 <strong>Chain reactions:</strong> Multiple knight moves create

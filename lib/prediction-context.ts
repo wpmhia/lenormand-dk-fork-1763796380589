@@ -167,16 +167,14 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
   const primary = significantPairs[0] ?? [...pairs].sort((a, b) => b.weight - a.weight)[0] ?? null;
   const supporting = significantPairs[1] ?? [...pairs].sort((a, b) => b.weight - a.weight)[1] ?? null;
 
-  const sigIndex = sig?.index ?? 18;
   const importantHouses = layout.houses
     .filter((house) =>
       layout.topicCards.some((tc) => tc.cardId === house.houseCardId)
       || (sig && house.occupyingCard.id === sig.card.id),
     )
-    .sort((a, b) =>
-      grandTableauDistance(a.position - 1, sigIndex) -
-      grandTableauDistance(b.position - 1, sigIndex),
-    );
+    .sort((a, b) => sig
+      ? grandTableauDistance(a.position - 1, sig.index) - grandTableauDistance(b.position - 1, sig.index)
+      : 0);
   const houseLines: PredictionEvidenceLine[] = [];
   for (const house of importantHouses) {
     const isImportant =
@@ -220,10 +218,10 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
     allPairs: [],
     significatorEvidence: sigLines,
     houseEvidence: houseLines,
-     topicEvidence: [...layout.topicCards]
-       .sort((a, b) =>
-         grandTableauDistance(a.index, sigIndex) -
-         grandTableauDistance(b.index, sigIndex),
+      topicEvidence: [...layout.topicCards]
+       .sort((a, b) => sig
+         ? grandTableauDistance(a.index, sig.index) - grandTableauDistance(b.index, sig.index)
+         : 0,
        )
        .slice(0, 4)
        .map((tc) => ({

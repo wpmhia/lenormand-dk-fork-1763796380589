@@ -108,7 +108,7 @@ export default function LearnPage() {
       id: "grand-tableau-techniques",
       title: "Grand Tableau Mastery",
       description:
-        "Master the 36-card Grand Tableau with knight moves, mirrors, houses, and advanced interpretation techniques.",
+        "Study the 36-card Grand Tableau with houses, significators, mirrors, and documented positional techniques.",
       icon: LayoutGrid,
       duration: "40 min",
       difficulty: "Advanced",
