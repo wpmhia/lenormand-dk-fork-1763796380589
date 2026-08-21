@@ -53,7 +53,7 @@ export default function HowReadingsWorkPage() {
                 </li>
                 <li>
                   <strong>Grand Tableau logic</strong> &mdash; Houses,
-                  significators, corners, center four, cards of fate, mirror
+                  significators, corners, center four, mirror
                   pairs, and vertical columns are computed from the card
                   positions, not guessed by the model.
                 </li>

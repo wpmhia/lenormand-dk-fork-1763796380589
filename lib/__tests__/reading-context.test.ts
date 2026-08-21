@@ -202,13 +202,6 @@ describe("buildReadingContext", () => {
       }
     });
 
-    it("has 4 cards of fate", () => {
-      const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(allIds), cardsMap);
-      if (ctx.layout.type === "grand-tableau") {
-        expect(ctx.layout.cardsOfFate).toHaveLength(4);
-      }
-    });
-
     it("finds topic cards", () => {
       const ctx = buildReadingContext("grand-tableau", "", makeNormalizedCards(allIds), cardsMap);
       if (ctx.layout.type === "grand-tableau") {

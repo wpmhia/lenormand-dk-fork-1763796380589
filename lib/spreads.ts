@@ -31,7 +31,6 @@ export interface GrandTableauPosition {
   col: number;
   isCorner: boolean;
   isCenter: boolean;
-  isCardsOfFate: boolean;
   isTopicCard: boolean;
   topicType?:
     | "health"
@@ -65,8 +64,6 @@ export const GRAND_TABLEAU_TOPIC_CARDS: Record<
 };
 
 export const GRAND_TABLEAU_CORNERS = [0, 8, 27, 35];
-
-export const GRAND_TABLEAU_CARDS_OF_FATE = [32, 33, 34, 35];
 
 export const GRAND_TABLEAU_CENTER_CARDS = [13, 14, 22, 23];
 
@@ -126,7 +123,6 @@ export function getGrandTableauPosition(index: number): GrandTableauPosition {
   const col = index % 9;
   const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
   const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
-  const isCardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
 
   return {
     index,
@@ -134,7 +130,6 @@ export function getGrandTableauPosition(index: number): GrandTableauPosition {
     col,
     isCorner,
     isCenter,
-    isCardsOfFate,
     isTopicCard: false,
     topicType: undefined,
   };

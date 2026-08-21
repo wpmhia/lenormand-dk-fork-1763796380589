@@ -7,7 +7,6 @@ import {
   SIGNIFICATOR_CARDS,
   GRAND_TABLEAU_TOPIC_CARDS,
   GRAND_TABLEAU_CORNERS,
-  GRAND_TABLEAU_CARDS_OF_FATE,
   GRAND_TABLEAU_CENTER_CARDS,
   DIRECTIONAL_ZONES,
 } from "@/lib/spreads";
@@ -107,7 +106,6 @@ export function GrandTableauLayout({
             const isSignificator = index === significatorIndex;
             const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
             const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
-            const isCardsOfFate = GRAND_TABLEAU_CARDS_OF_FATE.includes(index);
             const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card!.id];
 
             const zoneInfo =
@@ -123,8 +121,6 @@ export function GrandTableauLayout({
                 borderClass = "border-amber-500 ring-2 ring-amber-500/30";
               } else if (isCorner) {
                 borderClass = "border-purple-500/50";
-              } else if (isCardsOfFate) {
-                borderClass = "border-red-500/50";
               } else if (isCenter) {
                 borderClass = "border-green-500/50";
               }
@@ -154,7 +150,6 @@ export function GrandTableauLayout({
                     {showAdvancedAnalysis && (
                       <>
                         {isCorner && <Badge variant="outline" className="border-purple-500/50 text-[10px] text-purple-600">Context</Badge>}
-                        {isCardsOfFate && <Badge variant="outline" className="border-red-500/50 text-[10px] text-red-600">Fate</Badge>}
                         {isCenter && <Badge variant="outline" className="border-green-500/50 text-[10px] text-green-600">Heart</Badge>}
                       </>
                     )}
@@ -209,12 +204,6 @@ export function GrandTableauLayout({
           <h4 className="mb-1 text-xs font-semibold text-foreground">Center Four</h4>
           <p className="text-xs text-muted-foreground">
             {GRAND_TABLEAU_CENTER_CARDS.map((i) => validCards[i]?.card.name).filter(Boolean).join(", ")}
-          </p>
-        </div>
-        <div className="rounded-lg border border-border bg-card/50 p-3">
-          <h4 className="mb-1 text-xs font-semibold text-foreground">Cards of Fate</h4>
-          <p className="text-xs text-muted-foreground">
-            {GRAND_TABLEAU_CARDS_OF_FATE.map((i) => validCards[i]?.card.name).filter(Boolean).join(", ")}
           </p>
         </div>
       </div>
