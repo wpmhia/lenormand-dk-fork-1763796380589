@@ -53,11 +53,11 @@ export function getReadingTimeoutMs(cardCount: number): number {
   if (cardCount <= 3) return 20_000;
   if (cardCount <= 5) return 25_000;
   if (cardCount <= 9) return 42_000;
-  return 46_000;
+  return 44_000;
 }
 
 export function getReadingRepairTimeoutMs(cardCount: number): number {
-  return cardCount >= 9 ? 12_000 : 8_000;
+  return cardCount >= 36 ? 10_000 : cardCount >= 9 ? 12_000 : 8_000;
 }
 
 // ============================================================================

@@ -8,7 +8,7 @@ import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/pre
 import { buildPredictionTimingLine } from "@/lib/timing";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildPromptFromContext } from "@/lib/prompt-builder";
-import { getStructuredReadingSchema, renderStructuredReading } from "@/lib/structured-reading";
+import { getStructuredReadingSchema, renderStructuredReading, validateStructuredReading } from "@/lib/structured-reading";
 import type { Card } from "@/lib/types";
 
 const cardsMap = new Map<number, Card>();
@@ -128,6 +128,29 @@ describe("spread-aware structured reading contract", () => {
     expect(rendered).toContain("## Houses and mirrors");
     expect(rendered.indexOf("## Houses and mirrors")).toBeLessThan(rendered.indexOf("## Cards"));
     expect(validateReadingOutput(rendered, [12, 27], "grand-tableau").issues.some((i) => i.type === "missing_section")).toBe(false);
+  });
+
+  it("rejects made-up evidence IDs and incomplete 3/5-card coverage", () => {
+    const three = buildReadingContext("sentence-3", "Will I hear back?", normalized([12, 27, 26]), cardsMap);
+    const value = getStructuredReadingSchema("sentence-3").parse({
+      interpretation: "The cards describe communication developing through a practical exchange and unresolved details.",
+      evidence: [{ pair: "Birds + Letter", evidenceIds: ["made-up-xyz"], implication: "A message becomes important." }],
+      prediction: { development: "A message is the likely next development.", timing: "Within days.", watchFor: null, practicalAction: null },
+    });
+    const issues = validateStructuredReading(value, three).map((issue) => issue.message);
+    expect(issues).toContain('Structured evidence cites unknown evidence ID: "made-up-xyz"');
+    expect(issues).toContain('Structured evidence is missing required pair ID: "pair-1-2"');
+    expect(issues).toContain('Structured evidence is missing required pair ID: "pair-2-3"');
+
+    const five = buildReadingContext("sentence-5", "What develops next?", normalized([1, 2, 3, 4, 5]), cardsMap);
+    const fiveValue = getStructuredReadingSchema("sentence-5").parse({
+      interpretation: "The line describes a practical sequence developing through several connected events and choices.",
+      evidence: [{ pair: "Card 1 + Card 2", evidenceIds: ["pair-1-2"], implication: "The opening combination starts the development." }],
+      prediction: { development: "The sequence continues through a practical next step.", timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
+    });
+    const fiveIssues = validateStructuredReading(fiveValue, five).map((issue) => issue.message);
+    expect(fiveIssues).toContain('Structured evidence is missing required pair ID: "pair-2-3"');
+    expect(fiveIssues).toContain('Structured evidence is missing required pair ID: "pair-4-5"');
   });
 });
 
