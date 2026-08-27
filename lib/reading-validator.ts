@@ -29,7 +29,7 @@ export const BANNED_BARE_TERMS = [
 export const BANNED_QUESTION_PREFIX = /^Your question:.*\n\n/s;
 
 export interface ValidationIssue {
-  type: "banned_term" | "invented_card" | "unsupported_timing" | "missing_section" | "extra_section" | "empty_section";
+  type: "banned_term" | "invented_card" | "unsupported_timing" | "missing_section" | "extra_section" | "empty_section" | "ungrounded_evidence";
   message: string;
 }
 
@@ -40,7 +40,7 @@ export interface ValidationResult {
 
 const SPREAD_SECTIONS: Record<string, string[]> = {
   "single-card": ["## Interpretation"],
-  "daily-card": [],
+  "daily-card": ["## Interpretation"],
   "sentence-3": ["## Interpretation", "## Cards", "## Prediction"],
   "sentence-5": ["## Interpretation", "## Cards", "## Prediction"],
   "comprehensive": ["## Interpretation", "## Cards", "## Prediction"],
@@ -310,6 +310,7 @@ export const ISSUE_SEVERITY: Record<ValidationIssue["type"], "fatal" | "repairab
   missing_section: "fatal",
   empty_section: "fatal",
   extra_section: "repairable",
+  ungrounded_evidence: "fatal",
 };
 
 export function isCriticalIssue(issue: ValidationIssue): boolean {

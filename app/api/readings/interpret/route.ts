@@ -12,7 +12,7 @@ import { Card } from "@/lib/types";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { generateText, Output } from "ai";
-import { getStructuredReadingSchema, renderStructuredReading } from "@/lib/structured-reading";
+import { getStructuredReadingSchema, renderStructuredReading, validateStructuredReading } from "@/lib/structured-reading";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 import {
@@ -123,17 +123,19 @@ export async function POST(request: Request) {
 
     let finalText = normalizeMarkdown(renderStructuredReading(result.output, validated.spreadId));
 
+    let structuredIssues = validateStructuredReading(result.output, context);
     let outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
     let markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
     let finalCritical = [
       ...outputValidation.issues.filter(isCriticalIssue),
       ...markdownValidation.issues.filter(isCriticalIssue),
     ];
+    finalCritical.push(...structuredIssues);
 
     if (finalCritical.length > 0) {
       const repair = await generateText({
         model: mistral(MISTRAL_PRODUCTION_MODEL),
-        system: `${buildSystemPrompt(cardCount)}\n\nVALIDATION OVERRIDE: Regenerate the reading from scratch. Output only the required headings and content. Mention only drawn cards, use no timing unless supported, and avoid all Tarot/New Age language.`,
+        system: `${buildSystemPrompt(cardCount)}\n\nVALIDATION OVERRIDE: Regenerate the reading from scratch. Return only an object conforming to the supplied structured schema; do not emit Markdown headings yourself. Cite only evidence IDs supplied in the deterministic evidence pack, cover every required pair, and include every required Grand Tableau topic house.`,
         prompt: `${prompt}\n\nThe previous structured output failed validation. Return a corrected structured object only. Cite only evidence IDs from the evidence pack.`,
         output: Output.object({ schema: structuredSchema }),
         temperature: 0.1,
@@ -147,12 +149,14 @@ export async function POST(request: Request) {
         return generationFailedResponse(rateLimitResult, "structured-output-empty");
       }
       finalText = normalizeMarkdown(renderStructuredReading(repair.output, validated.spreadId));
+      structuredIssues = validateStructuredReading(repair.output, context);
       outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
       markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
       finalCritical = [
         ...outputValidation.issues.filter(isCriticalIssue),
         ...markdownValidation.issues.filter(isCriticalIssue),
       ];
+      finalCritical.push(...structuredIssues);
     }
 
     if (finalCritical.length > 0) {

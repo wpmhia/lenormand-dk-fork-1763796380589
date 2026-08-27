@@ -3,6 +3,14 @@ import { NormalizedCard } from "@/lib/reading-contract";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 import { buildReadingTrace } from "@/lib/reading-trace";
 
+export function getPairEvidenceId(indexA: number, indexB: number): string {
+  return `pair-${indexA + 1}-${indexB + 1}`;
+}
+
+export function getCardEvidenceId(index: number): string {
+  return `card-${index + 1}`;
+}
+
 const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"], string>> & { general: string }> = {
   1: { general: "news, arrival, or movement" },
   2: { general: "a small opportunity or temporary benefit" },
@@ -48,7 +56,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
     `Timing evidence supported: ${trace.timing.supported ? "yes" : "no"}`,
     "Card senses selected for this question:",
-    ...context.cards.map((card, index) => `- Position ${index + 1} ${card.name}: ${cardSense(card, context.questionDomain)}`),
+    ...context.cards.map((card, index) => `- ${getCardEvidenceId(index)}: Position ${index + 1} ${card.name}: ${cardSense(card, context.questionDomain)}`),
   ];
 
   const pairs = context.adjacentPairs
@@ -58,7 +66,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     lines.push("Question-relevant adjacent pairs:");
     for (const pair of pairs) {
       const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id);
-      lines.push(`- Positions ${pair.indexA + 1}+${pair.indexB + 1} ${pair.cardA.name} + ${pair.cardB.name}: ${meaning || "relationship present; no canonical pair meaning supplied"}`);
+      lines.push(`- ${getPairEvidenceId(pair.indexA, pair.indexB)}: Positions ${pair.indexA + 1}+${pair.indexB + 1} ${pair.cardA.name} + ${pair.cardB.name}: ${meaning || "relationship present; no canonical pair meaning supplied"}`);
     }
   }
 

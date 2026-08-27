@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { ReadingContext } from "@/lib/reading-context";
+import { getCardEvidenceId, getPairEvidenceId } from "@/lib/lenormand-evidence";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
@@ -83,4 +85,64 @@ export function renderStructuredReading(
     `**Likely timing:** ${multiReading.prediction.timing}`,
     optional,
   ].filter(Boolean).join("\n");
+}
+
+export interface StructuredReadingIssue {
+  type: "ungrounded_evidence";
+  message: string;
+}
+
+const IMPORTANT_GT_TOPICS = new Set(["heart", "love", "money", "health", "work", "home"]);
+
+/** Validates claims that are lost when structured output is rendered to Markdown. */
+export function validateStructuredReading(
+  reading: StructuredReading | SingleCardReading | GrandTableauReading,
+  context: ReadingContext,
+): StructuredReadingIssue[] {
+  if (context.layout.type === "single") return [];
+
+  const multiReading = reading as StructuredReading | GrandTableauReading;
+  const issues: StructuredReadingIssue[] = [];
+  const allowedEvidenceIds = new Set([
+    ...context.cards.map((_, index) => getCardEvidenceId(index)),
+    ...context.adjacentPairs.map((pair) => getPairEvidenceId(pair.indexA, pair.indexB)),
+  ]);
+  const citedIds = new Set(multiReading.evidence.flatMap((item) => item.evidenceIds));
+
+  for (const id of citedIds) {
+    if (!allowedEvidenceIds.has(id)) {
+      issues.push({ type: "ungrounded_evidence", message: `Structured evidence cites unknown evidence ID: "${id}"` });
+    }
+  }
+
+  if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {
+    const requiredCount = context.spreadId === "sentence-3" ? 2 : 4;
+    const requiredIds = context.adjacentPairs
+      .filter((pair) => pair.indexB === pair.indexA + 1)
+      .map((pair) => getPairEvidenceId(pair.indexA, pair.indexB));
+    if (requiredIds.length !== requiredCount) {
+      issues.push({ type: "ungrounded_evidence", message: `Deterministic pair contract expected ${requiredCount} adjacent pairs, found ${requiredIds.length}` });
+    }
+    for (const id of requiredIds) {
+      if (!citedIds.has(id)) issues.push({ type: "ungrounded_evidence", message: `Structured evidence is missing required pair ID: "${id}"` });
+    }
+  }
+
+  if (context.layout.type === "grand-tableau") {
+    const houses = (multiReading as GrandTableauReading).housesAndMirrors;
+    const requiredHouseIds = context.layout.topicCards
+      .filter((topic) => IMPORTANT_GT_TOPICS.has(topic.topic))
+      .map((topic) => `house-${topic.cardId}`);
+    const houseText = houses.map((house) => `${house.house} ${house.meaning}`.toLowerCase()).join(" ");
+    for (const id of requiredHouseIds) {
+      const cardId = Number(id.replace("house-", ""));
+      const house = context.layout.houses.find((item) => item.houseCardId === cardId);
+      if (!house || !houseText.includes(house.houseName.toLowerCase())) {
+        issues.push({ type: "ungrounded_evidence", message: `Structured Grand Tableau output is missing required topic house: "${house?.houseName ?? id}"` });
+      }
+    }
+    if (houses.length === 0) issues.push({ type: "ungrounded_evidence", message: "Structured Grand Tableau output must contain houses and mirrors" });
+  }
+
+  return issues;
 }

@@ -376,7 +376,7 @@ function formatGrandTableau(
     const h = layout.houses[i];
     const isImportant = importantHouseIds.has(h.houseCardId) || importantHouseIds.has(h.occupyingCard.id) || h.occupyingCard.id === h.houseCardId;
     if (!isImportant) continue;
-    parts.push(`Position ${h.position} (House of ${h.houseName}) -> ${fmtCard(h.occupyingCard)}`);
+    parts.push(`House evidence ID house-${h.houseCardId}: Position ${h.position} (House of ${h.houseName}) -> ${fmtCard(h.occupyingCard)}`);
   }
 
   parts.push("");
