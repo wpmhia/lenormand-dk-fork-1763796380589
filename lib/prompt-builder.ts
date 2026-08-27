@@ -166,8 +166,16 @@ ${PREDICTION_FIELDS_INSTRUCTION}
 Voice: practical, predictive, direct. Write like a real reading, not a card-meaning explanation.`;
 
 const SPREAD_PROMPTS: Record<string, (question: string, cards: string) => string> = {
-  "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.`,
-  "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.`,
+  "single-card": (q, c) => `${q}\nCard: ${c}\n\nRead this card alone. Explain what it means practically.
+
+Output exactly one section:
+
+## Interpretation`,
+  "daily-card": (_, c) => `Daily card: ${c} - read this card alone. What happens today? One sentence, practical and direct.
+
+Output exactly one section:
+
+## Interpretation`,
   "sentence-3": (q, c) => `${q}\nCards: ${c}\n\nPairs: 1+2, 2+3. Read as one Lenormand sentence. List both adjacent pairs in the Cards section, explaining the meaning of each.
 
 Output (exactly these sections):

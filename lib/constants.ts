@@ -44,8 +44,21 @@ export const DEFAULT_RATE_WINDOW_MS = 60 * 1000;
 /** Mistral API base URL */
 export const MISTRAL_BASE_URL = "https://api.mistral.ai";
 
-/** Default timeout for API requests in milliseconds */
-export const API_REQUEST_TIMEOUT_MS = 30 * 1000;
+/** Maximum route budget, including a possible validation repair. */
+export const API_REQUEST_TIMEOUT_MS = 60 * 1000;
+
+/** Generation budgets leave room for one short validation repair. */
+export function getReadingTimeoutMs(cardCount: number): number {
+  if (cardCount <= 1) return 15_000;
+  if (cardCount <= 3) return 20_000;
+  if (cardCount <= 5) return 25_000;
+  if (cardCount <= 9) return 42_000;
+  return 46_000;
+}
+
+export function getReadingRepairTimeoutMs(cardCount: number): number {
+  return cardCount >= 9 ? 12_000 : 8_000;
+}
 
 // ============================================================================
 // Error Messages
