@@ -8,6 +8,7 @@ import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/pre
 import { buildPredictionTimingLine } from "@/lib/timing";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildPromptFromContext } from "@/lib/prompt-builder";
+import { getStructuredReadingSchema, renderStructuredReading } from "@/lib/structured-reading";
 import type { Card } from "@/lib/types";
 
 const cardsMap = new Map<number, Card>();
@@ -89,6 +90,44 @@ describe("golden: validateReadingOutput content invariants", () => {
     const result = validateReadingOutput(GOLDEN_THREE_CARD, [12, 27, 26], "sentence-3");
     const empty = result.issues.filter((i) => i.type === "empty_section");
     expect(empty).toEqual([]);
+  });
+});
+
+describe("spread-aware structured reading contract", () => {
+  it.each([
+    ["sentence-3", 3],
+    ["sentence-5", 5],
+    ["comprehensive", 9],
+  ])("uses the multi-card contract for %s (%i cards)", (spreadId) => {
+    const parsed = getStructuredReadingSchema(spreadId).safeParse({
+      interpretation: "The cards describe a concrete situation developing through linked events and practical circumstances.",
+      evidence: [{ pair: "Card A + Card B", evidenceIds: ["pair-1"], implication: "The combination gives the situation a clear direction." }],
+      prediction: { development: "The situation develops through a clear practical next step.", timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it("renders single-card as Interpretation only", () => {
+    const parsed = getStructuredReadingSchema("single-card").parse({
+      interpretation: "The card points to a concrete development in the situation that requires attention.",
+    });
+    const rendered = renderStructuredReading(parsed, "single-card");
+    expect(rendered).toBe("## Interpretation\nThe card points to a concrete development in the situation that requires attention.");
+    expect(rendered).not.toContain("## Cards");
+    expect(validateReadingOutput(rendered, [12], "single-card").valid).toBe(true);
+  });
+
+  it("renders Grand Tableau houses and mirrors before card evidence", () => {
+    const parsed = getStructuredReadingSchema("grand-tableau").parse({
+      interpretation: "The tableau shows a practical situation developing through people, choices, and unresolved conditions.",
+      housesAndMirrors: [{ house: "House of Communication", meaning: "A message or discussion occupies this life area and makes the issue more concrete." }],
+      evidence: [{ pair: "Birds + Letter", evidenceIds: ["pair-1"], implication: "Communication becomes the active mechanism in this situation." }],
+      prediction: { development: "A concrete exchange is the most likely next development.", timing: "Within days.", watchFor: null, practicalAction: null },
+    });
+    const rendered = renderStructuredReading(parsed, "grand-tableau");
+    expect(rendered).toContain("## Houses and mirrors");
+    expect(rendered.indexOf("## Houses and mirrors")).toBeLessThan(rendered.indexOf("## Cards"));
+    expect(validateReadingOutput(rendered, [12, 27], "grand-tableau").issues.some((i) => i.type === "missing_section")).toBe(false);
   });
 });
 

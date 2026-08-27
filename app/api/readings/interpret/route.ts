@@ -1,6 +1,6 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
@@ -12,8 +12,8 @@ import { Card } from "@/lib/types";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { generateText, Output } from "ai";
-import { StructuredReadingSchema, renderStructuredReading } from "@/lib/structured-reading";
-import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
+import { getStructuredReadingSchema, renderStructuredReading } from "@/lib/structured-reading";
+import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 import {
   validateReadingOutput,
@@ -96,17 +96,18 @@ export async function POST(request: Request) {
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
+    const structuredSchema = getStructuredReadingSchema(validated.spreadId);
 
     const result = await generateText({
       model: mistral(MISTRAL_PRODUCTION_MODEL),
       system: buildSystemPrompt(cardCount),
       prompt: `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs.`,
-      output: Output.object({ schema: StructuredReadingSchema }),
+      output: Output.object({ schema: structuredSchema }),
       temperature: 0.2,
       maxOutputTokens: maxTokens,
       maxRetries: 1,
       abortSignal: request.signal,
-      timeout: { totalMs: API_REQUEST_TIMEOUT_MS - 5000 },
+      timeout: { totalMs: Math.min(getReadingTimeoutMs(cardCount), API_REQUEST_TIMEOUT_MS - 5000) },
     });
 
     const drawnCardIds = validated.cards.map((c) => c.id);
@@ -120,7 +121,7 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, "empty-output");
     }
 
-    let finalText = normalizeMarkdown(renderStructuredReading(result.output));
+    let finalText = normalizeMarkdown(renderStructuredReading(result.output, validated.spreadId));
 
     let outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
     let markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
@@ -134,18 +135,18 @@ export async function POST(request: Request) {
         model: mistral(MISTRAL_PRODUCTION_MODEL),
         system: `${buildSystemPrompt(cardCount)}\n\nVALIDATION OVERRIDE: Regenerate the reading from scratch. Output only the required headings and content. Mention only drawn cards, use no timing unless supported, and avoid all Tarot/New Age language.`,
         prompt: `${prompt}\n\nThe previous structured output failed validation. Return a corrected structured object only. Cite only evidence IDs from the evidence pack.`,
-        output: Output.object({ schema: StructuredReadingSchema }),
+        output: Output.object({ schema: structuredSchema }),
         temperature: 0.1,
         maxOutputTokens: maxTokens,
         maxRetries: 0,
         abortSignal: request.signal,
-        timeout: { totalMs: 8_000 },
+        timeout: { totalMs: getReadingRepairTimeoutMs(cardCount) },
       });
 
       if (!repair.output) {
         return generationFailedResponse(rateLimitResult, "structured-output-empty");
       }
-      finalText = normalizeMarkdown(renderStructuredReading(repair.output));
+      finalText = normalizeMarkdown(renderStructuredReading(repair.output, validated.spreadId));
       outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
       markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
       finalCritical = [
