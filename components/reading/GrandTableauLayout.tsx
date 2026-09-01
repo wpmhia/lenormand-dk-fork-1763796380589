@@ -99,7 +99,7 @@ export function GrandTableauLayout({
         </div>
       )}
 
-      <div className="-mx-4 overflow-x-auto px-4 pb-2 [-webkit-overflow-scrolling:touch] [overscroll-behavior-x:contain] sm:mx-0 sm:px-0">
+      <div className="-mx-4 overflow-x-auto px-4 pb-2 [-webkit-overflow-scrolling:touch] [overscroll-behavior-x:contain] sm:mx-0 sm:px-0" aria-label="Grand Tableau, horizontally scrollable">
         <div className="grid min-w-[752px] grid-cols-9 gap-1 sm:gap-sm">
           {validCards.map(({ card, index }) => {
             const pos = getGrandTableauPosition(index);
@@ -145,18 +145,18 @@ export function GrandTableauLayout({
                       {pos.row + 1}-{pos.col + 1}
                     </span>
                     {isSignificator && (
-                      <Badge variant="default" className="bg-amber-600 text-[10px]">YOU</Badge>
+                         <Badge variant="default" className="bg-amber-600 text-[11px]">YOU</Badge>
                     )}
                     {showAdvancedAnalysis && (
                       <>
-                        {isCorner && <Badge variant="outline" className="border-purple-500/50 text-[10px] text-purple-600">Context</Badge>}
-                        {isCenter && <Badge variant="outline" className="border-green-500/50 text-[10px] text-green-600">Heart</Badge>}
+                        {isCorner && <Badge variant="outline" className="border-purple-500/50 text-[11px] text-purple-600">Context</Badge>}
+                        {isCenter && <Badge variant="outline" className="border-green-500/50 text-[11px] text-green-600">Heart</Badge>}
                       </>
                     )}
                   </div>
 
                   {showAdvancedAnalysis && zone && significatorIndex !== -1 && !isSignificator && (
-                    <div className={`flex items-center gap-1 text-[10px] ${zone.color}`}>
+                    <div className={`flex items-center gap-1 text-[11px] ${zone.color}`}>
                       {getZoneIcon(zoneInfo.zone)}
                       <span>{zone.name}</span>
                       <span className="text-muted-foreground">({zoneInfo.distance})</span>
@@ -173,7 +173,7 @@ export function GrandTableauLayout({
                   />
 
                   {showAdvancedAnalysis && topicInfo && (
-                    <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+                      <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[11px] text-primary">
                       {getTopicIcon(topicInfo.type)}
                       <span>{topicInfo.label}</span>
                     </div>
@@ -185,10 +185,12 @@ export function GrandTableauLayout({
         </div>
       </div>
 
+      <p className="text-center text-xs text-muted-foreground sm:hidden">Swipe horizontally to explore all 36 cards</p>
+
       <div className="mt-3 space-y-3 sm:hidden">
         {significatorIndex !== -1 && validCards[significatorIndex] && (
           <div className="rounded-lg border border-amber-500/30 bg-amber-50/30 p-3 dark:bg-amber-950/20">
-            <h4 className="mb-1 text-xs font-semibold text-foreground">Significator</h4>
+              <h4 className="mb-1 text-xs font-semibold text-foreground">Significator</h4>
             <p className="text-xs text-muted-foreground">
               {validCards[significatorIndex].card.name} at position {significatorIndex + 1}
             </p>

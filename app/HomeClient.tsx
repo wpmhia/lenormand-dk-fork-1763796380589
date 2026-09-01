@@ -42,10 +42,10 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
   return (
     <main className="bg-background text-foreground" role="main">
       {/* Hero Section */}
-      <div className="container-hero py-12 md:py-16 lg:py-20">
-        <div className="relative flex flex-col items-center justify-center gap-10 md:flex-row md:items-center md:justify-center md:gap-16 lg:gap-20">
-          <div className="relative z-10 max-w-lg text-center md:max-w-xl md:text-left lg:max-w-2xl">
-            <h1 className="logo-font relative mb-4 pb-2 text-4xl font-bold leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+      <div className="container-hero">
+        <div className="relative grid items-center gap-10 md:grid-cols-[1.38fr_1fr] md:gap-12 lg:gap-16">
+          <div className="relative z-10 text-center md:text-left">
+            <h1 className="hero-title logo-font relative mb-4 pb-2 font-bold leading-tight text-foreground">
               <span className="relative inline-block">
                 Lenormand
                 <div className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
@@ -54,7 +54,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 Intelligence
               </span>
             </h1>
-            <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg md:mx-0 md:text-xl lg:max-w-2xl">
+              <p className="lead mx-auto mb-8 max-w-[70ch] text-muted-foreground md:mx-0">
               Clear, practical readings from the 36-card Lenormand system. Combination-based readings, card meanings, and learning.
             </p>
 
@@ -99,7 +99,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             </div>
           </div>
 
-          <div className="relative z-10 flex justify-center md:shrink-0">
+          <div className="relative z-10 flex justify-center md:justify-end">
             <Image
               src={heroImage}
               alt="Lenormand cards arranged in a traditional reading spread"
@@ -107,7 +107,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               height={550}
               priority
               sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 30vw"
-              className="h-auto w-[65vw] max-w-[260px] rounded-lg object-cover shadow-lg transition-shadow duration-300 hover:shadow-xl sm:max-w-[300px] md:max-w-[340px] lg:max-w-[380px]"
+              className="h-auto w-[65vw] max-w-[260px] rounded-lg object-cover shadow-lg transition-shadow duration-300 hover:shadow-xl sm:max-w-[300px] md:w-full md:max-w-[340px] lg:max-w-[380px]"
             />
           </div>
         </div>

@@ -27,11 +27,11 @@ export function ReadingTypeCard({
 
   return (
     <Link href={href} className="block">
-      <Card className="relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
-        <CardHeader className="relative z-10 pb-3">
+      <Card className="relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-border bg-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+        <CardHeader className="relative z-10 p-4 pb-3 md:p-5 md:pb-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-2">
-              <CardTitle className="line-clamp-2 flex items-center gap-2 text-base font-semibold text-card-foreground">
+              <CardTitle className="line-clamp-2 flex items-center gap-2 text-lg font-semibold text-card-foreground">
                 {icon}
                 <span>{title}</span>
               </CardTitle>
@@ -46,7 +46,7 @@ export function ReadingTypeCard({
             )}
           </div>
         </CardHeader>
-        <CardContent className="relative z-10 flex flex-grow flex-col justify-between p-0">
+        <CardContent className="relative z-10 flex flex-grow flex-col justify-between px-4 pb-4 md:px-5 md:pb-5">
           <p className="text-sm leading-relaxed text-muted-foreground">
             {description}
           </p>
