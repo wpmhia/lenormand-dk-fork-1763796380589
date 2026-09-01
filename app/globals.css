@@ -10,12 +10,6 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* Opt-in tap scale - apply .tap-scale to simple buttons only */
-  .tap-scale:active {
-    transform: scale(0.97);
-    transition: transform 0.1s ease;
-  }
-  
   /* Prevent text selection on interactive elements (iOS) */
   .no-select {
     -webkit-user-select: none;
@@ -42,8 +36,6 @@
     --accent: 25 30% 18%;
     --accent-foreground: 45 10% 98%;
     --card-border: 35 30% 20%;
-    --loading-start: 35 40% 65%;
-    --loading-mid: 45 10% 80%;
     --motion-control: 150ms;
     --motion-surface: 200ms;
     --motion-ceremonial: 800ms;
@@ -178,23 +170,6 @@
     font-weight: 700;
   }
 
-  .surface-card {
-    @apply rounded-lg border border-border bg-card shadow-elevation-1;
-    transition: box-shadow 200ms ease, border-color 200ms ease;
-  }
-
-  .surface-card:hover {
-    @apply shadow-elevation-2;
-  }
-
-  .panel {
-    @apply rounded-lg border border-border bg-card/70 shadow-elevation-1;
-  }
-
-  .pill {
-    @apply rounded-full;
-  }
-
   .gt-significator {
     color: hsl(var(--gt-significator));
     border-color: hsl(var(--gt-significator) / 0.5);
@@ -238,39 +213,6 @@
     max-width: 1280px;
   }
 
-  .container-cta {
-    @apply container py-12 md:py-16 lg:py-20;
-    max-width: 896px;
-  }
-
-  /* Grid System - Standardized gaps */
-  .grid-auto {
-    @apply grid gap-lg lg:gap-xl;
-  }
-  .grid-1 {
-    @apply grid-cols-1;
-  }
-  .grid-2 {
-    @apply grid-cols-1 md:grid-cols-2;
-  }
-  .grid-3 {
-    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
-  }
-  .grid-4 {
-    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
-  }
-
-  /* Spacing Utilities */
-  .space-section {
-    @apply space-y-2xl;
-  }
-  .space-content {
-    @apply space-y-xl;
-  }
-  .space-component {
-    @apply space-y-lg;
-  }
-
   /* Card Components - Standardized */
   .lenormand-card {
     aspect-ratio: 2.5 / 3.5;
@@ -291,104 +233,6 @@
 
   .lenormand-card img {
     @apply h-full w-full rounded-lg object-cover object-center;
-  }
-
-  /* Standard Card Component */
-  .card-base {
-    @apply rounded-lg border border-border bg-card shadow-elevation-1;
-    transition: box-shadow 200ms ease, border-color 200ms ease;
-  }
-
-  .card-base:hover {
-    @apply shadow-elevation-2;
-  }
-
-  /* Keep the existing shadcn Card primitive aligned with the surface contract. */
-  .rounded-lg.border.bg-card.text-card-foreground.shadow-sm {
-    border-radius: var(--radius);
-    padding: 1rem;
-    box-shadow: var(--shadow-elevation-1);
-  }
-
-  /* Loading States */
-  .loading-skeleton {
-    @apply rounded bg-gradient-to-r;
-    background-image: linear-gradient(to right, hsl(var(--loading-start)), hsl(var(--loading-mid)), hsl(var(--loading-start)));
-    pointer-events: none;
-    will-change: opacity;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .loading-spinner {
-    @apply rounded-full border-4;
-    border-color: hsl(var(--loading-mid));
-    border-top-color: hsl(var(--loading-start));
-    pointer-events: none;
-    will-change: transform;
-    animation: spin-smooth 2s linear infinite;
-  }
-
-  @keyframes pulse-smooth {
-    0%,
-    100% {
-      opacity: 0.6;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes spin-smooth {
-    from {
-      transform: translateZ(0) rotate(0deg);
-    }
-    to {
-      transform: translateZ(0) rotate(360deg);
-    }
-  }
-
-  .loading-skeleton-pulse {
-    animation: pulse-smooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Navigation */
-  .nav-header {
-    @apply sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60;
-  }
-
-  .nav-container {
-    @apply container mx-auto flex items-center justify-between;
-  }
-
-  .nav-link {
-    @apply text-sm font-medium text-card-foreground transition-colors duration-200 hover:text-primary;
-  }
-
-  /* Buttons - standardized by component size; do not add global heights. */
-  .btn-group {
-    @apply inline-flex gap-sm rounded-lg border border-border bg-muted p-sm;
-  }
-
-  .btn-group-item {
-    @apply min-h-11 min-w-11 rounded-md px-md py-sm text-xs;
-  }
-
-  /* Hero section */
-  .hero-image-cell {
-    @apply flex items-center justify-center;
-  }
-
-  /* Hero button group - Standardized */
-  .btn-group-hero {
-    @apply mx-auto flex max-w-lg flex-col justify-center gap-lg sm:flex-row;
-  }
-
-  .btn-group-hero-item {
-    @apply h-16 flex-1 cursor-pointer rounded-lg;
-  }
-
-  .touch-target {
-    @apply min-h-11 min-w-11;
   }
 
   /* Forms - Standardized */
@@ -433,39 +277,6 @@
 
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground/50;
-  }
-
-  /* Reading Results Styling */
-  .reading-container {
-    @apply space-y-lg;
-  }
-
-  .reading-section {
-    @apply rounded-lg border-2 border-amber-700/30 bg-gradient-to-br from-amber-900/10 to-amber-800/10 p-lg shadow-elevation-2;
-  }
-
-  .reading-section p {
-    @apply text-base leading-relaxed text-amber-50 md:text-lg;
-  }
-
-  .reading-section-title {
-    @apply mb-md text-sm font-semibold uppercase tracking-widest text-amber-300;
-  }
-
-  .practical-section {
-    @apply rounded-lg border-2 border-slate-600/30 bg-gradient-to-br from-slate-900/10 to-slate-800/10 p-lg shadow-elevation-2;
-  }
-
-  .practical-section p {
-    @apply text-base leading-relaxed text-slate-100;
-  }
-
-  .practical-title {
-    @apply mb-md text-sm font-semibold uppercase tracking-widest text-slate-300;
-  }
-
-  .reading-card {
-    @apply rounded-lg border border-border bg-card p-lg shadow-elevation-1;
   }
 
   /* Streaming Animation */
@@ -558,7 +369,7 @@
   .stagger-reveal {
     opacity: 0;
     transform: translateY(30px) scale(0.92);
-    animation: staggerReveal 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    animation: staggerReveal var(--motion-ceremonial) cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
   }
 
   @keyframes staggerReveal {

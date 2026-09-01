@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="page-layout mystical-bg">
+    <div className="page-layout">
       <div className="container mx-auto max-w-4xl px-4 py-12">
         <div className="mb-12 text-center">
           <h1 className="mb-4 flex items-center justify-center gap-3 text-4xl font-bold text-foreground">

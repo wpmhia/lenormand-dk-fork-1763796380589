@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Terms of Service | Lenormand Intelligence",
     description:
-      "Guidelines for using our mystical divination services responsibly and ethically.",
+      "Guidelines for using our card reading services responsibly and ethically.",
     type: "website",
   },
   alternates: {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="page-layout mystical-bg">
+    <div className="page-layout">
       <div className="container mx-auto max-w-4xl px-4 py-12">
         <div className="mb-12 text-center">
           <h1 className="mb-4 flex items-center justify-center gap-3 text-4xl font-bold text-foreground">
@@ -31,7 +31,7 @@ export default function TermsPage() {
             Terms of Service
           </h1>
           <p className="text-lg text-muted-foreground">
-            Guidelines for using our mystical divination services responsibly
+            Guidelines for using our card reading services responsibly
             and ethically.
           </p>
         </div>
@@ -44,7 +44,7 @@ export default function TermsPage() {
                 Acceptance of Terms
               </CardTitle>
             </CardHeader>
-            <CardContent className="card-content space-component text-foreground">
+            <CardContent className="card-content space-y-6 text-foreground">
               <p>
                 By using Lenormand Intelligence, you agree to these terms of
                 service. These terms govern your use of our divination platform

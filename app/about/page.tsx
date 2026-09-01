@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="page-layout mystical-bg">
+    <div className="page-layout">
       <div className="container mx-auto max-w-5xl px-4 py-12">
         {/* Hero Section */}
         <div className="mb-16 text-center">
