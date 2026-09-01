@@ -214,7 +214,7 @@ export default function LearnPage() {
       {/* Progress Tracker */}
       <div className="via-primary/2 border-t border-border bg-gradient-to-r from-primary/5 to-primary/5 py-12 md:py-16">
         <div className="container">
-          <div className="rounded-2xl border border-primary/20 bg-card/50 p-8 backdrop-blur-sm">
+          <div className="rounded-lg border border-primary/20 bg-card/50 p-6 backdrop-blur-sm md:p-8">
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
                 <TrendingUp className="h-6 w-6 text-white" />
@@ -254,7 +254,7 @@ export default function LearnPage() {
               className="cursor-pointer"
             >
               <Link href={`/learn/${module.id}`}>
-                <Card className="group relative min-h-[280px] overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm transition-all hover:border-border/60 hover:shadow-2xl hover:shadow-primary/20">
+                <Card className="group relative min-h-[240px] overflow-hidden rounded-lg border border-border bg-card backdrop-blur-sm transition-all hover:border-border/60 hover:shadow-elevation-3">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
                   <CardHeader className="relative z-10 pb-4">
                     <div className="mb-3 flex items-center justify-between">
@@ -380,7 +380,7 @@ export default function LearnPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="rounded-3xl border border-border/50 bg-gradient-to-r from-primary/10 to-primary/5 p-8 text-center">
+          <div className="rounded-lg border border-border/50 bg-gradient-to-r from-primary/10 to-primary/5 p-6 text-center md:p-8">
           <Zap className="mx-auto mb-4 h-8 w-8 text-primary" />
           <h3 className="mb-3 text-2xl font-bold text-foreground">
             Ready to Start Your Journey?

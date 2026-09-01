@@ -27,7 +27,7 @@ export function ReadingTypeCard({
 
   return (
     <Link href={href} className="block">
-      <Card className="relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-border bg-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+      <Card className="relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-border bg-card backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-elevation-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
         <CardHeader className="relative z-10 p-4 pb-3 md:p-5 md:pb-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-2">

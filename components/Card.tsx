@@ -17,9 +17,9 @@ interface CardProps {
 }
 
 const sizeClasses: Record<string, string> = {
-  sm: "w-20 h-32 text-xs",
-  md: "w-28 h-40 text-sm sm:text-base",
-  lg: "w-36 h-52 text-base",
+  sm: "w-20 aspect-[5/7] text-xs",
+  md: "w-28 aspect-[5/7] text-sm sm:text-base",
+  lg: "w-36 aspect-[5/7] text-base",
   responsive: "w-full aspect-[2.5/3.5] text-xs",
 };
 
@@ -63,7 +63,7 @@ function CardInner({
     return (
       <div
         className={cn(
-          "card-mystical group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl will-change-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+           "lenormand-card group relative flex cursor-pointer items-center justify-center overflow-hidden will-change-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
           selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
           sizeClasses[size],
           className,
@@ -88,7 +88,7 @@ function CardInner({
     <>
       <div
         className={cn(
-           "card-mystical group relative cursor-pointer overflow-hidden rounded-xl transition-all duration-300 will-change-transform hover:scale-105 hover:shadow-elevation-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+            "lenormand-card group relative cursor-pointer overflow-hidden transition-all duration-200 will-change-transform hover:scale-[1.02] hover:shadow-elevation-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
           selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
           sizeClasses[size],
           className,

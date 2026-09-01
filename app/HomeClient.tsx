@@ -40,7 +40,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
   const previewCards = useMemo(() => initialCards.slice(0, 6), [initialCards]);
 
   return (
-    <main className="bg-background text-foreground" role="main">
+    <div className="bg-background text-foreground">
       {/* Hero Section */}
       <div className="container-hero">
         <div className="relative grid items-center gap-10 md:grid-cols-[1.38fr_1fr] md:gap-12 lg:gap-16">
@@ -107,7 +107,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               height={550}
               priority
               sizes="(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 30vw"
-              className="h-auto w-[65vw] max-w-[260px] rounded-lg object-cover shadow-lg transition-shadow duration-300 hover:shadow-xl sm:max-w-[300px] md:w-full md:max-w-[340px] lg:max-w-[380px]"
+              className="h-auto w-[65vw] max-w-[260px] rounded-lg object-cover shadow-elevation-3 transition-shadow duration-200 hover:shadow-elevation-4 sm:max-w-[300px] md:w-full md:max-w-[340px] lg:max-w-[380px]"
             />
           </div>
         </div>
@@ -283,6 +283,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
           cards={initialCards}
         />
       </Suspense>
-    </main>
+    </div>
   );
 }

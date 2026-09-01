@@ -110,7 +110,7 @@ function DeckComponent({
             "relative h-[160px] w-[112px] rounded-xl p-0 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
             !canDraw
               ? "cursor-not-allowed opacity-60"
-              : "cursor-pointer hover:scale-105 hover:shadow-lg active:scale-95",
+              : "cursor-pointer hover:scale-[1.02] hover:shadow-elevation-3 active:scale-[0.98]",
           )}
           aria-label={
             isDrawing
@@ -121,7 +121,7 @@ function DeckComponent({
         >
           {/* Card Back Image */}
           <div
-            className="card-mystical h-full w-full overflow-hidden rounded-xl"
+            className="lenormand-card h-full w-full overflow-hidden"
             style={{
               backgroundImage: "url(/images/card-back.png)",
               backgroundSize: "cover",

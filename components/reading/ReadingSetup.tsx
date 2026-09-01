@@ -37,7 +37,7 @@ export function ReadingSetup({
   const charCount = question.length;
 
   return (
-    <Card className="overflow-hidden rounded-2xl border-border bg-card shadow-lg backdrop-blur-sm">
+    <Card className="overflow-hidden rounded-lg border-border bg-card shadow-elevation-1 backdrop-blur-sm">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-xl text-card-foreground">
           <Eye className="h-5 w-5" />
@@ -57,7 +57,7 @@ export function ReadingSetup({
               onQuestionChange(e.target.value);
             }}
             placeholder="What guidance do the cards have for me today?"
-            className="min-h-[100px] resize-none rounded-xl border-border bg-background text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:shadow-lg focus:ring-2 focus:ring-primary/20"
+            className="min-h-[100px] resize-none rounded-md border-border bg-background text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:shadow-elevation-2 focus:ring-2 focus:ring-primary/20"
             maxLength={500}
             aria-describedby="question-count"
           />
