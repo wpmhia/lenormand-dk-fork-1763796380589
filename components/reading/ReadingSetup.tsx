@@ -57,7 +57,7 @@ export function ReadingSetup({
               onQuestionChange(e.target.value);
             }}
             placeholder="What guidance do the cards have for me today?"
-            className="min-h-[100px] resize-none rounded-md border-border bg-background text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:shadow-elevation-2 focus:ring-2 focus:ring-primary/20"
+            className="min-h-[100px] resize-none rounded-md border-border bg-background text-foreground transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground focus:border-primary focus:shadow-elevation-2 focus:ring-2 focus:ring-primary/20"
             maxLength={500}
             aria-describedby="question-count"
           />
