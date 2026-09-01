@@ -12,7 +12,8 @@ import { Card } from "@/lib/types";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { generateText, Output } from "ai";
-import { getStructuredReadingSchema, renderStructuredReading, validateStructuredReading } from "@/lib/structured-reading";
+import { getStructuredReadingSchema, renderStructuredReading, validateStructuredReading, withCanonicalPredictionTiming } from "@/lib/structured-reading";
+import { buildPredictionTimingLine } from "@/lib/timing";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 import {
@@ -39,6 +40,7 @@ const mistral = createMistral({
 });
 
 export async function POST(request: Request) {
+  const startedAt = Date.now();
   try {
     const ip = getClientIP(request);
 
@@ -114,16 +116,22 @@ export async function POST(request: Request) {
 
     if (!result.output) {
       console.error("interpret: empty Mistral output", {
+        phase: "initial",
         spreadId: validated.spreadId,
         cardCount: cardCount,
         finishReason: result.finishReason,
+        elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, "empty-output");
     }
 
-    let finalText = normalizeMarkdown(renderStructuredReading(result.output, validated.spreadId));
+    const canonicalTiming = buildPredictionTimingLine(context.timingEvidence);
+    let structuredOutput = validated.spreadId === "single-card" || validated.spreadId === "daily-card"
+      ? result.output
+      : withCanonicalPredictionTiming(result.output, canonicalTiming);
+    let finalText = normalizeMarkdown(renderStructuredReading(structuredOutput, validated.spreadId));
 
-    let structuredIssues = validateStructuredReading(result.output, context);
+    let structuredIssues = validateStructuredReading(structuredOutput, context);
     let outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
     let markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
     let finalCritical = [
@@ -136,7 +144,7 @@ export async function POST(request: Request) {
       const repair = await generateText({
         model: mistral(MISTRAL_PRODUCTION_MODEL),
         system: `${buildSystemPrompt(cardCount)}\n\nVALIDATION OVERRIDE: Regenerate the reading from scratch. Return only an object conforming to the supplied structured schema; do not emit Markdown headings yourself. Cite only evidence IDs supplied in the deterministic evidence pack, cover every required pair, and include every required Grand Tableau topic house.`,
-        prompt: `${prompt}\n\nThe previous structured output failed validation. Return a corrected structured object only. Cite only evidence IDs from the evidence pack.`,
+        prompt: `${prompt}\n\nThe previous structured output failed validation. Return a corrected structured object only. Cite only evidence IDs from the evidence pack.\n\nValidation failures:\n${finalCritical.map((issue) => `- ${issue.message}`).join("\n")}\nCorrect exactly these failures.`,
         output: Output.object({ schema: structuredSchema }),
         temperature: 0.1,
         maxOutputTokens: maxTokens,
@@ -148,8 +156,11 @@ export async function POST(request: Request) {
       if (!repair.output) {
         return generationFailedResponse(rateLimitResult, "structured-output-empty");
       }
-      finalText = normalizeMarkdown(renderStructuredReading(repair.output, validated.spreadId));
-      structuredIssues = validateStructuredReading(repair.output, context);
+      structuredOutput = validated.spreadId === "single-card" || validated.spreadId === "daily-card"
+        ? repair.output
+        : withCanonicalPredictionTiming(repair.output, canonicalTiming);
+      finalText = normalizeMarkdown(renderStructuredReading(structuredOutput, validated.spreadId));
+      structuredIssues = validateStructuredReading(structuredOutput, context);
       outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
       markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
       finalCritical = [
@@ -161,10 +172,12 @@ export async function POST(request: Request) {
 
     if (finalCritical.length > 0) {
       console.error("interpret: reading rejected by validator", {
+        phase: finalCritical.length > 0 ? "repair" : "initial",
         spreadId: validated.spreadId,
         cardCount: cardCount,
         issues: finalCritical.map((i) => i.message),
         output: finalText,
+        elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, finalCritical.map((i) => i.message).join("; "));
     }
@@ -179,9 +192,11 @@ export async function POST(request: Request) {
     }
     const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
     console.error("interpret: generation error", {
+      phase: "generation",
       name: error.name,
       message: error.message,
       isTimeout,
+      elapsedMs: Date.now() - startedAt,
     });
     return new Response(
       JSON.stringify({

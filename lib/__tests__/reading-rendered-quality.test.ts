@@ -117,6 +117,11 @@ describe("spread-aware structured reading contract", () => {
     expect(validateReadingOutput(rendered, [12], "single-card").valid).toBe(true);
   });
 
+  it("keeps a single-card reading without timing claims valid", () => {
+    const reading = "## Interpretation\n\nThe card describes a concrete development in the situation that requires practical attention.";
+    expect(validateReadingOutput(reading, [24], "single-card").valid).toBe(true);
+  });
+
   it("renders Grand Tableau houses and mirrors before card evidence", () => {
     const parsed = getStructuredReadingSchema("grand-tableau").parse({
       interpretation: "The tableau shows a practical situation developing through people, choices, and unresolved conditions.",
