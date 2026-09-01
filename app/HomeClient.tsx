@@ -54,18 +54,18 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 Intelligence
               </span>
             </h1>
-              <p className="lead mx-auto mb-8 max-w-[70ch] text-muted-foreground md:mx-0">
+            <p className="lead mx-auto mb-8 max-w-[70ch] text-muted-foreground md:mx-0">
               Clear, practical readings from the 36-card Lenormand system. Combination-based readings, card meanings, and learning.
             </p>
 
             <div className="flex flex-col items-center gap-5 md:items-start">
               <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
-                <Link href="/read/new" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full gap-2 text-base sm:w-auto sm:text-sm">
+                <Button asChild size="lg" className="w-full gap-2 text-base sm:w-auto sm:text-sm">
+                  <Link href="/read/new">
                     <Sparkles className="h-5 w-5" />
                     Get Your Reading
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
                 <Button
                   variant="outline"
                   size="lg"
@@ -233,7 +233,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {previewCards.map((card) => (
             <Link key={card.id} href={`/learn/card-meanings/${card.id}`}>
-              <Card className="h-full cursor-pointer border-border bg-muted/50 transition-all duration-300 hover:border-primary/50 hover:shadow-lg">
+              <Card className="h-full cursor-pointer border-border bg-muted/50 transition-[border-color,box-shadow] duration-200 hover:border-primary/50 hover:shadow-elevation-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-foreground">
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
@@ -252,12 +252,12 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link href="/learn">
-            <Button variant="outline" size="lg" className="gap-2">
+            <Button asChild variant="outline" size="lg" className="gap-2">
+              <Link href="/learn">
               <BookOpen className="h-4 w-4" />
               View All 36 Cards
+              </Link>
             </Button>
-          </Link>
         </div>
       </div>
 

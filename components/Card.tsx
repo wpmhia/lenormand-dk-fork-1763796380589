@@ -49,19 +49,11 @@ function CardInner({
     onClick?.();
   }, [onClick]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (onClick && (e.key === "Enter" || e.key === " ")) {
-        e.preventDefault();
-        onClick();
-      }
-    },
-    [onClick],
-  );
-
   if (showBack) {
+    const CardFace = onClick ? "button" : "div";
     return (
-      <div
+      <CardFace
+        type={onClick ? "button" : undefined}
         className={cn(
            "lenormand-card group relative flex cursor-pointer items-center justify-center overflow-hidden will-change-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
           selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
@@ -69,9 +61,6 @@ function CardInner({
           className,
         )}
         onClick={handleClick}
-        onKeyDown={onClick ? handleKeyDown : undefined}
-        tabIndex={onClick ? 0 : undefined}
-        role={onClick ? "button" : undefined}
         aria-label={selected ? "Selected card" : "Lenormand card back. Click to draw or select card"}
         aria-pressed={selected}
         style={{
@@ -84,7 +73,7 @@ function CardInner({
     );
   }
 
-  const cardContent = (
+  const cardFace = (
     <>
       <div
         className={cn(
@@ -93,10 +82,6 @@ function CardInner({
           sizeClasses[size],
           className,
         )}
-        onClick={handleClick}
-        onKeyDown={onClick ? handleKeyDown : undefined}
-        tabIndex={onClick ? 0 : undefined}
-        role={onClick ? "button" : undefined}
         aria-label={`${card.name} card${selected ? " (selected)" : ""}. Click to ${onClick ? "select" : "view details"}`}
         aria-pressed={selected}
       >
@@ -129,10 +114,14 @@ function CardInner({
   );
 
   if (onClick) {
-    return cardContent;
+    return (
+      <button type="button" onClick={handleClick} className="p-0 text-left" aria-label={`${card.name} card${selected ? " (selected)" : ""}`}>
+        {cardFace}
+      </button>
+    );
   }
 
-  return <Link href={`/cards/${card.id}`}>{cardContent}</Link>;
+  return <Link href={`/cards/${card.id}`}>{cardFace}</Link>;
 }
 
 export const Card = CardInner;

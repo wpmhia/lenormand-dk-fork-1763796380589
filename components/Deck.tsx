@@ -76,7 +76,7 @@ function DeckComponent({
           variant="outline"
           size="default"
           className={cn(
-            "min-h-[48px] transition-all duration-300",
+              "min-h-[48px] transition-[border-color,background-color] duration-200",
             isShuffling && "scale-95",
           )}
         >
@@ -107,7 +107,7 @@ function DeckComponent({
           onClick={drawCards}
           disabled={!canDraw}
           className={cn(
-            "relative h-[160px] w-[112px] rounded-xl p-0 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+              "relative h-[160px] w-[112px] rounded-xl p-0 transition-[transform,box-shadow] duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
             !canDraw
               ? "cursor-not-allowed opacity-60"
               : "cursor-pointer hover:scale-[1.02] hover:shadow-elevation-3 active:scale-[0.98]",
