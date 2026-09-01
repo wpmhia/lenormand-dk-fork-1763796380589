@@ -37,7 +37,7 @@ const bodySchema = z.object({
   question: z.string().max(MAX_QUESTION_LENGTH).optional().default(""),
   spreadId: spreadIdSchema,
   cards: z.array(rawCardSchema).min(1),
-  significatorPreference: z.string().optional().default("both"),
+  significatorPreference: z.enum(["woman", "man", "both"]).optional().default("both"),
 });
 
 export const VALID_SPREADS = buildValidSpreads();
@@ -69,7 +69,6 @@ function sanitize(str: string): string {
   return str
     .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
     .replace(/["]/g, '"')
-    .replace(/\\/g, "\\\\")
     .replace(/\n|\r/g, " ");
 }
 
@@ -102,10 +101,7 @@ export function normalizeReadingRequest(
   }
 
   const data = parsed.data;
-  const significatorPreference: SignificatorPreference =
-    data.significatorPreference === "woman" || data.significatorPreference === "man" || data.significatorPreference === "both"
-      ? data.significatorPreference
-      : "both";
+  const significatorPreference: SignificatorPreference = data.significatorPreference;
   const sanitizedQuestion = sanitize(data.question);
   const expectedCount = VALID_SPREADS[data.spreadId];
 

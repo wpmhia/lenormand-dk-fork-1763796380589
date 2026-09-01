@@ -24,6 +24,7 @@ export interface RateLimitResult {
   limit: number;
   remaining: number;
   reset: number;
+  degraded?: boolean;
 }
 
 function hashIP(ip: string): string {
@@ -55,7 +56,8 @@ export async function rateLimit(
       const { success, limit: l, remaining, reset } = await ratelimiter.limit(key);
       return { success, limit: l, remaining, reset: reset || Date.now() + 60000 };
     } catch {
-      // Fall through to in-memory fallback
+      console.warn("rate-limit: Redis unavailable; allowing request in degraded mode");
+      return { success: true, limit, remaining: limit - 1, reset: Date.now() + 60000, degraded: true };
     }
   }
 
@@ -80,29 +82,52 @@ export async function rateLimit(
     }
   }
 
-  return { success: true, limit, remaining: limit - 1, reset: resetTime };
+  return { success: true, limit, remaining: limit - 1, reset: resetTime, degraded: true };
 }
 
 export function getClientIP(request: Request): string {
+  const platformIp = request.headers.get("x-vercel-forwarded-for") || request.headers.get("cf-connecting-ip");
+  if (platformIp) return platformIp.trim();
   const realIp = request.headers.get("x-real-ip");
   if (realIp) return realIp;
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     const ips = forwarded.split(",").map((s) => s.trim()).filter(Boolean);
-    return ips.at(-1) || "unknown";
+    return ips[0] || "unknown";
   }
   const ua = request.headers.get("user-agent") || "";
   const lang = request.headers.get("accept-language") || "";
   return `ua:${ua.length}:${lang.length}`;
 }
 
-export function checkBodySize(request: Request, maxBytes = 25000): number | null {
-  const contentLength = request.headers.get("content-length");
-  if (contentLength) {
-    const size = parseInt(contentLength, 10);
-    if (!isNaN(size) && size > maxBytes) {
-      return size;
-    }
+export class BodyTooLargeError extends Error {
+  constructor() {
+    super("Request body too large");
+    this.name = "BodyTooLargeError";
   }
-  return null;
+}
+
+export async function readBodyWithLimit(request: Request, maxBytes = 25000): Promise<string> {
+  const declared = Number(request.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > maxBytes) throw new BodyTooLargeError();
+  if (!request.body) return "";
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) throw new BodyTooLargeError();
+      chunks.push(value);
+    }
+  } catch (error) {
+    await reader.cancel();
+    throw error;
+  } finally { reader.releaseLock(); }
+  const body = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
+  return new TextDecoder().decode(body);
 }

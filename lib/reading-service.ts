@@ -1,4 +1,4 @@
-import { generateText, Output } from "ai";
+import { generateText, Output, type LanguageModel } from "ai";
 import type { ReadingContext } from "@/lib/reading-context";
 import {
   getStructuredReadingSchema,
@@ -20,7 +20,7 @@ export type ReadingServiceResult =
 
 interface ReadingServiceOptions {
   context: ReadingContext;
-  model: any;
+  model: LanguageModel;
   system: string;
   prompt: string;
   cardCount: number;
@@ -47,12 +47,13 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     timeout: { totalMs: timeout },
   });
 
-  const finalize = (output: any): { text: string; issues: ValidationIssue[] } => {
-    const structuredOutput = context.layout.type === "single"
-      ? output
-      : withCanonicalPredictionTiming(output, canonicalTiming);
-    const text = normalizeMarkdown(renderStructuredReading(structuredOutput, context.spreadId));
-    const structuralIssues = validateStructuredReading(structuredOutput, context);
+  const finalize = (output: unknown): { text: string; issues: ValidationIssue[] } => {
+    const structuredOutput = output as Parameters<typeof renderStructuredReading>[0];
+    const canonicalOutput = context.layout.type === "single"
+      ? structuredOutput
+      : withCanonicalPredictionTiming(structuredOutput as Exclude<typeof structuredOutput, never>, canonicalTiming);
+    const text = normalizeMarkdown(renderStructuredReading(canonicalOutput, context.spreadId));
+    const structuralIssues = validateStructuredReading(canonicalOutput, context);
     const outputIssues = validateReadingOutput(text, context.cards.map((card) => card.id), context.spreadId, {
       text: canonicalTiming,
       evidence: context.timingEvidence,

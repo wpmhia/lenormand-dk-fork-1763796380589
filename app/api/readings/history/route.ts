@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 import { Redis } from "@upstash/redis";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { checkBodySize } from "@/lib/rate-limit";
+import { readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 
 const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN")
   ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
@@ -77,14 +77,15 @@ export async function POST(request: Request) {
       );
     }
 
-    if (checkBodySize(request, 25000) !== null) {
-      return new Response(JSON.stringify({ error: "Request body too large" }), {
-        status: 413,
+    let body: any;
+    try {
+      body = JSON.parse(await readBodyWithLimit(request));
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof BodyTooLargeError ? error.message : "Invalid JSON body" }), {
+        status: error instanceof BodyTooLargeError ? 413 : 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
-
-    const body = await request.json();
     const { id, timestamp, question, spreadType, cards, interpretationPreview, interpretationFull } = body;
 
     if (
