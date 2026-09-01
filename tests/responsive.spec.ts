@@ -20,6 +20,7 @@ for (const viewport of viewports) {
     }));
     expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport + 1);
     await expect(page.locator("h1").first()).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toBeVisible();
 
     if (viewport.width < 768) {
       const menu = page.getByRole("button", { name: "Open mobile menu" });
@@ -45,4 +46,14 @@ test("standard pages keep readable containers without horizontal overflow", asyn
       expect(dimensions.content, `${route} overflows at ${width}px`).toBeLessThanOrEqual(dimensions.viewport + 1);
     }
   }
+});
+
+test("card grid uses the canonical readable card ratio", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/cards");
+  const card = page.locator("a[href^='/cards/']").first().locator("div").first();
+  const box = await card.boundingBox();
+  expect(box).not.toBeNull();
+  if (box) expect(box.height / box.width).toBeGreaterThan(1.25);
+  await expect(page.getByRole("contentinfo")).toBeVisible();
 });
