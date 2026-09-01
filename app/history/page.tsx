@@ -47,8 +47,8 @@ function HistoryPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="container mx-auto max-w-2xl px-4 pb-12">
+    <div className="min-h-screen bg-background py-12 md:py-16">
+      <div className="container-narrow pb-12">
         {/* Header */}
         <div className="mb-8">
           <Link
@@ -58,7 +58,7 @@ function HistoryPageContent() {
             <ArrowLeft className="h-4 w-4" />
             Back
           </Link>
-          <h1 className="mb-2 text-3xl font-bold text-foreground">
+          <h1 className="mb-2 font-bold text-foreground">
             Reading History
           </h1>
           <p className="text-muted-foreground">

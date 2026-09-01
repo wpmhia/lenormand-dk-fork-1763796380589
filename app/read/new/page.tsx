@@ -248,10 +248,10 @@ function NewReadingPageContent() {
 
   return (
       <div className="bg-ambience min-h-screen text-foreground">
-        <div className="container relative z-10 mx-auto max-w-4xl px-4 py-8">
+        <div className="container-narrow relative z-10 py-8 md:py-12">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="relative mb-4 text-4xl font-bold text-foreground">
+            <h1 className="relative mb-4 font-bold text-foreground">
               New Lenormand Reading
               <div className="absolute -bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
             </h1>

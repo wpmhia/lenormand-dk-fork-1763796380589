@@ -165,12 +165,12 @@ export default function LearnPage() {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10"></div>
-        <div className="container relative mx-auto max-w-6xl px-4 py-16">
+        <div className="container relative py-12 md:py-16 lg:py-20">
           <div className="space-y-8 text-center">
             <Badge className="badge-hero">📖 Learn the Lenormand System</Badge>
 
             <div className="space-y-6">
-              <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl">
+              <h1 className="font-bold leading-tight text-foreground">
                 <span className="relative inline-block">
                   Lenormand
                   <div className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
@@ -212,8 +212,8 @@ export default function LearnPage() {
       </div>
 
       {/* Progress Tracker */}
-      <div className="via-primary/2 border-t border-border bg-gradient-to-r from-primary/5 to-primary/5 py-12">
-        <div className="container mx-auto max-w-6xl px-4">
+      <div className="via-primary/2 border-t border-border bg-gradient-to-r from-primary/5 to-primary/5 py-12 md:py-16">
+        <div className="container">
           <div className="rounded-2xl border border-primary/20 bg-card/50 p-8 backdrop-blur-sm">
             <div className="flex items-start gap-4">
               <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80">
@@ -234,7 +234,7 @@ export default function LearnPage() {
       </div>
 
       {/* Course Overview */}
-      <div className="container mx-auto max-w-6xl px-4 py-16">
+      <div className="container py-12 md:py-16 lg:py-20">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold text-foreground">
             Your Learning Path

@@ -45,7 +45,7 @@
     --destructive-foreground: 0 0% 100%;
 
     /* Border Radius Scale */
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     --radius-xs: 0.25rem;
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
@@ -59,6 +59,7 @@
     --space-lg: 1.5rem; /* 24px */
     --space-xl: 2rem; /* 32px */
     --space-2xl: 3rem; /* 48px */
+    --section-space: 3rem;
 
     /* Elevation/Shadow Scale */
     --shadow-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -102,16 +103,22 @@
   }
 
   h1 {
-    @apply text-4xl leading-tight md:text-5xl lg:text-6xl;
+    font-size: clamp(2rem, 4vw, 3.5rem) !important;
+    line-height: 1.1;
+  }
+  .hero-title {
+    font-size: clamp(2.75rem, 6vw, 5rem) !important;
   }
   h2 {
-    @apply text-3xl leading-snug md:text-4xl;
+    font-size: clamp(1.625rem, 3vw, 2.25rem) !important;
+    line-height: 1.2;
   }
   h3 {
-    @apply text-2xl leading-snug md:text-3xl;
+    font-size: clamp(1.25rem, 2vw, 1.5rem) !important;
+    line-height: 1.25;
   }
   h4 {
-    @apply text-xl leading-snug md:text-2xl;
+    @apply text-lg leading-snug;
   }
   h5 {
     @apply text-lg md:text-xl;
@@ -121,7 +128,12 @@
   }
 
   p {
-    @apply leading-relaxed;
+    @apply text-base leading-relaxed;
+  }
+
+  .lead {
+    font-size: 1.125rem;
+    line-height: 1.7;
   }
 
   a {
@@ -140,27 +152,33 @@
 /* Layout System */
 @layer components {
   .container {
-    @apply mx-auto px-md sm:px-lg lg:px-xl;
+    @apply mx-auto w-full px-4 sm:px-6 lg:px-8;
+    max-width: 1152px;
   }
 
   .container-narrow {
-    @apply container max-w-4xl;
+    @apply container;
+    max-width: 896px;
   }
 
   .container-wide {
-    @apply container max-w-6xl;
+    @apply container;
+    max-width: 1280px;
   }
 
   .container-hero {
-    @apply container mx-auto max-w-6xl py-xl;
+    @apply container py-12 md:py-16 lg:py-20;
+    max-width: 1280px;
   }
 
   .container-section {
-    @apply container mx-auto max-w-6xl py-2xl;
+    @apply container py-12 md:py-16 lg:py-20;
+    max-width: 1280px;
   }
 
   .container-cta {
-    @apply container mx-auto max-w-4xl py-2xl;
+    @apply container py-12 md:py-16 lg:py-20;
+    max-width: 896px;
   }
 
   /* Grid System - Standardized gaps */
@@ -271,7 +289,7 @@
     @apply text-sm font-medium text-card-foreground transition-colors duration-200 hover:text-primary;
   }
 
-  /* Buttons - Standardized */
+  /* Buttons - standardized by component size; do not add global heights. */
   .btn-group {
     @apply inline-flex gap-sm rounded-lg border border-border bg-muted p-sm;
   }
@@ -292,12 +310,6 @@
 
   .btn-group-hero-item {
     @apply h-16 flex-1 cursor-pointer rounded-lg;
-  }
-
-  /* Touch target spacing - Accessibility standard 44x44px */
-  button,
-  [role="button"] {
-    @apply min-h-11 min-w-11;
   }
 
   .touch-target {

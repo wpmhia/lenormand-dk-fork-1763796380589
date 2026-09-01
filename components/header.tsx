@@ -9,11 +9,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
-      <div className="container flex h-14 items-center px-4">
+      <div className="container flex h-14 items-center md:h-16">
         <div className="flex items-center space-x-2">
           <Link
             href="/"
-            className="logo-font text-sm font-bold leading-tight transition-opacity hover:opacity-80 sm:text-base md:text-lg"
+            className="logo-font text-base font-bold leading-tight transition-opacity hover:opacity-80 sm:text-lg md:text-xl"
           >
             <span className="relative inline-block">
               Lenormand
@@ -79,7 +79,8 @@ export function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="border-t border-border bg-card px-4 py-4 md:hidden">
+        <div className="border-t border-border bg-card md:hidden">
+          <div className="container py-4">
           <nav className="flex flex-col space-y-2" role="navigation">
             <Link
               href="/"
@@ -122,6 +123,7 @@ export function Header() {
               <span>History</span>
             </Link>
           </nav>
+          </div>
         </div>
       )}
     </header>
