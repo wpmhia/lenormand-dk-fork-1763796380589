@@ -24,7 +24,7 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
           type="button"
            onClick={() => selectMethod("virtual")}
           disabled={disabled}
-          className={`flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
+          className={`flex flex-col items-start gap-2 rounded-lg border bg-card p-4 text-left transition-all duration-200 hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
         >
           <div className="flex w-full items-center justify-between">
             <Laptop className="h-5 w-5 text-primary" />
@@ -41,7 +41,7 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
           type="button"
            onClick={() => selectMethod("physical")}
           disabled={disabled}
-          className={`flex flex-col items-start gap-2 rounded-xl border-2 bg-card p-4 text-left transition-all hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
+          className={`flex flex-col items-start gap-2 rounded-lg border bg-card p-4 text-left transition-all duration-200 hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
         >
           <div className="flex w-full items-center justify-between">
             <Heart className="h-5 w-5 text-primary" />

@@ -81,19 +81,19 @@ export function GrandTableauLayout({
       {showAdvancedAnalysis && significatorIndex !== -1 && (
         <div className="mb-lg flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-lg">
           <div className="flex items-center gap-1 sm:gap-2">
-            <Clock className="h-3 w-3 text-amber-600 sm:h-4 sm:w-4" />
+            <Clock className="h-3 w-3 text-primary sm:h-4 sm:w-4" />
             <span>Left = Past</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
-            <Target className="h-3 w-3 text-blue-600 sm:h-4 sm:w-4" />
+            <Target className="h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
             <span>Right = Future</span>
           </div>
           <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Brain className="h-4 w-4 text-purple-600" />
+            <Brain className="h-4 w-4 text-primary" />
             <span>Above = Visible</span>
           </div>
           <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Eye className="h-4 w-4 text-emerald-600" />
+            <Eye className="h-4 w-4 text-muted-foreground" />
             <span>Below = Hidden</span>
           </div>
         </div>
@@ -120,9 +120,9 @@ export function GrandTableauLayout({
               if (isSignificator) {
                 borderClass = "border-amber-500 ring-2 ring-amber-500/30";
               } else if (isCorner) {
-                borderClass = "border-purple-500/50";
+                borderClass = "border-primary/50";
               } else if (isCenter) {
-                borderClass = "border-green-500/50";
+                borderClass = "border-primary/50";
               }
             } else if (isSignificator) {
               borderClass = "border-amber-500 ring-2 ring-amber-500/30";
@@ -149,8 +149,8 @@ export function GrandTableauLayout({
                     )}
                     {showAdvancedAnalysis && (
                       <>
-                        {isCorner && <Badge variant="outline" className="border-purple-500/50 text-[11px] text-purple-600">Context</Badge>}
-                        {isCenter && <Badge variant="outline" className="border-green-500/50 text-[11px] text-green-600">Heart</Badge>}
+                        {isCorner && <Badge variant="outline" className="border-primary/50 text-[11px] text-primary">Context</Badge>}
+                        {isCenter && <Badge variant="outline" className="border-primary/50 text-[11px] text-primary">Heart</Badge>}
                       </>
                     )}
                   </div>
@@ -244,10 +244,10 @@ export function GrandTableauLayout({
       {showAdvancedAnalysis && diagonals && (
         <div className="mt-lg grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[
-            { key: "topLeft", label: "Visible Influences", cards: diagonals.topLeft, color: "text-violet-600" },
-            { key: "bottomLeft", label: "Hidden Influences", cards: diagonals.bottomLeft, color: "text-teal-600" },
-            { key: "topRight", label: "Visible Possibilities", cards: diagonals.topRight, color: "text-indigo-600" },
-            { key: "bottomRight", label: "Hidden Possibilities", cards: diagonals.bottomRight, color: "text-cyan-600" },
+            { key: "topLeft", label: "Visible Influences", cards: diagonals.topLeft, color: "text-primary" },
+            { key: "bottomLeft", label: "Hidden Influences", cards: diagonals.bottomLeft, color: "text-muted-foreground" },
+            { key: "topRight", label: "Visible Possibilities", cards: diagonals.topRight, color: "text-primary" },
+            { key: "bottomRight", label: "Hidden Possibilities", cards: diagonals.bottomRight, color: "text-muted-foreground" },
           ].map((diag) => (
             <div key={diag.key} className="rounded-lg border border-border bg-card p-md">
               <div className={`mb-2 flex items-center gap-2 text-sm font-medium ${diag.color}`}>
