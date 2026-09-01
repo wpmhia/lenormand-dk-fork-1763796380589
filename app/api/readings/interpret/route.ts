@@ -7,21 +7,12 @@ import { buildReadingContext } from "@/lib/reading-context";
 import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
-import staticCardsData from "@/public/data/cards.json";
-import { Card } from "@/lib/types";
+import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
-import { generateText, Output } from "ai";
-import { getStructuredReadingSchema, renderStructuredReading, validateStructuredReading, withCanonicalPredictionTiming } from "@/lib/structured-reading";
-import { buildPredictionTimingLine } from "@/lib/timing";
+import { generateReading } from "@/lib/reading-service";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
-import {
-  validateReadingOutput,
-  validateReadingMarkdown,
-  normalizeMarkdown,
-  isCriticalIssue,
-} from "@/lib/reading-validator";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -30,8 +21,7 @@ export async function OPTIONS() {
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
-const allCards = staticCardsData as Card[];
-const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
+const cardsMap = getCardCatalogMap();
 
 const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 
@@ -98,91 +88,40 @@ export async function POST(request: Request) {
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
-    const structuredSchema = getStructuredReadingSchema(validated.spreadId);
-
-    const result = await generateText({
+    const serviceResult = await generateReading({
+      context,
       model: mistral(MISTRAL_PRODUCTION_MODEL),
       system: buildSystemPrompt(cardCount),
       prompt: `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs.`,
-      output: Output.object({ schema: structuredSchema }),
-      temperature: 0.2,
-      maxOutputTokens: maxTokens,
-      maxRetries: 1,
-      abortSignal: request.signal,
-      timeout: { totalMs: Math.min(getReadingTimeoutMs(cardCount), API_REQUEST_TIMEOUT_MS - 5000) },
+      cardCount,
+      maxTokens,
+      initialTimeoutMs: Math.min(getReadingTimeoutMs(cardCount), API_REQUEST_TIMEOUT_MS - 5000),
+      repairTimeoutMs: getReadingRepairTimeoutMs(cardCount),
+      signal: request.signal,
     });
 
-    const drawnCardIds = validated.cards.map((c) => c.id);
-
-    if (!result.output) {
+    if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty Mistral output", {
         phase: "initial",
         spreadId: validated.spreadId,
         cardCount: cardCount,
-        finishReason: result.finishReason,
+        finishReason: "empty-output",
         elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, "empty-output");
     }
-
-    const canonicalTiming = buildPredictionTimingLine(context.timingEvidence);
-    let structuredOutput = validated.spreadId === "single-card" || validated.spreadId === "daily-card"
-      ? result.output
-      : withCanonicalPredictionTiming(result.output, canonicalTiming);
-    let finalText = normalizeMarkdown(renderStructuredReading(structuredOutput, validated.spreadId));
-
-    let structuredIssues = validateStructuredReading(structuredOutput, context);
-    let outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
-    let markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
-    let finalCritical = [
-      ...outputValidation.issues.filter(isCriticalIssue),
-      ...markdownValidation.issues.filter(isCriticalIssue),
-    ];
-    finalCritical.push(...structuredIssues);
-
-    if (finalCritical.length > 0) {
-      const repair = await generateText({
-        model: mistral(MISTRAL_PRODUCTION_MODEL),
-        system: `${buildSystemPrompt(cardCount)}\n\nVALIDATION OVERRIDE: Regenerate the reading from scratch. Return only an object conforming to the supplied structured schema; do not emit Markdown headings yourself. Cite only evidence IDs supplied in the deterministic evidence pack, cover every required pair, and include every required Grand Tableau topic house.`,
-        prompt: `${prompt}\n\nThe previous structured output failed validation. Return a corrected structured object only. Cite only evidence IDs from the evidence pack.\n\nValidation failures:\n${finalCritical.map((issue) => `- ${issue.message}`).join("\n")}\nCorrect exactly these failures.`,
-        output: Output.object({ schema: structuredSchema }),
-        temperature: 0.1,
-        maxOutputTokens: maxTokens,
-        maxRetries: 0,
-        abortSignal: request.signal,
-        timeout: { totalMs: getReadingRepairTimeoutMs(cardCount) },
-      });
-
-      if (!repair.output) {
-        return generationFailedResponse(rateLimitResult, "structured-output-empty");
-      }
-      structuredOutput = validated.spreadId === "single-card" || validated.spreadId === "daily-card"
-        ? repair.output
-        : withCanonicalPredictionTiming(repair.output, canonicalTiming);
-      finalText = normalizeMarkdown(renderStructuredReading(structuredOutput, validated.spreadId));
-      structuredIssues = validateStructuredReading(structuredOutput, context);
-      outputValidation = validateReadingOutput(finalText, drawnCardIds, validated.spreadId);
-      markdownValidation = validateReadingMarkdown(finalText, validated.spreadId);
-      finalCritical = [
-        ...outputValidation.issues.filter(isCriticalIssue),
-        ...markdownValidation.issues.filter(isCriticalIssue),
-      ];
-      finalCritical.push(...structuredIssues);
-    }
-
-    if (finalCritical.length > 0) {
+    if (!serviceResult.ok) {
       console.error("interpret: reading rejected by validator", {
-        phase: finalCritical.length > 0 ? "repair" : "initial",
+        phase: "repair",
         spreadId: validated.spreadId,
         cardCount: cardCount,
-        issues: finalCritical.map((i) => i.message),
-        output: finalText,
+        issues: serviceResult.issues.map((i) => i.message),
         elapsedMs: Date.now() - startedAt,
       });
-      return generationFailedResponse(rateLimitResult, finalCritical.map((i) => i.message).join("; "));
+      return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
-    return readingResponse(finalText, rateLimitResult);
+    return readingResponse(serviceResult.reading, rateLimitResult);
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {
       return new Response(JSON.stringify({ error: error.message }), {
