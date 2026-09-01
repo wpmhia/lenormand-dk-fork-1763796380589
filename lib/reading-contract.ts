@@ -65,7 +65,7 @@ interface NormalizedReadingRequest {
   significatorPreference: SignificatorPreference;
 }
 
-function sanitize(str: string): string {
+function normalizeQuestion(str: string): string {
   return str
     .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
     .replace(/["]/g, '"')
@@ -102,7 +102,7 @@ export function normalizeReadingRequest(
 
   const data = parsed.data;
   const significatorPreference: SignificatorPreference = data.significatorPreference;
-  const sanitizedQuestion = sanitize(data.question);
+  const normalizedQuestion = normalizeQuestion(data.question);
   const expectedCount = VALID_SPREADS[data.spreadId];
 
   if (data.cards.length !== expectedCount) {
@@ -167,7 +167,7 @@ export function normalizeReadingRequest(
   const comboHints = cards.length > 1 ? buildAdjacentComboHints(cards, cardsMap) : [];
 
   return {
-    question: sanitizedQuestion,
+    question: normalizedQuestion,
     spreadId: data.spreadId,
     cards,
     comboHints,

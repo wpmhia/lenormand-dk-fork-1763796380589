@@ -5,6 +5,7 @@ import { getEnv } from "./env";
 const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN")
   ? new Redis({ url: getEnv("UPSTASH_REDIS_REST_URL")!, token: getEnv("UPSTASH_REDIS_REST_TOKEN")! })
   : null;
+const redisConfigured = Boolean(getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN"));
 
 const upstashRatelimit = redis
   ? new Ratelimit({
@@ -41,6 +42,11 @@ export async function rateLimit(
   _windowMs?: number,
 ): Promise<RateLimitResult> {
   const key = hashIP(ip);
+
+  if (!redisConfigured && process.env.NODE_ENV === "production") {
+    console.warn("rate-limit: Redis is not configured in production; allowing request in degraded mode");
+    return { success: true, limit, remaining: limit - 1, reset: Date.now() + 60000, degraded: true };
+  }
 
   if (upstashRatelimit) {
     try {
