@@ -168,8 +168,7 @@ describe("normalizeReadingRequest", () => {
     });
 
     it("rejects invalid value and defaults to 'both'", () => {
-      const result = normalizeReadingRequest(validBody({ significatorPreference: "cat" }), cardsMap);
-      expect(result.significatorPreference).toBe("both");
+      expect(() => normalizeReadingRequest(validBody({ significatorPreference: "cat" }), cardsMap)).toThrow("expected one of");
     });
   });
 

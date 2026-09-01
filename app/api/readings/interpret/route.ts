@@ -4,7 +4,7 @@ export const maxDuration = 60;
 
 import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
-import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
+import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
@@ -34,20 +34,12 @@ export async function POST(request: Request) {
   try {
     const ip = getClientIP(request);
 
-    const bodySize = checkBodySize(request);
-    if (bodySize !== null) {
-      return new Response(JSON.stringify({ error: "Request body too large" }), {
-        status: 413,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
     let body: unknown;
     try {
-      body = await request.json();
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-        status: 400,
+      body = JSON.parse(await readBodyWithLimit(request));
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof BodyTooLargeError ? error.message : "Invalid JSON body" }), {
+        status: error instanceof BodyTooLargeError ? 413 : 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
@@ -63,6 +55,7 @@ export async function POST(request: Request) {
 
     const effectiveLimit = cardCount >= GRAND_TABLEAU_CARD_COUNT ? Math.min(RATE_LIMIT, 5) : RATE_LIMIT;
     const rateLimitResult = await rateLimit(ip, effectiveLimit, RATE_LIMIT_WINDOW);
+    if (rateLimitResult.degraded) console.warn("interpret: rate limit running in degraded mode", { spreadId: validated.spreadId });
 
     if (!rateLimitResult.success) {
       return new Response(
@@ -74,6 +67,7 @@ export async function POST(request: Request) {
           status: 429,
           headers: {
             "Content-Type": "application/json",
+            "Retry-After": String(Math.max(1, Math.ceil((rateLimitResult.reset - Date.now()) / 1000))),
             "X-RateLimit-Limit": String(rateLimitResult.limit),
             "X-RateLimit-Remaining": String(rateLimitResult.remaining),
             "X-RateLimit-Reset": String(rateLimitResult.reset),
@@ -82,8 +76,6 @@ export async function POST(request: Request) {
         },
       );
     }
-
-    await incrementReadingCount();
 
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildPromptFromContext(context);
@@ -121,6 +113,7 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
+    await incrementReadingCount();
     return readingResponse(serviceResult.reading, rateLimitResult);
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {

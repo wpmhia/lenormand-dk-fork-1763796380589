@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-import { rateLimit, getClientIP, checkBodySize } from "@/lib/rate-limit";
+import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
@@ -46,6 +46,7 @@ export async function POST(request: Request) {
           status: 429,
           headers: {
             "Content-Type": "application/json",
+            "Retry-After": String(Math.max(1, Math.ceil((rateLimitResult.reset - Date.now()) / 1000))),
             "X-RateLimit-Limit": String(rateLimitResult.limit),
             "X-RateLimit-Remaining": String(rateLimitResult.remaining),
             "X-RateLimit-Reset": String(rateLimitResult.reset),
@@ -62,20 +63,12 @@ export async function POST(request: Request) {
       });
     }
 
-    const bodySize = checkBodySize(request);
-    if (bodySize !== null) {
-      return new Response(JSON.stringify({ error: "Request body too large" }), {
-        status: 413,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
     let body: unknown;
     try {
-      body = await request.json();
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-        status: 400,
+      body = JSON.parse(await readBodyWithLimit(request));
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof BodyTooLargeError ? error.message : "Invalid JSON body" }), {
+        status: error instanceof BodyTooLargeError ? 413 : 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
