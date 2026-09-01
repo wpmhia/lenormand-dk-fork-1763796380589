@@ -29,24 +29,22 @@ export function AccordionSection({ context, index }: AccordionSectionProps) {
   return (
     <Card className="mb-8 border-border bg-card">
       <CardHeader>
-        <div
+        <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setIsOpen(!isOpen); } }}
-          role="button"
-          tabIndex={0}
           aria-expanded={isOpen}
-          className="flex w-full cursor-pointer items-center gap-3 transition-opacity hover:opacity-80"
+          className="flex w-full items-center gap-3 text-left transition-opacity hover:opacity-80"
         >
           <div className="flex flex-1 items-center gap-3">
             {context.icon}
-            <CardTitle id={context.title.toLowerCase().replace(/\s+/g, "-")}>
+            <span className="text-lg font-semibold leading-none tracking-tight text-card-foreground">
               {context.title}
-            </CardTitle>
+            </span>
           </div>
           <ChevronDown
             className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
           />
-        </div>
+        </button>
         <p className="mt-2 text-sm text-muted-foreground">
           {context.description}
         </p>
