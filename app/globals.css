@@ -41,6 +41,12 @@
     --popover-foreground: 45 10% 98%;
     --accent: 25 30% 18%;
     --accent-foreground: 45 10% 98%;
+    --card-border: 35 30% 20%;
+    --loading-start: 35 40% 65%;
+    --loading-mid: 45 10% 80%;
+    --motion-control: 150ms;
+    --motion-surface: 200ms;
+    --motion-ceremonial: 800ms;
     --gt-significator: 35 75% 58%;
     --gt-context: 35 40% 65%;
     --gt-center: 35 55% 62%;
@@ -268,7 +274,9 @@
   /* Card Components - Standardized */
   .lenormand-card {
     aspect-ratio: 2.5 / 3.5;
-    @apply cursor-pointer rounded-lg border-2 border-amber-700/20 shadow-elevation-2 transition-all duration-300;
+    @apply cursor-pointer rounded-lg border-2 shadow-elevation-2 transition-all;
+    border-color: hsl(var(--card-border) / 0.2);
+    transition-duration: var(--motion-surface);
     background: linear-gradient(
       135deg,
       rgba(30, 30, 30, 0.95),
@@ -295,16 +303,26 @@
     @apply shadow-elevation-2;
   }
 
+  /* Keep the existing shadcn Card primitive aligned with the surface contract. */
+  .rounded-lg.border.bg-card.text-card-foreground.shadow-sm {
+    border-radius: var(--radius);
+    padding: 1rem;
+    box-shadow: var(--shadow-elevation-1);
+  }
+
   /* Loading States */
   .loading-skeleton {
-    @apply rounded bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200;
+    @apply rounded bg-gradient-to-r;
+    background-image: linear-gradient(to right, hsl(var(--loading-start)), hsl(var(--loading-mid)), hsl(var(--loading-start)));
     pointer-events: none;
     will-change: opacity;
     transform: translate3d(0, 0, 0);
   }
 
   .loading-spinner {
-    @apply rounded-full border-4 border-amber-200 border-t-amber-600;
+    @apply rounded-full border-4;
+    border-color: hsl(var(--loading-mid));
+    border-top-color: hsl(var(--loading-start));
     pointer-events: none;
     will-change: transform;
     animation: spin-smooth 2s linear infinite;
@@ -795,4 +813,12 @@
   a {
     @apply text-black underline;
   }
+}
+
+/* Preserve the Button primitive's 40 / 44 / 48px public size contract. */
+@layer utilities {
+  button.h-10 { min-height: 2.5rem; min-width: 2.5rem; }
+  button.h-11 { min-height: 2.75rem; min-width: 2.75rem; }
+  button.h-12 { min-height: 3rem; min-width: 3rem; }
+  button.w-11 { min-width: 2.75rem; }
 }
