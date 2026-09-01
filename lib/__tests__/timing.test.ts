@@ -125,6 +125,12 @@ describe("timing: prompt does not embed per-card timing strings from cards.json"
     expect(prompt).toContain("Not clearly shown by these cards");
   });
 
+  it("provides one canonical timing line for Moon", () => {
+    const ctx = idsToContext([32, 27, 26]);
+    expect(ctx.timingEvidence.map((e) => e.cardId)).toContain(32);
+    expect(buildPromptFromContext(ctx)).toContain("current lunar cycle");
+  });
+
   it("does not surface Clover as a timing signal even when drawn alongside other cards", () => {
     const ctx = idsToContext([1, 2, 11]);
     const prompt = buildPromptFromContext(ctx);

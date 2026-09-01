@@ -4,6 +4,7 @@ import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
+import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -97,6 +98,7 @@ Formatting rules:
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
 Give one concise forward-looking synthesis answering what is most likely to happen next in the user's specific situation. Lead with the practical answer to the question, not a generic card narrative. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
+Do not include any timeframe, duration, or words such as "soon" or "within" in Interpretation or Most likely development. Put timing exclusively in Likely timing.
 
 Required labels (always include, in this order, with one sentence each):
 
@@ -352,23 +354,7 @@ function formatGrandTableau(
     parts.push(`Row ${r + 1}: ${layout.grid[r].map((c) => fmtCard(c.card)).join(", ")}`);
   }
 
-  const importantHouseIds = new Set<number>();
-  const importantTopics = ["heart", "love", "money", "health", "work", "home"];
-  for (const tc of layout.topicCards) {
-    if (importantTopics.includes(tc.topic)) {
-      importantHouseIds.add(tc.cardId);
-    }
-  }
-  if (layout.primarySignificator) {
-    importantHouseIds.add(layout.primarySignificator.card.id);
-  }
-  if (layout.significators.woman) importantHouseIds.add(29);
-  if (layout.significators.man) importantHouseIds.add(28);
-
-  const sigHouseIdx = layout.primarySignificator?.index ?? -1;
-  if (sigHouseIdx >= 0) {
-    importantHouseIds.add(sigHouseIdx + 1);
-  }
+  const importantHouseIds = getGrandTableauPromptedHouseIds(layout);
 
   parts.push("");
   parts.push("Houses (key placements):");

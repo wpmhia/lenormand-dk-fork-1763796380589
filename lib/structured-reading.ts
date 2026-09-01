@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
-import { getCardEvidenceId, getPairEvidenceId } from "@/lib/lenormand-evidence";
+import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
@@ -107,6 +107,11 @@ export function validateStructuredReading(
     ...context.cards.map((_, index) => getCardEvidenceId(index)),
     ...context.adjacentPairs.map((pair) => getPairEvidenceId(pair.indexA, pair.indexB)),
   ]);
+  if (context.layout.type === "grand-tableau") {
+    for (const houseId of getGrandTableauPromptedHouseIds(context.layout)) {
+      allowedEvidenceIds.add(`house-${houseId}`);
+    }
+  }
   const citedIds = new Set(multiReading.evidence.flatMap((item) => item.evidenceIds));
 
   for (const id of citedIds) {
@@ -130,13 +135,15 @@ export function validateStructuredReading(
 
   if (context.layout.type === "grand-tableau") {
     const houses = (multiReading as GrandTableauReading).housesAndMirrors;
-    const requiredHouseIds = context.layout.topicCards
+    const grandLayout = context.layout;
+    const requiredHouseIds = grandLayout.topicCards
       .filter((topic) => IMPORTANT_GT_TOPICS.has(topic.topic))
-      .map((topic) => `house-${topic.cardId}`);
+      .map((topic) => `house-${topic.cardId}`)
+      .filter((id) => getGrandTableauPromptedHouseIds(grandLayout).has(Number(id.replace("house-", ""))));
     const houseText = houses.map((house) => `${house.house} ${house.meaning}`.toLowerCase()).join(" ");
     for (const id of requiredHouseIds) {
       const cardId = Number(id.replace("house-", ""));
-      const house = context.layout.houses.find((item) => item.houseCardId === cardId);
+      const house = grandLayout.houses.find((item) => item.houseCardId === cardId);
       if (!house || !houseText.includes(house.houseName.toLowerCase())) {
         issues.push({ type: "ungrounded_evidence", message: `Structured Grand Tableau output is missing required topic house: "${house?.houseName ?? id}"` });
       }
@@ -145,4 +152,12 @@ export function validateStructuredReading(
   }
 
   return issues;
+}
+
+export function withCanonicalPredictionTiming(
+  reading: StructuredReading | SingleCardReading | GrandTableauReading,
+  timing: string,
+): StructuredReading | SingleCardReading | GrandTableauReading {
+  if (!("prediction" in reading)) return reading;
+  return { ...reading, prediction: { ...reading.prediction, timing } };
 }

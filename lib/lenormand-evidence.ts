@@ -1,4 +1,4 @@
-import { ReadingContext } from "@/lib/reading-context";
+import { ReadingContext, GrandTableauLayout } from "@/lib/reading-context";
 import { NormalizedCard } from "@/lib/reading-contract";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 import { buildReadingTrace } from "@/lib/reading-trace";
@@ -9,6 +9,22 @@ export function getPairEvidenceId(indexA: number, indexB: number): string {
 
 export function getCardEvidenceId(index: number): string {
   return `card-${index + 1}`;
+}
+
+export function getGrandTableauPromptedHouseIds(layout: GrandTableauLayout): Set<number> {
+  const ids = new Set<number>();
+  const importantTopics = new Set(["heart", "love", "money", "health", "work", "home"]);
+  for (const topic of layout.topicCards) {
+    if (importantTopics.has(topic.topic)) ids.add(topic.cardId);
+  }
+  if (layout.primarySignificator) ids.add(layout.primarySignificator.card.id);
+  if (layout.significators.woman) ids.add(29);
+  if (layout.significators.man) ids.add(28);
+  if (layout.primarySignificator) ids.add(layout.primarySignificator.index + 1);
+  for (const house of layout.houses) {
+    if (house.occupyingCard.id === house.houseCardId) ids.add(house.houseCardId);
+  }
+  return ids;
 }
 
 const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"], string>> & { general: string }> = {
@@ -52,7 +68,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     "Deterministic Lenormand evidence pack:",
     `Question domain: ${context.questionDomain}`,
     `Question frame: ${context.questionFrame}`,
-    `Cards by position: ${context.cards.map((card, index) => `${index + 1} ${card.name}`).join(" — ")}`,
+    `Cards by position: ${context.cards.map((card, index) => `${getCardEvidenceId(index)} ${index + 1} ${card.name}`).join(" — ")}`,
     `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
     `Timing evidence supported: ${trace.timing.supported ? "yes" : "no"}`,
     "Card senses selected for this question:",
@@ -67,6 +83,15 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     for (const pair of pairs) {
       const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id);
       lines.push(`- ${getPairEvidenceId(pair.indexA, pair.indexB)}: Positions ${pair.indexA + 1}+${pair.indexB + 1} ${pair.cardA.name} + ${pair.cardB.name}: ${meaning || "relationship present; no canonical pair meaning supplied"}`);
+    }
+  }
+
+  if (context.layout.type === "grand-tableau") {
+    lines.push("Grand Tableau house evidence:");
+    for (const house of context.layout.houses) {
+      if (getGrandTableauPromptedHouseIds(context.layout).has(house.houseCardId)) {
+        lines.push(`- house-${house.houseCardId}: House of ${house.houseName}, position ${house.position}, occupied by ${house.occupyingCard.name}`);
+      }
     }
   }
 
