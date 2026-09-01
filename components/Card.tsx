@@ -77,7 +77,7 @@ function CardInner({
     <>
       <div
         className={cn(
-            "lenormand-card group relative cursor-pointer overflow-hidden transition-all duration-200 will-change-transform hover:scale-[1.02] hover:shadow-elevation-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+            "lenormand-card group relative cursor-pointer overflow-hidden transition-[transform,box-shadow] duration-200 will-change-transform hover:scale-[1.02] hover:shadow-elevation-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
           selected && "ring-2 ring-primary ring-offset-2 ring-offset-background border-2 border-primary",
           sizeClasses[size],
           className,
