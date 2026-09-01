@@ -1,5 +1,6 @@
-import { Card } from "@/lib/types";
+import { CARD_NAME_TO_ID } from "@/lib/card-catalog";
 import { getTimingCard, REQUIRED_PREDICTION_FIELDS, OPTIONAL_PREDICTION_FIELDS } from "@/lib/timing";
+import type { TimingEvidence } from "@/lib/reading-context";
 
 export const BANNED_PHRASES = [
   "spiritual journey",
@@ -74,6 +75,8 @@ export function validateReadingOutput(
   reading: string,
   drawnCardIds: number[],
   spreadId: string,
+  canonicalTiming?: { text: string; evidence: TimingEvidence[] },
+  validateStructure = true,
 ): ValidationResult {
   const issues: ValidationIssue[] = [];
   const lower = reading.toLowerCase();
@@ -96,12 +99,7 @@ export function validateReadingOutput(
     .split("\n")
     .filter((line) => !/^#{1,6}\s/.test(line))
     .join("\n");
-  const knownCardNames = new Set([
-    "rider", "clover", "ship", "house", "tree", "clouds", "snake", "coffin", "bouquet", "scythe",
-    "whip", "birds", "child", "fox", "bear", "stars", "stork", "dog", "tower", "garden",
-    "mountain", "paths", "crossroads", "mice", "heart", "ring", "book", "letter", "man",
-    "woman", "lily", "sun", "moon", "key", "fish", "anchor", "cross",
-  ]);
+  const knownCardNames = new Set(CARD_NAME_TO_ID.keys());
   const mentionedCards = new Set<string>();
   const cardAlternation = [...knownCardNames].join("|");
   const explicitCardPattern = new RegExp(`\\b(${cardAlternation})\\s*\\+\\s*(${cardAlternation})\\b|\\b(${cardAlternation})\\s+card\\b`, "gi");
@@ -119,17 +117,8 @@ export function validateReadingOutput(
     mentionedCards.add(match[1].toLowerCase());
   }
 
-  const nameToId: Record<string, number> = {
-    rider: 1, clover: 2, ship: 3, house: 4, tree: 5, clouds: 6, snake: 7,
-    coffin: 8, bouquet: 9, scythe: 10, whip: 11, birds: 12, child: 13,
-    fox: 14, bear: 15, stars: 16, stork: 17, dog: 18, tower: 19,
-    garden: 20, mountain: 21, crossroads: 22, paths: 22, mice: 23, heart: 24,
-    ring: 25, book: 26, letter: 27, man: 28, woman: 29, lily: 30,
-    sun: 31, moon: 32, key: 33, fish: 34, anchor: 35, cross: 36,
-  };
-
   for (const cardName of mentionedCards) {
-    const cardId = nameToId[cardName];
+    const cardId = CARD_NAME_TO_ID.get(cardName);
     if (cardId && !drawnSet.has(cardId)) {
       issues.push({ type: "invented_card", message: `Mentions card "${cardName}" that was not drawn` });
     }
@@ -137,14 +126,15 @@ export function validateReadingOutput(
 
   // Timing claims are unsupported wherever they appear, not just in Prediction.
   // A timing card must support any explicit time range in the complete reading.
-  const timingText = reading;
+  const timingText = canonicalTiming ? reading.replace(canonicalTiming.text, "") : reading;
   const numericTimingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
   const numericTimingMatch = timingText.match(numericTimingPattern);
 
   const nonnumericTimingPattern = /\b(?:within|in|over|coming|next|next few|last|past|the coming|the next)\s+(?:days?|weeks?|months?|years?|fortnight)\b|\bin\s+the\s+(?:short|long|near)\s+term\b|\bnear term\b|\bsoon\b|\bvery soon\b|\bshortly\b/i;
   const nonnumericTimingMatch = timingText.match(nonnumericTimingPattern);
 
-  const drawnTimingCards = spreadId === "grand-tableau"
+  const drawnTimingCards = canonicalTiming ? canonicalTiming.evidence.map((evidence) => getTimingCard(evidence.cardId)).filter((def): def is NonNullable<typeof def> => def !== undefined)
+    : spreadId === "grand-tableau"
     ? []
     : drawnCardIds.map((id) => getTimingCard(id))
       .filter((def): def is NonNullable<typeof def> => def !== undefined);
@@ -200,6 +190,8 @@ export function validateReadingOutput(
       }
     }
   }
+
+  if (!validateStructure) return { valid: issues.length === 0, issues };
 
   const allowed = SPREAD_SECTIONS[spreadId];
   if (allowed) {

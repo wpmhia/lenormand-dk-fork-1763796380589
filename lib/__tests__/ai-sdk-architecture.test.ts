@@ -5,9 +5,10 @@ const read = (path: string) => readFileSync(path, "utf8");
 
 describe("interpret route uses AI SDK correctly", () => {
   const src = read("app/api/readings/interpret/route.ts");
+  const serviceSrc = read("lib/reading-service.ts");
 
   it("uses generateText, not streamText, for initial readings", () => {
-    expect(src).toMatch(/import \{ generateText(?:, Output)? \} from "ai"/);
+    expect(serviceSrc).toMatch(/import \{ generateText(?:, Output)? \} from "ai"/);
     expect(src).not.toMatch(/import \{ streamText \} from "ai"/);
   });
 
@@ -18,14 +19,15 @@ describe("interpret route uses AI SDK correctly", () => {
   });
 
   it("uses SDK timeout and abortSignal, not a manual AbortController", () => {
-    expect(src).toMatch(/abortSignal: request\.signal/);
-    expect(src).toMatch(/timeout: \{ totalMs:/);
+    expect(serviceSrc).toMatch(/abortSignal: signal/);
+    expect(serviceSrc).toMatch(/timeout: \{ totalMs:/);
     expect(src).not.toMatch(/new AbortController\(\)/);
     expect(src).not.toMatch(/setTimeout\(\(\) => abortController\.abort/);
   });
 
   it("caps server-side retries at 1 (no 3x3 outer/SDK retry stacking)", () => {
-    expect(src).toMatch(/maxRetries: 1/);
+    expect(serviceSrc).toMatch(/generate\(system, initialTimeoutMs, 1\)/);
+    expect(serviceSrc).toMatch(/maxRetries: retries/);
   });
 
   it("returns a single JSON response with the final reading", () => {
