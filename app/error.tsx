@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Home, RefreshCw, BookOpen } from "lucide-react";
+import { StatePage } from "@/components/StatePage";
 
 export default function Error({
   error,
@@ -19,20 +20,11 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 text-center">
-        <div className="space-y-2">
-          <AlertCircle className="text-destructive mx-auto h-16 w-16" />
-          <h1 className="text-2xl font-bold text-foreground">
-            Something interrupted the reading
-          </h1>
-          <p className="text-muted-foreground">
-            Even the best readings hit snags. Let&apos;s try again or start
-            fresh.
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3">
+    <StatePage
+      icon={<AlertCircle className="h-10 w-10" />}
+      title="Something interrupted the reading"
+      description="Even the best readings hit snags. Let&apos;s try again or start fresh."
+    >
           <Button onClick={reset} className="w-full gap-2">
             <RefreshCw className="h-4 w-4" />
             Try again
@@ -55,8 +47,6 @@ export default function Error({
               Learn
             </Button>
           </div>
-        </div>
-      </div>
-    </div>
+    </StatePage>
   );
 }

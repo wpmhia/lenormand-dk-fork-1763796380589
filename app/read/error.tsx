@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Home, RefreshCw } from "lucide-react";
+import { StatePage } from "@/components/StatePage";
 
 export default function Error({
   error,
@@ -18,28 +19,12 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-6 rounded-lg border border-border bg-card p-6 text-center shadow-lg">
-        <div className="flex justify-center">
-          <div className="bg-destructive/10 rounded-full p-3">
-            <AlertCircle className="text-destructive h-8 w-8" />
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-card-foreground">Reading Error</h1>
-          <p className="text-muted-foreground">
-            We encountered an error while loading your reading. Please try
-            again.
-          </p>
-          {error.digest && (
-            <p className="text-xs text-muted-foreground/60">
-              Error ID: {error.digest}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col justify-center gap-3 sm:flex-row">
+    <StatePage
+      icon={<AlertCircle className="h-10 w-10" />}
+      title="Reading Error"
+      description="We encountered an error while loading your reading. Please try again."
+      detail={error.digest ? <p className="text-xs text-muted-foreground/60">Error ID: {error.digest}</p> : undefined}
+    >
           <button
             type="button"
             onClick={reset}
@@ -56,8 +41,6 @@ export default function Error({
             <Home className="h-4 w-4" />
             Go home
           </button>
-        </div>
-      </div>
-    </div>
+    </StatePage>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { StatePage } from "@/components/StatePage";
 
 export default function Error({
   error,
@@ -18,16 +19,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6 text-center">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold">Cards Error</h1>
-          <p className="text-muted-foreground">
-            We encountered an error while loading the cards. Please try again.
-          </p>
-        </div>
-
-        <div className="flex flex-col justify-center gap-3">
+    <StatePage title="Cards Error" description="We encountered an error while loading the cards. Please try again.">
           <Button
             onClick={reset}
             className="bg-primary text-primary-foreground hover:bg-primary/90"
@@ -37,8 +29,6 @@ export default function Error({
           <Button variant="outline" onClick={() => router.push("/")}>
             Go home
           </Button>
-        </div>
-      </div>
-    </div>
+    </StatePage>
   );
 }

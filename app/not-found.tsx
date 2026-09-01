@@ -1,26 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Home, BookOpen, Club } from "lucide-react";
 import Link from "next/link";
+import { StatePage } from "@/components/StatePage";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 text-center">
-        {/* Elegant 404 with subtle animation */}
-        <div className="space-y-2">
-          <h1 className="animate-pulse bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-8xl font-bold text-transparent">
-            404
-          </h1>
-          <p className="text-2xl font-semibold text-foreground">
-            This page wandered off
-          </p>
-          <p className="text-muted-foreground">
-            Sometimes even the cards lose their way. Let&apos;s get you back on
-            track.
-          </p>
-        </div>
-
-        {/* Helpful navigation options */}
+    <StatePage
+      icon={<div className="text-5xl font-bold text-primary">404</div>}
+      title="This page wandered off"
+      description="Sometimes even the cards lose their way. Let&apos;s get you back on track."
+    >
         <div className="flex flex-col gap-3">
           <Link href="/" className="w-full">
             <Button className="w-full gap-2">
@@ -43,7 +32,6 @@ export default function NotFound() {
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </StatePage>
   );
 }

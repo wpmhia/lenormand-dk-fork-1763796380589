@@ -81,7 +81,7 @@ export function GrandTableauLayout({
       {showAdvancedAnalysis && significatorIndex !== -1 && (
         <div className="mb-lg flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-lg">
           <div className="flex items-center gap-1 sm:gap-2">
-            <Clock className="h-3 w-3 text-primary sm:h-4 sm:w-4" />
+            <Clock className="gt-significator h-3 w-3 sm:h-4 sm:w-4" />
             <span>Left = Past</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
@@ -89,11 +89,11 @@ export function GrandTableauLayout({
             <span>Right = Future</span>
           </div>
           <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Brain className="h-4 w-4 text-primary" />
+            <Brain className="gt-context h-4 w-4" />
             <span>Above = Visible</span>
           </div>
           <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Eye className="h-4 w-4 text-muted-foreground" />
+            <Eye className="gt-center h-4 w-4" />
             <span>Below = Hidden</span>
           </div>
         </div>
@@ -120,9 +120,9 @@ export function GrandTableauLayout({
               if (isSignificator) {
                 borderClass = "border-amber-500 ring-2 ring-amber-500/30";
               } else if (isCorner) {
-                borderClass = "border-primary/50";
+                borderClass = "gt-context";
               } else if (isCenter) {
-                borderClass = "border-primary/50";
+                borderClass = "gt-center";
               }
             } else if (isSignificator) {
               borderClass = "border-amber-500 ring-2 ring-amber-500/30";
@@ -149,8 +149,8 @@ export function GrandTableauLayout({
                     )}
                     {showAdvancedAnalysis && (
                       <>
-                        {isCorner && <Badge variant="outline" className="border-primary/50 text-[11px] text-primary">Context</Badge>}
-                        {isCenter && <Badge variant="outline" className="border-primary/50 text-[11px] text-primary">Heart</Badge>}
+                        {isCorner && <Badge variant="outline" className="gt-context text-[11px]">Context</Badge>}
+                        {isCenter && <Badge variant="outline" className="gt-center text-[11px]">Heart</Badge>}
                       </>
                     )}
                   </div>
