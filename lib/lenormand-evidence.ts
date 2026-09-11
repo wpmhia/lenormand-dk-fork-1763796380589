@@ -93,6 +93,13 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
         lines.push(`- house-${house.houseCardId}: House of ${house.houseName}, position ${house.position}, occupied by ${house.occupyingCard.name}`);
       }
     }
+    lines.push("Grand Tableau positional relations:");
+    for (const pair of context.layout.verticalPairs) {
+      lines.push(`- vertical adjacency: ${pair.cardA.name} + ${pair.cardB.name}`);
+    }
+    for (const mirror of context.layout.mirrors) {
+      lines.push(`- mirror: ${mirror.cardA.name} <-> ${mirror.cardB.name}`);
+    }
   }
 
   return lines.join("\n");

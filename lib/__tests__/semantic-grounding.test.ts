@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getStructuredReadingSchema, validateStructuredReading } from "@/lib/structured-reading";
+import { getCardRelations, validatePredictionSemantics } from "@/lib/semantic-grounding";
 import type { Card } from "@/lib/types";
 
 const cardsMap = new Map<number, Card>();
@@ -58,5 +59,41 @@ describe("deterministic prediction semantic grounding", () => {
     const messages = validateStructuredReading(value, context).map((issue) => issue.message);
     expect(messages).toContain('Prediction must cite closing evidence "pair-2-3"');
     expect(messages).toContain('Prediction must cite closing evidence "card-3"');
+  });
+
+  it("does not infer the outcome of either option from Paths", () => {
+    const issues = reading([22, 24, 31], "What develops next?", "Neither path leads to commitment.");
+    expect(issues.some((issue) => issue.type === "semantic_grounding")).toBe(true);
+  });
+
+  it("does not infer that a Key solution was not acted on", () => {
+    const issues = reading([33, 24, 31], "What develops next?", "A solution is available but not yet taken.");
+    expect(issues.some((issue) => issue.message.includes("Key"))).toBe(true);
+  });
+
+  it("requires a generated GT relation for card-to-card influence", () => {
+    const names = ["Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun", "Moon", "Key", "Fish", "Anchor", "Cross"];
+    const fullMap = new Map<number, Card>();
+    for (let id = 1; id <= 36; id++) {
+      fullMap.set(id, { ...cardsMap.get(id)!, name: names[id - 1] });
+    }
+    const makeGrand = (related: boolean) => {
+      const ids = Array.from({ length: 36 }, (_, index) => index + 1);
+      const place = (id: number, target: number) => {
+        const current = ids.indexOf(id);
+        [ids[current], ids[target]] = [ids[target], ids[current]];
+      };
+      place(31, related ? 25 : 0);
+      place(6, related ? 26 : 20);
+      const cards = ids.map((id, position) => ({ id, name: fullMap.get(id)!.name, keywords: [], position }));
+      return buildReadingContext("grand-tableau", "What develops next?", cards, fullMap);
+    };
+
+    const unrelated = makeGrand(false);
+    expect(validatePredictionSemantics("The Sun's clarity is dimmed by the surrounding Clouds.", unrelated)).toHaveLength(1);
+
+    const related = makeGrand(true);
+    expect(getCardRelations(related)).toContainEqual({ cardA: 31, cardB: 6, relation: "adjacent" });
+    expect(validatePredictionSemantics("The Sun's clarity is dimmed by the surrounding Clouds.", related)).toEqual([]);
   });
 });
