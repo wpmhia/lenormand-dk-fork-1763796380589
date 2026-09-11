@@ -86,6 +86,8 @@ const PREREQUISITE_PATTERN = /\b(?:obstacle|prerequisite|must first be resolved|
 const NEGATIVE_TIMING_PATTERN = /\b(?:unlikely|not likely|probably not|not expected|will not|won't)\b.{0,45}\b(?:within|in|this|the next|binnen)\b.{0,25}\b(?:\d+\s*(?:days?|dagen?)|week(?:s)?|weekend)\b|\b(?:not this week|not within \d+\s*(?:days?|dagen?))\b|\b(?:only|just)\s+(?:in|over)\s+(?:the )?coming weeks\b/i;
 const MEETING_EXPANSION_PATTERN = /\b(?:planned|scheduled)\s+(?:meeting|appointment|encounter)\b|\b(?:meeting|appointment|encounter)\s+(?:is )?(?:planned|scheduled)\b|\b(?:geplande|afgesproken)\s+(?:ontmoeting|afspraak)\b|\b(?:ontmoeting|afspraak)\s+(?:staat|is)\s+gepland\b/i;
 const CHOICE_PREREQUISITE_PATTERN = /\b(?:depends on|hinges on|hangs on)\b.{0,30}\b(?:a )?choice\b|\b(?:choice|decision)\b.{0,35}\b(?:still )?(?:has to|needs to|must be)\b.{0,20}\b(?:made|resolved)\b|\b(?:keuze|beslissing)\b.{0,35}\b(?:moet nog|nog moet)\b.{0,20}\b(?:gemaakt|genomen)\b|\bhangt af van een keuze\b/i;
+const SEXUAL_QUESTION_PATTERN = /\b(?:sex|seks|sexual|seksuele|intimacy|intimate|intercourse|intiem|intimiteit|toenadering)\b/i;
+const SEXUAL_ANSWER_PATTERN = /\b(?:sex|seks|sexual intimacy|seksuele intimiteit|intimacy|intimate|intercourse|intiem|intimiteit|toenadering)\b/i;
 
 function pairKey(a: number, b: number): string {
   return `${Math.min(a, b)}:${Math.max(a, b)}`;
@@ -138,7 +140,7 @@ export function validatePredictionSemantics(
   development: string,
   context: ReadingContext,
   predictionEvidenceIds?: ReadonlySet<string>,
-  options: { validatePolarity?: boolean } = {},
+  options: { validatePolarity?: boolean; validateQuestionSpecificity?: boolean } = {},
 ): SemanticGroundingIssue[] {
   const cardIds = new Set(context.cards.map((card) => card.id));
   const issues: SemanticGroundingIssue[] = [];
@@ -199,6 +201,15 @@ export function validatePredictionSemantics(
     issues.push({
       type: "semantic_grounding",
       message: "Paths supports an open choice or multiple directions; it does not establish that a choice must first be made before the queried outcome can occur.",
+    });
+  }
+
+  if (options.validateQuestionSpecificity !== false
+    && SEXUAL_QUESTION_PATTERN.test(context.question)
+    && !SEXUAL_ANSWER_PATTERN.test(development)) {
+    issues.push({
+      type: "semantic_grounding",
+      message: "An explicit sexual-intimacy question requires the prediction to name that queried event rather than substitute a generic successful or clear outcome.",
     });
   }
 

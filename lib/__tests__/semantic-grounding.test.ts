@@ -107,6 +107,14 @@ describe("deterministic prediction semantic grounding", () => {
     expect(qualified.some((issue) => issue.message.includes("timing confirmation"))).toBe(false);
   });
 
+  it("requires an explicit sexual outcome for an explicit sex question", () => {
+    const generic = reading([30, 35, 31], "Will I have sex with Mahican?", "The situation will reach a successful or clear outcome.");
+    expect(generic.some((issue) => issue.message.includes("explicit sexual-intimacy question"))).toBe(true);
+
+    const specific = reading([30, 35, 31], "Will I have sex with Mahican?", "Sexual intimacy with Mahican is supported as the likely outcome.");
+    expect(specific.some((issue) => issue.message.includes("explicit sexual-intimacy question"))).toBe(false);
+  });
+
   it("keeps Clover + Ring evidence scoped to an opening or bond, not a meeting", () => {
     const cards = [2, 25, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "What develops in this relationship?", cards, cardsMap);
