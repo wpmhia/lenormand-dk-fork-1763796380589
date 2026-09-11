@@ -70,6 +70,7 @@ Synthesis disciplines (apply to all spreads):
 - Choice/outcome rule. A choice card establishes that a decision, fork, or alternative exists. It does not establish the outcome, quality, or destination of each option unless supplied evidence explicitly qualifies those options. Do not infer that neither path, both paths, or no option leads to stability, success, commitment, failure, separation, or another specific outcome merely from Paths.
 - Causality and agency rule. Do not infer an unchosen action from the existence of a solution, the outcome of an unresolved choice, a causal influence between unrelated cards, or certainty/severity beyond the supplied evidence.
 - Grand Tableau interaction rule. Do not claim that one card modifies, weakens, strengthens, blocks, clarifies, obscures, surrounds, or otherwise acts upon another card unless the supplied evidence explicitly contains a positional or combination relationship between those cards. A card appearing elsewhere in the tableau is not sufficient evidence that it modifies another card.
+- Polarity rule. Do not infer a positive or negative outcome from an ambiguous or multi-valent card unless the supplied evidence resolves that polarity. A sharp decision, sudden change, cut, choice, distance, or uncertainty does not by itself establish YES or NO. If the evidence establishes a turning point but not its direction, preserve that uncertainty. Do not translate "sudden" into "unlikely to happen quickly".
 
 Grounding details:
 

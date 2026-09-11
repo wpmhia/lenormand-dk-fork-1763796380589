@@ -71,6 +71,14 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("Key"))).toBe(true);
   });
 
+  it("does not turn Key-Scythe-Moon into an unsupported negative answer", () => {
+    const issues = reading([33, 10, 32], "Will intimacy happen soon?", "Intimacy is unlikely to happen quickly and separation is required.");
+    expect(issues.some((issue) => issue.message.includes("outcome polarity"))).toBe(true);
+
+    const qualified = reading([33, 10, 32], "Will intimacy happen soon?", "A sudden turning point around intimacy is likely, but these cards do not clearly establish its direction.");
+    expect(qualified.some((issue) => issue.message.includes("outcome polarity"))).toBe(false);
+  });
+
   it("requires a generated GT relation for card-to-card influence", () => {
     const names = ["Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun", "Moon", "Key", "Fish", "Anchor", "Cross"];
     const fullMap = new Map<number, Card>();
