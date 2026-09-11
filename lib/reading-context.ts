@@ -48,6 +48,7 @@ export interface ReadingContext {
   timingEvidence: TimingEvidence[];
   topicFocus: TopicFocus[];
   personBindings: PersonBinding[];
+  questionSubjects: string[];
 }
 
 export interface PersonBinding {
@@ -628,6 +629,7 @@ export function buildReadingContext(
 
   const questionFrame = getQuestionFrame(question);
   const personBindings = derivePersonBindings(question, significatorPreference);
+  const questionSubjects = deriveQuestionSubjects(question);
   const topicFocus: TopicFocus[] = [];
   const lowerQ = question.toLowerCase();
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(lowerQ);
@@ -663,7 +665,22 @@ export function buildReadingContext(
     timingEvidence,
     topicFocus,
     personBindings,
+    questionSubjects,
   };
+}
+
+function deriveQuestionSubjects(question: string): string[] {
+  const subjects: string[] = [];
+  const properNames = question.match(/\b[A-Z][a-z]{2,}\b/g) || [];
+  const questionOpeners = new Set(["Will", "Would", "Can", "Could", "Should", "Does", "Do", "Is", "Are", "What", "How", "Why", "When", "Where", "Blijft", "Ontstaat", "Krijgt", "Krijgen"]);
+  for (const name of properNames) {
+    if (!questionOpeners.has(name) && !subjects.includes(name)) subjects.push(name);
+  }
+  if (subjects.length > 0) return subjects;
+
+  const roleMatch = question.match(/\b(?:my|your|the)\s+(?:(?:female|male|vrouwelijke|mannelijke)\s+)?(?:partner|girlfriend|boyfriend|wife|husband|boss|manager|parent|mother|father)\b/i);
+  if (roleMatch) subjects.push(roleMatch[0]);
+  return subjects;
 }
 
 function derivePersonBindings(

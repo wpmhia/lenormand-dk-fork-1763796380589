@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
-import { validatePredictionSemantics } from "@/lib/semantic-grounding";
+import { validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
@@ -139,8 +139,11 @@ export function validateStructuredReading(
   }
 
   issues.push(...validatePredictionSemantics(multiReading.prediction.development, context, predictionEvidenceIds));
+  issues.push(...validateQuestionSubjectPreservation(multiReading.interpretation, context, "interpretation"));
+  issues.push(...validateQuestionSubjectPreservation(multiReading.prediction.development, context, "prediction"));
   for (const item of multiReading.evidence) {
     issues.push(...validatePredictionSemantics(item.implication, context, undefined, { validatePolarity: false, validateQuestionSpecificity: false }));
+    issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
   }
 
   if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {

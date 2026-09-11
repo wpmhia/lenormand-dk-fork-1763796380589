@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getStructuredReadingSchema, validateStructuredReading } from "@/lib/structured-reading";
-import { getCardRelations, validatePredictionSemantics } from "@/lib/semantic-grounding";
+import { getCardRelations, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import type { Card } from "@/lib/types";
 
@@ -140,6 +140,16 @@ describe("deterministic prediction semantic grounding", () => {
     expect(context.personBindings.map((binding) => binding.cardId)).toEqual([29]);
     const issues = validatePredictionSemantics("The man in your life will remain connected to your home life.", context);
     expect(issues.some((issue) => issue.message.includes("Man is unbound"))).toBe(true);
+  });
+
+  it("preserves a named question subject instead of allowing Man to become the grammatical subject", () => {
+    const cards = [28, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Blijft Mahican bij mij?", cards, cardsMap);
+    const issues = validateQuestionSubjectPreservation("The man will remain connected to your home life.", context, "prediction");
+    expect(issues.some((issue) => issue.message.includes('Question subject "Mahican"'))).toBe(true);
+
+    const valid = validateQuestionSubjectPreservation("Mahican's long-term decision is not clearly established.", context, "prediction");
+    expect(valid).toEqual([]);
   });
 
   it("does not bind Woman to an explicitly male question subject", () => {

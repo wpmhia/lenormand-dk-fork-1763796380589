@@ -73,6 +73,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Cards by position: ${context.cards.map((card, index) => `${getCardEvidenceId(index)} ${index + 1} ${card.name}`).join(" — ")}`,
     `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
     `Timing evidence supported: ${trace.timing.supported ? "yes" : "no"}`,
+    `Question subject(s) to preserve: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}`,
     `Person/entity bindings: ${context.personBindings.length > 0 ? context.personBindings.map((binding) => `${binding.cardId === 28 ? "Man" : "Woman"} bound by ${binding.source}`).join("; ") : "none; Man and Woman remain unbound"}`,
     "Card senses selected for this question:",
     ...context.cards.map((card, index) => `- ${getCardEvidenceId(index)}: Position ${index + 1} ${card.name}: ${cardSense(card, context.questionDomain)}`),
