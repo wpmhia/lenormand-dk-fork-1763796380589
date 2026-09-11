@@ -71,6 +71,7 @@ Synthesis disciplines (apply to all spreads):
 - Causality and agency rule. Do not infer an unchosen action from the existence of a solution, the outcome of an unresolved choice, a causal influence between unrelated cards, or certainty/severity beyond the supplied evidence.
 - Grand Tableau interaction rule. Do not claim that one card modifies, weakens, strengthens, blocks, clarifies, obscures, surrounds, or otherwise acts upon another card unless the supplied evidence explicitly contains a positional or combination relationship between those cards. A card appearing elsewhere in the tableau is not sufficient evidence that it modifies another card.
 - Polarity rule. Do not infer a positive or negative outcome from an ambiguous or multi-valent card unless the supplied evidence resolves that polarity. A sharp decision, sudden change, cut, choice, distance, or uncertainty does not by itself establish YES or NO. If the evidence establishes a turning point but not its direction, preserve that uncertainty. Do not translate "sudden" into "unlikely to happen quickly".
+- Timing-window rule. Absence of timing evidence inside the user's requested window is not negative evidence for that window. If the card evidence supports a development but timing is unclear, say that the development is supported while the cards do not establish whether it occurs within the requested window. Do not write "unlikely within 7 days", "not this week", or "only in the coming weeks" unless explicit timing evidence establishes exclusion or delay beyond that window.
 
 Grounding details:
 

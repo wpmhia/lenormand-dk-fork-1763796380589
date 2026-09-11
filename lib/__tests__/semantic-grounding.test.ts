@@ -96,6 +96,16 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("outcome polarity"))).toBe(false);
   });
 
+  it("does not turn missing seven-day timing confirmation into a negative outcome", () => {
+    const cards = [17, 9, 4].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Will intimacy happen within 7 days?", cards, cardsMap);
+    const issues = validatePredictionSemantics("Intimacy is not likely within 7 days.", context, new Set(["pair-2-3", "card-3"]));
+    expect(issues.some((issue) => issue.message.includes("timing confirmation"))).toBe(true);
+
+    const qualified = validatePredictionSemantics("The cards support intimacy, but they do not clearly establish whether it occurs within seven days.", context, new Set(["pair-2-3", "card-3"]));
+    expect(qualified.some((issue) => issue.message.includes("timing confirmation"))).toBe(false);
+  });
+
   it("requires a generated GT relation for card-to-card influence", () => {
     const names = ["Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun", "Moon", "Key", "Fish", "Anchor", "Cross"];
     const fullMap = new Map<number, Card>();
