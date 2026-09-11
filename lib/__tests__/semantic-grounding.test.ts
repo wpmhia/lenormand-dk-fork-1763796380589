@@ -134,6 +134,53 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("must first be made"))).toBe(true);
   });
 
+  it("does not bind Man to an explicitly female question subject", () => {
+    const cards = [29, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Blijft mijn vrouwelijke partner Mahican bij mij?", cards, cardsMap);
+    expect(context.personBindings.map((binding) => binding.cardId)).toEqual([29]);
+    const issues = validatePredictionSemantics("The man in your life will remain connected to your home life.", context);
+    expect(issues.some((issue) => issue.message.includes("Man is unbound"))).toBe(true);
+  });
+
+  it("does not bind Woman to an explicitly male question subject", () => {
+    const cards = [28, 29, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Will my male partner stay with me?", cards, cardsMap);
+    const issues = validatePredictionSemantics("She will remain connected to my home life.", context);
+    expect(issues.some((issue) => issue.message.includes("Woman is unbound"))).toBe(true);
+  });
+
+  it("keeps unbound Man and Woman from becoming invented partners or third parties", () => {
+    const cards = [28, 29, 15].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops in this situation?", cards, cardsMap);
+    const issues = validatePredictionSemantics("The man and woman are partners.", context);
+    expect(issues.filter((issue) => issue.message.includes("unbound")).length).toBe(2);
+    expect(issues.some((issue) => issue.message.includes("Bear supports"))).toBe(false);
+  });
+
+  it("does not turn Bear's authority sense into a boss without entity evidence", () => {
+    const cards = [15, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops in this relationship?", cards, cardsMap);
+    const issues = validatePredictionSemantics("A boss or authority figure is influencing the dynamics.", context);
+    expect(issues.some((issue) => issue.message.includes("Bear supports"))).toBe(true);
+
+    const supported = buildReadingContext("sentence-3", "Will my boss support me?", cards, cardsMap);
+    expect(validatePredictionSemantics("The boss's influence is central.", supported).some((issue) => issue.message.includes("Bear supports"))).toBe(false);
+  });
+
+  it("keeps explicit significator binding available", () => {
+    const cards = [29, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops in this situation?", cards, cardsMap, "woman");
+    expect(context.personBindings).toEqual([{ cardId: 29, source: "explicit-significator", evidence: "The request explicitly selected Woman as the significator." }]);
+    expect(validatePredictionSemantics("The woman remains connected to the situation.", context).some((issue) => issue.message.includes("Woman is unbound"))).toBe(false);
+  });
+
+  it("does not expand Paths + Tree into lasting stability without qualifying evidence", () => {
+    const cards = [22, 5, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops?", cards, cardsMap);
+    const issues = validatePredictionSemantics("This creates lasting consequences for your well-being and stability.", context);
+    expect(issues.some((issue) => issue.message.includes("Paths + Tree"))).toBe(true);
+  });
+
   it("requires a generated GT relation for card-to-card influence", () => {
     const names = ["Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun", "Moon", "Key", "Fish", "Anchor", "Cross"];
     const fullMap = new Map<number, Card>();
