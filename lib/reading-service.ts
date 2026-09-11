@@ -34,6 +34,9 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const { context, model, system, prompt, cardCount, maxTokens, initialTimeoutMs, repairTimeoutMs, signal } = options;
   const schema = getStructuredReadingSchema(context.spreadId);
   const canonicalTiming = buildPredictionTimingLine(context.timingEvidence);
+  const closingEvidenceInstruction = context.spreadId === "sentence-3" || context.spreadId === "sentence-5"
+    ? `For this sentence spread, prediction.evidenceIds must include "pair-${context.cards.length - 1}-${context.cards.length}" and "card-${context.cards.length}".`
+    : "";
 
   const generate = (instruction: string, timeout: number, retries: number, promptOverride = prompt) => generateText({
     model,
@@ -70,16 +73,28 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const initial = await generate(system, initialTimeoutMs, 1);
   if (!initial.output) return { ok: false, reason: "empty-output", issues: [] };
   let finalized = finalize(initial.output);
+  if (finalized.issues.length > 0) {
+    console.error("reading-service: initial structured output rejected", {
+      spreadId: context.spreadId,
+      issues: finalized.issues.map((issue) => ({ type: issue.type, message: issue.message })),
+    });
+  }
   if (finalized.issues.length === 0) return { ok: true, reading: finalized.text };
 
   const repair = await generate(
-    `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. Correct exactly the listed validation failures.`,
+    `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. The object must include prediction fields development, evidenceIds, timing, watchFor, and practicalAction. ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
     repairTimeoutMs,
     0,
-    `${prompt}\n\nValidation failures:\n${finalized.issues.map((issue) => `- ${issue.message}`).join("\n")}\nCorrect exactly these failures.`,
+    `${prompt}\n\nValidation failures (type: actionable message):\n${finalized.issues.map((issue) => `- ${issue.type}: ${issue.message}`).join("\n")}\n${closingEvidenceInstruction}\nReturn the complete structured object, including every required prediction field. Correct exactly these failures.`,
   );
   if (!repair.output) return { ok: false, reason: "structured-output-empty", issues: finalized.issues };
   finalized = finalize(repair.output);
+  if (finalized.issues.length > 0) {
+    console.error("reading-service: repaired structured output rejected", {
+      spreadId: context.spreadId,
+      issues: finalized.issues.map((issue) => ({ type: issue.type, message: issue.message })),
+    });
+  }
   return finalized.issues.length === 0
     ? { ok: true, reading: finalized.text }
     : { ok: false, reason: "validation", issues: finalized.issues };
