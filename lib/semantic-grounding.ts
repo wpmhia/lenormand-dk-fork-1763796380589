@@ -1,4 +1,11 @@
 import type { ReadingContext } from "@/lib/reading-context";
+import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
+
+export type CardRelation = {
+  cardA: number;
+  cardB: number;
+  relation: "adjacent" | "mirror" | "house" | "knight" | "diagonal";
+};
 
 export interface SemanticGroundingIssue {
   type: "semantic_grounding";
@@ -31,7 +38,73 @@ const RESTRICTIONS: SemanticRestriction[] = [
     message: "Scythe supports a sharp decision or sudden separation, not a definitive, permanent, or irreversible outcome without stronger evidence.",
     requiresAbsentCardIds: [8],
   },
+  {
+    cardId: 22,
+    unsupportedPatterns: [
+      /\bneither (?:path|direction|option)\b/i,
+      /\bno (?:path|direction|option) (?:leads?|offers?|provides?)\b/i,
+      /\bboth (?:paths|directions|options) (?:fail|lack)\b/i,
+    ],
+    message: "Paths establishes a choice or alternative, not the outcome, quality, or destination of each option without qualifying evidence.",
+  },
+  {
+    cardId: 33,
+    unsupportedPatterns: [
+      /\b(?:solution|answer|opportunity)\b.{0,35}\bnot yet (?:taken|seized|used|acted on)\b/i,
+      /\bnot yet (?:taken|seized|used|acted on)\b.{0,35}\b(?:key|solution|answer)\b/i,
+    ],
+    message: "Key supports a solution or decisive answer; it does not establish that the solution has not yet been chosen or acted on.",
+  },
 ];
+
+const INTERACTION_PATTERN = /\b(?:dimmed|diminished|weakened|strengthened|blocked|clarified|obscured|surrounded|modifies|influences|acts upon)\b/i;
+
+function pairKey(a: number, b: number): string {
+  return `${Math.min(a, b)}:${Math.max(a, b)}`;
+}
+
+/** Relations that are actually represented by the context's generated evidence. */
+export function getCardRelations(context: ReadingContext): CardRelation[] {
+  const relations: CardRelation[] = context.adjacentPairs.map((pair) => ({
+    cardA: pair.cardA.id,
+    cardB: pair.cardB.id,
+    relation: "adjacent",
+  }));
+
+  if (context.layout.type === "grand-tableau") {
+    for (let row = 0; row < context.layout.grid.length; row++) {
+      for (let column = 0; column < context.layout.grid[row].length; column++) {
+        const current = context.layout.grid[row][column].card;
+        if (column + 1 < context.layout.grid[row].length) {
+          relations.push({ cardA: current.id, cardB: context.layout.grid[row][column + 1].card.id, relation: "adjacent" });
+        }
+        if (row + 1 < context.layout.grid.length) {
+          relations.push({ cardA: current.id, cardB: context.layout.grid[row + 1][column].card.id, relation: "adjacent" });
+        }
+      }
+    }
+    for (const pair of context.layout.verticalPairs) {
+      relations.push({ cardA: pair.cardA.id, cardB: pair.cardB.id, relation: "adjacent" });
+    }
+    for (const mirror of context.layout.mirrors) {
+      relations.push({ cardA: mirror.cardA.id, cardB: mirror.cardB.id, relation: "mirror" });
+    }
+    const promptedHouseIds = getGrandTableauPromptedHouseIds(context.layout);
+    for (const house of context.layout.houses) {
+      if (promptedHouseIds.has(house.houseCardId)) {
+        relations.push({ cardA: house.occupyingCard.id, cardB: house.houseCardId, relation: "house" });
+      }
+    }
+  }
+
+  const seen = new Set<string>();
+  return relations.filter((relation) => {
+    const key = `${pairKey(relation.cardA, relation.cardB)}:${relation.relation}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
 export function validatePredictionSemantics(
   development: string,
@@ -49,5 +122,24 @@ export function validatePredictionSemantics(
     issues.push({ type: "semantic_grounding", message: restriction.message });
   }
 
+  const cardNames = context.cards.map((card) => ({ id: card.id, name: card.name }));
+  const namedCards = cardNames.filter(({ name }) => new RegExp(`\\b${escapeRegExp(name)}\\b`, "i").test(development));
+  if (INTERACTION_PATTERN.test(development) && namedCards.length >= 2) {
+    const relations = new Set(getCardRelations(context).map((relation) => pairKey(relation.cardA, relation.cardB)));
+    const hasSupportedRelation = namedCards.some((a, index) =>
+      namedCards.slice(index + 1).some((b) => relations.has(pairKey(a.id, b.id))),
+    );
+    if (!hasSupportedRelation) {
+      issues.push({
+        type: "semantic_grounding",
+        message: "A card interaction claim requires an explicit positional or combination relationship between the named cards.",
+      });
+    }
+  }
+
   return issues;
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
