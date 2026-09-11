@@ -7,6 +7,21 @@ export type CardRelation = {
   relation: "adjacent" | "mirror" | "house" | "knight" | "diagonal";
 };
 
+type CardPolarity = "positive" | "negative" | "neutral" | "ambiguous";
+
+const CARD_POLARITY: Record<number, CardPolarity> = {
+  2: "positive",
+  6: "ambiguous",
+  10: "ambiguous",
+  22: "ambiguous",
+  32: "ambiguous",
+  33: "positive",
+  35: "positive",
+};
+
+const POSITIVE_POLARITY_CARDS = new Set([9, 25, 31, 33, 35]);
+const NEGATIVE_POLARITY_CARDS = new Set([8, 11, 23, 36]);
+
 export interface SemanticGroundingIssue {
   type: "semantic_grounding";
   message: string;
@@ -58,6 +73,9 @@ const RESTRICTIONS: SemanticRestriction[] = [
 ];
 
 const INTERACTION_PATTERN = /\b(?:dimmed|diminished|weakened|strengthened|blocked|clarified|obscured|surrounded|modifies|influences|acts upon)\b/i;
+const NEGATIVE_POLARITY_PATTERN = /\b(?:unlikely|will not|won't|will end|definitive ending|must separate|no (?:sex|intimacy|commitment|contact))\b/i;
+const REQUIRED_SEPARATION_PATTERN = /\b(?:separation|cut|ending) (?:is|required|must be) required\b|\brequires? (?:a )?(?:separation|ending|break)\b/i;
+const POSITIVE_POLARITY_PATTERN = /\b(?:will|can|does)\b.{0,25}\b(?:happen|succeed|commit|occur|work out)\b|\b(?:yes|successful|certainly)\b/i;
 
 function pairKey(a: number, b: number): string {
   return `${Math.min(a, b)}:${Math.max(a, b)}`;
@@ -109,6 +127,7 @@ export function getCardRelations(context: ReadingContext): CardRelation[] {
 export function validatePredictionSemantics(
   development: string,
   context: ReadingContext,
+  predictionEvidenceIds?: ReadonlySet<string>,
 ): SemanticGroundingIssue[] {
   const cardIds = new Set(context.cards.map((card) => card.id));
   const issues: SemanticGroundingIssue[] = [];
@@ -137,7 +156,31 @@ export function validatePredictionSemantics(
     }
   }
 
+  if (questionRequiresPolarity(context.question)) {
+    const makesNegativeClaim = NEGATIVE_POLARITY_PATTERN.test(development) || REQUIRED_SEPARATION_PATTERN.test(development);
+    const makesPositiveClaim = POSITIVE_POLARITY_PATTERN.test(development);
+    if (makesNegativeClaim || makesPositiveClaim) {
+      const ambiguousCards = context.cards.filter((card) => CARD_POLARITY[card.id] === "ambiguous");
+      const evidenceCardIds = predictionEvidenceIds && predictionEvidenceIds.size > 0
+        ? new Set(context.cards.filter((_, index) => predictionEvidenceIds.has(`card-${index + 1}`)).map((card) => card.id))
+        : new Set(context.cards.map((card) => card.id));
+      const hasPolaritySupport = (makesNegativeClaim
+        ? [...evidenceCardIds].some((id) => NEGATIVE_POLARITY_CARDS.has(id))
+        : [...evidenceCardIds].some((id) => POSITIVE_POLARITY_CARDS.has(id)));
+      if (ambiguousCards.length > 0 && !hasPolaritySupport) {
+        issues.push({
+          type: "semantic_grounding",
+          message: "Prediction assigns positive or negative outcome polarity that the ambiguous evidence does not establish.",
+        });
+      }
+    }
+  }
+
   return issues;
+}
+
+function questionRequiresPolarity(question: string): boolean {
+  return /\?|\b(?:will|would|can|could|should|is|are|do|does|did|yes|no|likely|unlikely)\b/i.test(question);
 }
 
 function escapeRegExp(value: string): string {
