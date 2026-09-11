@@ -91,6 +91,11 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("closing pair and closing card"))).toBe(true);
   });
 
+  it("allows a qualified possibility without treating 'can happen' as positive polarity", () => {
+    const issues = reading([3, 24, 32], "What will happen?", "A sudden change can happen, but these cards do not establish which direction it takes.");
+    expect(issues.some((issue) => issue.message.includes("outcome polarity"))).toBe(false);
+  });
+
   it("requires a generated GT relation for card-to-card influence", () => {
     const names = ["Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun", "Moon", "Key", "Fish", "Anchor", "Cross"];
     const fullMap = new Map<number, Card>();

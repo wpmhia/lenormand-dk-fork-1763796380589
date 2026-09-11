@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         phase: "repair",
         spreadId: validated.spreadId,
         cardCount: cardCount,
-        issues: serviceResult.issues.map((i) => i.message),
+        issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),
         elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, serviceResult.reason);

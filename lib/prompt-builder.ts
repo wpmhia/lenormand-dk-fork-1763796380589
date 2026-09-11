@@ -103,7 +103,7 @@ Formatting rules:
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
 Give one concise forward-looking synthesis answering what is most likely to happen next in the user's specific situation. Lead with the practical answer to the question, not a generic card narrative. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
-The prediction evidenceIds field must contain only IDs from the deterministic evidence pack. For sentence spreads, it must include both the closing card ID and the closing pair ID. The development must be supported by those cited IDs; do not forecast what happens after the final drawn card.
+The structured prediction object must include exactly these fields: development, evidenceIds, timing, watchFor, and practicalAction. The prediction evidenceIds field must contain only IDs from the deterministic evidence pack. For sentence spreads, it must include both the closing card ID and the closing pair ID. The development must be supported by those cited IDs; do not forecast what happens after the final drawn card.
 Do not include any timeframe, duration, or words such as "soon" or "within" in Interpretation or Most likely development. Put timing exclusively in Likely timing.
 
 Required labels (always include, in this order, with one sentence each):
