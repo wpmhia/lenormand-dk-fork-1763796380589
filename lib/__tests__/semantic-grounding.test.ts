@@ -2,13 +2,14 @@ import { describe, expect, it } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getStructuredReadingSchema, validateStructuredReading } from "@/lib/structured-reading";
 import { getCardRelations, validatePredictionSemantics } from "@/lib/semantic-grounding";
+import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import type { Card } from "@/lib/types";
 
 const cardsMap = new Map<number, Card>();
 for (let id = 1; id <= 36; id++) {
   cardsMap.set(id, {
     id,
-    name: ["", "Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart"][id] || `Card ${id}`,
+    name: ["", "Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring"][id] || `Card ${id}`,
     number: id,
     keywords: [],
     uprightMeaning: "",
@@ -104,6 +105,25 @@ describe("deterministic prediction semantic grounding", () => {
 
     const qualified = validatePredictionSemantics("The cards support intimacy, but they do not clearly establish whether it occurs within seven days.", context, new Set(["pair-2-3", "card-3"]));
     expect(qualified.some((issue) => issue.message.includes("timing confirmation"))).toBe(false);
+  });
+
+  it("keeps Clover + Ring evidence scoped to an opening or bond, not a meeting", () => {
+    const cards = [2, 25, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops in this relationship?", cards, cardsMap);
+    const pack = buildLenormandEvidencePack(context);
+    expect(pack).toContain("Clover + Ring: relationship present; no canonical pair meaning supplied");
+    expect(pack).toContain("card-2: Position 2 Ring: commitment, agreement, or a relationship bond");
+    expect(pack).not.toContain("planned meeting");
+
+    const issues = validatePredictionSemantics("The small opportunity leads to a planned meeting.", context);
+    expect(issues.some((issue) => issue.message.includes("planned meeting"))).toBe(true);
+  });
+
+  it("does not turn Paths into a prerequisite in Dutch phrasing", () => {
+    const cards = [22, 24, 25].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Ontstaat er toenadering?", cards, cardsMap);
+    const issues = validatePredictionSemantics("Het hangt af van een keuze die nog gemaakt moet worden.", context);
+    expect(issues.some((issue) => issue.message.includes("must first be made"))).toBe(true);
   });
 
   it("requires a generated GT relation for card-to-card influence", () => {
