@@ -82,6 +82,7 @@ const REQUIRED_SEPARATION_PATTERN = /\b(?:separation|cut|ending) (?:is|required|
 // polarity caused valid qualified forecasts to fail when ambiguous cards were drawn.
 const POSITIVE_POLARITY_PATTERN = /\b(?:will|does)\b.{0,25}\b(?:happen|succeed|commit|occur|work out)\b|\b(?:yes|successful|certainly)\b/i;
 const PREREQUISITE_PATTERN = /\b(?:obstacle|prerequisite|must first be resolved|must first be overcome|requires? overcoming|depends on resolving|cannot happen until|can't happen until|cannot proceed until|requires? (?:a )?(?:resolution|clearance))\b/i;
+const NEGATIVE_TIMING_PATTERN = /\b(?:unlikely|not likely|probably not|not expected|will not|won't)\b.{0,45}\b(?:within|in|this|the next|binnen)\b.{0,25}\b(?:\d+\s*(?:days?|dagen?)|week(?:s)?|weekend)\b|\b(?:not this week|not within \d+\s*(?:days?|dagen?))\b|\b(?:only|just)\s+(?:in|over)\s+(?:the )?coming weeks\b/i;
 
 function pairKey(a: number, b: number): string {
   return `${Math.min(a, b)}:${Math.max(a, b)}`;
@@ -171,6 +172,15 @@ export function validatePredictionSemantics(
     });
   }
 
+  if (hasRequestedTimingWindow(context.question)
+    && NEGATIVE_TIMING_PATTERN.test(development)
+    && !timingEvidenceExplicitlyExcludesWindow(context)) {
+    issues.push({
+      type: "semantic_grounding",
+      message: "Absence of timing confirmation is not evidence that the requested time window is unlikely; preserve timing uncertainty instead.",
+    });
+  }
+
   if (questionRequiresPolarity(context.question)) {
     const makesNegativeClaim = NEGATIVE_POLARITY_PATTERN.test(development) || REQUIRED_SEPARATION_PATTERN.test(development);
     const makesPositiveClaim = POSITIVE_POLARITY_PATTERN.test(development);
@@ -217,6 +227,18 @@ export function validatePredictionSemantics(
 
 function questionRequiresPolarity(question: string): boolean {
   return /\?|\b(?:will|would|can|could|should|is|are|do|does|did|yes|no|likely|unlikely)\b/i.test(question);
+}
+
+function hasRequestedTimingWindow(question: string): boolean {
+  return /\b(?:within|in|over the next|during the next|next|binnen)\s+(?:\d+\s*)?(?:days?|dagen?|weeks?|weken?|week|weekend)\b|\bthis week\b|\bdeze week\b/i.test(question);
+}
+
+function timingEvidenceExplicitlyExcludesWindow(context: ReadingContext): boolean {
+  // Current timing evidence describes a positive range (days, weeks, months, or
+  // long-term development); none explicitly says that an earlier requested window
+  // is excluded. Keep this conservative until the timing model carries exclusion
+  // metadata rather than inferring it from a range label.
+  return context.timingEvidence.some((evidence) => /after|later than|not before|beyond|excludes/i.test(evidence.range));
 }
 
 function escapeRegExp(value: string): string {
