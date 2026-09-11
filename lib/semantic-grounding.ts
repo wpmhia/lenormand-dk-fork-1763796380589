@@ -10,6 +10,7 @@ export type CardRelation = {
 type CardPolarity = "positive" | "negative" | "neutral" | "ambiguous";
 
 const CARD_POLARITY: Record<number, CardPolarity> = {
+  3: "ambiguous",
   2: "positive",
   6: "ambiguous",
   10: "ambiguous",
@@ -21,6 +22,8 @@ const CARD_POLARITY: Record<number, CardPolarity> = {
 
 const POSITIVE_POLARITY_CARDS = new Set([9, 25, 31, 33, 35]);
 const NEGATIVE_POLARITY_CARDS = new Set([8, 11, 23, 36]);
+const PREREQUISITE_CONCEPT_CARDS = new Set([3, 6, 11, 22]);
+const EXPLICIT_BLOCKING_CARDS = new Set([8, 21, 36]);
 
 export interface SemanticGroundingIssue {
   type: "semantic_grounding";
@@ -73,9 +76,10 @@ const RESTRICTIONS: SemanticRestriction[] = [
 ];
 
 const INTERACTION_PATTERN = /\b(?:dimmed|diminished|weakened|strengthened|blocked|clarified|obscured|surrounded|modifies|influences|acts upon)\b/i;
-const NEGATIVE_POLARITY_PATTERN = /\b(?:unlikely|will not|won't|will end|definitive ending|must separate|no (?:sex|intimacy|commitment|contact))\b/i;
+const NEGATIVE_POLARITY_PATTERN = /\b(?:unlikely|not imminent|will not|won't|will end|definitive ending|must separate|no (?:sex|intimacy|commitment|contact))\b/i;
 const REQUIRED_SEPARATION_PATTERN = /\b(?:separation|cut|ending) (?:is|required|must be) required\b|\brequires? (?:a )?(?:separation|ending|break)\b/i;
 const POSITIVE_POLARITY_PATTERN = /\b(?:will|can|does)\b.{0,25}\b(?:happen|succeed|commit|occur|work out)\b|\b(?:yes|successful|certainly)\b/i;
+const PREREQUISITE_PATTERN = /\b(?:obstacle|prerequisite|must first be resolved|must first be overcome|requires? overcoming|depends on resolving|cannot happen until|can't happen until|cannot proceed until|requires? (?:a )?(?:resolution|clearance))\b/i;
 
 function pairKey(a: number, b: number): string {
   return `${Math.min(a, b)}:${Math.max(a, b)}`;
@@ -156,6 +160,15 @@ export function validatePredictionSemantics(
     }
   }
 
+  if (PREREQUISITE_PATTERN.test(development)
+    && [...cardIds].some((id) => PREREQUISITE_CONCEPT_CARDS.has(id))
+    && ![...cardIds].some((id) => EXPLICIT_BLOCKING_CARDS.has(id))) {
+    issues.push({
+      type: "semantic_grounding",
+      message: "An ambiguous development concept cannot be promoted into an obstacle or prerequisite without explicit blocking evidence.",
+    });
+  }
+
   if (questionRequiresPolarity(context.question)) {
     const makesNegativeClaim = NEGATIVE_POLARITY_PATTERN.test(development) || REQUIRED_SEPARATION_PATTERN.test(development);
     const makesPositiveClaim = POSITIVE_POLARITY_PATTERN.test(development);
@@ -172,6 +185,27 @@ export function validatePredictionSemantics(
           type: "semantic_grounding",
           message: "Prediction assigns positive or negative outcome polarity that the ambiguous evidence does not establish.",
         });
+      }
+
+      if ((context.spreadId === "sentence-3" || context.spreadId === "sentence-5") && context.cards.length >= 2) {
+        const closingCards = context.cards.slice(-2);
+        const earlierAmbiguous = context.cards.slice(0, -2).some((card) => CARD_POLARITY[card.id] === "ambiguous");
+        const closingPolarity = closingCards.reduce<CardPolarity>((result, card) => {
+          if (result !== "neutral") return result;
+          if (POSITIVE_POLARITY_CARDS.has(card.id)) return "positive";
+          if (NEGATIVE_POLARITY_CARDS.has(card.id)) return "negative";
+          return CARD_POLARITY[card.id] ?? result;
+        }, "neutral");
+        const closingSupportsClaim = makesNegativeClaim
+          ? closingPolarity === "negative"
+          : closingPolarity === "positive";
+        const explicitBlockingSupport = [...evidenceCardIds].some((id) => EXPLICIT_BLOCKING_CARDS.has(id));
+        if (earlierAmbiguous && !closingSupportsClaim && !explicitBlockingSupport) {
+          issues.push({
+            type: "semantic_grounding",
+            message: "Earlier ambiguous evidence cannot override the polarity established by the closing pair and closing card.",
+          });
+        }
       }
     }
   }
