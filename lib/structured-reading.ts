@@ -139,6 +139,9 @@ export function validateStructuredReading(
   }
 
   issues.push(...validatePredictionSemantics(multiReading.prediction.development, context, predictionEvidenceIds));
+  for (const item of multiReading.evidence) {
+    issues.push(...validatePredictionSemantics(item.implication, context, undefined, { validatePolarity: false }));
+  }
 
   if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {
     const requiredCount = context.spreadId === "sentence-3" ? 2 : 4;

@@ -45,6 +45,7 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   22: { general: "a choice between paths", relocation: "a decision about which direction or destination to take" },
   23: { general: "erosion, worry, or gradual loss", relocation: "pressure or erosion affecting the current living arrangement" },
   24: { general: "desire, attachment, or what is dearly wanted", relocation: "strong desire or attachment connected with the move" },
+  25: { general: "commitment, agreement, or a relationship bond" },
   26: { general: "what is unknown, concealed, or not yet disclosed", relocation: "an unresolved practical factor in the move" },
   28: { general: "a man or a person represented by the Man card" },
   29: { general: "a woman or a person represented by the Woman card" },

@@ -24,6 +24,7 @@ const POSITIVE_POLARITY_CARDS = new Set([9, 25, 31, 33, 35]);
 const NEGATIVE_POLARITY_CARDS = new Set([8, 11, 23, 36]);
 const PREREQUISITE_CONCEPT_CARDS = new Set([3, 6, 11, 22]);
 const EXPLICIT_BLOCKING_CARDS = new Set([8, 21, 36]);
+const MEETING_SUPPORT_CARDS = new Set([1, 12, 20, 27]);
 
 export interface SemanticGroundingIssue {
   type: "semantic_grounding";
@@ -83,6 +84,8 @@ const REQUIRED_SEPARATION_PATTERN = /\b(?:separation|cut|ending) (?:is|required|
 const POSITIVE_POLARITY_PATTERN = /\b(?:will|does)\b.{0,25}\b(?:happen|succeed|commit|occur|work out)\b|\b(?:yes|successful|certainly)\b/i;
 const PREREQUISITE_PATTERN = /\b(?:obstacle|prerequisite|must first be resolved|must first be overcome|requires? overcoming|depends on resolving|cannot happen until|can't happen until|cannot proceed until|requires? (?:a )?(?:resolution|clearance))\b/i;
 const NEGATIVE_TIMING_PATTERN = /\b(?:unlikely|not likely|probably not|not expected|will not|won't)\b.{0,45}\b(?:within|in|this|the next|binnen)\b.{0,25}\b(?:\d+\s*(?:days?|dagen?)|week(?:s)?|weekend)\b|\b(?:not this week|not within \d+\s*(?:days?|dagen?))\b|\b(?:only|just)\s+(?:in|over)\s+(?:the )?coming weeks\b/i;
+const MEETING_EXPANSION_PATTERN = /\b(?:planned|scheduled)\s+(?:meeting|appointment|encounter)\b|\b(?:meeting|appointment|encounter)\s+(?:is )?(?:planned|scheduled)\b|\b(?:geplande|afgesproken)\s+(?:ontmoeting|afspraak)\b|\b(?:ontmoeting|afspraak)\s+(?:staat|is)\s+gepland\b/i;
+const CHOICE_PREREQUISITE_PATTERN = /\b(?:depends on|hinges on|hangs on)\b.{0,30}\b(?:a )?choice\b|\b(?:choice|decision)\b.{0,35}\b(?:still )?(?:has to|needs to|must be)\b.{0,20}\b(?:made|resolved)\b|\b(?:keuze|beslissing)\b.{0,35}\b(?:moet nog|nog moet)\b.{0,20}\b(?:gemaakt|genomen)\b|\bhangt af van een keuze\b/i;
 
 function pairKey(a: number, b: number): string {
   return `${Math.min(a, b)}:${Math.max(a, b)}`;
@@ -135,6 +138,7 @@ export function validatePredictionSemantics(
   development: string,
   context: ReadingContext,
   predictionEvidenceIds?: ReadonlySet<string>,
+  options: { validatePolarity?: boolean } = {},
 ): SemanticGroundingIssue[] {
   const cardIds = new Set(context.cards.map((card) => card.id));
   const issues: SemanticGroundingIssue[] = [];
@@ -181,7 +185,24 @@ export function validatePredictionSemantics(
     });
   }
 
-  if (questionRequiresPolarity(context.question)) {
+  if (MEETING_EXPANSION_PATTERN.test(development)
+    && cardIds.has(2)
+    && cardIds.has(25)
+    && ![...cardIds].some((id) => MEETING_SUPPORT_CARDS.has(id))) {
+    issues.push({
+      type: "semantic_grounding",
+      message: "Clover + Ring supports a temporary opportunity or relationship bond, not a planned meeting or appointment without explicit meeting evidence.",
+    });
+  }
+
+  if (CHOICE_PREREQUISITE_PATTERN.test(development) && cardIds.has(22)) {
+    issues.push({
+      type: "semantic_grounding",
+      message: "Paths supports an open choice or multiple directions; it does not establish that a choice must first be made before the queried outcome can occur.",
+    });
+  }
+
+  if (options.validatePolarity !== false && questionRequiresPolarity(context.question)) {
     const makesNegativeClaim = NEGATIVE_POLARITY_PATTERN.test(development) || REQUIRED_SEPARATION_PATTERN.test(development);
     const makesPositiveClaim = POSITIVE_POLARITY_PATTERN.test(development);
     if (makesNegativeClaim || makesPositiveClaim) {
