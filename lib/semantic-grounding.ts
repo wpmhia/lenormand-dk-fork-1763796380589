@@ -31,6 +31,8 @@ export interface SemanticGroundingIssue {
   message: string;
 }
 
+export type SubjectValidationScope = "interpretation" | "card-commentary" | "prediction";
+
 interface SemanticRestriction {
   cardId: number;
   domain?: ReadingContext["questionDomain"];
@@ -92,6 +94,7 @@ const MALE_ENTITY_PATTERN = /\b(?:the|a|another)?\s*man\b|\b(?:he|him|his|husban
 const FEMALE_ENTITY_PATTERN = /\b(?:the|a|another)?\s*woman\b|\b(?:she|her|hers|wife|girlfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?woman\b/i;
 const BEAR_ENTITY_PATTERN = /\b(?:boss|manager|authority figure|parent|rival|another partner|someone in (?:a )?position of power)\b/i;
 const PATHS_TREE_EXPANSION_PATTERN = /\b(?:lasting consequences?|well[- ]?being|stability|stable future)\b/i;
+const SUBJECT_REPLACEMENT_PATTERN = /\b(?:the|a|another)?\s*(?:man|woman)\b|\b(?:he|him|his|she|her|hers|husband|wife|boyfriend|girlfriend|lover)\b/i;
 
 function pairKey(a: number, b: number): string {
   return `${Math.min(a, b)}:${Math.max(a, b)}`;
@@ -284,6 +287,35 @@ export function validatePredictionSemantics(
         }
       }
     }
+  }
+
+  return issues;
+}
+
+export function validateQuestionSubjectPreservation(
+  text: string,
+  context: ReadingContext,
+  scope: SubjectValidationScope,
+): SemanticGroundingIssue[] {
+  const primarySubject = context.questionSubjects[0];
+  if (!primarySubject) return [];
+
+  const subjectMentioned = new RegExp(`\\b${escapeRegExp(primarySubject)}\\b`, "i").test(text);
+  const cardOnlyReference = /\b(?:the )?(?:man|woman) card\b/i.test(text);
+  const issues: SemanticGroundingIssue[] = [];
+
+  if (SUBJECT_REPLACEMENT_PATTERN.test(text) && !subjectMentioned && !cardOnlyReference) {
+    issues.push({
+      type: "semantic_grounding",
+      message: `Question subject "${primarySubject}" must not be replaced by an unbound person/card reference in ${scope}.`,
+    });
+  }
+
+  if (scope !== "card-commentary" && !subjectMentioned) {
+    issues.push({
+      type: "semantic_grounding",
+      message: `${scope} must preserve the question subject "${primarySubject}" explicitly instead of switching to a generic subject.`,
+    });
   }
 
   return issues;

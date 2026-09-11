@@ -82,7 +82,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   if (finalized.issues.length === 0) return { ok: true, reading: finalized.text };
 
   const repair = await generate(
-    `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. The object must include prediction fields development, evidenceIds, timing, watchFor, and practicalAction. ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
+    `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. Preserve every explicit question subject exactly throughout the repaired interpretation, evidence implications, and prediction; never replace it with Man, Woman, he, or she. The object must include prediction fields development, evidenceIds, timing, watchFor, and practicalAction. ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
     repairTimeoutMs,
     0,
     `${prompt}\n\nValidation failures (type: actionable message):\n${finalized.issues.map((issue) => `- ${issue.type}: ${issue.message}`).join("\n")}\n${closingEvidenceInstruction}\nReturn the complete structured object, including every required prediction field. Correct exactly these failures.`,
