@@ -66,6 +66,7 @@ Synthesis disciplines (apply to all spreads):
 - Question-anchored synthesis. The sequence is question → cards → answer. Every sentence in Interpretation, Cards, and Prediction must explain what the cards mean for the user's actual situation. Do not narrate an abstract symbolic story and attach the question afterward. Start with the real-world implication, then name the card pair as evidence. Never introduce another life domain because a card commonly carries that association: Heart does not create romance in a relocation question, Ring does not create marriage in an employment question, and Book does not create study or education in a moving question.
 - Evidence discipline. Preserve the direction, polarity, and severity of the cards. Don't soften a difficult combination into a reassuring one, and don't magnify a mild one into a crisis. If the evidence leans adverse, say so clearly while preserving appropriate uncertainty.
 - Grounding discipline. Introduce concrete specifics (people, documents, events, organizations, places, costs, outcomes) only when they are established by the question/context or supported by the drawn cards. Do not add cards that were not drawn.
+- Semantic scope rule. Modifiers belong only to the concept they modify in the supplied evidence. A temporary opportunity means the opportunity/window is temporary; it does not establish that the resulting relationship, improvement, job, move, or other outcome is temporary. Do not transfer duration, permanence, severity, certainty, or causality from one evidence concept to another unless the evidence explicitly supports it. Scythe means a sharp decision or sudden separation, not automatically a definitive ending. Cross means a heavy outcome, not automatically that a relationship ends. Child means a new beginning in the love domain, not automatically a younger person.
 
 Grounding details:
 
@@ -98,6 +99,7 @@ Formatting rules:
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
 Give one concise forward-looking synthesis answering what is most likely to happen next in the user's specific situation. Lead with the practical answer to the question, not a generic card narrative. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
+The prediction evidenceIds field must contain only IDs from the deterministic evidence pack. For sentence spreads, it must include both the closing card ID and the closing pair ID. The development must be supported by those cited IDs; do not forecast what happens after the final drawn card.
 Do not include any timeframe, duration, or words such as "soon" or "within" in Interpretation or Most likely development. Put timing exclusively in Likely timing.
 
 Required labels (always include, in this order, with one sentence each):
@@ -110,7 +112,7 @@ Optional labels — include ONLY when the cards and question actually support a 
 **Watch for:** include only if the cards identify a concrete external event or sign (a specific message, contract, encounter, document, etc.) that the cards establish is part of the forecast. Skip if no card establishes a concrete external sign.
 **Practical action:** include only if a specific card establishes a concrete action the querent can take (e.g. Letter = write something; Key = open a discussion; Rider = act quickly). Skip if no card establishes a specific action. Do not give generic self-help.
 
-Synthesize the Prediction ONLY from the Prediction synthesis evidence block (which already states this spread's hierarchy). Do not introduce cards that are not in that evidence.`;
+Synthesize the Prediction ONLY from the Prediction synthesis evidence block (which already states this spread's hierarchy). Do not introduce cards that are not in that evidence. Evidence IDs are grounding metadata, not prose; do not print them in the reading text.`;
 
 const INTERPRETATION_INSTRUCTION = `## Interpretation
 Answer the user's question through the complete spread. Explain what the sequence of cards says about the specific situation asked about, including its direction, obstacles, people, decisions, or unresolved factors. Every paragraph must stay inside that subject. Do not begin with dictionary definitions or an abstract symbolic story and translate it to the question afterward. Do not give the final predicted outcome or timing here; the forward-looking forecast belongs in ## Prediction.`;

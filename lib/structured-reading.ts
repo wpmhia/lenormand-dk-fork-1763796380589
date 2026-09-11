@@ -1,9 +1,11 @@
 import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
+import { validatePredictionSemantics } from "@/lib/semantic-grounding";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
+  evidenceIds: z.array(z.string().min(1)).min(1),
   timing: z.string().min(1),
   watchFor: z.string().nullable(),
   practicalAction: z.string().nullable(),
@@ -88,7 +90,7 @@ export function renderStructuredReading(
 }
 
 export interface StructuredReadingIssue {
-  type: "ungrounded_evidence";
+  type: "ungrounded_evidence" | "ungrounded_prediction" | "semantic_grounding";
   message: string;
 }
 
@@ -113,12 +115,30 @@ export function validateStructuredReading(
     }
   }
   const citedIds = new Set(multiReading.evidence.flatMap((item) => item.evidenceIds));
+  const predictionEvidenceIds = new Set(multiReading.prediction.evidenceIds);
 
   for (const id of citedIds) {
     if (!allowedEvidenceIds.has(id)) {
       issues.push({ type: "ungrounded_evidence", message: `Structured evidence cites unknown evidence ID: "${id}"` });
     }
   }
+
+  for (const id of predictionEvidenceIds) {
+    if (!allowedEvidenceIds.has(id)) {
+      issues.push({ type: "ungrounded_prediction", message: `Prediction cites unknown evidence ID: "${id}"` });
+    }
+  }
+
+  if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {
+    const last = context.cards.length - 1;
+    for (const id of [getPairEvidenceId(last - 1, last), getCardEvidenceId(last)]) {
+      if (!predictionEvidenceIds.has(id)) {
+        issues.push({ type: "ungrounded_prediction", message: `Prediction must cite closing evidence "${id}"` });
+      }
+    }
+  }
+
+  issues.push(...validatePredictionSemantics(multiReading.prediction.development, context));
 
   if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {
     const requiredCount = context.spreadId === "sentence-3" ? 2 : 4;
