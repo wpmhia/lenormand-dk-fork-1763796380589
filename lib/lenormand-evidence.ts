@@ -42,6 +42,7 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   12: { general: "discussion, nervous activity, or exchanged messages" },
   13: { general: "a new beginning or something young", relocation: "a fresh start", love: "a new beginning" },
   14: { general: "caution, work, or something not entirely straightforward", career: "work or employment requiring caution", relocation: "work or an arrangement that may not be entirely straightforward" },
+  15: { general: "power, strength, or authority" },
   22: { general: "a choice between paths", relocation: "a decision about which direction or destination to take" },
   23: { general: "erosion, worry, or gradual loss", relocation: "pressure or erosion affecting the current living arrangement" },
   24: { general: "desire, attachment, or what is dearly wanted", relocation: "strong desire or attachment connected with the move" },
@@ -72,6 +73,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Cards by position: ${context.cards.map((card, index) => `${getCardEvidenceId(index)} ${index + 1} ${card.name}`).join(" — ")}`,
     `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
     `Timing evidence supported: ${trace.timing.supported ? "yes" : "no"}`,
+    `Person/entity bindings: ${context.personBindings.length > 0 ? context.personBindings.map((binding) => `${binding.cardId === 28 ? "Man" : "Woman"} bound by ${binding.source}`).join("; ") : "none; Man and Woman remain unbound"}`,
     "Card senses selected for this question:",
     ...context.cards.map((card, index) => `- ${getCardEvidenceId(index)}: Position ${index + 1} ${card.name}: ${cardSense(card, context.questionDomain)}`),
   ];

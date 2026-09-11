@@ -47,6 +47,13 @@ export interface ReadingContext {
   layout: ReadingLayout;
   timingEvidence: TimingEvidence[];
   topicFocus: TopicFocus[];
+  personBindings: PersonBinding[];
+}
+
+export interface PersonBinding {
+  cardId: 28 | 29;
+  source: "question" | "explicit-significator";
+  evidence: string;
 }
 
 export type QuestionDomain = "relocation" | "health" | "career" | "love" | "money" | "home" | "travel" | "general";
@@ -620,6 +627,7 @@ export function buildReadingContext(
   }
 
   const questionFrame = getQuestionFrame(question);
+  const personBindings = derivePersonBindings(question, significatorPreference);
   const topicFocus: TopicFocus[] = [];
   const lowerQ = question.toLowerCase();
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(lowerQ);
@@ -654,7 +662,32 @@ export function buildReadingContext(
     layout,
     timingEvidence,
     topicFocus,
+    personBindings,
   };
+}
+
+function derivePersonBindings(
+  question: string,
+  significatorPreference?: "woman" | "man" | "both",
+): PersonBinding[] {
+  const lower = question.toLowerCase();
+  const femaleExplicit = /\b(?:she|her|hers|wife|girlfriend|fiancee|lady|female|woman|vrouw\w*|haar|zij|mevrouw)\b/i.test(lower);
+  const maleExplicit = /\b(?:he|him|his|husband|boyfriend|fiance|gentleman|male|man|mannelijk\w*|heer)\b/i.test(lower);
+  const bindings: PersonBinding[] = [];
+
+  if (femaleExplicit && !maleExplicit) {
+    bindings.push({ cardId: 29, source: "question", evidence: "The question explicitly establishes a female person reference." });
+  } else if (maleExplicit && !femaleExplicit) {
+    bindings.push({ cardId: 28, source: "question", evidence: "The question explicitly establishes a male person reference." });
+  }
+
+  if (bindings.length === 0 && significatorPreference === "woman") {
+    bindings.push({ cardId: 29, source: "explicit-significator", evidence: "The request explicitly selected Woman as the significator." });
+  } else if (bindings.length === 0 && significatorPreference === "man") {
+    bindings.push({ cardId: 28, source: "explicit-significator", evidence: "The request explicitly selected Man as the significator." });
+  }
+
+  return bindings;
 }
 
 function matchQuestionTopic(question: string, category: string): boolean {
