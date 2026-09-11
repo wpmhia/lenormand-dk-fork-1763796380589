@@ -79,6 +79,18 @@ describe("deterministic prediction semantic grounding", () => {
     expect(qualified.some((issue) => issue.message.includes("outcome polarity"))).toBe(false);
   });
 
+  it("does not turn Ship into a prerequisite that overrides Ring and Bouquet", () => {
+    const cards = [20, 28, 3, 25, 9].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-5", "Will intimacy develop soon?", cards, cardsMap);
+    const issues = validatePredictionSemantics(
+      "Intimacy is not imminent because distance is an obstacle that must first be resolved.",
+      context,
+      new Set(["card-1", "card-3", "pair-4-5", "card-5"]),
+    );
+    expect(issues.some((issue) => issue.message.includes("obstacle or prerequisite"))).toBe(true);
+    expect(issues.some((issue) => issue.message.includes("closing pair and closing card"))).toBe(true);
+  });
+
   it("requires a generated GT relation for card-to-card influence", () => {
     const names = ["Rider", "Clover", "Ship", "House", "Tree", "Clouds", "Snake", "Coffin", "Bouquet", "Scythe", "Whip", "Birds", "Child", "Fox", "Bear", "Stars", "Stork", "Dog", "Tower", "Garden", "Mountain", "Paths", "Mice", "Heart", "Ring", "Book", "Letter", "Man", "Woman", "Lily", "Sun", "Moon", "Key", "Fish", "Anchor", "Cross"];
     const fullMap = new Map<number, Card>();
