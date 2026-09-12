@@ -64,11 +64,59 @@ function cardSense(card: NormalizedCard, domain: ReadingContext["questionDomain"
   return senses?.[domain] || senses?.general || card.name;
 }
 
+export type EvidencePolarity = "positive" | "negative" | "neutral" | "ambiguous";
+
+export interface EvidenceEnvelope {
+  question: { text: string; domain: ReadingContext["questionDomain"]; observationWindow: string | null };
+  cards: Array<{ evidenceId: string; position: number; name: string; supportedMeanings: string[]; polarity: EvidencePolarity | null }>;
+  pairs: Array<{ evidenceId: string; positions: [number, number]; cards: string[]; supportedMeaning: string | null; relation: "combination" | "adjacent" }>;
+  timing: { observationWindow: string | null; supported: boolean; evidence: string[] };
+}
+
+function getObservationWindow(question: string): string | null {
+  const match = question.match(/\b(?:within|during|over|in|binnen|komende|next)\b.{0,30}\b(?:days?|dagen?|weeks?|weken?|months?|maanden?|week|maand)\b/i);
+  return match?.[0] || null;
+}
+
+export function buildEvidenceEnvelope(context: ReadingContext): EvidenceEnvelope {
+  const window = getObservationWindow(context.question);
+  const pairs = context.adjacentPairs
+    .filter((pair) => context.layout.type !== "linear-sentence" || pair.indexB === pair.indexA + 1)
+    .sort((a, b) => b.weight - a.weight)
+    .map((pair) => ({
+      evidenceId: getPairEvidenceId(pair.indexA, pair.indexB),
+      positions: [pair.indexA + 1, pair.indexB + 1] as [number, number],
+      cards: [pair.cardA.name, pair.cardB.name],
+      supportedMeaning: getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id) || null,
+      relation: "combination" as const,
+    }));
+
+  return {
+    question: { text: context.question, domain: context.questionDomain, observationWindow: window },
+    cards: context.cards.map((card, index) => ({
+      evidenceId: getCardEvidenceId(index),
+      position: index + 1,
+      name: card.name,
+      supportedMeanings: [cardSense(card, context.questionDomain)],
+      // Predicate-level polarity is not supplied by the current evidence registry.
+      polarity: null,
+    })),
+    pairs,
+    timing: {
+      observationWindow: window,
+      supported: context.timingEvidence.length > 0,
+      evidence: context.timingEvidence.map((item) => item.range),
+    },
+  };
+}
+
 export function buildLenormandEvidencePack(context: ReadingContext): string {
   const trace = buildReadingTrace(context);
+  const envelope = buildEvidenceEnvelope(context);
   const lines = [
     "Deterministic Lenormand evidence pack:",
-    `Question domain: ${context.questionDomain}`,
+    `Question domain: ${envelope.question.domain}`,
+    `Question observation window: ${envelope.question.observationWindow || "none explicitly stated"}`,
     `Question frame: ${context.questionFrame}`,
     `Cards by position: ${context.cards.map((card, index) => `${getCardEvidenceId(index)} ${index + 1} ${card.name}`).join(" — ")}`,
     `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
@@ -76,17 +124,14 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Question subject(s) to preserve: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}`,
     `Person/entity bindings: ${context.personBindings.length > 0 ? context.personBindings.map((binding) => `${binding.cardId === 28 ? "Man" : "Woman"} bound by ${binding.source}`).join("; ") : "none; Man and Woman remain unbound"}`,
     "Card senses selected for this question:",
-    ...context.cards.map((card, index) => `- ${getCardEvidenceId(index)}: Position ${index + 1} ${card.name}: ${cardSense(card, context.questionDomain)}`),
+    ...envelope.cards.map((card) => `- ${card.evidenceId}: Position ${card.position} ${card.name}: ${card.supportedMeanings.join("; ")} (polarity metadata only: ${card.polarity})`),
   ];
 
-  const pairs = context.adjacentPairs
-    .filter((pair) => context.layout.type !== "linear-sentence" || pair.indexB === pair.indexA + 1)
-    .sort((a, b) => b.weight - a.weight);
+  const pairs = envelope.pairs;
   if (pairs.length > 0) {
     lines.push("Question-relevant adjacent pairs:");
     for (const pair of pairs) {
-      const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id);
-      lines.push(`- ${getPairEvidenceId(pair.indexA, pair.indexB)}: Positions ${pair.indexA + 1}+${pair.indexB + 1} ${pair.cardA.name} + ${pair.cardB.name}: ${meaning || "relationship present; no canonical pair meaning supplied"}`);
+      lines.push(`- ${pair.evidenceId}: Positions ${pair.positions[0]}+${pair.positions[1]} ${pair.cards.join(" + ")}: ${pair.supportedMeaning || "relationship present; no canonical pair meaning supplied"} (relation: ${pair.relation})`);
     }
   }
 

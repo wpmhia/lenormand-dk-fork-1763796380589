@@ -1,7 +1,7 @@
 import canonicalPairs from "@/public/data/canonical-pairs.json";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
+import { buildEvidenceEnvelope, buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { describe, expect, it } from "vitest";
 
 describe("canonical Lenormand evidence registry", () => {
@@ -33,5 +33,16 @@ describe("canonical Lenormand evidence registry", () => {
     expect(pack).not.toContain("financially possible");
     expect(pack).not.toContain("third party");
     expect(pack).not.toContain("physical meeting");
+  });
+
+  it("keeps the observation window separate from independent card timing", () => {
+    const cards = [24, 34, 31].map((id, position) => ({ id, name: ["Heart", "Fish", "Sun"][position], keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops during the coming month?", cards, new Map());
+    const envelope = buildEvidenceEnvelope(context);
+
+    expect(envelope.question.observationWindow).toContain("coming month");
+    expect(envelope.timing.observationWindow).toContain("coming month");
+    expect(envelope.timing.supported).toBe(false);
+    expect(envelope.cards.find((card) => card.name === "Fish")?.supportedMeanings).toEqual(["resources, flow, or available capacity"]);
   });
 });
