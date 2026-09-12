@@ -123,8 +123,9 @@ export async function POST(request: Request) {
       });
     }
     const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
-    console.error("interpret: generation error", {
-      phase: "generation",
+      console.error("interpret: generation error", {
+        phase: "generation",
+        failureClass: "generation-runtime",
       name: error.name,
       message: error.message,
       isTimeout,

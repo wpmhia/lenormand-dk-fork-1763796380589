@@ -70,16 +70,34 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     };
   };
 
+  const logValidation = (phase: "initial" | "repair", attempt: number, finalized: { issues: ValidationIssue[] }) => {
+    console.error("reading-service: validation disposition", {
+      phase,
+      attempt,
+      repairAttempted: phase === "repair",
+      finalDisposition: finalized.issues.length === 0 ? "accepted" : "rejected",
+      issues: finalized.issues.map((issue) => ({
+        code: issue.code ?? issue.type,
+        type: issue.type,
+        message: issue.message,
+      })),
+    });
+  };
+
   const initial = await generate(system, initialTimeoutMs, 1);
   if (!initial.output) return { ok: false, reason: "empty-output", issues: [] };
   let finalized = finalize(initial.output);
   if (finalized.issues.length > 0) {
+    logValidation("initial", 1, finalized);
     console.error("reading-service: initial structured output rejected", {
       spreadId: context.spreadId,
       issues: finalized.issues.map((issue) => ({ type: issue.type, message: issue.message })),
     });
   }
-  if (finalized.issues.length === 0) return { ok: true, reading: finalized.text };
+  if (finalized.issues.length === 0) {
+    logValidation("initial", 1, finalized);
+    return { ok: true, reading: finalized.text };
+  }
 
   const repair = await generate(
     `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. Preserve every explicit question subject exactly throughout the repaired interpretation, evidence implications, and prediction; never replace it with Man, Woman, he, or she. The object must include prediction fields development, evidenceIds, timing, watchFor, and practicalAction. ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
@@ -87,8 +105,12 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     0,
     `${prompt}\n\nValidation failures (type: actionable message):\n${finalized.issues.map((issue) => `- ${issue.type}: ${issue.message}`).join("\n")}\n${closingEvidenceInstruction}\nReturn the complete structured object, including every required prediction field. Correct exactly these failures.`,
   );
-  if (!repair.output) return { ok: false, reason: "structured-output-empty", issues: finalized.issues };
+  if (!repair.output) {
+    logValidation("repair", 2, finalized);
+    return { ok: false, reason: "structured-output-empty", issues: finalized.issues };
+  }
   finalized = finalize(repair.output);
+  logValidation("repair", 2, finalized);
   if (finalized.issues.length > 0) {
     console.error("reading-service: repaired structured output rejected", {
       spreadId: context.spreadId,
