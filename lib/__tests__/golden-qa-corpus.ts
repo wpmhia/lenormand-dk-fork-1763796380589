@@ -8,10 +8,13 @@ export type GoldenQACase = {
   polarity: "positive" | "negative" | "qualified" | "ambiguous";
   predicate: { required?: string[]; forbiddenSubstitutions?: string[] };
   timing: { requestedWindow?: string; evidenceSupported: boolean; forbiddenClaims?: string[] };
+  expectedAllowedClaims?: string[];
+  requiredEvidenceUsage?: string[];
+  uncertaintyRequirements?: string[];
 };
 
 export const GOLDEN_QA_CORPUS: GoldenQACase[] = [
-  { id: "timing-window", question: "What develops within seven days?", spreadId: "sentence-3", cards: [17, 9, 4], supportedEvidence: ["positive development", "home/familiar context"], forbiddenClaims: ["unlikely within seven days", "not this week"], polarity: "qualified", predicate: {}, timing: { requestedWindow: "seven days", evidenceSupported: false } },
+  { id: "timing-window", question: "What develops within seven days?", spreadId: "sentence-3", cards: [17, 9, 4], supportedEvidence: ["positive development", "home/familiar context"], forbiddenClaims: ["unlikely within seven days", "not this week"], polarity: "qualified", predicate: {}, timing: { requestedWindow: "seven days", evidenceSupported: false }, expectedAllowedClaims: ["positive development may be supported"], requiredEvidenceUsage: ["closing card"], uncertaintyRequirements: ["do not infer negative timing"] },
   { id: "paths-prerequisite", question: "What develops next?", spreadId: "sentence-3", cards: [3, 22, 25], supportedEvidence: ["movement", "choice", "bond"], forbiddenClaims: ["must choose first", "cannot happen until"], polarity: "ambiguous", predicate: {}, timing: { evidenceSupported: false } },
   { id: "ring-meeting", question: "What develops in this relationship?", spreadId: "sentence-3", cards: [2, 25, 24], supportedEvidence: ["temporary opportunity", "relationship bond", "desire"], forbiddenClaims: ["planned meeting", "appointment"], polarity: "qualified", predicate: {}, timing: { evidenceSupported: false } },
   { id: "sex-predicate", question: "Will we have sex?", spreadId: "sentence-3", cards: [30, 35, 31], supportedEvidence: ["intimacy", "stability", "clarity"], forbiddenClaims: ["intimacy answers sex", "attraction answers sex"], polarity: "qualified", predicate: { required: ["sex"], forbiddenSubstitutions: ["intimacy", "attraction", "closeness"] }, timing: { evidenceSupported: false } },
