@@ -115,6 +115,22 @@ describe("deterministic prediction semantic grounding", () => {
     expect(qualified.some((issue) => issue.code === "unsupported_certainty")).toBe(false);
   });
 
+  it("requires epistemic framing for external factual states, not just infidelity", () => {
+    const cases = [
+      ["Does he have contact with me?", "He has no contact anymore."],
+      ["Will I get the job?", "I will get the job."],
+      ["Is she honest?", "She is honest."],
+      ["Will he return?", "He will return."],
+    ] as const;
+    for (const [question, development] of cases) {
+      const context = buildReadingContext("sentence-3", question, [31, 4, 35].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position })), cardsMap);
+      expect(validatePredictionSemantics(development, context).some((issue) => issue.code === "unsupported_certainty")).toBe(true);
+    }
+
+    const qualified = buildReadingContext("sentence-3", "Will he return?", [31, 4, 35].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position })), cardsMap);
+    expect(validatePredictionSemantics("The cards strongly indicate that he will return.", qualified).some((issue) => issue.code === "unsupported_certainty")).toBe(false);
+  });
+
   it("does not turn missing seven-day timing confirmation into a negative outcome", () => {
     const cards = [17, 9, 4].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "Will intimacy happen within 7 days?", cards, cardsMap);

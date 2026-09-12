@@ -103,9 +103,9 @@ const TEMPORAL_ORDER_PATTERN = /\b(?:first|then|before|after|until|only after|ee
 const UNSUPPORTED_DURATION_PATTERN = /\b(?:for (?:several|many) (?:days?|weeks?|months?)|(?:last|lasting)\s+(?:several|many)\s+(?:days?|weeks?|months?)|for a long time|lasting for|wekenlang|maandenlang|voor lange tijd)\b/i;
 const UNSUPPORTED_PERSISTENCE_PATTERN = /\b(?:will continue|continues? indefinitely|will remain|ongoing|blijft voortduren|blijvend)\b/i;
 const SEVERITY_INFLATION_PATTERN = /\b(?:major|very strong|extreme|almost impossible|serious blockage|grote blokkade|zeer sterke blokkade|bijna onmogelijk)\b/i;
-const HIDDEN_STATE_QUESTION_PATTERN = /\b(?:cheat(?:ing)?|affair|unfaithful|faithful|lie|lying|secret|vreemdgaan|vreemd|ontrouw|affaire|liegen|geheim)\b/i;
-const HIDDEN_STATE_CLAIM_PATTERN = /\b(?:is|are|was|were|has|have|does|do|will|won't|will not|no longer|niet langer|gaat|blijft)\b.{0,45}\b(?:cheat(?:ing)?|an affair|unfaithful|faithful|lie|lying|secret|vreemdgaan|vreemd|ontrouw|affaire|liegen|geheim)\b/i;
 const EPISTEMIC_HEDGE_PATTERN = /\b(?:suggest(?:s|ed)?|point(?:s|ed)? to|appear(?:s)?|seem(?:s)?|may|might|could|likely|possibly|probably|wijst|wijzen|lijkt|lijken|kan|mogelijk|waarschijnlijk)\b/i;
+const EXTERNAL_FACT_QUESTION_PATTERN = /\b(?:has|have|is|are|does|do|did|will|would|comes?|return|contact|honest|heeft|hebben|is|zijn|gaat|komt|terug|contact|eerlijk|krijg|krijgen|blijft|blijven)\b/i;
+const EXTERNAL_SUBJECT_PATTERN = /\b(?:he|she|they|him|her|them|hij|zij|hem|haar|hen|we|you|i|wij|jij|ik|my partner|mijn partner)\b/i;
 const SUBJECT_REPLACEMENT_PATTERN = /\b(?:the|a|another)?\s*(?:man|woman)\b|\b(?:he|him|his|she|her|hers|husband|wife|boyfriend|girlfriend|lover)\b/i;
 
 function pairKey(a: number, b: number): string {
@@ -238,13 +238,18 @@ export function validatePredictionSemantics(
     issues.push({ type: "semantic_grounding", message: "The prediction must preserve the exact sex predicate; intimacy, attraction, closeness, or contact alone is not equivalent to sex." });
   }
 
-  if (HIDDEN_STATE_QUESTION_PATTERN.test(context.question)) {
-    const claimSentence = development.split(/[.!?]+/).find((sentence) => HIDDEN_STATE_CLAIM_PATTERN.test(sentence));
-    if (claimSentence && !EPISTEMIC_HEDGE_PATTERN.test(claimSentence)) {
+  if (requiresExternalFactFraming(context.question)) {
+    const subjectPattern = context.questionSubjects.length > 0
+      ? new RegExp(`(?:${context.questionSubjects.map(escapeRegExp).join("|")}|he|she|they|hij|zij|him|her|hem|haar|we|you|i|wij|jij|ik)`, "i")
+      : EXTERNAL_SUBJECT_PATTERN;
+    const claimSentence = development.split(/[.!?]+/).find((sentence) =>
+      subjectPattern.test(sentence) && EXTERNAL_FACT_CLAIM_PATTERN.test(sentence),
+    );
+    if (claimSentence && !EPISTEMIC_HEDGE_PATTERN.test(claimSentence) && !/\b(?:cards?|spread|evidence|kaarten|legging)\b/i.test(claimSentence)) {
       issues.push({
         type: "semantic_grounding",
         code: "unsupported_certainty",
-        message: "Polarity evidence cannot establish a hidden factual state as certain; use qualified evidence language instead of a categorical claim.",
+        message: "Card evidence supports a forecast or inference, not independent verification of an external fact; frame this claim as what the cards indicate or suggest.",
       });
     }
   }
@@ -377,6 +382,13 @@ function isExplicitNamedSubject(subject: string): boolean {
 
 function questionRequiresPolarity(question: string): boolean {
   return /\?|\b(?:will|would|can|could|should|is|are|do|does|did|yes|no|likely|unlikely)\b/i.test(question);
+}
+
+const EXTERNAL_FACT_CLAIM_PATTERN = /\b(?:is|are|was|were|has|have|does|do|did|will|won't|will not|no longer|niet langer|gaat|blijft|komt|krijgt|heeft|is|zijn)\b/i;
+
+function requiresExternalFactFraming(question: string): boolean {
+  return EXTERNAL_FACT_QUESTION_PATTERN.test(question)
+    && (EXTERNAL_SUBJECT_PATTERN.test(question) || /\b[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ'-]+\b/.test(question));
 }
 
 function hasRequestedTimingWindow(question: string): boolean {
