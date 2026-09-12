@@ -166,6 +166,13 @@ describe("deterministic prediction semantic grounding", () => {
     expect(valid).toEqual([]);
   });
 
+  it("allows an implicit continuation of the established subject", () => {
+    const cards = [12, 6, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "How will the contact between Mahican and me develop?", cards, cardsMap);
+    const issues = validateQuestionSubjectPreservation("The cards show continued communication, although uncertainty remains.", context, "interpretation");
+    expect(issues).toEqual([]);
+  });
+
   it("does not bind Woman to an explicitly male question subject", () => {
     const cards = [28, 29, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "Will my male partner stay with me?", cards, cardsMap);
