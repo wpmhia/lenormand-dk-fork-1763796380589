@@ -159,7 +159,7 @@ export function validatePredictionSemantics(
   development: string,
   context: ReadingContext,
   predictionEvidenceIds?: ReadonlySet<string>,
-  options: { validatePolarity?: boolean; validateQuestionSpecificity?: boolean } = {},
+  options: { validatePolarity?: boolean; validateQuestionSpecificity?: boolean; validateEpistemicCertainty?: boolean } = {},
 ): SemanticGroundingIssue[] {
   const cardIds = new Set(context.cards.map((card) => card.id));
   const issues: SemanticGroundingIssue[] = [];
@@ -238,7 +238,7 @@ export function validatePredictionSemantics(
     issues.push({ type: "semantic_grounding", message: "The prediction must preserve the exact sex predicate; intimacy, attraction, closeness, or contact alone is not equivalent to sex." });
   }
 
-  if (requiresExternalFactFraming(context.question)) {
+  if (options.validateEpistemicCertainty !== false && requiresExternalFactFraming(context.question)) {
     const subjectPattern = context.questionSubjects.length > 0
       ? new RegExp(`(?:${context.questionSubjects.map(escapeRegExp).join("|")}|he|she|they|hij|zij|him|her|hem|haar|we|you|i|wij|jij|ik)`, "i")
       : EXTERNAL_SUBJECT_PATTERN;
