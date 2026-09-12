@@ -129,6 +129,8 @@ describe("deterministic prediction semantic grounding", () => {
 
     const qualified = buildReadingContext("sentence-3", "Will he return?", [31, 4, 35].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position })), cardsMap);
     expect(validatePredictionSemantics("The cards strongly indicate that he will return.", qualified).some((issue) => issue.code === "unsupported_certainty")).toBe(false);
+
+    expect(validatePredictionSemantics("Mahican is no longer unfaithful.", qualified, undefined, { validateEpistemicCertainty: false })).toEqual([]);
   });
 
   it("does not turn missing seven-day timing confirmation into a negative outcome", () => {

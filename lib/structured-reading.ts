@@ -143,7 +143,7 @@ export function validateStructuredReading(
   issues.push(...validateQuestionSubjectPreservation(multiReading.interpretation, context, "interpretation"));
   issues.push(...validateQuestionSubjectPreservation(multiReading.prediction.development, context, "prediction"));
   for (const item of multiReading.evidence) {
-    issues.push(...validatePredictionSemantics(item.implication, context, undefined, { validatePolarity: false, validateQuestionSpecificity: false }));
+    issues.push(...validatePredictionSemantics(item.implication, context, undefined, { validatePolarity: false, validateQuestionSpecificity: false, validateEpistemicCertainty: false }));
     issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
   }
 
