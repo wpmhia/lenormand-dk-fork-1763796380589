@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildReadingContext } from "@/lib/reading-context";
+import { buildReadingContext, extractQuestionSubjects } from "@/lib/reading-context";
 import { Card } from "@/lib/types";
 
 function makeCard(id: number, name: string): Card {
@@ -373,6 +373,20 @@ describe("buildReadingContext", () => {
         expect(ctx.layout.mirrors).toHaveLength(0);
       }
     });
+  });
+});
+
+describe("question subject extraction", () => {
+  it("does not treat an initial Dutch verb as a person name", () => {
+    expect(extractQuestionSubjects("Komen Mahican en ik weer bij elkaar?")).toEqual(["Mahican"]);
+  });
+
+  it("extracts a subject after Blijft", () => {
+    expect(extractQuestionSubjects("Blijft Mahican bij mij?")).toEqual(["Mahican"]);
+  });
+
+  it("extracts a subject after Gaat", () => {
+    expect(extractQuestionSubjects("Gaat Mahican terugkomen?")).toEqual(["Mahican"]);
   });
 });
 
