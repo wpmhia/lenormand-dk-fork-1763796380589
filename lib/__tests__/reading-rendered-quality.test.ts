@@ -122,6 +122,13 @@ describe("spread-aware structured reading contract", () => {
     expect(validateReadingOutput(reading, [24], "single-card").valid).toBe(true);
   });
 
+  it("does not apply multi-card timing validation to a single-card interpretation", () => {
+    const reading = "## Interpretation\n\nA practical change may come soon, but the card alone does not establish its exact form or outcome.";
+    const result = validateReadingOutput(reading, [3], "single-card");
+    expect(result.issues.some((issue) => issue.type === "unsupported_timing")).toBe(false);
+    expect(result.valid).toBe(true);
+  });
+
   it("renders Grand Tableau houses and mirrors before card evidence", () => {
     const parsed = getStructuredReadingSchema("grand-tableau").parse({
       interpretation: "The tableau shows a practical situation developing through people, choices, and unresolved conditions.",
