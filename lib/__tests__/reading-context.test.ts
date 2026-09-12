@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildReadingContext } from "@/lib/reading-context";
+import { buildReadingContext, extractQuestionSubjects } from "@/lib/reading-context";
 import { Card } from "@/lib/types";
 
 function makeCard(id: number, name: string): Card {
@@ -373,6 +373,20 @@ describe("buildReadingContext", () => {
         expect(ctx.layout.mirrors).toHaveLength(0);
       }
     });
+  });
+});
+
+describe("question subject extraction", () => {
+  it("does not treat an initial Dutch verb as a person name", () => {
+    expect(extractQuestionSubjects("Will Alex and I get back together?")).toEqual(["Alex"]);
+  });
+
+  it("extracts a subject after Blijft", () => {
+    expect(extractQuestionSubjects("Will Alex stay with me?")).toEqual(["Alex"]);
+  });
+
+  it("extracts a subject after Gaat", () => {
+    expect(extractQuestionSubjects("Will Alex come back?")).toEqual(["Alex"]);
   });
 });
 

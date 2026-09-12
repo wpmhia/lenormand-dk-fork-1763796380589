@@ -134,6 +134,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Hierarchy: strongest ${trace.hierarchy.strongest}; secondary ${trace.hierarchy.secondary}`,
     `Timing evidence supported: ${trace.timing.supported ? "yes" : "no"}`,
     `Question subject(s) to preserve: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}`,
+    `Questioner reference: ${/\b(?:ik|mij|me|I|my|me)\b/i.test(context.question) ? "first-person questioner (ik/mij/me)" : "not explicitly stated"}`,
     `Person/entity bindings: ${context.personBindings.length > 0 ? context.personBindings.map((binding) => `${binding.cardId === 28 ? "Man" : "Woman"} bound by ${binding.source}`).join("; ") : "none; Man and Woman remain unbound"}`,
     "Card senses selected for this question:",
     ...envelope.cards.map((card) => `- ${card.evidenceId}: Position ${card.position} ${card.name}: ${card.supportedMeanings.join("; ")} (polarity metadata only: ${card.polarity})`),

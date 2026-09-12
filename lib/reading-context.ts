@@ -669,18 +669,31 @@ export function buildReadingContext(
   };
 }
 
-function deriveQuestionSubjects(question: string): string[] {
+const INITIAL_QUESTION_VERBS = new Set([
+  "will", "would", "can", "could", "should", "does", "do", "is", "are",
+  "what", "how", "why", "when", "where", "blijft", "ontstaat", "krijgt", "krijgen",
+  "kom", "komen", "ga", "gaat", "gaan", "blijf", "blijven", "word", "wordt", "worden",
+  "kan", "kunnen", "zal", "zullen", "wil", "willen", "heeft", "hebben", "zijn",
+]);
+
+export function extractQuestionSubjects(question: string): string[] {
   const subjects: string[] = [];
-  const properNames = question.match(/\b[A-Z][a-z]{2,}\b/g) || [];
-  const questionOpeners = new Set(["Will", "Would", "Can", "Could", "Should", "Does", "Do", "Is", "Are", "What", "How", "Why", "When", "Where", "Blijft", "Ontstaat", "Krijgt", "Krijgen"]);
-  for (const name of properNames) {
-    if (!questionOpeners.has(name) && !subjects.includes(name)) subjects.push(name);
+  const tokens = question.match(/[\p{L}'-]+/gu) ?? [];
+  for (const [index, token] of tokens.entries()) {
+    if (index === 0 && INITIAL_QUESTION_VERBS.has(token.toLowerCase())) continue;
+    if (/^[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ'-]+$/.test(token) && !subjects.includes(token)) {
+      subjects.push(token);
+    }
   }
   if (subjects.length > 0) return subjects;
 
   const roleMatch = question.match(/\b(?:my|your|the)\s+(?:(?:female|male|vrouwelijke|mannelijke)\s+)?(?:partner|girlfriend|boyfriend|wife|husband|boss|manager|parent|mother|father)\b/i);
   if (roleMatch) subjects.push(roleMatch[0]);
   return subjects;
+}
+
+function deriveQuestionSubjects(question: string): string[] {
+  return extractQuestionSubjects(question);
 }
 
 function derivePersonBindings(
