@@ -1,6 +1,6 @@
 import { ReadingContext, GrandTableauLayout } from "@/lib/reading-context";
 import { NormalizedCard } from "@/lib/reading-contract";
-import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
+import { getCanonicalLenormandPairMeaning, getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 import { buildReadingTrace } from "@/lib/reading-trace";
 
 export function getPairEvidenceId(indexA: number, indexB: number): string {
@@ -69,7 +69,8 @@ export type EvidencePolarity = "positive" | "negative" | "neutral" | "ambiguous"
 export interface EvidenceEnvelope {
   question: { text: string; domain: ReadingContext["questionDomain"]; observationWindow: string | null };
   cards: Array<{ evidenceId: string; position: number; name: string; supportedMeanings: string[]; polarity: EvidencePolarity | null }>;
-  pairs: Array<{ evidenceId: string; positions: [number, number]; cards: string[]; supportedMeaning: string | null; relation: "combination" | "adjacent" }>;
+  positionEvidence: Array<{ position: number; role: string; relationshipToQuestion: string }>;
+  pairs: Array<{ evidenceId: string; positions: [number, number]; cards: string[]; status: "reviewed" | "unreviewed"; supportedMeaning: string | null; relation: "combination" | "adjacent"; directional: false }>;
   timing: { observationWindow: string | null; supported: boolean; evidence: string[] };
 }
 
@@ -87,8 +88,10 @@ export function buildEvidenceEnvelope(context: ReadingContext): EvidenceEnvelope
       evidenceId: getPairEvidenceId(pair.indexA, pair.indexB),
       positions: [pair.indexA + 1, pair.indexB + 1] as [number, number],
       cards: [pair.cardA.name, pair.cardB.name],
-      supportedMeaning: getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id) || null,
+      supportedMeaning: getUsableLenormandPairMeaning(getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id)) || null,
+      status: getUsableLenormandPairMeaning(getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id)) ? "reviewed" as const : "unreviewed" as const,
       relation: "combination" as const,
+      directional: false as const,
     }));
 
   return {
@@ -100,6 +103,15 @@ export function buildEvidenceEnvelope(context: ReadingContext): EvidenceEnvelope
       supportedMeanings: [cardSense(card, context.questionDomain)],
       // Predicate-level polarity is not supplied by the current evidence registry.
       polarity: null,
+    })),
+    positionEvidence: context.cards.map((_, index) => ({
+      position: index + 1,
+      role: context.layout.type === "linear-sentence"
+        ? index === context.cards.length - 1 ? "closing" : index === 0 ? "opening" : "development"
+        : "tableau-position",
+      relationshipToQuestion: context.layout.type === "linear-sentence" && index === context.cards.length - 1
+        ? "forecast priority by current engine methodology"
+        : "context for the question",
     })),
     pairs,
     timing: {
@@ -125,13 +137,14 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Person/entity bindings: ${context.personBindings.length > 0 ? context.personBindings.map((binding) => `${binding.cardId === 28 ? "Man" : "Woman"} bound by ${binding.source}`).join("; ") : "none; Man and Woman remain unbound"}`,
     "Card senses selected for this question:",
     ...envelope.cards.map((card) => `- ${card.evidenceId}: Position ${card.position} ${card.name}: ${card.supportedMeanings.join("; ")} (polarity metadata only: ${card.polarity})`),
+    ...envelope.positionEvidence.map((position) => `- position-${position.position}: role=${position.role}; ${position.relationshipToQuestion}`),
   ];
 
   const pairs = envelope.pairs;
   if (pairs.length > 0) {
     lines.push("Question-relevant adjacent pairs:");
     for (const pair of pairs) {
-      lines.push(`- ${pair.evidenceId}: Positions ${pair.positions[0]}+${pair.positions[1]} ${pair.cards.join(" + ")}: ${pair.supportedMeaning || "relationship present; no canonical pair meaning supplied"} (relation: ${pair.relation})`);
+      lines.push(`- ${pair.evidenceId}: Positions ${pair.positions[0]}+${pair.positions[1]} ${pair.cards.join(" + ")}: ${pair.supportedMeaning || "unknown/unreviewed; relationship present but no canonical meaning supplied"} (status: ${pair.status}; relation: ${pair.relation}; directional: ${pair.directional})`);
     }
   }
 
