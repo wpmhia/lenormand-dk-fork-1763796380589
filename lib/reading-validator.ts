@@ -125,9 +125,12 @@ export function validateReadingOutput(
     }
   }
 
-  // Timing claims are unsupported wherever they appear, not just in Prediction.
+  // Single-card readings explain the card itself; they do not have a prediction
+  // timing channel. Do not reject ordinary prose such as "a change may come soon".
+  const isSingleCard = spreadId === "single-card" || spreadId === "daily-card";
+  // Timing claims are unsupported wherever they appear in multi-card readings.
   // A timing card must support any explicit time range in the complete reading.
-  const timingText = canonicalTiming ? reading.replace(canonicalTiming.text, "") : reading;
+  const timingText = isSingleCard ? "" : canonicalTiming ? reading.replace(canonicalTiming.text, "") : reading;
   const numericTimingPattern = /\b\d+\s*(?:-|–|—|\s+to\s+)\s*\d+\s*(day|days|week|weeks|month|months|year|years)\b|\b\d+\s+(day|days|week|weeks|month|months|year|years)\b/i;
   const numericTimingMatch = timingText.match(numericTimingPattern);
 
