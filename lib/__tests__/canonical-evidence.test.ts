@@ -1,5 +1,7 @@
 import canonicalPairs from "@/public/data/canonical-pairs.json";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
+import { buildReadingContext } from "@/lib/reading-context";
+import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { describe, expect, it } from "vitest";
 
 describe("canonical Lenormand evidence registry", () => {
@@ -17,5 +19,19 @@ describe("canonical Lenormand evidence registry", () => {
     expect(getCanonicalLenormandPairMeaning(14, 35)).toContain("work problems");
     expect(getCanonicalLenormandPairMeaning(35, 14)).toContain("work problems");
     expect(getCanonicalLenormandPairMeaning(1, 36)).toBeUndefined();
+  });
+
+  it("keeps Heart-Fish-Sun-Bear-House evidence domain-scoped and non-causal", () => {
+    const names = ["Heart", "Fish", "Sun", "Bear", "House"];
+    const cards = [24, 34, 31, 15, 4].map((id, position) => ({ id, name: names[position], keywords: [], position }));
+    const context = buildReadingContext("sentence-5", "Hoe ontwikkelt het contact tussen Mahican en mij zich de komende week?", cards, new Map());
+    const pack = buildLenormandEvidencePack(context);
+
+    expect(pack).toContain("Fish: resources, flow, or available capacity");
+    expect(pack).toContain("Bear: power, strength, or authority");
+    expect(pack).toContain("House: home, residence, or family setting");
+    expect(pack).not.toContain("financially possible");
+    expect(pack).not.toContain("third party");
+    expect(pack).not.toContain("physical meeting");
   });
 });
