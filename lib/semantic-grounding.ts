@@ -29,6 +29,7 @@ const MEETING_SUPPORT_CARDS = new Set([1, 12, 20, 27]);
 export interface SemanticGroundingIssue {
   type: "semantic_grounding";
   message: string;
+  code?: string;
 }
 
 export type SubjectValidationScope = "interpretation" | "card-commentary" | "prediction";
@@ -102,6 +103,9 @@ const TEMPORAL_ORDER_PATTERN = /\b(?:first|then|before|after|until|only after|ee
 const UNSUPPORTED_DURATION_PATTERN = /\b(?:for (?:several|many) (?:days?|weeks?|months?)|(?:last|lasting)\s+(?:several|many)\s+(?:days?|weeks?|months?)|for a long time|lasting for|wekenlang|maandenlang|voor lange tijd)\b/i;
 const UNSUPPORTED_PERSISTENCE_PATTERN = /\b(?:will continue|continues? indefinitely|will remain|ongoing|blijft voortduren|blijvend)\b/i;
 const SEVERITY_INFLATION_PATTERN = /\b(?:major|very strong|extreme|almost impossible|serious blockage|grote blokkade|zeer sterke blokkade|bijna onmogelijk)\b/i;
+const HIDDEN_STATE_QUESTION_PATTERN = /\b(?:cheat(?:ing)?|affair|unfaithful|faithful|lie|lying|secret|vreemdgaan|vreemd|ontrouw|affaire|liegen|geheim)\b/i;
+const HIDDEN_STATE_CLAIM_PATTERN = /\b(?:is|are|was|were|has|have|does|do|will|won't|will not|no longer|niet langer|gaat|blijft)\b.{0,45}\b(?:cheat(?:ing)?|an affair|unfaithful|faithful|lie|lying|secret|vreemdgaan|vreemd|ontrouw|affaire|liegen|geheim)\b/i;
+const EPISTEMIC_HEDGE_PATTERN = /\b(?:suggest(?:s|ed)?|point(?:s|ed)? to|appear(?:s)?|seem(?:s)?|may|might|could|likely|possibly|probably|wijst|wijzen|lijkt|lijken|kan|mogelijk|waarschijnlijk)\b/i;
 const SUBJECT_REPLACEMENT_PATTERN = /\b(?:the|a|another)?\s*(?:man|woman)\b|\b(?:he|him|his|she|her|hers|husband|wife|boyfriend|girlfriend|lover)\b/i;
 
 function pairKey(a: number, b: number): string {
@@ -232,6 +236,17 @@ export function validatePredictionSemantics(
     && EXACT_SEX_QUESTION_PATTERN.test(context.question)
     && !EXACT_SEX_ANSWER_PATTERN.test(development)) {
     issues.push({ type: "semantic_grounding", message: "The prediction must preserve the exact sex predicate; intimacy, attraction, closeness, or contact alone is not equivalent to sex." });
+  }
+
+  if (HIDDEN_STATE_QUESTION_PATTERN.test(context.question)) {
+    const claimSentence = development.split(/[.!?]+/).find((sentence) => HIDDEN_STATE_CLAIM_PATTERN.test(sentence));
+    if (claimSentence && !EPISTEMIC_HEDGE_PATTERN.test(claimSentence)) {
+      issues.push({
+        type: "semantic_grounding",
+        code: "unsupported_certainty",
+        message: "Polarity evidence cannot establish a hidden factual state as certain; use qualified evidence language instead of a categorical claim.",
+      });
+    }
   }
 
   const personText = development.replace(/\b(?:the )?(?:man|woman) card\b/gi, "");
