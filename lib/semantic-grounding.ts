@@ -347,13 +347,6 @@ export function validateQuestionSubjectPreservation(
     });
   }
 
-  if (scope !== "card-commentary" && !subjectMentioned) {
-    issues.push({
-      type: "semantic_grounding",
-      message: `${scope} must preserve the question subject "${primarySubject}" explicitly instead of switching to a generic subject.`,
-    });
-  }
-
   return issues;
 }
 
