@@ -133,7 +133,7 @@ describe("deterministic prediction semantic grounding", () => {
     const cards = [2, 25, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "What develops in this relationship?", cards, cardsMap);
     const pack = buildLenormandEvidencePack(context);
-    expect(pack).toContain("Clover + Ring: relationship present; no canonical pair meaning supplied");
+    expect(pack).toContain("Clover + Ring: unknown/unreviewed; relationship present but no canonical meaning supplied");
     expect(pack).toContain("card-2: Position 2 Ring: commitment, agreement, or a relationship bond");
     expect(pack).not.toContain("planned meeting");
 
