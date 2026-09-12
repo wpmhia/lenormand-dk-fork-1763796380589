@@ -165,6 +165,23 @@
 
 /* Logo Font */
 @layer components {
+  /* Keep button foreground tokens stable when global link hover rules or
+     variant backgrounds change the surface color. */
+  button.bg-primary:hover,
+  a.bg-primary:hover {
+    color: hsl(var(--primary-foreground));
+  }
+
+  button.bg-secondary:hover,
+  a.bg-secondary:hover {
+    color: hsl(var(--secondary-foreground));
+  }
+
+  button.bg-destructive:hover,
+  a.bg-destructive:hover {
+    color: hsl(var(--destructive-foreground));
+  }
+
   .logo-font {
     font-family: var(--font-brand), serif;
     font-weight: 700;
