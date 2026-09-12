@@ -4,6 +4,7 @@ import {
   getStructuredReadingSchema,
   renderStructuredReading,
   validateStructuredReading,
+  isBlockingStructuredIssue,
   withCanonicalPredictionTiming,
 } from "@/lib/structured-reading";
 import { buildPredictionTimingLine } from "@/lib/timing";
@@ -58,6 +59,12 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
       : withCanonicalPredictionTiming(structuredOutput as Exclude<typeof structuredOutput, never>, canonicalTiming);
     const text = normalizeMarkdown(renderStructuredReading(canonicalOutput, context.spreadId));
     const structuralIssues = validateStructuredReading(canonicalOutput, context);
+    const warnings = structuralIssues.filter((issue) => !isBlockingStructuredIssue(issue));
+    if (warnings.length > 0) {
+      console.warn("reading-service: non-blocking semantic warnings", {
+        warnings: warnings.map((issue) => ({ code: issue.code ?? issue.type, type: issue.type, message: issue.message })),
+      });
+    }
     const outputIssues = validateReadingOutput(text, context.cards.map((card) => card.id), context.spreadId, {
       text: canonicalTiming,
       evidence: context.timingEvidence,
@@ -66,7 +73,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
       text,
       issues: [
         ...outputIssues.issues.filter(isCriticalIssue),
-        ...structuralIssues,
+        ...structuralIssues.filter(isBlockingStructuredIssue),
       ],
     };
   };
