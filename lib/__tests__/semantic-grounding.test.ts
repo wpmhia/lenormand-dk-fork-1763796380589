@@ -105,6 +105,16 @@ describe("deterministic prediction semantic grounding", () => {
     expect(affirmative.some((issue) => issue.message.includes("outcome polarity"))).toBe(true);
   });
 
+  it("does not turn polarity support into certainty about hidden behavior", () => {
+    const cards = [31, 4, 35].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Gaat Mahican nog steeds vreemd?", cards, cardsMap);
+    const categorical = validatePredictionSemantics("Mahican gaat niet langer vreemd.", context);
+    expect(categorical.some((issue) => issue.code === "unsupported_certainty")).toBe(true);
+
+    const qualified = validatePredictionSemantics("De kaarten wijzen eerder tegen voortgaand vreemdgaan.", context);
+    expect(qualified.some((issue) => issue.code === "unsupported_certainty")).toBe(false);
+  });
+
   it("does not turn missing seven-day timing confirmation into a negative outcome", () => {
     const cards = [17, 9, 4].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "Will intimacy happen within 7 days?", cards, cardsMap);
