@@ -199,19 +199,23 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
 
   if (error && !isStreaming) {
     return (
-      <Card className="border-destructive/50 bg-destructive/5">
-        <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-          <AlertCircle className="text-destructive mb-4 h-12 w-12" />
-          <h3 className="mb-2 text-lg font-semibold text-foreground">
-            Interpretation Unavailable
-          </h3>
-          <p className="mb-6 max-w-md text-sm text-muted-foreground">{error}</p>
+      <div className="state-card border-destructive/40 bg-destructive/5">
+        <div className="state-icon">
+          <AlertCircle className="h-10 w-10" aria-hidden="true" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground">
+          We couldn&apos;t generate this interpretation
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Please try again. Your card spread is still available.
+        </p>
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
           <Button onClick={onRetry} size="lg" className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 

@@ -173,7 +173,7 @@ function generationFailedResponse(
 ) {
   return new Response(
     JSON.stringify({
-      error: "Reading generation failed validation",
+      error: "We couldn't generate the interpretation. Please try again.",
       reason,
       retryable: true,
       rateLimit: {

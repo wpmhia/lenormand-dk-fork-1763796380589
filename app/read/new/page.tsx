@@ -438,12 +438,12 @@ function NewReadingPageContent() {
               </ErrorBoundary>
 
                {/* Start New Reading */}
-               <div className="flex justify-center pt-8">
-                 <Button
-                   onClick={() => performReset(true)}
-                   variant="outline"
-                   size="lg"
-                   className="gap-2"
+                <div className="flex justify-center pt-2">
+                  <Button
+                    onClick={() => performReset(true)}
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 text-muted-foreground hover:text-foreground"
                  >
                    <Spade className="h-4 w-4" />
                    Start New Reading
