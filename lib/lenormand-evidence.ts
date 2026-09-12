@@ -54,7 +54,7 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   31: { general: "success, clarity, or a favorable result" },
   32: { general: "recognition, feelings, or a changing public mood" },
   33: { general: "a solution, access, or decisive answer" },
-  34: { general: "money, resources, or material flow" },
+  34: { general: "resources, flow, or available capacity", money: "money, resources, or material flow" },
   35: { general: "stability, security, or an established base", relocation: "the established home base or practical security" },
   36: { general: "a burden, difficult obligation, or heavy outcome" },
 };
