@@ -92,6 +92,7 @@ export function renderStructuredReading(
 export interface StructuredReadingIssue {
   type: "ungrounded_evidence" | "ungrounded_prediction" | "semantic_grounding";
   message: string;
+  code?: string;
 }
 
 const IMPORTANT_GT_TOPICS = new Set(["heart", "love", "money", "health", "work", "home"]);

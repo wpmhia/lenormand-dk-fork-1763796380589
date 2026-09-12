@@ -32,6 +32,7 @@ export const BANNED_QUESTION_PREFIX = /^Your question:.*\n\n/s;
 export interface ValidationIssue {
   type: "banned_term" | "invented_card" | "unsupported_timing" | "missing_section" | "extra_section" | "empty_section" | "ungrounded_evidence" | "ungrounded_prediction" | "semantic_grounding";
   message: string;
+  code?: string;
 }
 
 export interface ValidationResult {
