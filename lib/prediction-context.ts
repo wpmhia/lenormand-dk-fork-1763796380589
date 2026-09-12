@@ -3,6 +3,7 @@ import type { NormalizedCard } from "@/lib/reading-contract";
 import { buildPredictionTimingLine } from "@/lib/timing";
 import { GRAND_TABLEAU_TOPIC_CARDS } from "@/lib/spreads";
 import { fmtCard } from "@/lib/prompt-builder";
+import { getCanonicalLenormandPairMeaning, getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export interface PredictionEvidenceLine {
   label: string;
@@ -55,6 +56,14 @@ function grandTableauDistance(a: number, b: number): number {
   return Math.max(Math.abs(ar - br), Math.abs(ac - bc));
 }
 
+function pairMeaning(pair: AdjacentPair): string | undefined {
+  return getUsableLenormandPairMeaning(
+    // Pair evidence is symmetric unless the reviewed corpus explicitly says otherwise.
+    // Directional support is intentionally not invented here.
+    getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id),
+  );
+}
+
 function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLayout, pairs: AdjacentPair[]): PredictionContext {
   const last = cards.length >= 1 ? cards[cards.length - 1] : null;
   const secondLast = cards.length >= 2 ? cards[cards.length - 2] : null;
@@ -83,7 +92,7 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     b: p.cardB,
     indexA: p.indexA,
     indexB: p.indexB,
-    meaning: undefined,
+    meaning: pairMeaning(p),
     weight: p.weight,
   }));
 
@@ -95,10 +104,10 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     developmentCard,
     coreDriverCard: middle,
     primaryPair: last && secondLast
-       ? { a: secondLast, b: last, meaning: undefined }
+       ? { a: secondLast, b: last, meaning: lastPair ? pairMeaning(lastPair) : undefined }
       : null,
     supportingPair: cards.length >= 2
-       ? { a: cards[0], b: cards[1], meaning: undefined }
+       ? { a: cards[0], b: cards[1], meaning: firstPair ? pairMeaning(firstPair) : undefined }
       : null,
     allPairs,
     significatorEvidence: [],
@@ -315,6 +324,9 @@ export function formatPredictionEvidenceBlock(pe: PredictionContext): string {
       const isClosing = i === pe.allPairs.length - 1;
       const marker = isClosing ? " [STRONGEST — closing pair]" : "";
       lines.push(`    - pair ${i + 1} (${pos})${marker}: ${fmt(p.a)} + ${fmt(p.b)}${meaning}`);
+    }
+    if (pe.allPairs.length === 2) {
+      lines.push("- Three-card synthesis plan: combine the left pair and right pair through the central card as bridge/pivot; do not let either single outer card replace the pair synthesis.");
     }
   }
   if (pe.primaryPair) {
