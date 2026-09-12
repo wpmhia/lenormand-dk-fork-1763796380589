@@ -328,6 +328,13 @@ describe("system prompt purity", () => {
     expect(sp).toMatch(/chakra/);
     expect(sp).toMatch(/soul-purpose/);
   });
+
+  it("uses a structured-only system contract for Output.object generation", () => {
+    const sp = buildSystemPrompt(3, "structured");
+    expect(sp).toContain("Return only the object requested by the schema");
+    expect(sp).not.toContain("Formatting rules:");
+    expect(sp).not.toContain("Do not write text before the first heading");
+  });
 });
 
 describe("prompt quality: question appears in prompt", () => {

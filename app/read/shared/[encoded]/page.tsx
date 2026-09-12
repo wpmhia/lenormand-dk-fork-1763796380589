@@ -113,14 +113,14 @@ export default function SharedReadingPage({ params }: PageProps) {
         clearTimeout(timeoutRef.current);
       }
 
-      // Match server timeout: maxDuration = 30s, but the SDK timeout is 25s, so cap the UI wait slightly longer
+       // Keep the client timeout below the route's 60s maxDuration without ending the UI wait while the API is still working.
       timeoutRef.current = setTimeout(() => {
         if (mountedRef.current) {
           setAiLoading(false);
           setAiError("AI analysis timed out. The reading is still available.");
         }
         timeoutRef.current = null;
-      }, 30000);
+       }, 59000);
 
       try {
         const aiRequest = {
