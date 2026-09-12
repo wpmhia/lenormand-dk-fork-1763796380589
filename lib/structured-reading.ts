@@ -95,6 +95,12 @@ export interface StructuredReadingIssue {
   code?: string;
 }
 
+export function isBlockingStructuredIssue(issue: StructuredReadingIssue): boolean {
+  if (issue.code === "unsupported_certainty") return false;
+  if (issue.code === "unsupported_entity_binding" || issue.code === "subject_substitution") return true;
+  return issue.type === "ungrounded_evidence" || issue.type === "ungrounded_prediction";
+}
+
 const IMPORTANT_GT_TOPICS = new Set(["heart", "love", "money", "health", "work", "home"]);
 
 /** Validates claims that are lost when structured output is rendered to Markdown. */

@@ -261,6 +261,7 @@ export function validatePredictionSemantics(
     if (!binding) {
       issues.push({
         type: "semantic_grounding",
+        code: "unsupported_entity_binding",
         message: `${label} is unbound in this question; a concrete person, partner, or gendered pronoun cannot be assigned to it without entity-binding evidence.`,
       });
     }
@@ -270,13 +271,14 @@ export function validatePredictionSemantics(
     && !BEAR_ENTITY_PATTERN.test(context.question)) {
     issues.push({
       type: "semantic_grounding",
+      code: "unsupported_entity_binding",
       message: "Bear supports power, strength, or authority; it does not establish a concrete boss, parent, rival, or third person without entity evidence.",
     });
   }
 
   if (cardIds.has(7) && SNAKE_ENTITY_PATTERN.test(development)
     && !SNAKE_ENTITY_PATTERN.test(context.question)) {
-    issues.push({ type: "semantic_grounding", message: "Snake supports complication, caution, or an indirect route; it does not establish a female rival or other concrete person without entity evidence." });
+    issues.push({ type: "semantic_grounding", code: "unsupported_entity_binding", message: "Snake supports complication, caution, or an indirect route; it does not establish a female rival or other concrete person without entity evidence." });
   }
 
   if (cardIds.has(22) && cardIds.has(5) && PATHS_TREE_EXPANSION_PATTERN.test(development)
@@ -369,6 +371,7 @@ export function validateQuestionSubjectPreservation(
   if (SUBJECT_REPLACEMENT_PATTERN.test(text) && !subjectMentioned && !cardOnlyReference) {
     issues.push({
       type: "semantic_grounding",
+      code: "subject_substitution",
       message: `Question subject "${primarySubject}" must not be replaced by an unbound person/card reference in ${scope}.`,
     });
   }
