@@ -675,19 +675,21 @@ const INITIAL_QUESTION_VERBS = new Set([
   "kom", "komen", "ga", "gaat", "gaan", "blijf", "blijven", "word", "wordt", "worden",
   "kan", "kunnen", "zal", "zullen", "wil", "willen", "heeft", "hebben", "zijn",
 ]);
+const NON_NAME_INITIAL_WORDS = new Set(["my", "your", "the", "a", "an", "mijn", "jouw", "uw", "de", "het", "een", "ik", "i"]);
 
 export function extractQuestionSubjects(question: string): string[] {
   const subjects: string[] = [];
   const tokens = question.match(/[\p{L}'-]+/gu) ?? [];
   for (const [index, token] of tokens.entries()) {
     if (index === 0 && INITIAL_QUESTION_VERBS.has(token.toLowerCase())) continue;
+    if (index === 0 && NON_NAME_INITIAL_WORDS.has(token.toLowerCase())) continue;
     if (/^[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ'-]+$/.test(token) && !subjects.includes(token)) {
       subjects.push(token);
     }
   }
   if (subjects.length > 0) return subjects;
 
-  const roleMatch = question.match(/\b(?:my|your|the)\s+(?:(?:female|male|vrouwelijke|mannelijke)\s+)?(?:partner|girlfriend|boyfriend|wife|husband|boss|manager|parent|mother|father)\b/i);
+  const roleMatch = question.match(/\b(?:my|your|the|mijn|jouw|uw|de|het|een)\s+(?:(?:female|male|vrouwelijke|mannelijke)\s+)?(?:partner|girlfriend|boyfriend|wife|husband|boss|manager|parent|mother|father|partner)\b/i);
   if (roleMatch) subjects.push(roleMatch[0]);
   return subjects;
 }

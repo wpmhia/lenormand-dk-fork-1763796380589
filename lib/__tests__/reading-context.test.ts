@@ -388,6 +388,11 @@ describe("question subject extraction", () => {
   it("extracts a subject after Gaat", () => {
     expect(extractQuestionSubjects("Gaat Mahican terugkomen?")).toEqual(["Mahican"]);
   });
+
+  it("does not treat an initial possessive or article as a named subject", () => {
+    expect(extractQuestionSubjects("My partner comes back to me?")).toEqual(["My partner"]);
+    expect(extractQuestionSubjects("Mijn partner komt terug bij mij?")).toEqual(["Mijn partner"]);
+  });
 });
 
 describe("Petit Tableau pair weights match the prose hierarchy", () => {
