@@ -173,6 +173,13 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues).toEqual([]);
   });
 
+  it("does not reject natural pronouns for a descriptive subject phrase", () => {
+    const cards = [24, 29, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Will my partner come back to me?", cards, cardsMap);
+    const issues = validateQuestionSubjectPreservation("She may return, while the relationship remains under pressure.", context, "prediction");
+    expect(issues).toEqual([]);
+  });
+
   it("does not bind Woman to an explicitly male question subject", () => {
     const cards = [28, 29, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "Will my male partner stay with me?", cards, cardsMap);

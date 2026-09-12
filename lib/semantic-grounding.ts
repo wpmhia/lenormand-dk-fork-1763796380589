@@ -336,6 +336,12 @@ export function validateQuestionSubjectPreservation(
   const primarySubject = context.questionSubjects[0];
   if (!primarySubject) return [];
 
+  // Descriptive subjects such as "my partner" or "the relationship" are
+  // semantic roles, not unique identities. Natural pronouns and role terms
+  // may refer back to them without repeating the exact phrase. Only explicit
+  // named entities require the strict replacement check below.
+  if (!isExplicitNamedSubject(primarySubject)) return [];
+
   const subjectMentioned = new RegExp(`\\b${escapeRegExp(primarySubject)}\\b`, "i").test(text);
   const cardOnlyReference = /\b(?:the )?(?:man|woman) card\b/i.test(text);
   const issues: SemanticGroundingIssue[] = [];
@@ -348,6 +354,10 @@ export function validateQuestionSubjectPreservation(
   }
 
   return issues;
+}
+
+function isExplicitNamedSubject(subject: string): boolean {
+  return /^[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ'-]+$/.test(subject);
 }
 
 function questionRequiresPolarity(question: string): boolean {
