@@ -37,6 +37,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const closingEvidenceInstruction = context.spreadId === "sentence-3" || context.spreadId === "sentence-5"
     ? `For this sentence spread, prediction.evidenceIds must include "pair-${context.cards.length - 1}-${context.cards.length}" and "card-${context.cards.length}".`
     : "";
+  const initialPrompt = `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs. ${closingEvidenceInstruction}`;
 
   const generate = (instruction: string, timeout: number, retries: number, promptOverride = prompt) => generateText({
     model,
@@ -84,7 +85,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     });
   };
 
-  const initial = await generate(system, initialTimeoutMs, 1);
+  const initial = await generate(system, initialTimeoutMs, 1, initialPrompt);
   if (!initial.output) return { ok: false, reason: "empty-output", issues: [] };
   let finalized = finalize(initial.output);
   if (finalized.issues.length > 0) {

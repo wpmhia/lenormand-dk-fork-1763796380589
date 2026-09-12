@@ -51,8 +51,19 @@ function fmtPersonCard(card: { name: string; strength?: string }): string {
   return `${name} (specific person/significator)`;
 }
 
-export function buildSystemPrompt(cardCount?: number): string {
+export function buildSystemPrompt(cardCount?: number, outputMode: "markdown" | "structured" = "markdown"): string {
   const isSingleCard = cardCount === 1;
+  const outputInstructions = outputMode === "structured"
+    ? `Structured output contract:
+- Return only the object requested by the schema. Do not emit Markdown headings, bullets, prose outside fields, raw JSON fences, or formatting instructions from the reading voice.
+- Treat the schema and the deterministic evidence pack as authoritative. Populate every required field, including every required evidenceIds field.`
+    : `Formatting rules:
+- Use exactly the required headings. Do not rename, add, or omit headings.
+- Do not write text before the first heading.
+- Use one-level bullet lists only.
+- Bold card pairs and labels with ** **.
+- No tables, HTML, nested bullets, emojis, or raw JSON.
+- If timing is not clearly supported, write: Likely timing: Not clearly shown by these cards.`;
 
   return `You are a traditional Lenormand reader, not a Tarot reader.
 
@@ -102,13 +113,7 @@ ${isSingleCard
   : `Multi-card readings are read through combinations, lines, houses, and surrounding cards. Be concrete and specific. Name the relevant card pairs in the Cards section.`}
 }
 
-Formatting rules:
-- Use exactly the required headings. Do not rename, add, or omit headings.
-- Do not write text before the first heading.
-- Use one-level bullet lists only.
-- Bold card pairs and labels with ** **.
-- No tables, HTML, nested bullets, emojis, or raw JSON.
-- If timing is not clearly supported, write: Likely timing: Not clearly shown by these cards.`;
+${outputInstructions}`;
 }
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction

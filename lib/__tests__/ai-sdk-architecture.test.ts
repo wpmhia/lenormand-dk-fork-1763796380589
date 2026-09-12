@@ -26,7 +26,7 @@ describe("interpret route uses AI SDK correctly", () => {
   });
 
   it("caps server-side retries at 1 (no 3x3 outer/SDK retry stacking)", () => {
-    expect(serviceSrc).toMatch(/generate\(system, initialTimeoutMs, 1\)/);
+    expect(serviceSrc).toMatch(/generate\(system, initialTimeoutMs, 1, initialPrompt\)/);
     expect(serviceSrc).toMatch(/maxRetries: retries/);
   });
 

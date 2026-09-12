@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const serviceResult = await generateReading({
       context,
       model: mistral(MISTRAL_PRODUCTION_MODEL),
-      system: buildSystemPrompt(cardCount),
+       system: buildSystemPrompt(cardCount, "structured"),
       prompt: `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs.`,
       cardCount,
       maxTokens,
