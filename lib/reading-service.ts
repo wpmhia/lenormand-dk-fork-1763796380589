@@ -79,7 +79,8 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   };
 
   const logValidation = (phase: "initial" | "repair", attempt: number, finalized: { issues: ValidationIssue[] }) => {
-    console.error("reading-service: validation disposition", {
+    const logger = finalized.issues.length === 0 ? console.info : console.error;
+    logger("reading-service: validation disposition", {
       phase,
       attempt,
       repairAttempted: phase === "repair",
