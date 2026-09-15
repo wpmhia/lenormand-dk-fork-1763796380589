@@ -677,6 +677,7 @@ const INITIAL_QUESTION_VERBS = new Set([
   "what", "how", "why", "when", "where", "blijft", "ontstaat", "krijgt", "krijgen",
   "kom", "komen", "ga", "gaat", "gaan", "blijf", "blijven", "word", "wordt", "worden",
   "kan", "kunnen", "zal", "zullen", "wil", "willen", "heeft", "hebben", "zijn",
+  "geef", "geeft", "geef", "tell", "show", "give", "describe", "provide", "please", "also",
 ]);
 const NON_NAME_INITIAL_WORDS = new Set(["my", "your", "the", "a", "an", "mijn", "jouw", "uw", "de", "het", "een", "ik", "i"]);
 

@@ -393,6 +393,11 @@ describe("question subject extraction", () => {
     expect(extractQuestionSubjects("My partner comes back to me?")).toEqual(["My partner"]);
     expect(extractQuestionSubjects("Mijn partner komt terug bij mij?")).toEqual(["Mijn partner"]);
   });
+
+  it("does not treat discourse markers or imperative question openers as names", () => {
+    expect(extractQuestionSubjects("Also, what develops next?")).toEqual([]);
+    expect(extractQuestionSubjects("Geef me een reading over mijn relatie.")).toEqual([]);
+  });
 });
 
 describe("Petit Tableau pair weights match the prose hierarchy", () => {
