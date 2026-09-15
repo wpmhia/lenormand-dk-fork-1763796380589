@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
     const serviceResult = await generateReading({
