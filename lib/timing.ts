@@ -65,11 +65,41 @@ export const NO_TIMING_OUTPUT = "Not clearly shown by these cards.";
 export const NO_TIMING_INSTRUCTION =
   "No timing evidence detected. Do not infer a time range — write: Likely timing: Not clearly shown by these cards.";
 
+type ObservationHorizon = "days" | "weeks" | "months" | null;
+
+export function getObservationHorizon(question?: string): ObservationHorizon {
+  if (!question) return null;
+  if (/\b(?:today|tonight|this weekend|within \d+\s+days?|binnen \d+\s+dagen?|deze week|this week|coming week|komende week|next week)\b/i.test(question)) return "days";
+  if (/\b(?:coming|next|komende|volgende)\s+(?:two |three |four )?weeks?\b/i.test(question)) return "weeks";
+  if (/\b(?:coming|next|komende|volgende|the coming|de komende)\s+(?:month|maand)\b/i.test(question)) return "months";
+  return null;
+}
+
+function scopedTimingOutput(definition: TimingCardDefinition, horizon: ObservationHorizon): string {
+  if (!horizon) return definition.output;
+  if (horizon === "days") {
+    if (definition.range === "days") return "Within the requested short window; likely a brief or active development.";
+    return "Within the requested short window, this card indicates a gradual or background development; exact timing is not independently shown.";
+  }
+  if (horizon === "weeks") {
+    if (definition.range === "long-term") return "Across the requested weeks, this card indicates gradual background development; months-to-years timing is outside the question window.";
+    if (definition.range === "days") return "A brief or active moment may occur within the requested weeks.";
+  }
+  if (horizon === "months" && definition.range === "long-term") {
+    return "Across the requested month, this card indicates gradual development; exact timing remains unclear.";
+  }
+  if (horizon === "months" && definition.range === "days") {
+    return "A brief or active moment may occur within the requested month.";
+  }
+  return definition.output;
+}
+
 /**
  * Build the deterministic timing line for the Prediction contract.
  * This is what the model is told to repeat verbatim in **Likely timing:**.
  */
-export function buildPredictionTimingLine(timingEvidence: TimingEvidence[]): string {
+export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string): string {
+  const horizon = getObservationHorizon(question);
   const recognised: TimingCardDefinition[] = [];
   for (const te of timingEvidence) {
     const def = getTimingCard(te.cardId);
@@ -77,9 +107,9 @@ export function buildPredictionTimingLine(timingEvidence: TimingEvidence[]): str
   }
 
   if (recognised.length === 0) return NO_TIMING_OUTPUT;
-  if (recognised.length === 1) return recognised[0].output;
+  if (recognised.length === 1) return scopedTimingOutput(recognised[0], horizon);
   const joined = recognised.map((d) => d.name).join(" and ");
-  return `${joined}: ${recognised.map((d) => d.output).join(" / ")}`;
+  return `${joined}: ${recognised.map((d) => scopedTimingOutput(d, horizon)).join(" / ")}`;
 }
 
 export const PREDICTION_TIMING_LABEL = "Likely timing";
@@ -107,7 +137,8 @@ export type RequiredPredictionField = (typeof REQUIRED_PREDICTION_FIELDS)[number
 export type OptionalPredictionField = (typeof OPTIONAL_PREDICTION_FIELDS)[number];
 export type AllPredictionField = (typeof ALL_PREDICTION_FIELDS)[number];
 
-export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[]): string {
+export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[], question?: string): string {
+  const horizon = getObservationHorizon(question);
   const recognised: TimingCardDefinition[] = [];
   for (const te of timingEvidence) {
     const def = getTimingCard(te.cardId);
@@ -119,8 +150,9 @@ export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[]): str
   }
 
   const lines: string[] = ["Timing evidence:"];
+  if (horizon) lines.push(`Observation window from the question: ${horizon}. Interpret card pace within this window; do not replace it with an absolute months/years prediction.`);
   for (const def of recognised) {
-    lines.push(`- ${def.name}: ${def.promptGuidance}`);
+    lines.push(`- ${def.name}: ${horizon ? scopedTimingOutput(def, horizon) : def.promptGuidance}`);
   }
 
   return lines.join("\n");

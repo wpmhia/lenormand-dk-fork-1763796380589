@@ -491,7 +491,7 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
     result += `\n\n${predictionBlock}`;
   }
 
-  result += `\n\n${buildTimingEvidencePrompt(context.timingEvidence)}`;
+  result += `\n\n${buildTimingEvidencePrompt(context.timingEvidence, context.question)}`;
 
   if (context.topicFocus.length > 0) {
     result += "\n\nTopic focus:";
