@@ -679,7 +679,11 @@ export function extractQuestionSubjects(question: string): string[] {
   // this language-dependent by maintaining a list of question verbs. Names
   // at the start of a question must be supplied through explicit context or
   // significator binding; names after the grammatical opener remain eligible.
-  for (const token of tokens.slice(1)) {
+  // Keep the candidate window deliberately narrow: a capitalized month, place,
+  // or entity mentioned later in the question is context, not automatically
+  // the grammatical subject. Explicit bindings/situation context handle such
+  // entities without guessing from typography.
+  for (const token of tokens.slice(1, 3)) {
     if (/^[A-ZÀ-ÖØ-Þ][a-zà-öø-ÿ'-]+$/.test(token) && !subjects.includes(token)) {
       subjects.push(token);
     }
