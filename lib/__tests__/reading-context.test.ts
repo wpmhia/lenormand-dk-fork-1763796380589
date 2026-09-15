@@ -398,6 +398,10 @@ describe("question subject extraction", () => {
     expect(extractQuestionSubjects("Also, what develops next?")).toEqual([]);
     expect(extractQuestionSubjects("Geef me een reading over mijn relatie.")).toEqual([]);
   });
+
+  it("does not infer a sentence-initial capitalized word as a person", () => {
+    expect(extractQuestionSubjects("Mahican blijft bij mij?")).toEqual([]);
+  });
 });
 
 describe("Petit Tableau pair weights match the prose hierarchy", () => {
