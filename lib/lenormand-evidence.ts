@@ -67,7 +67,7 @@ function cardSense(card: NormalizedCard, domain: ReadingContext["questionDomain"
 export type EvidencePolarity = "positive" | "negative" | "neutral" | "ambiguous";
 
 export interface EvidenceEnvelope {
-  question: { text: string; domain: ReadingContext["questionDomain"]; observationWindow: string | null };
+  question: { text: string; domain: ReadingContext["questionDomain"]; situationContext: string; observationWindow: string | null };
   cards: Array<{ evidenceId: string; position: number; name: string; supportedMeanings: string[]; polarity: EvidencePolarity | null }>;
   positionEvidence: Array<{ position: number; role: string; relationshipToQuestion: string }>;
   pairs: Array<{ evidenceId: string; positions: [number, number]; cards: string[]; status: "reviewed" | "unreviewed"; supportedMeaning: string | null; relation: "combination" | "adjacent"; directional: false }>;
@@ -95,7 +95,7 @@ export function buildEvidenceEnvelope(context: ReadingContext): EvidenceEnvelope
     }));
 
   return {
-    question: { text: context.question, domain: context.questionDomain, observationWindow: window },
+    question: { text: context.question, domain: context.questionDomain, situationContext: context.situationContext, observationWindow: window },
     cards: context.cards.map((card, index) => ({
       evidenceId: getCardEvidenceId(index),
       position: index + 1,
