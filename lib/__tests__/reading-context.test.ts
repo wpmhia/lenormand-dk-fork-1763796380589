@@ -402,6 +402,10 @@ describe("question subject extraction", () => {
   it("does not infer a sentence-initial capitalized word as a person", () => {
     expect(extractQuestionSubjects("Mahican blijft bij mij?")).toEqual([]);
   });
+
+  it("does not infer a later date or place mention as the subject", () => {
+    expect(extractQuestionSubjects("What develops in September?")).toEqual([]);
+  });
 });
 
 describe("Petit Tableau pair weights match the prose hierarchy", () => {
