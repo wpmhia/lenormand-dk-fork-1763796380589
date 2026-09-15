@@ -59,16 +59,12 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   36: { general: "a burden, difficult obligation, or heavy outcome" },
 };
 
-function cardSense(card: NormalizedCard, domain: ReadingContext["questionDomain"]): string {
-  const senses = CARD_SENSES[card.id];
-  return senses?.[domain] || senses?.general || card.name;
-}
-
 export type EvidencePolarity = "positive" | "negative" | "neutral" | "ambiguous";
+export type EvidenceStatus = "reviewed" | "unreviewed";
 
 export interface EvidenceEnvelope {
   question: { text: string; domain: ReadingContext["questionDomain"]; situationContext: string; observationWindow: string | null };
-  cards: Array<{ evidenceId: string; position: number; name: string; supportedMeanings: string[]; polarity: EvidencePolarity | null }>;
+  cards: Array<{ evidenceId: string; position: number; name: string; status: EvidenceStatus; supportedMeanings: string[]; polarity: EvidencePolarity | null }>;
   positionEvidence: Array<{ position: number; role: string; relationshipToQuestion: string }>;
   pairs: Array<{ evidenceId: string; positions: [number, number]; cards: string[]; status: "reviewed" | "unreviewed"; supportedMeaning: string | null; relation: "combination" | "adjacent"; directional: false }>;
   timing: { observationWindow: string | null; supported: boolean; evidence: string[] };
@@ -77,6 +73,12 @@ export interface EvidenceEnvelope {
 function getObservationWindow(question: string): string | null {
   const match = question.match(/\b(?:within|during|over|in|binnen|komende|next)\b.{0,30}\b(?:days?|dagen?|weeks?|weken?|months?|maanden?|week|maand)\b/i);
   return match?.[0] || null;
+}
+
+function getCardEvidence(card: NormalizedCard, domain: ReadingContext["questionDomain"]): { status: EvidenceStatus; meaning: string | null } {
+  const senses = CARD_SENSES[card.id];
+  const meaning = senses?.[domain] || senses?.general;
+  return { status: meaning ? "reviewed" : "unreviewed", meaning: meaning || null };
 }
 
 export function buildEvidenceEnvelope(context: ReadingContext): EvidenceEnvelope {
@@ -97,10 +99,13 @@ export function buildEvidenceEnvelope(context: ReadingContext): EvidenceEnvelope
   return {
     question: { text: context.question, domain: context.questionDomain, situationContext: context.situationContext, observationWindow: window },
     cards: context.cards.map((card, index) => ({
+      ...(() => {
+        const evidence = getCardEvidence(card, context.questionDomain);
+        return { status: evidence.status, supportedMeanings: evidence.meaning ? [evidence.meaning] : [] };
+      })(),
       evidenceId: getCardEvidenceId(index),
       position: index + 1,
       name: card.name,
-      supportedMeanings: [cardSense(card, context.questionDomain)],
       // Predicate-level polarity is not supplied by the current evidence registry.
       polarity: null,
     })),
@@ -137,7 +142,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
     `Questioner reference: ${/\b(?:ik|mij|me|I|my|me)\b/i.test(context.question) ? "first-person questioner (ik/mij/me)" : "not explicitly stated"}`,
     `Person/entity bindings: ${context.personBindings.length > 0 ? context.personBindings.map((binding) => `${binding.cardId === 28 ? "Man" : "Woman"} bound by ${binding.source}`).join("; ") : "none; Man and Woman remain unbound"}`,
     "Card senses selected for this question:",
-    ...envelope.cards.map((card) => `- ${card.evidenceId}: Position ${card.position} ${card.name}: ${card.supportedMeanings.join("; ")} (polarity metadata only: ${card.polarity})`),
+    ...envelope.cards.map((card) => `- ${card.evidenceId}: Position ${card.position} ${card.name}: ${card.status === "reviewed" ? card.supportedMeanings.join("; ") : "unknown/unreviewed card meaning"} (status: ${card.status}; polarity metadata only: ${card.polarity})`),
     ...envelope.positionEvidence.map((position) => `- position-${position.position}: role=${position.role}; ${position.relationshipToQuestion}`),
   ];
 
