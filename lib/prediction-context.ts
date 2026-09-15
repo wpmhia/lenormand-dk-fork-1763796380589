@@ -249,7 +249,7 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
   // entries (those duplicated the same information and let Mistral pick the wrong
   // one as canonical).
   const timingLines: PredictionEvidenceLine[] = [
-    { label: "Permitted timing", value: buildPredictionTimingLine(timingEvidence) },
+    { label: "Permitted timing", value: buildPredictionTimingLine(timingEvidence, context.question) },
   ];
 
   let base: PredictionContext;

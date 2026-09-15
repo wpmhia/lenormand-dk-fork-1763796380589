@@ -6,6 +6,7 @@ import {
   TIMING_CARDS,
   TIMING_CARD_IDS,
   buildTimingEvidencePrompt,
+  buildPredictionTimingLine,
   isTimingCardId,
   getTimingCard,
   NO_TIMING_INSTRUCTION,
@@ -93,6 +94,25 @@ describe("timing: buildTimingEvidencePrompt output", () => {
     const out = buildTimingEvidencePrompt([{ cardId: 2, cardName: "Clover", range: "soon" }]);
     expect(out).toContain(NO_TIMING_INSTRUCTION);
     expect(out).not.toContain("Clover");
+  });
+});
+
+describe("timing: question observation window scopes card timing", () => {
+  it("does not emit Tree's absolute months-to-years timing inside a coming-week question", () => {
+    const line = buildPredictionTimingLine(
+      [{ cardId: 5, cardName: "Tree", range: "long-term" }],
+      "How will the coming week develop?",
+    );
+    expect(line).toContain("requested short window");
+    expect(line).not.toContain("months to years");
+  });
+
+  it("keeps Birds as a short active development inside a longer observation window", () => {
+    const line = buildPredictionTimingLine(
+      [{ cardId: 12, cardName: "Birds", range: "days" }],
+      "What develops during the coming month?",
+    );
+    expect(line).toContain("brief or active moment");
   });
 });
 
