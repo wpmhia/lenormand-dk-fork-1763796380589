@@ -40,6 +40,7 @@ export interface TopicFocus {
 export interface ReadingContext {
   spreadId: SpreadId;
   question: string;
+  situationContext: string;
   questionDomain: QuestionDomain;
   questionFrame: string;
   cards: NormalizedCard[];
@@ -590,6 +591,7 @@ export function buildReadingContext(
   cards: NormalizedCard[],
   cardsMap: Map<number, Card>,
   significatorPreference?: "woman" | "man" | "both",
+  situationContext = "",
 ): ReadingContext {
   let adjacentPairs: AdjacentPair[];
   let layout: ReadingLayout;
@@ -657,6 +659,7 @@ export function buildReadingContext(
   return {
     spreadId,
     question,
+    situationContext,
     questionDomain: questionFrame.domain,
     questionFrame: questionFrame.instruction,
     cards,

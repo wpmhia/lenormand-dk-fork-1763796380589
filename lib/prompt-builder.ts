@@ -483,6 +483,9 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   let result = prompt;
 
   result += `\n\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\nInterpret all card combinations within this frame. Do not switch domains because an isolated card has a familiar association.`;
+  if (context.situationContext.trim()) {
+    result += `\nKnown situation context (grounds specificity, not card evidence): ${context.situationContext}\nUse these facts only to choose the relevant facet of the cards; do not treat them as proof of the forecast.`;
+  }
   result += `\nQuestion subject: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}. Questioner reference: ${/\b(?:ik|mij|me|I|my)\b/i.test(context.question) ? "first-person reference (ik/mij/me)" : "not explicitly stated"}. Do not reinterpret sentence-initial verbs as people or entities.`;
   result += `\n\n${buildLenormandEvidencePack(context)}\nSynthesis must use this evidence pack as the authoritative semantic basis. Do not add meanings that are not present in it.`;
 
