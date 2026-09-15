@@ -70,7 +70,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     const structuralIssues = validateStructuredReading(canonicalOutput, context);
     const warnings = structuralIssues.filter((issue) => !isBlockingStructuredIssue(issue));
     if (warnings.length > 0) {
-      console.warn("reading-service: non-blocking semantic warnings", {
+      console.info("reading-service: non-blocking semantic warnings", {
         warnings: warnings.map((issue) => ({ code: issue.code ?? issue.type, type: issue.type, message: issue.message })),
       });
     }
