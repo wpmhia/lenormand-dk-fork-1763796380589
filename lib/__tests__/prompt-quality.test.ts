@@ -344,6 +344,21 @@ describe("prompt quality: question appears in prompt", () => {
     expect(prompt).toContain(question);
   });
 
+  it("passes situation context as specificity guidance, not as card evidence", () => {
+    const ctx = buildReadingContext(
+      "sentence-3",
+      "En hoef ik me geen zorgen te maken over Nico als kaper op de kust?",
+      normalized([2, 4, 22]),
+      cardsMap,
+      "both",
+      "Mahican reist naar Nederland, bekijkt woningen en bezoekt verschillende ziekenhuizen.",
+    );
+    const prompt = buildPromptFromContext(ctx);
+    expect(prompt).toContain("Mahican reist naar Nederland");
+    expect(prompt).toContain("grounds specificity, not card evidence");
+    expect(prompt).toContain("do not treat them as proof of the forecast");
+  });
+
   it("Petit Tableau prompt includes the question", () => {
     const ctx = buildReadingContext("comprehensive", question, normalized([1, 2, 3, 4, 5, 6, 7, 8, 9]), cardsMap);
     const prompt = buildPromptFromContext(ctx);
