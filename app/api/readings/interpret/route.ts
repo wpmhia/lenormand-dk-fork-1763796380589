@@ -13,6 +13,7 @@ import { createMistral } from "@ai-sdk/mistral";
 import { generateReading } from "@/lib/reading-service";
 import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
+import { parseQuestionFrame } from "@/lib/question-frame";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -77,7 +78,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext);
+    const semanticQuestion = await parseQuestionFrame(validated.question, mistral(MISTRAL_PRODUCTION_MODEL), request.signal);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
     const serviceResult = await generateReading({

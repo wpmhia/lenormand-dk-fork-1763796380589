@@ -8,6 +8,7 @@ import {
 } from "@/lib/spreads";
 import { TIMING_CARDS as SHARED_TIMING_CARDS } from "@/lib/timing";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
+import type { QuestionFrame as SemanticQuestionFrame } from "@/lib/question-frame";
 
 export interface AdjacentPair {
   indexA: number;
@@ -41,6 +42,7 @@ export interface ReadingContext {
   spreadId: SpreadId;
   question: string;
   situationContext: string;
+  semanticQuestion: SemanticQuestionFrame | null;
   questionDomain: QuestionDomain;
   questionFrame: string;
   cards: NormalizedCard[];
@@ -592,6 +594,7 @@ export function buildReadingContext(
   cardsMap: Map<number, Card>,
   significatorPreference?: "woman" | "man" | "both",
   situationContext = "",
+  semanticQuestion: SemanticQuestionFrame | null = null,
 ): ReadingContext {
   let adjacentPairs: AdjacentPair[];
   let layout: ReadingLayout;
@@ -629,7 +632,9 @@ export function buildReadingContext(
     }
   }
 
-  const questionFrame = getQuestionFrame(question);
+  const questionFrame = semanticQuestion
+    ? { domain: semanticQuestion.domain, instruction: `Answer the ${semanticQuestion.intent} question about ${semanticQuestion.predicate}.` }
+    : getQuestionFrame(question);
   const personBindings = derivePersonBindings(question, significatorPreference);
   const questionSubjects = deriveQuestionSubjects(question);
   const topicFocus: TopicFocus[] = [];
@@ -660,6 +665,7 @@ export function buildReadingContext(
     spreadId,
     question,
     situationContext,
+    semanticQuestion,
     questionDomain: questionFrame.domain,
     questionFrame: questionFrame.instruction,
     cards,

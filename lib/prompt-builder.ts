@@ -483,6 +483,9 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   let result = prompt;
 
   result += `\n\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\nInterpret all card combinations within this frame. Do not switch domains because an isolated card has a familiar association.`;
+  if (context.semanticQuestion) {
+    result += `\nSemantic question frame (canonical): domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; intent=${context.semanticQuestion.intent}; language=${context.semanticQuestion.language}; confidence=${context.semanticQuestion.confidence}. Treat this as the interpretation target, not as evidence for the outcome.`;
+  }
   if (context.situationContext.trim()) {
     result += `\nKnown situation context (grounds specificity, not card evidence): ${context.situationContext}\nUse these facts only to choose the relevant facet of the cards; do not treat them as proof of the forecast.`;
   }
