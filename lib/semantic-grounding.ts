@@ -293,10 +293,10 @@ export function validatePredictionSemantics(
 
   const pairEvidenceText = context.adjacentPairs.map((pair) => pair.traditionalMeaning || "").join(" ");
   if (CAUSALITY_PATTERN.test(development) && !/caus|leads?|results?|because|due|veroorzaakt|leidt/i.test(pairEvidenceText)) {
-    issues.push({ type: "semantic_grounding", message: "The supplied evidence does not encode the claimed causal relationship." });
+    issues.push({ type: "semantic_grounding", code: "unsupported_causality", message: "The supplied evidence does not encode the claimed causal relationship." });
   }
   if (TEMPORAL_ORDER_PATTERN.test(development) && !/before|after|until|first|then|voordat|nadat|eerst|daarna|pas/i.test(pairEvidenceText)) {
-    issues.push({ type: "semantic_grounding", message: "The supplied evidence does not encode the claimed first/then or before/after sequence." });
+    issues.push({ type: "semantic_grounding", code: "unsupported_temporal_order", message: "The supplied evidence does not encode the claimed first/then or before/after sequence." });
   }
   if (UNSUPPORTED_DURATION_PATTERN.test(development) && context.timingEvidence.length === 0) {
     issues.push({ type: "semantic_grounding", message: "The supplied evidence does not establish the claimed duration." });
@@ -379,6 +379,41 @@ export function validateQuestionSubjectPreservation(
   }
 
   return issues;
+}
+
+export function validateEntityEvidenceBinding(
+  text: string,
+  evidenceIds: ReadonlySet<string> | undefined,
+  context: ReadingContext,
+): SemanticGroundingIssue[] {
+  if (!evidenceIds || evidenceIds.size === 0) return [];
+  const citedCardIds = new Set<number>();
+  for (const id of evidenceIds) {
+    const cardMatch = id.match(/^card-(\d+)$/);
+    if (cardMatch) {
+      const card = context.cards[Number(cardMatch[1]) - 1];
+      if (card) citedCardIds.add(card.id);
+    }
+    const pairMatch = id.match(/^pair-(\d+)-(\d+)$/);
+    if (pairMatch) {
+      for (const position of [Number(pairMatch[1]), Number(pairMatch[2])]) {
+        const card = context.cards[position - 1];
+        if (card) citedCardIds.add(card.id);
+      }
+    }
+  }
+
+  const subject = context.questionSubjects[0];
+  const unboundPersonCard = [28, 29].find((id) => citedCardIds.has(id) && !context.personBindings.some((binding) => binding.cardId === id));
+  if (subject && unboundPersonCard && new RegExp(`\\b${escapeRegExp(subject)}\\b`, "i").test(text)
+    && /\b(?:with|for|to|represents?|means?|shows?|is|becomes?|van|met|voor|aan|als)\b/i.test(text)) {
+    return [{
+      type: "semantic_grounding",
+      code: "unsupported_entity_binding",
+      message: `The claim associates question subject "${subject}" with an unbound ${unboundPersonCard === 28 ? "Man" : "Woman"} card in its cited evidence path.`,
+    }];
+  }
+  return [];
 }
 
 function isExplicitNamedSubject(subject: string): boolean {

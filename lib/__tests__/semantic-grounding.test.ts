@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getStructuredReadingSchema, validateStructuredReading } from "@/lib/structured-reading";
-import { getCardRelations, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
+import { getCardRelations, validateEntityEvidenceBinding, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import type { Card } from "@/lib/types";
 
@@ -182,6 +182,13 @@ describe("deterministic prediction semantic grounding", () => {
     expect(context.personBindings.map((binding) => binding.cardId)).toEqual([29]);
     const issues = validatePredictionSemantics("The man in your life will remain connected to your home life.", context);
     expect(issues.some((issue) => issue.message.includes("Man is unbound"))).toBe(true);
+  });
+
+  it("rejects a named subject attributed to an unbound person card in cited evidence", () => {
+    const cards = [8, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Will Mahican stay?", cards, cardsMap);
+    const issues = validateEntityEvidenceBinding("Coffin + Man shows the end of a phase with Mahican.", new Set(["pair-1-2"]), context);
+    expect(issues.some((issue) => issue.code === "unsupported_entity_binding")).toBe(true);
   });
 
   it("preserves a named question subject instead of allowing Man to become the grammatical subject", () => {
