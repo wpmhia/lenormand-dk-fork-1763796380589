@@ -119,7 +119,7 @@ describe("timing: question observation window scopes card timing", () => {
     const line = buildPredictionTimingLine(
       [{ cardId: 12, cardName: "Birds", range: "days" }],
       "Did this happen?",
-      { intent: "retrospective_event", timeframe: null },
+      { mode: "retrospective_event", timeframe: null },
     );
     expect(line).toContain("past event");
   });
