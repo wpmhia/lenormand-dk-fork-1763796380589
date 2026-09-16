@@ -11,7 +11,7 @@ import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { generateReading } from "@/lib/reading-service";
-import { API_REQUEST_TIMEOUT_MS, DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 import { parseQuestionFrame } from "@/lib/question-frame";
 
@@ -32,6 +32,10 @@ const mistral = createMistral({
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
+  const deadlineMs = 55_000;
+  const responseReserveMs = 4_000;
+  const parserBudgetMs = 5_000;
+  const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
   try {
     const ip = getClientIP(request);
 
@@ -78,10 +82,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const semanticQuestion = await parseQuestionFrame(validated.question, mistral(MISTRAL_PRODUCTION_MODEL), request.signal);
+    const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
+    const semanticQuestion = await parseQuestionFrame(validated.question, mistral(MISTRAL_PRODUCTION_MODEL), parserSignal);
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = buildPromptFromContext(context);
     const maxTokens = getTokenBudget(cardCount);
+    const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
+    const repairBudgetMs = Math.min(getReadingRepairTimeoutMs(cardCount), Math.max(1_000, remainingMs - responseReserveMs));
+    const initialBudgetMs = Math.min(getReadingTimeoutMs(cardCount), Math.max(1_000, remainingMs - repairBudgetMs - responseReserveMs));
     const serviceResult = await generateReading({
       context,
       model: mistral(MISTRAL_PRODUCTION_MODEL),
@@ -89,9 +97,9 @@ export async function POST(request: Request) {
       prompt: `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs.`,
       cardCount,
       maxTokens,
-      initialTimeoutMs: Math.min(getReadingTimeoutMs(cardCount), API_REQUEST_TIMEOUT_MS - 5000),
-      repairTimeoutMs: getReadingRepairTimeoutMs(cardCount),
-      signal: request.signal,
+       initialTimeoutMs: initialBudgetMs,
+       repairTimeoutMs: repairBudgetMs,
+       signal: deadlineSignal,
     });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
