@@ -9,6 +9,7 @@ import {
   withCanonicalPredictionTiming,
 } from "@/lib/structured-reading";
 import { buildPredictionTimingLine } from "@/lib/timing";
+import { SimpleAnswerSchema, type SimpleAnswer } from "@/lib/simple-answer";
 import {
   isCriticalIssue,
   normalizeMarkdown,
@@ -32,10 +33,42 @@ interface ReadingServiceOptions {
   signal?: AbortSignal;
 }
 
+function adaptSimpleAnswer(answer: SimpleAnswer, context: ReadingContext): Record<string, unknown> {
+  const evidence = answer.cards.map((card) => ({ ...card, evidenceIds: [] as string[] }));
+  if (answer.mode === "forecast") {
+    return {
+      mode: "forecast",
+      interpretation: answer.interpretation,
+      evidence,
+      prediction: {
+        development: answer.answer,
+        evidenceIds: [],
+        timing: answer.timing || "Not clearly shown by these cards.",
+        watchFor: answer.watchFor,
+        practicalAction: answer.practicalAction,
+      },
+    };
+  }
+  if (answer.mode === "advice") {
+    return { mode: "advice", interpretation: answer.interpretation, evidence, practicalGuidance: answer.answer, guidanceEvidenceIds: [] };
+  }
+  return {
+    mode: answer.mode,
+    interpretation: answer.interpretation,
+    evidence,
+    conclusion: {
+      verdict: answer.verdict || "unresolved",
+      statement: answer.answer,
+      evidenceIds: [],
+    },
+  };
+}
+
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const { context, model, system, prompt, cardCount, maxTokens, initialTimeoutMs, repairTimeoutMs, signal } = options;
   const readingMode = context.semanticQuestion?.mode === "retrospective_event" || context.semanticQuestion?.mode === "current_state" || context.semanticQuestion?.mode === "advice" ? context.semanticQuestion.mode : "forecast";
-  const schema = getStructuredReadingSchema(context.spreadId, readingMode);
+  const useSimpleAnswer = context.spreadId !== "grand-tableau" && context.layout.type !== "single";
+  const schema = useSimpleAnswer ? SimpleAnswerSchema : getStructuredReadingSchema(context.spreadId, readingMode);
   const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question, context.semanticQuestion);
   const closingEvidenceInstruction = "The server will attach evidence provenance after generation.";
   const structuredEvidenceInstruction = "";
@@ -59,7 +92,10 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   });
 
   const finalize = (output: unknown): { text: string; issues: ValidationIssue[] } => {
-    const structuredOutput = normalizeStructuredEvidence(output as Parameters<typeof renderStructuredReading>[0], context) as Parameters<typeof renderStructuredReading>[0];
+    const structuredOutput = normalizeStructuredEvidence(
+      (useSimpleAnswer ? adaptSimpleAnswer(output as SimpleAnswer, context) : output) as Parameters<typeof renderStructuredReading>[0],
+      context,
+    ) as Parameters<typeof renderStructuredReading>[0];
     const canonicalOutput = context.layout.type === "single"
       ? structuredOutput
       : withCanonicalPredictionTiming(structuredOutput as Exclude<typeof structuredOutput, never>, canonicalTiming);
