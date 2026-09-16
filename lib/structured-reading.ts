@@ -43,8 +43,15 @@ const CurrentStateReadingSchema = z.object({
   evidence: EvidenceSchema,
   conclusion: RetrospectiveConclusionSchema,
 });
+const AdviceReadingSchema = z.object({
+  mode: z.literal("advice"),
+  interpretation: z.string().min(1),
+  evidence: EvidenceSchema,
+  practicalGuidance: z.string().min(1),
+  guidanceEvidenceIds: z.array(z.string().min(1)).min(1),
+});
 
-const MultiCardReadingSchema = z.discriminatedUnion("mode", [ForecastReadingSchema, RetrospectiveReadingSchema, CurrentStateReadingSchema]);
+const MultiCardReadingSchema = z.discriminatedUnion("mode", [ForecastReadingSchema, RetrospectiveReadingSchema, CurrentStateReadingSchema, AdviceReadingSchema]);
 
 const SingleCardReadingSchema = z.object({
   interpretation: z.string().min(1),
@@ -62,7 +69,10 @@ const GrandTableauRetrospectiveReadingSchema = RetrospectiveReadingSchema.extend
 const GrandTableauCurrentStateReadingSchema = CurrentStateReadingSchema.extend({
   housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
 });
-const GrandTableauReadingSchema = z.discriminatedUnion("mode", [GrandTableauForecastReadingSchema, GrandTableauRetrospectiveReadingSchema, GrandTableauCurrentStateReadingSchema]);
+const GrandTableauAdviceReadingSchema = AdviceReadingSchema.extend({
+  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
+});
+const GrandTableauReadingSchema = z.discriminatedUnion("mode", [GrandTableauForecastReadingSchema, GrandTableauRetrospectiveReadingSchema, GrandTableauCurrentStateReadingSchema, GrandTableauAdviceReadingSchema]);
 
 /** Kept as the default multi-card schema for callers that do not have a spread id. */
 export const StructuredReadingSchema = MultiCardReadingSchema;
@@ -73,10 +83,10 @@ export type StructuredReading = z.infer<typeof MultiCardReadingSchema>;
 export type SingleCardReading = z.infer<typeof SingleCardReadingSchema>;
 export type GrandTableauReading = z.infer<typeof GrandTableauReadingSchema>;
 
-export function getStructuredReadingSchema(spreadId: string, mode: "forecast" | "retrospective_event" | "current_state" = "forecast") {
+export function getStructuredReadingSchema(spreadId: string, mode: "forecast" | "retrospective_event" | "current_state" | "advice" = "forecast") {
   if (spreadId === "single-card" || spreadId === "daily-card") return SingleCardReadingSchema;
-  if (spreadId === "grand-tableau") return mode === "retrospective_event" ? GrandTableauRetrospectiveReadingSchema : mode === "current_state" ? GrandTableauCurrentStateReadingSchema : GrandTableauForecastReadingSchema;
-  return mode === "retrospective_event" ? RetrospectiveReadingSchema : mode === "current_state" ? CurrentStateReadingSchema : ForecastReadingSchema;
+  if (spreadId === "grand-tableau") return mode === "retrospective_event" ? GrandTableauRetrospectiveReadingSchema : mode === "current_state" ? GrandTableauCurrentStateReadingSchema : mode === "advice" ? GrandTableauAdviceReadingSchema : GrandTableauForecastReadingSchema;
+  return mode === "retrospective_event" ? RetrospectiveReadingSchema : mode === "current_state" ? CurrentStateReadingSchema : mode === "advice" ? AdviceReadingSchema : ForecastReadingSchema;
 }
 
 function isGrandTableauReading(reading: StructuredReading | GrandTableauReading): reading is GrandTableauReading {
@@ -100,6 +110,12 @@ export function renderStructuredReading(
       ? ["## Houses and mirrors", multiReading.housesAndMirrors.map((item) => `- **${item.house}**: ${item.meaning}`).join("\n"), ""]
       : [];
     return ["## Interpretation", multiReading.interpretation, "", ...housesAndMirrors, "## Cards", evidence, "", "## Conclusion", `**Card indication:** ${multiReading.conclusion.verdict.replace("_", " ")}.`, multiReading.conclusion.statement].join("\n");
+  }
+  if ("practicalGuidance" in multiReading) {
+    const houses = isGrandTableauReading(multiReading)
+      ? ["## Houses and mirrors", multiReading.housesAndMirrors.map((item) => `- **${item.house}**: ${item.meaning}`).join("\n"), ""]
+      : [];
+    return ["## Interpretation", multiReading.interpretation, "", ...houses, "## Cards", evidence, "", "## Practical guidance", multiReading.practicalGuidance].filter(Boolean).join("\n");
   }
   const optional = [
     multiReading.prediction.watchFor ? `**Watch for:** ${multiReading.prediction.watchFor}` : null,
@@ -168,6 +184,16 @@ export function validateStructuredReading(
       for (const id of item.evidenceIds) if (!allowedEvidenceIds.has(id)) issues.push({ type: "ungrounded_evidence", message: `Structured evidence cites unknown evidence ID: "${id}"` });
       issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
       issues.push(...validateEntityEvidenceBinding(item.implication, new Set(item.evidenceIds), context));
+    }
+    return issues;
+  }
+  if ("practicalGuidance" in multiReading) {
+    for (const id of multiReading.guidanceEvidenceIds) if (!allowedEvidenceIds.has(id)) issues.push({ type: "ungrounded_evidence", message: `Guidance cites unknown evidence ID: "${id}"` });
+    issues.push(...validateQuestionSubjectPreservation(multiReading.interpretation, context, "interpretation"));
+    issues.push(...validateQuestionSubjectPreservation(multiReading.practicalGuidance, context, "prediction"));
+    for (const item of multiReading.evidence) {
+      for (const id of item.evidenceIds) if (!allowedEvidenceIds.has(id)) issues.push({ type: "ungrounded_evidence", message: `Structured evidence cites unknown evidence ID: "${id}"` });
+      issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
     }
     return issues;
   }

@@ -54,9 +54,11 @@ export function auditStructuredSynthesis(
   for (const item of reading.evidence) add(item.implication, item.evidenceIds, "scenario");
   if ("conclusion" in reading) {
     add(reading.conclusion.statement, reading.conclusion.evidenceIds, "outcome");
-  } else {
+  } else if ("prediction" in reading) {
     add(reading.prediction.development, reading.prediction.evidenceIds, "outcome");
     if (reading.prediction.timing) add(reading.prediction.timing, [], "timing");
+  } else {
+    add(reading.practicalGuidance, reading.guidanceEvidenceIds, "scenario");
   }
 
   const validRefs = new Set([
