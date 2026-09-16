@@ -34,7 +34,7 @@ interface ReadingServiceOptions {
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const { context, model, system, prompt, cardCount, maxTokens, initialTimeoutMs, repairTimeoutMs, signal } = options;
   const schema = getStructuredReadingSchema(context.spreadId);
-  const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question);
+  const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question, context.semanticQuestion);
   const closingEvidenceInstruction = context.spreadId === "sentence-3" || context.spreadId === "sentence-5"
     ? `For this sentence spread, prediction.evidenceIds must include "pair-${context.cards.length - 1}-${context.cards.length}" and "card-${context.cards.length}".`
     : "";

@@ -7,7 +7,7 @@ export const QuestionFrameSchema = z.object({
   counterparty: z.string().nullable(),
   predicate: z.string().min(1),
   intent: z.enum(["future_outcome", "current_state", "advice", "timing", "description"]),
-  timeframe: z.string().nullable(),
+  timeframe: z.object({ value: z.number().positive(), unit: z.enum(["day", "week", "month", "year"]) }).nullable(),
   language: z.string().min(2).max(12),
   confidence: z.number().min(0).max(1),
 });

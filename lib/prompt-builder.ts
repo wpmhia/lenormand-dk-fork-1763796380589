@@ -489,7 +489,7 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   if (context.situationContext.trim()) {
     result += `\nKnown situation context (grounds specificity, not card evidence): ${context.situationContext}\nUse these facts only to choose the relevant facet of the cards; do not treat them as proof of the forecast.`;
   }
-  result += `\nQuestion subject: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}. Questioner reference: ${/\b(?:ik|mij|me|I|my)\b/i.test(context.question) ? "first-person reference (ik/mij/me)" : "not explicitly stated"}. Do not reinterpret sentence-initial verbs as people or entities.`;
+  result += `\nQuestion subject: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}. Questioner reference: ${context.semanticQuestion?.counterparty === "questioner" ? "first-person questioner" : "not explicitly stated"}. Do not reinterpret sentence-initial verbs as people or entities.`;
   result += `\n\n${buildLenormandEvidencePack(context)}\nSynthesis must use this evidence pack as the authoritative semantic basis. Do not add meanings that are not present in it.`;
 
   if (context.layout.type !== "single") {
@@ -497,7 +497,7 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
     result += `\n\n${predictionBlock}`;
   }
 
-  result += `\n\n${buildTimingEvidencePrompt(context.timingEvidence, context.question)}`;
+  result += `\n\n${buildTimingEvidencePrompt(context.timingEvidence, context.question, context.semanticQuestion)}`;
 
   if (context.topicFocus.length > 0) {
     result += "\n\nTopic focus:";
