@@ -56,7 +56,7 @@ export function buildSystemPrompt(cardCount?: number, outputMode: "markdown" | "
   const outputInstructions = outputMode === "structured"
     ? `Structured output contract:
 - Return only the object requested by the schema. Do not emit Markdown headings, bullets, prose outside fields, raw JSON fences, or formatting instructions from the reading voice.
-- Treat the schema and the deterministic evidence pack as authoritative. Populate every required field, including every required evidenceIds field.`
+- Treat the schema and deterministic evidence pack as authoritative. The server derives evidence provenance; do not invent or manage internal evidence IDs.`
     : `Formatting rules:
 - Use exactly the required headings. Do not rename, add, or omit headings.
 - Do not write text before the first heading.
@@ -119,7 +119,7 @@ ${outputInstructions}`;
 
 const PREDICTION_FIELDS_INSTRUCTION = `## Prediction
 Give one concise forward-looking synthesis answering what is most likely to happen next in the user's specific situation. Lead with the practical answer to the question, not a generic card narrative. Do not repeat the Interpretation or re-explain individual card meanings. Include timing only when supported by the Timing evidence above.
-The structured prediction object must include exactly these fields: development, evidenceIds, timing, watchFor, and practicalAction. The prediction evidenceIds field must contain only IDs from the deterministic evidence pack. For sentence spreads, it must include both the closing card ID and the closing pair ID. The development must be supported by those cited IDs; do not forecast what happens after the final drawn card.
+The structured prediction object must include development, timing, watchFor, and practicalAction. Evidence provenance is normalized server-side; do not invent internal evidence IDs. The development must remain grounded in the supplied evidence; do not forecast what happens after the final drawn card.
 Do not include any timeframe, duration, or words such as "soon" or "within" in Interpretation or Most likely development. Put timing exclusively in Likely timing.
 
 Required labels (always include, in this order, with one sentence each):
@@ -547,7 +547,7 @@ export function buildPromptFromContext(context: ReadingContext): string {
     return `${withEvidence}\n\nADVICE OUTPUT CONTRACT (authoritative): Return mode=advice with practicalGuidance and guidanceEvidenceIds. Do not return prediction or timing fields. Answer how the questioner can act; keep card evidence and advice distinct.`;
   }
   if (context.semanticQuestion?.mode !== "forecast") {
-    return `${withEvidence}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
+    return `${withEvidence}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict and conclusion.statement. Evidence provenance is normalized server-side. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
   }
   return withEvidence;
 }

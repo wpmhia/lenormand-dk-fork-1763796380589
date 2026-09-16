@@ -6,7 +6,7 @@ import { buildClaimPlan } from "@/lib/claim-plan";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
-  evidenceIds: z.array(z.string().min(1)).min(1),
+  evidenceIds: z.array(z.string().min(1)).default([]),
   timing: z.string().min(1),
   watchFor: z.string().nullable(),
   practicalAction: z.string().nullable(),
@@ -15,12 +15,12 @@ const PredictionSchema = z.object({
 const RetrospectiveConclusionSchema = z.object({
   verdict: z.enum(["supported", "not_supported", "unresolved"]),
   statement: z.string().min(1),
-  evidenceIds: z.array(z.string().min(1)).min(1),
+  evidenceIds: z.array(z.string().min(1)).default([]),
 });
 
 const EvidenceSchema = z.array(z.object({
   pair: z.string().min(1),
-  evidenceIds: z.array(z.string().min(1)).min(1),
+  evidenceIds: z.array(z.string().min(1)).default([]),
   implication: z.string().min(1),
 })).min(1);
 
@@ -48,7 +48,7 @@ const AdviceReadingSchema = z.object({
   interpretation: z.string().min(1),
   evidence: EvidenceSchema,
   practicalGuidance: z.string().min(1),
-  guidanceEvidenceIds: z.array(z.string().min(1)).min(1),
+  guidanceEvidenceIds: z.array(z.string().min(1)).default([]),
 });
 
 const MultiCardReadingSchema = z.discriminatedUnion("mode", [ForecastReadingSchema, RetrospectiveReadingSchema, CurrentStateReadingSchema, AdviceReadingSchema]);
@@ -109,6 +109,36 @@ export function getStructuredReadingSchema(spreadId: string, mode: "forecast" | 
   if (spreadId === "single-card" || spreadId === "daily-card") return SingleCardReadingSchema;
   if (spreadId === "grand-tableau") return mode === "retrospective_event" ? GrandTableauRetrospectiveReadingSchema : mode === "current_state" ? GrandTableauCurrentStateReadingSchema : mode === "advice" ? GrandTableauAdviceReadingSchema : GrandTableauForecastReadingSchema;
   return mode === "retrospective_event" ? RetrospectiveReadingSchema : mode === "current_state" ? CurrentStateReadingSchema : mode === "advice" ? AdviceReadingSchema : ForecastReadingSchema;
+}
+
+export function normalizeStructuredEvidence(
+  reading: StructuredReading | SingleCardReading | GrandTableauReading,
+  context: ReadingContext,
+): StructuredReading | SingleCardReading | GrandTableauReading {
+  if (context.layout.type === "single") return reading;
+  const value = structuredClone(reading) as StructuredReading | GrandTableauReading;
+  const evidence = value.evidence.map((item) => {
+    if (item.evidenceIds.length > 0) return item;
+    const normalizedPair = item.pair.toLowerCase().split("+").map((part) => part.trim());
+    const pair = context.adjacentPairs.find((candidate) => {
+      const names = [candidate.cardA.name.toLowerCase(), candidate.cardB.name.toLowerCase()];
+      return normalizedPair.length === 2 && normalizedPair.every((name) => names.includes(name));
+    });
+    return pair ? { ...item, evidenceIds: [getPairEvidenceId(pair.indexA, pair.indexB)] } : item;
+  });
+  if ("prediction" in value && value.prediction.evidenceIds.length === 0) {
+    const ids = evidence.flatMap((item) => item.evidenceIds);
+    if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {
+      const last = context.cards.length - 1;
+      ids.push(getPairEvidenceId(last - 1, last), getCardEvidenceId(last));
+    }
+    value.prediction.evidenceIds = [...new Set(ids)];
+  }
+  if ("conclusion" in value && value.conclusion.evidenceIds.length === 0) {
+    value.conclusion.evidenceIds = [...new Set(evidence.flatMap((item) => item.evidenceIds))];
+  }
+  value.evidence = evidence;
+  return value;
 }
 
 function isGrandTableauReading(reading: StructuredReading | GrandTableauReading): reading is GrandTableauReading {

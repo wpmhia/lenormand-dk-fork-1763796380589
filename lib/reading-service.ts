@@ -2,6 +2,7 @@ import { generateText, Output, type LanguageModel } from "ai";
 import type { ReadingContext } from "@/lib/reading-context";
 import {
   getStructuredReadingSchema,
+  normalizeStructuredEvidence,
   renderStructuredReading,
   validateStructuredReading,
   isBlockingStructuredIssue,
@@ -36,24 +37,14 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const readingMode = context.semanticQuestion?.mode === "retrospective_event" || context.semanticQuestion?.mode === "current_state" || context.semanticQuestion?.mode === "advice" ? context.semanticQuestion.mode : "forecast";
   const schema = getStructuredReadingSchema(context.spreadId, readingMode);
   const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question, context.semanticQuestion);
-  const closingEvidenceInstruction = readingMode === "forecast" && (context.spreadId === "sentence-3" || context.spreadId === "sentence-5")
-    ? `For this sentence spread, prediction.evidenceIds must include "pair-${context.cards.length - 1}-${context.cards.length}" and "card-${context.cards.length}".`
-    : "";
-  const requiredPairIds = readingMode === "forecast" && (context.spreadId === "sentence-3" || context.spreadId === "sentence-5")
-    ? context.adjacentPairs
-      .filter((pair) => pair.indexB === pair.indexA + 1)
-      .map((pair) => `pair-${pair.indexA + 1}-${pair.indexB + 1}`)
-      .join(", ")
-    : "";
-  const structuredEvidenceInstruction = requiredPairIds
-    ? `For this spread, evidence[].evidenceIds must include exactly these adjacent pair IDs: ${requiredPairIds}.`
-    : "";
+  const closingEvidenceInstruction = "The server will attach evidence provenance after generation.";
+  const structuredEvidenceInstruction = "";
   const modeInstruction = readingMode === "advice"
-    ? "This is advice mode. Return mode=advice with interpretation, evidence, practicalGuidance, and guidanceEvidenceIds. Do not return prediction or timing fields."
+    ? "This is advice mode. Return mode=advice with interpretation, evidence, and practicalGuidance. Do not return prediction or timing fields."
     : readingMode !== "forecast"
-    ? `This is ${readingMode} mode. Return mode=${readingMode} and a conclusion object with verdict, statement, and evidenceIds. Do not return prediction or timing fields.`
+    ? `This is ${readingMode} mode. Return mode=${readingMode} and a conclusion object with verdict and statement. Do not return prediction or timing fields.`
     : "Return mode=forecast with the required prediction fields.";
-  const initialPrompt = `${prompt}\n\n${modeInstruction} Return only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
+  const initialPrompt = `${prompt}\n\n${modeInstruction} Return only the requested structured object. Evidence provenance is normalized server-side; do not create or manage internal evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
 
   const generate = (instruction: string, timeout: number, retries: number, promptOverride = prompt) => generateText({
     model,
@@ -68,7 +59,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   });
 
   const finalize = (output: unknown): { text: string; issues: ValidationIssue[] } => {
-    const structuredOutput = output as Parameters<typeof renderStructuredReading>[0];
+    const structuredOutput = normalizeStructuredEvidence(output as Parameters<typeof renderStructuredReading>[0], context) as Parameters<typeof renderStructuredReading>[0];
     const canonicalOutput = context.layout.type === "single"
       ? structuredOutput
       : withCanonicalPredictionTiming(structuredOutput as Exclude<typeof structuredOutput, never>, canonicalTiming);
