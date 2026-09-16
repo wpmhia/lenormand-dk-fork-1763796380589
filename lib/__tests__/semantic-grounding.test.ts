@@ -215,6 +215,12 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("Woman is unbound"))).toBe(true);
   });
 
+  it("allows bare Man and Woman card labels without binding people", () => {
+    const cards = [28, 29, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "What develops?", cards, cardsMap);
+    expect(validatePredictionSemantics("Man and Woman cards appear in the spread.", context)).toEqual([]);
+  });
+
   it("keeps unbound Man and Woman from becoming invented partners or third parties", () => {
     const cards = [28, 29, 15].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "What develops in this situation?", cards, cardsMap);
