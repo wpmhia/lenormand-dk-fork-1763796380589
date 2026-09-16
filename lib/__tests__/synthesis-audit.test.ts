@@ -10,6 +10,7 @@ const cards = [
 ];
 
 const reading = (development: string, evidenceIds = ["pair-1-2", "card-3"]) => ({
+  mode: "forecast" as const,
   interpretation: "Communication and uncertainty are present.",
   evidence: [{ pair: "Birds + Mountain", evidenceIds: ["pair-1-2"], implication: "Communication appears difficult or delayed." }],
   prediction: { development, evidenceIds, timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },

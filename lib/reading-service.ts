@@ -33,12 +33,13 @@ interface ReadingServiceOptions {
 
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const { context, model, system, prompt, cardCount, maxTokens, initialTimeoutMs, repairTimeoutMs, signal } = options;
-  const schema = getStructuredReadingSchema(context.spreadId);
+  const readingMode = context.semanticQuestion?.mode === "retrospective_event" ? "retrospective_event" : "forecast";
+  const schema = getStructuredReadingSchema(context.spreadId, readingMode);
   const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question, context.semanticQuestion);
-  const closingEvidenceInstruction = context.spreadId === "sentence-3" || context.spreadId === "sentence-5"
+  const closingEvidenceInstruction = readingMode === "forecast" && (context.spreadId === "sentence-3" || context.spreadId === "sentence-5")
     ? `For this sentence spread, prediction.evidenceIds must include "pair-${context.cards.length - 1}-${context.cards.length}" and "card-${context.cards.length}".`
     : "";
-  const requiredPairIds = context.spreadId === "sentence-3" || context.spreadId === "sentence-5"
+  const requiredPairIds = readingMode === "forecast" && (context.spreadId === "sentence-3" || context.spreadId === "sentence-5")
     ? context.adjacentPairs
       .filter((pair) => pair.indexB === pair.indexA + 1)
       .map((pair) => `pair-${pair.indexA + 1}-${pair.indexB + 1}`)
@@ -47,7 +48,10 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const structuredEvidenceInstruction = requiredPairIds
     ? `For this spread, evidence[].evidenceIds must include exactly these adjacent pair IDs: ${requiredPairIds}.`
     : "";
-  const initialPrompt = `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
+  const modeInstruction = readingMode === "retrospective_event"
+    ? "This is retrospective_event mode. Return mode=retrospective_event and a conclusion object with verdict, statement, and evidenceIds. Do not return prediction or timing fields."
+    : "Return mode=forecast with the required prediction fields.";
+  const initialPrompt = `${prompt}\n\n${modeInstruction} Return only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
 
   const generate = (instruction: string, timeout: number, retries: number, promptOverride = prompt) => generateText({
     model,
@@ -118,10 +122,10 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   }
 
   const repair = await generate(
-    `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. Preserve every explicit question subject exactly throughout the repaired interpretation, evidence implications, and prediction; never replace it with Man, Woman, he, or she. The object must include prediction fields development, evidenceIds, timing, watchFor, and practicalAction. ${structuredEvidenceInstruction} ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
+    `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. Preserve every explicit question subject exactly throughout the repaired interpretation, evidence implications, and ${readingMode === "retrospective_event" ? "conclusion" : "prediction"}; never replace it with Man, Woman, he, or she. ${modeInstruction} ${structuredEvidenceInstruction} ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
     repairTimeoutMs,
     0,
-    `${prompt}\n\nValidation failures (type: actionable message):\n${finalized.issues.map((issue) => `- ${issue.type}: ${issue.message}`).join("\n")}\n${structuredEvidenceInstruction}\n${closingEvidenceInstruction}\nReturn the complete structured object, including every required prediction field. Correct exactly these failures.`,
+    `${prompt}\n\nValidation failures (type: actionable message):\n${finalized.issues.map((issue) => `- ${issue.type}: ${issue.message}`).join("\n")}\n${modeInstruction}\n${structuredEvidenceInstruction}\n${closingEvidenceInstruction}\nReturn the complete structured object. Correct exactly these failures.`,
   );
   if (!repair.output) {
     logValidation("repair", 2, finalized);
