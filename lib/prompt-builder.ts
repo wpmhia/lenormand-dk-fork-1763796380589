@@ -542,7 +542,11 @@ export function buildPromptFromContext(context: ReadingContext): string {
     prompt += "\n\nRead each card primarily through its position meaning before combining with adjacent cards.";
   }
 
-  return appendEvidence(prompt, context);
+  const withEvidence = appendEvidence(prompt, context);
+  if (context.semanticQuestion?.mode === "retrospective_event") {
+    return `${withEvidence}\n\nRETROSPECTIVE OUTPUT CONTRACT (authoritative): Return mode=retrospective_event with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess only whether the past event is supported, not supported, or unresolved; do not state independent factual verification.`;
+  }
+  return withEvidence;
 }
 
 export function sanitizeQuestion(question: string): string {
