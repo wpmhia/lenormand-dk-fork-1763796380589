@@ -93,8 +93,10 @@ const SEXUAL_QUESTION_PATTERN = /\b(?:sex|seks|sexual|seksuele|intimacy|intimate
 const SEXUAL_ANSWER_PATTERN = /\b(?:sex|seks|sexual intimacy|seksuele intimiteit|intimacy|intimate|intercourse|intiem|intimiteit|toenadering)\b/i;
 const EXACT_SEX_QUESTION_PATTERN = /\b(?:sex|seks|intercourse)\b/i;
 const EXACT_SEX_ANSWER_PATTERN = /\b(?:sex|seks|intercourse)\b/i;
-const MALE_ENTITY_PATTERN = /\b(?:the|a|another)?\s*man\b|\b(?:he|him|his|husband|boyfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?man\b/i;
-const FEMALE_ENTITY_PATTERN = /\b(?:the|a|another)?\s*woman\b|\b(?:she|her|hers|wife|girlfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?woman\b/i;
+// Bare "Man"/"Woman" is a card label and must remain legal, especially in
+// Grand Tableau commentary. Only a grammatical person reference is binding.
+const MALE_ENTITY_PATTERN = /\b(?:the|a|another)\s+man\b|\bman\s+in\b|\bman\s+(?=and|is|are|will|has|does)\b|\b(?:he|him|his|husband|boyfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?man\b/i;
+const FEMALE_ENTITY_PATTERN = /\b(?:the|a|another)\s+woman\b|\bwoman\s+in\b|\bwoman\s+(?=and|is|are|will|has|does)\b|\b(?:she|her|hers|wife|girlfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?woman\b/i;
 const BEAR_ENTITY_PATTERN = /\b(?:boss|manager|authority figure|parent|rival|another partner|someone in (?:a )?position of power)\b/i;
 const PATHS_TREE_EXPANSION_PATTERN = /\b(?:lasting consequences?|well[- ]?being|stability|stable future)\b/i;
 const SNAKE_ENTITY_PATTERN = /\b(?:female rival|rival|mistress|other woman|competitor|enemy)\b/i;
@@ -254,7 +256,7 @@ export function validatePredictionSemantics(
     }
   }
 
-  const personText = development.replace(/\b(?:the )?(?:man|woman) card\b/gi, "");
+  const personText = development.replace(/\b(?:the )?(?:man|woman)(?:\s+and\s+(?:man|woman))?\s+cards?\b/gi, "");
   for (const [cardId, pattern, label] of [[28, MALE_ENTITY_PATTERN, "Man"], [29, FEMALE_ENTITY_PATTERN, "Woman"]] as const) {
     if (!cardIds.has(cardId) || !pattern.test(personText)) continue;
     const binding = context.personBindings.find((candidate) => candidate.cardId === cardId);
