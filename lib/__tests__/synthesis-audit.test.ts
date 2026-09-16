@@ -12,7 +12,7 @@ const cards = [
 const reading = (development: string, evidenceIds = ["pair-1-2", "card-3"]) => ({
   mode: "forecast" as const,
   interpretation: "Communication and uncertainty are present.",
-  evidence: [{ claimId: "pair-1-2", pair: "Birds + Mountain", evidenceIds: ["pair-1-2"], implication: "Communication appears difficult or delayed." }],
+  evidence: [{ pair: "Birds + Mountain", evidenceIds: ["pair-1-2"], implication: "Communication appears difficult or delayed." }],
   prediction: { development, evidenceIds, claimIds: ["question-predicate", "pair-1-2"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
 });
 
@@ -33,7 +33,7 @@ describe("claim-level synthesis audit", () => {
     const context = buildReadingContext("sentence-3", "What develops?", cards, new Map());
     const result = auditStructuredSynthesis({
       ...reading("In Lenormand, Birds + Mountain means a fixed three-week delay."),
-      evidence: [{ claimId: "pair-1-2", pair: "Birds + Mountain", evidenceIds: ["pair-1-2"], implication: "In Lenormand, this pair means a fixed delay." }],
+      evidence: [{ pair: "Birds + Mountain", evidenceIds: ["pair-1-2"], implication: "In Lenormand, this pair means a fixed delay." }],
     }, buildEvidenceEnvelope(context));
     expect(result.violations.some((violation) => violation.code === "unreviewed_pair_expansion")).toBe(true);
   });
