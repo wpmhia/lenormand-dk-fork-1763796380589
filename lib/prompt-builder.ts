@@ -5,6 +5,7 @@ import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
+import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
@@ -550,6 +551,22 @@ export function buildPromptFromContext(context: ReadingContext): string {
     return `${withEvidence}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict and conclusion.statement. Evidence provenance is normalized server-side. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
   }
   return withEvidence;
+}
+
+/** Compact production reader prompt: code supplies spread facts, the model synthesizes. */
+export function buildSimpleReadingPrompt(context: ReadingContext): string {
+  const cards = context.cards.map((card, index) => `${index + 1}. ${card.name}`).join("\n");
+  const pairs = context.adjacentPairs.map((pair) => {
+    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning; combine the individual cards cautiously";
+    return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
+  }).join("\n");
+  const modeInstruction = context.semanticQuestion?.mode === "advice"
+    ? "The question asks for advice. Give practical guidance, not a forecast."
+    : context.semanticQuestion?.mode !== "forecast"
+      ? "The question asks about a current or past state. Give a qualified conclusion, not a future forecast."
+      : "Answer the forecast question directly, preserving uncertainty where the cards do not decide it.";
+
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\nCards in order:\n${cards}\n\nSpread: ${context.spreadId}\n${context.situationContext ? `Known situation context: ${context.situationContext}\nUse it to understand specificity, not as card evidence.\n` : ""}\nLocal pair references:\n${pairs || "No reviewed pair meanings are available; read the cards and positions together."}\n\nMethod:\n- Read the cards as a connected Lenormand sentence in their supplied order and positions.\n- Interpret them specifically in relation to the exact user question.\n- Adjacent combinations matter; do not invent relations between unrelated cards.\n- Do not invent events, motives, history, entities, or exact timing.\n- Preserve the distinction between what the questioner can do and what another person chooses to do.\n- ${modeInstruction}\n\nReturn only this structured object:\n{\n  "mode": "${context.semanticQuestion?.mode || "forecast"}",\n  "interpretation": "...",\n  "cards": [{ "pair": "...", "implication": "..." }],\n  "answer": "...",\n  "verdict": "supported | not_supported | unresolved | null",\n  "timing": "... or null",\n  "watchFor": "... or null",\n  "practicalAction": "... or null"\n}\nDo not output Markdown or internal evidence IDs.`;
 }
 
 export function sanitizeQuestion(question: string): string {

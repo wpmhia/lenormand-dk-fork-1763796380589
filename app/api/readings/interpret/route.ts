@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-import { buildPromptFromContext, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
+import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
     const semanticQuestion = await parseQuestionFrame(validated.question, mistral(MISTRAL_PRODUCTION_MODEL), parserSignal);
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
-    const prompt = buildPromptFromContext(context);
+    const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     const repairBudgetMs = Math.min(getReadingRepairTimeoutMs(cardCount), Math.max(1_000, remainingMs - responseReserveMs));
