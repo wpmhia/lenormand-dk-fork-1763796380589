@@ -448,6 +448,7 @@ function buildGrandTableauLayout(
   cardsMap: Map<number, Card>,
   significatorPreference: "woman" | "man" | "both" = "both",
   question: string = "",
+  semanticQuestion: SemanticQuestionFrame | null = null,
 ): GrandTableauLayout {
   const grid: GridCell[][] = [];
   for (let r = 0; r < 4; r++) {
@@ -500,9 +501,9 @@ function buildGrandTableauLayout(
       primarySignificator = significators.man;
       primarySignificatorSource = "default";
     } else if (significators.woman && significators.man) {
-      const lowerQ = question.toLowerCase();
-      const maleReferent = /\b(he|him|his|husband|boyfriend|fiance|gentleman|male)\b/.test(lowerQ);
-      const femaleReferent = /\b(she|her|hers|wife|girlfriend|fiancee|lady|female)\b/.test(lowerQ);
+      const lowerQ = semanticQuestion ? "" : question.toLowerCase();
+      const maleReferent = !semanticQuestion && /\b(he|him|his|husband|boyfriend|fiance|gentleman|male)\b/.test(lowerQ);
+      const femaleReferent = !semanticQuestion && /\b(she|her|hers|wife|girlfriend|fiancee|lady|female)\b/.test(lowerQ);
       if (maleReferent && !femaleReferent) {
         primarySignificator = significators.man;
         primarySignificatorSource = "referent";
@@ -614,7 +615,7 @@ export function buildReadingContext(
       adjacentPairs = buildPetitTableauPairs(cards, cardsMap);
       break;
     case "grand-tableau":
-      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference, question);
+      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference, question, semanticQuestion);
       adjacentPairs = buildGrandTableauPairs(cards, cardsMap, layout);
       break;
     default:
@@ -635,9 +636,28 @@ export function buildReadingContext(
   const questionFrame = semanticQuestion
     ? { domain: semanticQuestion.domain, instruction: `Answer the ${semanticQuestion.mode} question about ${semanticQuestion.predicate}.` }
     : getQuestionFrame(question);
-  const personBindings = derivePersonBindings(question, significatorPreference);
+  const personBindings = semanticQuestion
+    ? (significatorPreference === "woman" ? [{ cardId: 29 as const, source: "explicit-significator" as const, evidence: "The request explicitly selected Woman as the significator." }] : significatorPreference === "man" ? [{ cardId: 28 as const, source: "explicit-significator" as const, evidence: "The request explicitly selected Man as the significator." }] : [])
+    : derivePersonBindings(question, significatorPreference);
   const questionSubjects = semanticQuestion?.subject ? [semanticQuestion.subject] : deriveQuestionSubjects(question);
   const topicFocus: TopicFocus[] = [];
+  if (semanticQuestion) {
+    return {
+      spreadId,
+      question,
+      situationContext,
+      semanticQuestion,
+      questionDomain: questionFrame.domain,
+      questionFrame: questionFrame.instruction,
+      cards,
+      adjacentPairs,
+      layout,
+      timingEvidence,
+      topicFocus,
+      personBindings,
+      questionSubjects,
+    };
+  }
   const lowerQ = question.toLowerCase();
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(lowerQ);
   const explicitHealth = /\b(illness|disease|pain|symptom|diagnosis|treatment|surgery|recovery|health|wellness|medical condition)\b/i.test(lowerQ);
