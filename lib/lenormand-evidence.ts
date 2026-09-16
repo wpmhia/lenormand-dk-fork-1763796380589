@@ -157,9 +157,7 @@ export function buildLenormandEvidencePack(context: ReadingContext): string {
   if (context.layout.type === "grand-tableau") {
     lines.push("Grand Tableau house evidence:");
     for (const house of context.layout.houses) {
-      if (getGrandTableauPromptedHouseIds(context.layout).has(house.houseCardId)) {
-        lines.push(`- house-${house.houseCardId}: House of ${house.houseName}, position ${house.position}, occupied by ${house.occupyingCard.name}`);
-      }
+      lines.push(`- house-${house.houseCardId}: House of ${house.houseName}, position ${house.position}, occupied by ${house.occupyingCard.name}`);
     }
     lines.push("Grand Tableau positional relations:");
     for (const pair of context.layout.verticalPairs) {

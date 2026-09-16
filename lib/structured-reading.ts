@@ -156,7 +156,7 @@ export function validateStructuredReading(
     for (let position = 1; position <= context.cards.length; position++) {
       allowedEvidenceIds.add(`position-${position}`);
     }
-    for (const houseId of getGrandTableauPromptedHouseIds(context.layout)) allowedEvidenceIds.add(`house-${houseId}`);
+    for (const house of context.layout.houses) allowedEvidenceIds.add(`house-${house.houseCardId}`);
   }
   if ("conclusion" in multiReading) {
     const conclusionIds = new Set(multiReading.conclusion.evidenceIds);
