@@ -25,10 +25,10 @@ function reading(ids: number[], question: string, development: string) {
   const value = getStructuredReadingSchema("sentence-3").parse({
     interpretation: "The cards describe a concrete situation developing through linked events.",
     evidence: [
-      { pair: "first", evidenceIds: ["pair-1-2"] , implication: "The opening combination starts the situation." },
-      { pair: "closing", evidenceIds: ["pair-2-3"], implication: "The closing combination describes the outcome." },
+      { claimId: "pair-1-2", pair: "first", evidenceIds: ["pair-1-2"] , implication: "The opening combination starts the situation." },
+      { claimId: "pair-2-3", pair: "closing", evidenceIds: ["pair-2-3"], implication: "The closing combination describes the outcome." },
     ],
-    prediction: { development, evidenceIds: ["card-1", "pair-2-3", "card-3"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
+    prediction: { development, evidenceIds: ["card-1", "pair-2-3", "card-3"], claimIds: ["question-predicate", "pair-2-3"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
   });
   return validateStructuredReading(value, context);
 }
@@ -54,8 +54,8 @@ describe("deterministic prediction semantic grounding", () => {
     const context = buildReadingContext("sentence-3", "What develops?", cards, cardsMap);
     const value = getStructuredReadingSchema("sentence-3").parse({
       interpretation: "The cards describe a concrete situation.",
-      evidence: [{ pair: "opening", evidenceIds: ["pair-1-2"], implication: "The situation starts." }],
-      prediction: { development: "A development follows.", evidenceIds: ["pair-1-2"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
+      evidence: [{ claimId: "pair-1-2", pair: "opening", evidenceIds: ["pair-1-2"], implication: "The situation starts." }],
+      prediction: { development: "A development follows.", evidenceIds: ["pair-1-2"], claimIds: ["question-predicate"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
     });
     const messages = validateStructuredReading(value, context).map((issue) => issue.message);
     expect(messages).toContain('Prediction must cite closing evidence "pair-2-3"');

@@ -46,6 +46,24 @@ export function buildClaimPlan(context: ReadingContext): ClaimPlan {
     });
   }
 
+  for (const [index] of context.cards.entries()) {
+    claims.push({ id: `card-${index + 1}`, subject: "situation", predicate: "card_meaning", modality: "suggested", polarity: "unresolved", evidenceIds: [`card-${index + 1}`], bindingIds: [], proposition: null });
+  }
+  if (context.layout.type === "grand-tableau") {
+    for (const position of context.layout.grid.flat()) {
+      claims.push({ id: `position-${position.index + 1}`, subject: "situation", predicate: "position_context", modality: "suggested", polarity: "unresolved", evidenceIds: [`position-${position.index + 1}`], bindingIds: [], proposition: null });
+    }
+    for (const house of context.layout.houses) {
+      claims.push({ id: `house-${house.houseCardId}`, subject: "situation", predicate: "house_relation", modality: "suggested", polarity: "unresolved", evidenceIds: [`house-${house.houseCardId}`], bindingIds: [], proposition: null });
+    }
+    for (const mirror of context.layout.mirrors) {
+      claims.push({ id: `mirror-${mirror.cardA.id}-${mirror.cardB.id}`, subject: "situation", predicate: "mirror_relation", modality: "suggested", polarity: "unresolved", evidenceIds: [`mirror-${mirror.cardA.id}-${mirror.cardB.id}`], bindingIds: [], proposition: null });
+    }
+  }
+  if (context.timingEvidence.length > 0) {
+    claims.push({ id: "timing-1", subject: "event", predicate: "timing", modality: "supported", polarity: "neutral", evidenceIds: ["timing-1"], bindingIds: [], proposition: null });
+  }
+
   const subject = semantic?.subject || context.questionSubjects[0] || null;
   const primaryEvidence = context.adjacentPairs.map((pair) => getPairEvidenceId(pair.indexA, pair.indexB));
   claims.push({

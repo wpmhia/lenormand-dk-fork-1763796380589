@@ -101,8 +101,8 @@ describe("spread-aware structured reading contract", () => {
   ])("uses the multi-card contract for %s (%i cards)", (spreadId) => {
     const parsed = getStructuredReadingSchema(spreadId).safeParse({
       interpretation: "The cards describe a concrete situation developing through linked events and practical circumstances.",
-      evidence: [{ pair: "Card A + Card B", evidenceIds: ["pair-1"], implication: "The combination gives the situation a clear direction." }],
-      prediction: { development: "The situation develops through a clear practical next step.", evidenceIds: ["pair-1-2", "card-3"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
+      evidence: [{ claimId: "pair-1-2", pair: "Card A + Card B", evidenceIds: ["pair-1"], implication: "The combination gives the situation a clear direction." }],
+      prediction: { development: "The situation develops through a clear practical next step.", evidenceIds: ["pair-1-2", "card-3"], claimIds: ["question-predicate"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
     });
     expect(parsed.success).toBe(true);
   });
@@ -133,8 +133,8 @@ describe("spread-aware structured reading contract", () => {
     const parsed = getStructuredReadingSchema("grand-tableau").parse({
       interpretation: "The tableau shows a practical situation developing through people, choices, and unresolved conditions.",
       housesAndMirrors: [{ house: "House of Communication", meaning: "A message or discussion occupies this life area and makes the issue more concrete." }],
-      evidence: [{ pair: "Birds + Letter", evidenceIds: ["pair-1"], implication: "Communication becomes the active mechanism in this situation." }],
-      prediction: { development: "A concrete exchange is the most likely next development.", evidenceIds: ["pair-1-2", "card-2"], timing: "Within days.", watchFor: null, practicalAction: null },
+      evidence: [{ claimId: "pair-1-2", pair: "Birds + Letter", evidenceIds: ["pair-1"], implication: "Communication becomes the active mechanism in this situation." }],
+      prediction: { development: "A concrete exchange is the most likely next development.", evidenceIds: ["pair-1-2", "card-2"], claimIds: ["question-predicate"], timing: "Within days.", watchFor: null, practicalAction: null },
     });
     const rendered = renderStructuredReading(parsed, "grand-tableau");
     expect(rendered).toContain("## Houses and mirrors");
@@ -146,8 +146,8 @@ describe("spread-aware structured reading contract", () => {
     const three = buildReadingContext("sentence-3", "Will I hear back?", normalized([12, 27, 26]), cardsMap);
     const value = getStructuredReadingSchema("sentence-3").parse({
       interpretation: "The cards describe communication developing through a practical exchange and unresolved details.",
-      evidence: [{ pair: "Birds + Letter", evidenceIds: ["made-up-xyz"], implication: "A message becomes important." }],
-      prediction: { development: "A message is the likely next development.", evidenceIds: ["pair-2-3", "card-3"], timing: "Within days.", watchFor: null, practicalAction: null },
+       evidence: [{ claimId: "pair-1-2", pair: "Birds + Letter", evidenceIds: ["made-up-xyz"], implication: "A message becomes important." }],
+      prediction: { development: "A message is the likely next development.", evidenceIds: ["pair-2-3", "card-3"], claimIds: ["question-predicate"], timing: "Within days.", watchFor: null, practicalAction: null },
     });
     const issues = validateStructuredReading(value, three).map((issue) => issue.message);
     expect(issues).toContain('Structured evidence cites unknown evidence ID: "made-up-xyz"');
@@ -157,8 +157,8 @@ describe("spread-aware structured reading contract", () => {
     const five = buildReadingContext("sentence-5", "What develops next?", normalized([1, 2, 3, 4, 5]), cardsMap);
     const fiveValue = getStructuredReadingSchema("sentence-5").parse({
       interpretation: "The line describes a practical sequence developing through several connected events and choices.",
-      evidence: [{ pair: "Card 1 + Card 2", evidenceIds: ["pair-1-2"], implication: "The opening combination starts the development." }],
-      prediction: { development: "The sequence continues through a practical next step.", evidenceIds: ["pair-4-5", "card-5"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
+       evidence: [{ claimId: "pair-1-2", pair: "Card 1 + Card 2", evidenceIds: ["pair-1-2"], implication: "The opening combination starts the development." }],
+      prediction: { development: "The sequence continues through a practical next step.", evidenceIds: ["pair-4-5", "card-5"], claimIds: ["question-predicate"], timing: "Not clearly shown by these cards.", watchFor: null, practicalAction: null },
     });
     const fiveIssues = validateStructuredReading(fiveValue, five).map((issue) => issue.message);
     expect(fiveIssues).toContain('Structured evidence is missing required pair ID: "pair-2-3"');
