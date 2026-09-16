@@ -2,7 +2,6 @@ import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
 import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
-import { buildClaimPlan } from "@/lib/claim-plan";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
@@ -80,7 +79,7 @@ Synthesis disciplines (apply to all spreads):
 - Direct-answer specificity. When the question asks about an explicit event or outcome, the Prediction development must name that event or outcome directly. Do not replace a sexual-intimacy question with "a successful outcome", "a clear outcome", or "the situation develops"; state whether sexual intimacy is supported, unresolved, or not established. Keep timing separate in Likely timing.
 - Evidence discipline. Preserve the direction, polarity, and severity of the cards. Don't soften a difficult combination into a reassuring one, and don't magnify a mild one into a crisis. If the evidence leans adverse, say so clearly while preserving appropriate uncertainty.
 - Grounding discipline. Introduce concrete specifics (people, documents, events, organizations, places, costs, outcomes) only when they are established by the question/context or supported by the drawn cards. Do not add cards that were not drawn.
-- Evidence-envelope discipline. The deterministic evidence pack is the complete semantic envelope for this reading. Card meanings are question-scoped licensed meanings, pair meanings are the only supplied combination claims, polarity is metadata rather than an instruction for the final answer, and an observation window is not independent card timing. Synthesize fluently from this envelope; do not expand a meaning into a more specific entity, event, cause, prerequisite, duration, or outcome.
+ - Evidence-envelope discipline. The deterministic evidence pack is the primary provenance reference for this reading. Pair meanings marked unknown are not reviewed doctrine, but the LLM may cautiously synthesize supplied individual card meanings and positions. Do not invent a more specific entity, event, cause, prerequisite, duration, or factual certainty than the evidence supports.
 - Semantic scope rule. Modifiers belong only to the concept they modify in the supplied evidence. A temporary opportunity means the opportunity/window is temporary; it does not establish that the resulting relationship, improvement, job, move, or other outcome is temporary. Do not transfer duration, permanence, severity, certainty, or causality from one evidence concept to another unless the evidence explicitly supports it. Scythe means a sharp decision or sudden separation, not automatically a definitive ending. Cross means a heavy outcome, not automatically that a relationship ends. Child means a new beginning in the love domain, not automatically a younger person.
 - Choice/outcome rule. A choice card establishes that a decision, fork, or alternative exists. It does not establish the outcome, quality, or destination of each option unless supplied evidence explicitly qualifies those options. Do not infer that neither path, both paths, or no option leads to stability, success, commitment, failure, separation, or another specific outcome merely from Paths.
 - Causality and agency rule. Do not infer an unchosen action from the existence of a solution, the outcome of an unresolved choice, a causal influence between unrelated cards, or certainty/severity beyond the supplied evidence.
@@ -544,15 +543,13 @@ export function buildPromptFromContext(context: ReadingContext): string {
   }
 
   const withEvidence = appendEvidence(prompt, context);
-  const claimPlan = buildClaimPlan(context);
-  const planInstruction = `\n\nDeterministic evidence graph (authoritative provenance boundary):\n${JSON.stringify(claimPlan, null, 2)}\nUse this graph to preserve subjects, predicates, bindings, positions, and evidence references. You may synthesize a fluent Lenormand interpretation from the supplied evidence; this graph is not a list of exact sentences. Do not create a more specific entity, event, causal relation, timing, or outcome without graph support.`;
   if (context.semanticQuestion?.mode === "advice") {
-    return `${withEvidence}${planInstruction}\n\nADVICE OUTPUT CONTRACT (authoritative): Return mode=advice with practicalGuidance and guidanceEvidenceIds. Do not return prediction or timing fields. Answer how the questioner can act; keep card evidence and advice distinct.`;
+    return `${withEvidence}\n\nADVICE OUTPUT CONTRACT (authoritative): Return mode=advice with practicalGuidance and guidanceEvidenceIds. Do not return prediction or timing fields. Answer how the questioner can act; keep card evidence and advice distinct.`;
   }
   if (context.semanticQuestion?.mode !== "forecast") {
-    return `${withEvidence}${planInstruction}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
+    return `${withEvidence}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
   }
-  return `${withEvidence}${planInstruction}`;
+  return withEvidence;
 }
 
 export function sanitizeQuestion(question: string): string {
