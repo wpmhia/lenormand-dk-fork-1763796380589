@@ -56,15 +56,15 @@ function grandTableauDistance(a: number, b: number): number {
   return Math.max(Math.abs(ar - br), Math.abs(ac - bc));
 }
 
-function pairMeaning(pair: AdjacentPair): string | undefined {
+function pairMeaning(pair: AdjacentPair, context: ReadingContext): string | undefined {
   return getUsableLenormandPairMeaning(
     // Pair evidence is symmetric unless the reviewed corpus explicitly says otherwise.
     // Directional support is intentionally not invented here.
-    getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id),
+    getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion),
   );
 }
 
-function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLayout, pairs: AdjacentPair[]): PredictionContext {
+function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLayout, pairs: AdjacentPair[], context: ReadingContext): PredictionContext {
   const last = cards.length >= 1 ? cards[cards.length - 1] : null;
   const secondLast = cards.length >= 2 ? cards[cards.length - 2] : null;
   const middle = cards.length % 2 === 1 ? cards[Math.floor(cards.length / 2)] : null;
@@ -92,7 +92,7 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     b: p.cardB,
     indexA: p.indexA,
     indexB: p.indexB,
-    meaning: pairMeaning(p),
+    meaning: pairMeaning(p, context),
     weight: p.weight,
   }));
 
@@ -104,10 +104,10 @@ function buildLinearPrediction(cards: NormalizedCard[], layout: LinearSentenceLa
     developmentCard,
     coreDriverCard: middle,
     primaryPair: last && secondLast
-       ? { a: secondLast, b: last, meaning: lastPair ? pairMeaning(lastPair) : undefined }
+       ? { a: secondLast, b: last, meaning: lastPair ? pairMeaning(lastPair, context) : undefined }
       : null,
     supportingPair: cards.length >= 2
-       ? { a: cards[0], b: cards[1], meaning: firstPair ? pairMeaning(firstPair) : undefined }
+       ? { a: cards[0], b: cards[1], meaning: firstPair ? pairMeaning(firstPair, context) : undefined }
       : null,
     allPairs,
     significatorEvidence: [],
@@ -249,7 +249,7 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
   // entries (those duplicated the same information and let Mistral pick the wrong
   // one as canonical).
   const timingLines: PredictionEvidenceLine[] = [
-    { label: "Permitted timing", value: buildPredictionTimingLine(timingEvidence, context.question) },
+    { label: "Permitted timing", value: buildPredictionTimingLine(timingEvidence, context.question, context.semanticQuestion) },
   ];
 
   let base: PredictionContext;
@@ -258,7 +258,7 @@ export function buildPredictionContext(context: ReadingContext): PredictionConte
   } else if (layout.type === "grand-tableau") {
     base = buildGrandPrediction(cards, layout, adjacentPairs);
   } else if (layout.type === "linear-sentence") {
-    base = buildLinearPrediction(cards, layout, adjacentPairs);
+    base = buildLinearPrediction(cards, layout, adjacentPairs, context);
   } else {
     base = {
       layoutType: "single",

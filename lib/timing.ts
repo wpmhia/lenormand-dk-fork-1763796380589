@@ -1,4 +1,5 @@
 import { TimingEvidence } from "@/lib/reading-context";
+import type { QuestionFrame } from "@/lib/question-frame";
 
 export type TimingRangeKey = "days" | "weeks" | "months" | "long-term";
 
@@ -67,7 +68,12 @@ export const NO_TIMING_INSTRUCTION =
 
 type ObservationHorizon = "days" | "weeks" | "months" | null;
 
-export function getObservationHorizon(question?: string): ObservationHorizon {
+export function getObservationHorizon(question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe"> | null): ObservationHorizon {
+  if (semanticQuestion?.timeframe) {
+    if (semanticQuestion.timeframe.unit === "day") return "days";
+    if (semanticQuestion.timeframe.unit === "week") return "weeks";
+    if (semanticQuestion.timeframe.unit === "month" || semanticQuestion.timeframe.unit === "year") return "months";
+  }
   if (!question) return null;
   if (/\b(?:today|tonight|this weekend|within \d+\s+days?|binnen \d+\s+dagen?|deze week|this week|coming week|komende week|next week)\b/i.test(question)) return "days";
   if (/\b(?:coming|next|komende|volgende)\s+(?:two |three |four )?weeks?\b/i.test(question)) return "weeks";
@@ -98,8 +104,8 @@ function scopedTimingOutput(definition: TimingCardDefinition, horizon: Observati
  * Build the deterministic timing line for the Prediction contract.
  * This is what the model is told to repeat verbatim in **Likely timing:**.
  */
-export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string): string {
-  const horizon = getObservationHorizon(question);
+export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe"> | null): string {
+  const horizon = getObservationHorizon(question, semanticQuestion);
   const recognised: TimingCardDefinition[] = [];
   for (const te of timingEvidence) {
     const def = getTimingCard(te.cardId);
@@ -137,8 +143,8 @@ export type RequiredPredictionField = (typeof REQUIRED_PREDICTION_FIELDS)[number
 export type OptionalPredictionField = (typeof OPTIONAL_PREDICTION_FIELDS)[number];
 export type AllPredictionField = (typeof ALL_PREDICTION_FIELDS)[number];
 
-export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[], question?: string): string {
-  const horizon = getObservationHorizon(question);
+export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe"> | null): string {
+  const horizon = getObservationHorizon(question, semanticQuestion);
   const recognised: TimingCardDefinition[] = [];
   for (const te of timingEvidence) {
     const def = getTimingCard(te.cardId);

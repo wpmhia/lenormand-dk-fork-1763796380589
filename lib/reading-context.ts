@@ -636,7 +636,7 @@ export function buildReadingContext(
     ? { domain: semanticQuestion.domain, instruction: `Answer the ${semanticQuestion.intent} question about ${semanticQuestion.predicate}.` }
     : getQuestionFrame(question);
   const personBindings = derivePersonBindings(question, significatorPreference);
-  const questionSubjects = deriveQuestionSubjects(question);
+  const questionSubjects = semanticQuestion?.subject ? [semanticQuestion.subject] : deriveQuestionSubjects(question);
   const topicFocus: TopicFocus[] = [];
   const lowerQ = question.toLowerCase();
   const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(lowerQ);
