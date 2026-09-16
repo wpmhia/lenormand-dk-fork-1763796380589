@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
 import { validateEntityEvidenceBinding, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
+import { buildClaimPlan } from "@/lib/claim-plan";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
@@ -9,15 +10,18 @@ const PredictionSchema = z.object({
   timing: z.string().min(1),
   watchFor: z.string().nullable(),
   practicalAction: z.string().nullable(),
+  claimIds: z.array(z.string().min(1)).min(1),
 });
 
 const RetrospectiveConclusionSchema = z.object({
   verdict: z.enum(["supported", "not_supported", "unresolved"]),
   statement: z.string().min(1),
   evidenceIds: z.array(z.string().min(1)).min(1),
+  claimIds: z.array(z.string().min(1)).min(1),
 });
 
 const EvidenceSchema = z.array(z.object({
+  claimId: z.string().min(1),
   pair: z.string().min(1),
   evidenceIds: z.array(z.string().min(1)).min(1),
   implication: z.string().min(1),
@@ -146,6 +150,8 @@ export function validateStructuredReading(
   if (context.layout.type === "single") return [];
 
   const multiReading = reading as StructuredReading | GrandTableauReading;
+  const claimPlan = buildClaimPlan(context);
+  const claimById = new Map(claimPlan.claims.map((claim) => [claim.id, claim]));
   const issues: StructuredReadingIssue[] = [];
   const allowedEvidenceIds = new Set([
     ...context.cards.map((_, index) => getCardEvidenceId(index)),
@@ -164,14 +170,24 @@ export function validateStructuredReading(
     issues.push(...validateQuestionSubjectPreservation(multiReading.conclusion.statement, context, "prediction"));
     issues.push(...validateEntityEvidenceBinding(multiReading.conclusion.statement, new Set(multiReading.conclusion.evidenceIds), context));
     for (const item of multiReading.evidence) {
+      const claim = claimById.get(item.claimId);
+      if (!claim) issues.push({ type: "ungrounded_evidence", message: `Evidence cites unknown ClaimPlan claim: "${item.claimId}"` });
+      else if (claim.evidenceIds.some((id) => !item.evidenceIds.includes(id))) issues.push({ type: "ungrounded_evidence", message: `Evidence for claim "${item.claimId}" does not include its ClaimPlan evidence.` });
       for (const id of item.evidenceIds) if (!allowedEvidenceIds.has(id)) issues.push({ type: "ungrounded_evidence", message: `Structured evidence cites unknown evidence ID: "${id}"` });
       issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
       issues.push(...validateEntityEvidenceBinding(item.implication, new Set(item.evidenceIds), context));
     }
+    for (const claimId of multiReading.conclusion.claimIds) if (!claimById.has(claimId)) issues.push({ type: "ungrounded_prediction", message: `Conclusion cites unknown ClaimPlan claim: "${claimId}"` });
     return issues;
   }
   const citedIds = new Set(multiReading.evidence.flatMap((item) => item.evidenceIds));
   const predictionEvidenceIds = new Set(multiReading.prediction.evidenceIds);
+  for (const item of multiReading.evidence) {
+    const claim = claimById.get(item.claimId);
+    if (!claim) issues.push({ type: "ungrounded_evidence", message: `Evidence cites unknown ClaimPlan claim: "${item.claimId}"` });
+    else if (claim.evidenceIds.some((id) => !item.evidenceIds.includes(id))) issues.push({ type: "ungrounded_evidence", message: `Evidence for claim "${item.claimId}" does not include its ClaimPlan evidence.` });
+  }
+  for (const claimId of multiReading.prediction.claimIds) if (!claimById.has(claimId)) issues.push({ type: "ungrounded_prediction", message: `Prediction cites unknown ClaimPlan claim: "${claimId}"` });
 
   for (const id of citedIds) {
     if (!allowedEvidenceIds.has(id)) {
