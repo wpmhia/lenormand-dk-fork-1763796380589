@@ -36,8 +36,14 @@ const RetrospectiveReadingSchema = z.object({
   evidence: EvidenceSchema,
   conclusion: RetrospectiveConclusionSchema,
 });
+const CurrentStateReadingSchema = z.object({
+  mode: z.literal("current_state"),
+  interpretation: z.string().min(1),
+  evidence: EvidenceSchema,
+  conclusion: RetrospectiveConclusionSchema,
+});
 
-const MultiCardReadingSchema = z.discriminatedUnion("mode", [ForecastReadingSchema, RetrospectiveReadingSchema]);
+const MultiCardReadingSchema = z.discriminatedUnion("mode", [ForecastReadingSchema, RetrospectiveReadingSchema, CurrentStateReadingSchema]);
 
 const SingleCardReadingSchema = z.object({
   interpretation: z.string().min(1),
@@ -52,7 +58,10 @@ const GrandTableauForecastReadingSchema = ForecastReadingSchema.extend({
 const GrandTableauRetrospectiveReadingSchema = RetrospectiveReadingSchema.extend({
   housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
 });
-const GrandTableauReadingSchema = z.discriminatedUnion("mode", [GrandTableauForecastReadingSchema, GrandTableauRetrospectiveReadingSchema]);
+const GrandTableauCurrentStateReadingSchema = CurrentStateReadingSchema.extend({
+  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
+});
+const GrandTableauReadingSchema = z.discriminatedUnion("mode", [GrandTableauForecastReadingSchema, GrandTableauRetrospectiveReadingSchema, GrandTableauCurrentStateReadingSchema]);
 
 /** Kept as the default multi-card schema for callers that do not have a spread id. */
 export const StructuredReadingSchema = MultiCardReadingSchema;
@@ -63,10 +72,10 @@ export type StructuredReading = z.infer<typeof MultiCardReadingSchema>;
 export type SingleCardReading = z.infer<typeof SingleCardReadingSchema>;
 export type GrandTableauReading = z.infer<typeof GrandTableauReadingSchema>;
 
-export function getStructuredReadingSchema(spreadId: string, mode: "forecast" | "retrospective_event" = "forecast") {
+export function getStructuredReadingSchema(spreadId: string, mode: "forecast" | "retrospective_event" | "current_state" = "forecast") {
   if (spreadId === "single-card" || spreadId === "daily-card") return SingleCardReadingSchema;
-  if (spreadId === "grand-tableau") return mode === "retrospective_event" ? GrandTableauRetrospectiveReadingSchema : GrandTableauForecastReadingSchema;
-  return mode === "retrospective_event" ? RetrospectiveReadingSchema : ForecastReadingSchema;
+  if (spreadId === "grand-tableau") return mode === "retrospective_event" ? GrandTableauRetrospectiveReadingSchema : mode === "current_state" ? GrandTableauCurrentStateReadingSchema : GrandTableauForecastReadingSchema;
+  return mode === "retrospective_event" ? RetrospectiveReadingSchema : mode === "current_state" ? CurrentStateReadingSchema : ForecastReadingSchema;
 }
 
 function isGrandTableauReading(reading: StructuredReading | GrandTableauReading): reading is GrandTableauReading {
