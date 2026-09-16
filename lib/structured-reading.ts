@@ -83,6 +83,28 @@ export type StructuredReading = z.infer<typeof MultiCardReadingSchema>;
 export type SingleCardReading = z.infer<typeof SingleCardReadingSchema>;
 export type GrandTableauReading = z.infer<typeof GrandTableauReadingSchema>;
 
+export interface CompatibilityAnswer {
+  interpretation: string;
+  cards: Array<{ pair: string; implication: string }>;
+  answer: string;
+  timing?: string;
+  watchFor?: string | null;
+  practicalAction?: string | null;
+}
+
+export function toCompatibilityAnswer(reading: StructuredReading | SingleCardReading | GrandTableauReading): CompatibilityAnswer {
+  if ("practicalGuidance" in reading) {
+    return { interpretation: reading.interpretation, cards: reading.evidence, answer: reading.practicalGuidance };
+  }
+  if ("conclusion" in reading) {
+    return { interpretation: reading.interpretation, cards: reading.evidence, answer: reading.conclusion.statement };
+  }
+  if ("prediction" in reading) {
+    return { interpretation: reading.interpretation, cards: reading.evidence, answer: reading.prediction.development, timing: reading.prediction.timing, watchFor: reading.prediction.watchFor, practicalAction: reading.prediction.practicalAction };
+  }
+  return { interpretation: reading.interpretation, cards: [], answer: reading.interpretation };
+}
+
 export function getStructuredReadingSchema(spreadId: string, mode: "forecast" | "retrospective_event" | "current_state" | "advice" = "forecast") {
   if (spreadId === "single-card" || spreadId === "daily-card") return SingleCardReadingSchema;
   if (spreadId === "grand-tableau") return mode === "retrospective_event" ? GrandTableauRetrospectiveReadingSchema : mode === "current_state" ? GrandTableauCurrentStateReadingSchema : mode === "advice" ? GrandTableauAdviceReadingSchema : GrandTableauForecastReadingSchema;
@@ -102,20 +124,21 @@ export function renderStructuredReading(
   }
 
   const multiReading = reading as StructuredReading | GrandTableauReading;
-  const evidence = multiReading.evidence
+  const compatibilityAnswer = toCompatibilityAnswer(reading);
+  const evidence = compatibilityAnswer.cards
     .map((item) => `- **${item.pair}**: ${item.implication}`)
     .join("\n");
   if ("conclusion" in multiReading) {
     const housesAndMirrors = isGrandTableauReading(multiReading)
       ? ["## Houses and mirrors", multiReading.housesAndMirrors.map((item) => `- **${item.house}**: ${item.meaning}`).join("\n"), ""]
       : [];
-    return ["## Interpretation", multiReading.interpretation, "", ...housesAndMirrors, "## Cards", evidence, "", "## Conclusion", `**Card indication:** ${multiReading.conclusion.verdict.replace("_", " ")}.`, multiReading.conclusion.statement].join("\n");
+    return ["## Interpretation", compatibilityAnswer.interpretation, "", ...housesAndMirrors, "## Cards", evidence, "", "## Conclusion", `**Card indication:** ${multiReading.conclusion.verdict.replace("_", " ")}.`, compatibilityAnswer.answer].join("\n");
   }
   if ("practicalGuidance" in multiReading) {
     const houses = isGrandTableauReading(multiReading)
       ? ["## Houses and mirrors", multiReading.housesAndMirrors.map((item) => `- **${item.house}**: ${item.meaning}`).join("\n"), ""]
       : [];
-    return ["## Interpretation", multiReading.interpretation, "", ...houses, "## Cards", evidence, "", "## Practical guidance", multiReading.practicalGuidance].filter(Boolean).join("\n");
+    return ["## Interpretation", compatibilityAnswer.interpretation, "", ...houses, "## Cards", evidence, "", "## Practical guidance", compatibilityAnswer.answer].filter(Boolean).join("\n");
   }
   const optional = [
     multiReading.prediction.watchFor ? `**Watch for:** ${multiReading.prediction.watchFor}` : null,
@@ -128,7 +151,7 @@ export function renderStructuredReading(
 
   return [
     "## Interpretation",
-    multiReading.interpretation,
+    compatibilityAnswer.interpretation,
     "",
     ...housesAndMirrors,
     "## Cards",
