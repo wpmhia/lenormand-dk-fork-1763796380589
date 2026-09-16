@@ -2,6 +2,7 @@ import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
 import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
+import { buildClaimPlan } from "@/lib/claim-plan";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
@@ -543,10 +544,12 @@ export function buildPromptFromContext(context: ReadingContext): string {
   }
 
   const withEvidence = appendEvidence(prompt, context);
+  const claimPlan = buildClaimPlan(context);
+  const planInstruction = `\n\nDeterministic ClaimPlan (authoritative synthesis boundary):\n${JSON.stringify(claimPlan, null, 2)}\nOnly verbalize claims represented here. Preserve their subject, predicate, modality, polarity, and evidenceIds. Do not create a more specific entity, event, causal relation, timing, or outcome than this plan contains.`;
   if (context.semanticQuestion?.mode !== "forecast") {
-    return `${withEvidence}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
+    return `${withEvidence}${planInstruction}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
   }
-  return withEvidence;
+  return `${withEvidence}${planInstruction}`;
 }
 
 export function sanitizeQuestion(question: string): string {
