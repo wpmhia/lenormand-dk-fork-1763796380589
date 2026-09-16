@@ -148,8 +148,9 @@ export interface StructuredReadingIssue {
 }
 
 export function isBlockingStructuredIssue(issue: StructuredReadingIssue): boolean {
-  if (issue.code === "unsupported_certainty") return false;
-  if (issue.code === "unsupported_entity_binding" || issue.code === "subject_substitution" || issue.code === "unsupported_causality" || issue.code === "unsupported_temporal_order") return true;
+  // Semantic disagreement is diagnostic only. Rendering must not turn a
+  // debatable interpretation into an HTTP 5xx; only structural/provenance
+  // failures that make the object unusable remain blocking here.
   return issue.type === "ungrounded_evidence" || issue.type === "ungrounded_prediction";
 }
 
