@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
-import { validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
+import { validateEntityEvidenceBinding, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
@@ -132,7 +132,7 @@ export interface StructuredReadingIssue {
 
 export function isBlockingStructuredIssue(issue: StructuredReadingIssue): boolean {
   if (issue.code === "unsupported_certainty") return false;
-  if (issue.code === "unsupported_entity_binding" || issue.code === "subject_substitution") return true;
+  if (issue.code === "unsupported_entity_binding" || issue.code === "subject_substitution" || issue.code === "unsupported_causality" || issue.code === "unsupported_temporal_order") return true;
   return issue.type === "ungrounded_evidence" || issue.type === "ungrounded_prediction";
 }
 
@@ -162,9 +162,11 @@ export function validateStructuredReading(
     for (const id of conclusionIds) if (!allowedEvidenceIds.has(id)) issues.push({ type: "ungrounded_prediction", message: `Conclusion cites unknown evidence ID: "${id}"` });
     issues.push(...validateQuestionSubjectPreservation(multiReading.interpretation, context, "interpretation"));
     issues.push(...validateQuestionSubjectPreservation(multiReading.conclusion.statement, context, "prediction"));
+    issues.push(...validateEntityEvidenceBinding(multiReading.conclusion.statement, new Set(multiReading.conclusion.evidenceIds), context));
     for (const item of multiReading.evidence) {
       for (const id of item.evidenceIds) if (!allowedEvidenceIds.has(id)) issues.push({ type: "ungrounded_evidence", message: `Structured evidence cites unknown evidence ID: "${id}"` });
       issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
+      issues.push(...validateEntityEvidenceBinding(item.implication, new Set(item.evidenceIds), context));
     }
     return issues;
   }
@@ -195,9 +197,11 @@ export function validateStructuredReading(
   issues.push(...validatePredictionSemantics(multiReading.prediction.development, context, predictionEvidenceIds));
   issues.push(...validateQuestionSubjectPreservation(multiReading.interpretation, context, "interpretation"));
   issues.push(...validateQuestionSubjectPreservation(multiReading.prediction.development, context, "prediction"));
+  issues.push(...validateEntityEvidenceBinding(multiReading.prediction.development, predictionEvidenceIds, context));
   for (const item of multiReading.evidence) {
     issues.push(...validatePredictionSemantics(item.implication, context, undefined, { validatePolarity: false, validateQuestionSpecificity: false, validateEpistemicCertainty: false }));
     issues.push(...validateQuestionSubjectPreservation(item.implication, context, "card-commentary"));
+    issues.push(...validateEntityEvidenceBinding(item.implication, new Set(item.evidenceIds), context));
   }
 
   if (context.spreadId === "sentence-3" || context.spreadId === "sentence-5") {
