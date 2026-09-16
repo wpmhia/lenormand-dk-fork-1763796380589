@@ -33,7 +33,7 @@ interface ReadingServiceOptions {
 
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const { context, model, system, prompt, cardCount, maxTokens, initialTimeoutMs, repairTimeoutMs, signal } = options;
-  const readingMode = context.semanticQuestion?.mode === "retrospective_event" ? "retrospective_event" : "forecast";
+  const readingMode = context.semanticQuestion?.mode === "retrospective_event" || context.semanticQuestion?.mode === "current_state" ? context.semanticQuestion.mode : "forecast";
   const schema = getStructuredReadingSchema(context.spreadId, readingMode);
   const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question, context.semanticQuestion);
   const closingEvidenceInstruction = readingMode === "forecast" && (context.spreadId === "sentence-3" || context.spreadId === "sentence-5")
@@ -48,8 +48,8 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const structuredEvidenceInstruction = requiredPairIds
     ? `For this spread, evidence[].evidenceIds must include exactly these adjacent pair IDs: ${requiredPairIds}.`
     : "";
-  const modeInstruction = readingMode === "retrospective_event"
-    ? "This is retrospective_event mode. Return mode=retrospective_event and a conclusion object with verdict, statement, and evidenceIds. Do not return prediction or timing fields."
+  const modeInstruction = readingMode !== "forecast"
+    ? `This is ${readingMode} mode. Return mode=${readingMode} and a conclusion object with verdict, statement, and evidenceIds. Do not return prediction or timing fields.`
     : "Return mode=forecast with the required prediction fields.";
   const initialPrompt = `${prompt}\n\n${modeInstruction} Return only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
 

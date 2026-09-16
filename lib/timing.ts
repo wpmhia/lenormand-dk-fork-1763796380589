@@ -105,7 +105,7 @@ function scopedTimingOutput(definition: TimingCardDefinition, horizon: Observati
  * This is what the model is told to repeat verbatim in **Likely timing:**.
  */
 export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe" | "mode"> | null): string {
-  if (semanticQuestion?.mode === "retrospective_event") {
+  if (semanticQuestion && semanticQuestion.mode !== "forecast") {
     return "Not applicable: this question asks about a past event, not future timing.";
   }
   const horizon = getObservationHorizon(question, semanticQuestion);

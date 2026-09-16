@@ -485,8 +485,8 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
   result += `\n\nQuestion frame (${context.questionDomain}): ${context.questionFrame}\nInterpret all card combinations within this frame. Do not switch domains because an isolated card has a familiar association.`;
   if (context.semanticQuestion) {
     result += `\nSemantic question frame (canonical): mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}. Treat this as the interpretation target, not as evidence for the outcome.`;
-    if (context.semanticQuestion.mode === "retrospective_event") {
-      result += "\nRetrospective event mode: answer whether the supplied cards support, do not support, or leave the past event unresolved. Do not convert this into a future forecast, and do not claim independent factual verification.";
+    if (context.semanticQuestion.mode !== "forecast") {
+      result += `\n${context.semanticQuestion.mode} mode: answer the current/past state represented by the exact predicate and preserve subject/target direction. Use the conclusion contract; do not convert this into a future forecast or claim independent factual verification.`;
     }
   }
   if (context.situationContext.trim()) {
@@ -543,8 +543,8 @@ export function buildPromptFromContext(context: ReadingContext): string {
   }
 
   const withEvidence = appendEvidence(prompt, context);
-  if (context.semanticQuestion?.mode === "retrospective_event") {
-    return `${withEvidence}\n\nRETROSPECTIVE OUTPUT CONTRACT (authoritative): Return mode=retrospective_event with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess only whether the past event is supported, not supported, or unresolved; do not state independent factual verification.`;
+  if (context.semanticQuestion?.mode !== "forecast") {
+    return `${withEvidence}\n\nCONCLUSION OUTPUT CONTRACT (authoritative): Return mode=${context.semanticQuestion?.mode} with conclusion.verdict, conclusion.statement, and conclusion.evidenceIds. Do not return prediction, Most likely development, Likely timing, Watch for, or Practical action. Assess the requested state/event only; preserve the semantic subject and target direction, and do not state independent factual verification.`;
   }
   return withEvidence;
 }
