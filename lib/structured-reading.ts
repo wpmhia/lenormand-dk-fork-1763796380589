@@ -143,6 +143,9 @@ export function validateStructuredReading(
     ...context.adjacentPairs.map((pair) => getPairEvidenceId(pair.indexA, pair.indexB)),
   ]);
   if (context.layout.type === "grand-tableau") {
+    for (let position = 1; position <= context.cards.length; position++) {
+      allowedEvidenceIds.add(`position-${position}`);
+    }
     for (const houseId of getGrandTableauPromptedHouseIds(context.layout)) allowedEvidenceIds.add(`house-${houseId}`);
   }
   if ("conclusion" in multiReading) {
