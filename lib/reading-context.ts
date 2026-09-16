@@ -60,7 +60,7 @@ export interface PersonBinding {
   evidence: string;
 }
 
-export type QuestionDomain = "relocation" | "health" | "career" | "love" | "money" | "home" | "travel" | "general";
+export type QuestionDomain = "relocation" | "health" | "career" | "love" | "love_sexual" | "money" | "home" | "travel" | "general";
 
 export interface QuestionFrame {
   domain: QuestionDomain;
@@ -633,7 +633,7 @@ export function buildReadingContext(
   }
 
   const questionFrame = semanticQuestion
-    ? { domain: semanticQuestion.domain, instruction: `Answer the ${semanticQuestion.intent} question about ${semanticQuestion.predicate}.` }
+    ? { domain: semanticQuestion.domain, instruction: `Answer the ${semanticQuestion.mode} question about ${semanticQuestion.predicate}.` }
     : getQuestionFrame(question);
   const personBindings = derivePersonBindings(question, significatorPreference);
   const questionSubjects = semanticQuestion?.subject ? [semanticQuestion.subject] : deriveQuestionSubjects(question);

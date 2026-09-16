@@ -114,6 +114,15 @@ describe("timing: question observation window scopes card timing", () => {
     );
     expect(line).toContain("brief or active moment");
   });
+
+  it("does not invent future timing for a retrospective event question", () => {
+    const line = buildPredictionTimingLine(
+      [{ cardId: 12, cardName: "Birds", range: "days" }],
+      "Did this happen?",
+      { intent: "retrospective_event", timeframe: null },
+    );
+    expect(line).toContain("past event");
+  });
 });
 
 describe("timing: prompt does not embed per-card timing strings from cards.json", () => {
