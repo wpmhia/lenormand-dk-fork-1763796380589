@@ -104,8 +104,8 @@ function scopedTimingOutput(definition: TimingCardDefinition, horizon: Observati
  * Build the deterministic timing line for the Prediction contract.
  * This is what the model is told to repeat verbatim in **Likely timing:**.
  */
-export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe" | "intent"> | null): string {
-  if (semanticQuestion && "intent" in semanticQuestion && semanticQuestion.intent === "retrospective_event") {
+export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe" | "mode"> | null): string {
+  if (semanticQuestion?.mode === "retrospective_event") {
     return "Not applicable: this question asks about a past event, not future timing.";
   }
   const horizon = getObservationHorizon(question, semanticQuestion);
