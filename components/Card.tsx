@@ -115,7 +115,12 @@ function CardInner({
 
   if (onClick) {
     return (
-      <button type="button" onClick={handleClick} className="p-0 text-left" aria-label={`${card.name} card${selected ? " (selected)" : ""}`}>
+      <button
+        type="button"
+        onClick={handleClick}
+        className={cn("p-0 text-left", size === "responsive" && "w-full")}
+        aria-label={`${card.name} card${selected ? " (selected)" : ""}`}
+      >
         {cardFace}
       </button>
     );
