@@ -18,7 +18,7 @@ export interface ClaimPlanClaim {
 }
 
 export interface ClaimPlan {
-  mode: "forecast" | "retrospective_event" | "current_state";
+  mode: "forecast" | "retrospective_event" | "current_state" | "advice";
   subject: string | null;
   counterparty: string | null;
   predicate: string;

@@ -6,7 +6,7 @@ export const QuestionFrameSchema = z.object({
   subject: z.string().nullable(),
   counterparty: z.string().nullable(),
   predicate: z.string().min(1),
-  mode: z.enum(["forecast", "retrospective_event", "current_state"]),
+  mode: z.enum(["forecast", "retrospective_event", "current_state", "advice"]),
   timeframe: z.object({ value: z.number().positive(), unit: z.enum(["day", "week", "month", "year"]) }).nullable(),
 });
 
@@ -17,7 +17,7 @@ export async function parseQuestionFrame(question: string, model: LanguageModel,
     model,
     abortSignal: signal,
     maxOutputTokens: 240,
-    system: "Parse the user's question only. Return the requested structured object with one canonical mode: forecast, retrospective_event, or current_state. Identify the grammatical subject/actor, counterparty/target, and exact predicate direction. Do not infer an answer, card meaning, polarity, or outside facts. Preserve ambiguity.",
+    system: "Parse the user's question only. Return the requested structured object with one canonical mode: forecast, retrospective_event, current_state, or advice. Identify the grammatical subject/actor, counterparty/target, and exact predicate direction. Do not infer an answer, card meaning, polarity, or outside facts. Preserve ambiguity.",
     prompt: `Parse this question into the schema exactly:\n\n${question}`,
     output: Output.object({ schema: QuestionFrameSchema }),
   });
