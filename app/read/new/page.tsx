@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { Deck } from "@/components/Deck";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -26,10 +27,6 @@ import {
 
 const PhysicalCardInput = dynamic(() =>
   import("@/components/reading").then((mod) => ({ default: mod.PhysicalCardInput })),
-  { ssr: false }
-);
-const Deck = dynamic(() =>
-  import("@/components/Deck").then((mod) => ({ default: mod.Deck })),
   { ssr: false }
 );
 const ReadingViewer = dynamic(() =>
