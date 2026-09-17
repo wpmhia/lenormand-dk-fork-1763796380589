@@ -5,7 +5,7 @@ export const maxDuration = 30;
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { createDeepSeek } from "@ai-sdk/deepseek";
+import { readingModel } from "@/lib/ai-model";
 import { streamText } from "ai";
 import { DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
@@ -26,9 +26,6 @@ const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
 
-const deepseek = createDeepSeek({
-  apiKey: DEEPSEEK_API_KEY || "",
-});
 
 export async function POST(request: Request) {
   try {
@@ -123,7 +120,7 @@ export async function POST(request: Request) {
     const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\n\n${buildLenormandEvidencePack(context)}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
 
     const result = streamText({
-      model: deepseek("deepseek-flash"),
+      model: readingModel,
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
       temperature: 0.2,

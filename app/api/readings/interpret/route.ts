@@ -9,7 +9,7 @@ import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { createDeepSeek } from "@ai-sdk/deepseek";
+import { readingModel } from "@/lib/ai-model";
 import { generateReading } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
@@ -24,19 +24,13 @@ const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
 
-const deepseek = createDeepSeek({
-  apiKey: DEEPSEEK_API_KEY || "",
-});
-const BUILD_SHA = process.env.VERCEL_GIT_COMMIT_SHA || process.env.RAILWAY_GIT_COMMIT_SHA || process.env.GIT_COMMIT_SHA || "unknown";
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
-  const requestId = crypto.randomUUID();
   const deadlineMs = 55_000;
   const responseReserveMs = 4_000;
   const parserBudgetMs = 5_000;
   const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
-  const provider = "deepseek" as const;
   try {
     const ip = getClientIP(request);
 
@@ -84,21 +78,17 @@ export async function POST(request: Request) {
     }
 
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
-    const model = deepseek("deepseek-flash");
-    const semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
+    const semanticQuestion = await parseQuestionFrame(validated.question, readingModel, parserSignal);
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     const repairBudgetMs = Math.min(getReadingRepairTimeoutMs(cardCount), Math.max(1_000, remainingMs - responseReserveMs));
     const initialBudgetMs = Math.min(getReadingTimeoutMs(cardCount), Math.max(1_000, remainingMs - repairBudgetMs - responseReserveMs));
-    const serviceResult = await generateReading({ context, model, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, signal: deadlineSignal });
+    const serviceResult = await generateReading({ context, model: readingModel, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, signal: deadlineSignal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty model output", {
-        requestId,
-        provider,
-        buildSha: BUILD_SHA,
         phase: "initial",
         spreadId: validated.spreadId,
         cardCount: cardCount,
@@ -109,9 +99,6 @@ export async function POST(request: Request) {
     }
     if (!serviceResult.ok) {
       console.error("interpret: reading rejected by validator", {
-        requestId,
-        provider,
-        buildSha: BUILD_SHA,
         phase: "repair",
         spreadId: validated.spreadId,
         cardCount: cardCount,
@@ -136,9 +123,6 @@ export async function POST(request: Request) {
     const isTimeout = deadlineAborted || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
       console.error("interpret: generation error", {
         phase: "generation",
-        requestId,
-        provider,
-        buildSha: BUILD_SHA,
         failureClass: "generation-runtime",
         name: error.name,
         message: error.message,
