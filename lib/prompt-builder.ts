@@ -334,7 +334,7 @@ function formatPetitTableau(
     `Row 2 / Middle Line: ${layout.rows.middle.map((c) => fmtCard(c.card)).join(" + ")}`,
     `Row 3 / Lower Line: ${layout.rows.bottom.map((c) => fmtCard(c.card)).join(" + ")}`,
     "",
-    `Center card: ${fmtCard(layout.center.card)} - heart of the tableau`,
+    `Center card (exact position row 2, column 2): ${fmtCard(layout.center.card)} - heart of the tableau. Do not describe any other card as the center/pivot.`,
     "",
     "Columns:",
     gridLines,
