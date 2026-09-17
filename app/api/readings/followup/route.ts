@@ -125,6 +125,7 @@ export async function POST(request: Request) {
       prompt,
       temperature: 0.2,
       maxOutputTokens: FOLLOWUP_MAX_OUTPUT_TOKENS,
+      providerOptions: { deepseek: { thinking: { type: "disabled" } } },
       maxRetries: 1,
       abortSignal: request.signal,
       timeout: { totalMs: 15_000 },
