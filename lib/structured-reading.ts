@@ -201,9 +201,9 @@ export interface StructuredReadingIssue {
 }
 
 export function isBlockingStructuredIssue(issue: StructuredReadingIssue): boolean {
-  // Semantic disagreement is diagnostic only. Rendering must not turn a
-  // debatable interpretation into an HTTP 5xx; only structural/provenance
-  // failures that make the object unusable remain blocking here.
+  // Entity/subject substitution is a hard provenance violation; other
+  // interpretive semantic disagreements remain diagnostic only.
+  if (issue.code === "unsupported_entity_binding" || issue.code === "subject_substitution") return true;
   return issue.type === "ungrounded_evidence" || issue.type === "ungrounded_prediction";
 }
 
