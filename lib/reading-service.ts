@@ -84,6 +84,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     system: instruction,
     prompt: promptOverride,
     output: Output.object({ schema }),
+    providerOptions: { deepseek: { thinking: { type: "disabled" } } },
     temperature: retries > 0 ? 0.2 : 0.1,
     maxOutputTokens: maxTokens,
     maxRetries: retries,
