@@ -335,6 +335,13 @@ describe("system prompt purity", () => {
     expect(sp).not.toContain("Formatting rules:");
     expect(sp).not.toContain("Do not write text before the first heading");
   });
+
+  it("preserves mixed evidence instead of forcing a negative conclusion", () => {
+    const sp = buildSystemPrompt(3, "structured");
+    expect(sp).toContain("- Synthesis strength rule.");
+    expect(sp).toContain("Do not turn a warning sign into the predicted outcome.");
+    expect(sp).toContain("preserve that uncertainty rather than forcing a yes/no conclusion.");
+  });
 });
 
 describe("prompt quality: question appears in prompt", () => {
