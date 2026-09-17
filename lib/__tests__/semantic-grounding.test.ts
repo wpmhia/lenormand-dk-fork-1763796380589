@@ -184,6 +184,14 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("Man is unbound"))).toBe(true);
   });
 
+  it("keeps Man unbound for a named subject without significator metadata", () => {
+    const cards = [28, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
+    const context = buildReadingContext("sentence-3", "Blijft Mahican bij mij?", cards, cardsMap, "both");
+    expect(context.personBindings).toEqual([]);
+    const issues = validateEntityEvidenceBinding("The Man card appears, but it is not identified as Mahican.", new Set(["card-1"]), context);
+    expect(issues).toEqual([]);
+  });
+
   it("rejects a named subject attributed to an unbound person card in cited evidence", () => {
     const cards = [8, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "Will Mahican stay?", cards, cardsMap);
