@@ -37,13 +37,16 @@ const deepseek = createOpenAICompatible({
   baseURL: "https://api.deepseek.com/v1",
   apiKey: DEEPSEEK_API_KEY || "",
 });
+const BUILD_SHA = process.env.VERCEL_GIT_COMMIT_SHA || process.env.RAILWAY_GIT_COMMIT_SHA || process.env.GIT_COMMIT_SHA || "unknown";
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
+  const requestId = crypto.randomUUID();
   const deadlineMs = 55_000;
   const responseReserveMs = 4_000;
   const parserBudgetMs = 5_000;
   const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
+  let provider: "deepseek" | "mistral" | "unknown" = "unknown";
   try {
     const ip = getClientIP(request);
 
@@ -91,28 +94,40 @@ export async function POST(request: Request) {
     }
 
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
-    const model = (DEEPSEEK_API_KEY ? deepseek("deepseek-flash") : mistral(MISTRAL_PRODUCTION_MODEL)) as LanguageModel;
-    const semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
+    provider = DEEPSEEK_API_KEY ? "deepseek" : "mistral";
+    let model = (provider === "deepseek" ? deepseek("deepseek-flash") : mistral(MISTRAL_PRODUCTION_MODEL)) as LanguageModel;
+    let semanticQuestion;
+    try {
+      semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
+    } catch (error) {
+      if (provider !== "deepseek") throw error;
+      provider = "mistral";
+      model = mistral(MISTRAL_PRODUCTION_MODEL) as LanguageModel;
+      console.warn("interpret: DeepSeek question parse failed; falling back to Mistral", { requestId, buildSha: BUILD_SHA });
+      semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
+    }
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     const repairBudgetMs = Math.min(getReadingRepairTimeoutMs(cardCount), Math.max(1_000, remainingMs - responseReserveMs));
     const initialBudgetMs = Math.min(getReadingTimeoutMs(cardCount), Math.max(1_000, remainingMs - repairBudgetMs - responseReserveMs));
-    const serviceResult = await generateReading({
-      context,
-      model,
-       system: buildSystemPrompt(cardCount, "structured"),
-      prompt: `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs.`,
-      cardCount,
-      maxTokens,
-       initialTimeoutMs: initialBudgetMs,
-       repairTimeoutMs: repairBudgetMs,
-       signal: deadlineSignal,
-    });
+    let serviceResult;
+    try {
+      serviceResult = await generateReading({ context, model, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, signal: deadlineSignal });
+    } catch (error) {
+      if (provider !== "deepseek") throw error;
+      provider = "mistral";
+      model = mistral(MISTRAL_PRODUCTION_MODEL) as LanguageModel;
+      console.warn("interpret: DeepSeek reading failed; falling back to Mistral", { requestId, buildSha: BUILD_SHA });
+      serviceResult = await generateReading({ context, model, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: Math.max(1_000, initialBudgetMs - 1_000), repairTimeoutMs: Math.max(1_000, repairBudgetMs - 1_000), signal: deadlineSignal });
+    }
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
-      console.error("interpret: empty Mistral output", {
+      console.error("interpret: empty model output", {
+        requestId,
+        provider,
+        buildSha: BUILD_SHA,
         phase: "initial",
         spreadId: validated.spreadId,
         cardCount: cardCount,
@@ -123,6 +138,9 @@ export async function POST(request: Request) {
     }
     if (!serviceResult.ok) {
       console.error("interpret: reading rejected by validator", {
+        requestId,
+        provider,
+        buildSha: BUILD_SHA,
         phase: "repair",
         spreadId: validated.spreadId,
         cardCount: cardCount,
@@ -133,7 +151,7 @@ export async function POST(request: Request) {
     }
 
     await incrementReadingCount();
-    return readingResponse(serviceResult.reading, rateLimitResult);
+    return readingResponse(serviceResult.reading, rateLimitResult, provider === "deepseek" ? "deepseek" : "mistral");
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {
       return new Response(JSON.stringify({ error: error.message }), {
@@ -141,14 +159,23 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
-    const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
+    const clientAborted = request.signal.aborted;
+    const deadlineAborted = deadlineSignal.aborted && !clientAborted;
+    const providerAborted = error.name === "ResponseAborted";
+    const isTimeout = deadlineAborted || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
       console.error("interpret: generation error", {
         phase: "generation",
+        requestId,
+        provider,
+        buildSha: BUILD_SHA,
         failureClass: "generation-runtime",
-      name: error.name,
-      message: error.message,
-      isTimeout,
-      elapsedMs: Date.now() - startedAt,
+        name: error.name,
+        message: error.message,
+        isTimeout,
+        clientAborted,
+        deadlineAborted,
+        providerAborted,
+        elapsedMs: Date.now() - startedAt,
     });
     return new Response(
       JSON.stringify({
@@ -163,11 +190,12 @@ export async function POST(request: Request) {
 function readingResponse(
   reading: string,
   rateLimitResult: { limit: number; remaining: number; reset: number },
+  provider: "deepseek" | "mistral" = "mistral",
 ) {
   return new Response(
     JSON.stringify({
       reading,
-      source: "mistral",
+      source: provider,
       rateLimit: {
         limit: rateLimitResult.limit,
         remaining: rateLimitResult.remaining,
