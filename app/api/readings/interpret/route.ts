@@ -11,6 +11,7 @@ import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import type { LanguageModel } from "ai";
 import { generateReading } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
     }
 
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
-    const model = DEEPSEEK_API_KEY ? deepseek("deepseek-flash") : mistral(MISTRAL_PRODUCTION_MODEL);
+    const model = (DEEPSEEK_API_KEY ? deepseek("deepseek-flash") : mistral(MISTRAL_PRODUCTION_MODEL)) as LanguageModel;
     const semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
