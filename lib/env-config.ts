@@ -7,6 +7,12 @@ export const ENV_VARIABLES: EnvVariable[] = [
     instructions: "Get your API key from https://console.mistral.ai/api-keys",
   },
   {
+    name: "DEEPSEEK_API",
+    description: "DeepSeek API key for the optional DeepSeek reading model",
+    required: false,
+    instructions: "Set DEEPSEEK_API to enable DeepSeek; Mistral remains the fallback.",
+  },
+  {
     name: "DATABASE_URL",
     description: "PostgreSQL connection string for Neon database (unused in free mode)",
     required: false,
@@ -68,5 +74,4 @@ export interface EnvVariable {
   instructions: string;
   required: boolean;
 }
-
 

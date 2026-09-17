@@ -10,6 +10,7 @@ import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { createMistral } from "@ai-sdk/mistral";
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateReading } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
@@ -20,6 +21,7 @@ export async function OPTIONS() {
 }
 
 const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
+const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
@@ -28,6 +30,11 @@ const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 
 const mistral = createMistral({
   apiKey: MISTRAL_API_KEY || "",
+});
+const deepseek = createOpenAICompatible({
+  name: "deepseek",
+  baseURL: "https://api.deepseek.com/v1",
+  apiKey: DEEPSEEK_API_KEY || "",
 });
 
 export async function POST(request: Request) {
@@ -51,7 +58,7 @@ export async function POST(request: Request) {
     const validated = normalizeReadingRequest(body, cardsMap);
     const cardCount = validated.cards.length;
 
-    if (!MISTRAL_API_KEY) {
+    if (!MISTRAL_API_KEY && !DEEPSEEK_API_KEY) {
       return new Response(JSON.stringify({ error: "Service unavailable" }), {
         status: 503,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -83,7 +90,8 @@ export async function POST(request: Request) {
     }
 
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
-    const semanticQuestion = await parseQuestionFrame(validated.question, mistral(MISTRAL_PRODUCTION_MODEL), parserSignal);
+    const model = DEEPSEEK_API_KEY ? deepseek("deepseek-flash") : mistral(MISTRAL_PRODUCTION_MODEL);
+    const semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
@@ -92,7 +100,7 @@ export async function POST(request: Request) {
     const initialBudgetMs = Math.min(getReadingTimeoutMs(cardCount), Math.max(1_000, remainingMs - repairBudgetMs - responseReserveMs));
     const serviceResult = await generateReading({
       context,
-      model: mistral(MISTRAL_PRODUCTION_MODEL),
+      model,
        system: buildSystemPrompt(cardCount, "structured"),
       prompt: `${prompt}\n\nReturn only the requested structured object. Every evidence item must cite an evidence ID that appears in the deterministic evidence pack. Do not create evidence IDs.`,
       cardCount,
