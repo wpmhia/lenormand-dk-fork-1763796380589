@@ -404,6 +404,7 @@ export function validateEntityEvidenceBinding(
   }
 
   const subject = context.questionSubjects[0];
+  if (/\b(?:man|woman) card\b/i.test(text) && /\b(?:not identified|unbound|unknown|not established)\b/i.test(text)) return [];
   const unboundPersonCard = [28, 29].find((id) => citedCardIds.has(id) && !context.personBindings.some((binding) => binding.cardId === id));
   if (subject && unboundPersonCard && new RegExp(`\\b${escapeRegExp(subject)}\\b`, "i").test(text)
     && /\b(?:with|for|to|represents?|means?|shows?|is|becomes?|van|met|voor|aan|als)\b/i.test(text)) {
