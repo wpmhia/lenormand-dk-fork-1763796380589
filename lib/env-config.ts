@@ -1,16 +1,10 @@
 // IMPORTANT: When adding new env variables to the codebase, update this array
 export const ENV_VARIABLES: EnvVariable[] = [
   {
-    name: "MISTRAL_API_KEY",
-    description: "API key for Mistral AI service for Lenormand reading interpretations",
-    required: true,
-    instructions: "Get your API key from https://console.mistral.ai/api-keys",
-  },
-  {
     name: "DEEPSEEK_API",
-    description: "DeepSeek API key for the optional DeepSeek reading model",
-    required: false,
-    instructions: "Set DEEPSEEK_API to enable DeepSeek; Mistral remains the fallback.",
+    description: "DeepSeek API key for Lenormand readings and follow-ups",
+    required: true,
+    instructions: "Get your API key from the DeepSeek API console.",
   },
   {
     name: "DATABASE_URL",
@@ -35,12 +29,6 @@ export const ENV_VARIABLES: EnvVariable[] = [
     description: "Fallback reading counter when Redis is unavailable",
     required: false,
     instructions: "Set to the current accurate count, e.g. 12900. Only used when Redis is not configured.",
-  },
-  {
-    name: "MISTRAL_BASE_URL",
-    description: "Base URL for Mistral API (optional)",
-    required: false,
-    instructions: "Only set if using a custom endpoint. Default: https://api.mistral.ai",
   },
   {
     name: "READING_HMAC_SECRET",
@@ -74,4 +62,3 @@ export interface EnvVariable {
   instructions: string;
   required: boolean;
 }
-

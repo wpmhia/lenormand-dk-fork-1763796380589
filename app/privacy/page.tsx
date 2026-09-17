@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                 <li>
                   <strong>AI Interpretations:</strong> When you request AI
                   analysis, your reading is sent securely to our AI processing
-                  service (Mistral). This data is not stored permanently and is
+                  service (DeepSeek). This data is not stored permanently and is
                   deleted after the interpretation is generated.
                 </li>
                 <li>
@@ -257,7 +257,7 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Data Processing:</strong> AI processing is done via
-                  Mistral. Read data is not stored on our servers.
+                  DeepSeek. Read data is not stored on our servers.
                 </li>
                 <li>
                   <strong>Right to be Forgotten:</strong> Since we store no
@@ -266,7 +266,7 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>International Transfers:</strong> Our service providers
-                  (Mistral, Umami) may process data outside the EU. We ensure
+                  (DeepSeek, Umami) may process data outside the EU. We ensure
                   appropriate safeguards are in place.
                 </li>
               </ul>

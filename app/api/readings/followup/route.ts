@@ -5,7 +5,7 @@ export const maxDuration = 30;
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { createMistral } from "@ai-sdk/mistral";
+import { createDeepSeek } from "@ai-sdk/deepseek";
 import { streamText } from "ai";
 import { DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
@@ -20,15 +20,14 @@ export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
+const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
-const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
 const allCards = staticCardsData as Card[];
 const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
 
-const mistral = createMistral({
-  apiKey: MISTRAL_API_KEY || "",
+const deepseek = createDeepSeek({
+  apiKey: DEEPSEEK_API_KEY || "",
 });
 
 export async function POST(request: Request) {
@@ -56,7 +55,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!MISTRAL_API_KEY) {
+    if (!DEEPSEEK_API_KEY) {
       return new Response(JSON.stringify({ error: "AI not configured" }), {
         status: 503,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -124,7 +123,7 @@ export async function POST(request: Request) {
     const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\n\n${buildLenormandEvidencePack(context)}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
 
     const result = streamText({
-      model: mistral(MISTRAL_PRODUCTION_MODEL),
+      model: deepseek("deepseek-flash"),
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
       temperature: 0.2,

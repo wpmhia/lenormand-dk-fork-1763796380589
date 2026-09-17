@@ -77,7 +77,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     : readingMode !== "forecast"
     ? `This is ${readingMode} mode. Return mode=${readingMode} and a conclusion object with verdict and statement. Do not return prediction or timing fields.`
     : "Return mode=forecast with the required prediction fields.";
-  const initialPrompt = `${prompt}\n\n${modeInstruction} Return only the requested structured object. Evidence provenance is normalized server-side; do not create or manage internal evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
+  const initialPrompt = `${prompt}\n\n${modeInstruction} Return valid JSON only. Return only the requested structured object. Evidence provenance is normalized server-side; do not create or manage internal evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
 
   const generate = (instruction: string, timeout: number, retries: number, promptOverride = prompt) => generateText({
     model,

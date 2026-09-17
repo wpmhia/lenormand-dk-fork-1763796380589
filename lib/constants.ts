@@ -41,8 +41,6 @@ export const DEFAULT_RATE_WINDOW_MS = 60 * 1000;
 // API Configuration
 // ============================================================================
 
-/** Mistral API base URL */
-export const MISTRAL_BASE_URL = "https://api.mistral.ai";
 
 /** Maximum route budget, including a possible validation repair. */
 export const API_REQUEST_TIMEOUT_MS = 60 * 1000;

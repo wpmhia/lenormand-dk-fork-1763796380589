@@ -9,9 +9,7 @@ import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
-import { createMistral } from "@ai-sdk/mistral";
-import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import type { LanguageModel } from "ai";
+import { createDeepSeek } from "@ai-sdk/deepseek";
 import { generateReading } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs, getReadingTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
@@ -21,20 +19,12 @@ export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-const MISTRAL_API_KEY = getEnv("MISTRAL_API_KEY");
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
 
-const MISTRAL_PRODUCTION_MODEL = "mistral-small-2603";
-
-const mistral = createMistral({
-  apiKey: MISTRAL_API_KEY || "",
-});
-const deepseek = createOpenAICompatible({
-  name: "deepseek",
-  baseURL: "https://api.deepseek.com/v1",
+const deepseek = createDeepSeek({
   apiKey: DEEPSEEK_API_KEY || "",
 });
 const BUILD_SHA = process.env.VERCEL_GIT_COMMIT_SHA || process.env.RAILWAY_GIT_COMMIT_SHA || process.env.GIT_COMMIT_SHA || "unknown";
@@ -46,7 +36,7 @@ export async function POST(request: Request) {
   const responseReserveMs = 4_000;
   const parserBudgetMs = 5_000;
   const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
-  let provider: "deepseek" | "mistral" | "unknown" = "unknown";
+  const provider = "deepseek" as const;
   try {
     const ip = getClientIP(request);
 
@@ -62,7 +52,7 @@ export async function POST(request: Request) {
     const validated = normalizeReadingRequest(body, cardsMap);
     const cardCount = validated.cards.length;
 
-    if (!MISTRAL_API_KEY && !DEEPSEEK_API_KEY) {
+    if (!DEEPSEEK_API_KEY) {
       return new Response(JSON.stringify({ error: "Service unavailable" }), {
         status: 503,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -94,34 +84,15 @@ export async function POST(request: Request) {
     }
 
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
-    provider = DEEPSEEK_API_KEY ? "deepseek" : "mistral";
-    let model = (provider === "deepseek" ? deepseek("deepseek-flash") : mistral(MISTRAL_PRODUCTION_MODEL)) as LanguageModel;
-    let semanticQuestion;
-    try {
-      semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
-    } catch (error) {
-      if (provider !== "deepseek") throw error;
-      provider = "mistral";
-      model = mistral(MISTRAL_PRODUCTION_MODEL) as LanguageModel;
-      console.warn("interpret: DeepSeek question parse failed; falling back to Mistral", { requestId, buildSha: BUILD_SHA });
-      semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
-    }
+    const model = deepseek("deepseek-flash");
+    const semanticQuestion = await parseQuestionFrame(validated.question, model, parserSignal);
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     const repairBudgetMs = Math.min(getReadingRepairTimeoutMs(cardCount), Math.max(1_000, remainingMs - responseReserveMs));
     const initialBudgetMs = Math.min(getReadingTimeoutMs(cardCount), Math.max(1_000, remainingMs - repairBudgetMs - responseReserveMs));
-    let serviceResult;
-    try {
-      serviceResult = await generateReading({ context, model, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, signal: deadlineSignal });
-    } catch (error) {
-      if (provider !== "deepseek") throw error;
-      provider = "mistral";
-      model = mistral(MISTRAL_PRODUCTION_MODEL) as LanguageModel;
-      console.warn("interpret: DeepSeek reading failed; falling back to Mistral", { requestId, buildSha: BUILD_SHA });
-      serviceResult = await generateReading({ context, model, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: Math.max(1_000, initialBudgetMs - 1_000), repairTimeoutMs: Math.max(1_000, repairBudgetMs - 1_000), signal: deadlineSignal });
-    }
+    const serviceResult = await generateReading({ context, model, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, signal: deadlineSignal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty model output", {
@@ -151,7 +122,7 @@ export async function POST(request: Request) {
     }
 
     await incrementReadingCount();
-    return readingResponse(serviceResult.reading, rateLimitResult, provider === "deepseek" ? "deepseek" : "mistral");
+    return readingResponse(serviceResult.reading, rateLimitResult);
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {
       return new Response(JSON.stringify({ error: error.message }), {
@@ -190,12 +161,11 @@ export async function POST(request: Request) {
 function readingResponse(
   reading: string,
   rateLimitResult: { limit: number; remaining: number; reset: number },
-  provider: "deepseek" | "mistral" = "mistral",
 ) {
   return new Response(
     JSON.stringify({
       reading,
-      source: provider,
+      source: "deepseek",
       rateLimit: {
         limit: rateLimitResult.limit,
         remaining: rateLimitResult.remaining,
