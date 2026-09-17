@@ -580,7 +580,7 @@ describe("prompt quality: card strength metadata does not leak into the model pr
   it("does NOT include '; STRONG', '; NEUTRAL', or '; WEAK' inside any card mention in the prompt", () => {
     // strength is an internal classification metadata field. A Coffin should not become
     // "neutral" and a Cross should not become "weak" because of a database field —
-    // Mistral will fabricate sentences like "the weak energy of the opening cards" otherwise.
+    // The model will fabricate sentences like "the weak energy of the opening cards" otherwise.
     const ctx = buildReadingContext(
       "sentence-3",
       "Will the situation resolve?",

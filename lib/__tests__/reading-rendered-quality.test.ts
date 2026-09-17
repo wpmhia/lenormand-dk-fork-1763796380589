@@ -455,7 +455,7 @@ describe("golden: prompt mandates the three-part arc", () => {
 
 describe("golden: timing validation only scans the Prediction section", () => {
   it("does not flag 'long-term stability' in the Interpretation section (Lily + Anchor case)", () => {
-    // Lily + Anchor — no timing card drawn. The Mistral reading could legitimately
+    // Lily + Anchor — no timing card drawn. The model reading could legitimately
     // describe "long-term professional stability" in Interpretation. That phrase is
     // descriptive, not a timing claim, so it must not trigger unsupported_timing.
     const reading = `## Interpretation

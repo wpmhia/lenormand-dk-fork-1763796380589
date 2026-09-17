@@ -103,7 +103,7 @@ export function useAIAnalysis(
       const text: string = data.reading || "";
       if (!text.trim()) throw new Error("No reading received");
       if (abortControllerRef.current === controller) {
-        setAiReading({ reading: text, source: data.source || "mistral" });
+        setAiReading({ reading: text, source: data.source || "deepseek" });
       }
     } catch (err: any) {
       if (err.name === "AbortError") return;

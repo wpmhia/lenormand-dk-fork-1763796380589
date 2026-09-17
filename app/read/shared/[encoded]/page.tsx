@@ -174,7 +174,7 @@ export default function SharedReadingPage({ params }: PageProps) {
           } else if (errorMessage.includes("API key")) {
             setAiErrorDetails({
               type: "configuration_needed",
-              helpUrl: "https://platform.mistral.com/",
+              helpUrl: "https://platform.deepseek.com/",
               action: "Configure API key",
             });
           } else if (errorMessage.includes("temporarily unavailable")) {

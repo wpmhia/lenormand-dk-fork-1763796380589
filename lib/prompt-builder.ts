@@ -282,7 +282,7 @@ export function buildPrompt(cards: CardInput[], spreadId: string, question: stri
  * metadata field, not a metaphysical intensity. A Coffin does not become "neutral"
  * and a Cross does not become "weak" because of a database field. Strength metadata
  * is still kept on the Card type for UI / learning purposes, but it must not leak
- * into synthesis prompts, or Mistral will fabricate prose like
+ * into synthesis prompts, or the model will fabricate prose like
  * "the weak energy of the opening cards" out of nothing.
  */
 function fmtCard(card: { name: string; keywords?: string[]; strength?: string }): string {
