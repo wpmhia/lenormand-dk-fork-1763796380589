@@ -36,13 +36,18 @@ interface ReadingServiceOptions {
 
 function adaptSimpleAnswer(answer: SimpleAnswer, context: ReadingContext): Record<string, unknown> {
   const evidence = answer.cards.map((card) => ({ ...card, evidenceIds: [] as string[] }));
+  const verdictPrefix = answer.verdict === "not_supported"
+    ? "The cards do not support this outcome. "
+    : answer.verdict === "supported"
+      ? "The cards support this outcome. "
+      : "The outcome remains unresolved. ";
   if (answer.mode === "forecast") {
     return {
       mode: "forecast",
       interpretation: answer.interpretation,
       evidence,
       prediction: {
-        development: answer.answer,
+        development: `${verdictPrefix}${answer.answer}`,
         evidenceIds: [],
         timing: answer.timing || "Not clearly shown by these cards.",
         watchFor: answer.watchFor,
