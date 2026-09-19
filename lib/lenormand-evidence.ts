@@ -68,6 +68,10 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
 export type EvidencePolarity = "positive" | "negative" | "neutral" | "ambiguous";
 export type EvidenceStatus = "reviewed" | "unreviewed";
 
+export function getCoreCardMeaning(card: NormalizedCard): string | null {
+  return CARD_SENSES[card.id]?.general || null;
+}
+
 export interface EvidenceEnvelope {
   question: { text: string; domain: ReadingContext["questionDomain"]; situationContext: string; observationWindow: string | null };
   cards: Array<{ evidenceId: string; position: number; name: string; status: EvidenceStatus; supportedMeanings: string[]; polarity: EvidencePolarity | null }>;

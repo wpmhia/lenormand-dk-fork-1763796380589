@@ -4,7 +4,7 @@ import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
-import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
+import { getCoreCardMeaning, getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Read the exact user question and the supplied cards, order, positions, and reviewed pair references. Synthesize one natural, nuanced answer. Preserve the question predicate, actor roles, and meaningful qualifiers. Respect the supplied spread layout and center/closing structure. Do not invent cards, people, facts, exact timing, or causal conditions. For an outcome question, answer the exact predicate first with the strongest direction supported by the complete spread. Do not call a reading undecided merely because some cards are mixed; preserve uncertainty only when the spread genuinely does not resolve the answer. Return only valid JSON matching the requested schema.`;
@@ -558,9 +558,9 @@ export function buildPromptFromContext(context: ReadingContext): string {
 
 /** Compact production reader prompt: code supplies spread facts, the model synthesizes. */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
-  const cards = context.cards.map((card, index) => `${index + 1}. ${card.name}`).join("\n");
+  const cards = context.cards.map((card, index) => `${index + 1}. ${card.name} — ${getCoreCardMeaning(card) || "no reviewed core meaning supplied"}`).join("\n");
   const pairs = context.adjacentPairs.map((pair) => {
-    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning; combine the individual cards cautiously";
+    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id) || "no reviewed pair meaning supplied";
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");
   const layout = context.layout.type === "grand-tableau"
