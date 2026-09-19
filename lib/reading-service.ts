@@ -31,6 +31,7 @@ interface ReadingServiceOptions {
   initialTimeoutMs: number;
   repairTimeoutMs: number;
   signal?: AbortSignal;
+  deadlineAt?: number;
 }
 
 function adaptSimpleAnswer(answer: SimpleAnswer, context: ReadingContext): Record<string, unknown> {
@@ -151,9 +152,12 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     return { ok: true, reading: finalized.text };
   }
 
+  const remainingRepairMs = options.deadlineAt
+    ? Math.max(1_000, options.deadlineAt - Date.now() - 4_000)
+    : repairTimeoutMs;
   const repair = await generate(
     `${system}\n\nVALIDATION OVERRIDE: Return only an object conforming to the supplied structured schema; do not emit Markdown headings. Preserve every explicit question subject exactly throughout the repaired interpretation, evidence implications, and ${readingMode === "retrospective_event" ? "conclusion" : "prediction"}; never replace it with Man, Woman, he, or she. ${modeInstruction} ${structuredEvidenceInstruction} ${closingEvidenceInstruction} Correct exactly the listed validation failures without weakening the evidence or hierarchy rules.`,
-    repairTimeoutMs,
+    remainingRepairMs,
     0,
     `${prompt}\n\nValidation failures (type: actionable message):\n${finalized.issues.map((issue) => `- ${issue.type}: ${issue.message}`).join("\n")}\n${modeInstruction}\n${structuredEvidenceInstruction}\n${closingEvidenceInstruction}\nReturn the complete structured object. Correct exactly these failures.`,
   );
