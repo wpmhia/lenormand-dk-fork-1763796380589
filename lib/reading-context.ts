@@ -449,6 +449,7 @@ function buildGrandTableauLayout(
   significatorPreference: "woman" | "man" | "both" = "both",
   question: string = "",
   semanticQuestion: SemanticQuestionFrame | null = null,
+  languageIndependent = false,
 ): GrandTableauLayout {
   const grid: GridCell[][] = [];
   for (let r = 0; r < 4; r++) {
@@ -501,9 +502,9 @@ function buildGrandTableauLayout(
       primarySignificator = significators.man;
       primarySignificatorSource = "default";
     } else if (significators.woman && significators.man) {
-      const lowerQ = semanticQuestion ? "" : question.toLowerCase();
-      const maleReferent = !semanticQuestion && /\b(he|him|his|husband|boyfriend|fiance|gentleman|male)\b/.test(lowerQ);
-      const femaleReferent = !semanticQuestion && /\b(she|her|hers|wife|girlfriend|fiancee|lady|female)\b/.test(lowerQ);
+      const lowerQ = semanticQuestion || languageIndependent ? "" : question.toLowerCase();
+      const maleReferent = !semanticQuestion && !languageIndependent && /\b(he|him|his|husband|boyfriend|fiance|gentleman|male)\b/.test(lowerQ);
+      const femaleReferent = !semanticQuestion && !languageIndependent && /\b(she|her|hers|wife|girlfriend|fiancee|lady|female)\b/.test(lowerQ);
       if (maleReferent && !femaleReferent) {
         primarySignificator = significators.man;
         primarySignificatorSource = "referent";
@@ -596,6 +597,7 @@ export function buildReadingContext(
   significatorPreference?: "woman" | "man" | "both",
   situationContext = "",
   semanticQuestion: SemanticQuestionFrame | null = null,
+  languageIndependent = false,
 ): ReadingContext {
   let adjacentPairs: AdjacentPair[];
   let layout: ReadingLayout;
@@ -615,7 +617,7 @@ export function buildReadingContext(
       adjacentPairs = buildPetitTableauPairs(cards, cardsMap);
       break;
     case "grand-tableau":
-      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference, question, semanticQuestion);
+      layout = buildGrandTableauLayout(cards, cardsMap, significatorPreference, question, semanticQuestion, languageIndependent);
       adjacentPairs = buildGrandTableauPairs(cards, cardsMap, layout);
       break;
     default:
@@ -635,13 +637,17 @@ export function buildReadingContext(
 
   const questionFrame = semanticQuestion
     ? { domain: semanticQuestion.domain, instruction: `Answer the ${semanticQuestion.mode} question about ${semanticQuestion.predicate}.` }
-    : getQuestionFrame(question);
+    : languageIndependent
+      ? { domain: "general" as const, instruction: "Answer the exact user question using the supplied cards and spread." }
+      : getQuestionFrame(question);
   const personBindings = semanticQuestion
     ? (significatorPreference === "woman" ? [{ cardId: 29 as const, source: "explicit-significator" as const, evidence: "The request explicitly selected Woman as the significator." }] : significatorPreference === "man" ? [{ cardId: 28 as const, source: "explicit-significator" as const, evidence: "The request explicitly selected Man as the significator." }] : [])
-    : derivePersonBindings(question, significatorPreference);
-  const questionSubjects = semanticQuestion?.subject ? [semanticQuestion.subject] : deriveQuestionSubjects(question);
+    : languageIndependent
+      ? (significatorPreference === "woman" ? [{ cardId: 29 as const, source: "explicit-significator" as const, evidence: "The request explicitly selected Woman as the significator." }] : significatorPreference === "man" ? [{ cardId: 28 as const, source: "explicit-significator" as const, evidence: "The request explicitly selected Man as the significator." }] : [])
+      : derivePersonBindings(question, significatorPreference);
+  const questionSubjects = semanticQuestion?.subject ? [semanticQuestion.subject] : languageIndependent ? [] : deriveQuestionSubjects(question);
   const topicFocus: TopicFocus[] = [];
-  if (semanticQuestion) {
+  if (semanticQuestion || languageIndependent) {
     return {
       spreadId,
       question,

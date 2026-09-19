@@ -100,7 +100,7 @@ export async function POST(request: Request) {
         });
       }
     }
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion, true);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
