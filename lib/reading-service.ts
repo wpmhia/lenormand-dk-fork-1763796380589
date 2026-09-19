@@ -36,31 +36,16 @@ interface ReadingServiceOptions {
 
 function adaptSimpleAnswer(answer: SimpleAnswer, context: ReadingContext): Record<string, unknown> {
   const evidence = answer.cards.map((card) => ({ pair: card.combination, implication: card.meaning, evidenceIds: [] as string[] }));
-  if (answer.mode === "forecast") {
-    return {
-      mode: "forecast",
-      interpretation: answer.interpretation,
-      evidence,
-      prediction: {
-        development: answer.directAnswer,
-        evidenceIds: [],
-        timing: answer.timing || "Not clearly shown by these cards.",
-        watchFor: null,
-        practicalAction: null,
-      },
-    };
-  }
-  if (answer.mode === "advice") {
-    return { mode: "advice", interpretation: answer.interpretation, evidence, practicalGuidance: answer.directAnswer, guidanceEvidenceIds: [] };
-  }
   return {
-    mode: answer.mode,
+    mode: "forecast",
     interpretation: answer.interpretation,
     evidence,
-    conclusion: {
-      verdict: "unresolved",
-      statement: answer.directAnswer,
+    prediction: {
+      development: answer.directAnswer,
       evidenceIds: [],
+      timing: answer.timing || "Not clearly shown by these cards.",
+      watchFor: null,
+      practicalAction: null,
     },
   };
 }
@@ -73,11 +58,13 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const canonicalTiming = buildPredictionTimingLine(context.timingEvidence, context.question, context.semanticQuestion);
   const closingEvidenceInstruction = "The server will attach evidence provenance after generation.";
   const structuredEvidenceInstruction = "";
-  const modeInstruction = readingMode === "advice"
-    ? "This is advice mode. Return mode=advice with interpretation, evidence, and practicalGuidance. Do not return prediction or timing fields."
-    : readingMode !== "forecast"
-    ? `This is ${readingMode} mode. Return mode=${readingMode} and a conclusion object with verdict and statement. Do not return prediction or timing fields.`
-    : "Return mode=forecast with the required prediction fields.";
+  const modeInstruction = useSimpleAnswer
+    ? "Return the simple answer contract: directAnswer, interpretation, cards, timing, and optional housesAndMirrors. Do not return legacy prediction, verdict, or internal evidence IDs."
+    : readingMode === "advice"
+      ? "This is advice mode. Return mode=advice with interpretation, evidence, practicalGuidance, and guidanceEvidenceIds. Do not return prediction or timing fields."
+      : readingMode !== "forecast"
+        ? `This is ${readingMode} mode. Return mode=${readingMode} and a conclusion object with verdict and statement. Do not return prediction or timing fields.`
+        : "Return mode=forecast with the required prediction fields.";
   const initialPrompt = `${prompt}\n\n${modeInstruction} Return valid JSON only. Return only the requested structured object. Evidence provenance is normalized server-side; do not create or manage internal evidence IDs. ${structuredEvidenceInstruction} ${closingEvidenceInstruction}`;
 
   const generate = (instruction: string, timeout: number, retries: number, promptOverride = prompt) => generateText({
