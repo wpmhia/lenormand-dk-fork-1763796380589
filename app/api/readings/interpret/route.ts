@@ -24,6 +24,17 @@ const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
 
+function classifyGenerationFailure(error: Error & { name?: string; statusCode?: number }, clientAborted: boolean, deadlineAborted: boolean): string {
+  if (clientAborted) return "client_abort";
+  if (deadlineAborted || error.name === "TimeoutError" || error.name === "AbortError") return "provider_timeout";
+  if (error.name === "AI_NoObjectGeneratedError") return "schema_mismatch";
+  if (error.name === "AI_NoOutputGeneratedError") return "empty_output";
+  if (error.name === "ResponseAborted" || error.message?.toLowerCase().includes("econnreset")) return "provider_abort";
+  if (error.statusCode === 401 || error.statusCode === 403) return "provider_auth";
+  if (error.statusCode === 429) return "provider_rate_limit";
+  return "provider_runtime";
+}
+
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
@@ -123,7 +134,7 @@ export async function POST(request: Request) {
     const isTimeout = deadlineAborted || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
       console.error("interpret: generation error", {
         phase: "generation",
-        failureClass: "generation-runtime",
+        failureClass: classifyGenerationFailure(error, clientAborted, deadlineAborted),
         name: error.name,
         message: error.message,
         statusCode: error.statusCode ?? error.status ?? error.cause?.statusCode,
