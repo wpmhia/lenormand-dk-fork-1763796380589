@@ -7,6 +7,8 @@ import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Read the exact user question and the supplied cards, order, positions, and reviewed pair references. Synthesize one natural, nuanced answer. Preserve the question predicate, actor roles, and meaningful qualifiers. Respect the supplied spread layout and center/closing structure. Do not invent cards, people, facts, exact timing, or causal conditions. If evidence is mixed, preserve uncertainty rather than forcing a yes/no answer. Return only valid JSON matching the requested schema.`;
+
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 400;
   if (cardCount <= 3) return 800;

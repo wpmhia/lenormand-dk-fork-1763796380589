@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
 import { validateEntityEvidenceBinding, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
-import { buildClaimPlan } from "@/lib/claim-plan";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
