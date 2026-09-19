@@ -14,7 +14,7 @@ function defToSpread(id: string): Spread {
 }
 
 export const AUTHENTIC_SPREADS: Spread[] = [
-  "single-card", "sentence-3", "comprehensive", "grand-tableau",
+  "single-card", "sentence-5", "sentence-3", "comprehensive", "grand-tableau",
 ].map(defToSpread);
 
 export const COMPREHENSIVE_SPREADS: Spread[] = [

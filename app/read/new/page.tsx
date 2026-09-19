@@ -57,7 +57,7 @@ function NewReadingPageContent() {
   const [method, setMethod] = useState<Method>(null);
   const [question, setQuestion] = useState("");
   const [selectedSpread, setSelectedSpread] = useState<Spread>(
-    AUTHENTIC_SPREADS[1],
+    AUTHENTIC_SPREADS.find((spread) => spread.id === "sentence-5") ?? AUTHENTIC_SPREADS[1],
   );
 
   // Card state
