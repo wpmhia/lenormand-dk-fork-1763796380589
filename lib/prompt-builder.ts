@@ -561,7 +561,9 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
     const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning; combine the individual cards cautiously";
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");
-  const modeInstruction = context.semanticQuestion?.mode === "advice"
+  const modeInstruction = !context.semanticQuestion
+    ? "Understand the question directly and choose the appropriate answer style: forecast, current state, retrospective event, or advice."
+    : context.semanticQuestion.mode === "advice"
     ? "The question asks for advice. Give practical guidance, not a forecast."
     : context.semanticQuestion?.mode !== "forecast"
       ? "The question asks about a current or past state. Give a qualified conclusion, not a future forecast."
