@@ -25,7 +25,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     model: options.model,
     system: options.system,
     prompt: options.prompt,
-    output: Output.object({ schema: SimpleAnswerSchema }),
+    output: Output.json(),
     providerOptions: { deepseek: { thinking: { type: "disabled" } } },
     maxOutputTokens: options.maxTokens,
     maxRetries: 1,
@@ -34,5 +34,6 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   });
 
   if (!result.output) return { ok: false, reason: "empty-output", issues: [] };
-  return { ok: true, reading: renderSimpleAnswer(result.output) };
+  const answer = SimpleAnswerSchema.parse(result.output);
+  return { ok: true, reading: renderSimpleAnswer(answer) };
 }
