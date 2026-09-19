@@ -90,13 +90,15 @@ export async function POST(request: Request) {
 
     const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
     let semanticQuestion: Awaited<ReturnType<typeof parseQuestionFrame>> | null = null;
-    try {
-      semanticQuestion = await parseQuestionFrame(validated.question, readingModel, parserSignal);
-    } catch (error) {
-      console.warn("interpret: question parser failed; continuing with raw question context", {
-        name: error instanceof Error ? error.name : "unknown",
-        message: error instanceof Error ? error.message : String(error),
-      });
+    if (validated.spreadId === "grand-tableau") {
+      try {
+        semanticQuestion = await parseQuestionFrame(validated.question, readingModel, parserSignal);
+      } catch (error) {
+        console.warn("interpret: question parser failed; continuing with raw question context", {
+          name: error instanceof Error ? error.name : "unknown",
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion);
     const prompt = context.spreadId === "grand-tableau" ? buildPromptFromContext(context) : buildSimpleReadingPrompt(context);
