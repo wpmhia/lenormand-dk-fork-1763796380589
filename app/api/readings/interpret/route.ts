@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-import { buildSimpleReadingPrompt, buildSystemPrompt, getTokenBudget } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT, getTokenBudget } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     const repairBudgetMs = getReadingRepairTimeoutMs(cardCount);
     const initialBudgetMs = Math.max(1_000, remainingMs - responseReserveMs);
-    const serviceResult = await generateReading({ context, model: readingModel, system: buildSystemPrompt(cardCount, "structured"), prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
+    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty model output", {
