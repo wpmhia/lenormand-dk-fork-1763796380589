@@ -64,13 +64,13 @@ const GrandTableauForecastReadingSchema = ForecastReadingSchema.extend({
   })).min(1),
 });
 const GrandTableauRetrospectiveReadingSchema = RetrospectiveReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
+  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).default([]),
 });
 const GrandTableauCurrentStateReadingSchema = CurrentStateReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
+  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).default([]),
 });
 const GrandTableauAdviceReadingSchema = AdviceReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).min(1),
+  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).default([]),
 });
 const GrandTableauReadingSchema = z.discriminatedUnion("mode", [GrandTableauForecastReadingSchema, GrandTableauRetrospectiveReadingSchema, GrandTableauCurrentStateReadingSchema, GrandTableauAdviceReadingSchema]);
 
@@ -310,10 +310,10 @@ export function validateStructuredReading(
       const cardId = Number(id.replace("house-", ""));
       const house = grandLayout.houses.find((item) => item.houseCardId === cardId);
       if (!house || !houseText.includes(house.houseName.toLowerCase())) {
-        issues.push({ type: "ungrounded_evidence", message: `Structured Grand Tableau output is missing required topic house: "${house?.houseName ?? id}"` });
+        issues.push({ type: "semantic_grounding", code: "optional_grand_context", message: `Grand Tableau output omitted optional topic house: "${house?.houseName ?? id}"` });
       }
     }
-    if (houses.length === 0) issues.push({ type: "ungrounded_evidence", message: "Structured Grand Tableau output must contain houses and mirrors" });
+    if (houses.length === 0) issues.push({ type: "semantic_grounding", code: "optional_grand_context", message: "Grand Tableau output omitted optional houses and mirrors" });
   }
 
   return issues;
