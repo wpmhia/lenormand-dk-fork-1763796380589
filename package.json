@@ -16,6 +16,7 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "test": "vitest",
+    "test:typecheck": "tsc -p tsconfig.test.json --noEmit",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"

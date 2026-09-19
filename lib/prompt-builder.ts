@@ -563,25 +563,14 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
     const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning; combine the individual cards cautiously";
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");
-  const modeInstruction = !context.semanticQuestion
-    ? "Understand the question directly and choose the appropriate answer style: forecast, current state, retrospective event, or advice."
-    : context.semanticQuestion.mode === "advice"
-    ? "The question asks for advice. Give practical guidance, not a forecast."
-    : context.semanticQuestion?.mode !== "forecast"
-      ? "The question asks about a current or past state. Give a qualified conclusion, not a future forecast."
-      : "Answer the forecast question directly, preserving uncertainty where the cards do not decide it.";
-  const bindingInstruction = "Never bind Man or Woman to a named question subject unless explicit significator metadata establishes that binding; otherwise treat the person card as a separate unresolved person.";
-  const hierarchyInstruction = context.layout.type === "linear-sentence"
-    ? `For this linear spread, the closing pair (${context.cards[context.cards.length - 2]?.name} + ${context.cards[context.cards.length - 1]?.name}) and closing card (${context.cards[context.cards.length - 1]?.name}) are primary outcome evidence.`
-    : context.layout.type === "petit-tableau"
-      ? `For this Petit Tableau, use the exact center card (${context.layout.center.card.name}) as the pivot.`
-      : "Respect the supplied spread layout and positions; do not invent positional relationships.";
-  const modeInstructionWithHierarchy = `${modeInstruction} ${hierarchyInstruction} ${bindingInstruction} For an outcome question, answer the exact predicate before explaining the cards. Do not replace an outcome with advice or invented conditions; do not write only if, provided that, or depends on unless the evidence encodes that condition.`;
-  const layoutFacts = context.layout.type === "grand-tableau"
+  const layout = context.layout.type === "grand-tableau"
     ? `Grand Tableau rows: ${context.layout.grid.map((row) => row.map((cell) => cell.card.name).join(" + ")).join(" / ")}. Center four: ${context.layout.centerFour.map((cell) => cell.card.name).join(" + ")}.`
-    : "";
-
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\nCards in order:\n${cards}\n\nSpread: ${context.spreadId}\n${layoutFacts}\n${context.situationContext ? `Known situation context: ${context.situationContext}\nUse it to understand specificity, not as card evidence.\n` : ""}\nLocal pair references:\n${pairs || "No reviewed pair meanings are available; read the cards and positions together."}\n\nMethod:\n- Read the cards as a connected Lenormand sentence in their supplied order and positions.\n- Interpret them specifically in relation to the exact user question. Preserve every meaningful qualifier; do not generalize the requested action or quality. "spannend praten" is not merely "praten"; "seksueel schrijven" is not merely "schrijven"; "meer contact" is not merely "contact"; "liefdevoller reageren" is not merely "reageren".\n- Prefer the most concrete question-relevant card sense over generic psychological or chronological narrative. Child may describe a playful, light, spontaneous or cheeky quality; do not automatically turn it into a new phase or timeline.\n- Preserve actor and perspective roles. Communication does not establish who initiates it, and Heart does not automatically represent the questioner's desire or the other person's desire. Do not assign initiation, motive, or agency unless the question/context/evidence supports it.\n- Do not invent events, motives, history, entities, or exact timing. Speed or liveliness is not automatically "within days" or "very soon"; use timing only when explicit timing evidence is supplied.\n- Keep certainty consistent: an unresolved interpretation must not be followed by a categorical or likely prediction unless the evidence changes that assessment.\n- Adjacent combinations matter; do not invent relations between unrelated cards.\n- Preserve the distinction between what the questioner can do and what another person chooses to do.\n- ${modeInstructionWithHierarchy}\n\nReturn only this structured object:\n{\n  "mode": "${context.semanticQuestion?.mode || "forecast"}",\n  "interpretation": "...",\n  "cards": [{ "combination": "...", "meaning": "..." }],\n  "directAnswer": "...",\n  "verdict": "supported | not_supported | unresolved | null",\n  "timing": "... or null",\n  "watchFor": "... or null",\n  "practicalAction": "... or null"\n}\nDo not output Markdown or internal evidence IDs.`;
+    : context.layout.type === "petit-tableau"
+      ? `Petit Tableau center: ${context.layout.center.card.name}.`
+      : context.layout.type === "linear-sentence"
+        ? `Closing pair: ${context.cards[context.cards.length - 2]?.name} + ${context.cards[context.cards.length - 1]?.name}. Closing card: ${context.cards[context.cards.length - 1]?.name}.`
+        : "";
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\nCards in order:\n${cards}\n\nSpread facts:\n${layout}\n\nLocal pair references:\n${pairs || "No reviewed pair meanings are available; synthesize from cards and layout."}\n\nRead the question and cards together. Preserve the exact predicate and qualifiers. Respect positions and closing evidence. Do not invent cards, entities, motives, history, exact timing, or conditions. Reviewed pair meanings are optional references; unreviewed combinations may be cautiously synthesized but are not canonical doctrine.\n\nReturn valid JSON only matching this exact object:\n{\n  "directAnswer": "direct answer to the user's question",\n  "interpretation": "natural Lenormand interpretation",\n  "cards": [{ "combination": "card combination", "meaning": "what it contributes" }],\n  "timing": null,\n  "housesAndMirrors": []\n}`;
 }
 
 export function sanitizeQuestion(question: string): string {
