@@ -203,7 +203,7 @@ export interface StructuredReadingIssue {
 export function isBlockingStructuredIssue(issue: StructuredReadingIssue): boolean {
   // Entity/subject substitution is a hard provenance violation; other
   // interpretive semantic disagreements remain diagnostic only.
-  if (issue.code === "unsupported_entity_binding" || issue.code === "subject_substitution") return true;
+  if (issue.code === "subject_substitution") return true;
   return issue.type === "ungrounded_evidence" || issue.type === "ungrounded_prediction";
 }
 

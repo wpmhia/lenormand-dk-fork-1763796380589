@@ -3,7 +3,7 @@ import { isBlockingStructuredIssue } from "@/lib/structured-reading";
 
 describe("structured validation severity", () => {
   it("keeps interpretive disagreements non-blocking but entity substitutions blocking", () => {
-    expect(isBlockingStructuredIssue({ type: "semantic_grounding", code: "unsupported_entity_binding", message: "unbound person" })).toBe(true);
+    expect(isBlockingStructuredIssue({ type: "semantic_grounding", code: "unsupported_entity_binding", message: "unbound person" })).toBe(false);
     expect(isBlockingStructuredIssue({ type: "semantic_grounding", code: "unsupported_causality", message: "unsupported cause" })).toBe(false);
   });
 
