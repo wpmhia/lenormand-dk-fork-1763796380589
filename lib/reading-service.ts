@@ -35,36 +35,31 @@ interface ReadingServiceOptions {
 }
 
 function adaptSimpleAnswer(answer: SimpleAnswer, context: ReadingContext): Record<string, unknown> {
-  const evidence = answer.cards.map((card) => ({ ...card, evidenceIds: [] as string[] }));
-  const verdictPrefix = answer.verdict === "not_supported"
-    ? "The cards do not support this outcome. "
-    : answer.verdict === "supported"
-      ? "The cards support this outcome. "
-      : "The outcome remains unresolved. ";
+  const evidence = answer.cards.map((card) => ({ pair: card.combination, implication: card.meaning, evidenceIds: [] as string[] }));
   if (answer.mode === "forecast") {
     return {
       mode: "forecast",
       interpretation: answer.interpretation,
       evidence,
       prediction: {
-        development: `${verdictPrefix}${answer.answer}`,
+        development: answer.directAnswer,
         evidenceIds: [],
         timing: answer.timing || "Not clearly shown by these cards.",
-        watchFor: answer.watchFor,
-        practicalAction: answer.practicalAction,
+        watchFor: null,
+        practicalAction: null,
       },
     };
   }
   if (answer.mode === "advice") {
-    return { mode: "advice", interpretation: answer.interpretation, evidence, practicalGuidance: answer.answer, guidanceEvidenceIds: [] };
+    return { mode: "advice", interpretation: answer.interpretation, evidence, practicalGuidance: answer.directAnswer, guidanceEvidenceIds: [] };
   }
   return {
     mode: answer.mode,
     interpretation: answer.interpretation,
     evidence,
     conclusion: {
-      verdict: answer.verdict || "unresolved",
-      statement: answer.answer,
+      verdict: "unresolved",
+      statement: answer.directAnswer,
       evidenceIds: [],
     },
   };
