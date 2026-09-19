@@ -9,7 +9,7 @@ import {
   withCanonicalPredictionTiming,
 } from "@/lib/structured-reading";
 import { buildPredictionTimingLine } from "@/lib/timing";
-import { SimpleAnswerSchema, type SimpleAnswer } from "@/lib/simple-answer";
+import { renderSimpleAnswer, SimpleAnswerSchema, type SimpleAnswer } from "@/lib/simple-answer";
 import {
   isCriticalIssue,
   normalizeMarkdown,
@@ -81,6 +81,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   });
 
   const finalize = (output: unknown): { text: string; issues: ValidationIssue[] } => {
+    if (useSimpleAnswer) return { text: renderSimpleAnswer(output as SimpleAnswer), issues: [] };
     const structuredOutput = normalizeStructuredEvidence(
       (useSimpleAnswer ? adaptSimpleAnswer(output as SimpleAnswer, context) : output) as Parameters<typeof renderStructuredReading>[0],
       context,
