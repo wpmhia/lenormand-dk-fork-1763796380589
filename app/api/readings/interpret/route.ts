@@ -88,24 +88,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const parserSignal = AbortSignal.any([request.signal, AbortSignal.timeout(parserBudgetMs)]);
+    const parserSignal = AbortSignal.any([request.signal, deadlineSignal, AbortSignal.timeout(parserBudgetMs)]);
     let semanticQuestion: Awaited<ReturnType<typeof parseQuestionFrame>> | null = null;
-    if (validated.spreadId === "grand-tableau") {
-      try {
-        semanticQuestion = await parseQuestionFrame(validated.question, readingModel, parserSignal);
-      } catch (error) {
-        console.warn("interpret: question parser failed; continuing with raw question context", {
-          name: error instanceof Error ? error.name : "unknown",
-          message: error instanceof Error ? error.message : String(error),
-        });
-      }
+    try {
+      semanticQuestion = await parseQuestionFrame(validated.question, readingModel, parserSignal);
+    } catch (error) {
+      console.warn("interpret: question parser failed; continuing with deterministic question context", {
+        name: error instanceof Error ? error.name : "unknown",
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion, true);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion, false);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     const repairBudgetMs = getReadingRepairTimeoutMs(cardCount);
-    const initialBudgetMs = Math.max(1_000, remainingMs - responseReserveMs);
+    const initialBudgetMs = Math.max(1_000, remainingMs - responseReserveMs - repairBudgetMs);
     const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {

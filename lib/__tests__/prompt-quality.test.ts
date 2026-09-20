@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildPromptFromContext, buildSystemPrompt } from "@/lib/prompt-builder";
+import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { Card } from "@/lib/types";
 
@@ -377,6 +377,37 @@ describe("prompt quality: question appears in prompt", () => {
     const ctx = buildReadingContext("grand-tableau", question, normalized(allIds), cardsMap);
     const prompt = buildPromptFromContext(ctx);
     expect(prompt).toContain(question);
+  });
+});
+
+describe("production simple prompt evidence", () => {
+  it("includes the three-card left/right pairs and bridge-pivot instruction", () => {
+    const ctx = buildReadingContext("sentence-3", "Will I find a new job?", normalized([1, 2, 3]), cardsMap);
+    const prompt = buildSimpleReadingPrompt(ctx);
+    expect(prompt).toContain("Full ordered progression (2 adjacent pairs)");
+    expect(prompt).toContain("Rider + Clover");
+    expect(prompt).toContain("Clover + Ship");
+    expect(prompt).toContain("left pair and right pair through the central card as bridge/pivot");
+  });
+
+  it("includes ordered closing-pair evidence for five cards", () => {
+    const ctx = buildReadingContext("sentence-5", "Will the deal close?", normalized([1, 2, 3, 4, 5]), cardsMap);
+    const prompt = buildSimpleReadingPrompt(ctx);
+    expect(prompt).toContain("Full ordered progression (4 adjacent pairs)");
+    expect(prompt).toContain("[STRONGEST — closing pair]");
+    expect(prompt).toContain("Closing pair");
+  });
+
+  it("includes Petit Tableau hierarchy and Grand Tableau spatial evidence", () => {
+    const petit = buildSimpleReadingPrompt(buildReadingContext("comprehensive", "What will my month bring?", normalized([1, 2, 3, 4, 5, 6, 7, 8, 9]), cardsMap));
+    expect(petit).toContain("Petit Tableau hierarchy");
+    expect(petit).toContain("Center card (heart of tableau)");
+
+    const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+    const grand = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap, "woman"));
+    expect(grand).toContain("significator surroundings");
+    expect(grand).toContain("House of");
+    expect(grand).toContain("Primary significator");
   });
 });
 

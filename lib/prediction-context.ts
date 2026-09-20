@@ -205,6 +205,13 @@ function buildGrandPrediction(cards: NormalizedCard[], layout: GrandTableauLayou
       label: `Primary significator: ${sig.card.name}`,
       value: `position ${sig.index + 1}, row ${row}, column ${col} (source: ${layout.primarySignificatorSource ?? "explicit"})`,
     });
+    for (const pair of significantPairs.slice(0, 4)) {
+      const other = pair.cardA.id === sig.card.id ? pair.cardB : pair.cardA;
+      sigLines.push({
+        label: "Significator surroundings",
+        value: `${fmt(other)} via ${fmt(pair.cardA)} + ${fmt(pair.cardB)} (evidence weight ${pair.weight})`,
+      });
+    }
   }
   const notes: string[] = [];
   if (!sig) {
