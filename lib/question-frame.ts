@@ -20,8 +20,8 @@ export async function parseQuestionFrame(question: string, model: LanguageModel,
     providerOptions: { deepseek: { thinking: { type: "disabled" } } },
     system: "Parse the user's question only. Return the requested structured object with one canonical mode: forecast, retrospective_event, current_state, or advice. Identify the grammatical subject/actor, counterparty/target, and exact predicate including meaningful qualifiers such as style, intensity, emotional or sexual quality. Do not generalize a qualified predicate into a broader action. Do not infer an answer, card meaning, polarity, or outside facts. Preserve ambiguity.",
     prompt: `Parse this question into the schema exactly. Return valid JSON only.\n\n${question}`,
-    output: Output.object({ schema: QuestionFrameSchema }),
+    output: Output.json(),
   });
   if (!result.output) throw new Error("Question frame was not generated");
-  return result.output;
+  return QuestionFrameSchema.parse(result.output);
 }

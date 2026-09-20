@@ -560,7 +560,7 @@ export function buildPromptFromContext(context: ReadingContext): string {
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
   const cards = context.cards.map((card, index) => `${index + 1}. ${card.name} — ${getCoreCardMeaning(card) || "no reviewed core meaning supplied"}`).join("\n");
   const pairs = context.adjacentPairs.map((pair) => {
-    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id) || "no reviewed pair meaning supplied";
+    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning supplied";
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");
   const layout = context.layout.type === "grand-tableau"
@@ -570,7 +570,20 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
       : context.layout.type === "linear-sentence"
         ? `Closing pair: ${context.cards[context.cards.length - 2]?.name} + ${context.cards[context.cards.length - 1]?.name}. Closing card: ${context.cards[context.cards.length - 1]?.name}.`
         : "";
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\nCards in order:\n${cards}\n\nSpread facts:\n${layout}\n\nLocal pair references:\n${pairs || "No reviewed pair meanings are available; synthesize from cards and layout."}\n\nRead the question and cards together. Preserve the exact predicate and qualifiers. Respect positions and closing evidence. Do not invent cards, entities, motives, history, exact timing, or conditions. Reviewed pair meanings are optional references; unreviewed combinations may be cautiously synthesized but are not canonical doctrine.\n\nReturn valid JSON only matching this exact object:\n{\n  "directAnswer": "direct answer to the user's question",\n  "interpretation": "natural Lenormand interpretation",\n  "cards": [{ "combination": "card combination", "meaning": "what it contributes" }],\n  "timing": null,\n  "housesAndMirrors": []\n}`;
+  const semantic = context.semanticQuestion
+    ? `Semantic question frame: mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}.`
+    : `Question frame (${context.questionDomain}): ${context.questionFrame}`;
+  const situation = context.situationContext.trim()
+    ? `\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
+    : "";
+  const subjects = `\nQuestion subjects: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}.`;
+  const prediction = context.layout.type !== "single"
+    ? `\n\n${formatPredictionEvidenceBlock(buildPredictionContext(context))}`
+    : "";
+  const topicFocus = context.topicFocus.length > 0
+    ? `\n\nTopic focus:\n${context.topicFocus.slice(0, 5).map((topic) => `- ${topic.topic}: ${topic.cardName} at position ${topic.index + 1}`).join("\n")}`
+    : "";
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}${subjects}${situation}\n\nCards in order:\n${cards}\n\nSpread facts:\n${layout}\n\nLocal pair references:\n${pairs || "No reviewed pair meanings are available; synthesize from cards and layout."}${topicFocus}${prediction}\n\nRead the question and cards together. Preserve the exact predicate and qualifiers. Treat the deterministic evidence above as authoritative: follow its spread hierarchy, ordered progression, bridge/pivot, significator, house, mirror, proximity, and timing instructions. Do not invent cards, entities, motives, history, exact timing, or conditions. Reviewed pair meanings are optional references; unreviewed combinations may be cautiously synthesized but are not canonical doctrine.\n\nReturn valid JSON only matching this exact object:\n{\n  "directAnswer": "direct answer to the user's question",\n  "interpretation": "natural Lenormand interpretation",\n  "cards": [{ "combination": "card combination", "meaning": "what it contributes" }],\n  "timing": null,\n  "housesAndMirrors": []\n}`;
 }
 
 export function sanitizeQuestion(question: string): string {
