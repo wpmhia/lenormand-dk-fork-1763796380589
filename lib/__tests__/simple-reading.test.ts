@@ -8,7 +8,10 @@ const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
 
 vi.mock("ai", () => ({
   generateText,
-  Output: { json: vi.fn(() => ({ type: "json" })) },
+  Output: {
+    json: vi.fn(() => ({ type: "json" })),
+    object: vi.fn(({ schema }) => ({ type: "object", schema })),
+  },
 }));
 
 const validOutput = {
