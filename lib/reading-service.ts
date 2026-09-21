@@ -92,10 +92,34 @@ function isMalformedObjectError(error: unknown): error is Error & { text?: strin
 function normalizeSimpleAnswer(raw: z.infer<typeof SimpleAnswerTransportSchema>): ReturnType<typeof SimpleAnswerSchema.parse> {
   return SimpleAnswerSchema.parse({
     ...raw,
+    cards: raw.cards
+      .map(normalizeCard)
+      .filter((item): item is { combination: string; meaning: string } => item !== null),
+    timing: normalizeTiming(raw.timing),
     housesAndMirrors: raw.housesAndMirrors
       .map(normalizeHouseMirror)
       .filter((item): item is HouseMirror => item !== null),
   });
+}
+
+function normalizeCard(value: unknown): { combination: string; meaning: string } | null {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const item = value as Record<string, unknown>;
+    if (typeof item.combination === "string" && item.combination.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
+      return { combination: item.combination.trim(), meaning: item.meaning.trim() };
+    }
+    return null;
+  }
+
+  if (typeof value === "string") {
+    const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
+    if (match) return { combination: match[1].trim(), meaning: match[2].trim() };
+  }
+  return null;
+}
+
+function normalizeTiming(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
 function normalizeHouseMirror(value: unknown): HouseMirror | null {

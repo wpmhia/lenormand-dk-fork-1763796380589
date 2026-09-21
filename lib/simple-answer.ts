@@ -18,8 +18,8 @@ export const SimpleAnswerSchema = z.object({
 export const SimpleAnswerTransportSchema = z.object({
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
-  cards: z.array(z.object({ combination: z.string().min(1), meaning: z.string().min(1) })).default([]),
-  timing: z.string().nullable().default(null),
+  cards: z.array(z.unknown()).default([]),
+  timing: z.unknown().optional(),
   housesAndMirrors: z.array(z.unknown()).default([]),
 });
 
