@@ -51,7 +51,11 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
       model: options.model,
       system: options.system,
       prompt,
-      output: Output.json(),
+       output: Output.object({
+         schema: SimpleAnswerSchema,
+         name: "simple_lenormand_reading",
+         description: "A structured Lenormand reading. Every cards and housesAndMirrors item must be an object with the exact fields required by the schema.",
+       }),
       providerOptions: { deepseek: { thinking: { type: "disabled" } } },
       maxOutputTokens: options.maxTokens,
       maxRetries: 0,
