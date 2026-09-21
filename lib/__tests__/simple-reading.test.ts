@@ -96,4 +96,18 @@ describe("simple reading JSON repair", () => {
     expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
     expect(generateText).toHaveBeenCalledTimes(1);
   });
+
+  it("normalizes a legacy house string without retrying", async () => {
+    const output = {
+      ...validOutput,
+      housesAndMirrors: ["House of Heart: relationship becomes central"],
+    };
+    generateText.mockResolvedValueOnce({ output, text: JSON.stringify(output) });
+
+    const result = await generateReading(options());
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.reading).toContain("House of Heart");
+    expect(generateText).toHaveBeenCalledTimes(1);
+  });
 });

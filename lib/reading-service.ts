@@ -1,6 +1,12 @@
 import { generateText, Output, type LanguageModel } from "ai";
+import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
-import { renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
+import {
+  renderSimpleAnswer,
+  SimpleAnswerSchema,
+  SimpleAnswerTransportSchema,
+  type HouseMirror,
+} from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 
 export type ReadingServiceResult =
@@ -52,9 +58,9 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
       system: options.system,
       prompt,
        output: Output.object({
-         schema: SimpleAnswerSchema,
+         schema: SimpleAnswerTransportSchema,
          name: "simple_lenormand_reading",
-         description: "A structured Lenormand reading. Every cards and housesAndMirrors item must be an object with the exact fields required by the schema.",
+         description: "A structured Lenormand reading. housesAndMirrors may contain house/meaning objects or strings that the server will normalize.",
        }),
       providerOptions: { deepseek: { thinking: { type: "disabled" } } },
       maxOutputTokens: options.maxTokens,
@@ -63,10 +69,15 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
       timeout: { totalMs: timeoutMs },
     });
     if (!result.output) return { kind: "empty" };
-    const parsed = SimpleAnswerSchema.safeParse(result.output);
-    return parsed.success
-      ? { kind: "valid", answer: parsed.data }
-      : { kind: "invalid", raw: result.text || JSON.stringify(result.output), error: parsed.error };
+    const parsed = SimpleAnswerTransportSchema.safeParse(result.output);
+    if (!parsed.success) {
+      return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error: parsed.error };
+    }
+    try {
+      return { kind: "valid", answer: normalizeSimpleAnswer(parsed.data) };
+    } catch (error) {
+      return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error };
+    }
   } catch (error) {
     const raw = isMalformedObjectError(error) ? error.text || "" : "";
     if (isMalformedObjectError(error)) return { kind: "invalid", raw, error };
@@ -76,6 +87,31 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
 
 function isMalformedObjectError(error: unknown): error is Error & { text?: string } {
   return Boolean(error && typeof error === "object" && (error as { name?: string }).name === "AI_NoObjectGeneratedError");
+}
+
+function normalizeSimpleAnswer(raw: z.infer<typeof SimpleAnswerTransportSchema>): ReturnType<typeof SimpleAnswerSchema.parse> {
+  return SimpleAnswerSchema.parse({
+    ...raw,
+    housesAndMirrors: raw.housesAndMirrors
+      .map(normalizeHouseMirror)
+      .filter((item): item is HouseMirror => item !== null),
+  });
+}
+
+function normalizeHouseMirror(value: unknown): HouseMirror | null {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const item = value as Record<string, unknown>;
+    if (typeof item.house === "string" && item.house.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
+      return { house: item.house.trim(), meaning: item.meaning.trim() };
+    }
+    return null;
+  }
+
+  if (typeof value === "string") {
+    const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
+    if (match) return { house: match[1].trim(), meaning: match[2].trim() };
+  }
+  return null;
 }
 
 function schemaIssue(error: unknown): ValidationIssue {
