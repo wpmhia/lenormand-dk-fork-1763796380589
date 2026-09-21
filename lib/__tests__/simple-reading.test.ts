@@ -110,4 +110,22 @@ describe("simple reading JSON repair", () => {
     expect(result.ok && result.reading).toContain("House of Heart");
     expect(generateText).toHaveBeenCalledTimes(1);
   });
+
+  it.each([
+    ["house object", { housesAndMirrors: [{ house: "House of Heart", meaning: "Relationships matter." }] }],
+    ["malformed house", { housesAndMirrors: [{ house: 4 }] }],
+    ["card string", { cards: ["Clover + Ring: a small opening"] }],
+    ["card object", { cards: [{ combination: "Clover + Ring", meaning: "A small opening." }] }],
+    ["malformed card", { cards: [{ combination: "Clover" }] }],
+    ["missing timing", {}],
+    ["null timing", { timing: null }],
+  ])("accepts %s without retrying", async (_, overrides) => {
+    const output = { ...validOutput, ...overrides };
+    generateText.mockResolvedValueOnce({ output, text: JSON.stringify(output) });
+
+    const result = await generateReading(options());
+
+    expect(result.ok).toBe(true);
+    expect(generateText).toHaveBeenCalledTimes(1);
+  });
 });
