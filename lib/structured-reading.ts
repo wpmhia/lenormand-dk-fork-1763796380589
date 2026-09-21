@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import { getCardEvidenceId, getGrandTableauPromptedHouseIds, getPairEvidenceId } from "@/lib/lenormand-evidence";
 import { validateEntityEvidenceBinding, validatePredictionSemantics, validateQuestionSubjectPreservation } from "@/lib/semantic-grounding";
+import { HouseMirrorSchema } from "@/lib/simple-answer";
 
 const PredictionSchema = z.object({
   development: z.string().min(1),
@@ -57,19 +58,16 @@ const SingleCardReadingSchema = z.object({
 });
 
 const GrandTableauForecastReadingSchema = ForecastReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({
-    house: z.string().min(1),
-    meaning: z.string().min(1),
-  })).min(1),
+  housesAndMirrors: z.array(HouseMirrorSchema).min(1),
 });
 const GrandTableauRetrospectiveReadingSchema = RetrospectiveReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).default([]),
+  housesAndMirrors: z.array(HouseMirrorSchema).default([]),
 });
 const GrandTableauCurrentStateReadingSchema = CurrentStateReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).default([]),
+  housesAndMirrors: z.array(HouseMirrorSchema).default([]),
 });
 const GrandTableauAdviceReadingSchema = AdviceReadingSchema.extend({
-  housesAndMirrors: z.array(z.object({ house: z.string().min(1), meaning: z.string().min(1) })).default([]),
+  housesAndMirrors: z.array(HouseMirrorSchema).default([]),
 });
 const GrandTableauReadingSchema = z.discriminatedUnion("mode", [GrandTableauForecastReadingSchema, GrandTableauRetrospectiveReadingSchema, GrandTableauCurrentStateReadingSchema, GrandTableauAdviceReadingSchema]);
 
