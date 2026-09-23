@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import {
   BrainCircuit,
   CheckCircle2,
@@ -54,30 +55,42 @@ export default function AboutPage() {
               Why I built this
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5 text-foreground">
-            <p>
-              I&apos;m Willem Gielen, a cardiologist with a longstanding interest
-              in technology, clinical decision-making, and artificial
-              intelligence. In medicine, I work in a world where complex
-              information has to be reduced to something useful: identify the
-              important signals, understand uncertainty, and communicate a
-              conclusion clearly.
-            </p>
-            <p>
-              Lenormand Intelligence is not a medical tool and it does not turn
-              card readings into medical, financial, or legal advice. Lenormand
-              is a separate symbolic practice. What makes it interesting to me
-              is the engineering problem: can a system represent a question,
-              apply a defined reading method, and produce a useful answer
-              without pretending that an unconstrained language model is an
-              oracle?
-            </p>
-            <p>
-              That makes this project a practical experiment in structured
-              reasoning and AI engineering. The cards provide a compact domain;
-              the software provides the discipline needed to make its reasoning
-              inspectable and repeatable.
-            </p>
+          <CardContent className="grid gap-8 text-foreground md:grid-cols-[1fr_280px] md:items-start">
+            <div className="space-y-5">
+              <p>
+                I&apos;m Willem Gielen, a cardiologist with a longstanding interest
+                in technology, clinical decision-making, and artificial
+                intelligence. In medicine, I work in a world where complex
+                information has to be reduced to something useful: identify the
+                important signals, understand uncertainty, and communicate a
+                conclusion clearly.
+              </p>
+              <p>
+                Lenormand Intelligence is not a medical tool and it does not turn
+                card readings into medical, financial, or legal advice. Lenormand
+                is a separate symbolic practice. What makes it interesting to me
+                is the engineering problem: can a system represent a question,
+                apply a defined reading method, and produce a useful answer
+                without pretending that an unconstrained language model is an
+                oracle?
+              </p>
+              <p>
+                That makes this project a practical experiment in structured
+                reasoning and AI engineering. The cards provide a compact domain;
+                the software provides the discipline needed to make its reasoning
+                inspectable and repeatable.
+              </p>
+            </div>
+            <div className="overflow-hidden rounded-lg border border-border shadow-lg">
+              <Image
+                src="/images/about-willem.jpg"
+                alt="Willem Gielen exploring the symbolic world behind Lenormand Intelligence"
+                width={960}
+                height={1280}
+                className="h-auto w-full object-cover"
+                priority
+              />
+            </div>
           </CardContent>
         </Card>
 
