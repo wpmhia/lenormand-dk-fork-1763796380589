@@ -13,7 +13,6 @@ import { readingModel } from "@/lib/ai-model";
 import { generateReading } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
-import { parseQuestionFrame } from "@/lib/question-frame";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -40,7 +39,6 @@ export async function POST(request: Request) {
   const startedAt = Date.now();
   const deadlineMs = 55_000;
   const responseReserveMs = 4_000;
-  const parserBudgetMs = 5_000;
   const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
   try {
     const ip = getClientIP(request);
@@ -88,17 +86,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const parserSignal = AbortSignal.any([request.signal, deadlineSignal, AbortSignal.timeout(parserBudgetMs)]);
-    let semanticQuestion: Awaited<ReturnType<typeof parseQuestionFrame>> | null = null;
-    try {
-      semanticQuestion = await parseQuestionFrame(validated.question, readingModel, parserSignal);
-    } catch (error) {
-      console.warn("interpret: question parser failed; continuing with deterministic question context", {
-        name: error instanceof Error ? error.name : "unknown",
-        message: error instanceof Error ? error.message : String(error),
-      });
-    }
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, semanticQuestion, false);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, null, false);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
@@ -140,19 +128,26 @@ export async function POST(request: Request) {
     const deadlineAborted = deadlineSignal.aborted && !clientAborted;
     const providerAborted = error.name === "ResponseAborted";
     const isTimeout = deadlineAborted || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
-      console.error("interpret: generation error", {
-        phase: "generation",
-        failureClass: classifyGenerationFailure(error, clientAborted, deadlineAborted),
+    if (clientAborted) {
+      console.info("interpret: client aborted request", {
         name: error.name,
-        message: error.message,
-        statusCode: error.statusCode ?? error.status ?? error.cause?.statusCode,
-        providerCode: error.code ?? error.cause?.code,
-        cause: error.cause?.message,
-        isTimeout,
-        clientAborted,
-        deadlineAborted,
-        providerAborted,
         elapsedMs: Date.now() - startedAt,
+      });
+      return new Response(null, { status: 499 });
+    }
+    console.error("interpret: generation error", {
+      phase: "generation",
+      failureClass: classifyGenerationFailure(error, clientAborted, deadlineAborted),
+      name: error.name,
+      message: error.message,
+      statusCode: error.statusCode ?? error.status ?? error.cause?.statusCode,
+      providerCode: error.code ?? error.cause?.code,
+      cause: error.cause?.message,
+      isTimeout,
+      clientAborted,
+      deadlineAborted,
+      providerAborted,
+      elapsedMs: Date.now() - startedAt,
     });
     return new Response(
       JSON.stringify({

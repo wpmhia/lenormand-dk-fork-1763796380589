@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { CARD_TIMING_KNOWLEDGE, getCardTimingKnowledge } from "@/lib/timing";
+import { CARD_CATALOG } from "@/lib/card-catalog";
+
+const cardImagesByNumber = new Map(CARD_CATALOG.map((card) => [card.number, card.imageUrl]));
 
 const cardMeanings = [
   {
@@ -598,7 +601,7 @@ export default function CardMeaningsPage() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <Image
-                      src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
+                       src={cardImagesByNumber.get(card.number) || "/images/cards-placeholder.jpg"}
                       alt={card.name}
                       width={128}
                       height={128}
@@ -665,7 +668,7 @@ export default function CardMeaningsPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <Image
-                          src={`/images/cards/${card.number.toString().padStart(2, "0")}-${card.number === 22 ? "paths" : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-")}.png`}
+                           src={cardImagesByNumber.get(card.number) || "/images/cards-placeholder.jpg"}
                           alt={card.name}
                           width={64}
                           height={64}

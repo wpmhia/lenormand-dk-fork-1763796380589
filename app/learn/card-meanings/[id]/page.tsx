@@ -28,11 +28,6 @@ export default async function CardMeaningPage({ params }: PageProps) {
 
   const previousCardId = Math.max(1, card.id - 1);
   const nextCardId = Math.min(36, card.id + 1);
-  const cardImageName =
-    card.number === 22
-      ? "paths"
-      : card.name.toLowerCase().replace("the ", "").replace(/ /g, "-");
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8">
@@ -75,7 +70,7 @@ export default async function CardMeaningPage({ params }: PageProps) {
               <CardContent>
                 <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                   <Image
-                    src={`/images/cards/${card.number.toString().padStart(2, "0")}-${cardImageName}.png`}
+                    src={card.imageUrl || "/images/cards-placeholder.jpg"}
                     alt={card.name}
                     width={128}
                     height={128}

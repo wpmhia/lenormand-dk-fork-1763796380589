@@ -76,6 +76,7 @@ const nextConfig = {
   },
   // Enable experimental features for better performance
   experimental: {
+    instrumentationHook: true,
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
   },
 };

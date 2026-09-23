@@ -77,6 +77,21 @@ describe("simple reading JSON repair", () => {
     expect(generateText.mock.calls[1][0].prompt).toContain("Previous response:");
   });
 
+  it("recovers a parseable structured error locally before retrying", async () => {
+    const locallyRecoverable = {
+      directAnswer: validOutput.directAnswer,
+      interpretation: validOutput.interpretation,
+      cards: "not an array",
+    };
+    generateText.mockRejectedValueOnce(malformedError(JSON.stringify(locallyRecoverable)));
+
+    const result = await generateReading(options());
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.reading).toContain(validOutput.directAnswer);
+    expect(generateText).toHaveBeenCalledTimes(1);
+  });
+
   it("returns schema-mismatch when the repair also fails", async () => {
     generateText
       .mockRejectedValueOnce(malformedError())
