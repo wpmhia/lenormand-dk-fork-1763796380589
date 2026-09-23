@@ -71,7 +71,10 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
     if (!result.output) return { kind: "empty" };
     const parsed = SimpleAnswerTransportSchema.safeParse(result.output);
     if (!parsed.success) {
-      return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error: parsed.error };
+      const raw = result.text || JSON.stringify(result.output);
+      const recovered = recoverAnswer(raw);
+      if (recovered) return { kind: "valid", answer: recovered };
+      return { kind: "invalid", raw, error: parsed.error };
     }
     try {
       return { kind: "valid", answer: normalizeSimpleAnswer(parsed.data) };
@@ -80,9 +83,51 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
     }
   } catch (error) {
     const raw = isMalformedObjectError(error) ? error.text || "" : "";
-    if (isMalformedObjectError(error)) return { kind: "invalid", raw, error };
+    if (isMalformedObjectError(error)) {
+      const recovered = recoverAnswer(raw);
+      if (recovered) return { kind: "valid", answer: recovered };
+      return { kind: "invalid", raw, error };
+    }
     throw error;
   }
+}
+
+function recoverAnswer(raw: string): ReturnType<typeof SimpleAnswerSchema.parse> | null {
+  const candidate = parseJsonCandidate(raw);
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
+
+  const object = candidate as Record<string, unknown>;
+  const tolerantCandidate = {
+    ...object,
+    cards: Array.isArray(object.cards) ? object.cards : [],
+    housesAndMirrors: Array.isArray(object.housesAndMirrors) ? object.housesAndMirrors : [],
+  };
+  const parsed = SimpleAnswerTransportSchema.safeParse(tolerantCandidate);
+  if (!parsed.success) return null;
+
+  try {
+    return normalizeSimpleAnswer(parsed.data);
+  } catch {
+    return null;
+  }
+}
+
+function parseJsonCandidate(raw: string): unknown {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  const candidates = [
+    trimmed.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim(),
+    trimmed.slice(trimmed.indexOf("{"), trimmed.lastIndexOf("}") + 1),
+  ];
+  for (const candidate of candidates) {
+    if (!candidate || !candidate.startsWith("{") || !candidate.endsWith("}")) continue;
+    try {
+      return JSON.parse(candidate);
+    } catch {
+    }
+  }
+  return null;
 }
 
 function isMalformedObjectError(error: unknown): error is Error & { text?: string } {
