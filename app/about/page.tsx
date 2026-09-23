@@ -1,26 +1,24 @@
-import Image from "next/image";
 import { Metadata } from "next";
 import {
+  BrainCircuit,
+  CheckCircle2,
   Club,
-  Diamond,
-  Lightbulb,
-  Users,
-  BookOpen,
-  Shield,
-  Compass,
+  Code2,
+  HeartPulse,
+  ShieldCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About Us | Lenormand Intelligence",
+  title: "About Willem Gielen | Lenormand Intelligence",
   description:
-    "Learn about Lenormand Intelligence - bridging ancient Lenormand divination wisdom with modern AI. Discover our mission, values, and the team behind the platform.",
+    "Lenormand Intelligence is an independent structured-reasoning and AI engineering project by Willem Gielen, cardiologist and physician-builder.",
   openGraph: {
     title: "About Lenormand Intelligence",
     description:
-      "Where ancient wisdom meets modern intelligence. Discover our mission to make Lenormand divination accessible through responsible AI.",
+      "Meet Willem Gielen and learn why he built Lenormand Intelligence as an experiment in structured reasoning and constrained AI.",
     type: "website",
   },
   alternates: {
@@ -32,332 +30,160 @@ export default function AboutPage() {
   return (
     <div className="page-layout">
       <div className="container mx-auto max-w-5xl px-4 py-12">
-        {/* Hero Section */}
-        <div className="mb-16 text-center">
+        <section className="mb-16 text-center">
           <div className="mb-6 flex items-center justify-center gap-3">
-            <Club className="h-10 w-10 animate-pulse text-primary" />
+            <Club className="h-10 w-10 text-primary" />
             <h1 className="text-5xl font-bold text-foreground">
-              Lenormand Intelligence
+              Built by Willem Gielen
             </h1>
-            <Diamond className="h-10 w-10 animate-pulse text-primary" />
           </div>
-          <p className="mb-4 text-xl text-muted-foreground">
-            Where ancient wisdom meets modern intelligence
+          <p className="mb-5 text-xl font-medium text-primary">
+            Cardiologist, physician-builder, and AI expert
           </p>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            We bridge the timeless art of Lenormand divination with trained AI,
-            creating a platform where human expertise and machine learning work
-            in perfect harmony to illuminate the patterns hidden within the
-            cards.
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            Lenormand Intelligence is my independent project at the intersection
+            of traditional Lenormand, structured reasoning, and modern artificial
+            intelligence.
           </p>
-        </div>
+        </section>
 
-        {/* Our Story */}
         <Card className="mb-12 border-border bg-gradient-to-br from-muted to-muted/50">
           <CardHeader>
             <CardTitle className="flex items-center gap-3 text-2xl text-foreground">
-              <Compass className="h-6 w-6 text-primary" />
-              Our Journey
+              <HeartPulse className="h-6 w-6 text-primary" />
+              Why I built this
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 md:grid-cols-2 md:items-start">
-              <div className="space-y-4 text-foreground">
-                <p>
-                  Lenormand Intelligence emerged from a vision: to preserve the
-                  profound depth of Lenormand divination while making it
-                  accessible to a new generation of seekers and practitioners.
-                </p>
-                <p>
-                  Our founders-experienced Lenormand readers, historians devoted
-                  to the deck&apos;s evolution, and engineers passionate about
-                  responsible AI-came together with a singular mission. We
-                  painstakingly digitized decades of annotated readings, rare
-                  spreads, classical texts, and practitioner notes. This living
-                  archive became our training foundation.
-                </p>
-                <p>
-                  Through careful curation and rigorous validation, we taught AI
-                  systems to recognize the subtle relationships between cards,
-                  detect timing patterns, and propose meaningful interpretations
-                  grounded in both tradition and real-world outcomes. What began
-                  as a private repository of knowledge has evolved into a
-                  collaborative platform that serves readers, students, and
-                  researchers worldwide.
-                </p>
-                <p className="text-sm italic text-muted-foreground">
-                  Every reading here carries the weight of tradition and the
-                  clarity of technology-neither overwhelming the other, but each
-                  amplifying what the other can offer.
-                </p>
-              </div>
-              <div className="relative overflow-hidden rounded-lg shadow-lg">
-                <Image
-                  src="/images/team.webp?v=1"
-                  alt="Lenormand Intelligence Team"
-                  width={400}
-                  height={320}
-                  className="h-auto w-full object-cover"
-                  priority
-                />
-              </div>
-            </div>
+          <CardContent className="space-y-5 text-foreground">
+            <p>
+              I&apos;m Willem Gielen, a cardiologist with a longstanding interest
+              in technology, clinical decision-making, and artificial
+              intelligence. In medicine, I work in a world where complex
+              information has to be reduced to something useful: identify the
+              important signals, understand uncertainty, and communicate a
+              conclusion clearly.
+            </p>
+            <p>
+              Lenormand Intelligence is not a medical tool and it does not turn
+              card readings into medical, financial, or legal advice. Lenormand
+              is a separate symbolic practice. What makes it interesting to me
+              is the engineering problem: can a system represent a question,
+              apply a defined reading method, and produce a useful answer
+              without pretending that an unconstrained language model is an
+              oracle?
+            </p>
+            <p>
+              That makes this project a practical experiment in structured
+              reasoning and AI engineering. The cards provide a compact domain;
+              the software provides the discipline needed to make its reasoning
+              inspectable and repeatable.
+            </p>
           </CardContent>
         </Card>
 
-        {/* What We Do */}
-        <div className="mb-12">
+        <section className="mb-12">
           <h2 className="mb-8 flex items-center gap-3 text-3xl font-bold text-foreground">
-            <Lightbulb className="h-8 w-8 text-primary" />
-            What We Offer
+            <BrainCircuit className="h-8 w-8 text-primary" />
+            The engineering approach
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
-            {/* Card 1 */}
-            <Card className="border-border bg-muted transition-colors hover:bg-muted/80">
+            <Card className="border-border bg-muted">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Club className="h-5 w-5 text-primary" />
-                  AI-Assisted Readings
+                  <Code2 className="h-5 w-5 text-primary" />
+                  Deterministic logic first
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-foreground">
                 <p>
-                  Our trained AI suggests interpretations, reveals card
-                  connections, and identifies timing indicators based on curated
-                  readings and historical sources. Every AI proposal passes
-                  through human review to ensure context, ethics, and accuracy
-                  remain central.
+                  Spread layouts, card relationships, timing evidence, and
+                  question framing are represented in code rather than left to
+                  improvisation. The same input should lead to the same
+                  structural context.
                 </p>
               </CardContent>
             </Card>
 
-            {/* Card 2 */}
-            <Card className="border-border bg-muted transition-colors hover:bg-muted/80">
+            <Card className="border-border bg-muted">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Users className="h-5 w-5 text-primary" />
-                  Expert Knowledge Modeling
+                  <BrainCircuit className="h-5 w-5 text-primary" />
+                  Constrained AI
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-foreground">
                 <p>
-                  We transform practitioner expertise-card meanings, spread
-                  logic, observed outcomes-into structured models that help AI
-                  recognize patterns and offer actionable insights while
-                  preserving the nuance of traditional practice.
+                  AI is used for language and synthesis inside a defined
+                  context. Structured output, explicit prompts, and limited
+                  responsibilities keep the model from replacing the method.
                 </p>
               </CardContent>
             </Card>
 
-            {/* Card 3 */}
-            <Card className="border-border bg-muted transition-colors hover:bg-muted/80">
+            <Card className="border-border bg-muted">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Learning & Mastery
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  Validation over confidence
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-foreground">
                 <p>
-                  Interactive courses, annotated example readings, and
-                  AI-powered practice drills accelerate your learning while
-                  honoring traditional methods. Study at your pace with feedback
-                  from both expert knowledge and intelligent systems.
+                  Generated content is parsed, normalized, and checked before
+                  it is rendered. When an output does not satisfy the contract,
+                  the system should recover safely or fail clearly.
                 </p>
               </CardContent>
             </Card>
 
-            {/* Card 4 */}
-            <Card className="border-border bg-muted transition-colors hover:bg-muted/80">
+            <Card className="border-border bg-muted">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Shield className="h-5 w-5 text-primary" />
-                  Living Archive
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                  Honest boundaries
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-foreground">
                 <p>
-                  We maintain and continually expand our secure library of
-                  spreads, translations, historical texts, and practitioner
-                  notes-a conservancy that strengthens both AI performance and
-                  human understanding of the craft.
+                  A reading is an interpretive tool for reflection, not a
+                  prediction engine or professional service. The site should
+                  make that distinction clear rather than oversell certainty.
                 </p>
               </CardContent>
             </Card>
           </div>
-        </div>
+        </section>
 
-        {/* How We Work */}
         <Card className="mb-12 border-border bg-gradient-to-br from-muted to-muted/50">
           <CardHeader>
             <CardTitle className="text-2xl text-foreground">
-              How We Work
+              A work in progress
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {/* Principle 1 */}
-              <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-3 font-semibold text-foreground">
-                  Data-First, Expert-Verified
-                </h3>
-                <p className="text-foreground">
-                  Every training input comes from vetted readings and historical
-                  texts. Every AI output is reviewed by experienced readers
-                  before reaching you. Quality flows from curated foundations.
-                </p>
-              </div>
-
-              {/* Principle 2 */}
-              <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-3 font-semibold text-foreground">
-                  Transparent Assistance
-                </h3>
-                <p className="text-foreground">
-                  We present AI insights as suggestions and probabilities, never
-                  deterministic answers. Human context, intuition, and consent
-                  guide the final interpretation. The card reader remains the
-                  authority.
-                </p>
-              </div>
-
-              {/* Principle 3 */}
-              <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-3 font-semibold text-foreground">
-                  Privacy & Ethical Practice
-                </h3>
-                <p className="text-foreground">
-                  Client confidentiality and explicit consent are fundamental.
-                  We never use personal data for training without permission.
-                  Your readings remain yours alone.
-                </p>
-              </div>
-
-              {/* Principle 4 */}
-              <div className="border-l-4 border-primary pl-6">
-                <h3 className="mb-3 font-semibold text-foreground">
-                  Continuous Evolution
-                </h3>
-                <p className="text-foreground">
-                  Feedback from users, practitioners, and researchers refines
-                  both our AI models and teaching materials. We grow through
-                  listening, learning, and respectful iteration.
-                </p>
-              </div>
-            </div>
+          <CardContent className="space-y-5 text-foreground">
+            <p>
+              Lenormand Intelligence is intentionally an evolving project. I use
+              it to test how domain models, deterministic software, structured
+              output, and language models can work together without hiding the
+              limits of any one of them.
+            </p>
+            <p>
+              The goal is not to make a machine sound mystical. It is to build a
+              clear, useful, and technically honest interface for exploring a
+              traditional system of symbols.
+            </p>
+            <p className="pt-3 text-right font-medium text-primary">
+              Willem Gielen
+            </p>
           </CardContent>
         </Card>
 
-        {/* Who Benefits */}
-        <div className="mb-12">
-          <h2 className="mb-8 text-3xl font-bold text-foreground">
-            Who We Serve
-          </h2>
-          <div className="space-y-4">
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-3 font-semibold text-foreground">
-                Curious Beginners
-              </h3>
-              <p className="text-foreground">
-                Start with guided practice and reliable examples. Build
-                confidence through structured learning and supportive AI
-                feedback as you discover the language of the cards.
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-3 font-semibold text-foreground">
-                Practicing Readers
-              </h3>
-              <p className="text-foreground">
-                Deepen your craft with tools that increase consistency and
-                speed. Access documented methods, reusable spreads, and insights
-                that enhance your intuitive practice without replacing it.
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-3 font-semibold text-foreground">
-                Professional Consultants
-              </h3>
-              <p className="text-foreground">
-                Strengthen your practice with structured templates, AI-assisted
-                consistency checks, and client-ready reports. Build your
-                reputation on both expertise and transparency.
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted p-6">
-              <h3 className="mb-3 font-semibold text-foreground">
-                Researchers & Historians
-              </h3>
-              <p className="text-foreground">
-                Explore the deck&apos;s evolution, usage patterns, and cultural
-                significance through our curated archive of texts, translations,
-                and annotated readings spanning centuries of practice.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* What You'll Find Here */}
-        <Card className="mb-12 border-border bg-gradient-to-br from-muted to-muted/50">
-          <CardHeader>
-            <CardTitle className="text-2xl text-foreground">
-              What Awaits You Here
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3 text-foreground">
-              <li className="flex gap-3">
-                <Diamond className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
-                <span>
-                  <strong>AI-Assisted Readings:</strong> Immediate, nuanced
-                  interpretations grounded in curated knowledge
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <BookOpen className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
-                <span>
-                  <strong>Structured Learning Paths:</strong> From foundational
-                  concepts to advanced mastery, with AI feedback on your
-                  practice readings
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Compass className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
-                <span>
-                  <strong>Reference Library:</strong> Downloadable spreads, card
-                  meanings, and annotated real-world examples
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Users className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
-                <span>
-                  <strong>Community:</strong> Connect with readers, mentors, and
-                  fellow seekers in a thoughtful, respectful space
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Shield className="mt-1 h-5 w-5 flex-shrink-0 text-primary" />
-                <span>
-                  <strong>Complete Privacy:</strong> Your readings remain yours.
-                  We respect your confidentiality absolutely
-                </span>
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        {/* CTA Section */}
         <div className="rounded-lg border border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 p-8 text-center">
           <h2 className="mb-4 text-2xl font-bold text-foreground">
-            Begin Your Journey
+            Explore the project
           </h2>
           <p className="mb-6 text-lg text-muted-foreground">
-            Whether you&apos;re taking your first step into Lenormand or
-            deepening a lifelong practice, we&apos;re here to illuminate your
-            path.
+            Try a reading or learn more about the system behind it.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link href="/read/new">
@@ -365,24 +191,12 @@ export default function AboutPage() {
                 Get Your Reading
               </Button>
             </Link>
-            <Link href="/learn">
+            <Link href="/how-readings-work">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Explore Learning
+                How Readings Work
               </Button>
             </Link>
           </div>
-        </div>
-
-        {/* Footer Note */}
-        <div className="mt-12 border-t border-border pt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Lenormand Intelligence is a living project, continuously refined
-            through the wisdom of practitioners, feedback from our community,
-            and the evolving capabilities of responsible AI.
-          </p>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Questions or stories to share? We&apos;d love to hear from you.
-          </p>
         </div>
       </div>
     </div>
