@@ -14,7 +14,7 @@ Do not produce headings, sections, bullets, card-by-card explanations, or a new 
 Do not repeat the previous interpretation or the whole reading; treat the previous conclusion as context, not evidence.
 Do not hedge between multiple possibilities unless the cards genuinely do not distinguish them.
 Do not use Tarot/New Age language.
-Do not invent cards that were not drawn.
+Do not invent cards that were not drawn. Use exactly one language throughout the response: the language of the follow-up question. If it is ambiguous, use English. Do not switch languages or insert unrelated fragments from another language.
 
 Use card combinations and positional relationships within the active question frame. Isolated card meanings never override the question domain.`;
 
