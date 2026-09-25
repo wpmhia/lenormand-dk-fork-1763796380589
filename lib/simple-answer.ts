@@ -34,6 +34,12 @@ const INTERNAL_REFERENCE_PATTERNS: RegExp[] = [
   /\b(?:weight|gewicht)\s*[-#]?\s*\d+\b/i,
 ];
 
+const UNSUPPORTED_PREREQUISITE_PATTERNS: RegExp[] = [
+  /\b(?:must|needs? to|has to|have to|requires?|is required|is necessary|necessary|must first)\b/i,
+  /\b(?:nodig|moet|moeten|vereist|noodzakelijk|eerst nodig|pas als|pas nadat|zodra)\b/i,
+  /\b(?:only after|once|cannot|can't|until)\b/i,
+];
+
 export function findProseInvariantViolation(answer: SimpleAnswer): string | null {
   const prose = [
     answer.directAnswer,
@@ -43,7 +49,9 @@ export function findProseInvariantViolation(answer: SimpleAnswer): string | null
     ...answer.housesAndMirrors.flatMap((item) => [item.house, item.meaning]),
   ].join("\n");
   const violation = INTERNAL_REFERENCE_PATTERNS.find((pattern) => pattern.test(prose));
-  return violation?.source || null;
+  if (violation) return violation.source;
+  const prerequisite = UNSUPPORTED_PREREQUISITE_PATTERNS.find((pattern) => pattern.test(prose));
+  return prerequisite ? `unsupported prerequisite: ${prerequisite.source}` : null;
 }
 
 export function renderSimpleAnswer(answer: SimpleAnswer): string {
