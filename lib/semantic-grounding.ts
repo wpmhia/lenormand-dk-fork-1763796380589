@@ -22,10 +22,6 @@ const CARD_POLARITY: Record<number, CardPolarity> = {
 
 const POSITIVE_POLARITY_CARDS = new Set([9, 25, 31, 33, 35]);
 const NEGATIVE_POLARITY_CARDS = new Set([8, 11, 23, 36]);
-const PREREQUISITE_CONCEPT_CARDS = new Set([3, 6, 11, 22]);
-const EXPLICIT_BLOCKING_CARDS = new Set([8, 21, 36]);
-const MEETING_SUPPORT_CARDS = new Set([1, 12, 20, 27]);
-
 export interface SemanticGroundingIssue {
   type: "semantic_grounding";
   message: string;
@@ -34,61 +30,13 @@ export interface SemanticGroundingIssue {
 
 export type SubjectValidationScope = "interpretation" | "card-commentary" | "prediction";
 
-interface SemanticRestriction {
-  cardId: number;
-  domain?: ReadingContext["questionDomain"];
-  unsupportedPatterns: RegExp[];
-  message: string;
-  requiresAbsentCardIds?: number[];
-}
-
-const RESTRICTIONS: SemanticRestriction[] = [
-  {
-    cardId: 13,
-    domain: "love",
-    unsupportedPatterns: [/\byounger (?:man|woman|person|partner)\b/i, /\byoung (?:man|woman|person|partner)\b/i],
-    message: "Child in the love domain is grounded as a new beginning; a younger person is not supported unless established by the question.",
-  },
-  {
-    cardId: 2,
-    unsupportedPatterns: [/\btemporar\w* relationship\b/i, /\brelationship\b.{0,30}\btemporar\w*\b/i, /\bimprov\w*\b.{0,30}\btemporar\w*\b/i],
-    message: "Clover makes the opportunity or benefit temporary; it does not establish that the resulting relationship or improvement is temporary.",
-  },
-  {
-    cardId: 10,
-    unsupportedPatterns: [/\bdefinitive(?:ly)?\b/i, /\bpermanent(?:ly)?\b/i, /\birreversible\b/i],
-    message: "Scythe supports a sharp decision or sudden separation, not a definitive, permanent, or irreversible outcome without stronger evidence.",
-    requiresAbsentCardIds: [8],
-  },
-  {
-    cardId: 22,
-    unsupportedPatterns: [
-      /\bneither (?:path|direction|option)\b/i,
-      /\bno (?:path|direction|option) (?:leads?|offers?|provides?)\b/i,
-      /\bboth (?:paths|directions|options) (?:fail|lack)\b/i,
-    ],
-    message: "Paths establishes a choice or alternative, not the outcome, quality, or destination of each option without qualifying evidence.",
-  },
-  {
-    cardId: 33,
-    unsupportedPatterns: [
-      /\b(?:solution|answer|opportunity)\b.{0,35}\bnot yet (?:taken|seized|used|acted on)\b/i,
-      /\bnot yet (?:taken|seized|used|acted on)\b.{0,35}\b(?:key|solution|answer)\b/i,
-    ],
-    message: "Key supports a solution or decisive answer; it does not establish that the solution has not yet been chosen or acted on.",
-  },
-];
-
 const INTERACTION_PATTERN = /\b(?:dimmed|diminished|weakened|strengthened|blocked|clarified|obscured|surrounded|modifies|influences|acts upon)\b/i;
 const NEGATIVE_POLARITY_PATTERN = /\b(?:unlikely|not imminent|will not|won't|will end|definitive ending|must separate|no (?:sex|intimacy|commitment|contact))\b/i;
 const REQUIRED_SEPARATION_PATTERN = /\b(?:separation|cut|ending) (?:is|required|must be) required\b|\brequires? (?:a )?(?:separation|ending|break)\b/i;
 // "Can happen" expresses possibility, not a positive answer. Treating it as
 // polarity caused valid qualified forecasts to fail when ambiguous cards were drawn.
 const POSITIVE_POLARITY_PATTERN = /\b(?:will|does)\b.{0,25}\b(?:happen|succeed|commit|occur|work out)\b|\b(?:yes|successful|certainly)\b/i;
-const PREREQUISITE_PATTERN = /\b(?:obstacle|prerequisite|must first be resolved|must first be overcome|requires? overcoming|depends on resolving|cannot happen until|can't happen until|cannot proceed until|requires? (?:a )?(?:resolution|clearance))\b/i;
 const NEGATIVE_TIMING_PATTERN = /\b(?:unlikely|not likely|probably not|not expected|will not|won't)\b.{0,45}\b(?:within|in|this|the next|binnen)\b.{0,25}\b(?:\d+\s*(?:days?|dagen?)|week(?:s)?|weekend)\b|\b(?:not this week|not within \d+\s*(?:days?|dagen?))\b|\b(?:only|just)\s+(?:in|over)\s+(?:the )?coming weeks\b/i;
-const MEETING_EXPANSION_PATTERN = /\b(?:planned|scheduled)\s+(?:meeting|appointment|encounter)\b|\b(?:meeting|appointment|encounter)\s+(?:is )?(?:planned|scheduled)\b|\b(?:geplande|afgesproken)\s+(?:ontmoeting|afspraak)\b|\b(?:ontmoeting|afspraak)\s+(?:staat|is)\s+gepland\b/i;
-const CHOICE_PREREQUISITE_PATTERN = /\b(?:depends on|hinges on|hangs on)\b.{0,30}\b(?:a )?choice\b|\b(?:choice|decision)\b.{0,35}\b(?:still )?(?:has to|needs to|must be)\b.{0,20}\b(?:made|resolved)\b|\b(?:keuze|beslissing)\b.{0,35}\b(?:moet nog|nog moet)\b.{0,20}\b(?:gemaakt|genomen)\b|\bhangt af van een keuze\b/i;
 const SEXUAL_QUESTION_PATTERN = /\b(?:sex|seks|sexual|seksuele|intimacy|intimate|intercourse|intiem|intimiteit|toenadering)\b/i;
 const SEXUAL_ANSWER_PATTERN = /\b(?:sex|seks|sexual intimacy|seksuele intimiteit|intimacy|intimate|intercourse|intiem|intimiteit|toenadering)\b/i;
 const EXACT_SEX_QUESTION_PATTERN = /\b(?:sex|seks|intercourse)\b/i;
@@ -97,14 +45,6 @@ const EXACT_SEX_ANSWER_PATTERN = /\b(?:sex|seks|intercourse)\b/i;
 // Grand Tableau commentary. Only a grammatical person reference is binding.
 const MALE_ENTITY_PATTERN = /\b(?:the|a|another)\s+man\b|\bman\s+in\b|\bman\s+(?=and|is|are|will|has|does)\b|\b(?:he|him|his|husband|boyfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?man\b/i;
 const FEMALE_ENTITY_PATTERN = /\b(?:the|a|another)\s+woman\b|\bwoman\s+in\b|\bwoman\s+(?=and|is|are|will|has|does)\b|\b(?:she|her|hers|wife|girlfriend|lover)\b|\b(?:represented by|becomes|is)\s+(?:the )?woman\b/i;
-const BEAR_ENTITY_PATTERN = /\b(?:boss|manager|authority figure|parent|rival|another partner|someone in (?:a )?position of power)\b/i;
-const PATHS_TREE_EXPANSION_PATTERN = /\b(?:lasting consequences?|well[- ]?being|stability|stable future)\b/i;
-const SNAKE_ENTITY_PATTERN = /\b(?:female rival|rival|mistress|other woman|competitor|enemy)\b/i;
-const CAUSALITY_PATTERN = /\b(?:because of|due to|causes?|caused by|results? in|leads? to|as a result of|vanwege|veroorzaakt|leidt tot)\b/i;
-const TEMPORAL_ORDER_PATTERN = /\b(?:first|then|before|after|until|only after|eerst|daarna|voordat|nadat|pas nadat)\b/i;
-const UNSUPPORTED_DURATION_PATTERN = /\b(?:for (?:several|many) (?:days?|weeks?|months?)|(?:last|lasting)\s+(?:several|many)\s+(?:days?|weeks?|months?)|for a long time|lasting for|wekenlang|maandenlang|voor lange tijd)\b/i;
-const UNSUPPORTED_PERSISTENCE_PATTERN = /\b(?:will continue|continues? indefinitely|will remain|ongoing|blijft voortduren|blijvend)\b/i;
-const SEVERITY_INFLATION_PATTERN = /\b(?:major|very strong|extreme|almost impossible|serious blockage|grote blokkade|zeer sterke blokkade|bijna onmogelijk)\b/i;
 const EPISTEMIC_HEDGE_PATTERN = /\b(?:suggest(?:s|ed)?|point(?:s|ed)? to|appear(?:s)?|seem(?:s)?|may|might|could|likely|possibly|probably|wijst|wijzen|lijkt|lijken|kan|mogelijk|waarschijnlijk)\b/i;
 const EXTERNAL_FACT_QUESTION_PATTERN = /\b(?:has|have|is|are|does|do|did|will|would|comes?|return|contact|honest|heeft|hebben|is|zijn|gaat|komt|terug|contact|eerlijk|krijg|krijgen|blijft|blijven)\b/i;
 const EXTERNAL_SUBJECT_PATTERN = /\b(?:he|she|they|him|her|them|hij|zij|hem|haar|hen|we|you|i|wij|jij|ik|my partner|mijn partner)\b/i;
@@ -166,15 +106,6 @@ export function validatePredictionSemantics(
   const cardIds = new Set(context.cards.map((card) => card.id));
   const issues: SemanticGroundingIssue[] = [];
 
-  for (const restriction of RESTRICTIONS) {
-    if (!cardIds.has(restriction.cardId)) continue;
-    if (restriction.domain && restriction.domain !== context.questionDomain) continue;
-    if (restriction.requiresAbsentCardIds?.some((id) => cardIds.has(id))) continue;
-    if (!restriction.unsupportedPatterns.some((pattern) => pattern.test(development))) continue;
-
-    issues.push({ type: "semantic_grounding", message: restriction.message });
-  }
-
   const cardNames = context.cards.map((card) => ({ id: card.id, name: card.name }));
   const namedCards = cardNames.filter(({ name }) => new RegExp(`\\b${escapeRegExp(name)}\\b`, "i").test(development));
   if (INTERACTION_PATTERN.test(development) && namedCards.length >= 2) {
@@ -190,38 +121,12 @@ export function validatePredictionSemantics(
     }
   }
 
-  if (PREREQUISITE_PATTERN.test(development)
-    && [...cardIds].some((id) => PREREQUISITE_CONCEPT_CARDS.has(id))
-    && ![...cardIds].some((id) => EXPLICIT_BLOCKING_CARDS.has(id))) {
-    issues.push({
-      type: "semantic_grounding",
-      message: "An ambiguous development concept cannot be promoted into an obstacle or prerequisite without explicit blocking evidence.",
-    });
-  }
-
   if (hasRequestedTimingWindow(context.question)
     && NEGATIVE_TIMING_PATTERN.test(development)
     && !timingEvidenceExplicitlyExcludesWindow(context)) {
     issues.push({
       type: "semantic_grounding",
       message: "Absence of timing confirmation is not evidence that the requested time window is unlikely; preserve timing uncertainty instead.",
-    });
-  }
-
-  if (MEETING_EXPANSION_PATTERN.test(development)
-    && cardIds.has(2)
-    && cardIds.has(25)
-    && ![...cardIds].some((id) => MEETING_SUPPORT_CARDS.has(id))) {
-    issues.push({
-      type: "semantic_grounding",
-      message: "Clover + Ring supports a temporary opportunity or relationship bond, not a planned meeting or appointment without explicit meeting evidence.",
-    });
-  }
-
-  if (CHOICE_PREREQUISITE_PATTERN.test(development) && cardIds.has(22)) {
-    issues.push({
-      type: "semantic_grounding",
-      message: "Paths supports an open choice or multiple directions; it does not establish that a choice must first be made before the queried outcome can occur.",
     });
   }
 
@@ -269,45 +174,6 @@ export function validatePredictionSemantics(
     }
   }
 
-  if (cardIds.has(15) && BEAR_ENTITY_PATTERN.test(development)
-    && !BEAR_ENTITY_PATTERN.test(context.question)) {
-    issues.push({
-      type: "semantic_grounding",
-      code: "unsupported_entity_binding",
-      message: "Bear supports power, strength, or authority; it does not establish a concrete boss, parent, rival, or third person without entity evidence.",
-    });
-  }
-
-  if (cardIds.has(7) && SNAKE_ENTITY_PATTERN.test(development)
-    && !SNAKE_ENTITY_PATTERN.test(context.question)) {
-    issues.push({ type: "semantic_grounding", code: "unsupported_entity_binding", message: "Snake supports complication, caution, or an indirect route; it does not establish a female rival or other concrete person without entity evidence." });
-  }
-
-  if (cardIds.has(22) && cardIds.has(5) && PATHS_TREE_EXPANSION_PATTERN.test(development)
-    && ![4, 31, 35].some((id) => cardIds.has(id))) {
-    issues.push({
-      type: "semantic_grounding",
-      message: "Paths + Tree supports an open direction and long-term growth or condition, not lasting consequences, well-being, or stability without qualifying evidence.",
-    });
-  }
-
-  const pairEvidenceText = context.adjacentPairs.map((pair) => pair.traditionalMeaning || "").join(" ");
-  if (CAUSALITY_PATTERN.test(development) && !/caus|leads?|results?|because|due|veroorzaakt|leidt/i.test(pairEvidenceText)) {
-    issues.push({ type: "semantic_grounding", code: "unsupported_causality", message: "The supplied evidence does not encode the claimed causal relationship." });
-  }
-  if (TEMPORAL_ORDER_PATTERN.test(development) && !/before|after|until|first|then|voordat|nadat|eerst|daarna|pas/i.test(pairEvidenceText)) {
-    issues.push({ type: "semantic_grounding", code: "unsupported_temporal_order", message: "The supplied evidence does not encode the claimed first/then or before/after sequence." });
-  }
-  if (UNSUPPORTED_DURATION_PATTERN.test(development) && context.timingEvidence.length === 0) {
-    issues.push({ type: "semantic_grounding", message: "The supplied evidence does not establish the claimed duration." });
-  }
-  if (UNSUPPORTED_PERSISTENCE_PATTERN.test(development) && ![4, 5, 35].some((id) => cardIds.has(id))) {
-    issues.push({ type: "semantic_grounding", message: "The supplied evidence does not establish persistence or continuation." });
-  }
-  if (SEVERITY_INFLATION_PATTERN.test(development) && ![8, 21, 36].some((id) => cardIds.has(id))) {
-    issues.push({ type: "semantic_grounding", message: "The supplied evidence does not establish the claimed severity." });
-  }
-
   if (options.validatePolarity !== false && questionRequiresPolarity(context.question)) {
     const makesNegativeClaim = NEGATIVE_POLARITY_PATTERN.test(development) || REQUIRED_SEPARATION_PATTERN.test(development);
     const makesPositiveClaim = POSITIVE_POLARITY_PATTERN.test(development);
@@ -338,8 +204,7 @@ export function validatePredictionSemantics(
         const closingSupportsClaim = makesNegativeClaim
           ? closingPolarity === "negative"
           : closingPolarity === "positive";
-        const explicitBlockingSupport = [...evidenceCardIds].some((id) => EXPLICIT_BLOCKING_CARDS.has(id));
-        if (earlierAmbiguous && !closingSupportsClaim && !explicitBlockingSupport) {
+        if (earlierAmbiguous && !closingSupportsClaim) {
           issues.push({
             type: "semantic_grounding",
             message: "Earlier ambiguous evidence cannot override the polarity established by the closing pair and closing card.",

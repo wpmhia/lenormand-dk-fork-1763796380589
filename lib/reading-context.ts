@@ -509,12 +509,12 @@ function buildGrandTableauLayout(
     primarySignificator = significators.man;
     primarySignificatorSource = "explicit";
   } else if (significatorPreference === "both") {
-    // "both" preference means the user wants the model to read from both Man and Woman
+      // "both" preference means the user wants the model to read from both Man and Woman
     // cards if both are present. To pick a primary when both are drawn we look at the
     // question's gender-specific referent language ("he", "him", "his", "husband",
     // "boyfriend"; "she", "her", "wife", "girlfriend"). We explicitly do NOT switch on
-    // topic (job/love): inferring the significator's sex from a career topic is
-    // methodologically indefensible — a question about Mahican's career must not anchor
+      // topic (job/love): inferring the significator's sex from a career topic is
+      // methodologically indefensible — a career topic must not anchor
     // the entire GT around the Man card simply because careers have historically been
     // male-coded.
     if (significators.woman && !significators.man) {

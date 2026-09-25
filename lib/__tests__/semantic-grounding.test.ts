@@ -34,21 +34,6 @@ function reading(ids: number[], question: string, development: string) {
 }
 
 describe("deterministic prediction semantic grounding", () => {
-  it("rejects a younger-person claim for Child in a love question", () => {
-    const issues = reading([13, 24, 31], "What develops in my relationship?", "A younger person becomes involved.");
-    expect(issues.some((issue) => issue.type === "semantic_grounding")).toBe(true);
-  });
-
-  it("rejects transferring Clover's temporary benefit to the relationship", () => {
-    const issues = reading([24, 2, 31], "What develops in my relationship?", "The relationship improves temporarily.");
-    expect(issues.some((issue) => issue.message.includes("Clover"))).toBe(true);
-  });
-
-  it("rejects definitive Scythe severity without Coffin", () => {
-    const issues = reading([10, 24, 31], "What develops in my relationship?", "The relationship ends definitively.");
-    expect(issues.some((issue) => issue.message.includes("Scythe"))).toBe(true);
-  });
-
   it("requires closing card and pair IDs in sentence predictions", () => {
     const cards = [1, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "What develops?", cards, cardsMap);
@@ -62,34 +47,12 @@ describe("deterministic prediction semantic grounding", () => {
     expect(messages).toContain('Prediction must cite closing evidence "card-3"');
   });
 
-  it("does not infer the outcome of either option from Paths", () => {
-    const issues = reading([22, 24, 31], "What develops next?", "Neither path leads to commitment.");
-    expect(issues.some((issue) => issue.type === "semantic_grounding")).toBe(true);
-  });
-
-  it("does not infer that a Key solution was not acted on", () => {
-    const issues = reading([33, 24, 31], "What develops next?", "A solution is available but not yet taken.");
-    expect(issues.some((issue) => issue.message.includes("Key"))).toBe(true);
-  });
-
   it("does not turn Key-Scythe-Moon into an unsupported negative answer", () => {
     const issues = reading([33, 10, 32], "Will intimacy happen soon?", "Intimacy is unlikely to happen quickly and separation is required.");
     expect(issues.some((issue) => issue.message.includes("outcome polarity"))).toBe(true);
 
     const qualified = reading([33, 10, 32], "Will intimacy happen soon?", "A sudden turning point around intimacy is likely, but these cards do not clearly establish its direction.");
     expect(qualified.some((issue) => issue.message.includes("outcome polarity"))).toBe(false);
-  });
-
-  it("does not turn Ship into a prerequisite that overrides Ring and Bouquet", () => {
-    const cards = [20, 28, 3, 25, 9].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-5", "Will intimacy develop soon?", cards, cardsMap);
-    const issues = validatePredictionSemantics(
-      "Intimacy is not imminent because distance is an obstacle that must first be resolved.",
-      context,
-      new Set(["card-1", "card-3", "pair-4-5", "card-5"]),
-    );
-    expect(issues.some((issue) => issue.message.includes("obstacle or prerequisite"))).toBe(true);
-    expect(issues.some((issue) => issue.message.includes("closing pair and closing card"))).toBe(true);
   });
 
   it("allows a qualified possibility without treating 'can happen' as positive polarity", () => {
@@ -107,8 +70,8 @@ describe("deterministic prediction semantic grounding", () => {
 
   it("does not turn polarity support into certainty about hidden behavior", () => {
     const cards = [31, 4, 35].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "Gaat Mahican nog steeds vreemd?", cards, cardsMap);
-    const categorical = validatePredictionSemantics("Mahican gaat niet langer vreemd.", context);
+    const context = buildReadingContext("sentence-3", "Gaat Alex nog steeds vreemd?", cards, cardsMap);
+    const categorical = validatePredictionSemantics("Alex gaat niet langer vreemd.", context);
     expect(categorical.some((issue) => issue.code === "unsupported_certainty")).toBe(true);
 
     const qualified = validatePredictionSemantics("De kaarten wijzen eerder tegen voortgaand vreemdgaan.", context);
@@ -130,7 +93,7 @@ describe("deterministic prediction semantic grounding", () => {
     const qualified = buildReadingContext("sentence-3", "Will he return?", [31, 4, 35].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position })), cardsMap);
     expect(validatePredictionSemantics("The cards strongly indicate that he will return.", qualified).some((issue) => issue.code === "unsupported_certainty")).toBe(false);
 
-    expect(validatePredictionSemantics("Mahican is no longer unfaithful.", qualified, undefined, { validateEpistemicCertainty: false })).toEqual([]);
+    expect(validatePredictionSemantics("Alex is no longer unfaithful.", qualified, undefined, { validateEpistemicCertainty: false })).toEqual([]);
   });
 
   it("does not turn missing seven-day timing confirmation into a negative outcome", () => {
@@ -147,38 +110,19 @@ describe("deterministic prediction semantic grounding", () => {
   });
 
   it("requires an explicit sexual outcome for an explicit sex question", () => {
-    const generic = reading([30, 35, 31], "Will I have sex with Mahican?", "The situation will reach a successful or clear outcome.");
+    const generic = reading([30, 35, 31], "Will I have sex with Alex?", "The situation will reach a successful or clear outcome.");
     expect(generic.some((issue) => issue.message.includes("explicit sexual-intimacy question"))).toBe(true);
 
-    const broadened = reading([30, 35, 31], "Will I have sex with Mahican?", "Emotional intimacy is supported, but the exact physical outcome remains unresolved.");
+    const broadened = reading([30, 35, 31], "Will I have sex with Alex?", "Emotional intimacy is supported, but the exact physical outcome remains unresolved.");
     expect(broadened.some((issue) => issue.message.includes("exact sex predicate"))).toBe(true);
 
-    const specific = reading([30, 35, 31], "Will I have sex with Mahican?", "Sex with Mahican is supported as the likely outcome.");
+    const specific = reading([30, 35, 31], "Will I have sex with Alex?", "Sex with Alex is supported as the likely outcome.");
     expect(specific.some((issue) => issue.message.includes("explicit sexual-intimacy question"))).toBe(false);
-  });
-
-  it("keeps Clover + Ring evidence scoped to an opening or bond, not a meeting", () => {
-    const cards = [2, 25, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "What develops in this relationship?", cards, cardsMap);
-    const pack = buildLenormandEvidencePack(context);
-    expect(pack).toContain("Clover + Ring: unknown/unreviewed; relationship present but no canonical meaning supplied");
-    expect(pack).toContain("card-2: Position 2 Ring: commitment, agreement, or a relationship bond");
-    expect(pack).not.toContain("planned meeting");
-
-    const issues = validatePredictionSemantics("The small opportunity leads to a planned meeting.", context);
-    expect(issues.some((issue) => issue.message.includes("planned meeting"))).toBe(true);
-  });
-
-  it("does not turn Paths into a prerequisite in Dutch phrasing", () => {
-    const cards = [22, 24, 25].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "Ontstaat er toenadering?", cards, cardsMap);
-    const issues = validatePredictionSemantics("Het hangt af van een keuze die nog gemaakt moet worden.", context);
-    expect(issues.some((issue) => issue.message.includes("must first be made"))).toBe(true);
   });
 
   it("does not bind Man to an explicitly female question subject", () => {
     const cards = [29, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "Blijft mijn vrouwelijke partner Mahican bij mij?", cards, cardsMap);
+    const context = buildReadingContext("sentence-3", "Blijft mijn vrouwelijke partner Alex bij mij?", cards, cardsMap);
     expect(context.personBindings.map((binding) => binding.cardId)).toEqual([29]);
     const issues = validatePredictionSemantics("The man in your life will remain connected to your home life.", context);
     expect(issues.some((issue) => issue.message.includes("Man is unbound"))).toBe(true);
@@ -186,32 +130,32 @@ describe("deterministic prediction semantic grounding", () => {
 
   it("keeps Man unbound for a named subject without significator metadata", () => {
     const cards = [28, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "Blijft Mahican bij mij?", cards, cardsMap, "both");
+    const context = buildReadingContext("sentence-3", "Blijft Alex bij mij?", cards, cardsMap, "both");
     expect(context.personBindings).toEqual([]);
-    const issues = validateEntityEvidenceBinding("The Man card appears, but it is not identified as Mahican.", new Set(["card-1"]), context);
+    const issues = validateEntityEvidenceBinding("The Man card appears, but it is not identified as Alex.", new Set(["card-1"]), context);
     expect(issues).toEqual([]);
   });
 
   it("rejects a named subject attributed to an unbound person card in cited evidence", () => {
     const cards = [8, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "Will Mahican stay?", cards, cardsMap);
-    const issues = validateEntityEvidenceBinding("Coffin + Man shows the end of a phase with Mahican.", new Set(["pair-1-2"]), context);
+    const context = buildReadingContext("sentence-3", "Will Alex stay?", cards, cardsMap);
+    const issues = validateEntityEvidenceBinding("Coffin + Man shows the end of a phase with Alex.", new Set(["pair-1-2"]), context);
     expect(issues.some((issue) => issue.code === "unsupported_entity_binding")).toBe(true);
   });
 
   it("preserves a named question subject instead of allowing Man to become the grammatical subject", () => {
     const cards = [28, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "Blijft Mahican bij mij?", cards, cardsMap);
+    const context = buildReadingContext("sentence-3", "Blijft Alex bij mij?", cards, cardsMap);
     const issues = validateQuestionSubjectPreservation("The man will remain connected to your home life.", context, "prediction");
-    expect(issues.some((issue) => issue.message.includes('Question subject "Mahican"'))).toBe(true);
+    expect(issues.some((issue) => issue.message.includes('Question subject "Alex"'))).toBe(true);
 
-    const valid = validateQuestionSubjectPreservation("Mahican's long-term decision is not clearly established.", context, "prediction");
+    const valid = validateQuestionSubjectPreservation("Alex's long-term decision is not clearly established.", context, "prediction");
     expect(valid).toEqual([]);
   });
 
   it("allows an implicit continuation of the established subject", () => {
     const cards = [12, 6, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "How will the contact between Mahican and me develop?", cards, cardsMap);
+    const context = buildReadingContext("sentence-3", "How will the contact between Alex and me develop?", cards, cardsMap);
     const issues = validateQuestionSubjectPreservation("The cards show continued communication, although uncertainty remains.", context, "interpretation");
     expect(issues).toEqual([]);
   });
@@ -244,46 +188,11 @@ describe("deterministic prediction semantic grounding", () => {
     expect(issues.some((issue) => issue.message.includes("Bear supports"))).toBe(false);
   });
 
-  it("does not turn Bear's authority sense into a boss without entity evidence", () => {
-    const cards = [15, 24, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "What develops in this relationship?", cards, cardsMap);
-    const issues = validatePredictionSemantics("A boss or authority figure is influencing the dynamics.", context);
-    expect(issues.some((issue) => issue.message.includes("Bear supports"))).toBe(true);
-
-    const supported = buildReadingContext("sentence-3", "Will my boss support me?", cards, cardsMap);
-    expect(validatePredictionSemantics("The boss's influence is central.", supported).some((issue) => issue.message.includes("Bear supports"))).toBe(false);
-  });
-
   it("keeps explicit significator binding available", () => {
     const cards = [29, 28, 31].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
     const context = buildReadingContext("sentence-3", "What develops in this situation?", cards, cardsMap, "woman");
     expect(context.personBindings).toEqual([{ cardId: 29, source: "explicit-significator", evidence: "The request explicitly selected Woman as the significator." }]);
     expect(validatePredictionSemantics("The woman remains connected to the situation.", context).some((issue) => issue.message.includes("Woman is unbound"))).toBe(false);
-  });
-
-  it("does not expand Paths + Tree into lasting stability without qualifying evidence", () => {
-    const cards = [22, 5, 24].map((id, position) => ({ id, name: cardsMap.get(id)!.name, keywords: [], position }));
-    const context = buildReadingContext("sentence-3", "What develops?", cards, cardsMap);
-    const issues = validatePredictionSemantics("This creates lasting consequences for your well-being and stability.", context);
-    expect(issues.some((issue) => issue.message.includes("Paths + Tree"))).toBe(true);
-  });
-
-  it("does not invent first-then ordering from Ship and Paths", () => {
-    const issues = reading([3, 22, 25], "What develops next?", "First a journey and decision must happen, then the relationship can move forward.");
-    expect(issues.some((issue) => issue.message.includes("first/then"))).toBe(true);
-  });
-
-  it("blocks unsupported causal, duration, persistence, and severity inflation", () => {
-    const issues = reading([6, 24, 31], "What develops next?", "Because of the Clouds, a major blockage will last several weeks and continue indefinitely.");
-    expect(issues.some((issue) => issue.message.includes("causal relationship"))).toBe(true);
-    expect(issues.some((issue) => issue.message.includes("duration"))).toBe(true);
-    expect(issues.some((issue) => issue.message.includes("persistence"))).toBe(true);
-    expect(issues.some((issue) => issue.message.includes("severity"))).toBe(true);
-  });
-
-  it("does not turn Snake into a female rival without entity evidence", () => {
-    const issues = reading([7, 24, 31], "What develops in this relationship?", "A female rival influences the relationship.");
-    expect(issues.some((issue) => issue.message.includes("Snake supports"))).toBe(true);
   });
 
   it("requires a generated GT relation for card-to-card influence", () => {

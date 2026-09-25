@@ -354,14 +354,14 @@ describe("prompt quality: question appears in prompt", () => {
   it("passes situation context as specificity guidance, not as card evidence", () => {
     const ctx = buildReadingContext(
       "sentence-3",
-      "En hoef ik me geen zorgen te maken over Nico als kaper op de kust?",
+      "En hoef ik me geen zorgen te maken over Jordan als kaper op de kust?",
       normalized([2, 4, 22]),
       cardsMap,
       "both",
-      "Mahican reist naar Nederland, bekijkt woningen en bezoekt verschillende ziekenhuizen.",
+      "Alex reist naar het buitenland, bekijkt woningen en bezoekt verschillende ziekenhuizen.",
     );
     const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toContain("Mahican reist naar Nederland");
+    expect(prompt).toContain("Alex reist naar het buitenland");
     expect(prompt).toContain("grounds specificity, not card evidence");
     expect(prompt).toContain("do not treat them as proof of the forecast");
   });
@@ -411,7 +411,7 @@ describe("production simple prompt evidence", () => {
   it("builds a narrative spine for Petit Tableau without row-major numbering", () => {
     const petit = buildSimpleReadingPrompt(buildReadingContext(
       "comprehensive",
-      "Hoe ziet de toekomst eruit met mijn vrouw Mahican?",
+      "Hoe ziet de toekomst eruit met mijn vrouw Alex?",
       normalized([4, 1, 13, 21, 5, 34, 28, 9, 12]),
       cardsMap,
     ));
@@ -427,7 +427,7 @@ describe("production simple prompt evidence", () => {
   });
 
   it("classifies Dutch and Danish relationship questions deterministically", () => {
-    expect(getQuestionFrame("Hoe ziet de toekomst er met mijn vrouw Mahican uit?").domain).toBe("love");
+    expect(getQuestionFrame("Hoe ziet de toekomst er met mijn vrouw Alex uit?").domain).toBe("love");
     expect(getQuestionFrame("Hvordan ser fremtiden ud med min kone?").domain).toBe("love");
     expect(getQuestionFrame("Komt die man morgen langs?").domain).not.toBe("love");
   });

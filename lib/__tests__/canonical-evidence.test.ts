@@ -24,7 +24,7 @@ describe("canonical Lenormand evidence registry", () => {
   it("keeps Heart-Fish-Sun-Bear-House evidence domain-scoped and non-causal", () => {
     const names = ["Heart", "Fish", "Sun", "Bear", "House"];
     const cards = [24, 34, 31, 15, 4].map((id, position) => ({ id, name: names[position], keywords: [], position }));
-    const context = buildReadingContext("sentence-5", "Hoe ontwikkelt het contact tussen Mahican en mij zich de komende week?", cards, new Map());
+    const context = buildReadingContext("sentence-5", "Hoe ontwikkelt het contact tussen Alex en mij zich de komende week?", cards, new Map());
     const pack = buildLenormandEvidencePack(context);
 
     expect(pack).toContain("Fish: resources, flow, or available capacity");
