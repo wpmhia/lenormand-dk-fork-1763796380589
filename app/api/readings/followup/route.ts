@@ -143,7 +143,6 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     if (request.signal.aborted || error?.name === "AbortError") {
-      console.info("interpret: client aborted request", { route: "followup" });
       return new Response(JSON.stringify({ error: "Client closed the request" }), {
         status: 499,
         headers: { "Content-Type": "application/json", ...corsHeaders },

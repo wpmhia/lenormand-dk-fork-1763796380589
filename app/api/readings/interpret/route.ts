@@ -129,10 +129,6 @@ export async function POST(request: Request) {
     const providerAborted = error.name === "ResponseAborted";
     const isTimeout = deadlineAborted || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
     if (clientAborted) {
-      console.info("interpret: client aborted request", {
-        name: error.name,
-        elapsedMs: Date.now() - startedAt,
-      });
       return new Response(null, { status: 499 });
     }
     console.error("interpret: generation error", {
