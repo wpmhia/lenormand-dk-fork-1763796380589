@@ -8,9 +8,9 @@ import { SpreadSelect, Spread } from "./SpreadSelect";
 import { MethodToggle } from "./MethodToggle";
 
 const SUGGESTED_QUESTIONS = [
-  "What is the likely next development?",
-  "What should I know about this connection?",
-  "What do the cards show about work or money?",
+  "What happens next?",
+  "What does this connection show?",
+  "What do the cards show about work?",
 ];
 
 interface ReadingSetupProps {
@@ -44,7 +44,7 @@ export function ReadingSetup({
           Ask the Cards
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {/* Question Input */}
         <div className="space-y-3">
           <label htmlFor="question" className="text-sm font-medium text-foreground">
@@ -72,9 +72,9 @@ export function ReadingSetup({
 
         {/* Suggested Questions */}
         {question.length === 0 && (
-          <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Try one:</p>
-            <div className="flex gap-2 overflow-x-auto pb-1">
+          <div className="space-y-3 border-t border-border/60 pt-3">
+            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">Try one</p>
+            <div className="flex flex-wrap gap-2">
               {SUGGESTED_QUESTIONS.map((q) => (
                 <button
                   key={q}
@@ -82,7 +82,7 @@ export function ReadingSetup({
                   onClick={() => {
                     onQuestionChange(q);
                   }}
-                  className="shrink-0 whitespace-nowrap rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
+                  className="max-w-full rounded-full border border-border/80 bg-background/70 px-3 py-2 text-left text-xs leading-4 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-muted/60 hover:text-foreground"
                 >
                   {q}
                 </button>
