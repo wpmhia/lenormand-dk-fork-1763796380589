@@ -6,7 +6,7 @@ import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
-import { streamText } from "ai";
+import { generateText } from "ai";
 import { DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
       .join("\n");
     const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\n\n${buildLenormandEvidencePack(context)}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
 
-    const result = streamText({
+    const result = await generateText({
       model: readingModel,
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
@@ -130,8 +130,11 @@ export async function POST(request: Request) {
       timeout: { totalMs: 15_000 },
     });
 
-    return result.toTextStreamResponse({
+    return new Response(result.text, {
+      status: 200,
       headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store",
         "X-RateLimit-Limit": String(rateLimitResult.limit),
         "X-RateLimit-Remaining": String(rateLimitResult.remaining),
         "X-RateLimit-Reset": String(rateLimitResult.reset),
@@ -139,13 +142,20 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
+    if (request.signal.aborted || error?.name === "AbortError") {
+      console.info("interpret: client aborted request", { route: "followup" });
+      return new Response(JSON.stringify({ error: "Client closed the request" }), {
+        status: 499,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
     if (error.name === "SyntaxError") {
       return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
-    const isTimeout = error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
+    const isTimeout = error.message?.includes("abort") || error.message?.includes("timeout");
     return new Response(
       JSON.stringify({ error: isTimeout ? "Response timed out" : "Processing failed" }),
       { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },
