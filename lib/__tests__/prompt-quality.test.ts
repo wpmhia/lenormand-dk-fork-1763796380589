@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildReadingContext } from "@/lib/reading-context";
+import { buildReadingContext, getQuestionFrame } from "@/lib/reading-context";
 import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { Card } from "@/lib/types";
@@ -408,6 +408,40 @@ describe("production simple prompt evidence", () => {
     expect(grand).toContain("significator surroundings");
     expect(grand).toContain("House of");
     expect(grand).toContain("Primary significator");
+  });
+
+  it("builds a narrative spine for Petit Tableau without row-major numbering", () => {
+    const petit = buildSimpleReadingPrompt(buildReadingContext(
+      "comprehensive",
+      "Hoe ziet de toekomst eruit met mijn vrouw Mahican?",
+      normalized([4, 1, 13, 21, 5, 34, 28, 9, 12]),
+      cardsMap,
+    ));
+
+    expect(petit).toContain("Core / heart: Tree");
+    expect(petit).toContain("Main arc (middle line, left → center → outcome): Mountain → Tree → Fish");
+    expect(petit).toContain("Secondary arc (center column): Rider → Tree → Bouquet");
+    expect(petit).not.toContain("Cards in order:");
+    expect(petit).not.toMatch(/\n1\. House/);
+    expect(petit).toContain("Woman: bound by question");
+    expect(petit).toContain("Man: unbound");
+  });
+
+  it("classifies Dutch and Danish relationship questions deterministically", () => {
+    expect(getQuestionFrame("Hoe ziet de toekomst er met mijn vrouw Mahican uit?").domain).toBe("love");
+    expect(getQuestionFrame("Hvordan ser fremtiden ud med min kone?").domain).toBe("love");
+  });
+
+  it("uses relationship-scoped Fish meaning instead of finance meaning", () => {
+    const prompt = buildSimpleReadingPrompt(buildReadingContext(
+      "comprehensive",
+      "Hoe ziet de toekomst eruit met mijn vrouw?",
+      normalized([4, 1, 13, 21, 5, 34, 28, 9, 12]),
+      cardsMap,
+    ));
+
+    expect(prompt).toContain("Fish — emotional availability, reciprocity, or room for the relationship to develop");
+    expect(prompt).not.toContain("Fish — money, resources, or material flow");
   });
 });
 

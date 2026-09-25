@@ -28,10 +28,11 @@ export type SimpleAnswer = z.infer<typeof SimpleAnswerSchema>;
 export function renderSimpleAnswer(answer: SimpleAnswer): string {
   const cards = answer.cards.length > 0
     ? answer.cards.map((card) => `- **${card.combination}**: ${card.meaning}`).join("\n")
-    : "- No card commentary was provided.";
+    : "";
   const timing = answer.timing ? `\n\n## Timing\n${answer.timing}` : "";
   const houses = answer.housesAndMirrors.length > 0
     ? `\n\n## Houses and mirrors\n${answer.housesAndMirrors.map((item) => `- **${item.house}**: ${item.meaning}`).join("\n")}`
     : "";
-  return `## Interpretation\n${answer.interpretation}\n\n## Cards\n${cards}\n\n## Answer\n${answer.directAnswer}${timing}${houses}`;
+  const cardsSection = cards ? `\n\n## Key combinations\n${cards}` : "";
+  return `## Answer\n${answer.directAnswer}\n\n## Reading\n${answer.interpretation}${cardsSection}${timing}${houses}`;
 }
