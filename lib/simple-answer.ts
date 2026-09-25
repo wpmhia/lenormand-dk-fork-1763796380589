@@ -7,7 +7,11 @@ export const HouseMirrorSchema = z.object({
 
 export type HouseMirror = z.infer<typeof HouseMirrorSchema>;
 
+export const AnswerDirectionSchema = z.enum(["yes", "no", "unresolved"]);
+export type AnswerDirection = z.infer<typeof AnswerDirectionSchema>;
+
 export const SimpleAnswerSchema = z.object({
+  direction: AnswerDirectionSchema.default("unresolved"),
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
   cards: z.array(z.object({ combination: z.string().min(1), meaning: z.string().min(1) })).default([]),
@@ -16,6 +20,7 @@ export const SimpleAnswerSchema = z.object({
 });
 
 export const SimpleAnswerTransportSchema = z.object({
+  direction: AnswerDirectionSchema.optional().default("unresolved"),
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
   cards: z.array(z.unknown()).default([]),
