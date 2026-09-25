@@ -423,6 +423,7 @@ describe("production simple prompt evidence", () => {
     expect(petit).toContain("Secondary arc (center column): Rider → Tree → Bouquet");
     expect(petit).not.toContain("Cards in order:");
     expect(petit).not.toMatch(/\n1\. House/);
+    expect(petit).not.toContain("House + Rider:");
     expect(petit).toContain("Woman: bound by question");
     expect(petit).toContain("Man: unbound");
   });
@@ -430,6 +431,7 @@ describe("production simple prompt evidence", () => {
   it("classifies Dutch and Danish relationship questions deterministically", () => {
     expect(getQuestionFrame("Hoe ziet de toekomst er met mijn vrouw Mahican uit?").domain).toBe("love");
     expect(getQuestionFrame("Hvordan ser fremtiden ud med min kone?").domain).toBe("love");
+    expect(getQuestionFrame("Komt die man morgen langs?").domain).not.toBe("love");
   });
 
   it("uses relationship-scoped Fish meaning instead of finance meaning", () => {

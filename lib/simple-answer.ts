@@ -25,6 +25,27 @@ export const SimpleAnswerTransportSchema = z.object({
 
 export type SimpleAnswer = z.infer<typeof SimpleAnswerSchema>;
 
+const INTERNAL_REFERENCE_PATTERNS: RegExp[] = [
+  /\b(?:position|positie)\s*[-#]?\s*\d+\b/i,
+  /\b(?:card|kaart)\s*[-#]?\s*\d+\b/i,
+  /\bcard-\d+\b/i,
+  /\bpair-\d+(?:-\d+)?\b/i,
+  /\b(?:evidence|bewijs)\s*(?:id|identifier|nummer|reference|referentie)\b/i,
+  /\b(?:weight|gewicht)\s*[-#]?\s*\d+\b/i,
+];
+
+export function findProseInvariantViolation(answer: SimpleAnswer): string | null {
+  const prose = [
+    answer.directAnswer,
+    answer.interpretation,
+    ...answer.cards.flatMap((card) => [card.combination, card.meaning]),
+    answer.timing || "",
+    ...answer.housesAndMirrors.flatMap((item) => [item.house, item.meaning]),
+  ].join("\n");
+  const violation = INTERNAL_REFERENCE_PATTERNS.find((pattern) => pattern.test(prose));
+  return violation?.source || null;
+}
+
 export function renderSimpleAnswer(answer: SimpleAnswer): string {
   const cards = answer.cards.length > 0
     ? answer.cards.map((card) => `- **${card.combination}**: ${card.meaning}`).join("\n")

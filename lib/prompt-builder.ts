@@ -613,7 +613,19 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
   const scopedCards = context.cards
     .map((card) => `${card.name} — ${getQuestionScopedCardMeaning(card, context.questionDomain) || "no reviewed question-scoped meaning supplied"}`)
     .join("\n");
-  const pairs = context.adjacentPairs.map((pair) => {
+  const petitNarrativePairs = new Set([
+    "3-4", "4-5", // middle row
+    "1-4", "4-7", // center column
+    "1-5", "5-9", "3-5", "5-7", // diagonals
+  ]);
+  const relevantPairs = context.layout.type === "petit-tableau"
+    ? context.adjacentPairs.filter((pair) => {
+      const key = `${Math.min(pair.indexA, pair.indexB) + 1}-${Math.max(pair.indexA, pair.indexB) + 1}`;
+      if (petitNarrativePairs.has(key)) return true;
+      return Boolean(getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion));
+    })
+    : context.adjacentPairs;
+  const pairs = relevantPairs.map((pair) => {
     const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning supplied";
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");

@@ -5,6 +5,7 @@ import {
   renderSimpleAnswer,
   SimpleAnswerSchema,
   SimpleAnswerTransportSchema,
+  findProseInvariantViolation,
   type HouseMirror,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
@@ -39,7 +40,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)] };
   }
 
-  const repairPrompt = `${options.prompt}\n\nThe previous model response was malformed or did not match the required object. Repair it once. Return only valid JSON matching the exact object contract; preserve its useful content and do not add commentary.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
+  const repairPrompt = `${options.prompt}\n\nThe previous model response was malformed or violated the output contract. Repair it once. Preserve the useful reading content, but remove internal coordinates, numeric positions, evidence identifiers, pair IDs, weights, and implementation terminology from every user-visible field. Return only valid JSON matching the exact object contract; do not add commentary.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
   const repaired = await generateOnce(options, repairPrompt, repairMs);
   if (repaired.kind === "valid") return { ok: true, reading: renderSimpleAnswer(repaired.answer) };
   if (repaired.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
@@ -77,7 +78,11 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
       return { kind: "invalid", raw, error: parsed.error };
     }
     try {
-      return { kind: "valid", answer: normalizeSimpleAnswer(parsed.data) };
+      const answer = normalizeSimpleAnswer(parsed.data);
+      if (findProseInvariantViolation(answer)) {
+        return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error: new Error("User-facing prose contains internal references") };
+      }
+      return { kind: "valid", answer };
     } catch (error) {
       return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error };
     }
@@ -106,7 +111,8 @@ function recoverAnswer(raw: string): ReturnType<typeof SimpleAnswerSchema.parse>
   if (!parsed.success) return null;
 
   try {
-    return normalizeSimpleAnswer(parsed.data);
+    const answer = normalizeSimpleAnswer(parsed.data);
+    return findProseInvariantViolation(answer) ? null : answer;
   } catch {
     return null;
   }
