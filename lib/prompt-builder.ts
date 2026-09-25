@@ -336,65 +336,79 @@ function cardNames(cards: { card: { name: string } }[]): string[] {
   return cards.map(({ card }) => fmtCard(card));
 }
 
-export function buildNarrativePlan(context: ReadingContext): NarrativePlan | null {
+export function buildSingleNarrativePlan(context: ReadingContext): NarrativePlan {
+  const card = context.cards[0];
+  return {
+    focus: card ? fmtCard(card) : null,
+    development: [],
+    supporting: [],
+    outcomeEvidence: card ? [fmtCard(card)] : [],
+  };
+}
+
+export function buildLinearNarrativePlan(context: ReadingContext): NarrativePlan {
+  const cards = context.cards.map(fmtCard);
+  const closing = cards.at(-1);
+  const closingPair = cards.length >= 2 ? cards.slice(-2).join(" + ") : null;
+  return {
+    focus: cards[Math.floor(cards.length / 2)] || cards[0] || null,
+    development: cards,
+    supporting: context.adjacentPairs.slice(0, 2).map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`),
+    outcomeEvidence: [closingPair, closing].filter((value): value is string => Boolean(value)),
+  };
+}
+
+export function buildPetitNarrativePlan(context: ReadingContext): NarrativePlan {
+  if (context.layout.type !== "petit-tableau") throw new Error("Petit narrative planner requires a Petit Tableau layout");
+  const layout = context.layout;
+  const line = cardNames(layout.rows.middle);
+  return {
+    focus: fmtCard(layout.center.card),
+    development: line,
+    supporting: [
+      cardNames(layout.columns.center).join(" → "),
+      cardNames(layout.diagonals.main).join(" → "),
+      cardNames(layout.diagonals.other).join(" → "),
+    ],
+    outcomeEvidence: line.at(-1) ? [line.at(-1)!] : [],
+  };
+}
+
+export function buildGrandTableauNarrativePlan(context: ReadingContext): NarrativePlan {
+  if (context.layout.type !== "grand-tableau") throw new Error("Grand Tableau narrative planner requires a Grand Tableau layout");
+  const layout = context.layout;
+  const focus = layout.primarySignificator?.card
+    ?? layout.topicCards[0]?.card
+    ?? null;
+  const localPairs = context.adjacentPairs
+    .filter((pair) => focus && (pair.cardA.id === focus.id || pair.cardB.id === focus.id))
+    .slice(0, 4)
+    .map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`);
+  const houses = layout.houses
+    .filter((house) => layout.topicCards.some((topic) => topic.cardId === house.houseCardId))
+    .slice(0, 4)
+    .map((house) => `${house.houseName}: ${fmtCard(house.occupyingCard)}`);
+  const strongest = context.adjacentPairs
+    .slice()
+    .sort((a, b) => b.weight - a.weight)[0];
+  return {
+    focus: focus ? fmtCard(focus) : null,
+    development: localPairs,
+    supporting: [...houses, ...layout.mirrors.slice(0, 4).map((pair) => `${fmtCard(pair.cardA)} ↔ ${fmtCard(pair.cardB)}`)],
+    outcomeEvidence: strongest ? [`${fmtCard(strongest.cardA)} + ${fmtCard(strongest.cardB)}`] : [],
+  };
+}
+
+export function buildNarrativePlan(context: ReadingContext): NarrativePlan {
   switch (context.layout.type) {
-    case "single": {
-      const card = context.cards[0];
-      return {
-        focus: card ? fmtCard(card) : null,
-        development: [],
-        supporting: [],
-        outcomeEvidence: card ? [fmtCard(card)] : [],
-      };
-    }
-    case "linear-sentence": {
-      const cards = context.cards.map(fmtCard);
-      const closing = cards.at(-1);
-      const closingPair = cards.length >= 2 ? cards.slice(-2).join(" + ") : null;
-      return {
-        focus: cards[Math.floor(cards.length / 2)] || cards[0] || null,
-        development: cards,
-        supporting: context.adjacentPairs.slice(0, 2).map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`),
-        outcomeEvidence: [closingPair, closing].filter((value): value is string => Boolean(value)),
-      };
-    }
-    case "petit-tableau": {
-      const layout = context.layout;
-      const line = cardNames(layout.rows.middle);
-      return {
-        focus: fmtCard(layout.center.card),
-        development: line,
-        supporting: [
-          cardNames(layout.columns.center).join(" → "),
-          cardNames(layout.diagonals.main).join(" → "),
-          cardNames(layout.diagonals.other).join(" → "),
-        ],
-        outcomeEvidence: line.at(-1) ? [line.at(-1)!] : [],
-      };
-    }
-    case "grand-tableau": {
-      const layout = context.layout;
-      const focus = layout.primarySignificator?.card
-        ?? layout.topicCards[0]?.card
-        ?? null;
-      const localPairs = context.adjacentPairs
-        .filter((pair) => focus && (pair.cardA.id === focus.id || pair.cardB.id === focus.id))
-        .slice(0, 4)
-        .map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`);
-      const houses = layout.houses
-        .filter((house) => layout.topicCards.some((topic) => topic.cardId === house.houseCardId))
-        .slice(0, 4)
-        .map((house) => `${house.houseName}: ${fmtCard(house.occupyingCard)}`);
-      const strongest = context.adjacentPairs
-        .slice()
-        .sort((a, b) => b.weight - a.weight)[0];
-      return {
-        focus: focus ? fmtCard(focus) : null,
-        development: localPairs,
-        supporting: [...houses, ...layout.mirrors.slice(0, 4).map((pair) => `${fmtCard(pair.cardA)} ↔ ${fmtCard(pair.cardB)}`)],
-        outcomeEvidence: strongest ? [`${fmtCard(strongest.cardA)} + ${fmtCard(strongest.cardB)}`] : [],
-      };
-    }
+    case "single":
+      return buildSingleNarrativePlan(context);
+    case "linear-sentence":
+      return buildLinearNarrativePlan(context);
+    case "petit-tableau":
+      return buildPetitNarrativePlan(context);
+    case "grand-tableau":
+      return buildGrandTableauNarrativePlan(context);
   }
 }
 
