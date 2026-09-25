@@ -378,15 +378,15 @@ describe("buildReadingContext", () => {
 
 describe("question subject extraction", () => {
   it("does not treat an initial Dutch verb as a person name", () => {
-    expect(extractQuestionSubjects("Will Alex and I get back together?")).toEqual(["Alex"]);
+    expect(extractQuestionSubjects("Komen Alex en ik weer bij elkaar?")).toEqual(["Alex"]);
   });
 
   it("extracts a subject after Blijft", () => {
-    expect(extractQuestionSubjects("Will Alex stay with me?")).toEqual(["Alex"]);
+    expect(extractQuestionSubjects("Blijft Alex bij mij?")).toEqual(["Alex"]);
   });
 
   it("extracts a subject after Gaat", () => {
-    expect(extractQuestionSubjects("Will Alex come back?")).toEqual(["Alex"]);
+    expect(extractQuestionSubjects("Gaat Alex terugkomen?")).toEqual(["Alex"]);
   });
 
   it("does not treat an initial possessive or article as a named subject", () => {
@@ -400,7 +400,7 @@ describe("question subject extraction", () => {
   });
 
   it("does not infer a sentence-initial capitalized word as a person", () => {
-    expect(extractQuestionSubjects("Alex stays with me?")).toEqual([]);
+    expect(extractQuestionSubjects("Alex blijft bij mij?")).toEqual([]);
   });
 
   it("does not infer a later date or place mention as the subject", () => {
