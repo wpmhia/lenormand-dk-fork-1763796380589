@@ -54,6 +54,7 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   24: { general: "desire, attachment, or what is dearly wanted", relocation: "strong desire or attachment connected with the move" },
   25: { general: "commitment, agreement, or a relationship bond" },
   26: { general: "what is unknown, concealed, or not yet disclosed", relocation: "an unresolved practical factor in the move" },
+  27: { general: "a message, letter, document, or formal communication", career: "an application, offer, or work-related document" },
   28: { general: "a man or a person represented by the Man card" },
   29: { general: "a woman or a person represented by the Woman card" },
   30: { general: "maturity, patience, or established intimacy" },
