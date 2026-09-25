@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
+import { findProseInvariantViolation, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
@@ -72,6 +72,18 @@ describe("simple reading contract", () => {
     expect(rendered.indexOf("## Answer")).toBeLessThan(rendered.indexOf("## Reading"));
     expect(rendered).not.toContain("## Key combinations");
     expect(rendered).not.toContain("No card commentary");
+  });
+
+  it("rejects internal coordinates in user-facing prose", () => {
+    const answer = SimpleAnswerSchema.parse({
+      directAnswer: "The Tree at position 5 supports growth.",
+      interpretation: "The relationship develops gradually.",
+      cards: [],
+      timing: null,
+      housesAndMirrors: [],
+    });
+
+    expect(findProseInvariantViolation(answer)).not.toBeNull();
   });
 });
 
