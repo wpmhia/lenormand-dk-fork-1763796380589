@@ -67,12 +67,31 @@ export interface QuestionFrame {
   instruction: string;
 }
 
+const QUESTION_DOMAIN_KEYWORDS: Record<Exclude<QuestionDomain, "general">, string[]> = {
+  relocation: ["move", "moving", "relocate", "relocation", "migrate", "immigrate", "verhuizen", "verhuis", "verhuizing", "flytte", "flytter", "flytning"],
+  health: ["illness", "disease", "pain", "symptom", "diagnosis", "treatment", "surgery", "recovery", "health", "wellness", "medical", "ziekte", "pijn", "symptoom", "diagnose", "behandeling", "gezondheid", "sundhed", "sygdom", "smerte", "symptom"],
+  career: ["job", "position", "role", "career", "work", "employment", "interview", "salary", "promotion", "employer", "baan", "werk", "functie", "salaris", "promotie", "arbejde", "job", "stilling", "løn", "karriere"],
+  love: ["love", "relationship", "partner", "romance", "marriage", "married", "dating", "boyfriend", "girlfriend", "wife", "husband", "spouse", "liefde", "relatie", "partner", "romantiek", "huwelijk", "getrouwd", "vriend", "vriendin", "vrouw", "echtgenote", "man", "echtgenoot", "kærlighed", "forhold", "ægteskab", "gift", "kone", "mand", "kæreste"],
+  love_sexual: ["sex", "sexual", "intimacy", "intimate", "seks", "seksueel", "intimiteit", "seksualitet", "sex", "seksuel", "intimitet"],
+  money: ["money", "finance", "income", "loan", "debt", "salary", "wealth", "budget", "geld", "financiën", "inkomen", "lening", "schuld", "vermogen", "budget", "penge", "økonomi", "indkomst", "gæld", "formue"],
+  home: ["home", "house", "apartment", "property", "renovation", "roommate", "thuis", "huis", "woning", "appartement", "eigendom", "verbouwing", "huisgenoot", "hjem", "hus", "bolig", "lejlighed"],
+  travel: ["travel", "trip", "vacation", "journey", "flight", "abroad", "overseas", "reizen", "reis", "vakantie", "vlucht", "buitenland", "rejse", "ferie", "fly", "udland"],
+};
+
+function matchesKeywords(question: string, keywords: string[]): boolean {
+  return keywords.some((keyword) => {
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?:^|\\s|[^\\p{L}])${escaped}(?:$|\\s|[^\\p{L}])`, "iu").test(question);
+  });
+}
+
 export function getQuestionFrame(question: string): QuestionFrame {
   const q = question.toLowerCase();
-  const explicitCareer = /\b(job|position|role|career|work|employment|interview|salary|promotion|employer)\b/i.test(q);
-  const explicitHealth = /\b(illness|disease|pain|symptom|diagnosis|treatment|surgery|recovery|health|wellness|medical condition)\b/i.test(q);
+  const explicitCareer = matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.career);
+  const explicitHealth = matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.health);
 
-  if (/\b(?:move|moving|relocat(?:e|ed|es|ing|ion)|migrat(?:e|ed|es|ing|ion)|immigrat(?:e|ed|es|ing|ion))\b/i.test(q)
+  if (matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.relocation)
+    || /\b(?:move|moving|relocat(?:e|ed|es|ing|ion)|migrat(?:e|ed|es|ing|ion)|immigrat(?:e|ed|es|ing|ion))\b/i.test(q)
     || /\b(?:move|return)\s+(?:back\s+)?to\s+[A-Z][\w-]+/i.test(question)
     || /\b(?:move|settle)\s+(?:back\s+)?(?:home|abroad|overseas)\b/i.test(q)) {
     return {
@@ -86,16 +105,19 @@ export function getQuestionFrame(question: string): QuestionFrame {
   if (explicitCareer) {
     return { domain: "career", instruction: "This is a career or employment question. Interpret cards through work, roles, applications, decisions, and professional circumstances." };
   }
-  if (/\b(love|relationship|partner|romance|marriage|dating|boyfriend|girlfriend)\b/i.test(q)) {
+  if (matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.love_sexual)) {
+    return { domain: "love_sexual", instruction: "This is an intimacy question. Preserve the exact sexual or intimate predicate and do not broaden it into general romance or contact." };
+  }
+  if (matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.love)) {
     return { domain: "love", instruction: "This is a relationship question. Interpret the line through the people, contact, commitment, and circumstances described by the question." };
   }
-  if (/\b(money|finance|income|loan|debt|salary|wealth|budget)\b/i.test(q)) {
+  if (matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.money)) {
     return { domain: "money", instruction: "This is a money question. Interpret the line through finances, resources, payments, and practical material circumstances." };
   }
-  if (/\b(home|house|apartment|property|renovation|roommate)\b/i.test(q)) {
+  if (matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.home)) {
     return { domain: "home", instruction: "This is a home question. Interpret the line through residence, family, property, and domestic circumstances." };
   }
-  if (/\b(travel|trip|vacation|journey|flight|abroad|overseas)\b/i.test(q)) {
+  if (matchesKeywords(q, QUESTION_DOMAIN_KEYWORDS.travel)) {
     return { domain: "travel", instruction: "This is a travel question. Interpret the line through movement, routes, visits, and practical travel circumstances." };
   }
   return { domain: "general", instruction: "Use the user's question as the semantic frame. Do not let a card's common domain replace the concrete situation being asked about." };
@@ -756,56 +778,19 @@ function derivePersonBindings(
 }
 
 function matchQuestionTopic(question: string, category: string): boolean {
-  const wordBoundary = (kw: string) => new RegExp(`\\b${kw}\\b`, "i");
-  const matches = (kws: string[]) => kws.some((kw) => wordBoundary(kw).test(question));
   switch (category) {
     case "love":
-      return matches([
-        "love", "relationship", "partner", "romance", "marriage", "married", "marry",
-        "dating", "boyfriend", "girlfriend", "heart", "commitment", "committed",
-      ]);
+      return matchesKeywords(question, [...QUESTION_DOMAIN_KEYWORDS.love, "heart", "commitment", "committed", "marry"]);
     case "job":
-      return matches([
-        // General employment (full word families so 'employed', 'employment' match too)
-        "job", "jobs", "work", "working", "works", "career", "careers",
-        "employ", "employed", "employment", "employer", "employers",
-        "boss", "interview", "interviews", "colleague", "colleagues", "workplace",
-        "promotion", "promoted", "promote", "firing", "fired", "fire",
-        "layoff", "resign", "resigned", "salary",
-        // Professional / qualified contexts that the old matcher missed entirely
-        "profession", "professional", "position", "role", "post",
-        "qualification", "qualified", "qualify", "credentials",
-        "license", "licence", "licensed",
-        "medical", "doctor", "nurse", "nursing", "physician", "clinical",
-        "hospital", "specialty", "specialist",
-        "law", "legal", "attorney", "lawyer",
-        "teaching", "academic", "professor",
-        "practice", "practicing", "practise",
-      ]);
+      return matchesKeywords(question, [...QUESTION_DOMAIN_KEYWORDS.career, "boss", "colleague", "workplace", "firing", "layoff", "resign", "profession", "qualification", "license", "doctor", "nurse", "hospital", "lawyer", "teaching", "professor"]);
     case "money":
-      return matches([
-        "money", "finance", "financial", "income",
-        "invest", "investing", "investment", "investor",
-        "loan", "loans", "debt", "debts",
-        "wealth", "wealthy", "budget", "budgets", "afford", "pay", "paid",
-      ]);
+      return matchesKeywords(question, [...QUESTION_DOMAIN_KEYWORDS.money, "financial", "invest", "investing", "investment", "investor", "afford", "pay", "paid"]);
     case "health":
-      return matches([
-        "health", "healthy", "illness", "ill", "sick", "sickness",
-        "disease", "diseases", "pain", "heal", "healing",
-        "recover", "recovery", "doctor", "doctors",
-        "hospital", "wellness", "surgery", "surgical",
-      ]);
+      return matchesKeywords(question, [...QUESTION_DOMAIN_KEYWORDS.health, "healthy", "sick", "heal", "healing", "doctors", "surgical"]);
     case "home":
-      return matches([
-        "home", "house", "apartment", "move", "moving",
-        "renovation", "roommate", "property",
-      ]);
+      return matchesKeywords(question, QUESTION_DOMAIN_KEYWORDS.home);
     case "travel":
-      return matches([
-        "travel", "traveling", "trip", "vacation", "journey",
-        "flight", "visit", "visiting", "holiday", "abroad", "overseas",
-      ]);
+      return matchesKeywords(question, QUESTION_DOMAIN_KEYWORDS.travel);
     default:
       return false;
   }

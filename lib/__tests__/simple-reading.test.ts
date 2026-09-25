@@ -58,6 +58,21 @@ describe("simple reading contract", () => {
     expect(rendered).toContain("The cards support a cautious opening.");
     expect(rendered).not.toContain("Most likely development");
   });
+
+  it("renders the answer before the reading and omits empty combinations", () => {
+    const answer = SimpleAnswerSchema.parse({
+      directAnswer: "The relationship can develop steadily.",
+      interpretation: "The cards show a gradual opening.",
+      cards: [],
+      timing: null,
+      housesAndMirrors: [],
+    });
+    const rendered = renderSimpleAnswer(answer);
+
+    expect(rendered.indexOf("## Answer")).toBeLessThan(rendered.indexOf("## Reading"));
+    expect(rendered).not.toContain("## Key combinations");
+    expect(rendered).not.toContain("No card commentary");
+  });
 });
 
 describe("simple reading JSON repair", () => {

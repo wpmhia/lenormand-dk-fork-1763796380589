@@ -60,7 +60,7 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   31: { general: "success, clarity, or a favorable result" },
   32: { general: "recognition, feelings, or a changing public mood" },
   33: { general: "a solution, access, or decisive answer" },
-  34: { general: "resources, flow, or available capacity", money: "money, resources, or material flow" },
+  34: { general: "resources, flow, or available capacity", love: "emotional availability, reciprocity, or room for the relationship to develop", money: "money, resources, or material flow" },
   35: { general: "stability, security, or an established base", relocation: "the established home base or practical security" },
   36: { general: "a burden, difficult obligation, or heavy outcome" },
 };
@@ -68,8 +68,16 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
 export type EvidencePolarity = "positive" | "negative" | "neutral" | "ambiguous";
 export type EvidenceStatus = "reviewed" | "unreviewed";
 
+export function getQuestionScopedCardMeaning(
+  card: NormalizedCard,
+  domain: ReadingContext["questionDomain"],
+): string | null {
+  const senses = CARD_SENSES[card.id];
+  return senses?.[domain] || senses?.general || null;
+}
+
 export function getCoreCardMeaning(card: NormalizedCard): string | null {
-  return CARD_SENSES[card.id]?.general || null;
+  return getQuestionScopedCardMeaning(card, "general");
 }
 
 export interface EvidenceEnvelope {
@@ -86,8 +94,7 @@ function getObservationWindow(question: string): string | null {
 }
 
 function getCardEvidence(card: NormalizedCard, domain: ReadingContext["questionDomain"]): { status: EvidenceStatus; meaning: string | null } {
-  const senses = CARD_SENSES[card.id];
-  const meaning = senses?.[domain] || senses?.general;
+  const meaning = getQuestionScopedCardMeaning(card, domain);
   return { status: meaning ? "reviewed" : "unreviewed", meaning: meaning || null };
 }
 
