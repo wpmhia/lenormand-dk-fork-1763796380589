@@ -11,7 +11,7 @@ import { DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
-import { FOLLOWUP_SYSTEM_PROMPT, FOLLOWUP_MAX_OUTPUT_TOKENS } from "@/lib/followup-prompt";
+import { FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
@@ -123,11 +123,11 @@ export async function POST(request: Request) {
       model: readingModel,
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
-      maxOutputTokens: FOLLOWUP_MAX_OUTPUT_TOKENS,
-      providerOptions: { deepseek: { thinking: { type: "enabled" } } },
+      maxOutputTokens: 256,
+      providerOptions: { deepseek: { thinking: { type: "disabled" } } },
       maxRetries: 1,
       abortSignal: request.signal,
-      timeout: { totalMs: 15_000 },
+      timeout: { totalMs: 20_000 },
     });
 
     return new Response(result.text, {

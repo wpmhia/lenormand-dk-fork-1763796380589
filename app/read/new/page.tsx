@@ -79,6 +79,7 @@ function NewReadingPageContent() {
     followUpResponse,
     followUpLoading,
     followUpStreaming,
+    followUpHistory,
     submitFollowUp,
   } = useAIAnalysis(
     question,
@@ -426,6 +427,7 @@ function NewReadingPageContent() {
                   followUpLoading={followUpLoading}
                   followUpStreaming={followUpStreaming}
                   followUpResponse={followUpResponse}
+                  followUpHistory={followUpHistory}
                   spreadId={selectedSpread.id}
                   cardCount={selectedSpread.cards}
                   question={question}

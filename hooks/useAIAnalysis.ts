@@ -15,6 +15,7 @@ interface UseAIAnalysisReturn {
   followUpResponse: string | null;
   followUpLoading: boolean;
   followUpStreaming: boolean;
+  followUpHistory: FollowUpTurn[];
   submitFollowUp: (question: string) => void;
 }
 
@@ -161,31 +162,18 @@ export function useAIAnalysis(
           signal: controller.signal,
         });
 
-        if (!response.ok || !response.body) {
+        if (!response.ok) {
           throw new Error(await readErrorMessage(response, "Request failed"));
         }
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            const text = decoder.decode(value, { stream: true });
-            if (text && followUpAbortControllerRef.current === controller) {
-              fullResponse += text;
-              setFollowUpResponse(fullResponse);
-            }
-          }
-          if (followUpAbortControllerRef.current === controller && fullResponse.trim()) {
-            setFollowUpHistory([
-              ...priorHistory,
-              { role: "user" as const, content: followUpQuestion },
-              { role: "assistant" as const, content: fullResponse.trim() },
-            ].slice(-12));
-          }
-        } finally {
-          reader.releaseLock();
+        fullResponse = await response.text();
+        if (followUpAbortControllerRef.current === controller && fullResponse.trim()) {
+          setFollowUpResponse(fullResponse.trim());
+          setFollowUpHistory([
+            ...priorHistory,
+            { role: "user" as const, content: followUpQuestion },
+            { role: "assistant" as const, content: fullResponse.trim() },
+          ].slice(-12));
         }
       } catch (err: any) {
         if (err.name === "AbortError") return;
@@ -214,6 +202,7 @@ export function useAIAnalysis(
     followUpResponse,
     followUpLoading,
     followUpStreaming,
+    followUpHistory,
     submitFollowUp,
   };
 }

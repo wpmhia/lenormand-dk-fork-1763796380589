@@ -29,6 +29,7 @@ interface AIReadingDisplayProps {
   followUpLoading?: boolean;
   followUpStreaming?: boolean;
   followUpResponse?: string | null;
+  followUpHistory?: { role: "user" | "assistant"; content: string }[];
   spreadId?: string;
   cardCount?: number;
   question?: string;
@@ -46,6 +47,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   followUpLoading = false,
   followUpStreaming = false,
   followUpResponse = null,
+  followUpHistory = [],
   spreadId,
   cardCount,
   question,
@@ -175,6 +177,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   const handleFollowUpSubmit = () => {
     if (!followUpQuestion.trim() || !onFollowUp) return;
     onFollowUp(followUpQuestion.trim());
+    setFollowUpQuestion("");
   };
 
   const handleFollowUpKeyDown = (
@@ -185,6 +188,10 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
       handleFollowUpSubmit();
     }
   };
+
+  const hasUncommittedFollowUpResponse = Boolean(
+    followUpResponse && followUpHistory.at(-1)?.content !== followUpResponse,
+  );
 
   if (isLoading) {
     return (
@@ -332,8 +339,22 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
           />
         )}
 
-        {!isStreaming && !followUpResponse && (
+        {!isStreaming && aiReading?.reading && (
           <div className="mt-8 border-t border-border/50 pt-6">
+            {followUpHistory.length > 0 && (
+              <div className="mb-6 space-y-4">
+                {followUpHistory.map((turn, index) => (
+                  <div key={`${turn.role}-${index}`} className={turn.role === "user" ? "rounded-lg bg-muted/40 px-4 py-3" : "px-1"}>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {turn.role === "user" ? "You asked" : "Follow-up"}
+                    </p>
+                    <div className="text-sm leading-relaxed text-foreground/90">
+                      {turn.role === "assistant" ? <ReadingMarkdown>{turn.content}</ReadingMarkdown> : turn.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             {!showFollowUpInput ? (
               <button
                 onClick={() => setShowFollowUpInput(true)}
@@ -383,7 +404,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
           </div>
         )}
 
-        {(followUpResponse || followUpStreaming) && (
+         {(followUpStreaming || hasUncommittedFollowUpResponse) && (
           <div className="mt-8 border-t border-border/50 pt-6">
             <div className="mb-3 flex items-center gap-2 text-sm font-medium text-foreground">
               <MessageCircle className="h-4 w-4 text-primary" />
@@ -401,7 +422,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
                 </div>
               )}
             </div>
-            {followUpStreaming && followUpResponse && (
+             {followUpStreaming && followUpResponse && (
               <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
                 <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary"></div>
                 <span>typing...</span>
