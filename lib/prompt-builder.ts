@@ -326,11 +326,10 @@ function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
 }
 
 export interface NarrativePlan {
-  core: string;
-  mainArc: string[];
-  secondaryArc: string[];
-  supportingEvidence: string[];
-  outcomeDirection: string | null;
+  focus: string | null;
+  development: string[];
+  supporting: string[];
+  outcomeEvidence: string[];
 }
 
 function cardNames(cards: { card: { name: string } }[]): string[] {
@@ -338,28 +337,87 @@ function cardNames(cards: { card: { name: string } }[]): string[] {
 }
 
 export function buildNarrativePlan(context: ReadingContext): NarrativePlan | null {
-  if (context.layout.type !== "petit-tableau") return null;
-  const layout = context.layout;
-  const line = cardNames(layout.rows.middle);
-  const secondary = cardNames(layout.columns.center);
-  return {
-    core: fmtCard(layout.center.card),
-    mainArc: line,
-    secondaryArc: secondary,
-    supportingEvidence: [cardNames(layout.diagonals.main).join(" → "), cardNames(layout.diagonals.other).join(" → ")],
-    outcomeDirection: line.at(-1) ?? null,
-  };
+  switch (context.layout.type) {
+    case "single": {
+      const card = context.cards[0];
+      return {
+        focus: card ? fmtCard(card) : null,
+        development: [],
+        supporting: [],
+        outcomeEvidence: card ? [fmtCard(card)] : [],
+      };
+    }
+    case "linear-sentence": {
+      const cards = context.cards.map(fmtCard);
+      const closing = cards.at(-1);
+      const closingPair = cards.length >= 2 ? cards.slice(-2).join(" + ") : null;
+      return {
+        focus: cards[Math.floor(cards.length / 2)] || cards[0] || null,
+        development: cards,
+        supporting: context.adjacentPairs.slice(0, 2).map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`),
+        outcomeEvidence: [closingPair, closing].filter((value): value is string => Boolean(value)),
+      };
+    }
+    case "petit-tableau": {
+      const layout = context.layout;
+      const line = cardNames(layout.rows.middle);
+      return {
+        focus: fmtCard(layout.center.card),
+        development: line,
+        supporting: [
+          cardNames(layout.columns.center).join(" → "),
+          cardNames(layout.diagonals.main).join(" → "),
+          cardNames(layout.diagonals.other).join(" → "),
+        ],
+        outcomeEvidence: line.at(-1) ? [line.at(-1)!] : [],
+      };
+    }
+    case "grand-tableau": {
+      const layout = context.layout;
+      const focus = layout.primarySignificator?.card
+        ?? layout.topicCards[0]?.card
+        ?? null;
+      const localPairs = context.adjacentPairs
+        .filter((pair) => focus && (pair.cardA.id === focus.id || pair.cardB.id === focus.id))
+        .slice(0, 4)
+        .map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`);
+      const houses = layout.houses
+        .filter((house) => layout.topicCards.some((topic) => topic.cardId === house.houseCardId))
+        .slice(0, 4)
+        .map((house) => `${house.houseName}: ${fmtCard(house.occupyingCard)}`);
+      const strongest = context.adjacentPairs
+        .slice()
+        .sort((a, b) => b.weight - a.weight)[0];
+      return {
+        focus: focus ? fmtCard(focus) : null,
+        development: localPairs,
+        supporting: [...houses, ...layout.mirrors.slice(0, 4).map((pair) => `${fmtCard(pair.cardA)} ↔ ${fmtCard(pair.cardB)}`)],
+        outcomeEvidence: strongest ? [`${fmtCard(strongest.cardA)} + ${fmtCard(strongest.cardB)}`] : [],
+      };
+    }
+  }
 }
 
-function formatNarrativePlan(plan: NarrativePlan): string {
+function formatNarrativePlan(plan: NarrativePlan, layoutType: ReadingContext["layout"]["type"]): string {
+  if (layoutType === "petit-tableau") {
+    return [
+      "Narrative plan (authoritative; write one coherent story from this spine):",
+      `- Core / heart: ${plan.focus || "not established"}`,
+      `- Main arc (middle line, left → center → outcome): ${plan.development.join(" → ") || "not established"}`,
+      `- Secondary arc (center column): ${plan.supporting[0] || "not established"}`,
+      `- Supporting evidence (diagonals): ${plan.supporting.slice(1).join("; ") || "none"}`,
+      `- Outcome direction: ${plan.outcomeEvidence.join("; ") || "not established"}`,
+      "- Narrative priority: focus, development, outcome evidence, then supporting evidence only when it materially qualifies the story.",
+      "- Do not narrate every drawn card or use numeric positions in the answer.",
+    ].join("\n");
+  }
   return [
     "Narrative plan (authoritative; write one coherent story from this spine):",
-    `- Core / heart: ${plan.core}`,
-    `- Main arc (middle line, left → center → outcome): ${plan.mainArc.join(" → ")}`,
-    `- Secondary arc (center column): ${plan.secondaryArc.join(" → ")}`,
-    `- Supporting evidence (diagonals): ${plan.supportingEvidence.join("; ")}`,
-    `- Outcome direction: ${plan.outcomeDirection || "not established"}`,
-    "- Narrative priority: core, main arc, secondary arc, diagonals, then outer cards only when they materially qualify the story.",
+    `- Focus: ${plan.focus || "not established"}`,
+    `- Development: ${plan.development.join(" → ") || "not established"}`,
+    `- Supporting evidence: ${plan.supporting.join("; ") || "none"}`,
+    `- ${layoutType === "linear-sentence" ? "Outcome evidence (Closing pair / card)" : "Outcome evidence"}: ${plan.outcomeEvidence.join("; ") || "not established"}`,
+    "- Narrative priority: focus, development, outcome evidence, then supporting evidence only when it materially qualifies the story.",
     "- Do not narrate every drawn card or use numeric positions in the answer.",
   ].join("\n");
 }
@@ -630,10 +688,10 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");
   const narrativePlan = buildNarrativePlan(context);
-  const layout = context.layout.type === "grand-tableau"
-    ? `Grand Tableau rows: ${context.layout.grid.map((row) => row.map((cell) => cell.card.name).join(" + ")).join(" / ")}. Center four: ${context.layout.centerFour.map((cell) => cell.card.name).join(" + ")}.`
-    : narrativePlan
-      ? formatNarrativePlan(narrativePlan)
+  const layout = narrativePlan
+      ? formatNarrativePlan(narrativePlan, context.layout.type)
+      : context.layout.type === "grand-tableau"
+        ? `Grand Tableau rows: ${context.layout.grid.map((row) => row.map((cell) => cell.card.name).join(" + ")).join(" / ")}. Center four: ${context.layout.centerFour.map((cell) => cell.card.name).join(" + ")}.`
       : context.layout.type === "linear-sentence"
         ? `Closing pair: ${context.cards[context.cards.length - 2]?.name} + ${context.cards[context.cards.length - 1]?.name}. Closing card: ${context.cards[context.cards.length - 1]?.name}.`
         : "";
