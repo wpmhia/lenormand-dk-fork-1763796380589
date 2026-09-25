@@ -86,16 +86,16 @@ describe("simple reading contract", () => {
     expect(findProseInvariantViolation(answer)).not.toBeNull();
   });
 
-  it("rejects unsupported causal prerequisites and causal timing", () => {
+  it("does not reject ordinary natural language causality", () => {
     const answer = SimpleAnswerSchema.parse({
-      directAnswer: "Happiness appears once the sharp choice is made.",
+      directAnswer: "You must be cautious with this transition.",
       interpretation: "The cards show a positive direction.",
       cards: [],
       timing: null,
       housesAndMirrors: [],
     });
 
-    expect(findProseInvariantViolation(answer)).toContain("unsupported prerequisite");
+    expect(findProseInvariantViolation(answer)).toBeNull();
   });
 });
 

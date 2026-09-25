@@ -384,30 +384,28 @@ describe("production simple prompt evidence", () => {
   it("includes the three-card left/right pairs and bridge-pivot instruction", () => {
     const ctx = buildReadingContext("sentence-3", "Will I find a new job?", normalized([1, 2, 3]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).toContain("Full ordered progression (2 adjacent pairs)");
+    expect(prompt).toContain("Development line (ordered, not causal): Rider | Clover | Ship");
     expect(prompt).toContain("Rider + Clover");
     expect(prompt).toContain("Clover + Ship");
-    expect(prompt).toContain("left pair and right pair through the central card as bridge/pivot");
   });
 
   it("includes ordered closing-pair evidence for five cards", () => {
     const ctx = buildReadingContext("sentence-5", "Will the deal close?", normalized([1, 2, 3, 4, 5]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).toContain("Full ordered progression (4 adjacent pairs)");
-    expect(prompt).toContain("[STRONGEST — closing pair]");
-    expect(prompt).toContain("Closing pair");
+    expect(prompt).toContain("Development line (ordered, not causal): Rider | Clover | Ship | House | Tree");
+    expect(prompt).toContain("Outcome evidence (Closing pair / card): House + Tree; Tree");
   });
 
   it("includes Petit Tableau hierarchy and Grand Tableau spatial evidence", () => {
     const petit = buildSimpleReadingPrompt(buildReadingContext("comprehensive", "What will my month bring?", normalized([1, 2, 3, 4, 5, 6, 7, 8, 9]), cardsMap));
-    expect(petit).toContain("Petit Tableau hierarchy");
-    expect(petit).toContain("Center card (heart of tableau)");
+    expect(petit).toContain("Main line (left to right; ordered, not causal)");
+    expect(petit).toContain("Core / heart");
 
     const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
     const grand = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap, "woman"));
-    expect(grand).toContain("significator surroundings");
-    expect(grand).toContain("House of");
-    expect(grand).toContain("Primary significator");
+    expect(grand).toContain("Narrative plan");
+    expect(grand).toContain("Focus:");
+    expect(grand).toContain("Supporting evidence:");
   });
 
   it("builds a narrative spine for Petit Tableau without row-major numbering", () => {
@@ -419,8 +417,8 @@ describe("production simple prompt evidence", () => {
     ));
 
     expect(petit).toContain("Core / heart: Tree");
-    expect(petit).toContain("Main arc (middle line, left → center → outcome): Mountain → Tree → Fish");
-    expect(petit).toContain("Secondary arc (center column): Rider → Tree → Bouquet");
+    expect(petit).toContain("Main line (left to right; ordered, not causal): Mountain | Tree | Fish");
+    expect(petit).toContain("Secondary axis (center column; supporting, not causal): Rider | Tree | Bouquet");
     expect(petit).not.toContain("Cards in order:");
     expect(petit).not.toMatch(/\n1\. House/);
     expect(petit).not.toContain("House + Rider:");

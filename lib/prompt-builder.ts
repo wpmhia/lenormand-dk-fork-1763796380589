@@ -16,7 +16,7 @@ Storytelling contract:
 - Use only the question-scoped card senses supplied below. Do not reactivate unrelated meanings from model knowledge.
 - Person cards are bound only when the supplied person bindings say so. An unbound Man or Woman must not become a husband, wife, partner, named person, or pronoun.
 - Never expose numeric positions, card indices, evidence IDs, pair IDs, weights, or internal geometry labels in user-facing prose. Translate structure into natural language.
-- Do not turn a card event into a causal prerequisite. Without explicit causal evidence, avoid claims that something is necessary, must happen first, is required, or that one development happens "once" or "only after" another.
+- Development lines are ordered reading structure, not causal claims. The order does not establish that one event causes, requires, or must precede another.
 - Preserve the question's predicate as the subject of the answer. A qualifying card may add context, but must not replace a wellbeing, relocation, work, or other question with a different relationship or event question.
 - Preserve the exact question predicate, subject, and qualifiers. Do not invent cards, people, facts, exact timing, or causal conditions.
 - Answer the exact predicate first with the strongest direction supported by the complete spread. Preserve uncertainty only when the spread genuinely does not resolve the answer.
@@ -368,9 +368,9 @@ export function buildPetitNarrativePlan(context: ReadingContext): NarrativePlan 
     focus: fmtCard(layout.center.card),
     development: line,
     supporting: [
-      cardNames(layout.columns.center).join(" → "),
-      cardNames(layout.diagonals.main).join(" → "),
-      cardNames(layout.diagonals.other).join(" → "),
+      cardNames(layout.columns.center).join(" | "),
+      cardNames(layout.diagonals.main).join(" | "),
+      cardNames(layout.diagonals.other).join(" | "),
     ],
     outcomeEvidence: line.at(-1) ? [line.at(-1)!] : [],
   };
@@ -419,8 +419,8 @@ function formatNarrativePlan(plan: NarrativePlan, layoutType: ReadingContext["la
     return [
       "Narrative plan (authoritative; write one coherent story from this spine):",
       `- Core / heart: ${plan.focus || "not established"}`,
-      `- Main arc (middle line, left → center → outcome): ${plan.development.join(" → ") || "not established"}`,
-      `- Secondary arc (center column): ${plan.supporting[0] || "not established"}`,
+      `- Main line (left to right; ordered, not causal): ${plan.development.join(" | ") || "not established"}`,
+      `- Secondary axis (center column; supporting, not causal): ${plan.supporting[0] || "not established"}`,
       `- Supporting evidence (diagonals): ${plan.supporting.slice(1).join("; ") || "none"}`,
       `- Outcome direction: ${plan.outcomeEvidence.join("; ") || "not established"}`,
       "- Narrative priority: focus, development, outcome evidence, then supporting evidence only when it materially qualifies the story.",
@@ -430,7 +430,7 @@ function formatNarrativePlan(plan: NarrativePlan, layoutType: ReadingContext["la
   return [
     "Narrative plan (authoritative; write one coherent story from this spine):",
     `- Focus: ${plan.focus || "not established"}`,
-    `- Development: ${plan.development.join(" → ") || "not established"}`,
+    `- Development line (ordered, not causal): ${plan.development.join(" | ") || "not established"}`,
     `- Supporting evidence: ${plan.supporting.join("; ") || "none"}`,
     `- ${layoutType === "linear-sentence" ? "Outcome evidence (Closing pair / card)" : "Outcome evidence"}: ${plan.outcomeEvidence.join("; ") || "not established"}`,
     "- Narrative priority: focus, development, outcome evidence, then supporting evidence only when it materially qualifies the story.",
@@ -684,8 +684,16 @@ export function buildPromptFromContext(context: ReadingContext): string {
 
 /** Compact production reader prompt: code supplies spread facts, the model synthesizes. */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
+  const narrativePlan = buildNarrativePlan(context);
+  const planText = [
+    narrativePlan.focus || "",
+    ...narrativePlan.development,
+    ...narrativePlan.supporting,
+    ...narrativePlan.outcomeEvidence,
+  ].join(" | ");
   const scopedCards = context.cards
-    .map((card) => `${card.name} — ${getQuestionScopedCardMeaning(card, context.questionDomain) || "no reviewed question-scoped meaning supplied"}`)
+    .filter((card) => planText.includes(fmtCard(card)))
+    .map((card) => `${fmtCard(card)} — ${getQuestionScopedCardMeaning(card, context.questionDomain) || "no reviewed question-scoped meaning supplied"}`)
     .join("\n");
   const petitNarrativePairs = new Set([
     "3-4", "4-5", // middle row
@@ -698,22 +706,19 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
       if (petitNarrativePairs.has(key)) return true;
       return Boolean(getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion));
     })
-    : context.adjacentPairs;
+    : context.adjacentPairs.filter((pair) => {
+      const forward = `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`;
+      const reverse = `${fmtCard(pair.cardB)} + ${fmtCard(pair.cardA)}`;
+      return planText.includes(forward) || planText.includes(reverse);
+    });
   const pairs = relevantPairs.map((pair) => {
     const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning supplied";
     return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
   }).join("\n");
-  const narrativePlan = buildNarrativePlan(context);
-  const layout = narrativePlan
-      ? formatNarrativePlan(narrativePlan, context.layout.type)
-      : context.layout.type === "grand-tableau"
-        ? `Grand Tableau rows: ${context.layout.grid.map((row) => row.map((cell) => cell.card.name).join(" + ")).join(" / ")}. Center four: ${context.layout.centerFour.map((cell) => cell.card.name).join(" + ")}.`
-      : context.layout.type === "linear-sentence"
-        ? `Closing pair: ${context.cards[context.cards.length - 2]?.name} + ${context.cards[context.cards.length - 1]?.name}. Closing card: ${context.cards[context.cards.length - 1]?.name}.`
-        : "";
   const semantic = context.semanticQuestion
     ? `Semantic question frame: mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}.`
     : `Question frame (${context.questionDomain}): ${context.questionFrame}`;
+  const answerFocus = `Required answer focus: preserve the exact outcome or state requested by this question; do not replace it with a related question.\nQuestion predicate: ${context.semanticQuestion?.predicate || context.question}`;
   const situation = context.situationContext.trim()
     ? `\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
     : "";
@@ -725,19 +730,7 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
       ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
       : `- ${label}: unbound`;
   }).join("\n")}`;
-  const prediction = context.layout.type !== "single"
-    ? `\n\n${formatPredictionEvidenceBlock(buildPredictionContext(context))}`
-    : "";
-  const topicFocus = context.topicFocus.length > 0
-    ? `\n\nTopic focus:\n${context.topicFocus.slice(0, 5).map((topic) => `- ${topic.topic}: ${topic.cardName} at position ${topic.index + 1}`).join("\n")}`
-    : "";
-  const houseGuidance = context.layout.type === "grand-tableau"
-    ? "For Grand Tableau, include useful house or mirror observations when relevant."
-    : "For this spread, omit house or mirror observations.";
-  const cardsBlock = narrativePlan
-    ? `Question-scoped card senses (use only when a card materially advances the narrative):\n${scopedCards}`
-    : `Question-scoped card senses:\n${scopedCards}`;
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}${subjects}${personBindings}${situation}\n\n${cardsBlock}\n\nSpread facts:\n${layout}\n\nLocal pair references:\n${pairs || "No reviewed pair meanings are available; synthesize from cards and layout."}${topicFocus}${prediction}\n\nRead the question and deterministic narrative plan together. Preserve the exact predicate and qualifiers. Do not invent cards, entities, motives, history, exact timing, or conditions. Reviewed pair meanings are optional references; unreviewed combinations may be cautiously synthesized but are not canonical doctrine. ${houseGuidance}\n\nReturn only the structured object requested by the response schema.`;
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}\n${answerFocus}${subjects}${personBindings}${situation}\n\n${formatNarrativePlan(narrativePlan, context.layout.type)}\n\nQuestion-scoped meanings for cards referenced in the plan:\n${scopedCards || "No card meanings were selected."}\n\nRelevant reviewed combinations:\n${pairs || "No reviewed combinations were selected."}\n\nWrite one coherent synthesis, not a card inventory. Preserve the exact question and predicate. The development lines are ordered reading structure, not causality or timing. Do not invent cards, people, facts, exact timing, prerequisites, or implementation details. Return only the structured object requested by the response schema.`;
 }
 
 export function sanitizeQuestion(question: string): string {
