@@ -41,7 +41,7 @@ const CARD_SENSES: Record<number, Partial<Record<ReadingContext["questionDomain"
   11: { general: "repeated conflict, pressure, or argument" },
   12: { general: "discussion, nervous activity, or exchanged messages" },
   13: { general: "a new beginning or something young", relocation: "a fresh start", love: "a new beginning" },
-  14: { general: "caution, work, or something not entirely straightforward", career: "work or employment requiring caution", relocation: "work or an arrangement that may not be entirely straightforward" },
+  14: { general: "caution or something not entirely straightforward", love: "caution, self-interest, or something that requires careful handling", career: "work or employment requiring caution", relocation: "an arrangement that may not be entirely straightforward" },
   15: { general: "power, strength, or authority" },
   16: { general: "clarity, guidance, hope, visibility, or inspiration" },
   17: { general: "change, transition, or gradual movement" },

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext, getQuestionFrame } from "@/lib/reading-context";
-import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt } from "@/lib/prompt-builder";
+import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { Card } from "@/lib/types";
 
@@ -444,6 +444,20 @@ describe("production simple prompt evidence", () => {
 
     expect(prompt).toContain("Fish — emotional availability, reciprocity, or room for the relationship to develop");
     expect(prompt).not.toContain("Fish — money, resources, or material flow");
+  });
+
+  it("preserves a wellbeing predicate instead of turning it into a relationship question", () => {
+    const prompt = buildSimpleReadingPrompt(buildReadingContext(
+      "sentence-5",
+      "Worden we gelukkig in Nederland?",
+      normalized([10, 14, 33, 25, 13]),
+      cardsMap,
+    ));
+
+    expect(prompt).toContain("Worden we gelukkig in Nederland?");
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toContain("Preserve the question's predicate as the subject of the answer");
+    expect(prompt).toContain("Fox — caution or something not entirely straightforward");
+    expect(prompt).not.toContain("Fox — work or employment requiring caution");
   });
 });
 

@@ -85,6 +85,18 @@ describe("simple reading contract", () => {
 
     expect(findProseInvariantViolation(answer)).not.toBeNull();
   });
+
+  it("rejects unsupported causal prerequisites and causal timing", () => {
+    const answer = SimpleAnswerSchema.parse({
+      directAnswer: "Happiness appears once the sharp choice is made.",
+      interpretation: "The cards show a positive direction.",
+      cards: [],
+      timing: null,
+      housesAndMirrors: [],
+    });
+
+    expect(findProseInvariantViolation(answer)).toContain("unsupported prerequisite");
+  });
 });
 
 describe("simple reading JSON repair", () => {

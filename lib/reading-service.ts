@@ -40,7 +40,7 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)] };
   }
 
-  const repairPrompt = `${options.prompt}\n\nThe previous model response was malformed or violated the output contract. Repair it once. Preserve the useful reading content, but remove internal coordinates, numeric positions, evidence identifiers, pair IDs, weights, and implementation terminology from every user-visible field. Return only valid JSON matching the exact object contract; do not add commentary.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
+  const repairPrompt = `${options.prompt}\n\nThe previous model response was malformed or violated the output contract. Repair it once. Preserve the useful reading content, but remove internal coordinates, numeric positions, evidence identifiers, pair IDs, weights, unsupported causal prerequisites, and implementation terminology from every user-visible field. Keep the exact user question predicate as the answer's subject. Return only valid JSON matching the exact object contract; do not add commentary.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
   const repaired = await generateOnce(options, repairPrompt, repairMs);
   if (repaired.kind === "valid") return { ok: true, reading: renderSimpleAnswer(repaired.answer) };
   if (repaired.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
