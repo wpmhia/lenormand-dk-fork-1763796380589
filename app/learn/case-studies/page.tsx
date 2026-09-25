@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { BackToTop } from "@/components/BackToTop";
 import { cn } from "@/lib/utils";
+import { CARD_CATALOG } from "@/lib/card-catalog";
 import {
   ArrowLeft,
   ChevronDown,
@@ -144,21 +145,8 @@ const CASE_STUDIES = [
   },
 ];
 
-// Helper function to get card image URL
-const CARD_NAMES: Record<number, string> = {
-  1: "rider", 2: "clover", 3: "ship", 4: "house", 5: "tree",
-  6: "clouds", 7: "snake", 8: "coffin", 9: "bouquet", 10: "whip",
-  11: "whip", 12: "birds", 13: "child", 14: "fox", 15: "bear",
-  16: "stars", 17: "stork", 18: "dog", 19: "tower", 20: "garden",
-  21: "mountain", 22: "paths", 23: "mice", 24: "heart", 25: "ring",
-  26: "book", 27: "letter", 28: "gentleman", 29: "lady", 30: "lilies",
-  31: "sun", 32: "moon", 33: "key", 34: "fish", 35: "anchor", 36: "cross",
-};
-
 function getCardImageUrl(cardId: number): string {
-  const paddedId = cardId.toString().padStart(2, "0");
-  const name = CARD_NAMES[cardId] || "rider";
-  return `/images/cards/${paddedId}-${name}.png`;
+  return CARD_CATALOG.find((card) => card.id === cardId)?.imageUrl || "/images/cards-placeholder.jpg";
 }
 
 export default function CaseStudiesPage() {
