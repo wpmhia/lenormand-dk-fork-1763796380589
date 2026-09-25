@@ -7,19 +7,20 @@ import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { getQuestionScopedCardMeaning, getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
 import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Read the exact user question and the deterministic narrative plan supplied by the server. Synthesize one natural, nuanced answer from that plan; do not reconstruct a new reading from raw card knowledge.
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Read the exact user question and the deterministic narrative plan supplied by the server. Synthesize one natural, nuanced answer from that plan.
 
 Storytelling contract:
 - The narrative is a synthesis, not a card inventory. Mention a card by name only when it materially advances the main narrative; a 9-card tableau normally needs only 3-6 card names in the prose.
 - For Petit Tableau, prioritize the center card, then the middle row from left to right, then the center column, then diagonals. Do not narrate the tableau in row-major card order.
 - Treat the supplied main arc as the spine and supporting axes as qualification. Do not replace the spine with an isolated card or unrelated common meaning.
-- Use only the question-scoped card senses supplied below. Do not reactivate unrelated meanings from model knowledge.
+- Use the supplied card senses as question-scoped guardrails, not as an exhaustive dictionary. Use established traditional Lenormand knowledge for card combinations when no reviewed override is supplied. Do not invent cards, spread positions, people, facts, or unrelated domains.
 - Person cards are bound only when the supplied person bindings say so. An unbound Man or Woman must not become a husband, wife, partner, named person, or pronoun.
 - Never expose numeric positions, card indices, evidence IDs, pair IDs, weights, or internal geometry labels in user-facing prose. Translate structure into natural language.
 - Development lines are ordered reading structure, not causal claims. The order does not establish that one event causes, requires, or must precede another.
 - Preserve the question's predicate as the subject of the answer. A qualifying card may add context, but must not replace a wellbeing, relocation, work, or other question with a different relationship or event question.
 - Preserve the exact question predicate, subject, and qualifiers. Do not invent cards, people, facts, exact timing, or causal conditions.
 - Answer the exact predicate first with the strongest direction supported by the complete spread. Preserve uncertainty only when the spread genuinely does not resolve the answer.
+- For predictive yes/no questions, make the direction explicit when the spread supports it: begin with a clear yes, no, or unresolved answer, then qualify it. Do not replace a resolved conclusion with vague language such as "the situation develops" or "there may be potential."
 - Use exactly one language throughout all user-visible string values: the language of the user's question. If ambiguous, use English.
 
 Return only valid JSON matching the requested schema.`;
@@ -623,7 +624,7 @@ function appendEvidence(prompt: string, context: ReadingContext): string {
     result += `\nKnown situation context (grounds specificity, not card evidence): ${context.situationContext}\nUse these facts only to choose the relevant facet of the cards; do not treat them as proof of the forecast.`;
   }
   result += `\nQuestion subject: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}. Questioner reference: ${context.semanticQuestion?.counterparty === "questioner" ? "first-person questioner" : "not explicitly stated"}. Do not reinterpret sentence-initial verbs as people or entities.`;
-  result += `\n\n${buildLenormandEvidencePack(context)}\nSynthesis must use this evidence pack as the authoritative semantic basis. Do not add meanings that are not present in it.`;
+  result += `\n\n${buildLenormandEvidencePack(context)}\nSynthesis must use this evidence pack as the authoritative structural and question-scoping basis. Reviewed pair meanings are overrides; where a pair is unreviewed, use traditional Lenormand combination knowledge without inventing extra facts.`;
 
   if (context.layout.type !== "single") {
     const predictionBlock = formatPredictionEvidenceBlock(buildPredictionContext(context));
@@ -712,8 +713,8 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
       return planText.includes(forward) || planText.includes(reverse);
     });
   const pairs = relevantPairs.map((pair) => {
-    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion) || "no reviewed pair meaning supplied";
-    return `- ${pair.cardA.name} + ${pair.cardB.name}: ${meaning}`;
+    const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion);
+    return `- ${pair.cardA.name} + ${pair.cardB.name}${meaning ? `: reviewed override — ${meaning}` : ": no reviewed override; synthesize this combination using traditional Lenormand knowledge"}`;
   }).join("\n");
   const semantic = context.semanticQuestion
     ? `Semantic question frame: mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}.`
@@ -730,7 +731,10 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
       ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
       : `- ${label}: unbound`;
   }).join("\n")}`;
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}\n${answerFocus}${subjects}${personBindings}${situation}\n\n${formatNarrativePlan(narrativePlan, context.layout.type)}\n\nQuestion-scoped meanings for cards referenced in the plan:\n${scopedCards || "No card meanings were selected."}\n\nRelevant reviewed combinations:\n${pairs || "No reviewed combinations were selected."}\n\nWrite one coherent synthesis, not a card inventory. Preserve the exact question and predicate. The development lines are ordered reading structure, not causality or timing. Do not invent cards, people, facts, exact timing, prerequisites, or implementation details. Return only the structured object requested by the response schema.`;
+  const predictionEvidence = context.layout.type === "single"
+    ? ""
+    : `\n\n${formatPredictionEvidenceBlock(buildPredictionContext(context))}`;
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}\n${answerFocus}${subjects}${personBindings}${situation}\n\n${formatNarrativePlan(narrativePlan, context.layout.type)}${predictionEvidence}\n\nQuestion-scoped card guardrails for cards referenced in the plan:\n${scopedCards || "No card guardrails were selected."}\n\nRelevant pair overrides (not an exhaustive database):\n${pairs || "No reviewed overrides were selected. Use traditional Lenormand combination knowledge."}\n\nSynthesis contract:\n- Read combinations in the spread structure supplied above, using traditional Lenormand knowledge for unreviewed pairs.\n- For linear readings, the closing card and closing pair are the strongest forecast evidence; earlier pairs describe development and context.\n- Answer the exact predicate directly. For a predictive yes/no question, make yes, no, or unresolved explicit when the evidence supports that direction.\n- Use one coherent synthesis, not a card inventory. The development lines are ordered reading structure, not causality or timing.\n- Do not invent cards, people, facts, exact timing, prerequisites, or implementation details.\nReturn only the structured object requested by the response schema.`;
 }
 
 export function sanitizeQuestion(question: string): string {
