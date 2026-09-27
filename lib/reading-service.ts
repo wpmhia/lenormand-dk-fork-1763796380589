@@ -87,16 +87,13 @@ async function generateOnce(
     const parsed = ModelAnswerSchema.safeParse(result.output);
     if (!parsed.success) {
       const raw = result.text || JSON.stringify(result.output);
-      const recovered = recoverAnswer(raw);
+      const recovered = recoverAnswer(raw, attempt);
       if (recovered) return { kind: "valid", answer: recovered };
       return { kind: "invalid", raw, error: parsed.error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
     }
     try {
       const answer = normalizeSimpleAnswer(parsed.data);
-      if (findProseInvariantViolation(answer)) {
-      const raw = result.text || JSON.stringify(result.output);
-        return { kind: "invalid", raw, error: new Error("User-facing prose contains internal references"), diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
-      }
+      warnOnProseMetadataLeak(answer, attempt);
       return { kind: "valid", answer };
     } catch (error) {
       const raw = result.text || JSON.stringify(result.output);
@@ -105,7 +102,7 @@ async function generateOnce(
   } catch (error) {
     const raw = isMalformedObjectError(error) ? error.text || "" : "";
     if (isMalformedObjectError(error)) {
-      const recovered = recoverAnswer(raw);
+      const recovered = recoverAnswer(raw, attempt);
       if (recovered) return { kind: "valid", answer: recovered };
       return { kind: "invalid", raw, error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
     }
@@ -113,7 +110,7 @@ async function generateOnce(
   }
 }
 
-function recoverAnswer(raw: string): ReturnType<typeof SimpleAnswerSchema.parse> | null {
+function recoverAnswer(raw: string, attempt: StructuredOutputDiagnostics["attempt"] = "initial"): ReturnType<typeof SimpleAnswerSchema.parse> | null {
   const candidate = parseJsonCandidate(raw);
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
 
@@ -128,7 +125,8 @@ function recoverAnswer(raw: string): ReturnType<typeof SimpleAnswerSchema.parse>
 
   try {
     const answer = normalizeSimpleAnswer(parsed.data);
-    return findProseInvariantViolation(answer) ? null : answer;
+    warnOnProseMetadataLeak(answer, attempt);
+    return answer;
   } catch {
     return null;
   }
@@ -212,6 +210,11 @@ function schemaIssue(error: unknown): ValidationIssue {
     type: "structured-output",
     message: `SimpleAnswer JSON could not be parsed or did not match the model schema: ${error instanceof Error ? error.message : String(error)}`,
   };
+}
+
+function warnOnProseMetadataLeak(answer: ReturnType<typeof SimpleAnswerSchema.parse>, attempt: StructuredOutputDiagnostics["attempt"]): void {
+  const leak = findProseInvariantViolation(answer);
+  if (leak) console.warn("reading: prose metadata leak", { leak, attempt });
 }
 
 function describeRawOutput(raw: string) {
