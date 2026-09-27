@@ -40,7 +40,6 @@ export type SimpleAnswer = z.infer<typeof SimpleAnswerSchema>;
 
 const INTERNAL_REFERENCE_PATTERNS: RegExp[] = [
   /\b(?:position|positie)\s*[-#]?\s*\d+\b/i,
-  /\b(?:card|kaart)\s*[-#]?\s*\d+\b/i,
   /\bcard-\d+\b/i,
   /\bpair-\d+(?:-\d+)?\b/i,
   /\b(?:evidence|bewijs)\s*(?:id|identifier|nummer|reference|referentie)\b/i,
