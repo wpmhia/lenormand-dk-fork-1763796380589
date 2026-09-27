@@ -105,11 +105,12 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, "empty-output");
     }
     if (!serviceResult.ok) {
-      console.error("interpret: reading rejected by validator", {
-        phase: "repair",
+      console.error("interpret: structured output failed", {
+        phase: serviceResult.diagnostics?.attempt ?? "repair",
         spreadId: validated.spreadId,
         cardCount: cardCount,
         issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),
+        rawShape: serviceResult.diagnostics?.rawShape,
         elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
