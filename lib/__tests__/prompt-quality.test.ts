@@ -340,7 +340,7 @@ describe("system prompt purity", () => {
     const sp = buildSystemPrompt(3, "structured");
     expect(sp).toContain("- Synthesis strength rule.");
     expect(sp).toContain("Do not turn a warning sign into the predicted outcome.");
-    expect(sp).toContain("preserve that uncertainty rather than forcing a yes/no conclusion.");
+    expect(sp).toContain("preserve that uncertainty rather than forcing a conclusion.");
   });
 });
 
@@ -387,6 +387,15 @@ describe("production simple prompt evidence", () => {
     expect(prompt).toContain("Development line (ordered, not causal): Rider | Clover | Ship");
     expect(prompt).toContain("Rider + Clover");
     expect(prompt).toContain("Clover + Ship");
+  });
+
+  it("uses direct natural-language synthesis without a direction field", () => {
+    const prompt = buildSimpleReadingPrompt(buildReadingContext("sentence-3", "Hoe moet ik met Mahican omgaan?", normalized([6, 7, 12]), cardsMap));
+
+    expect(prompt).toContain("Answer the user's exact question directly in the first sentence of directAnswer.");
+    expect(prompt).toContain("If it asks how, why, what, which, or requests guidance, answer that question directly instead.");
+    expect(prompt).not.toContain("structured direction field");
+    expect(prompt).not.toContain('direction field: use "yes" or "no"');
   });
 
   it("includes ordered closing-pair evidence for five cards", () => {

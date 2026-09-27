@@ -15,7 +15,6 @@ vi.mock("ai", () => ({
 }));
 
 const validOutput = {
-  direction: "unresolved" as const,
   directAnswer: "The cards support a cautious opening.",
   interpretation: "The line combines a practical opening with uncertainty.",
   cards: [{ combination: "Clover + Ring", meaning: "A small opening around a bond." }],
@@ -60,13 +59,13 @@ describe("simple reading contract", () => {
     expect(rendered).not.toContain("Most likely development");
   });
 
-  it("defaults direction for backwards-compatible model output", () => {
+  it("keeps the compact output focused on the natural-language answer", () => {
     const answer = SimpleAnswerSchema.parse({
       directAnswer: "The cards support a cautious opening.",
       interpretation: "The line combines a practical opening with uncertainty.",
     });
 
-    expect(answer.direction).toBe("unresolved");
+    expect(answer).not.toHaveProperty("direction");
   });
 
   it("renders the answer before the reading and omits empty combinations", () => {
