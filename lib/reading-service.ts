@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import {
   renderSimpleAnswer,
+  ModelAnswerSchema,
   SimpleAnswerSchema,
   SimpleAnswerTransportSchema,
   findProseInvariantViolation,
@@ -12,7 +13,7 @@ import type { ValidationIssue } from "@/lib/reading-validator";
 
 export type ReadingServiceResult =
   | { ok: true; reading: string }
-  | { ok: false; reason: "empty-output" | "schema-mismatch"; issues: ValidationIssue[] };
+  | { ok: false; reason: "empty-output" | "schema-mismatch"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
   context: ReadingContext;
@@ -28,7 +29,7 @@ export interface ReadingServiceOptions {
 }
 
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
-  const result = await generateOnce(options, options.prompt, options.initialTimeoutMs);
+  const result = await generateOnce(options, options.prompt, options.initialTimeoutMs, options.system, "initial");
   if (result.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
   if (result.kind === "valid") return { ok: true, reading: renderSimpleAnswer(result.answer) };
 
@@ -37,32 +38,45 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
     Math.max(0, (options.deadlineAt ?? Number.POSITIVE_INFINITY) - Date.now()),
   );
   if (repairMs < 1_000 || !result.raw.trim()) {
-    return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)] };
+    return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
   }
 
-  const repairPrompt = `${options.prompt}\n\nThe previous model response was malformed or violated the output contract. Repair it once. Preserve the useful reading content, but remove internal coordinates, numeric positions, evidence identifiers, pair IDs, weights, unsupported causal prerequisites, and implementation terminology from every user-visible field. Keep the exact user question predicate as the answer's subject. Return only valid JSON matching the exact object contract; do not add commentary.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
-  const repaired = await generateOnce(options, repairPrompt, repairMs);
+  const repairPrompt = `Convert the response below into one valid JSON object.\n\nRequired fields:\n- directAnswer: non-empty string\n- interpretation: non-empty string\n\nOptional fields:\n- cards: array of objects with combination and meaning strings\n- timing: string or null\n- housesAndMirrors: array of objects with house and meaning strings\n\nReturn JSON only. Do not rewrite or expand the reading. Do not add facts.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
+  const repaired = await generateOnce(options, repairPrompt, repairMs, STRUCTURED_REPAIR_SYSTEM_PROMPT, "repair");
   if (repaired.kind === "valid") return { ok: true, reading: renderSimpleAnswer(repaired.answer) };
   if (repaired.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
-  return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(repaired.error)] };
+  return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(repaired.error)], diagnostics: repaired.diagnostics };
 }
+
+const STRUCTURED_REPAIR_SYSTEM_PROMPT = "You are a JSON syntax repair utility. Convert only the supplied response into the requested JSON object. Preserve its text exactly where possible. Never add facts or commentary.";
 
 type GenerationAttempt =
   | { kind: "empty" }
   | { kind: "valid"; answer: ReturnType<typeof SimpleAnswerSchema.parse> }
-  | { kind: "invalid"; raw: string; error: unknown };
+  | { kind: "invalid"; raw: string; error: unknown; diagnostics: StructuredOutputDiagnostics };
 
-async function generateOnce(options: ReadingServiceOptions, prompt: string, timeoutMs: number): Promise<GenerationAttempt> {
+type StructuredOutputDiagnostics = {
+  attempt: "initial" | "repair";
+  rawShape: ReturnType<typeof describeRawOutput>;
+};
+
+async function generateOnce(
+  options: ReadingServiceOptions,
+  prompt: string,
+  timeoutMs: number,
+  system: string,
+  attempt: StructuredOutputDiagnostics["attempt"],
+): Promise<GenerationAttempt> {
   try {
     const result = await generateText({
       model: options.model,
-      system: options.system,
+      system,
       prompt,
-       output: Output.object({
-         schema: SimpleAnswerTransportSchema,
-         name: "simple_lenormand_reading",
-         description: "A structured Lenormand reading. housesAndMirrors may contain house/meaning objects or strings that the server will normalize.",
-       }),
+      output: Output.object({
+        schema: ModelAnswerSchema,
+        name: "simple_lenormand_reading",
+        description: "A structured Lenormand reading with optional card, timing, and house details.",
+      }),
       providerOptions: { deepseek: { thinking: { type: "disabled" } } },
       maxOutputTokens: options.maxTokens,
       maxRetries: 0,
@@ -70,28 +84,30 @@ async function generateOnce(options: ReadingServiceOptions, prompt: string, time
       timeout: { totalMs: timeoutMs },
     });
     if (!result.output) return { kind: "empty" };
-    const parsed = SimpleAnswerTransportSchema.safeParse(result.output);
+    const parsed = ModelAnswerSchema.safeParse(result.output);
     if (!parsed.success) {
       const raw = result.text || JSON.stringify(result.output);
       const recovered = recoverAnswer(raw);
       if (recovered) return { kind: "valid", answer: recovered };
-      return { kind: "invalid", raw, error: parsed.error };
+      return { kind: "invalid", raw, error: parsed.error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
     }
     try {
       const answer = normalizeSimpleAnswer(parsed.data);
       if (findProseInvariantViolation(answer)) {
-        return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error: new Error("User-facing prose contains internal references") };
+      const raw = result.text || JSON.stringify(result.output);
+        return { kind: "invalid", raw, error: new Error("User-facing prose contains internal references"), diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
       }
       return { kind: "valid", answer };
     } catch (error) {
-      return { kind: "invalid", raw: result.text || JSON.stringify(result.output), error };
+      const raw = result.text || JSON.stringify(result.output);
+      return { kind: "invalid", raw, error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
     }
   } catch (error) {
     const raw = isMalformedObjectError(error) ? error.text || "" : "";
     if (isMalformedObjectError(error)) {
       const recovered = recoverAnswer(raw);
       if (recovered) return { kind: "valid", answer: recovered };
-      return { kind: "invalid", raw, error };
+      return { kind: "invalid", raw, error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
     }
     throw error;
   }
@@ -140,14 +156,16 @@ function isMalformedObjectError(error: unknown): error is Error & { text?: strin
   return Boolean(error && typeof error === "object" && (error as { name?: string }).name === "AI_NoObjectGeneratedError");
 }
 
-function normalizeSimpleAnswer(raw: z.infer<typeof SimpleAnswerTransportSchema>): ReturnType<typeof SimpleAnswerSchema.parse> {
+function normalizeSimpleAnswer(
+  raw: z.infer<typeof ModelAnswerSchema> | z.infer<typeof SimpleAnswerTransportSchema>,
+): ReturnType<typeof SimpleAnswerSchema.parse> {
   return SimpleAnswerSchema.parse({
     ...raw,
-    cards: raw.cards
+    cards: (raw.cards ?? [])
       .map(normalizeCard)
       .filter((item): item is { combination: string; meaning: string } => item !== null),
     timing: normalizeTiming(raw.timing),
-    housesAndMirrors: raw.housesAndMirrors
+    housesAndMirrors: (raw.housesAndMirrors ?? [])
       .map(normalizeHouseMirror)
       .filter((item): item is HouseMirror => item !== null),
   });
@@ -191,7 +209,20 @@ function normalizeHouseMirror(value: unknown): HouseMirror | null {
 
 function schemaIssue(error: unknown): ValidationIssue {
   return {
-    type: "missing_section",
-    message: `SimpleAnswer JSON did not match the transport schema: ${error instanceof Error ? error.message : String(error)}`,
+    type: "structured-output",
+    message: `SimpleAnswer JSON could not be parsed or did not match the model schema: ${error instanceof Error ? error.message : String(error)}`,
+  };
+}
+
+function describeRawOutput(raw: string) {
+  const trimmed = raw.trim();
+  return {
+    length: raw.length,
+    startsWithBrace: trimmed.startsWith("{"),
+    endsWithBrace: trimmed.endsWith("}"),
+    startsWithFence: trimmed.startsWith("```"),
+    startsWithHeading: trimmed.startsWith("#"),
+    hasOpeningBrace: trimmed.includes("{"),
+    hasClosingBrace: trimmed.includes("}"),
   };
 }

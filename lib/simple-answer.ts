@@ -7,6 +7,19 @@ export const HouseMirrorSchema = z.object({
 
 export type HouseMirror = z.infer<typeof HouseMirrorSchema>;
 
+export const ModelAnswerSchema = z.object({
+  directAnswer: z.string().min(1),
+  interpretation: z.string().min(1),
+  cards: z.array(
+    z.object({
+      combination: z.string().min(1),
+      meaning: z.string().min(1),
+    }),
+  ).optional(),
+  timing: z.string().nullable().optional(),
+  housesAndMirrors: z.array(HouseMirrorSchema).optional(),
+});
+
 export const SimpleAnswerSchema = z.object({
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
