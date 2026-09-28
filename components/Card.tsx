@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { CardImage } from "@/components/CardImage";
 import Link from "next/link";
 import { Card as CardType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -90,7 +90,7 @@ function CardInner({
           {!isLoaded && (
             <div className="absolute inset-0 animate-pulse bg-muted" />
           )}
-          <Image
+          <CardImage
             src={card.imageUrl || "/images/cards-placeholder.jpg"}
             alt={card.name}
             fill

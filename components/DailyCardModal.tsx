@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import { CardImage } from "@/components/CardImage";
 import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -146,12 +146,11 @@ export function DailyCardModal({
 
         <div className="relative mx-auto w-32 sm:w-40">
           <div className="relative aspect-[2.5/3.5] overflow-hidden rounded-xl shadow-lg shadow-primary/20">
-            <Image
+            <CardImage
               src={card.imageUrl || "/images/cards-placeholder.jpg"}
               alt={card.name}
               fill
               className="object-cover"
-              unoptimized
             />
           </div>
         </div>

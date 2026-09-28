@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { CardImage } from "@/components/CardImage";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +69,7 @@ export default async function CardMeaningPage({ params }: PageProps) {
               </CardHeader>
               <CardContent>
                 <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  <Image
+                  <CardImage
                     src={card.imageUrl || "/images/cards-placeholder.jpg"}
                     alt={card.name}
                     width={128}

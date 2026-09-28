@@ -18,7 +18,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { CardImage } from "@/components/CardImage";
 import { Card as CardType } from "@/lib/types";
 import {
   GRAND_TABLEAU_TOPIC_CARDS,
@@ -101,7 +101,7 @@ export default function CardDetailClient({
                   <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-primary to-purple-600 opacity-25 blur transition duration-1000 group-hover:opacity-40"></div>
                   <div className="relative overflow-hidden rounded-lg shadow-xl">
                     <div className="relative aspect-[2.5/3.5]">
-                      <Image
+                      <CardImage
                         src={card.imageUrl}
                         alt={card.name}
                         fill
