@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  if (request.headers.has("Next-Action")) {
+    return new NextResponse(null, { status: 404 });
+  }
+
   const pathname = request.nextUrl.pathname;
 
   const response = NextResponse.next();

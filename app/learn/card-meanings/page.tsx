@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { CardImage } from "@/components/CardImage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -600,7 +600,7 @@ export default function CardMeaningsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <Image
+                    <CardImage
                        src={cardImagesByNumber.get(card.number) || "/images/cards-placeholder.jpg"}
                       alt={card.name}
                       width={128}
@@ -667,7 +667,7 @@ export default function CardMeaningsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <Image
+                        <CardImage
                            src={cardImagesByNumber.get(card.number) || "/images/cards-placeholder.jpg"}
                           alt={card.name}
                           width={64}

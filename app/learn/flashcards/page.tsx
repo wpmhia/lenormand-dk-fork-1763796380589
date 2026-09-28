@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { CardImage } from "@/components/CardImage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -316,7 +316,7 @@ export default function FlashcardsPage() {
                 style={{ backfaceVisibility: "hidden" }}
               >
                 <div className="relative mb-3 h-32 w-24 overflow-hidden rounded-lg shadow-md sm:h-40 sm:w-32">
-                  <Image
+                  <CardImage
                     src={getCardImageUrl(currentCard.id)}
                     alt={currentCard.name}
                     fill
@@ -364,7 +364,7 @@ export default function FlashcardsPage() {
                 }}
               >
                 <div className="relative mb-3 h-32 w-24 overflow-hidden rounded-lg shadow-md sm:h-40 sm:w-32">
-                  <Image
+                  <CardImage
                     src={getCardImageUrl(currentCard.id)}
                     alt={currentCard.name}
                     fill
