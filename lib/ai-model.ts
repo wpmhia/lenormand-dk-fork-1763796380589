@@ -8,4 +8,4 @@ const deepseek = createDeepSeek({
   apiKey: process.env.DEEPSEEK_API,
 });
 
-export const readingModel = deepseek("deepseek-flash");
+export const readingModel = deepseek(process.env.DEEPSEEK_MODEL || "deepseek-v4-pro");
