@@ -58,6 +58,15 @@ export function getReadingRepairTimeoutMs(cardCount: number): number {
   return cardCount >= 36 ? 10_000 : cardCount >= 9 ? 12_000 : 8_000;
 }
 
+/**
+ * Use the remaining request budget for the first model call. A repair timeout
+ * is applied only if that call returns malformed output early; reserving it
+ * up front needlessly aborts slow-but-valid first attempts.
+ */
+export function getReadingInitialTimeoutMs(remainingMs: number, responseReserveMs = 4_000): number {
+  return Math.max(1_000, remainingMs - responseReserveMs);
+}
+
 // ============================================================================
 // Error Messages
 // ============================================================================
