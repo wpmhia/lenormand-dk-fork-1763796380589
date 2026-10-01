@@ -11,7 +11,7 @@ import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { generateReading } from "@/lib/reading-service";
-import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingInitialTimeoutMs, getReadingRepairTimeoutMs } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
@@ -94,9 +94,9 @@ export async function POST(request: Request) {
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, null, false);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
-    const remainingMs = deadlineMs - (Date.now() - startedAt);
+    const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
     repairTimeoutMs = getReadingRepairTimeoutMs(cardCount);
-    modelTimeoutMs = getReadingInitialTimeoutMs(remainingMs, responseReserveMs);
+    modelTimeoutMs = Math.max(1_000, remainingMs - responseReserveMs - repairTimeoutMs);
     generationStartedAt = Date.now();
     const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: modelTimeoutMs, repairTimeoutMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
 
