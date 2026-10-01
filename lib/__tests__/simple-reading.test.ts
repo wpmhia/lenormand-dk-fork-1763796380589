@@ -30,9 +30,7 @@ function options(overrides: Partial<Parameters<typeof generateReading>[0]> = {})
     prompt: "prompt",
     cardCount: 3,
     maxTokens: 500,
-    initialTimeoutMs: 5_000,
-    repairTimeoutMs: 5_000,
-    deadlineAt: Date.now() + 10_000,
+    timeoutMs: 5_000,
     ...overrides,
   };
 }
@@ -108,24 +106,22 @@ describe("simple reading contract", () => {
   });
 });
 
-describe("simple reading JSON repair", () => {
+describe("simple reading single-call output handling", () => {
   beforeEach(() => {
     generateText.mockReset();
   });
 
-  it("repairs a malformed first response", async () => {
-    generateText
-      .mockRejectedValueOnce(malformedError())
-      .mockResolvedValueOnce({ output: validOutput, text: JSON.stringify(validOutput) });
+  it("returns a schema failure after malformed output without a second provider call", async () => {
+    generateText.mockRejectedValueOnce(malformedError());
 
     const result = await generateReading(options());
 
-    expect(result.ok).toBe(true);
-    expect(generateText).toHaveBeenCalledTimes(2);
-    expect(generateText.mock.calls[1][0].prompt).toContain("Previous response:");
+    expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
+    expect(generateText).toHaveBeenCalledTimes(1);
+    expect(generateText.mock.calls[0][0].timeout).toEqual({ totalMs: 5_000 });
   });
 
-  it("recovers a parseable structured error locally before retrying", async () => {
+  it("recovers locally parseable output without retrying", async () => {
     const locallyRecoverable = {
       directAnswer: validOutput.directAnswer,
       interpretation: validOutput.interpretation,
@@ -140,21 +136,10 @@ describe("simple reading JSON repair", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("returns schema-mismatch when the repair also fails", async () => {
-    generateText
-      .mockRejectedValueOnce(malformedError())
-      .mockRejectedValueOnce(malformedError("still malformed"));
+  it("returns schema-mismatch when local recovery cannot parse the response", async () => {
+    generateText.mockRejectedValueOnce(malformedError("still malformed"));
 
     const result = await generateReading(options());
-
-    expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
-    expect(generateText).toHaveBeenCalledTimes(2);
-  });
-
-  it("does not retry when the repair budget is below one second", async () => {
-    generateText.mockRejectedValueOnce(malformedError());
-
-    const result = await generateReading(options({ repairTimeoutMs: 999 }));
 
     expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
     expect(generateText).toHaveBeenCalledTimes(1);

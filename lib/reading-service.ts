@@ -22,56 +22,32 @@ export interface ReadingServiceOptions {
   prompt: string;
   cardCount: number;
   maxTokens: number;
-  initialTimeoutMs: number;
-  repairTimeoutMs?: number;
-  deadlineAt?: number;
+  timeoutMs: number;
   signal?: AbortSignal;
 }
 
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
-  const result = await generateOnce(options, options.prompt, options.initialTimeoutMs, options.system, "initial");
+  const result = await generateOnce(options);
   if (result.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
   if (result.kind === "valid") return { ok: true, reading: renderSimpleAnswer(result.answer) };
-
-  const repairMs = Math.min(
-    options.repairTimeoutMs ?? 0,
-    Math.max(0, (options.deadlineAt ?? Number.POSITIVE_INFINITY) - Date.now()),
-  );
-  if (repairMs < 1_000 || !result.raw.trim()) {
-    return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
-  }
-
-  const repairPrompt = `Convert the response below into one valid JSON object.\n\nRequired fields:\n- directAnswer: non-empty string\n- interpretation: non-empty string\n\nOptional fields:\n- cards: array of objects with combination and meaning strings\n- timing: string or null\n- housesAndMirrors: array of objects with house and meaning strings\n\nReturn JSON only. Do not rewrite or expand the reading. Do not add facts.\n\nPrevious response:\n${result.raw.slice(0, 16_000)}`;
-  const repaired = await generateOnce(options, repairPrompt, repairMs, STRUCTURED_REPAIR_SYSTEM_PROMPT, "repair");
-  if (repaired.kind === "valid") return { ok: true, reading: renderSimpleAnswer(repaired.answer) };
-  if (repaired.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
-  return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(repaired.error)], diagnostics: repaired.diagnostics };
+  return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
 }
-
-const STRUCTURED_REPAIR_SYSTEM_PROMPT = "You are a JSON syntax repair utility. Convert only the supplied response into the requested JSON object. Preserve its text exactly where possible. Never add facts or commentary.";
 
 type GenerationAttempt =
   | { kind: "empty" }
   | { kind: "valid"; answer: ReturnType<typeof SimpleAnswerSchema.parse> }
-  | { kind: "invalid"; raw: string; error: unknown; diagnostics: StructuredOutputDiagnostics };
+  | { kind: "invalid"; error: unknown; diagnostics: StructuredOutputDiagnostics };
 
 type StructuredOutputDiagnostics = {
-  attempt: "initial" | "repair";
   rawShape: ReturnType<typeof describeRawOutput>;
 };
 
-async function generateOnce(
-  options: ReadingServiceOptions,
-  prompt: string,
-  timeoutMs: number,
-  system: string,
-  attempt: StructuredOutputDiagnostics["attempt"],
-): Promise<GenerationAttempt> {
+async function generateOnce(options: ReadingServiceOptions): Promise<GenerationAttempt> {
   try {
     const result = await generateText({
       model: options.model,
-      system,
-      prompt,
+      system: options.system,
+      prompt: options.prompt,
       output: Output.object({
         schema: ModelAnswerSchema,
         name: "simple_lenormand_reading",
@@ -81,36 +57,36 @@ async function generateOnce(
       maxOutputTokens: options.maxTokens,
       maxRetries: 0,
       abortSignal: options.signal,
-      timeout: { totalMs: timeoutMs },
+      timeout: { totalMs: options.timeoutMs },
     });
     if (!result.output) return { kind: "empty" };
     const parsed = ModelAnswerSchema.safeParse(result.output);
     if (!parsed.success) {
       const raw = result.text || JSON.stringify(result.output);
-      const recovered = recoverAnswer(raw, attempt);
+      const recovered = recoverAnswer(raw);
       if (recovered) return { kind: "valid", answer: recovered };
-      return { kind: "invalid", raw, error: parsed.error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
+      return { kind: "invalid", error: parsed.error, diagnostics: { rawShape: describeRawOutput(raw) } };
     }
     try {
       const answer = normalizeSimpleAnswer(parsed.data);
-      warnOnProseMetadataLeak(answer, attempt);
+      warnOnProseMetadataLeak(answer);
       return { kind: "valid", answer };
     } catch (error) {
       const raw = result.text || JSON.stringify(result.output);
-      return { kind: "invalid", raw, error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
+      return { kind: "invalid", error, diagnostics: { rawShape: describeRawOutput(raw) } };
     }
   } catch (error) {
     const raw = isMalformedObjectError(error) ? error.text || "" : "";
     if (isMalformedObjectError(error)) {
-      const recovered = recoverAnswer(raw, attempt);
+      const recovered = recoverAnswer(raw);
       if (recovered) return { kind: "valid", answer: recovered };
-      return { kind: "invalid", raw, error, diagnostics: { attempt, rawShape: describeRawOutput(raw) } };
+      return { kind: "invalid", error, diagnostics: { rawShape: describeRawOutput(raw) } };
     }
     throw error;
   }
 }
 
-function recoverAnswer(raw: string, attempt: StructuredOutputDiagnostics["attempt"] = "initial"): ReturnType<typeof SimpleAnswerSchema.parse> | null {
+function recoverAnswer(raw: string): ReturnType<typeof SimpleAnswerSchema.parse> | null {
   const candidate = parseJsonCandidate(raw);
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
 
@@ -125,7 +101,7 @@ function recoverAnswer(raw: string, attempt: StructuredOutputDiagnostics["attemp
 
   try {
     const answer = normalizeSimpleAnswer(parsed.data);
-    warnOnProseMetadataLeak(answer, attempt);
+    warnOnProseMetadataLeak(answer);
     return answer;
   } catch {
     return null;
@@ -212,9 +188,9 @@ function schemaIssue(error: unknown): ValidationIssue {
   };
 }
 
-function warnOnProseMetadataLeak(answer: ReturnType<typeof SimpleAnswerSchema.parse>, attempt: StructuredOutputDiagnostics["attempt"]): void {
+function warnOnProseMetadataLeak(answer: ReturnType<typeof SimpleAnswerSchema.parse>): void {
   const leak = findProseInvariantViolation(answer);
-  if (leak) console.warn("reading: prose metadata leak", { leak, attempt });
+  if (leak) console.warn("reading: prose metadata leak", { leak });
 }
 
 function describeRawOutput(raw: string) {

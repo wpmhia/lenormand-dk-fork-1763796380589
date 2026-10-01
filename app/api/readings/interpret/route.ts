@@ -11,7 +11,7 @@ import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { generateReading } from "@/lib/reading-service";
-import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
@@ -23,9 +23,8 @@ const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
 
-function classifyGenerationFailure(error: Error & { name?: string; statusCode?: number }, clientAborted: boolean, deadlineAborted: boolean): string {
+function classifyGenerationFailure(error: Error & { name?: string; statusCode?: number }, clientAborted: boolean): string {
   if (clientAborted) return "client_abort";
-  if (deadlineAborted) return "route_deadline";
   if (error.name === "TimeoutError") return "generation_timeout";
   if (error.name === "AbortError") return "generation_aborted";
   if (error.name === "AI_NoObjectGeneratedError") return "schema_mismatch";
@@ -39,11 +38,7 @@ function classifyGenerationFailure(error: Error & { name?: string; statusCode?: 
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
-  const deadlineMs = 55_000;
-  const responseReserveMs = 4_000;
-  const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
-  let modelTimeoutMs: number | undefined;
-  let repairTimeoutMs: number | undefined;
+  let modelTimeoutMs = READING_GENERATION_TIMEOUT_MS;
   let generationStartedAt: number | undefined;
   try {
     const ip = getClientIP(request);
@@ -94,11 +89,8 @@ export async function POST(request: Request) {
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, null, false);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
-    const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
-    repairTimeoutMs = getReadingRepairTimeoutMs(cardCount);
-    modelTimeoutMs = Math.max(1_000, remainingMs - responseReserveMs - repairTimeoutMs);
     generationStartedAt = Date.now();
-    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: modelTimeoutMs, repairTimeoutMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
+    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, timeoutMs: modelTimeoutMs, signal: request.signal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty model output", {
@@ -112,7 +104,7 @@ export async function POST(request: Request) {
     }
     if (!serviceResult.ok) {
       console.error("interpret: structured output failed", {
-        phase: serviceResult.diagnostics?.attempt ?? "repair",
+        phase: "structured-output",
         spreadId: validated.spreadId,
         cardCount: cardCount,
         issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),
@@ -132,15 +124,14 @@ export async function POST(request: Request) {
       });
     }
     const clientAborted = request.signal.aborted;
-    const deadlineAborted = deadlineSignal.aborted && !clientAborted;
     const providerAborted = error.name === "ResponseAborted";
-    const isTimeout = deadlineAborted || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
+    const isTimeout = error.name === "TimeoutError" || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
     if (clientAborted) {
       return new Response(null, { status: 499 });
     }
     console.error("interpret: generation error", {
       phase: "generation",
-      failureClass: classifyGenerationFailure(error, clientAborted, deadlineAborted),
+      failureClass: classifyGenerationFailure(error, clientAborted),
       name: error.name,
       message: error.message,
       statusCode: error.statusCode ?? error.status ?? error.cause?.statusCode,
@@ -148,10 +139,8 @@ export async function POST(request: Request) {
       cause: error.cause?.message,
       isTimeout,
       clientAborted,
-      deadlineAborted,
       providerAborted,
       modelTimeoutMs,
-      repairTimeoutMs,
       generationElapsedMs: generationStartedAt ? Date.now() - generationStartedAt : undefined,
       elapsedMs: Date.now() - startedAt,
     });
