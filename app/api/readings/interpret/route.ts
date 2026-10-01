@@ -11,7 +11,7 @@ import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { generateReading } from "@/lib/reading-service";
-import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingRepairTimeoutMs } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, getReadingInitialTimeoutMs, getReadingRepairTimeoutMs } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
@@ -25,7 +25,9 @@ const cardsMap = getCardCatalogMap();
 
 function classifyGenerationFailure(error: Error & { name?: string; statusCode?: number }, clientAborted: boolean, deadlineAborted: boolean): string {
   if (clientAborted) return "client_abort";
-  if (deadlineAborted || error.name === "TimeoutError" || error.name === "AbortError") return "provider_timeout";
+  if (deadlineAborted) return "route_deadline";
+  if (error.name === "TimeoutError") return "generation_timeout";
+  if (error.name === "AbortError") return "generation_aborted";
   if (error.name === "AI_NoObjectGeneratedError") return "schema_mismatch";
   if (error.name === "AI_NoOutputGeneratedError") return "empty_output";
   if (error.name === "ResponseAborted" || error.message?.toLowerCase().includes("econnreset")) return "provider_abort";
@@ -40,6 +42,9 @@ export async function POST(request: Request) {
   const deadlineMs = 55_000;
   const responseReserveMs = 4_000;
   const deadlineSignal = AbortSignal.any([request.signal, AbortSignal.timeout(deadlineMs)]);
+  let modelTimeoutMs: number | undefined;
+  let repairTimeoutMs: number | undefined;
+  let generationStartedAt: number | undefined;
   try {
     const ip = getClientIP(request);
 
@@ -89,10 +94,11 @@ export async function POST(request: Request) {
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, null, false);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
-    const remainingMs = Math.max(1_000, deadlineMs - (Date.now() - startedAt));
-    const repairBudgetMs = getReadingRepairTimeoutMs(cardCount);
-    const initialBudgetMs = Math.max(1_000, remainingMs - responseReserveMs - repairBudgetMs);
-    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: initialBudgetMs, repairTimeoutMs: repairBudgetMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
+    const remainingMs = deadlineMs - (Date.now() - startedAt);
+    repairTimeoutMs = getReadingRepairTimeoutMs(cardCount);
+    modelTimeoutMs = getReadingInitialTimeoutMs(remainingMs, responseReserveMs);
+    generationStartedAt = Date.now();
+    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, initialTimeoutMs: modelTimeoutMs, repairTimeoutMs, deadlineAt: startedAt + deadlineMs, signal: deadlineSignal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty model output", {
@@ -144,6 +150,9 @@ export async function POST(request: Request) {
       clientAborted,
       deadlineAborted,
       providerAborted,
+      modelTimeoutMs,
+      repairTimeoutMs,
+      generationElapsedMs: generationStartedAt ? Date.now() - generationStartedAt : undefined,
       elapsedMs: Date.now() - startedAt,
     });
     return new Response(
