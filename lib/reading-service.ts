@@ -1,4 +1,4 @@
-import { generateText, Output, type LanguageModel } from "ai";
+import { generateText, type LanguageModel } from "ai";
 import { z } from "zod";
 import type { ReadingContext } from "@/lib/reading-context";
 import {
@@ -39,58 +39,50 @@ type GenerationAttempt =
   | { kind: "invalid"; error: unknown; diagnostics: StructuredOutputDiagnostics };
 
 type StructuredOutputDiagnostics = {
+  finishReason: unknown;
   rawShape: ReturnType<typeof describeRawOutput>;
 };
 
 async function generateOnce(options: ReadingServiceOptions): Promise<GenerationAttempt> {
-  try {
-    const result = await generateText({
-      model: options.model,
-      system: options.system,
-      prompt: options.prompt,
-      output: Output.object({
-        schema: ModelAnswerSchema,
-        name: "simple_lenormand_reading",
-        description: "A structured Lenormand reading with optional card, timing, and house details.",
-      }),
-      providerOptions: { deepseek: { thinking: { type: "disabled" } } },
-      maxOutputTokens: options.maxTokens,
-      maxRetries: 0,
-      abortSignal: options.signal,
-      timeout: { totalMs: options.timeoutMs },
-    });
-    if (!result.output) return { kind: "empty" };
-    const parsed = ModelAnswerSchema.safeParse(result.output);
-    if (!parsed.success) {
-      const raw = result.text || JSON.stringify(result.output);
-      const recovered = recoverAnswer(raw);
-      if (recovered) return { kind: "valid", answer: recovered };
-      return { kind: "invalid", error: parsed.error, diagnostics: { rawShape: describeRawOutput(raw) } };
-    }
-    try {
-      const answer = normalizeSimpleAnswer(parsed.data);
-      warnOnProseMetadataLeak(answer);
-      return { kind: "valid", answer };
-    } catch (error) {
-      const raw = result.text || JSON.stringify(result.output);
-      return { kind: "invalid", error, diagnostics: { rawShape: describeRawOutput(raw) } };
-    }
-  } catch (error) {
-    const raw = isMalformedObjectError(error) ? error.text || "" : "";
-    if (isMalformedObjectError(error)) {
-      const recovered = recoverAnswer(raw);
-      if (recovered) return { kind: "valid", answer: recovered };
-      return { kind: "invalid", error, diagnostics: { rawShape: describeRawOutput(raw) } };
-    }
-    throw error;
-  }
+  const result = await generateText({
+    model: options.model,
+    system: options.system,
+    prompt: options.prompt,
+    providerOptions: { deepseek: { thinking: { type: "disabled" } } },
+    maxOutputTokens: options.maxTokens,
+    maxRetries: 0,
+    abortSignal: options.signal,
+    timeout: { totalMs: options.timeoutMs },
+  });
+
+  const raw = result.text ?? "";
+  if (!raw.trim()) return { kind: "empty" };
+
+  const diagnostics: StructuredOutputDiagnostics = { finishReason: result.finishReason, rawShape: describeRawOutput(raw) };
+  const answer = answerFromText(raw);
+  if (answer) return { kind: "valid", answer };
+  return { kind: "invalid", error: new Error("Model output was not a usable reading object"), diagnostics };
 }
 
-function recoverAnswer(raw: string): ReturnType<typeof SimpleAnswerSchema.parse> | null {
+function answerFromText(raw: string): ReturnType<typeof SimpleAnswerSchema.parse> | null {
   const candidate = parseJsonCandidate(raw);
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
 
   const object = candidate as Record<string, unknown>;
+  const strict = ModelAnswerSchema.safeParse(object);
+  if (strict.success) {
+    try {
+      const answer = normalizeSimpleAnswer(strict.data);
+      warnOnProseMetadataLeak(answer);
+      return answer;
+    } catch {
+      return null;
+    }
+  }
+  return recoverAnswer(object);
+}
+
+function recoverAnswer(object: Record<string, unknown>): ReturnType<typeof SimpleAnswerSchema.parse> | null {
   const tolerantCandidate = {
     ...object,
     cards: Array.isArray(object.cards) ? object.cards : [],
@@ -124,10 +116,6 @@ function parseJsonCandidate(raw: string): unknown {
     }
   }
   return null;
-}
-
-function isMalformedObjectError(error: unknown): error is Error & { text?: string } {
-  return Boolean(error && typeof error === "object" && (error as { name?: string }).name === "AI_NoObjectGeneratedError");
 }
 
 function normalizeSimpleAnswer(
