@@ -10,6 +10,7 @@ import {
   type HouseMirror,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
+import { extractJsonObject } from "@/lib/model-json";
 
 export type ReadingServiceResult =
   | { ok: true; reading: string }
@@ -65,10 +66,9 @@ async function generateOnce(options: ReadingServiceOptions): Promise<GenerationA
 }
 
 function answerFromText(raw: string): ReturnType<typeof SimpleAnswerSchema.parse> | null {
-  const candidate = parseJsonCandidate(raw);
-  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
+  const object = extractJsonObject(raw);
+  if (!object) return null;
 
-  const object = candidate as Record<string, unknown>;
   const strict = ModelAnswerSchema.safeParse(object);
   if (strict.success) {
     try {
@@ -98,24 +98,6 @@ function recoverAnswer(object: Record<string, unknown>): ReturnType<typeof Simpl
   } catch {
     return null;
   }
-}
-
-function parseJsonCandidate(raw: string): unknown {
-  const trimmed = raw.trim();
-  if (!trimmed) return null;
-
-  const candidates = [
-    trimmed.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim(),
-    trimmed.slice(trimmed.indexOf("{"), trimmed.lastIndexOf("}") + 1),
-  ];
-  for (const candidate of candidates) {
-    if (!candidate || !candidate.startsWith("{") || !candidate.endsWith("}")) continue;
-    try {
-      return JSON.parse(candidate);
-    } catch {
-    }
-  }
-  return null;
 }
 
 function normalizeSimpleAnswer(
