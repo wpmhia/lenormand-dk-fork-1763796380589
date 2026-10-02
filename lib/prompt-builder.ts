@@ -27,12 +27,11 @@ Storytelling contract:
 Return only valid JSON matching the requested schema.`;
 
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 1) return 400;
-  if (cardCount <= 3) return 800;
-  if (cardCount <= 5) return 1200;
-  if (cardCount <= 9) return 2000;
-  if (cardCount <= 36) return 3000;
-  return 500;
+  if (cardCount <= 1) return 1_200;
+  if (cardCount <= 3) return 1_600;
+  if (cardCount <= 5) return 2_000;
+  if (cardCount <= 9) return 2_800;
+  return 3_600;
 }
 
 export interface AIReadingResponse {
