@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     generationStartedAt = Date.now();
-    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt: `${prompt}\n\nReturn only the requested structured object.`, cardCount, maxTokens, timeoutMs: modelTimeoutMs, signal: request.signal });
+    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt, cardCount, maxTokens, timeoutMs: modelTimeoutMs, signal: request.signal });
 
     if (!serviceResult.ok && serviceResult.reason === "empty-output") {
       console.error("interpret: empty model output", {
@@ -109,6 +109,7 @@ export async function POST(request: Request) {
         cardCount: cardCount,
         issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),
         rawShape: serviceResult.diagnostics?.rawShape,
+        finishReason: serviceResult.diagnostics?.finishReason,
         elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, serviceResult.reason);

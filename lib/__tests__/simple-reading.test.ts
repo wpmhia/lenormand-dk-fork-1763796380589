@@ -8,10 +8,6 @@ const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
 
 vi.mock("ai", () => ({
   generateText,
-  Output: {
-    json: vi.fn(() => ({ type: "json" })),
-    object: vi.fn(({ schema }) => ({ type: "object", schema })),
-  },
 }));
 
 const validOutput = {
@@ -35,11 +31,8 @@ function options(overrides: Partial<Parameters<typeof generateReading>[0]> = {})
   };
 }
 
-function malformedError(text = '{"directAnswer":"truncated"') {
-  return Object.assign(new Error("No object generated"), {
-    name: "AI_NoObjectGeneratedError",
-    text,
-  });
+function textOutput(value: unknown, finishReason = "stop") {
+  return { text: typeof value === "string" ? value : JSON.stringify(value), finishReason };
 }
 
 describe("simple reading contract", () => {
@@ -111,14 +104,24 @@ describe("simple reading single-call output handling", () => {
     generateText.mockReset();
   });
 
-  it("returns a schema failure after malformed output without a second provider call", async () => {
-    generateText.mockRejectedValueOnce(malformedError());
+  it("returns a schema failure for truncated output without a second provider call", async () => {
+    generateText.mockResolvedValueOnce(textOutput('{"directAnswer":"A cautious week ahead','aborted'));
 
     const result = await generateReading(options());
 
     expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
+    expect(result.ok === false && result.diagnostics?.finishReason).toBe("aborted");
     expect(generateText).toHaveBeenCalledTimes(1);
     expect(generateText.mock.calls[0][0].timeout).toEqual({ totalMs: 5_000 });
+  });
+
+  it("parses plain model text into a valid reading", async () => {
+    generateText.mockResolvedValueOnce(textOutput(validOutput));
+
+    const result = await generateReading(options());
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.reading).toContain(validOutput.directAnswer);
   });
 
   it("recovers locally parseable output without retrying", async () => {
@@ -127,7 +130,7 @@ describe("simple reading single-call output handling", () => {
       interpretation: validOutput.interpretation,
       cards: "not an array",
     };
-    generateText.mockRejectedValueOnce(malformedError(JSON.stringify(locallyRecoverable)));
+    generateText.mockResolvedValueOnce(textOutput(locallyRecoverable));
 
     const result = await generateReading(options());
 
@@ -137,7 +140,7 @@ describe("simple reading single-call output handling", () => {
   });
 
   it("returns schema-mismatch when local recovery cannot parse the response", async () => {
-    generateText.mockRejectedValueOnce(malformedError("still malformed"));
+    generateText.mockResolvedValueOnce(textOutput("still malformed"));
 
     const result = await generateReading(options());
 
@@ -145,12 +148,20 @@ describe("simple reading single-call output handling", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
+  it("reports empty provider output", async () => {
+    generateText.mockResolvedValueOnce(textOutput("   "));
+
+    const result = await generateReading(options());
+
+    expect(result).toMatchObject({ ok: false, reason: "empty-output" });
+  });
+
   it("normalizes a legacy house string without retrying", async () => {
     const output = {
       ...validOutput,
       housesAndMirrors: ["House of Heart: relationship becomes central"],
     };
-    generateText.mockResolvedValueOnce({ output, text: JSON.stringify(output) });
+    generateText.mockResolvedValueOnce(textOutput(output));
 
     const result = await generateReading(options());
 
@@ -168,8 +179,7 @@ describe("simple reading single-call output handling", () => {
     ["missing timing", {}],
     ["null timing", { timing: null }],
   ])("accepts %s without retrying", async (_, overrides) => {
-    const output = { ...validOutput, ...overrides };
-    generateText.mockResolvedValueOnce({ output, text: JSON.stringify(output) });
+    generateText.mockResolvedValueOnce(textOutput({ ...validOutput, ...overrides }));
 
     const result = await generateReading(options());
 
