@@ -332,10 +332,10 @@ export const CARD_TIMING_KNOWLEDGE: Record<number, CardTimingKnowledge> = {
   },
   22: {
     cardId: 22,
-    cardName: "Crossroads",
+    cardName: "Paths",
     category: "neutral",
     learningLabel: "Decision point — no specific duration.",
-    aiLabel: "Crossroads signals choice or direction, not a timeframe.",
+    aiLabel: "Paths signals choice or direction, not a timeframe.",
   },
   23: {
     cardId: 23,

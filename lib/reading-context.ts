@@ -1,4 +1,5 @@
 import { Card } from "@/lib/types";
+import { CARD_CATALOG } from "@/lib/card-catalog";
 import { NormalizedCard, SpreadId } from "@/lib/reading-contract";
 import { getLayoutType } from "@/lib/spread-definitions";
 import {
@@ -454,16 +455,13 @@ const QUESTION_TOPICS: Record<string, { cardIds: number[]; topic: string }[]> = 
   ],
 };
 
-const ALL_CARD_NAMES = [
-  "Rider", "Clover", "Ship", "House", "Tree",
-  "Clouds", "Snake", "Coffin", "Bouquet", "Scythe",
-  "Whip", "Birds", "Child", "Fox", "Bear",
-  "Stars", "Stork", "Dog", "Tower", "Garden",
-  "Mountain", "Crossroads", "Mice", "Heart", "Ring",
-  "Book", "Letter", "Man", "Woman", "Lily",
-  "Sun", "Moon", "Key", "Fish", "Anchor",
-  "Cross",
-];
+/**
+ * House names for the Grand Tableau come from the card catalog, not from a second
+ * hardcoded list. The two had drifted: house 22 was called "Crossroads" here while the
+ * card drawn on it is canonically "Paths", so the model was handed two names for one
+ * card. Deriving the names keeps the house grid and the drawn deck identical.
+ */
+const ALL_CARD_NAMES = [...CARD_CATALOG].sort((a, b) => a.id - b.id).map((card) => card.name);
 
 function buildGrandTableauLayout(
   cards: NormalizedCard[],
