@@ -1,4 +1,5 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
+import { outputTierFor } from "@/lib/simple-answer";
 import type {
   ReadingContext,
   GrandTableauLayout,
@@ -266,27 +267,57 @@ export function buildSpreadFacts(context: ReadingContext): string {
   return hasDisplacedCards(context) ? `${DISPLACED_CARD_LEGEND}\n${body}` : body;
 }
 
-/** Output contract. Presentation capacity scales with the spread; nothing here ranks evidence. */
-const SIMPLE_ANSWER_JSON_CONTRACT = `Return only one JSON object with exactly these fields:
-{
-  "directAnswer": string,
-  "interpretation": string,
-  "positiveFactors": string[],
-  "challenges": string[],
-  "keyPatterns": [{ "cards": string, "meaning": string }],
-  "development": string | null,
-  "cards": [{ "combination": string, "meaning": string }],
-  "timing": string | null,
-  "housesAndMirrors": [{ "house": string, "meaning": string }]
+/**
+ * Output contract. Capacity scales with the spread.
+ *
+ * A five-card line is asked for a direct answer, a reading, its patterns and a timing,
+ * and nothing else. A five-card line has one story; asking the model to also fill
+ * positiveFactors, challenges, development and houses makes it restate that story four
+ * more times and average itself into something blander. Larger spreads are offered the
+ * extra fields they can actually fill.
+ */
+function outputContractFor(cardCount: number): string {
+  const tier = outputTierFor(cardCount);
+
+  const lines = [
+    "Return only one JSON object with exactly these fields:",
+    "{",
+    '  "directAnswer": string,',
+    '  "interpretation": string,',
+    '  "keyPatterns": [{ "cards": string, "meaning": string }],',
+  ];
+
+  if (tier === "compact") {
+    lines.push('  "timing": string | null');
+  } else {
+    lines.push('  "positiveFactors": string[],');
+    lines.push('  "challenges": string[],');
+    if (tier === "full") {
+      lines.push('  "development": string | null,');
+      lines.push('  "housesAndMirrors": [{ "house": string, "meaning": string }]');
+    } else {
+      lines.push('  "timing": string | null');
+    }
+  }
+  lines.push("}");
+
+  lines.push("- directAnswer answers the question directly in one or two sentences.");
+  lines.push("- interpretation is the reading itself as flowing prose. Give the spread the room it needs.");
+  lines.push('- keyPatterns lists only the structural patterns you actually used, naming the cards involved, for example "Clouds + Coffin: uncertainty sits next to closure".');
+  lines.push("- timing is null when the spread does not ground a timing.");
+
+  if (tier === "compact") {
+    lines.push("- This is a short spread. Say the one thing it says well. Do not manufacture balance, and do not repeat the interpretation as a list.");
+  } else {
+    lines.push("- positiveFactors lists what in the spread supports the outcome; challenges lists what works against it. Weigh both; do not report one side only.");
+    lines.push(tier === "full"
+      ? "- development is the overall direction of travel of this spread, or null when the spread grounds none."
+      : "- This is a 9-card grid. Weigh the rows, columns, diagonals and centre before concluding.");
+  }
+
+  lines.push("- Do not rename, add, or remove fields. Do not use Markdown fences.");
+  return lines.join("\n");
 }
-- directAnswer answers the question directly in one or two sentences.
-- interpretation is the reading itself as flowing prose. Give the spread the room it needs; do not compress a large spread into a single dense paragraph.
-- positiveFactors lists what in the spread supports the outcome. challenges lists what in the spread works against it. Weigh both; do not report only one side.
-- keyPatterns lists the structural patterns you actually used, naming the cards involved, for example "Rider + Heart: the news brings an emotional opening".
-- development is the overall direction of travel of this spread, or null when the spread does not ground a direction.
-- cards and housesAndMirrors may be [] when you have nothing to add.
-- timing is null when you cannot ground a timing.
-- Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
 /** Question frame, predicate, subjects and person bindings. Identical for every spread. */
 function simplePromptHeader(context: ReadingContext): string {
@@ -311,6 +342,8 @@ function simplePromptHeader(context: ReadingContext): string {
 const SYNTHESIS_CONTRACT = `Synthesis contract:
 - Read the complete spread yourself. The server has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair for you, and has not ranked the cards. Weigh the spread with traditional Lenormand technique and decide which cards, combinations and spatial relationships answer this question.
 - Geometry fidelity. You may only assert a spatial relationship that appears in the structural facts above. Two cards that merely both appear somewhere in the spread are not a combination. Never invent adjacency, mirroring, a row, a column, a diagonal, house occupancy or a position.
+- Adjacency is not a causal chain. Adjacent cards qualify and combine with each other; that A sits next to B does not establish that A causes B, nor that B causes whatever follows it. Do not infer the absence of recovery, reconciliation, return or any other outcome merely because a particular positive card was not drawn.
+- Calibrate certainty to the spread. Avoid absolute wording such as "final", "fated", "certain", "irreversible" or "no possibility of repair" unless the spread structure itself clearly supports that level of certainty.
 - Position roles that the spread itself defines may be used; interpretive hierarchy the spread does not define may not be invented.
 - Read Man and Woman as person cards only where the person bindings above bind them. An unbound card stays an unassigned person-card reference, never a partner, spouse or pronoun.
 - Preserve the exact question subject and predicate. Do not replace a wellbeing, relocation, work or relationship question with another kind of question.
@@ -333,7 +366,7 @@ Structural facts (deterministic; complete for this spread):
 ${buildSpreadFacts(context)}
 
 ${SYNTHESIS_CONTRACT}
-${SIMPLE_ANSWER_JSON_CONTRACT}`;
+${outputContractFor(context.cards.length)}`;
 }
 
 export function sanitizeQuestion(question: string): string {

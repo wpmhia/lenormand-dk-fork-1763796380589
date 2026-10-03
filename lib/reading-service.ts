@@ -150,9 +150,6 @@ function normalizeSimpleAnswer(
       .map(normalizeKeyPattern)
       .filter((item): item is KeyPattern => item !== null),
     development: normalizeTiming(raw.development),
-    cards: (raw.cards ?? [])
-      .map(normalizeCard)
-      .filter((item): item is { combination: string; meaning: string } => item !== null),
     timing: normalizeTiming(raw.timing),
     housesAndMirrors: (raw.housesAndMirrors ?? [])
       .map(normalizeHouseMirror)
@@ -174,22 +171,6 @@ function normalizeKeyPattern(value: unknown): KeyPattern | null {
     if (typeof item.cards === "string" && item.cards.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
       return { cards: item.cards.trim(), meaning: item.meaning.trim() };
     }
-  }
-  return null;
-}
-
-function normalizeCard(value: unknown): { combination: string; meaning: string } | null {
-  if (value && typeof value === "object" && !Array.isArray(value)) {
-    const item = value as Record<string, unknown>;
-    if (typeof item.combination === "string" && item.combination.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
-      return { combination: item.combination.trim(), meaning: item.meaning.trim() };
-    }
-    return null;
-  }
-
-  if (typeof value === "string") {
-    const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
-    if (match) return { combination: match[1].trim(), meaning: match[2].trim() };
   }
   return null;
 }

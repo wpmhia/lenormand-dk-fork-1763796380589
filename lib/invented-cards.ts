@@ -102,7 +102,6 @@ function houseLabelText(label: string): string {
  */
 function labelText(answer: SimpleAnswer): string[] {
   return [
-    ...answer.cards.map((card) => card.combination),
     ...answer.keyPatterns.map((pattern) => pattern.cards),
     ...answer.housesAndMirrors.map((item) => houseLabelText(item.house)),
   ];
@@ -116,12 +115,11 @@ function proseText(answer: SimpleAnswer): string[] {
   return [
     answer.directAnswer,
     answer.interpretation,
+    ...answer.keyPatterns.map((pattern) => pattern.meaning),
     ...answer.positiveFactors,
     ...answer.challenges,
     answer.development || "",
     answer.timing || "",
-    ...answer.cards.map((card) => card.meaning),
-    ...answer.keyPatterns.map((pattern) => pattern.meaning),
     ...answer.housesAndMirrors.map((item) => item.meaning),
   ];
 }

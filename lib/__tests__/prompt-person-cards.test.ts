@@ -118,11 +118,17 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
   it("returns the structured JSON contract instead of markdown pseudo-headings", () => {
     expect(prompt).toContain('"directAnswer": string');
     expect(prompt).toContain('"interpretation": string');
+    expect(prompt).toContain('"keyPatterns"');
     expect(prompt).toContain('"timing": string | null');
-    expect(prompt).toContain('"housesAndMirrors"');
     expect(prompt).not.toMatch(/## Interpretation/i);
     expect(prompt).not.toMatch(/## Prediction/i);
     expect(prompt).not.toMatch(/\*\*Most likely development:\*\*/);
+  });
+
+  it("keeps the two calibration rules that prevent overstated readings", () => {
+    expect(prompt).toMatch(/Adjacency is not a causal chain/);
+    expect(prompt).toMatch(/Calibrate certainty to the spread/);
+    expect(prompt).toMatch(/merely because a particular positive card was not drawn/);
   });
 
   it("keeps the geometry-fidelity rule that forbids invented spatial relations", () => {
