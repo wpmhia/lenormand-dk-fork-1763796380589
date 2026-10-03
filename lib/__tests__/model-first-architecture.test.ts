@@ -266,16 +266,16 @@ describe("pipeline: one universal prompt for every spread", () => {
       expect(text, id).toContain(field);
     }
 
+    // The model must declare the relation it claims, because the validator checks the
+    // declared relation rather than guessing it from prose.
+    expect(text, id).toContain('"relation": string');
+    expect(text, id).toContain('"combination"');
+    expect(text, id).toContain('"knight"');
+    expect(text, id).toContain("The server checks any non-");
+
     // Each removed field was a per-spread judgement about how much a spread had to say.
-    for (const removed of [
-      '"positiveFactors"',
-      '"challenges"',
-      '"development"',
-      '"housesAndMirrors"',
-      '"directAnswer"',
-      '"keyPatterns"',
-      '"combination"',
-    ]) {
+    // (`"combination"` is no longer listed: it is now a legitimate relation value.)
+    for (const removed of ['"positiveFactors"', '"challenges"', '"development"', '"housesAndMirrors"', '"directAnswer"', '"keyPatterns"']) {
       expect(text, id).not.toContain(removed);
     }
   });
