@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     }
     if (!serviceResult.ok) {
       console.error("interpret: structured output failed", {
-        phase: "structured-output",
+        phase: serviceResult.reason === "invented-card" ? "invented-card" : "structured-output",
         spreadId: validated.spreadId,
         cardCount: cardCount,
         issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),

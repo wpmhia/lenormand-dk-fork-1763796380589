@@ -7,7 +7,7 @@ import {
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildPredictionTimingLine } from "@/lib/timing";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildPromptFromContext } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt } from "@/lib/prompt-builder";
 import { getStructuredReadingSchema, renderStructuredReading, validateStructuredReading } from "@/lib/structured-reading";
 import type { Card } from "@/lib/types";
 
@@ -433,23 +433,27 @@ A meaningful sentence about Birds and Letter and how they develop together.
   });
 });
 
-describe("golden: prompt mandates the three-part arc", () => {
-  it("instructs Interpretation to hold back the final forecast", () => {
+/**
+ * The legacy markdown arc ("## Interpretation holds back the forecast, ## Cards are
+ * evidence not forecast, ## Prediction synthesises") was replaced by the JSON output
+ * contract, so those prompt mandates no longer exist. What remains load-bearing is that
+ * the production prompt states the same discipline in its new shape: a direct answer
+ * first, one synthesis rather than an inventory, and grounded timing only.
+ */
+describe("golden: production prompt keeps the directness discipline in its new shape", () => {
+  it("answers the question directly in the first sentence of directAnswer", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/Do not give the final predicted outcome or timing here/);
+    expect(buildSimpleReadingPrompt(ctx)).toMatch(/Answer the user's exact question directly in the first sentence of directAnswer/);
   });
 
-  it("instructs Cards to be evidence, not forecast", () => {
+  it("requires one synthesis rather than a card inventory", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/evidence, not forecast/);
+    expect(buildSimpleReadingPrompt(ctx)).toMatch(/Use one coherent synthesis, not a card inventory/);
   });
 
-  it("instructs Prediction to be one synthesized forward-looking conclusion that does not repeat the Interpretation", () => {
+  it("requires timing to be grounded or null", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/Do not repeat the Interpretation/);
+    expect(buildSimpleReadingPrompt(ctx)).toMatch(/Leave timing null when the spread does not ground it/);
   });
 });
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildPromptFromContext, buildSystemPrompt } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { Card } from "@/lib/types";
 import {
   TIMING_CARDS,
@@ -125,55 +125,46 @@ describe("timing: question observation window scopes card timing", () => {
   });
 });
 
+/**
+ * Timing is the model's job now. The server supplies no timing evidence block, no
+ * per-card timing ranges and no canonical timing line: the prompt only states that
+ * `timing` must stay null when the spread does not ground it. These tests guard the
+ * absence of leaked per-card timing metadata, which is the property that still matters.
+ */
 describe("timing: prompt does not embed per-card timing strings from cards.json", () => {
   it("does not include 'Near future (1-3 weeks)' for Rider even when Rider is drawn", () => {
-    const ctx = idsToContext([1, 3, 4]);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(idsToContext([1, 3, 4]));
     expect(prompt).not.toContain("Near future (1-3 weeks)");
     expect(prompt).not.toMatch(/timing:\s*Near future/i);
   });
 
   it("does not include '; timing:' anywhere in the prompt", () => {
-    const ctx = idsToContext([1, 3, 4]);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).not.toMatch(/;\s*timing:/i);
+    expect(buildSimpleReadingPrompt(idsToContext([1, 3, 4]))).not.toMatch(/;\s*timing:/i);
   });
 
-  it("uses timingEvidence as the only timing source in the prompt", () => {
-    const ctx = idsToContext([12, 27, 26]);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toContain("Timing evidence");
-    expect(prompt).toContain("Birds");
-    expect(prompt).toContain("days");
-  });
-
-  it("emits the no-timing instruction when no timing card is drawn", () => {
-    const ctx = idsToContext([1, 3, 4]);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toContain("No timing evidence detected");
-    expect(prompt).toContain("Not clearly shown by these cards");
-  });
-
-  it("provides one canonical timing line for Moon", () => {
-    const ctx = idsToContext([32, 27, 26]);
-    expect(ctx.timingEvidence.map((e) => e.cardId)).toContain(32);
-    expect(buildPromptFromContext(ctx)).toContain("current lunar cycle");
+  it("does not embed card-level timing strings from cards.json like 'Within 1-3 weeks'", () => {
+    const prompt = buildSimpleReadingPrompt(idsToContext([32, 27, 26]));
+    expect(prompt).not.toContain("Within 1-3 weeks");
+    expect(prompt).not.toContain("Within 1-2 weeks");
+    expect(prompt).not.toContain("current lunar cycle");
   });
 
   it("does not surface Clover as a timing signal even when drawn alongside other cards", () => {
-    const ctx = idsToContext([1, 2, 11]);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(idsToContext([1, 2, 11]));
     expect(prompt).not.toMatch(/Clover.*soft timing/i);
     expect(prompt).not.toMatch(/Clover.*lucky chance/i);
-    expect(prompt).toContain("No timing evidence detected");
+  });
+
+  it("leaves timing to the model as a nullable field instead of prescribing it", () => {
+    const prompt = buildSimpleReadingPrompt(idsToContext([32, 27, 26]));
+    expect(prompt).toMatch(/"timing": string \| null/);
+    expect(prompt).toMatch(/Leave timing null when the spread does not ground it/);
   });
 });
 
 describe("timing: system prompt is consistent with the shared definition", () => {
-  it("system prompt mentions timing and points to Timing evidence section", () => {
-    const sp = buildSystemPrompt(3);
-    expect(sp).toMatch(/not a Tarot reader/i);
-    expect(sp).toMatch(/timing/i);
-    expect(sp).toMatch(/Timing evidence/i);
+  it("keeps timing a model decision rather than a server assertion", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Timing evidence/i);
   });
 });

@@ -13,8 +13,7 @@ import { Card } from "@/lib/types";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
-import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
+import { buildSpreadFacts } from "@/lib/prompt-builder";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -108,16 +107,22 @@ export async function POST(request: Request) {
 
     const activeQuestion = `${safeOriginalQuestion}\nActive follow-up: ${followUpQuestion}`;
     const context = buildReadingContext(validated.spreadId, activeQuestion, validated.cards, cardsMap, validated.significatorPreference);
-    const predictionEvidence = formatPredictionEvidenceBlock(buildPredictionContext(context));
-    const fixedCards = validated.cards.map((card, index) => `${index + 1} ${card.name}`).join(" — ");
-    const progression = context.adjacentPairs
-      .filter((pair) => pair.indexB === pair.indexA + 1)
-      .map((pair) => `${pair.cardA.name} + ${pair.cardB.name}`)
-      .join("; ");
     const history = (followUpHistory as { role: "user" | "assistant"; content: string }[])
       .map((turn) => `${turn.role}: ${turn.content}`)
       .join("\n");
-    const prompt = `FIXED SPREAD (never redraw or alter):\n${fixedCards}\n\nOriginal question: ${safeOriginalQuestion || "(none)"}\nActive follow-up: ${followUpQuestion}\n\n${buildLenormandEvidencePack(context)}\n\nAdjacent progression: ${progression || "No linear progression"}\n\n${predictionEvidence}\n\nConversation history (context only; deterministic evidence above has priority):\n${history}`;
+    // Model-first, like the primary reading path: the follow-up gets the complete
+    // deterministic spread and nothing pre-selected. It must not receive a ranked
+    // prediction block, a weighted pair shortlist or a card dictionary.
+    const prompt = `FIXED SPREAD (never redraw or alter):
+${buildSpreadFacts(context)}
+
+Original question: ${safeOriginalQuestion || "(none)"}
+Active follow-up: ${followUpQuestion}
+
+Answer the active follow-up from the complete spread above. Weigh the whole spread, not only the part the original reading emphasised. Previous AI wording and conversation history are context only and may be wrong; correct them when they conflict with the spread above.
+
+Conversation history:
+${history}`;
 
     const result = await generateText({
       model: readingModel,

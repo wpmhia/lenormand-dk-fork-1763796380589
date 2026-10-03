@@ -61,11 +61,19 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
     expect(prompt).not.toMatch(/Man\s*\(\s*masculine/i);
   });
 
-  it("supplies a question-scoped sense for non-person cards instead of raw keywords", () => {
+  it("sends no card dictionary at all, only card names and structure", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).toContain("Rider");
-    expect(prompt).toContain("news, arrival, or movement");
+    expect(prompt).toContain("Ship");
+    expect(prompt).toContain("Clover");
+    // Model-first: the server supplies geometry, never meaning.
+    expect(prompt).not.toContain("news, arrival, or movement");
+    expect(prompt).not.toMatch(/Question-scoped card senses/i);
+    expect(prompt).not.toMatch(/Reviewed combination meanings/i);
+    // Raw catalog keywords must not leak either.
+    expect(prompt).not.toContain("luck, chance");
+    expect(prompt).not.toContain("journey");
   });
 
   it("reports the binding state of both person cards explicitly", () => {
@@ -77,21 +85,20 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
 });
 
 describe("prompt-builder: production system prompt forbids relationship inference", () => {
-  it("contains an explicit rule against inferring husband/wife/boyfriend/girlfriend/father/mother", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/never infer husband/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/wife/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/boyfriend/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/girlfriend/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/father/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/mother/i);
+  it("forbids an unbound person card from becoming a spouse, partner or pronoun", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/represent a specific person only when the supplied bindings establish this/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/never becomes a spouse, partner, named person or pronoun/i);
   });
 
   it("still treats Man/Woman as person/significator", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/person\/significator/i);
+    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 29, 1]), cardsMap);
+    expect(buildSimpleReadingPrompt(ctx)).toContain("Man (specific person/significator)");
   });
 
   it("keeps the binding authority with deterministic person bindings", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/person bindings say so/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/supplied bindings/i);
+    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
+    expect(buildSimpleReadingPrompt(ctx)).toContain("- Man: unbound");
   });
 });
 
@@ -143,6 +150,8 @@ describe("prompt-builder: timing stays ungrounded rather than invented", () => {
   it("instructs the model to leave timing null when the spread does not ground it", () => {
     const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([1, 2, 3, 12, 27]), cardsMap);
     expect(buildSimpleReadingPrompt(ctx)).toMatch(/Leave timing null when the spread does not ground it/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards, people, facts, exact timing/i);
+    expect(buildSimpleReadingPrompt(ctx)).toMatch(/"timing": string \| null/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not force certainty when the spread is genuinely mixed/i);
   });
 });

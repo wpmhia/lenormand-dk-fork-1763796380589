@@ -5,29 +5,40 @@ import type {
   LinearSentenceLayout,
   PetitTableauLayout,
 } from "@/lib/reading-context";
-import { getQuestionScopedCardMeaning } from "@/lib/lenormand-evidence";
-import { getCanonicalLenormandPairMeaning, getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Read the exact user question and the deterministic structural facts supplied by the server. Decide for yourself which cards, combinations and spatial relationships matter, and synthesize one natural, nuanced answer.
+/**
+ * Model-first reading contract.
+ *
+ * The LLM is the Lenormand interpreter. This layer is responsible for exactly one
+ * thing: handing it the complete, deterministic truth about where the cards are.
+ * It must never pre-interpret. Card dictionaries (CARD_SENSES), reviewed pair
+ * meanings and weighted pair rankings are deliberately absent from the production
+ * prompt: shipping them steers the model into a server-chosen reading before it has
+ * looked at the spread as a whole, which is the failure mode this architecture exists
+ * to remove. Those dictionaries remain in lib/ for the fallback reader and the
+ * educational UI.
+ */
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an expert traditional Lenormand reader.
 
-Storytelling contract:
-- The narrative is a synthesis, not a card inventory. Mention a card by name only when it materially advances the main narrative; a 9-card tableau normally needs only 3-6 card names in the prose, and a 36-card tableau 4-8.
-- Every drawn card in the spread is supplied to you. The server has deliberately not chosen a focus, a main line or an outcome pair for you, and it has not ranked the cards. Weigh the spread yourself with traditional Lenormand technique.
-- Use the supplied card senses as question-scoped guardrails, not as an exhaustive dictionary. Use established traditional Lenormand knowledge for card combinations when no reviewed meaning is supplied. Do not invent cards, spread positions, people, facts, or unrelated domains.
-- Never assert a spatial relationship that the structural facts do not state. Two cards that merely both appear somewhere in the spread are not a combination; adjacency, mirroring, row, column, diagonal and house occupancy may only be used where the facts list them.
-- Position roles that the spread itself defines (opening/central/closing in a sentence spread, house occupancy in a Grand Tableau, grid coordinates) are facts and may be used. Interpretive hierarchy that the spread does not define may not be invented.
-- Person cards are bound only when the supplied person bindings say so. An unbound Man or Woman must not become a husband, wife, partner, named person, or pronoun.
-- A person card is rendered as "Man (specific person/significator)" or "Woman (specific person/significator)". That label marks an unassigned person-card reference, not an identified individual.
-- Entity-binding rule. Never infer husband, wife, boyfriend, girlfriend, father, mother, partner, or any other exact relationship from an unbound card. Power, authority, strength, or Bear does not instantiate a boss, parent, rival, or third person without explicit entity evidence. Never replace the question's established subject with a person card.
-- Never expose numeric positions, card indices, evidence IDs, pair IDs, weights, or internal geometry labels in user-facing prose. Translate structure into natural language.
-- Preserve the question's predicate as the subject of the answer. A qualifying card may add context, but must not replace a wellbeing, relocation, work, or other question with a different relationship or event question.
-- Preserve the exact question predicate, subject, and qualifiers. Do not invent cards, people, facts, exact timing, or causal conditions.
-- Answer the user's exact question directly in the first sentence.
-- If the question naturally calls for a yes/no answer, give the clearest yes/no conclusion supported by the spread. If the question asks how, why, what, which, or requests guidance, answer that question directly instead.
-- Do not discuss question types, classifications, confidence labels, schema fields, or whether the question is binary.
-- Use exactly one language throughout all user-visible string values: the language of the user's question. If ambiguous, use English.
+Interpret the complete supplied spread in relation to the user's exact question.
 
-Return only valid JSON matching the requested schema.`;
+Use traditional Lenormand reading methods appropriate to the supplied spread: card combinations, defined positions, lines, surrounding cards, and where applicable houses and verified spatial relationships. You know the traditional Lenormand deck; no card dictionary is supplied to you, and none is needed.
+
+Consider the spread as a whole before reaching a conclusion. Weigh supporting and conflicting indications rather than reducing the reading to one isolated positive or negative card. A large spread is not a licence to ignore most of it.
+
+The structural data supplied by the server is authoritative. Do not invent cards, positions, spatial relationships, people, events, or facts. Two cards that merely both appear somewhere in the spread are not a combination: assert adjacency, mirroring, a row, a column, a diagonal, house occupancy or a position only where the structural facts list it.
+
+Position roles that the spread itself defines are facts and may be used. Interpretive hierarchy that the spread does not define may not be invented.
+
+Person cards represent a specific person only when the supplied bindings establish this. An unbound Man or Woman is an unassigned person-card reference and never becomes a spouse, partner, named person or pronoun.
+
+Be concrete, nuanced and predictive where the spread supports prediction. Do not force certainty when the spread is genuinely mixed.
+
+Answer in the language of the user's question, using exactly one language throughout. If ambiguous, use English.
+
+Translate structure into natural language: never expose internal position numbers, card indices, pair identifiers or geometry labels in user-facing prose.
+
+Return only the required JSON.`;
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 1_200;
@@ -71,6 +82,27 @@ function fmtCard(card: { name: string; keywords?: string[]; strength?: string })
 
 export { fmtCard, PERSON_CARD_NAMES };
 
+/**
+ * A card as it appears in the structural layer: canonical English name plus canonical
+ * deck number, which is what makes the spread referenceable against the real deck.
+ *
+ * The deck number is printed only when it differs from the position the card occupies.
+ * A freshly drawn tableau puts every card in its own position, and printing `1 1 Rider`
+ * there would read as a typo rather than as data; a shuffled tableau still shows the
+ * full mapping because the number then carries real information.
+ */
+function fmtCell(card: { id: number; name: string; keywords?: string[] }, position?: number): string {
+  const name = fmtCard(card);
+  return position !== undefined && position !== card.id ? `${name} [card ${card.id}]` : name;
+}
+
+/** Whether any drawn card sits at a position other than its own deck number. */
+function hasDisplacedCards(context: ReadingContext): boolean {
+  return context.cards.some((card, index) => card.id !== index + 1);
+}
+
+const DISPLACED_CARD_LEGEND = `Notation: "<name> [card N]" also gives the canonical deck number N where the drawn card occupies a position other than its own.`;
+
 const GT_GRID_ROWS = 4;
 const GT_GRID_COLUMNS = 9;
 const PETIT_GRID = 3;
@@ -112,11 +144,11 @@ function geometricPairs(context: ReadingContext): { indexA: number; indexB: numb
 function pairLine(context: ReadingContext, indexA: number, indexB: number): string {
   const cardA = context.cards[indexA];
   const cardB = context.cards[indexB];
-  return `${indexA + 1}+${indexB + 1}: ${cardA ? fmtCard(cardA) : "empty"} + ${cardB ? fmtCard(cardB) : "empty"}`;
+  return `${indexA + 1}+${indexB + 1}: ${cardA ? fmtCell(cardA, indexA + 1) : "empty"} + ${cardB ? fmtCell(cardB, indexB + 1) : "empty"}`;
 }
 
 function cardsByPosition(context: ReadingContext): string {
-  return context.cards.map((card, index) => `${index + 1} ${fmtCard(card)}`).join(" | ");
+  return context.cards.map((card, index) => `${index + 1} ${fmtCell(card, index + 1)}`).join(" | ");
 }
 
 function singleSpreadFacts(context: ReadingContext): string[] {
@@ -133,7 +165,7 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
   for (const position of layout.positions) {
     const card = context.cards[position.index];
     if (!card) continue;
-    facts.push(`- position ${position.index + 1}: ${fmtCard(card)} (role defined by this spread: ${position.role})`);
+    facts.push(`- position ${position.index + 1}: ${fmtCell(card, position.index + 1)} (role defined by this spread: ${position.role})`);
   }
   facts.push("Adjacent pairs in this spread (consecutive positions only):");
   for (const pair of geometricPairs(context)) facts.push(`- ${pairLine(context, pair.indexA, pair.indexB)}`);
@@ -144,13 +176,13 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
 function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): string[] {
   const cell = (row: number, col: number): string => {
     const found = layout.grid[row]?.[col];
-    return found ? `${found.index + 1} ${fmtCard(found.card)}` : "empty";
+    return found ? `${found.index + 1} ${fmtCell(found.card, found.index + 1)}` : "empty";
   };
   const facts = [`Petit Tableau 3x3 grid (positions 1-9, row-major):`];
   facts.push(`Row 1: ${cell(0, 0)} | ${cell(0, 1)} | ${cell(0, 2)}`);
   facts.push(`Row 2: ${cell(1, 0)} | ${cell(1, 1)} | ${cell(1, 2)}`);
   facts.push(`Row 3: ${cell(2, 0)} | ${cell(2, 1)} | ${cell(2, 2)}`);
-  facts.push(`Geometric centre: position ${layout.center.index + 1} (Row 2, Column 2) = ${fmtCard(layout.center.card)}`);
+  facts.push(`Geometric centre: position ${layout.center.index + 1} (Row 2, Column 2) = ${fmtCell(layout.center.card, layout.center.index + 1)}`);
   facts.push(`Columns: left ${cell(0, 0)} | ${cell(1, 0)} | ${cell(2, 0)}`);
   facts.push(`  middle ${cell(0, 1)} | ${cell(1, 1)} | ${cell(2, 1)}`);
   facts.push(`  right ${cell(0, 2)} | ${cell(1, 2)} | ${cell(2, 2)}`);
@@ -166,7 +198,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
   const facts = [`Grand Tableau 4x9 grid (positions 1-36, left to right, top to bottom):`];
   for (let row = 0; row < GT_GRID_ROWS; row++) {
-    facts.push(`Row ${row + 1}: ${layout.grid[row].map((entry) => `${entry.index + 1} ${fmtCard(entry.card)}`).join(" | ")}`);
+    facts.push(`Row ${row + 1}: ${layout.grid[row].map((entry) => `${entry.index + 1} ${fmtCell(entry.card, entry.index + 1)}`).join(" | ")}`);
   }
 
   facts.push("");
@@ -190,7 +222,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push("");
   facts.push("Houses (position N belongs to the card in house order; the occupying card is what was drawn on it):");
   for (const house of layout.houses) {
-    facts.push(`- position ${house.position}: ${house.houseName} house, occupied by ${fmtCard(house.occupyingCard)}`);
+    facts.push(`- position ${house.position}: ${house.houseName} house, occupied by ${fmtCell(house.occupyingCard, house.position)}`);
   }
 
   const adjacencies = geometricPairs(context);
@@ -201,7 +233,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   if (layout.mirrors.length > 0) {
     facts.push(`Mirrored across a significator, ${layout.mirrors.length} in total:`);
     for (const mirror of layout.mirrors) {
-      facts.push(`- ${mirror.indexA + 1}<->${mirror.indexB + 1}: ${fmtCard(mirror.cardA)} <-> ${fmtCard(mirror.cardB)}`);
+      facts.push(`- ${mirror.indexA + 1}<->${mirror.indexB + 1}: ${fmtCell(mirror.cardA, mirror.indexA + 1)} <-> ${fmtCell(mirror.cardB, mirror.indexB + 1)}`);
     }
   }
   facts.push("This grid is 4 rows of 9. It defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
@@ -219,42 +251,39 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
  */
 export function buildSpreadFacts(context: ReadingContext): string {
   const layout = context.layout;
-  switch (layout.type) {
-    case "single":
-      return singleSpreadFacts(context).join("\n");
-    case "linear-sentence":
-      return linearSpreadFacts(context, layout).join("\n");
-    case "petit-tableau":
-      return petitSpreadFacts(context, layout).join("\n");
-    case "grand-tableau":
-      return grandTableauSpreadFacts(context, layout).join("\n");
-  }
+  const body = ((): string => {
+    switch (layout.type) {
+      case "single":
+        return singleSpreadFacts(context).join("\n");
+      case "linear-sentence":
+        return linearSpreadFacts(context, layout).join("\n");
+      case "petit-tableau":
+        return petitSpreadFacts(context, layout).join("\n");
+      case "grand-tableau":
+        return grandTableauSpreadFacts(context, layout).join("\n");
+    }
+  })();
+  return hasDisplacedCards(context) ? `${DISPLACED_CARD_LEGEND}\n${body}` : body;
 }
 
-/** Reviewed combination meanings for every geometrically adjacent pair of this spread. */
-function adjacentPairsOf(context: ReadingContext): string {
-  return geometricPairs(context)
-    .map(({ indexA, indexB }) => {
-      const cardA = context.cards[indexA];
-      const cardB = context.cards[indexB];
-      if (!cardA || !cardB) return null;
-      const meaning = getUsableLenormandPairMeaning(getCanonicalLenormandPairMeaning(cardA.id, cardB.id, context.semanticQuestion));
-      return `- ${indexA + 1}+${indexB + 1} ${cardA.name} + ${cardB.name}: ${meaning || "no reviewed meaning; synthesize this combination using traditional Lenormand knowledge"}`;
-    })
-    .filter((line): line is string => line !== null)
-    .join("\n");
-}
-
+/** Output contract. Presentation capacity scales with the spread; nothing here ranks evidence. */
 const SIMPLE_ANSWER_JSON_CONTRACT = `Return only one JSON object with exactly these fields:
 {
   "directAnswer": string,
   "interpretation": string,
+  "positiveFactors": string[],
+  "challenges": string[],
+  "keyPatterns": [{ "cards": string, "meaning": string }],
+  "development": string | null,
   "cards": [{ "combination": string, "meaning": string }],
   "timing": string | null,
   "housesAndMirrors": [{ "house": string, "meaning": string }]
 }
 - directAnswer answers the question directly in one or two sentences.
-- interpretation is the reading itself as flowing prose.
+- interpretation is the reading itself as flowing prose. Give the spread the room it needs; do not compress a large spread into a single dense paragraph.
+- positiveFactors lists what in the spread supports the outcome. challenges lists what in the spread works against it. Weigh both; do not report only one side.
+- keyPatterns lists the structural patterns you actually used, naming the cards involved, for example "Rider + Heart: the news brings an emotional opening".
+- development is the overall direction of travel of this spread, or null when the spread does not ground a direction.
 - cards and housesAndMirrors may be [] when you have nothing to add.
 - timing is null when you cannot ground a timing.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
@@ -294,25 +323,14 @@ const SYNTHESIS_CONTRACT = `Synthesis contract:
  * The production reading prompt, identical in shape for every spread type:
  * question + complete spread + deterministic structural facts -> model.
  *
- * Every drawn card reaches the model. Nothing is pre-selected, ranked or dropped.
+ * Every drawn card reaches the model. Nothing is pre-selected, ranked, dropped or
+ * pre-interpreted: the server contributes geometry and nothing else.
  */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
-  const cardSenses = context.cards
-    .map((card, index) => `- position ${index + 1} ${fmtCard(card)}: ${getQuestionScopedCardMeaning(card, context.questionDomain) || "no reviewed question-scoped meaning supplied"}`)
-    .join("\n");
-
-  const pairs = adjacentPairsOf(context);
-
   return `${simplePromptHeader(context)}
 
 Structural facts (deterministic; complete for this spread):
 ${buildSpreadFacts(context)}
-
-Question-scoped card senses (every drawn card; single-card senses, not the reading):
-${cardSenses}
-
-Reviewed combination meanings for the adjacent pairs of this spread (not an exhaustive database):
-${pairs || "This spread has no adjacent pairs. Use traditional Lenormand combination knowledge."}
 
 ${SYNTHESIS_CONTRACT}
 ${SIMPLE_ANSWER_JSON_CONTRACT}`;

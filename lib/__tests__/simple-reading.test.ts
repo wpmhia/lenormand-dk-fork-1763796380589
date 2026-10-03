@@ -18,9 +18,21 @@ const validOutput = {
   housesAndMirrors: [],
 };
 
+/**
+ * `generateReading` checks the reading against the drawn set, so the fixture has to
+ * carry a real card list rather than `{}`. Clover, Ring and Heart are drawn here
+ * because `validOutput` and the legacy house-string case name them.
+ */
+const drawnCards = [
+  { id: 2, name: "Clover", keywords: [] },
+  { id: 6, name: "Clouds", keywords: [] },
+  { id: 24, name: "Heart", keywords: [] },
+  { id: 25, name: "Ring", keywords: [] },
+];
+
 function options(overrides: Partial<Parameters<typeof generateReading>[0]> = {}) {
   return {
-    context: {} as ReadingContext,
+    context: { cards: drawnCards } as unknown as ReadingContext,
     model: {} as LanguageModel,
     system: "system",
     prompt: "prompt",
