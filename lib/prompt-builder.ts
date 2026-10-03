@@ -5,7 +5,7 @@ import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { buildLenormandEvidencePack } from "@/lib/lenormand-evidence";
 import { getQuestionScopedCardMeaning, getGrandTableauPromptedHouseIds } from "@/lib/lenormand-evidence";
-import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
+import { getCanonicalLenormandPairMeaning, getUsableLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Read the exact user question and the deterministic narrative plan supplied by the server. Synthesize one natural, nuanced answer from that plan.
 
@@ -741,8 +741,164 @@ export function buildPromptFromContext(context: ReadingContext): string {
   return withEvidence;
 }
 
+const SIMPLE_ANSWER_JSON_CONTRACT = `Return only one JSON object with exactly these fields:
+{
+  "directAnswer": string,
+  "interpretation": string,
+  "cards": [{ "combination": string, "meaning": string }],
+  "timing": string | null,
+  "housesAndMirrors": [{ "house": string, "meaning": string }]
+}
+- directAnswer answers the question directly in one or two sentences.
+- interpretation is the reading itself as flowing prose.
+- cards and housesAndMirrors may be [] when you have nothing to add.
+- timing is null when you cannot ground a timing.
+- Do not rename, add, or remove fields. Do not use Markdown fences.`;
+
+/** Question frame, predicate, subjects and person bindings. Identical for every spread. */
+function simplePromptHeader(context: ReadingContext): string {
+  const semantic = context.semanticQuestion
+    ? `Semantic question frame: mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}.`
+    : `Question frame (${context.questionDomain}): ${context.questionFrame}`;
+  const answerFocus = `Required answer focus: preserve the exact outcome or state requested by this question; do not replace it with a related question.\nQuestion predicate: ${context.semanticQuestion?.predicate || context.question}`;
+  const situation = context.situationContext.trim()
+    ? `\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
+    : "";
+  const subjects = `\nQuestion subjects: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}.`;
+  const personBindings = `\nPerson bindings:\n${([28, 29] as const).map((cardId) => {
+    const binding = context.personBindings.find((item) => item.cardId === cardId);
+    const label = cardId === 28 ? "Man" : "Woman";
+    return binding
+      ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
+      : `- ${label}: unbound`;
+  }).join("\n")}`;
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}\n${answerFocus}${subjects}${personBindings}${situation}`;
+}
+
+const GT_GRID_ROWS = 4;
+const GT_GRID_COLUMNS = 9;
+
+/**
+ * Every true horizontal and vertical neighbour in the 4x9 grid: 32 horizontal +
+ * 27 vertical = 59 pairs. Derived straight from the grid geometry rather than from
+ * `context.adjacentPairs`, which is a weighted top-20 shortlist.
+ */
+function grandTableauAdjacencies(): { a: number; b: number }[] {
+  const pairs: { a: number; b: number }[] = [];
+  for (let row = 0; row < GT_GRID_ROWS; row++) {
+    for (let col = 0; col < GT_GRID_COLUMNS - 1; col++) {
+      pairs.push({ a: row * GT_GRID_COLUMNS + col, b: row * GT_GRID_COLUMNS + col + 1 });
+    }
+  }
+  for (let col = 0; col < GT_GRID_COLUMNS; col++) {
+    for (let row = 0; row < GT_GRID_ROWS - 1; row++) {
+      pairs.push({ a: row * GT_GRID_COLUMNS + col, b: (row + 1) * GT_GRID_COLUMNS + col });
+    }
+  }
+  return pairs;
+}
+
+/**
+ * Grand Tableau production prompt.
+ *
+ * The Grand Tableau does not go through the NarrativePlan selection layer. That
+ * layer is an interpretive decision (focus, four houses, four mirrors, one
+ * "strongest" outcome pair) and it used to hide most of the 36-card spread from
+ * the model before DeepSeek ever saw it. Here the code supplies only facts a model
+ * cannot compute reliably — coordinates, house occupancy, true adjacency, mirrors
+ * — and the model itself decides which houses, combinations and spatial relations
+ * matter for the question.
+ */
+function buildGrandTableauProductionPrompt(context: ReadingContext): string {
+  const layout = context.layout;
+  if (layout.type !== "grand-tableau") throw new Error("Grand Tableau production prompt requires a Grand Tableau layout");
+
+  const facts: string[] = [];
+
+  facts.push("Grand Tableau 4x9 grid (positions run left to right, top to bottom, 1-36):");
+  for (let row = 0; row < GT_GRID_ROWS; row++) {
+    facts.push(`Row ${row + 1}: ${layout.grid[row].map((cell) => `${cell.index + 1} ${fmtCard(cell.card)}`).join(" | ")}`);
+  }
+
+  facts.push("");
+  facts.push("Significators:");
+  for (const [label, cardId, significator] of [
+    ["Man", 28, layout.significators.man],
+    ["Woman", 29, layout.significators.woman],
+  ] as const) {
+    if (!significator) {
+      facts.push(`- ${label}: not present in this spread`);
+      continue;
+    }
+    const row = Math.floor(significator.index / GT_GRID_COLUMNS) + 1;
+    const column = (significator.index % GT_GRID_COLUMNS) + 1;
+    const houseName = layout.houses[significator.index]?.houseName ?? "unknown";
+    const binding = context.personBindings.find((item) => item.cardId === cardId);
+    facts.push(`- ${label}: position ${significator.index + 1}, Row ${row}, Column ${column}, sitting on the ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
+  }
+  facts.push(`- Significator selection: ${layout.significatorPreference === "both" ? "both Man and Woman; read each one's own neighbourhood as an equal relational anchor, and do not treat them as a pair with each other" : layout.significatorPreference === "man" ? "Man" : "Woman"}`);
+
+  facts.push("");
+  facts.push("Houses (position N belongs to the card in house order; the occupying card is what was drawn on it):");
+  for (const house of layout.houses) {
+    facts.push(`- position ${house.position}: ${house.houseName} house, occupied by ${fmtCard(house.occupyingCard)}`);
+  }
+
+  const adjacencies = grandTableauAdjacencies();
+  facts.push("");
+  facts.push(`Verified spatial relations (deterministic geometry, complete):`);
+  facts.push(`Adjacent pairs, ${adjacencies.length} in total (every horizontal and vertical neighbour):`);
+  for (const { a, b } of adjacencies) {
+    facts.push(`- ${a + 1}+${b + 1}: ${fmtCard(layout.grid[Math.floor(a / GT_GRID_COLUMNS)][a % GT_GRID_COLUMNS].card)} + ${fmtCard(layout.grid[Math.floor(b / GT_GRID_COLUMNS)][b % GT_GRID_COLUMNS].card)}`);
+  }
+  if (layout.mirrors.length > 0) {
+    facts.push(`Mirrored across a significator, ${layout.mirrors.length} in total:`);
+    for (const mirror of layout.mirrors) {
+      facts.push(`- ${mirror.indexA + 1}<->${mirror.indexB + 1}: ${fmtCard(mirror.cardA)} <-> ${fmtCard(mirror.cardB)}`);
+    }
+  }
+  facts.push("Note: this documented 9x4 method has no separate fate row and no universal outcome pair. Positions 33-36 are ordinary fourth-row positions.");
+
+  const cardSenses = context.cards
+    .map((card, index) => `- position ${index + 1} ${fmtCard(card)}: ${getQuestionScopedCardMeaning(card, context.questionDomain) || "no reviewed question-scoped meaning supplied"}`)
+    .join("\n");
+
+  const reviewedPairs = adjacencies
+    .map(({ a, b }) => {
+      const cardA = layout.grid[Math.floor(a / GT_GRID_COLUMNS)][a % GT_GRID_COLUMNS].card;
+      const cardB = layout.grid[Math.floor(b / GT_GRID_COLUMNS)][b % GT_GRID_COLUMNS].card;
+      const meaning = getUsableLenormandPairMeaning(getCanonicalLenormandPairMeaning(cardA.id, cardB.id, context.semanticQuestion));
+      return meaning ? `- ${a + 1}+${b + 1} ${cardA.name} + ${cardB.name}: ${meaning}` : null;
+    })
+    .filter((line): line is string => line !== null);
+
+  return `${simplePromptHeader(context)}
+
+${facts.join("\n")}
+
+Question-scoped card senses (all 36 cards; single-card senses, not the reading):
+${cardSenses}
+
+Reviewed combination meanings for adjacent pairs in this spread (not an exhaustive database):
+${reviewedPairs.length > 0 ? reviewedPairs.join("\n") : "No reviewed overrides are available for this spread. Use traditional Lenormand combination knowledge."}
+
+Synthesis contract:
+- Read the complete Grand Tableau yourself. Decide which houses, combinations and spatial relationships are relevant to the question; the server has deliberately not chosen a focus, a main line or an outcome pair for you.
+- Geometry fidelity. You may only assert a spatial relationship that appears in the verified relations above. Two cards that merely both appear somewhere in the tableau are not a combination. Never invent adjacency, mirroring, house occupancy or a position.
+- This spread has no closing card, no fate row and no single outcome pair. Do not present one arbitrary pair as the result; let the significator neighbourhoods and the question-relevant houses carry the answer together.
+- Read Man and Woman as relational anchors only where the person bindings above bind them. An unbound card stays an unassigned person-card reference, never a partner, spouse or pronoun.
+- Preserve the exact question subject and predicate. Do not replace a wellbeing, relocation, work or relationship question with another kind of question.
+- Do not invent cards, people, facts, exact timing, dates, prerequisites or implementation details. Leave timing null when the spread does not ground it.
+- Answer the user's exact question directly in the first sentence of directAnswer.
+- Use one coherent synthesis, not a card inventory. A 36-card tableau normally needs only 4-8 card names in the prose; put the rest in cards and housesAndMirrors.
+${SIMPLE_ANSWER_JSON_CONTRACT}`;
+}
+
 /** Compact production reader prompt: code supplies spread facts, the model synthesizes. */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
+  if (context.layout.type === "grand-tableau") {
+    return buildGrandTableauProductionPrompt(context);
+  }
   const narrativePlan = buildNarrativePlan(context);
   const planText = [
     narrativePlan.focus || "",
@@ -770,38 +926,29 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
       const reverse = `${fmtCard(pair.cardB)} + ${fmtCard(pair.cardA)}`;
       return planText.includes(forward) || planText.includes(reverse);
     });
-  const pairs = relevantPairs.map((pair) => {
+const pairs = relevantPairs.map((pair) => {
     const meaning = getCanonicalLenormandPairMeaning(pair.cardA.id, pair.cardB.id, context.semanticQuestion);
     return `- ${pair.cardA.name} + ${pair.cardB.name}${meaning ? `: reviewed override — ${meaning}` : ": no reviewed override; synthesize this combination using traditional Lenormand knowledge"}`;
   }).join("\n");
-  const semantic = context.semanticQuestion
-    ? `Semantic question frame: mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}.`
-    : `Question frame (${context.questionDomain}): ${context.questionFrame}`;
-  const answerFocus = `Required answer focus: preserve the exact outcome or state requested by this question; do not replace it with a related question.\nQuestion predicate: ${context.semanticQuestion?.predicate || context.question}`;
-  const situation = context.situationContext.trim()
-    ? `\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
-    : "";
-  const subjects = `\nQuestion subjects: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}.`;
-  const personBindings = `\nPerson bindings:\n${([28, 29] as const).map((cardId) => {
-    const binding = context.personBindings.find((item) => item.cardId === cardId);
-    const label = cardId === 28 ? "Man" : "Woman";
-    return binding
-      ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
-      : `- ${label}: unbound`;
-  }).join("\n")}`;
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}\n${answerFocus}${subjects}${personBindings}${situation}\n\n${formatNarrativePlan(narrativePlan, context.layout.type)}\n\nQuestion-scoped card guardrails for cards referenced in the plan:\n${scopedCards || "No card guardrails were selected."}\n\nRelevant pair overrides (not an exhaustive database):\n${pairs || "No reviewed overrides were selected. Use traditional Lenormand combination knowledge."}\n\nSynthesis contract:\n- Read combinations in the spread structure supplied above, using traditional Lenormand knowledge for unreviewed pairs.\n- For linear readings, the closing card and closing pair are the strongest forecast evidence; earlier pairs describe development and context.\n- Answer the user's exact question directly in the first sentence of directAnswer.\n- If the question naturally calls for a yes/no answer, give the clearest yes/no conclusion supported by the spread. If it asks how, why, what, which, or requests guidance, answer that question directly instead.\n- Do not discuss question types, classifications, confidence labels, schema fields, or whether the question is binary.\n- Use one coherent synthesis, not a card inventory. The development lines are ordered reading structure, not causality or timing.\n- Do not invent cards, people, facts, exact timing, prerequisites, or implementation details.\nReturn only one JSON object with exactly these fields:
-{
-  "directAnswer": string,
-  "interpretation": string,
-  "cards": [{ "combination": string, "meaning": string }],
-  "timing": string | null,
-  "housesAndMirrors": [{ "house": string, "meaning": string }]
-}
-- directAnswer answers the question directly in one or two sentences.
-- interpretation is the reading itself as flowing prose.
-- cards and housesAndMirrors may be [] when you have nothing to add.
-- timing is null when you cannot ground a timing.
-- Do not rename, add, or remove fields. Do not use Markdown fences.`;
+  return `${simplePromptHeader(context)}
+
+${formatNarrativePlan(narrativePlan, context.layout.type)}
+
+Question-scoped card guardrails for cards referenced in the plan:
+${scopedCards || "No card guardrails were selected."}
+
+Relevant pair overrides (not an exhaustive database):
+${pairs || "No reviewed overrides were selected. Use traditional Lenormand combination knowledge."}
+
+Synthesis contract:
+- Read combinations in the spread structure supplied above, using traditional Lenormand knowledge for unreviewed pairs.
+- For linear readings, the closing card and closing pair are the strongest forecast evidence; earlier pairs describe development and context.
+- Answer the user's exact question directly in the first sentence of directAnswer.
+- If the question naturally calls for a yes/no answer, give the clearest yes/no conclusion supported by the spread. If it asks how, why, what, which, or requests guidance, answer that question directly instead.
+- Do not discuss question types, classifications, confidence labels, schema fields, or whether the question is binary.
+- Use one coherent synthesis, not a card inventory. The development lines are ordered reading structure, not causality or timing.
+- Do not invent cards, people, facts, exact timing, prerequisites, or implementation details.
+${SIMPLE_ANSWER_JSON_CONTRACT}`;
 }
 
 export function sanitizeQuestion(question: string): string {

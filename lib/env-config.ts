@@ -7,6 +7,18 @@ export const ENV_VARIABLES: EnvVariable[] = [
     instructions: "Get your API key from the DeepSeek API console.",
   },
   {
+    name: "DEEPSEEK_MODEL",
+    description: "DeepSeek model id used for readings (default: deepseek-flash)",
+    required: false,
+    instructions: "Set to deepseek-v4-flash or deepseek-v4-pro for the V4 family. Note that deepseek-flash is a different, non-V4 model.",
+  },
+  {
+    name: "DEEPSEEK_THINKING",
+    description: "DeepSeek thinking mode: off (default), on, or auto",
+    required: false,
+    instructions: "auto enables thinking for 36-card Grand Tableaux only. Read DEEPSEEK_THINKING=off before enabling: reasoning tokens share the maxOutputTokens budget with the JSON body and generation is capped at 15s.",
+  },
+  {
     name: "DATABASE_URL",
     description: "PostgreSQL connection string for Neon database (unused in free mode)",
     required: false,

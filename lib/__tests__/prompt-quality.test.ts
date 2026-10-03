@@ -412,9 +412,9 @@ describe("production simple prompt evidence", () => {
 
     const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
     const grand = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Will I move?", normalized(allIds), cardsMap, "woman"));
-    expect(grand).toContain("Narrative plan");
-    expect(grand).toContain("Focus:");
-    expect(grand).toContain("Supporting evidence:");
+    expect(grand).toContain("Grand Tableau 4x9 grid");
+    expect(grand).toContain("Verified spatial relations");
+    expect(grand).toContain("Significators:");
   });
 
   it("builds a narrative spine for Petit Tableau without row-major numbering", () => {
@@ -494,14 +494,47 @@ describe("regression: Grand Tableau narrative anchors both significators and inv
     expect(bothPlan.outcomeEvidence).toEqual([]);
   });
 
-  it("renders GT-specific plan lines including combination fidelity", () => {
+  it("hands the model the complete tableau instead of a pre-selected plan", () => {
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("grand-tableau", "Wat betekent dit voor mijn situatie?", normalized(allIds), cardsMap, "both"),
     );
-    expect(prompt).toContain("- Focus: no single primary significator; read from the relational anchors below");
-    expect(prompt).toContain("Relational anchors (read each as its own neighbourhood; they are not a pair)");
-    expect(prompt).toMatch(/Outcome evidence: none\. This 9x4 Grand Tableau has no universal outcome pair/);
-    expect(prompt).toMatch(/Combination fidelity: you may name a combination only if it appears in the lines above\./);
+    expect(prompt).not.toContain("Narrative plan");
+    expect(prompt).not.toContain("- Focus:");
+    expect(prompt).not.toContain("Outcome evidence:");
+    expect(prompt).toContain("the server has deliberately not chosen a focus, a main line or an outcome pair for you");
+    expect(prompt).toContain("Geometry fidelity.");
+    expect(prompt).toMatch(/no single outcome pair/);
+  });
+
+  it("supplies every card, house and true adjacency, not a server-side shortlist", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("grand-tableau", "Wat betekent dit voor mijn situatie?", normalized(allIds), cardsMap, "both"),
+    );
+    for (const card of cards) {
+      expect(prompt).toContain(`${card.name} house, occupied by`);
+      expect(prompt).toMatch(new RegExp(`position \\d+ ${card.name.replace("(specific person/significator)", "")}[^\\n]*`));
+    }
+    // 32 horizontal + 27 vertical neighbours of a 4x9 grid.
+    expect(prompt).toContain("Adjacent pairs, 59 in total");
+    expect(prompt).toContain("both Man and Woman; read each one's own neighbourhood as an equal relational anchor");
+    expect(prompt).toContain("Man: position 28, Row 4, Column 1");
+    expect(prompt).toContain("Woman: position 29, Row 4, Column 2");
+  });
+
+  it("lists every adjacency as a real grid neighbour", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("grand-tableau", "Wat betekent dit voor mijn situatie?", normalized(allIds), cardsMap, "both"),
+    );
+    const lines = prompt.split("\n").filter((line) => /^\- \d+\+\d+: /.test(line));
+    expect(lines).toHaveLength(59);
+    const grid = normalized(allIds);
+    for (const line of lines) {
+      const [a, b] = line.match(/^\- (\d+)\+(\d+): /)!.slice(1).map(Number);
+      expect(Math.abs(Math.floor((a - 1) / 9) - Math.floor((b - 1) / 9))).toBeLessThanOrEqual(1);
+      expect(Math.abs((a - 1) % 9 - (b - 1) % 9)).toBeLessThanOrEqual(1);
+      expect(a).not.toBe(b);
+      expect(grid[a - 1].name).toBeTruthy();
+    }
   });
 
   it("still focuses an explicitly selected significator", () => {
