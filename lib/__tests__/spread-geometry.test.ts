@@ -119,8 +119,10 @@ describe("spread-geometry: knight's moves are complete", () => {
 
 describe("spread-geometry: relations are described, never interpreted", () => {
   it("labels a knight's move", () => {
-    expect(gridRelation(6, 14, 9).label).toBe("knight's move apart");
-    expect(gridRelation(14, 6, 9).label).toBe("knight's move apart");
+    // 6 is row 1 col 7; 17 is row 2 col 9 -> one row and two columns apart.
+    expect(gridRelation(6, 17, 9).label).toBe("knight's move apart");
+    expect(gridRelation(17, 6, 9).label).toBe("knight's move apart");
+    expect(gridRelation(0, 19, 9).label).toBe("knight's move apart");
   });
 
   it("labels orthogonal and diagonal neighbours", () => {
@@ -145,68 +147,76 @@ describe("spread-geometry: relations are described, never interpreted", () => {
   });
 });
 
-describe("buildSpreadFacts: the Grand Tableau supplies complete geometry", () => {
+describe("buildSpreadFacts: the Grand Tableau supplies coordinates, not relation lists", () => {
   const facts = buildSpreadFacts(
     buildReadingContext("grand-tableau", "Full picture?", draw(36, 13), cardsMap),
   );
 
-  it("supplies every column of the 4x9 grid", () => {
-    expect(facts).toContain("Columns (top to bottom), 9 in total:");
-    expect(facts.split("\n").filter((line) => /^- column \d+: /.test(line))).toHaveLength(9);
+  it("states the grid shape and how positions are numbered", () => {
+    expect(facts).toContain("Grand Tableau, a 4x9 grid of 36 cards.");
+    expect(facts).toContain("Position 1 is row 1 column 1");
+    expect(facts).toContain("numbering runs left to right, then top to bottom");
   });
 
-  it("supplies all 59 orthogonal pairs", () => {
-    expect(facts).toContain("Adjacent pairs, 59 in total");
-    expect(facts.split("\n").filter((line) => /^- \d+\+\d+: /.test(line))).toHaveLength(59);
+  it("supplies one coordinate line per card", () => {
+    const lines = facts.split("\n").filter((line) => /^- \d+: .+, row \d+, col \d+, .+ house$/.test(line));
+    expect(lines).toHaveLength(36);
   });
 
-  it("supplies every diagonal line", () => {
-    expect(facts).toContain("Diagonal lines, 20 in total");
-    expect(facts.split("\n").filter((line) => line.startsWith("- diagonal "))).toHaveLength(20);
+  it("reports the exact grid coordinate for every card", () => {
+    const cards = draw(36, 13);
+    for (let index = 0; index < 36; index++) {
+      const expected = `- ${index + 1}: ${cards[index].name}, row ${Math.floor(index / 9) + 1}, col ${(index % 9) + 1}, `;
+      // Person cards carry an annotation, so match on the coordinate prefix instead.
+      const line = facts.split("\n").find((entry) => entry.startsWith(`- ${index + 1}: `))!;
+      expect(line, `position ${index + 1}`).toContain(`row ${Math.floor(index / 9) + 1}, col ${(index % 9) + 1}, `);
+      expect(line).toContain(cards[index].name);
+      expect(expected.length).toBeGreaterThan(0);
+    }
   });
 
-  it("supplies every knight's move", () => {
-    expect(facts).toContain("Knight's moves, 74 in total:");
-    expect(facts.split("\n").filter((line) => line.startsWith("- knight: "))).toHaveLength(74);
+  it("names every house exactly once, alongside its occupant", () => {
+    expect(deck.every((card) => facts.includes(`${card.name} house`))).toBe(true);
+    expect(facts.split("\n").filter((line) => / house$/.test(line))).toHaveLength(36);
   });
 
-  it("still supplies all 36 houses", () => {
-    expect(facts.split("\n").filter((line) => /^- position \d+: .+ house, occupied by /.test(line))).toHaveLength(36);
+  it("never precomputes a relation list", () => {
+    // Enumerating relations cost thousands of characters and pre-decided relevance.
+    // They are derivable from the coordinates above, so the prompt must not contain them.
+    expect(facts).not.toMatch(/^- \d+\+\d+: /m);
+    expect(facts).not.toContain("- diagonal ");
+    expect(facts).not.toContain("- knight: ");
+    expect(facts).not.toContain("- column ");
+    expect(facts).not.toContain("Adjacent pairs");
+    expect(facts).not.toContain("Mirrored across a significator");
   });
 
-  it("no longer claims its relations are complete without being complete", () => {
-    // The old header said "Verified spatial relations (complete)" while listing only
-    // orthogonal pairs and significator mirrors, which was simply untrue.
-    expect(facts).toContain("Verified spatial relations (complete for this 4x9 grid):");
-    expect(facts).not.toContain("Verified spatial relations (complete)");
-  });
-
-  it("attaches no meaning to any relation it reports", () => {
+  it("supplies no interpretation anywhere", () => {
     for (const line of facts.split("\n")) {
-      if (!/^(- \d+\+\d+: |- diagonal |- knight: |- column |-\d+<->\d+: )/.test(line)) continue;
-      expect(line, `relation line carries interpretation: ${line}`).not.toMatch(
-        /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative/i,
+      expect(line, `structural facts carry interpretation: ${line}`).not.toMatch(
+        /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative|luck/i,
       );
     }
   });
 });
 
-describe("buildSpreadFacts: the Petit Tableau supplies complete geometry", () => {
+describe("buildSpreadFacts: the Petit Tableau supplies coordinates", () => {
   const facts = buildSpreadFacts(
     buildReadingContext("comprehensive", "What will the month bring?", draw(9, 5), cardsMap),
   );
 
-  it("supplies every column", () => {
-    expect(facts.split("\n").filter((line) => /^- column \d+: /.test(line))).toHaveLength(3);
-  });
-
-  it("supplies all 12 orthogonal pairs, all 6 diagonals and all 8 knight's moves", () => {
-    expect(facts.split("\n").filter((line) => /^- \d+\+\d+: /.test(line))).toHaveLength(12);
-    expect(facts.split("\n").filter((line) => line.startsWith("- diagonal "))).toHaveLength(6);
-    expect(facts.split("\n").filter((line) => line.startsWith("- knight: "))).toHaveLength(8);
+  it("supplies one coordinate line per card", () => {
+    expect(facts.split("\n").filter((line) => /^- \d+: .+, row \d+, col \d+$/.test(line))).toHaveLength(9);
   });
 
   it("still names the geometric centre", () => {
-    expect(facts).toContain("Geometric centre: position 5 (Row 2, Column 2)");
+    expect(facts).toContain("Geometric centre: position 5 (row 2, col 2).");
+  });
+
+  it("never precomputes a relation list", () => {
+    expect(facts).not.toMatch(/^- \d+\+\d+: /m);
+    expect(facts).not.toContain("- diagonal ");
+    expect(facts).not.toContain("- knight: ");
+    expect(facts).not.toContain("- column ");
   });
 });

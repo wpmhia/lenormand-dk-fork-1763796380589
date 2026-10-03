@@ -2,7 +2,6 @@ import { z } from "zod";
 import { Card } from "@/lib/types";
 import { MAX_QUESTION_LENGTH } from "@/lib/constants";
 import { SPREAD_DEFINITIONS, SpreadId } from "@/lib/spread-definitions";
-import { getCanonicalLenormandPairMeaning } from "@/lib/pair-meaning";
 
 export type { SpreadId };
 
@@ -50,12 +49,6 @@ export interface NormalizedCard {
   strength?: string;
 }
 
-interface ComboHint {
-  cardA: string;
-  cardB: string;
-  meaning: string;
-}
-
 type SignificatorPreference = "woman" | "man" | "both";
 
 interface NormalizedReadingRequest {
@@ -63,7 +56,6 @@ interface NormalizedReadingRequest {
   situationContext: string;
   spreadId: SpreadId;
   cards: NormalizedCard[];
-  comboHints: ComboHint[];
   significatorPreference: SignificatorPreference;
 }
 
@@ -72,24 +64,6 @@ function normalizeQuestion(str: string): string {
     .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
     .replace(/["]/g, '"')
     .replace(/\n|\r/g, " ");
-}
-
-function buildAdjacentComboHints(
-  cards: NormalizedCard[],
-  cardsMap: Map<number, Card>,
-): ComboHint[] {
-  const hints: ComboHint[] = [];
-  for (let i = 0; i < cards.length - 1; i++) {
-    const cardA = cardsMap.get(cards[i].id);
-    const cardB = cardsMap.get(cards[i + 1].id);
-    if (cardA && cardB) {
-      const meaning = getCanonicalLenormandPairMeaning(cardA.id, cardB.id);
-      if (meaning) {
-        hints.push({ cardA: cardA.name, cardB: cardB.name, meaning });
-      }
-    }
-  }
-  return hints;
 }
 
 export function normalizeReadingRequest(
@@ -166,14 +140,11 @@ export function normalizeReadingRequest(
     });
   }
 
-  const comboHints = cards.length > 1 ? buildAdjacentComboHints(cards, cardsMap) : [];
-
   return {
     question: normalizedQuestion,
     situationContext: normalizeQuestion(data.situationContext),
     spreadId: data.spreadId,
     cards,
-    comboHints,
     significatorPreference,
   };
 }

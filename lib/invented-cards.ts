@@ -88,23 +88,11 @@ function idsFrom(text: string, pattern: RegExp): number[] {
 }
 
 /**
- * House labels follow the convention "<Card> house" or "House of <Card>". The word
- * "House" is itself a card (id 4), so the wrapper is stripped before scanning,
- * otherwise every well-formed house label reads as a reference to the House card.
- */
-function houseLabelText(label: string): string {
-  return label.replace(/^\s*house\s+of\s+/i, "").replace(/\s+houses?\s*$/i, "");
-}
-
-/**
  * Label fields whose stated purpose is to name cards. A canonical card name here that
  * was not drawn is always a fabrication, so these are scanned without ambiguity guards.
  */
 function labelText(answer: SimpleAnswer): string[] {
-  return [
-    ...answer.keyPatterns.map((pattern) => pattern.cards),
-    ...answer.housesAndMirrors.map((item) => houseLabelText(item.house)),
-  ];
+  return answer.patterns.map((pattern) => pattern.cards);
 }
 
 /**
@@ -113,15 +101,19 @@ function labelText(answer: SimpleAnswer): string[] {
  */
 function proseText(answer: SimpleAnswer): string[] {
   return [
-    answer.directAnswer,
-    answer.interpretation,
-    ...answer.keyPatterns.map((pattern) => pattern.meaning),
-    ...answer.positiveFactors,
-    ...answer.challenges,
-    answer.development || "",
+    answer.answer,
+    answer.reading,
+    ...answer.patterns.map((pattern) => pattern.meaning),
     answer.timing || "",
-    ...answer.housesAndMirrors.map((item) => item.meaning),
   ];
+}
+
+/**
+ * Every canonical card id named anywhere in `text`, in order. Used by the structural
+ * validators, which operate on the model's own words rather than a precomputed list.
+ */
+export function cardIdsInText(text: string): number[] {
+  return [...new Set(idsFrom(text, ANY_CARD_PATTERN))];
 }
 
 export function findInventedCards(answer: SimpleAnswer, drawnCardIds: number[]): number[] {

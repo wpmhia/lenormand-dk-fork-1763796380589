@@ -78,8 +78,9 @@ describe("card catalog: downstream registries use canonical names", () => {
 
     const houseNames = facts
       .split("\n")
-      .filter((line) => /^- position \d+: .+ house, occupied by /.test(line))
-      .map((line) => line.match(/^- position \d+: (.+) house, occupied by /)![1]);
+      .map((line) => line.match(/, ([^,]+) house$/))
+      .filter((match): match is RegExpMatchArray => match !== null)
+      .map((match) => match[1]);
 
     expect(houseNames).toEqual(CARD_CATALOG.map((card) => card.name));
     // A deck that is shuffled must still name houses canonically.

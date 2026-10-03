@@ -1,6 +1,4 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
-import { outputTierFor } from "@/lib/simple-answer";
-import { adjacentPairs, diagonalLines, gridRelation, knightPairs } from "@/lib/spread-geometry";
 import type {
   ReadingContext,
   GrandTableauLayout,
@@ -110,45 +108,6 @@ const GT_GRID_ROWS = 4;
 const GT_GRID_COLUMNS = 9;
 const PETIT_GRID = 3;
 
-/**
- * Every geometrically adjacent position pair in the spread: horizontal and
- * vertical neighbours only, straight from the grid or line geometry.
- *
- * This deliberately does not use `context.adjacentPairs`, which is a weighted
- * top-20 shortlist. Selecting pairs by weight before the model reads the spread is
- * exactly the evidence selection this layer must not do.
- */
-function geometricPairs(context: ReadingContext): { indexA: number; indexB: number }[] {
-  const layout = context.layout;
-  if (layout.type === "single") return [];
-
-  if (layout.type === "linear-sentence") {
-    return context.cards
-      .map((_, index) => ({ indexA: index, indexB: index + 1 }))
-      .filter((pair) => pair.indexB < context.cards.length);
-  }
-
-  const columns = layout.type === "petit-tableau" ? PETIT_GRID : GT_GRID_COLUMNS;
-  const rows = layout.type === "petit-tableau" ? PETIT_GRID : GT_GRID_ROWS;
-  const pairs: { indexA: number; indexB: number }[] = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < columns - 1; col++) {
-      pairs.push({ indexA: row * columns + col, indexB: row * columns + col + 1 });
-    }
-  }
-  for (let col = 0; col < columns; col++) {
-    for (let row = 0; row < rows - 1; row++) {
-      pairs.push({ indexA: row * columns + col, indexB: (row + 1) * columns + col });
-    }
-  }
-  return pairs.filter((pair) => pair.indexB < context.cards.length);
-}
-
-function pairLine(context: ReadingContext, indexA: number, indexB: number): string {
-  const cardA = context.cards[indexA];
-  const cardB = context.cards[indexB];
-  return `${indexA + 1}+${indexB + 1}: ${cardA ? fmtCell(cardA, indexA + 1) : "empty"} + ${cardB ? fmtCell(cardB, indexB + 1) : "empty"}`;
-}
 
 function cardsByPosition(context: ReadingContext): string {
   return context.cards.map((card, index) => `${index + 1} ${fmtCell(card, index + 1)}`).join(" | ");
@@ -162,41 +121,49 @@ function singleSpreadFacts(context: ReadingContext): string[] {
 }
 
 function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout): string[] {
-  const facts = [
-    `Linear sentence spread (${context.cards.length} cards, left to right): ${cardsByPosition(context)}`,
-  ];
-  for (const position of layout.positions) {
-    const card = context.cards[position.index];
-    if (!card) continue;
-    facts.push(`- position ${position.index + 1}: ${fmtCell(card, position.index + 1)} (role defined by this spread: ${position.role})`);
+  const facts = [`Linear sentence spread (${context.cards.length} cards, read left to right):`];
+  for (const position of context.cards.map((card, index) => ({ card, index }))) {
+    const role = layout.positions.find((entry) => entry.index === position.index);
+    const suffix = role ? ` (role defined by this spread: ${role.role})` : "";
+    facts.push(`- position ${position.index + 1}: ${fmtCell(position.card, position.index + 1)}${suffix}`);
   }
-  facts.push("Adjacent pairs in this spread (consecutive positions only):");
-  for (const pair of geometricPairs(context)) facts.push(`- ${pairLine(context, pair.indexA, pair.indexB)}`);
-  facts.push("There is no other geometry in this spread: adjacency means consecutive positions.");
+  facts.push("Adjacency in this spread means consecutive positions. There is no other geometry.");
   return facts;
 }
 
+/**
+ * One row per card: position, card, and its coordinates.
+ *
+ * Deliberately exhaustive about *where* cards are and silent about *how they relate*.
+ * Every relation a reader can use — adjacency, rows, columns, diagonals, knight's moves,
+ * mirrors, distances — is derivable from these coordinates, and the validator recomputes
+ * them on demand to check whatever the model actually claims. Enumerating the relations
+ * here instead cost thousands of characters and pre-decided which ones looked relevant.
+ */
+function coordinateFacts(cards: ReadingContext["cards"], rowCount: number, columnCount: number, houseNameAt?: (index: number) => string): string[] {
+  return cards.map((card, index) => {
+    const row = Math.floor(index / columnCount) + 1;
+    const column = (index % columnCount) + 1;
+    const house = houseNameAt ? `, ${houseNameAt(index)} house` : "";
+    return `- ${index + 1}: ${fmtCell(card, index + 1)}, row ${row}, col ${column}${house}`;
+  });
+}
+
 function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): string[] {
-  const cell = (row: number, col: number): string => {
-    const found = layout.grid[row]?.[col];
-    return found ? `${found.index + 1} ${fmtCell(found.card, found.index + 1)}` : "empty";
-  };
-  const facts = [`Petit Tableau 3x3 grid (positions 1-9, row-major):`];
-  facts.push(`Row 1: ${cell(0, 0)} | ${cell(0, 1)} | ${cell(0, 2)}`);
-  facts.push(`Row 2: ${cell(1, 0)} | ${cell(1, 1)} | ${cell(1, 2)}`);
-  facts.push(`Row 3: ${cell(2, 0)} | ${cell(2, 1)} | ${cell(2, 2)}`);
-  facts.push(`Geometric centre: position ${layout.center.index + 1} (Row 2, Column 2) = ${fmtCell(layout.center.card, layout.center.index + 1)}`);
-  facts.push(...columnFacts(context, PETIT_GRID, PETIT_GRID));
-  facts.push(...geometryFacts(context, PETIT_GRID, PETIT_GRID));
-  facts.push("This grid defines no closing position and no outcome position; weigh the spread yourself.");
+  const facts = [
+    `Petit Tableau, a 3x3 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
+    ...coordinateFacts(context.cards, PETIT_GRID, PETIT_GRID),
+    `Geometric centre: position ${layout.center.index + 1} (row 2, col 2).`,
+    "This grid defines no closing position and no outcome position; weigh the spread yourself.",
+  ];
   return facts;
 }
 
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
-  const facts = [`Grand Tableau 4x9 grid (positions 1-36, left to right, top to bottom):`];
-  for (let row = 0; row < GT_GRID_ROWS; row++) {
-    facts.push(`Row ${row + 1}: ${layout.grid[row].map((entry) => `${entry.index + 1} ${fmtCell(entry.card, entry.index + 1)}`).join(" | ")}`);
-  }
+  const facts = [
+    `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
+    ...coordinateFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS, (index) => layout.houses[index]?.houseName ?? "unknown"),
+  ];
 
   facts.push("");
   facts.push("Significators:");
@@ -213,91 +180,26 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
     const column = (info.index % GT_GRID_COLUMNS) + 1;
     const houseName = layout.houses[info.index]?.houseName ?? "unknown";
     const binding = context.personBindings.find((item) => item.cardId === cardId);
-    facts.push(`- ${label}: position ${info.index + 1}, Row ${row}, Column ${column}, sitting on the ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
-  }
-  const man = layout.significators.man;
-  const woman = layout.significators.woman;
-  if (man && woman) {
-    const relation = gridRelation(man.index, woman.index, GT_GRID_COLUMNS);
-    facts.push(`- Man to Woman: ${relation.label} (Man Row ${Math.floor(man.index / GT_GRID_COLUMNS) + 1} Column ${(man.index % GT_GRID_COLUMNS) + 1}, Woman Row ${Math.floor(woman.index / GT_GRID_COLUMNS) + 1} Column ${(woman.index % GT_GRID_COLUMNS) + 1}; ${Math.abs(relation.rowDelta)} row(s) and ${Math.abs(relation.columnDelta)} column(s) apart)`);
+    facts.push(`- ${label}: position ${info.index + 1}, row ${row}, col ${column}, ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
   }
   if (layout.significatorPreference === "both") {
-    facts.push("- Both significators are in this spread. Read each one's own surroundings, and weigh any spatial relation between them that is listed above.");
+    facts.push("- Both significators are in this spread; read each one's own surroundings, and weigh their relation to each other from the coordinates above.");
   } else {
-    facts.push(`- Significator focus: ${layout.significatorPreference === "man" ? "Man" : "Woman"}. The other person card is still present in the grid above as an ordinary card.`);
+    facts.push(`- Significator focus: ${layout.significatorPreference === "man" ? "Man" : "Woman"}. The other person card is still present as an ordinary card.`);
   }
 
   facts.push("");
-  facts.push("Houses (position N belongs to the card in house order; the occupying card is what was drawn on it):");
-  for (const house of layout.houses) {
-    facts.push(`- position ${house.position}: ${house.houseName} house, occupied by ${fmtCell(house.occupyingCard, house.position)}`);
-  }
-
-  facts.push("");
-  facts.push(`Verified spatial relations (complete for this ${GT_GRID_ROWS}x${GT_GRID_COLUMNS} grid):`);
-  facts.push(...columnFacts(context, GT_GRID_ROWS, GT_GRID_COLUMNS));
-  facts.push(...geometryFacts(context, GT_GRID_ROWS, GT_GRID_COLUMNS));
-
-  if (layout.mirrors.length > 0) {
-    facts.push(`Mirrored across a significator, ${layout.mirrors.length} in total:`);
-    for (const mirror of layout.mirrors) {
-      facts.push(`- ${mirror.indexA + 1}<->${mirror.indexB + 1}: ${fmtCell(mirror.cardA, mirror.indexA + 1)} <-> ${fmtCell(mirror.cardB, mirror.indexB + 1)}`);
-    }
-  }
-  facts.push("This grid is 4 rows of 9. It defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
-  return facts;
-}
-
-/** Column-major view of a grid, so a reader can traverse a column without reassembling pairs. */
-function columnFacts(context: ReadingContext, rowCount: number, columnCount: number): string[] {
-  const facts: string[] = [`Columns (top to bottom), ${columnCount} in total:`];
-  for (let column = 0; column < columnCount; column++) {
-    const cells = Array.from({ length: rowCount }, (_, row) => row * columnCount + column);
-    facts.push(`- column ${column + 1}: ${cells.map((cell) => fmtCell(context.cards[cell], cell + 1)).join(" + ")}`);
-  }
-  return facts;
-}
-
-/**
- * Every positional relation the grid defines, with nothing added and nothing left out.
- *
- * Reporting only orthogonal neighbours used to hide diagonals, knight's moves and the
- * distance between two significators from the model, which are all facts a reader checks
- * and none of which the server is entitled to interpret.
- */
-function geometryFacts(context: ReadingContext, rowCount: number, columnCount: number): string[] {
-  const neighbours = adjacentPairs(rowCount, columnCount);
-  const diagonals = diagonalLines(rowCount, columnCount);
-  const knights = knightPairs(rowCount, columnCount);
-  const facts: string[] = [];
-
-  facts.push(`Adjacent pairs, ${neighbours.length} in total (every horizontal and vertical neighbour):`);
-  for (const { a, b } of neighbours) {
-    if (b < context.cards.length) facts.push(`- ${a + 1}+${b + 1}: ${fmtCell(context.cards[a], a + 1)} + ${fmtCell(context.cards[b], b + 1)}`);
-  }
-
-  facts.push(`Diagonal lines, ${diagonals.length} in total (each line read left to right):`);
-  for (const line of diagonals) {
-    const slope = line.slope === 1 ? "down-right" : "down-left";
-    facts.push(`- diagonal ${slope}: ${line.cells.map((cell) => fmtCell(context.cards[cell], cell + 1)).join(" + ")}`);
-  }
-
-  facts.push(`Knight's moves, ${knights.length} in total:`);
-  for (const { a, b } of knights) {
-    facts.push(`- knight: ${a + 1}<->${b + 1}: ${fmtCell(context.cards[a], a + 1)} <-> ${fmtCell(context.cards[b], b + 1)}`);
-  }
-
+  facts.push("The grid defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
   return facts;
 }
 
 /**
  * Deterministic structural facts for the spread, for every spread type.
  *
- * This layer supplies only what a model cannot compute reliably: card order,
- * position roles the spread itself defines, grid coordinates, house occupancy and
- * mathematically verified spatial relationships. It deliberately supplies no
- * focus, no ranked pairs, no development line and no outcome evidence — choosing
- * what matters is the model's job, not the server's.
+ * This layer supplies only what a model cannot compute reliably: card order, position
+ * roles the spread itself defines, grid coordinates and house occupancy. It supplies no
+ * relation lists, no focus, no ranked pairs and no outcome evidence — deriving what
+ * matters, and which relations hold, is the model's job and the validator's check.
  */
 export function buildSpreadFacts(context: ReadingContext): string {
   const layout = context.layout;
@@ -317,87 +219,56 @@ export function buildSpreadFacts(context: ReadingContext): string {
 }
 
 /**
- * Output contract. Capacity scales with the spread.
+ * The output request. One contract for every spread: four fields, nothing conditional.
  *
- * A five-card line is asked for a direct answer, a reading, its patterns and a timing,
- * and nothing else. A five-card line has one story; asking the model to also fill
- * positiveFactors, challenges, development and houses makes it restate that story four
- * more times and average itself into something blander. Larger spreads are offered the
- * extra fields they can actually fill.
+ * A smaller spread is not a different shape, it is less of the same shape. Tying the
+ * field set to the card count was itself a server-side judgement about how much a spread
+ * had to say, which is the model's call.
  */
-function outputContractFor(cardCount: number): string {
-  const tier = outputTierFor(cardCount);
-
-  const lines = [
-    "Return only one JSON object with exactly these fields:",
-    "{",
-    '  "directAnswer": string,',
-    '  "interpretation": string,',
-    '  "keyPatterns": [{ "cards": string, "meaning": string }],',
-  ];
-
-  if (tier === "compact") {
-    lines.push('  "timing": string | null');
-  } else {
-    lines.push('  "positiveFactors": string[],');
-    lines.push('  "challenges": string[],');
-    if (tier === "full") {
-      lines.push('  "development": string | null,');
-      lines.push('  "housesAndMirrors": [{ "house": string, "meaning": string }]');
-    } else {
-      lines.push('  "timing": string | null');
-    }
-  }
-  lines.push("}");
-
-  lines.push("- directAnswer answers the question directly in one or two sentences.");
-  lines.push("- interpretation is the reading itself as flowing prose. Give the spread the room it needs.");
-  lines.push('- keyPatterns lists only the structural patterns you actually used, naming the cards involved, for example "Clouds + Coffin: uncertainty sits next to closure".');
-  lines.push("- timing is null when the spread does not ground a timing.");
-
-  if (tier === "compact") {
-    lines.push("- This is a short spread. Say the one thing it says well. Do not manufacture balance, and do not repeat the interpretation as a list.");
-  } else {
-    lines.push("- positiveFactors lists what in the spread supports the outcome; challenges lists what works against it. Weigh both; do not report one side only.");
-    lines.push(tier === "full"
-      ? "- development is the overall direction of travel of this spread, or null when the spread grounds none."
-      : "- This is a 9-card grid. Weigh the rows, columns, diagonals and centre before concluding.");
-  }
-
-  lines.push("- Do not rename, add, or remove fields. Do not use Markdown fences.");
-  return lines.join("\n");
+const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
+{
+  "answer": string,
+  "reading": string,
+  "patterns": [{ "cards": string, "meaning": string }],
+  "timing": string | null
 }
+- answer answers the question directly in one or two sentences.
+- reading is the reading itself as flowing prose. Give the spread the room it needs; a large spread may need several paragraphs.
+- patterns lists the combinations and spatial patterns you actually used, naming the cards involved, for example "Clouds + Coffin: uncertainty sits next to closure". Use as many as the spread genuinely supports, and none if it supports none.
+- timing is null when the spread does not ground a timing.
+- Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
-/** Question frame, predicate, subjects and person bindings. Identical for every spread. */
+/**
+ * Question, situation and person bindings. Identical for every spread.
+ *
+ * The raw question goes to the model unparsed. Supplying a server-derived domain, subject,
+ * predicate or semantic frame told the model what the question was about before it had
+ * read it, and the model already has the question itself.
+ */
 function simplePromptHeader(context: ReadingContext): string {
-  const semantic = context.semanticQuestion
-    ? `Semantic question frame: mode=${context.semanticQuestion.mode}; domain=${context.semanticQuestion.domain}; subject=${context.semanticQuestion.subject || "not specified"}; counterparty=${context.semanticQuestion.counterparty || "not specified"}; predicate=${context.semanticQuestion.predicate}; timeframe=${context.semanticQuestion.timeframe ? `${context.semanticQuestion.timeframe.value} ${context.semanticQuestion.timeframe.unit}` : "none"}.`
-    : `Question frame (${context.questionDomain}): ${context.questionFrame}`;
-  const answerFocus = `Required answer focus: preserve the exact outcome or state requested by this question; do not replace it with a related question.\nQuestion predicate: ${context.semanticQuestion?.predicate || context.question}`;
   const situation = context.situationContext.trim()
-    ? `\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
+    ? `\n\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
     : "";
-  const subjects = `\nQuestion subjects: ${context.questionSubjects.length > 0 ? context.questionSubjects.join(", ") : "not explicitly named"}.`;
-  const personBindings = `\nPerson bindings:\n${([28, 29] as const).map((cardId) => {
+  const personBindings = `\n\nPerson bindings:\n${([28, 29] as const).map((cardId) => {
     const binding = context.personBindings.find((item) => item.cardId === cardId);
     const label = cardId === 28 ? "Man" : "Woman";
     return binding
       ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
       : `- ${label}: unbound`;
   }).join("\n")}`;
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}\n\n${semantic}\n${answerFocus}${subjects}${personBindings}${situation}`;
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}${personBindings}${situation}`;
 }
 
 const SYNTHESIS_CONTRACT = `Synthesis contract:
 - Read the complete spread yourself. The server has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair for you, and has not ranked the cards. Weigh the spread with traditional Lenormand technique and decide which cards, combinations and spatial relationships answer this question.
-- Geometry fidelity. You may only assert a spatial relationship that appears in the structural facts above. Two cards that merely both appear somewhere in the spread are not a combination. Never invent adjacency, mirroring, a row, a column, a diagonal, house occupancy or a position.
+- Geometry fidelity. The coordinates above are authoritative. Derive adjacency, rows, columns, diagonals, knight's moves, mirroring and distances from them yourself; the server does not precompute these for you. Never invent a position, a house or a spatial relationship that the coordinates do not support.
 - Adjacency is not a causal chain. Adjacent cards qualify and combine with each other; that A sits next to B does not establish that A causes B, nor that B causes whatever follows it. Do not infer the absence of recovery, reconciliation, return or any other outcome merely because a particular positive card was not drawn.
 - Calibrate certainty to the spread. Avoid absolute wording such as "final", "fated", "certain", "irreversible" or "no possibility of repair" unless the spread structure itself clearly supports that level of certainty.
 - Position roles that the spread itself defines may be used; interpretive hierarchy the spread does not define may not be invented.
 - Read Man and Woman as person cards only where the person bindings above bind them. An unbound card stays an unassigned person-card reference, never a partner, spouse or pronoun.
 - Preserve the exact question subject and predicate. Do not replace a wellbeing, relocation, work or relationship question with another kind of question.
 - Do not invent cards, people, facts, exact timing, dates, prerequisites or implementation details. Leave timing null when the spread does not ground it.
-- Answer the user's exact question directly in the first sentence of directAnswer.
+- Answer the user's exact question directly in the first sentence of the answer field.
 - If the question naturally calls for a yes/no answer, give the clearest yes/no conclusion supported by the spread. If it asks how, why, what, which, or requests guidance, answer that question directly instead.
 - Use one coherent synthesis, not a card inventory. Mention a card by name only when it materially advances the reading.`;
 
@@ -415,7 +286,7 @@ Structural facts (deterministic; complete for this spread):
 ${buildSpreadFacts(context)}
 
 ${SYNTHESIS_CONTRACT}
-${outputContractFor(context.cards.length)}`;
+${OUTPUT_CONTRACT}`;
 }
 
 export function sanitizeQuestion(question: string): string {

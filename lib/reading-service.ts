@@ -7,17 +7,17 @@ import {
   SimpleAnswerSchema,
   SimpleAnswerTransportSchema,
   findProseInvariantViolation,
-  type HouseMirror,
-  type KeyPattern,
+  type Pattern,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
 import { findInventedCards } from "@/lib/invented-cards";
+import { findFalseGeometryClaims } from "@/lib/geometry-claims";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
   | { ok: true; reading: string }
-  | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
+  | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card" | "false-geometry"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
   context: ReadingContext;
@@ -68,6 +68,17 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
         diagnostics: result.diagnostics,
       };
     }
+
+    const falseGeometry = findFalseGeometryClaims(result.answer, options.context);
+    if (falseGeometry.length > 0) {
+      return {
+        ok: false,
+        reason: "false-geometry",
+        issues: falseGeometry.map((message) => ({ type: "false_geometry" as const, message })),
+        diagnostics: result.diagnostics,
+      };
+    }
+
     return { ok: true, reading: renderSimpleAnswer(result.answer) };
   }
   return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
@@ -124,8 +135,7 @@ function answerFromText(raw: string): ReturnType<typeof SimpleAnswerSchema.parse
 function recoverAnswer(object: Record<string, unknown>): ReturnType<typeof SimpleAnswerSchema.parse> | null {
   const tolerantCandidate = {
     ...object,
-    cards: Array.isArray(object.cards) ? object.cards : [],
-    housesAndMirrors: Array.isArray(object.housesAndMirrors) ? object.housesAndMirrors : [],
+    patterns: Array.isArray(object.patterns) ? object.patterns : [],
   };
   const parsed = SimpleAnswerTransportSchema.safeParse(tolerantCandidate);
   if (!parsed.success) return null;
@@ -144,55 +154,32 @@ function normalizeSimpleAnswer(
 ): ReturnType<typeof SimpleAnswerSchema.parse> {
   return SimpleAnswerSchema.parse({
     ...raw,
-    positiveFactors: normalizeLines(raw.positiveFactors),
-    challenges: normalizeLines(raw.challenges),
-    keyPatterns: (raw.keyPatterns ?? [])
-      .map(normalizeKeyPattern)
-      .filter((item): item is KeyPattern => item !== null),
-    development: normalizeTiming(raw.development),
+    patterns: (raw.patterns ?? [])
+      .map(normalizePattern)
+      .filter((item): item is Pattern => item !== null),
     timing: normalizeTiming(raw.timing),
-    housesAndMirrors: (raw.housesAndMirrors ?? [])
-      .map(normalizeHouseMirror)
-      .filter((item): item is HouseMirror => item !== null),
   });
 }
 
-function normalizeLines(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .filter((item): item is string => typeof item === "string")
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0);
-}
-
-function normalizeKeyPattern(value: unknown): KeyPattern | null {
+function normalizePattern(value: unknown): Pattern | null {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     const item = value as Record<string, unknown>;
     if (typeof item.cards === "string" && item.cards.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
       return { cards: item.cards.trim(), meaning: item.meaning.trim() };
     }
+    return null;
+  }
+
+  // Tolerate a plain "A + B: meaning" string so one malformed entry does not fail a reading.
+  if (typeof value === "string") {
+    const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
+    if (match) return { cards: match[1].trim(), meaning: match[2].trim() };
   }
   return null;
 }
 
 function normalizeTiming(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
-}
-
-function normalizeHouseMirror(value: unknown): HouseMirror | null {
-  if (value && typeof value === "object" && !Array.isArray(value)) {
-    const item = value as Record<string, unknown>;
-    if (typeof item.house === "string" && item.house.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
-      return { house: item.house.trim(), meaning: item.meaning.trim() };
-    }
-    return null;
-  }
-
-  if (typeof value === "string") {
-    const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
-    if (match) return { house: match[1].trim(), meaning: match[2].trim() };
-  }
-  return null;
 }
 
 function schemaIssue(error: unknown): ValidationIssue {

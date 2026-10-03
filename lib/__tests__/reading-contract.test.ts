@@ -172,23 +172,4 @@ describe("normalizeReadingRequest", () => {
     });
   });
 
-  describe("comboHints", () => {
-    it("builds empty comboHints for single-card spread", () => {
-      const body = validBody({ spreadId: "single-card", cards: [{ id: 1, name: "", position: 0 }] });
-      const result = normalizeReadingRequest(body, cardsMap);
-      expect(result.comboHints).toEqual([]);
-    });
-
-    it("builds comboHints for multi-card spread", () => {
-      const body = validBody({
-        cards: [
-          { id: 1, name: "", position: 0 },
-          { id: 2, name: "", position: 1 },
-          { id: 3, name: "", position: 2 },
-        ],
-      });
-      const result = normalizeReadingRequest(body, cardsMap);
-      expect(Array.isArray(result.comboHints)).toBe(true);
-    });
-  });
 });

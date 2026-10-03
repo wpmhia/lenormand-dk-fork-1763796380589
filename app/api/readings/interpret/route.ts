@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext, null, false);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     generationStartedAt = Date.now();
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     }
     if (!serviceResult.ok) {
       console.error("interpret: structured output failed", {
-        phase: serviceResult.reason === "invented-card" ? "invented-card" : "structured-output",
+        phase: serviceResult.reason,
         spreadId: validated.spreadId,
         cardCount: cardCount,
         issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),

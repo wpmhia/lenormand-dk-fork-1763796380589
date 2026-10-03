@@ -116,9 +116,9 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
   });
 
   it("returns the structured JSON contract instead of markdown pseudo-headings", () => {
-    expect(prompt).toContain('"directAnswer": string');
-    expect(prompt).toContain('"interpretation": string');
-    expect(prompt).toContain('"keyPatterns"');
+    expect(prompt).toContain('"answer": string');
+    expect(prompt).toContain('"reading": string');
+    expect(prompt).toContain('"patterns"');
     expect(prompt).toContain('"timing": string | null');
     expect(prompt).not.toMatch(/## Interpretation/i);
     expect(prompt).not.toMatch(/## Prediction/i);
@@ -131,9 +131,10 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
     expect(prompt).toMatch(/merely because a particular positive card was not drawn/);
   });
 
-  it("keeps the geometry-fidelity rule that forbids invented spatial relations", () => {
+  it("keeps the geometry-fidelity rule, now framed as derive-don't-invent", () => {
     expect(prompt).toMatch(/Geometry fidelity\./);
-    expect(prompt).toMatch(/Two cards that merely both appear somewhere in the spread are not a combination/);
+    expect(prompt).toMatch(/The coordinates above are authoritative/);
+    expect(prompt).toMatch(/Never invent a position, a house or a spatial relationship/);
   });
 });
 
