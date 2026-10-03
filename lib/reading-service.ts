@@ -8,14 +8,16 @@ import {
   SimpleAnswerTransportSchema,
   findProseInvariantViolation,
   type HouseMirror,
+  type KeyPattern,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
+import { findInventedCards } from "@/lib/invented-cards";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
   | { ok: true; reading: string }
-  | { ok: false; reason: "empty-output" | "schema-mismatch"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
+  | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
   context: ReadingContext;
@@ -53,13 +55,27 @@ export function resolveThinkingMode(cardCount: number): { type: "enabled" | "dis
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const result = await generateOnce(options);
   if (result.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
-  if (result.kind === "valid") return { ok: true, reading: renderSimpleAnswer(result.answer) };
+  if (result.kind === "valid") {
+    const invented = findInventedCards(result.answer, options.context.cards.map((card) => card.id));
+    if (invented.length > 0) {
+      return {
+        ok: false,
+        reason: "invented-card",
+        issues: [{
+          type: "invented_card",
+          message: `Reading names ${invented.length} card(s) that were not drawn: ${invented.join(", ")}`,
+        }],
+        diagnostics: result.diagnostics,
+      };
+    }
+    return { ok: true, reading: renderSimpleAnswer(result.answer) };
+  }
   return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
 }
 
 type GenerationAttempt =
   | { kind: "empty" }
-  | { kind: "valid"; answer: ReturnType<typeof SimpleAnswerSchema.parse> }
+  | { kind: "valid"; answer: ReturnType<typeof SimpleAnswerSchema.parse>; diagnostics?: StructuredOutputDiagnostics }
   | { kind: "invalid"; error: unknown; diagnostics: StructuredOutputDiagnostics };
 
 type StructuredOutputDiagnostics = {
@@ -84,7 +100,7 @@ async function generateOnce(options: ReadingServiceOptions): Promise<GenerationA
 
   const diagnostics: StructuredOutputDiagnostics = { finishReason: result.finishReason, rawShape: describeRawOutput(raw) };
   const answer = answerFromText(raw);
-  if (answer) return { kind: "valid", answer };
+  if (answer) return { kind: "valid", answer, diagnostics };
   return { kind: "invalid", error: new Error("Model output was not a usable reading object"), diagnostics };
 }
 
@@ -128,6 +144,12 @@ function normalizeSimpleAnswer(
 ): ReturnType<typeof SimpleAnswerSchema.parse> {
   return SimpleAnswerSchema.parse({
     ...raw,
+    positiveFactors: normalizeLines(raw.positiveFactors),
+    challenges: normalizeLines(raw.challenges),
+    keyPatterns: (raw.keyPatterns ?? [])
+      .map(normalizeKeyPattern)
+      .filter((item): item is KeyPattern => item !== null),
+    development: normalizeTiming(raw.development),
     cards: (raw.cards ?? [])
       .map(normalizeCard)
       .filter((item): item is { combination: string; meaning: string } => item !== null),
@@ -136,6 +158,24 @@ function normalizeSimpleAnswer(
       .map(normalizeHouseMirror)
       .filter((item): item is HouseMirror => item !== null),
   });
+}
+
+function normalizeLines(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+}
+
+function normalizeKeyPattern(value: unknown): KeyPattern | null {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const item = value as Record<string, unknown>;
+    if (typeof item.cards === "string" && item.cards.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
+      return { cards: item.cards.trim(), meaning: item.meaning.trim() };
+    }
+  }
+  return null;
 }
 
 function normalizeCard(value: unknown): { combination: string; meaning: string } | null {
