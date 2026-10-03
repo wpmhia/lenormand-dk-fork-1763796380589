@@ -1,10 +1,12 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import { outputTierFor } from "@/lib/simple-answer";
+import { adjacentPairs, diagonalLines, gridRelation, knightPairs } from "@/lib/spread-geometry";
 import type {
   ReadingContext,
   GrandTableauLayout,
   LinearSentenceLayout,
   PetitTableauLayout,
+  SignificatorInfo,
 } from "@/lib/reading-context";
 
 /**
@@ -184,14 +186,8 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
   facts.push(`Row 2: ${cell(1, 0)} | ${cell(1, 1)} | ${cell(1, 2)}`);
   facts.push(`Row 3: ${cell(2, 0)} | ${cell(2, 1)} | ${cell(2, 2)}`);
   facts.push(`Geometric centre: position ${layout.center.index + 1} (Row 2, Column 2) = ${fmtCell(layout.center.card, layout.center.index + 1)}`);
-  facts.push(`Columns: left ${cell(0, 0)} | ${cell(1, 0)} | ${cell(2, 0)}`);
-  facts.push(`  middle ${cell(0, 1)} | ${cell(1, 1)} | ${cell(2, 1)}`);
-  facts.push(`  right ${cell(0, 2)} | ${cell(1, 2)} | ${cell(2, 2)}`);
-  facts.push(`Diagonals: main ${cell(0, 0)} | ${cell(1, 1)} | ${cell(2, 2)}`);
-  facts.push(`  other ${cell(0, 2)} | ${cell(1, 1)} | ${cell(2, 0)}`);
-  const pairs = geometricPairs(context);
-  facts.push(`Adjacent pairs in this grid, ${pairs.length} in total (every horizontal and vertical neighbour):`);
-  for (const pair of pairs) facts.push(`- ${pairLine(context, pair.indexA, pair.indexB)}`);
+  facts.push(...columnFacts(context, PETIT_GRID, PETIT_GRID));
+  facts.push(...geometryFacts(context, PETIT_GRID, PETIT_GRID));
   facts.push("This grid defines no closing position and no outcome position; weigh the spread yourself.");
   return facts;
 }
@@ -204,21 +200,32 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
 
   facts.push("");
   facts.push("Significators:");
-  for (const [label, cardId, significator] of [
-    ["Man", 28, layout.significators.man],
-    ["Woman", 29, layout.significators.woman],
-  ] as const) {
-    if (!significator) {
-      facts.push(`- ${label}: not present in this spread`);
+  const significatorRows: { label: string; cardId: 28 | 29; info: SignificatorInfo | undefined }[] = [
+    { label: "Man", cardId: 28, info: layout.significators.man },
+    { label: "Woman", cardId: 29, info: layout.significators.woman },
+  ];
+  for (const { label, cardId, info } of significatorRows) {
+    if (!info) {
+      facts.push(`- ${label}: not in this spread`);
       continue;
     }
-    const row = Math.floor(significator.index / GT_GRID_COLUMNS) + 1;
-    const column = (significator.index % GT_GRID_COLUMNS) + 1;
-    const houseName = layout.houses[significator.index]?.houseName ?? "unknown";
+    const row = Math.floor(info.index / GT_GRID_COLUMNS) + 1;
+    const column = (info.index % GT_GRID_COLUMNS) + 1;
+    const houseName = layout.houses[info.index]?.houseName ?? "unknown";
     const binding = context.personBindings.find((item) => item.cardId === cardId);
-    facts.push(`- ${label}: position ${significator.index + 1}, Row ${row}, Column ${column}, sitting on the ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
+    facts.push(`- ${label}: position ${info.index + 1}, Row ${row}, Column ${column}, sitting on the ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
   }
-  facts.push(`- Significator selection: ${layout.significatorPreference === "both" ? "both Man and Woman; read each one's own neighbourhood, and do not treat them as a pair with each other" : layout.significatorPreference === "man" ? "Man" : "Woman"}`);
+  const man = layout.significators.man;
+  const woman = layout.significators.woman;
+  if (man && woman) {
+    const relation = gridRelation(man.index, woman.index, GT_GRID_COLUMNS);
+    facts.push(`- Man to Woman: ${relation.label} (Man Row ${Math.floor(man.index / GT_GRID_COLUMNS) + 1} Column ${(man.index % GT_GRID_COLUMNS) + 1}, Woman Row ${Math.floor(woman.index / GT_GRID_COLUMNS) + 1} Column ${(woman.index % GT_GRID_COLUMNS) + 1}; ${Math.abs(relation.rowDelta)} row(s) and ${Math.abs(relation.columnDelta)} column(s) apart)`);
+  }
+  if (layout.significatorPreference === "both") {
+    facts.push("- Both significators are in this spread. Read each one's own surroundings, and weigh any spatial relation between them that is listed above.");
+  } else {
+    facts.push(`- Significator focus: ${layout.significatorPreference === "man" ? "Man" : "Woman"}. The other person card is still present in the grid above as an ordinary card.`);
+  }
 
   facts.push("");
   facts.push("Houses (position N belongs to the card in house order; the occupying card is what was drawn on it):");
@@ -226,11 +233,11 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
     facts.push(`- position ${house.position}: ${house.houseName} house, occupied by ${fmtCell(house.occupyingCard, house.position)}`);
   }
 
-  const adjacencies = geometricPairs(context);
   facts.push("");
-  facts.push(`Verified spatial relations (complete):`);
-  facts.push(`Adjacent pairs, ${adjacencies.length} in total (every horizontal and vertical neighbour):`);
-  for (const pair of adjacencies) facts.push(`- ${pairLine(context, pair.indexA, pair.indexB)}`);
+  facts.push(`Verified spatial relations (complete for this ${GT_GRID_ROWS}x${GT_GRID_COLUMNS} grid):`);
+  facts.push(...columnFacts(context, GT_GRID_ROWS, GT_GRID_COLUMNS));
+  facts.push(...geometryFacts(context, GT_GRID_ROWS, GT_GRID_COLUMNS));
+
   if (layout.mirrors.length > 0) {
     facts.push(`Mirrored across a significator, ${layout.mirrors.length} in total:`);
     for (const mirror of layout.mirrors) {
@@ -238,6 +245,48 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
     }
   }
   facts.push("This grid is 4 rows of 9. It defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
+  return facts;
+}
+
+/** Column-major view of a grid, so a reader can traverse a column without reassembling pairs. */
+function columnFacts(context: ReadingContext, rowCount: number, columnCount: number): string[] {
+  const facts: string[] = [`Columns (top to bottom), ${columnCount} in total:`];
+  for (let column = 0; column < columnCount; column++) {
+    const cells = Array.from({ length: rowCount }, (_, row) => row * columnCount + column);
+    facts.push(`- column ${column + 1}: ${cells.map((cell) => fmtCell(context.cards[cell], cell + 1)).join(" + ")}`);
+  }
+  return facts;
+}
+
+/**
+ * Every positional relation the grid defines, with nothing added and nothing left out.
+ *
+ * Reporting only orthogonal neighbours used to hide diagonals, knight's moves and the
+ * distance between two significators from the model, which are all facts a reader checks
+ * and none of which the server is entitled to interpret.
+ */
+function geometryFacts(context: ReadingContext, rowCount: number, columnCount: number): string[] {
+  const neighbours = adjacentPairs(rowCount, columnCount);
+  const diagonals = diagonalLines(rowCount, columnCount);
+  const knights = knightPairs(rowCount, columnCount);
+  const facts: string[] = [];
+
+  facts.push(`Adjacent pairs, ${neighbours.length} in total (every horizontal and vertical neighbour):`);
+  for (const { a, b } of neighbours) {
+    if (b < context.cards.length) facts.push(`- ${a + 1}+${b + 1}: ${fmtCell(context.cards[a], a + 1)} + ${fmtCell(context.cards[b], b + 1)}`);
+  }
+
+  facts.push(`Diagonal lines, ${diagonals.length} in total (each line read left to right):`);
+  for (const line of diagonals) {
+    const slope = line.slope === 1 ? "down-right" : "down-left";
+    facts.push(`- diagonal ${slope}: ${line.cells.map((cell) => fmtCell(context.cards[cell], cell + 1)).join(" + ")}`);
+  }
+
+  facts.push(`Knight's moves, ${knights.length} in total:`);
+  for (const { a, b } of knights) {
+    facts.push(`- knight: ${a + 1}<->${b + 1}: ${fmtCell(context.cards[a], a + 1)} <-> ${fmtCell(context.cards[b], b + 1)}`);
+  }
+
   return facts;
 }
 
