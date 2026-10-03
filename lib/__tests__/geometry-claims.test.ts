@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validateRelation, findFalseGeometryClaims, geometryOf, type LayoutGeometry } from "@/lib/geometry-claims";
+import { validateRelation, findInvalidGeometryPatterns, geometryOf, type LayoutGeometry } from "@/lib/geometry-claims";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { SimpleAnswerSchema, type PatternRelation } from "@/lib/simple-answer";
@@ -124,17 +124,17 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
 
   it("accepts a true claim and rejects a false one for the same card pair", () => {
     const close = tableauAt({ 1: 0, 2: 1 }); // Rider and Clover adjacent
-    expect(findFalseGeometryClaims(answer([{ cards: ["Rider", "Clover"], relation: "adjacent", meaning: "x" }]), close)).toEqual([]);
+    expect(findInvalidGeometryPatterns(answer([{ cards: ["Rider", "Clover"], relation: "adjacent", meaning: "x" }]), close)).toEqual([]);
 
     const far = tableauAt({ 1: 0, 2: 30 });
-    expect(findFalseGeometryClaims(answer([{ cards: ["Rider", "Clover"], relation: "adjacent", meaning: "x" }]), far)).not.toEqual([]);
+    expect(findInvalidGeometryPatterns(answer([{ cards: ["Rider", "Clover"], relation: "adjacent", meaning: "x" }]), far)).not.toEqual([]);
   });
 
   it("never scans prose for relation words", () => {
     const context = tableauAt({ 1: 0, 2: 30 });
     // "next to" appears only in the meaning, and the declared relation is combination.
     expect(
-      findFalseGeometryClaims(
+      findInvalidGeometryPatterns(
         answer([{ cards: ["Rider", "Clover"], relation: "combination", meaning: "uncertainty sits next to closure" }]),
         context,
       ),
@@ -150,7 +150,7 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     }));
     const petit = buildReadingContext("comprehensive", "Q?", cards, cardsMap);
     expect(
-      findFalseGeometryClaims(answer([{ cards: ["Rider", "Clover"], relation: "house", meaning: "x" }]), petit),
+      findInvalidGeometryPatterns(answer([{ cards: ["Rider", "Clover"], relation: "house", meaning: "x" }]), petit),
     ).not.toEqual([]);
   });
 
@@ -158,7 +158,7 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     // Rider at row 1 col 1, and two filler cards placed down column 1: indices 0, 9, 18.
     const column = tableauAt({ 1: 0, 2: 9, 3: 18 });
     expect(
-      findFalseGeometryClaims(
+      findInvalidGeometryPatterns(
         answer([{ cards: ["Rider", "Clover", "Ship"], relation: "column", meaning: "x" }]),
         column,
       ),
@@ -166,17 +166,31 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
 
     // The same three cards called a diagonal do not form one.
     expect(
-      findFalseGeometryClaims(
+      findInvalidGeometryPatterns(
         answer([{ cards: ["Rider", "Clover", "Ship"], relation: "diagonal", meaning: "x" }]),
         column,
       ),
     ).not.toEqual([]);
   });
 
+  it("reports the offending pattern by index so exactly that one can be dropped", () => {
+    const context = tableauAt({ 1: 0, 2: 30 });
+    const invalid = findInvalidGeometryPatterns(
+      answer([
+        { cards: ["Rider", "Clover"], relation: "combination", meaning: "kept" },
+        { cards: ["Rider", "Clover"], relation: "adjacent", meaning: "dropped" },
+      ]),
+      context,
+    );
+    expect(invalid).toHaveLength(1);
+    expect(invalid[0].index).toBe(1);
+    expect(invalid[0].message).toMatch(/adjacent/);
+  });
+
   it("ignores a claim naming a card that was not drawn", () => {
     const context = tableauAt({ 1: 0 });
     expect(
-      findFalseGeometryClaims(answer([{ cards: ["Rider", "Nothing"], relation: "knight", meaning: "x" }]), context),
+      findInvalidGeometryPatterns(answer([{ cards: ["Rider", "Nothing"], relation: "knight", meaning: "x" }]), context),
     ).toEqual([]);
   });
 });

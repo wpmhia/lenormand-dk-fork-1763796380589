@@ -168,6 +168,14 @@ describe("buildSpreadFacts: the Grand Tableau supplies coordinates, not relation
     expect(lines).toHaveLength(36);
   });
 
+  it("also lays the grid out as visual rows, for reliable model reading", () => {
+    const rowLines = facts.split("\n").filter((line) => /^Row \d+: /.test(line));
+    expect(rowLines).toHaveLength(4);
+    expect(rowLines[0]).toMatch(/^Row 1: .+ \| .+ \| /);
+    // The row view is the same cards, not a relation list.
+    expect(rowLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
+  });
+
   it("reports the exact grid coordinate for every card", () => {
     const cards = draw(36, 13);
     for (let index = 0; index < 36; index++) {
@@ -212,6 +220,10 @@ describe("buildSpreadFacts: the Petit Tableau supplies coordinates", () => {
 
   it("supplies one coordinate line per card", () => {
     expect(facts.split("\n").filter((line) => /^- \d+: .+, row \d+, col \d+$/.test(line))).toHaveLength(9);
+  });
+
+  it("also lays the grid out as visual rows", () => {
+    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(3);
   });
 
   it("still names the geometric centre", () => {

@@ -13,12 +13,12 @@ import {
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
 import { findInventedCards } from "@/lib/invented-cards";
-import { findFalseGeometryClaims } from "@/lib/geometry-claims";
+import { findInvalidGeometryPatterns } from "@/lib/geometry-claims";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
-  | { ok: true; reading: string }
-  | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card" | "false-geometry"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
+  | { ok: true; reading: string; droppedGeometryPatterns: string[] }
+  | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
   context: ReadingContext;
@@ -70,17 +70,22 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
       };
     }
 
-    const falseGeometry = findFalseGeometryClaims(result.answer, options.context);
-    if (falseGeometry.length > 0) {
-      return {
-        ok: false,
-        reason: "false-geometry",
-        issues: falseGeometry.map((message) => ({ type: "false_geometry" as const, message })),
-        diagnostics: result.diagnostics,
-      };
-    }
+    // A false spatial claim is repaired locally: drop the offending patterns and keep the
+    // reading. Rejecting the whole Grand Tableau over one mis-declared relation would throw
+    // away a usable reading for a detail.
+    const invalidGeometry = findInvalidGeometryPatterns(result.answer, options.context);
+    const answer = invalidGeometry.length === 0
+      ? result.answer
+      : {
+          ...result.answer,
+          patterns: result.answer.patterns.filter((_, index) => !invalidGeometry.some((item) => item.index === index)),
+        };
 
-    return { ok: true, reading: renderSimpleAnswer(result.answer) };
+    return {
+      ok: true,
+      reading: renderSimpleAnswer(answer),
+      droppedGeometryPatterns: invalidGeometry.map((item) => item.message),
+    };
   }
   return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
 }

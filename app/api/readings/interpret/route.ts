@@ -115,6 +115,16 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
+    // A mis-declared spatial pattern is dropped, not fatal. Log it so the rate is measurable.
+    if (serviceResult.droppedGeometryPatterns.length > 0) {
+      console.warn("interpret: dropped unsupported geometry patterns", {
+        spreadId: validated.spreadId,
+        cardCount: cardCount,
+        dropped: serviceResult.droppedGeometryPatterns,
+        elapsedMs: Date.now() - startedAt,
+      });
+    }
+
     await incrementReadingCount();
     return readingResponse(serviceResult.reading, rateLimitResult);
   } catch (error: any) {

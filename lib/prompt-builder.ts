@@ -149,9 +149,27 @@ function coordinateFacts(cards: ReadingContext["cards"], rowCount: number, colum
   });
 }
 
+/**
+ * The same grid laid out as visual rows.
+ *
+ * This is not interpretation and not a Lenormand rule: it is the identical deterministic
+ * geometry in a form a language model reads more reliably. Reconstructing a 4x9 grid from
+ * 36 coordinate lines while writing a long reading is exactly where a textual model slips;
+ * the coordinates stay too, because the validator and any finer claim still need them.
+ */
+function gridRowFacts(cards: ReadingContext["cards"], rowCount: number, columnCount: number): string[] {
+  const facts: string[] = [];
+  for (let row = 0; row < rowCount; row++) {
+    const cells = Array.from({ length: columnCount }, (_, column) => row * columnCount + column);
+    facts.push(`Row ${row + 1}: ${cells.map((cell) => fmtCard(cards[cell])).join(" | ")}`);
+  }
+  return facts;
+}
+
 function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): string[] {
   const facts = [
     `Petit Tableau, a 3x3 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
+    ...gridRowFacts(context.cards, PETIT_GRID, PETIT_GRID),
     ...coordinateFacts(context.cards, PETIT_GRID, PETIT_GRID),
     `Geometric centre: position ${layout.center.index + 1} (row 2, col 2).`,
     "This grid defines no closing position and no outcome position; weigh the spread yourself.",
@@ -162,6 +180,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
   const facts = [
     `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
+    ...gridRowFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS),
     ...coordinateFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS, (index) => layout.houses[index]?.houseName ?? "unknown"),
   ];
 
