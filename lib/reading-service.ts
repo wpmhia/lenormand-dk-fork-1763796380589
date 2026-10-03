@@ -11,6 +11,7 @@ import {
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
+import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
   | { ok: true; reading: string }
@@ -25,6 +26,28 @@ export interface ReadingServiceOptions {
   maxTokens: number;
   timeoutMs: number;
   signal?: AbortSignal;
+}
+
+/**
+ * DeepSeek thinking mode.
+ *
+ * The AI SDK defaults to `enabled`; this project previously forced `disabled` for
+ * every reading. Thinking is genuinely useful for a 36-card Grand Tableau, but it
+ * is not free to switch on: reasoning tokens are drawn from the same
+ * `maxOutputTokens` budget as the JSON body, and generation is capped at
+ * READING_GENERATION_TIMEOUT_MS (15s). Enabling it without raising both turns thin
+ * readings into truncated-JSON 502s and timeouts, so the default stays `off` and
+ * the A/B test is a single env var.
+ *
+ * DEEPSEEK_THINKING=auto  -> on for grand-tableau (36 cards), off otherwise
+ * DEEPSEEK_THINKING=on    -> always on
+ * DEEPSEEK_THINKING=off   -> always off (default)
+ */
+export function resolveThinkingMode(cardCount: number): { type: "enabled" | "disabled" } {
+  const configured = (process.env.DEEPSEEK_THINKING || "off").toLowerCase();
+  if (configured === "on" || configured === "enabled") return { type: "enabled" };
+  if (configured === "auto") return { type: cardCount >= GRAND_TABLEAU_CARD_COUNT ? "enabled" : "disabled" };
+  return { type: "disabled" };
 }
 
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
@@ -49,7 +72,7 @@ async function generateOnce(options: ReadingServiceOptions): Promise<GenerationA
     model: options.model,
     system: options.system,
     prompt: options.prompt,
-    providerOptions: { deepseek: { thinking: { type: "disabled" } } },
+    providerOptions: { deepseek: { thinking: resolveThinkingMode(options.cardCount) } },
     maxOutputTokens: options.maxTokens,
     maxRetries: 0,
     abortSignal: options.signal,
