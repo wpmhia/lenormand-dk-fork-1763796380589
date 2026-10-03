@@ -7,7 +7,7 @@ import {
   getTokenBudget,
 } from "@/lib/prompt-builder";
 import { findInventedCards } from "@/lib/invented-cards";
-import { SimpleAnswerSchema } from "@/lib/simple-answer";
+import { SimpleAnswerSchema, outputTierFor } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import { SPREAD_IDS, type SpreadId } from "@/lib/spread-definitions";
 import cardsData from "@/public/data/cards.json";
@@ -424,7 +424,6 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
     challenges: [] as string[],
     keyPatterns: [] as { cards: string; meaning: string }[],
     development: null as string | null,
-    cards: [] as { combination: string; meaning: string }[],
     timing: null as string | null,
     housesAndMirrors: [] as { house: string; meaning: string }[],
   };
@@ -448,9 +447,9 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
     ).toContain(10);
   });
 
-  it("rejects an undrawn card named in a key combination", () => {
+  it("rejects an undrawn card named in a key pattern label", () => {
     expect(
-      findInventedCards(answer({ cards: [{ combination: "Heart + Tower", meaning: "a collapse." }] }), drawn),
+      findInventedCards(answer({ keyPatterns: [{ cards: "Heart + Tower", meaning: "a collapse." }] }), drawn),
     ).toContain(19);
   });
 
@@ -654,6 +653,61 @@ describe("invariant 8: one universal prompt pipeline handles every spread", () =
     expect(text).toContain('"challenges": string[]');
     expect(text).toContain('"keyPatterns"');
     expect(text).toContain('"development": string | null');
+  });
+
+  // Output capacity scales with the spread. Offering a five-card line the full field set
+  // produced the same conclusion six times over, which the model then averaged into
+  // something blander than any single pass.
+  describe("output capacity scales with the spread", () => {
+    it("classifies spread sizes into compact, standard and full", () => {
+      expect(outputTierFor(1)).toBe("compact");
+      expect(outputTierFor(3)).toBe("compact");
+      expect(outputTierFor(5)).toBe("compact");
+      expect(outputTierFor(9)).toBe("standard");
+      expect(outputTierFor(36)).toBe("full");
+    });
+
+    it.each(["single-card", "daily-card", "sentence-3", "sentence-5"] as const)(
+      "asks %s for the compact contract only",
+      (id) => {
+        const count = ALL_SPREADS.find((s) => s.id === id)!.count;
+        const text = prompt(id, "How will my relationship develop?", draw(count));
+        expect(text).toContain('"keyPatterns"');
+        expect(text).toContain('"timing": string | null');
+        expect(text).not.toContain('"positiveFactors"');
+        expect(text).not.toContain('"challenges"');
+        expect(text).not.toContain('"development"');
+        expect(text).not.toContain('"housesAndMirrors"');
+      },
+    );
+
+    it("asks a 9-card grid for factors but not houses or development", () => {
+      const text = prompt("comprehensive", "How will my relationship develop?", draw(9));
+      expect(text).toContain('"positiveFactors": string[]');
+      expect(text).toContain('"challenges": string[]');
+      expect(text).not.toContain('"development"');
+      expect(text).not.toContain('"housesAndMirrors"');
+    });
+
+    it("asks a 36-card Grand Tableau for the full contract", () => {
+      const text = prompt("grand-tableau", "How will my relationship develop?", draw(36));
+      expect(text).toContain('"positiveFactors": string[]');
+      expect(text).toContain('"challenges": string[]');
+      expect(text).toContain('"development": string | null');
+      expect(text).toContain('"housesAndMirrors"');
+    });
+
+    it("never asks for the removed duplicate key-combinations field", () => {
+      for (const { id, count } of ALL_SPREADS) {
+        expect(prompt(id, "How will my relationship develop?", draw(count))).not.toContain('"combination"');
+      }
+    });
+
+    it("tells a short spread not to manufacture balance", () => {
+      expect(prompt("sentence-3", "How will my relationship develop?", draw(3))).toMatch(
+        /Say the one thing it says well/,
+      );
+    });
   });
 
   it("tells the model to weigh the whole spread and never invent structure", () => {

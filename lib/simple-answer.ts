@@ -15,29 +15,37 @@ export const KeyPatternSchema = z.object({
 export type KeyPattern = z.infer<typeof KeyPatternSchema>;
 
 /**
- * Presentation capacity for the model, not a reading methodology.
+ * Output capacity scales with the spread.
  *
- * A 36-card Grand Tableau cannot be carried honestly by `interpretation` alone: the
- * model compresses and the reading collapses into one dense paragraph. `positiveFactors`,
- * `challenges`, `keyPatterns` and `development` give it somewhere to put the converging
- * and conflicting lines it is supposed to weigh. The server preselects none of it.
+ * A five-card line carries one linear story. Asking the model to also fill
+ * positiveFactors, challenges, keyPatterns, development, cards and housesAndMirrors does
+ * not produce a richer reading; it produces the same conclusion six times over, which
+ * the model then averages into something blander and less committed than any one pass.
+ * Each spread size is therefore offered only the fields that can carry something the
+ * prose cannot already say.
  *
- * Everything here is optional at the model boundary so a missing field degrades to `[]`
- * or `null` rather than failing the whole reading.
+ * `cards` is gone entirely: it duplicated `keyPatterns`, which already binds a named
+ * combination to its meaning.
+ */
+export type OutputTier = "compact" | "standard" | "full";
+
+export function outputTierFor(cardCount: number): OutputTier {
+  if (cardCount <= 5) return "compact";
+  if (cardCount <= 9) return "standard";
+  return "full";
+}
+
+/**
+ * Everything past `directAnswer`/`interpretation` is optional at the model boundary so a
+ * field the model did not fill degrades to `[]` or `null` instead of failing the reading.
  */
 export const ModelAnswerSchema = z.object({
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
+  keyPatterns: z.array(KeyPatternSchema).optional(),
   positiveFactors: z.array(z.string()).optional(),
   challenges: z.array(z.string()).optional(),
-  keyPatterns: z.array(KeyPatternSchema).optional(),
   development: z.string().nullable().optional(),
-  cards: z.array(
-    z.object({
-      combination: z.string().min(1),
-      meaning: z.string().min(1),
-    }),
-  ).optional(),
   timing: z.string().nullable().optional(),
   housesAndMirrors: z.array(HouseMirrorSchema).optional(),
 });
@@ -45,11 +53,10 @@ export const ModelAnswerSchema = z.object({
 export const SimpleAnswerSchema = z.object({
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
+  keyPatterns: z.array(KeyPatternSchema).default([]),
   positiveFactors: z.array(z.string()).default([]),
   challenges: z.array(z.string()).default([]),
-  keyPatterns: z.array(KeyPatternSchema).default([]),
   development: z.string().nullable().default(null),
-  cards: z.array(z.object({ combination: z.string().min(1), meaning: z.string().min(1) })).default([]),
   timing: z.string().nullable().default(null),
   housesAndMirrors: z.array(HouseMirrorSchema).default([]),
 });
@@ -57,11 +64,10 @@ export const SimpleAnswerSchema = z.object({
 export const SimpleAnswerTransportSchema = z.object({
   directAnswer: z.string().min(1),
   interpretation: z.string().min(1),
+  keyPatterns: z.array(z.unknown()).default([]),
   positiveFactors: z.array(z.unknown()).default([]),
   challenges: z.array(z.unknown()).default([]),
-  keyPatterns: z.array(z.unknown()).default([]),
   development: z.unknown().optional(),
-  cards: z.array(z.unknown()).default([]),
   timing: z.unknown().optional(),
   housesAndMirrors: z.array(z.unknown()).default([]),
 });
@@ -80,11 +86,10 @@ export function findProseInvariantViolation(answer: SimpleAnswer): string | null
   const prose = [
     answer.directAnswer,
     answer.interpretation,
+    ...answer.keyPatterns.flatMap((pattern) => [pattern.cards, pattern.meaning]),
     ...answer.positiveFactors,
     ...answer.challenges,
-    ...answer.keyPatterns.flatMap((pattern) => [pattern.cards, pattern.meaning]),
     answer.development || "",
-    ...answer.cards.flatMap((card) => [card.combination, card.meaning]),
     answer.timing || "",
     ...answer.housesAndMirrors.flatMap((item) => [item.house, item.meaning]),
   ].join("\n");
@@ -97,19 +102,23 @@ function section(title: string, items: string[]): string {
   return `\n\n## ${title}\n${items.map((item) => `- ${item}`).join("\n")}`;
 }
 
+/**
+ * Renders only the sections that carry content. Because the request contract already
+ * withholds fields a small spread cannot fill, a five-card reading renders as Answer,
+ * Reading, Key patterns and Timing, with no empty headings and no restated conclusion.
+ */
 export function renderSimpleAnswer(answer: SimpleAnswer): string {
-  const positives = section("Positive factors", answer.positiveFactors);
-  const challenges = section("Challenges", answer.challenges);
   const patterns = section(
     "Key patterns",
     answer.keyPatterns.map((pattern) => `**${pattern.cards}**: ${pattern.meaning}`),
   );
+  const positives = section("Positive factors", answer.positiveFactors);
+  const challenges = section("Challenges", answer.challenges);
   const development = answer.development ? `\n\n## Development\n${answer.development}` : "";
-  const cards = section("Key combinations", answer.cards.map((card) => `**${card.combination}**: ${card.meaning}`));
   const timing = answer.timing ? `\n\n## Timing\n${answer.timing}` : "";
   const houses = section(
     "Houses and mirrors",
     answer.housesAndMirrors.map((item) => `**${item.house}**: ${item.meaning}`),
   );
-  return `## Answer\n${answer.directAnswer}\n\n## Reading\n${answer.interpretation}${positives}${challenges}${patterns}${development}${cards}${timing}${houses}`;
+  return `## Answer\n${answer.directAnswer}\n\n## Reading\n${answer.interpretation}${patterns}${positives}${challenges}${development}${timing}${houses}`;
 }
