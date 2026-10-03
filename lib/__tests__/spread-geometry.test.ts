@@ -137,12 +137,17 @@ describe("spread-geometry: relations are described, never interpreted", () => {
     expect(gridRelation(3, 4, 9).distance).toBe(1);
   });
 
-  it("assigns no meaning to any relation", () => {
-    const labels = [0, 1, 5, 9, 14, 18, 27, 35].flatMap((a) =>
-      [0, 1, 5, 9, 14, 18, 27, 35].map((b) => gridRelation(a, b, 9).label),
-    );
+  /**
+   * The module may compute relations but never rank or interpret them. If any of this
+   * vocabulary appears in the exported labels, an expert engine has crept back in.
+   */
+  it("exposes only coordinate and relation vocabulary, never judgement", () => {
+    const indices = [0, 1, 5, 9, 10, 14, 18, 27, 35];
+    const labels = indices.flatMap((a) => indices.map((b) => gridRelation(a, b, 9).label));
     for (const label of labels) {
-      expect(label).not.toMatch(/means|indicates|suggests|good|bad|positive|negative|luck/i);
+      expect(label).not.toMatch(
+        /means|indicates|suggests|good|bad|positive|negative|luck|important|primary|focus|stronger|outcome|weight|should|must|tradition/i,
+      );
     }
   });
 });

@@ -22,89 +22,109 @@ export interface SpreadDefinition {
   id: SpreadId;
   cardCount: number;
   label: string;
+  /** What the reader does. Describes the method the model is actually given. */
   description: string;
   layoutType: LayoutType;
-  isAuthentic: boolean;
+  /**
+   * "traditional" (a spread with established Lenormand usage) or "modern" (a house
+   * construct). This replaces the old `isAuthentic` boolean, which read as if a modern
+   * spread were somehow invalid.
+   */
+  tradition: "traditional" | "modern";
   order: number;
   positions?: SpreadPosition[];
 }
 
+/**
+ * The single canonical description of every spread: what it is, what it means
+ * positionally, and how the server lays it out.
+ *
+ * This is deliberately the same method the reading prompt receives. The prompt supplies
+ * coordinates and, for linear spreads, these position labels; it never asserts a
+ * "main line", an "outcome slot" or a deterministic sequence of cause and effect, and
+ * neither may this file. When pedagogy and production disagree, the product teaches one
+ * method while the model reads another.
+ */
 export const SPREAD_DEFINITIONS = {
   "single-card": {
     id: "single-card",
     cardCount: 1,
     label: "Single Card",
-    description: "Quick daily guidance - direct answer, immediate action",
+    description: "One card, read directly against your question.",
     layoutType: "single",
-    isAuthentic: true,
+    tradition: "traditional",
     order: 1,
   } as const,
   "daily-card": {
     id: "daily-card",
     cardCount: 1,
     label: "Daily Card",
-    description: "A single card for today's guidance",
+    description: "A single card for today.",
     layoutType: "single",
-    isAuthentic: true,
+    tradition: "modern",
     order: 0,
   } as const,
   "sentence-3": {
     id: "sentence-3",
     cardCount: 3,
     label: "3-Card Sentence",
-    description: "Opening, turning point, and outcome with timing and action guidance",
+    description:
+      "Three cards read left to right as one sentence. Opening, central and closing are positional descriptors, not a guaranteed sequence of cause and effect.",
     layoutType: "linear-sentence",
-    isAuthentic: true,
+    tradition: "traditional",
     order: 2,
     positions: [
-      { index: 0, label: "Opening Card", meaning: "The subject or starting point of the situation" },
-      { index: 1, label: "Central Card", meaning: "The core action, challenge, or turning point" },
-      { index: 2, label: "Closing Card", meaning: "The outcome or resolution; check the mirror relationship with the central card" },
+      { index: 0, label: "Opening", meaning: "The first position in the line - where the sentence opens." },
+      { index: 1, label: "Central", meaning: "The middle position - the point the line turns on." },
+      { index: 2, label: "Closing", meaning: "The final position - where the line currently leads, not a guaranteed conclusion." },
     ],
   } as const,
   "sentence-5": {
     id: "sentence-5",
     cardCount: 5,
-    label: "5-Card Sentence Reading",
-    description: "Extended narrative using pair-reading technique - Lenormand's flexible approach for more complex situations",
+    label: "5-Card Sentence",
+    description:
+      "Five cards read left to right as one connected sentence. Each card modifies the next; no card holds a fixed role.",
     layoutType: "linear-sentence",
-    isAuthentic: false,
+    tradition: "modern",
     order: 3,
     positions: [
-      { index: 0, label: "Subject", meaning: "Who or what the reading is about - the main person or situation" },
-      { index: 1, label: "Action", meaning: "What is happening, being done, or influencing the subject" },
-      { index: 2, label: "Focus", meaning: "The heart of the matter - the central action or key event" },
-      { index: 3, label: "Development", meaning: "How the situation unfolds or what comes next" },
-      { index: 4, label: "Outcome", meaning: "Where this leads - the result or conclusion" },
+      { index: 0, label: "First card", meaning: "Position 1 of the line; read in sequence with its neighbour." },
+      { index: 1, label: "Second card", meaning: "Position 2 of the line; modifies and is modified by its neighbours." },
+      { index: 2, label: "Third card", meaning: "Position 3 of the line; modifies and is modified by its neighbours." },
+      { index: 3, label: "Fourth card", meaning: "Position 4 of the line; modifies and is modified by its neighbours." },
+      { index: 4, label: "Fifth card", meaning: "Position 5 of the line; the last card, not a predetermined conclusion." },
     ],
   } as const,
-  "comprehensive": {
+  comprehensive: {
     id: "comprehensive",
     cardCount: 9,
     label: "Petit Tableau",
-    description: "Deeper exploration of complex situations without overwhelming detail",
+    description:
+      "A 3x3 grid. The centre is structurally special; rows, columns, diagonals and surrounding cards may all be weighed. No row is singled out.",
     layoutType: "petit-tableau",
-    isAuthentic: true,
+    tradition: "traditional",
     order: 4,
     positions: [
-      { index: 0, label: "Upper Line", meaning: "Context line - read with cards 1+2 and 2+3 as a Lenormand sentence" },
-      { index: 1, label: "Upper Line", meaning: "Context line - part of the upper grid sentence with adjacent cards" },
-      { index: 2, label: "Upper Line", meaning: "Context line - completes the upper row" },
-      { index: 3, label: "Middle Line", meaning: "Main line - read with the center card and adjacent cards" },
-      { index: 4, label: "Heart of the Matter", meaning: "Center card - the focal point of the Petit Tableau grid" },
-      { index: 5, label: "Middle Line", meaning: "Main line - modifies or develops the center card's meaning" },
-      { index: 6, label: "Lower Line", meaning: "Underlying line - read with cards 7+8 and 8+9 as a Lenormand sentence" },
-      { index: 7, label: "Lower Line", meaning: "Underlying line - part of the lower grid sentence" },
-      { index: 8, label: "Lower Line", meaning: "Underlying line - completes the lower row" },
+      { index: 0, label: "Top row", meaning: "Row 1, column 1. Part of the top row; read with the cards around it." },
+      { index: 1, label: "Top row", meaning: "Row 1, column 2. Part of the top row; read with the cards around it." },
+      { index: 2, label: "Top row", meaning: "Row 1, column 3. Part of the top row; read with the cards around it." },
+      { index: 3, label: "Middle row", meaning: "Row 2, column 1. Part of the middle row; read with the cards around it." },
+      { index: 4, label: "Centre", meaning: "Row 2, column 2. The geometric centre of the grid." },
+      { index: 5, label: "Middle row", meaning: "Row 2, column 3. Part of the middle row; read with the cards around it." },
+      { index: 6, label: "Bottom row", meaning: "Row 3, column 1. Part of the bottom row; read with the cards around it." },
+      { index: 7, label: "Bottom row", meaning: "Row 3, column 2. Part of the bottom row; read with the cards around it." },
+      { index: 8, label: "Bottom row", meaning: "Row 3, column 3. Part of the bottom row; read with the cards around it." },
     ],
   } as const,
   "grand-tableau": {
     id: "grand-tableau",
     cardCount: 36,
     label: "Grand Tableau",
-    description: "Complete life situation through full 4x9 grid - the most comprehensive reading",
+    description:
+      "All 36 cards in a 4x9 grid: every house, the significators, relative geometry and traditional Grand Tableau technique. No single position is predetermined as the final one.",
     layoutType: "grand-tableau",
-    isAuthentic: true,
+    tradition: "traditional",
     order: 5,
   } as const,
 } as const;

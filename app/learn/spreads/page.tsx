@@ -59,16 +59,17 @@ const spreads = [
            {
              name: "Card 1",
              description:
-               "Current situation or topic (read with Card 2 to see development)",
+               "First position in the line (read with Card 2 to see how the sentence opens)",
            },
            {
              name: "Card 2",
              description:
-               "Development or action (read with Card 1 and Card 3 for full meaning)",
+               "Middle position, the point the line turns on (read with Cards 1 and 3)",
            },
            {
              name: "Card 3",
-             description: "Outcome or resolution (read with Card 2 to see how it concludes)",
+             description:
+               "Final position - where the line currently leads, not a guaranteed outcome (read with Card 2)",
            },
          ],
        },
@@ -108,11 +109,11 @@ const spreads = [
         difficulty: "Intermediate",
         isPrimary: true,
         positions: [
-          { name: "Opening", description: "The situation's beginning or foundation" },
-          { name: "Development", description: "What unfolds or emerges" },
-          { name: "Focus", description: "The central theme or key energy (pay special attention to this card)" },
-          { name: "Influence", description: "External factors and positional influences" },
-          { name: "Outcome", description: "Where the situation leads" },
+          { name: "First card", description: "Position 1 of the line; read in sequence with its neighbour" },
+          { name: "Second card", description: "Position 2 of the line; modifies and is modified by its neighbours" },
+          { name: "Third card", description: "Position 3 of the line; modifies and is modified by its neighbours" },
+          { name: "Fourth card", description: "Position 4 of the line; modifies and is modified by its neighbours" },
+          { name: "Fifth card", description: "Position 5 of the line; the last card, not a predetermined verdict" },
         ],
       },
     ],
@@ -126,7 +127,7 @@ const spreads = [
          name: "9-Card Petit Grand Tableau",
          description: "Complete life reading using traditional 3x3 grid layout read as three rows with pair combinations",
          layout:
-           "3x3 Grid (3 rows): Row 1 = Opening situation, Row 2 = Development, Row 3 = Resolution (read pairs 1+2, 2+3 in each row)",
+           "3x3 Grid (3 rows). No row is designated main or underlying; the centre is structurally special. Read rows, columns, diagonals and surrounding cards together",
          useCase: "Major life decisions, deep insight, complex situations",
          difficulty: "Intermediate",
          isPrimary: true,
@@ -134,45 +135,45 @@ const spreads = [
            {
              name: "Row 1, Card 1",
              description:
-               "The topic or beginning of the situation (pair with Card 2 to see opening development)",
+               "Top row, column 1. Part of the top row; read with the cards around it",
            },
            {
              name: "Row 1, Card 2",
              description:
-               "How the situation opens or develops initially (read with Card 3 to see where it leads)",
+               "Top row, column 2. Part of the top row; read with the cards around it",
            },
            {
              name: "Row 1, Card 3",
-             description: "Where the opening leads or the transition point",
+             description: "Top row, column 3. Part of the top row; read with the cards around it",
            },
            {
              name: "Row 2, Card 1",
              description:
-               "Development or complication emerges (shows what unfolds from Row 1)",
+               "Middle row, column 1. Part of the middle row; read with the cards around it",
            },
            {
              name: "Row 2, Card 2 (CENTER)",
              description:
-               "Heart of the matter - the central theme connecting all rows. Read with surrounding cards for full meaning",
+               "The geometric centre of the grid. Read with the surrounding cards for its full meaning",
            },
            {
              name: "Row 2, Card 3",
              description:
-               "Further development or turning point in the narrative",
+               "Middle row, column 3. Part of the middle row; read with the cards around it",
            },
            {
              name: "Row 3, Card 1",
              description:
-               "Resolution begins (shows how development leads to closing)",
+               "Bottom row, column 1. Part of the bottom row; read with the cards around it",
            },
            {
              name: "Row 3, Card 2",
              description:
-               "How the resolution manifests or the final action taken",
+               "Bottom row, column 2. Part of the bottom row; read with the cards around it",
            },
            {
              name: "Row 3, Card 3",
-             description: "Final outcome or settled state",
+             description: "Bottom row, column 3. Part of the bottom row; read with the cards around it",
            },
          ],
        },

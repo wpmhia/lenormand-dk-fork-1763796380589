@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
 import {
-  AUTHENTIC_SPREADS,
+  TRADITIONAL_SPREADS,
   COMPREHENSIVE_SPREADS,
   Spread,
   SignificatorType,
@@ -57,7 +57,7 @@ function NewReadingPageContent() {
   const [method, setMethod] = useState<Method>(null);
   const [question, setQuestion] = useState("");
   const [selectedSpread, setSelectedSpread] = useState<Spread>(
-    AUTHENTIC_SPREADS.find((spread) => spread.id === "sentence-5") ?? AUTHENTIC_SPREADS[1],
+    TRADITIONAL_SPREADS.find((spread) => spread.id === "sentence-5") ?? TRADITIONAL_SPREADS[1],
   );
 
   // Card state
@@ -112,7 +112,7 @@ function NewReadingPageContent() {
       setDrawnCards([]);
       setDrawnCardTypes([]);
       setQuestion("");
-      setSelectedSpread(AUTHENTIC_SPREADS[1]);
+      setSelectedSpread(TRADITIONAL_SPREADS[1]);
       setError("");
       setReadingSaved(false);
       setSignificatorType("none");
