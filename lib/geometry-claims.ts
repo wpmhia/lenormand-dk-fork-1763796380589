@@ -78,8 +78,11 @@ export function findFalseGeometryClaims(answer: SimpleAnswer, context: ReadingCo
   const isLinear = context.layout.type === "linear-sentence";
 
   for (const pattern of answer.patterns) {
-    const text = `${pattern.cards} ${pattern.meaning}`;
-    const check = RELATION_CHECKS.find((candidate) => candidate.pattern.test(text));
+    // Only the structured label is checked, never `meaning`. The meaning is prose, and a
+    // model writing "Clouds + Coffin: uncertainty sits next to closure" is describing the
+    // combination, not asserting geometric adjacency. Scanning prose for relation words
+    // rejected valid readings; the boundary is labels only.
+    const check = RELATION_CHECKS.find((candidate) => candidate.pattern.test(pattern.cards));
     if (!check) continue;
 
     const ids = cardIdsInText(pattern.cards);
