@@ -1,5 +1,11 @@
-import { TimingEvidence } from "@/lib/reading-context";
-import type { QuestionFrame } from "@/lib/question-frame";
+/**
+ * Timing as a knowledge source, not a prediction engine.
+ *
+ * The server used to build timing evidence, exclude time windows and compare a question's
+ * timeframe against drawn cards. That was a rule-based timing model running beside the
+ * LLM. What remains is a small reference table used by the educational UI; timing in a
+ * reading is the model's call, grounded in the question and the spread.
+ */
 
 export type TimingRangeKey = "days" | "weeks" | "months" | "long-term";
 
@@ -61,111 +67,6 @@ export function isTimingCardId(id: number): boolean {
 
 export const TIMING_CARD_IDS: ReadonlySet<number> = new Set(Object.keys(TIMING_CARDS).map(Number));
 
-export const NO_TIMING_OUTPUT = "Not clearly shown by these cards.";
-
-export const NO_TIMING_INSTRUCTION =
-  "No timing evidence detected. Do not infer a time range — write: Likely timing: Not clearly shown by these cards.";
-
-type ObservationHorizon = "days" | "weeks" | "months" | null;
-
-export function getObservationHorizon(question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe"> | null): ObservationHorizon {
-  if (semanticQuestion?.timeframe) {
-    if (semanticQuestion.timeframe.unit === "day") return "days";
-    if (semanticQuestion.timeframe.unit === "week") return "weeks";
-    if (semanticQuestion.timeframe.unit === "month" || semanticQuestion.timeframe.unit === "year") return "months";
-  }
-  if (!question) return null;
-  if (/\b(?:today|tonight|this weekend|within \d+\s+days?|binnen \d+\s+dagen?|deze week|this week|coming week|komende week|next week)\b/i.test(question)) return "days";
-  if (/\b(?:coming|next|komende|volgende)\s+(?:two |three |four )?weeks?\b/i.test(question)) return "weeks";
-  if (/\b(?:coming|next|komende|volgende|the coming|de komende)\s+(?:month|maand)\b/i.test(question)) return "months";
-  return null;
-}
-
-function scopedTimingOutput(definition: TimingCardDefinition, horizon: ObservationHorizon): string {
-  if (!horizon) return definition.output;
-  if (horizon === "days") {
-    if (definition.range === "days") return "Within the requested short window; likely a brief or active development.";
-    return "Within the requested short window, this card indicates a gradual or background development; exact timing is not independently shown.";
-  }
-  if (horizon === "weeks") {
-    if (definition.range === "long-term") return "Across the requested weeks, this card indicates gradual background development; months-to-years timing is outside the question window.";
-    if (definition.range === "days") return "A brief or active moment may occur within the requested weeks.";
-  }
-  if (horizon === "months" && definition.range === "long-term") {
-    return "Across the requested month, this card indicates gradual development; exact timing remains unclear.";
-  }
-  if (horizon === "months" && definition.range === "days") {
-    return "A brief or active moment may occur within the requested month.";
-  }
-  return definition.output;
-}
-
-/**
- * Build the deterministic timing line for the Prediction contract.
- * This is what the model is told to repeat verbatim in **Likely timing:**.
- */
-export function buildPredictionTimingLine(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe" | "mode"> | null): string {
-  if (semanticQuestion && semanticQuestion.mode !== "forecast") {
-    return "Not applicable: this question asks about a past event, not future timing.";
-  }
-  const horizon = getObservationHorizon(question, semanticQuestion);
-  const recognised: TimingCardDefinition[] = [];
-  for (const te of timingEvidence) {
-    const def = getTimingCard(te.cardId);
-    if (def) recognised.push(def);
-  }
-
-  if (recognised.length === 0) return NO_TIMING_OUTPUT;
-  if (recognised.length === 1) return scopedTimingOutput(recognised[0], horizon);
-  const joined = recognised.map((d) => d.name).join(" and ");
-  return `${joined}: ${recognised.map((d) => scopedTimingOutput(d, horizon)).join(" / ")}`;
-}
-
-export const PREDICTION_TIMING_LABEL = "Likely timing";
-
-// Required labels — always present in every Prediction. Without these, the section is
-// structurally incomplete and the validator rejects it as empty.
-export const REQUIRED_PREDICTION_FIELDS = [
-  "Most likely development",
-  "Likely timing",
-] as const;
-
-// Optional labels — present only when the cards and question actually support a
-// concrete external sign or specific action. The validator does not require these.
-export const OPTIONAL_PREDICTION_FIELDS = [
-  "Watch for",
-  "Practical action",
-] as const;
-
-export const ALL_PREDICTION_FIELDS = [
-  ...REQUIRED_PREDICTION_FIELDS,
-  ...OPTIONAL_PREDICTION_FIELDS,
-] as const;
-
-export type RequiredPredictionField = (typeof REQUIRED_PREDICTION_FIELDS)[number];
-export type OptionalPredictionField = (typeof OPTIONAL_PREDICTION_FIELDS)[number];
-export type AllPredictionField = (typeof ALL_PREDICTION_FIELDS)[number];
-
-export function buildTimingEvidencePrompt(timingEvidence: TimingEvidence[], question?: string, semanticQuestion?: Pick<QuestionFrame, "timeframe"> | null): string {
-  const horizon = getObservationHorizon(question, semanticQuestion);
-  const recognised: TimingCardDefinition[] = [];
-  for (const te of timingEvidence) {
-    const def = getTimingCard(te.cardId);
-    if (def) recognised.push(def);
-  }
-
-  if (recognised.length === 0) {
-    return `Timing evidence:\n${NO_TIMING_INSTRUCTION}`;
-  }
-
-  const lines: string[] = ["Timing evidence:"];
-  if (horizon) lines.push(`Observation window from the question: ${horizon}. Interpret card pace within this window; do not replace it with an absolute months/years prediction.`);
-  for (const def of recognised) {
-    lines.push(`- ${def.name}: ${horizon ? scopedTimingOutput(def, horizon) : def.promptGuidance}`);
-  }
-
-  return lines.join("\n");
-}
 
 export type CardTimingCategory =
   | "primary"
