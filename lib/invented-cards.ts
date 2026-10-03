@@ -14,8 +14,8 @@ import type { SimpleAnswer } from "@/lib/simple-answer";
  * name scan would reject perfectly good readings ("the heart of it", "a key part",
  * "their home will feel lighter"). Detection is therefore split by field:
  *
- * - Label fields (`cards[].combination`, `keyPatterns[].cards`,
- *   `housesAndMirrors[].house`) exist precisely to name cards, so a full scan is safe.
+ * - The pattern labels (`patterns[].cards`) exist precisely to name cards, so each
+ *   element is scanned without ambiguity guards.
  * - Prose fields only flag a card on an explicit Lenormand reference (`A + B`, `the A
  *   card`, `card A`) or on a bare mention of a name that is not an everyday noun.
  */
@@ -92,7 +92,7 @@ function idsFrom(text: string, pattern: RegExp): number[] {
  * was not drawn is always a fabrication, so these are scanned without ambiguity guards.
  */
 function labelText(answer: SimpleAnswer): string[] {
-  return answer.patterns.map((pattern) => pattern.cards);
+  return answer.patterns.flatMap((pattern) => pattern.cards);
 }
 
 /**

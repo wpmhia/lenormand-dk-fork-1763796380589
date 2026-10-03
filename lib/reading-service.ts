@@ -165,21 +165,21 @@ function normalizeSimpleAnswer(
 function normalizePattern(value: unknown): Pattern | null {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     const item = value as Record<string, unknown>;
-    if (typeof item.cards === "string" && item.cards.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
-      const relation =
-        typeof item.relation === "string" && (PATTERN_RELATIONS as readonly string[]).includes(item.relation)
-          ? (item.relation as Pattern["relation"])
-          : "combination";
-      return { cards: item.cards.trim(), relation, meaning: item.meaning.trim() };
-    }
-    return null;
+    const cards = Array.isArray(item.cards)
+      ? item.cards.filter((card): card is string => typeof card === "string" && card.trim().length > 0).map((card) => card.trim())
+      : typeof item.cards === "string" && item.cards.trim()
+        ? [item.cards.trim()]
+        : [];
+
+    if (cards.length === 0 || typeof item.meaning !== "string" || !item.meaning.trim()) return null;
+
+    const relation =
+      typeof item.relation === "string" && (PATTERN_RELATIONS as readonly string[]).includes(item.relation)
+        ? (item.relation as Pattern["relation"])
+        : "combination";
+    return { cards, relation, meaning: item.meaning.trim() };
   }
 
-  // Tolerate a plain "A + B: meaning" string so one malformed entry does not fail a reading.
-  if (typeof value === "string") {
-    const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
-    if (match) return { cards: match[1].trim(), relation: "combination", meaning: match[2].trim() };
-  }
   return null;
 }
 

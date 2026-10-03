@@ -1,4 +1,4 @@
-import { cardIdsInText } from "@/lib/invented-cards";
+import { CARD_NAME_TO_ID } from "@/lib/card-catalog";
 import type { ReadingContext } from "@/lib/reading-context";
 import type { PatternRelation, SimpleAnswer } from "@/lib/simple-answer";
 
@@ -6,10 +6,11 @@ import type { PatternRelation, SimpleAnswer } from "@/lib/simple-answer";
  * The generic geometry validator.
  *
  * The model declares *what it claims* (`patterns[].relation`) and *between which cards*
- * (`patterns[].cards`). The server resolves names to positions and does arithmetic. It
- * never knows that a card is a Tree, a Woman or a Paths, and it never infers a relation
- * from prose — a regex that guesses "this sentence sounds like adjacency" is a semantic
- * engine wearing a geometry hat, and it rejects valid readings.
+ * (`patterns[].cards`, an array of canonical names). The server maps each name to an id,
+ * each id to a position, and does arithmetic. It never parses a combined string, never
+ * knows that a card is a Tree, a Woman or a Paths, and never infers a relation from prose
+ * — a regex that guesses "this sentence sounds like adjacency" is a semantic engine
+ * wearing a geometry hat, and it rejects valid readings.
  *
  * Works for any spread, and for any future spread that has a layout:
  *
@@ -109,7 +110,8 @@ export function validateRelation(
     }
 
     case "knight":
-      return kind === "grid" && steps(indices).every(([a, b]) => isKnightStep(a, b, columns));
+      // A knight's move is defined between exactly two cards.
+      return kind === "grid" && indices.length === 2 && isKnightStep(indices[0], indices[1], columns);
 
     case "house":
       // A house relation can only be asserted where houses exist (the Grand Tableau).
@@ -132,15 +134,16 @@ export function findFalseGeometryClaims(answer: SimpleAnswer, context: ReadingCo
   for (const pattern of answer.patterns) {
     if (pattern.relation === "combination") continue;
 
-    const ids = cardIdsInText(pattern.cards);
-    if (ids.length < 2) continue;
+    // Direct lookup per named card. No parsing, no regex, no combined-string splitting.
+    const indices = pattern.cards
+      .map((name) => CARD_NAME_TO_ID.get(name.trim().toLowerCase()))
+      .map((id) => (id === undefined ? -1 : context.cards.findIndex((card) => card.id === id)));
 
-    const indices = ids.map((id) => context.cards.findIndex((card) => card.id === id));
-    if (indices.some((index) => index < 0)) continue;
+    if (indices.length < 2 || indices.some((index) => index < 0)) continue;
 
     if (!validateRelation(indices, pattern.relation, geometry)) {
       violations.push(
-        `Pattern "${pattern.cards}" claims relation "${pattern.relation}", but the coordinates do not support it.`,
+        `Pattern "${pattern.cards.join(" + ")}" claims relation "${pattern.relation}", but the coordinates do not support it.`,
       );
     }
   }
