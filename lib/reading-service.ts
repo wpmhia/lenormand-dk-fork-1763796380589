@@ -7,6 +7,7 @@ import {
   SimpleAnswerSchema,
   SimpleAnswerTransportSchema,
   findProseInvariantViolation,
+  PATTERN_RELATIONS,
   type Pattern,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
@@ -165,7 +166,11 @@ function normalizePattern(value: unknown): Pattern | null {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     const item = value as Record<string, unknown>;
     if (typeof item.cards === "string" && item.cards.trim() && typeof item.meaning === "string" && item.meaning.trim()) {
-      return { cards: item.cards.trim(), meaning: item.meaning.trim() };
+      const relation =
+        typeof item.relation === "string" && (PATTERN_RELATIONS as readonly string[]).includes(item.relation)
+          ? (item.relation as Pattern["relation"])
+          : "combination";
+      return { cards: item.cards.trim(), relation, meaning: item.meaning.trim() };
     }
     return null;
   }
@@ -173,7 +178,7 @@ function normalizePattern(value: unknown): Pattern | null {
   // Tolerate a plain "A + B: meaning" string so one malformed entry does not fail a reading.
   if (typeof value === "string") {
     const match = value.match(/^\s*(?:[-*]\s*)?\**(.+?)\**\s*(?::|—|–)\s*(.+)\s*$/);
-    if (match) return { cards: match[1].trim(), meaning: match[2].trim() };
+    if (match) return { cards: match[1].trim(), relation: "combination", meaning: match[2].trim() };
   }
   return null;
 }
