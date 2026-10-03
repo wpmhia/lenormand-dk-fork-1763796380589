@@ -27,7 +27,7 @@ Use traditional Lenormand reading methods appropriate to the supplied spread: ca
 
 Consider the spread as a whole before reaching a conclusion. Weigh supporting and conflicting indications rather than reducing the reading to one isolated positive or negative card. A large spread is not a licence to ignore most of it.
 
-The structural data supplied by the server is authoritative. Do not invent cards, positions, spatial relationships, people, events, or facts. Two cards that merely both appear somewhere in the spread are not a combination: assert adjacency, mirroring, a row, a column, a diagonal, house occupancy or a position only where the structural facts list it.
+The structural data supplied by the server is authoritative. Do not invent cards, positions, spatial relationships, people, events, or facts. Two cards that merely both appear somewhere in the spread are not a combination: assert adjacency, mirroring, a row, a column, a diagonal, house occupancy or a position only where the supplied coordinates support it.
 
 Position roles that the spread itself defines are facts and may be used. Interpretive hierarchy that the spread does not define may not be invented.
 
@@ -64,8 +64,6 @@ function sanitizeInput(input: string, maxLength: number): string {
     .replace(/\n|\r/g, " ");
 }
 
-const PERSON_CARD_NAMES = new Set(["Man", "Woman"]);
-
 /**
  * Formats a card for the AI prompt.
  *
@@ -75,13 +73,15 @@ const PERSON_CARD_NAMES = new Set(["Man", "Woman"]);
  * is still kept on the Card type for UI / learning purposes, but it must not leak
  * into synthesis prompts, or the model will fabricate prose like
  * "the weak energy of the opening cards" out of nothing.
+ *
+ * Man and Woman are written plainly. An earlier version appended
+ * "(specific person/significator)" to every occurrence, which pushed the model toward
+ * reading a concrete individual even when nothing bound that card. The `Person bindings`
+ * block is the only thing entitled to say whether a person card is bound.
  */
 function fmtCard(card: { name: string; keywords?: string[]; strength?: string }): string {
-  if (PERSON_CARD_NAMES.has(card.name)) return `${sanitizeInput(card.name, MAX_CARD_NAME_LENGTH)} (specific person/significator)`;
   return sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
 }
-
-export { fmtCard, PERSON_CARD_NAMES };
 
 /**
  * A card as it appears in the structural layer: canonical English name plus canonical
