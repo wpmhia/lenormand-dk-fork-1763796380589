@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildSystemPrompt, buildPrompt } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
+import { buildReadingContext } from "@/lib/reading-context";
 import { getPositionInfo } from "@/components/reading/SpreadPositions";
 import cardsData from "@/public/data/cards.json";
+import type { Card } from "@/lib/types";
 
 const HARD_BANNED = [
   "shadow work",
@@ -27,20 +29,32 @@ const REVIEW_TERMS = [
   "intuition",
 ];
 
-function extractSpreadPrompts(): string[] {
-  const spreads = [
-    { id: "single-card", cards: [{ id: 1, name: "Rider", keywords: ["news"] }], question: "Test?" },
-    { id: "daily-card", cards: [{ id: 1, name: "Rider", keywords: ["news"] }], question: "Test?" },
-    { id: "sentence-3", cards: [{ id: 1, name: "Rider", keywords: ["news"] }, { id: 2, name: "Clover", keywords: ["luck"] }, { id: 3, name: "Ship", keywords: ["travel"] }], question: "Test?" },
-    { id: "sentence-5", cards: [{ id: 1, name: "Rider", keywords: ["news"] }, { id: 2, name: "Clover", keywords: ["luck"] }, { id: 3, name: "Ship", keywords: ["travel"] }, { id: 4, name: "House", keywords: ["home"] }, { id: 5, name: "Tree", keywords: ["health"] }], question: "Test?" },
-    { id: "comprehensive", cards: Array.from({ length: 9 }, (_, i) => ({ id: i + 1, name: `Card ${i + 1}`, keywords: [`kw${i + 1}`] })), question: "Test?" },
-    { id: "grand-tableau", cards: Array.from({ length: 36 }, (_, i) => ({ id: i + 1, name: `Card ${i + 1}`, keywords: [`kw${i + 1}`] })), question: "Test?" },
-  ];
+const catalog = cardsData as Card[];
+const cardsMap = new Map<number, Card>(catalog.map((card) => [card.id, card]));
+const allCards = [...catalog].sort((a, b) => a.id - b.id);
+const normalized = (count: number) =>
+  allCards.slice(0, count).map((card) => ({ id: card.id, name: card.name, keywords: card.keywords }));
 
-  return spreads.map((s) => buildPrompt(s.cards, s.id, s.question));
+/** Every production prompt the model can actually receive, one per spread. */
+function extractSpreadPrompts(): string[] {
+  return [
+    "single-card",
+    "daily-card",
+    "sentence-3",
+    "sentence-5",
+    "comprehensive",
+    "grand-tableau",
+  ].map((spreadId) => buildSimpleReadingPrompt(buildReadingContext(spreadId as never, "Test?", normalized(getCardCount(spreadId)), cardsMap)));
 }
 
-const systemPrompts = [buildSystemPrompt(1), buildSystemPrompt(3), buildSystemPrompt(36)];
+function getCardCount(spreadId: string): number {
+  if (spreadId === "grand-tableau") return 36;
+  if (spreadId === "comprehensive") return 9;
+  if (spreadId === "sentence-5") return 5;
+  return 3;
+}
+
+const systemPrompts = [SIMPLE_LENORMAND_SYSTEM_PROMPT];
 
 describe("Lenormand purity", () => {
   const spreadPrompts = extractSpreadPrompts();
@@ -49,6 +63,12 @@ describe("Lenormand purity", () => {
     for (const term of HARD_BANNED) {
       it(`does not contain "${term}" in any spread prompt`, () => {
         for (const text of spreadPrompts) {
+          expect(text.toLowerCase()).not.toContain(term.toLowerCase());
+        }
+      });
+
+      it(`does not contain "${term}" in the production system prompt`, () => {
+        for (const text of systemPrompts) {
           expect(text.toLowerCase()).not.toContain(term.toLowerCase());
         }
       });
