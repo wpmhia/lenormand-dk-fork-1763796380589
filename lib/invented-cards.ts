@@ -1,4 +1,4 @@
-import { CARD_NAME_TO_ID } from "@/lib/card-catalog";
+import { CARD_CATALOG, CARD_NAME_TO_ID } from "@/lib/card-catalog";
 import type { SimpleAnswer } from "@/lib/simple-answer";
 
 /**
@@ -22,21 +22,29 @@ import type { SimpleAnswer } from "@/lib/simple-answer";
 
 const CANONICAL_CARD_NAMES = [...CARD_NAME_TO_ID.keys()];
 
-/** Names that are not ordinary English nouns, so a bare mention is already a card reference. */
-const UNAMBIGUOUS_CARD_IDS = new Set([
+function namesOf(ids: Set<number>): string[] {
+  return CARD_CATALOG.filter((card) => ids.has(card.id)).map((card) => card.name);
+}
+
+/**
+ * Card names so unlikely in ordinary English that a bare mention is a card reference in
+ * any casing. Matching these case-insensitively is safe: "coffin", "scythe", "clover",
+ * "lily", "stork" and "rider" are not words a reading reaches for incidentally, so
+ * "Rider", "rider" and "the rider card" are all caught.
+ *
+ * The remaining distinctive names (Clouds, Birds, Anchor, Whip, Bouquet, Snake, Fox) are
+ * deliberately NOT matched bare. They are ordinary words that a sentence can begin with
+ * ("Clouds gather over this", "Birds of a feather", "Anchors the plan"), and a false
+ * positive here rejects an entire reading, so they are only caught through the strict
+ * label scan or an explicit `A + B` / `the A card` reference.
+ */
+const DISTINCTIVE_BARE_CARD_IDS = new Set([
   1, // Rider
   2, // Clover
-  6, // Clouds
-  7, // Snake
   8, // Coffin
-  9, // Bouquet
   10, // Scythe
-  11, // Whip
-  12, // Birds
-  14, // Fox
   17, // Stork
   30, // Lily
-  35, // Anchor
 ]);
 
 function escapeRegExp(input: string): string {
@@ -53,7 +61,7 @@ function alternation(names: string[]): string {
 
 const ANY_CARD_PATTERN = new RegExp(`\\b(?:${alternation(CANONICAL_CARD_NAMES)})\\b`, "gi");
 
-/** `Rider + Heart`, `Rider+Heart`, `the Rider card`, `card Rider`. */
+/** `Rider + Heart`, `Rider+Heart`, `the Rider card`, `card Rider`, in any casing. */
 const EXPLICIT_REFERENCE_PATTERN = new RegExp(
   `\\b(?:${alternation(CANONICAL_CARD_NAMES)})\\b\\s*(?:\\+|,|and)\\s*\\b(?:${alternation(CANONICAL_CARD_NAMES)})\\b` +
     `|\\b(?:the\\s+)?(?:${alternation(CANONICAL_CARD_NAMES)})\\s+card\\b` +
@@ -61,13 +69,16 @@ const EXPLICIT_REFERENCE_PATTERN = new RegExp(
   "gi",
 );
 
-const BARE_UNAMBIGUOUS_PATTERN = new RegExp(`\\b(?:${alternation(CANONICAL_CARD_NAMES.filter((name) => UNAMBIGUOUS_CARD_IDS.has(CARD_NAME_TO_ID.get(name)!)))})\\b`, "g");
+/** Bare mention of a distinctive name, lower- or capitalised. */
+const DISTINCTIVE_BARE_PATTERN = new RegExp(`\\b(?:${alternation(namesOf(DISTINCTIVE_BARE_CARD_IDS))})\\b`, "gi");
 
 function idsFrom(text: string, pattern: RegExp): number[] {
   const ids: number[] = [];
   pattern.lastIndex = 0;
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(text)) !== null) {
+    // A global regex that can match an empty string would never advance.
+    if (match[0] === "") pattern.lastIndex++;
     for (const name of match[0].toLowerCase().split(/[^a-z]+/)) {
       const id = CARD_NAME_TO_ID.get(name);
       if (id) ids.push(id);
@@ -129,7 +140,7 @@ export function findInventedCards(answer: SimpleAnswer, drawnCardIds: number[]):
     for (const id of idsFrom(text, EXPLICIT_REFERENCE_PATTERN)) {
       if (!drawn.has(id)) invented.add(id);
     }
-    for (const id of idsFrom(text, BARE_UNAMBIGUOUS_PATTERN)) {
+    for (const id of idsFrom(text, DISTINCTIVE_BARE_PATTERN)) {
       if (!drawn.has(id)) invented.add(id);
     }
   }
