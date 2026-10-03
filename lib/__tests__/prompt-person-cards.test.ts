@@ -54,11 +54,18 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
     expect(prompt).not.toContain("feminine");
   });
 
-  it("labels Man and Woman as 'specific person/significator' instead", () => {
+  /**
+   * The structural layer writes "Man" and "Woman" plainly. Annotating the card itself as
+   * a specific person pushed the model toward reading a concrete individual even when
+   * nothing bound it; only the `Person bindings` block may assert that.
+   */
+  it("writes Man and Woman plainly, with personhood left to the bindings", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).toContain("Man (specific person/significator)");
+    expect(prompt).not.toContain("specific person/significator");
     expect(prompt).not.toMatch(/Man\s*\(\s*masculine/i);
+    expect(prompt).toContain("Man");
+    expect(prompt).toContain("- Man: unbound");
   });
 
   it("sends no card dictionary at all, only card names and structure", () => {
@@ -90,9 +97,12 @@ describe("prompt-builder: production system prompt forbids relationship inferenc
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/never becomes a spouse, partner, named person or pronoun/i);
   });
 
-  it("still treats Man/Woman as person/significator", () => {
+  it("keeps the person-card label out of the structural layer", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 29, 1]), cardsMap);
-    expect(buildSimpleReadingPrompt(ctx)).toContain("Man (specific person/significator)");
+    const prompt = buildSimpleReadingPrompt(ctx);
+    expect(prompt).not.toContain("specific person/significator");
+    expect(prompt).toContain("- Man: unbound");
+    expect(prompt).toContain("- Woman: unbound");
   });
 
   it("keeps the binding authority with deterministic person bindings", () => {

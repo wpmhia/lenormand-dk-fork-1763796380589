@@ -219,6 +219,21 @@ describe("model boundary: one contract for every spread", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards, positions, spatial relationships, people, events, or facts/i);
   });
 
+  /**
+   * The prompt must not contradict itself. It used to say relations may be asserted "only
+   * where the structural facts list it" while the facts deliberately list no relations,
+   * later telling the model to derive them from coordinates instead. Both halves now say
+   * the same thing.
+   */
+  it("grounds spatial claims in the coordinates, not in a relation list", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/only where the supplied coordinates support it/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/only where the structural facts list it/i);
+    // And the user prompt says the same thing, from the other direction.
+    expect(buildSimpleReadingPrompt(context("grand-tableau", "Q?", draw(36)))).toMatch(
+      /The coordinates above are authoritative/,
+    );
+  });
+
   it("scales the token budget with the spread", () => {
     const budgets = SPREAD_IDS.map((id) => getTokenBudget(CARD_COUNT[id]));
     for (let i = 1; i < budgets.length; i++) expect(budgets[i]).toBeGreaterThanOrEqual(budgets[i - 1]);
