@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildPromptFromContext, buildSystemPrompt, buildPrompt } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { Card } from "@/lib/types";
 
 function makeCard(id: number, name: string, keywords?: string[]): Card {
@@ -37,102 +37,97 @@ function normalized(ids: number[]) {
   });
 }
 
-describe("prompt-builder: fmtCard strips relationship keywords for Man/Woman", () => {
-  it("does not include 'husband' for the Man card in any prompt section", () => {
+describe("prompt-builder: person cards never leak relationship keywords", () => {
+  it("does not include 'husband' for the Man card anywhere in the production prompt", () => {
     const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([28, 1, 3, 12, 27]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).not.toContain("husband");
     expect(prompt).not.toContain("father");
+    expect(prompt).not.toContain("masculine");
   });
 
-  it("does not include 'wife' for the Woman card in any prompt section", () => {
+  it("does not include 'wife' for the Woman card anywhere in the production prompt", () => {
     const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([29, 1, 3, 12, 27]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).not.toContain("wife");
     expect(prompt).not.toContain("mother");
+    expect(prompt).not.toContain("feminine");
   });
 
   it("labels Man and Woman as 'specific person/significator' instead", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).toContain("Man (specific person/significator)");
     expect(prompt).not.toMatch(/Man\s*\(\s*masculine/i);
   });
 
-  it("preserves relationship-neutral keywords for non-person cards", () => {
+  it("supplies a question-scoped sense for non-person cards instead of raw keywords", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).toContain("Rider");
-    expect(prompt).toContain("news");
+    expect(prompt).toContain("news, arrival, or movement");
   });
 
-  it("legacy buildPrompt also strips relationship keywords for person cards", () => {
-    const cardList = [
-      { id: 28, name: "Man", keywords: ["masculine", "husband", "father"] },
-      { id: 1, name: "Rider", keywords: ["news"] },
-    ];
-    const prompt = buildPrompt(cardList, "sentence-3", "Will I move?");
-    expect(prompt).not.toContain("husband");
-    expect(prompt).not.toContain("father");
-    expect(prompt).toContain("Man (specific person/significator)");
+  it("reports the binding state of both person cards explicitly", () => {
+    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
+    const prompt = buildSimpleReadingPrompt(ctx);
+    expect(prompt).toContain("- Man: unbound");
+    expect(prompt).toContain("- Woman: unbound");
   });
 });
 
-describe("prompt-builder: system prompt forbids relationship inference", () => {
+describe("prompt-builder: production system prompt forbids relationship inference", () => {
   it("contains an explicit rule against inferring husband/wife/boyfriend/girlfriend/father/mother", () => {
-    const sp = buildSystemPrompt(3);
-    expect(sp).toMatch(/never infer husband/i);
-    expect(sp).toMatch(/wife/i);
-    expect(sp).toMatch(/boyfriend/i);
-    expect(sp).toMatch(/girlfriend/i);
-    expect(sp).toMatch(/father/i);
-    expect(sp).toMatch(/mother/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/never infer husband/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/wife/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/boyfriend/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/girlfriend/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/father/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/mother/i);
   });
 
   it("still treats Man/Woman as person/significator", () => {
-    const sp = buildSystemPrompt(3);
-    expect(sp).toMatch(/person\/significator/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/person\/significator/i);
+  });
+
+  it("keeps the binding authority with deterministic person bindings", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/person bindings say so/i);
   });
 });
 
-describe("prompt-builder: Reading and Prediction have non-overlapping jobs", () => {
-  it("uses a simple contract with three sections, no pseudo-headings inside instructions", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toMatch(/## Interpretation/i);
-    expect(prompt).toMatch(/## Cards/i);
-    expect(prompt).toMatch(/## Prediction/i);
+describe("prompt-builder: production prompt does not preselect evidence for the model", () => {
+  const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
+  const prompt = buildSimpleReadingPrompt(ctx);
+
+  it("contains no narrative plan, focus, development line or outcome evidence", () => {
+    expect(prompt).not.toContain("Narrative plan");
+    expect(prompt).not.toMatch(/^- Focus:/m);
+    expect(prompt).not.toMatch(/^- Development line/m);
+    expect(prompt).not.toMatch(/^- Outcome evidence/m);
+    expect(prompt).not.toMatch(/^- Supporting evidence/m);
+    expect(prompt).toMatch(/has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair/);
   });
 
-  it("includes the four mandatory Prediction labels (Most likely development/Likely timing/Watch for/Practical action)", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toContain("**Most likely development:**");
-    expect(prompt).toContain("**Likely timing:**");
-    expect(prompt).toContain("**Watch for:**");
-    expect(prompt).toContain("**Practical action:**");
+  it("returns the structured JSON contract instead of markdown pseudo-headings", () => {
+    expect(prompt).toContain('"directAnswer": string');
+    expect(prompt).toContain('"interpretation": string');
+    expect(prompt).toContain('"timing": string | null');
+    expect(prompt).toContain('"housesAndMirrors"');
+    expect(prompt).not.toMatch(/## Interpretation/i);
+    expect(prompt).not.toMatch(/## Prediction/i);
+    expect(prompt).not.toMatch(/\*\*Most likely development:\*\*/);
   });
 
-  it("includes a structured Prediction synthesis evidence block", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).toContain("Prediction synthesis evidence:");
-    expect(prompt).toMatch(/Primary outcome/);
-    expect(prompt).toMatch(/Strongest transition/);
-  });
-
-  it("does not include pseudo-heading meta-explanations about section roles", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
-    expect(prompt).not.toMatch(/## Interpretation — explain the situation/i);
-    expect(prompt).not.toMatch(/## Prediction — the forward-looking forecast/i);
+  it("keeps the geometry-fidelity rule that forbids invented spatial relations", () => {
+    expect(prompt).toMatch(/Geometry fidelity\./);
+    expect(prompt).toMatch(/Two cards that merely both appear somewhere in the spread are not a combination/);
   });
 });
 
-describe("prompt-builder: timing only via Timing evidence section", () => {
-  it("does not embed card-level timing metadata (e.g. 'timing: Near future') in any prompt section", () => {
+describe("prompt-builder: timing stays ungrounded rather than invented", () => {
+  it("does not embed card-level timing metadata (e.g. 'timing: Near future') anywhere", () => {
     const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([1, 2, 3, 12, 27]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).not.toMatch(/;\s*timing:\s*Near future/i);
     expect(prompt).not.toMatch(/\(\s*timing:/i);
     expect(prompt).not.toMatch(/timing:\s*Near future \(1-3 weeks\)/i);
@@ -140,14 +135,14 @@ describe("prompt-builder: timing only via Timing evidence section", () => {
 
   it("does not embed card-level timing strings from cards.json like 'Within 1-3 weeks'", () => {
     const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([1, 2, 3, 12, 27]), cardsMap);
-    const prompt = buildPromptFromContext(ctx);
+    const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).not.toContain("Within 1-3 weeks");
     expect(prompt).not.toContain("Within 1-2 weeks");
   });
 
-  it("system prompt tells the model to use the 'Timing evidence' section as the only timing source", () => {
-    const sp = buildSystemPrompt(3);
-    expect(sp).toMatch(/Timing evidence/i);
-    expect(sp).toMatch(/only when the prompt supplies/);
+  it("instructs the model to leave timing null when the spread does not ground it", () => {
+    const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([1, 2, 3, 12, 27]), cardsMap);
+    expect(buildSimpleReadingPrompt(ctx)).toMatch(/Leave timing null when the spread does not ground it/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards, people, facts, exact timing/i);
   });
 });
