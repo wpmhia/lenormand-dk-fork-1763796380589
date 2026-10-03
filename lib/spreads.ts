@@ -5,15 +5,16 @@ export interface Spread {
   cards: number;
   label: string;
   description: string;
-  isAuthentic?: boolean;
+  tradition?: "traditional" | "modern";
 }
 
 function defToSpread(id: string): Spread {
   const d = SPREAD_DEFINITIONS[id as keyof typeof SPREAD_DEFINITIONS];
-  return { id: d.id, cards: d.cardCount, label: d.label, description: d.description, isAuthentic: d.isAuthentic };
+  return { id: d.id, cards: d.cardCount, label: d.label, description: d.description, tradition: d.tradition };
 }
 
-export const AUTHENTIC_SPREADS: Spread[] = [
+/** Spreads with established Lenormand usage, as opposed to house constructs. */
+export const TRADITIONAL_SPREADS: Spread[] = [
   "single-card", "sentence-5", "sentence-3", "comprehensive", "grand-tableau",
 ].map(defToSpread);
 

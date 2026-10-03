@@ -36,6 +36,40 @@ describe("SPREAD_DEFINITIONS", () => {
   });
 });
 
+describe("SPREAD_DEFINITIONS is the canonical spread method", () => {
+  /**
+   * The UI explains a spread from this file and the prompt lays it out from this file, so
+   * they cannot describe different methods. If pedagogy asserts an outcome slot or a main
+   * line that the model is deliberately free to weigh itself, the product teaches one
+   * method while the model reads another.
+   */
+  it("never asserts a deterministic outcome, focus or hierarchy in any spread text", () => {
+    const forbidden = /\b(outcome|resolution|verdict|focus|main line|underlying|subject|action slot)\b/i;
+    for (const def of Object.values(SPREAD_DEFINITIONS) as SpreadDefinition[]) {
+      expect(def.description, `${def.id} description`).not.toMatch(forbidden);
+      for (const position of def.positions ?? []) {
+        expect(position.label, `${def.id} position ${position.index} label`).not.toMatch(forbidden);
+        expect(position.meaning, `${def.id} position ${position.index} meaning`).not.toMatch(forbidden);
+      }
+    }
+  });
+
+  it("marks `tradition` explicitly and drops the misleading isAuthentic flag", () => {
+    for (const def of Object.values(SPREAD_DEFINITIONS) as SpreadDefinition[]) {
+      expect(["traditional", "modern"]).toContain(def.tradition);
+      expect(def as unknown as Record<string, unknown>).not.toHaveProperty("isAuthentic");
+    }
+    expect(getDefinition("sentence-5")?.tradition).toBe("modern");
+    expect(getDefinition("grand-tableau")?.tradition).toBe("traditional");
+  });
+
+  it("describes the 5-card spread as a neutral sequential line", () => {
+    const def = getDefinition("sentence-5")!;
+    const labels = (def.positions ?? []).map((p) => p.label);
+    expect(labels).toEqual(["First card", "Second card", "Third card", "Fourth card", "Fifth card"]);
+  });
+});
+
 describe("VALID_SPREADS consistency", () => {
   it("VALID_SPREADS card counts exactly match SPREAD_DEFINITIONS", () => {
     for (const id of Object.keys(VALID_SPREADS) as SpreadId[]) {

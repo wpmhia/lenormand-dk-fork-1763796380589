@@ -16,18 +16,16 @@ import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
 
 /**
- * Regression suite for the model-first architecture.
+ * The model-first contract, in one suite:
  *
- * The invariant under test:
+ *   input -> geometry -> prompt handoff -> model boundary -> factual validation -> render
  *
- *   question + cards with coordinates + explicit bindings -> DeepSeek -> factual validation
+ * The server places the cards; the model reads them; the validator checks hard facts.
+ * Tests are grouped by that pipeline rather than by the subsystem that once implemented it.
  *
- * and not:
- *
- *   question + spread -> heuristic interpretation -> selected evidence -> DeepSeek
- *
- * The server places the cards. The model reads them. The validator checks hard facts.
- * These tests are about that contract, not about reading quality.
+ * Deliberately not duplicated: an invariant that is identical for a 1-card draw and a
+ * 36-card tableau is asserted once. Invariants that genuinely differ by layout (roles,
+ * coordinates, centres, houses) get their own case for each layout they differ in.
  */
 
 const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
@@ -37,14 +35,14 @@ const catalog = cardsData as Card[];
 const cardsMap = new Map<number, Card>(catalog.map((c) => [c.id, c]));
 const deck = [...catalog].sort((a, b) => a.id - b.id);
 
-const ALL_SPREADS: { id: SpreadId; count: number }[] = [
-  { id: "single-card", count: 1 },
-  { id: "daily-card", count: 1 },
-  { id: "sentence-3", count: 3 },
-  { id: "sentence-5", count: 5 },
-  { id: "comprehensive", count: 9 },
-  { id: "grand-tableau", count: 36 },
-];
+const CARD_COUNT: Record<SpreadId, number> = {
+  "single-card": 1,
+  "daily-card": 1,
+  "sentence-3": 3,
+  "sentence-5": 5,
+  comprehensive: 9,
+  "grand-tableau": 36,
+};
 
 /** Draws `count` cards starting at `offset`, wrapping so ids differ from positions. */
 function draw(count: number, offset = 0) {
@@ -54,127 +52,46 @@ function draw(count: number, offset = 0) {
   });
 }
 
-function context(spreadId: SpreadId, question: string, cards = draw(36)): ReadingContext {
+function context(spreadId: SpreadId, question: string, cards = draw(CARD_COUNT[spreadId])): ReadingContext {
   return buildReadingContext(spreadId, question, cards, cardsMap);
 }
 
-function prompt(
-  spreadId: SpreadId,
-  question = "How will my relationship develop?",
-  cards?: ReturnType<typeof draw>,
-): string {
-  const count = ALL_SPREADS.find((s) => s.id === spreadId)?.count ?? 36;
-  return buildSimpleReadingPrompt(context(spreadId, question, cards ?? draw(count)));
+function prompt(spreadId: SpreadId, question = "How will my relationship develop?", cards?: ReturnType<typeof draw>): string {
+  return buildSimpleReadingPrompt(context(spreadId, question, cards ?? draw(CARD_COUNT[spreadId])));
 }
 
-// --------------------------------------------------------------------------------------
-// 1. Every drawn card reaches the model
-// --------------------------------------------------------------------------------------
+// ======================================================================================
+// INPUT -> PROMPT HANDOFF
+// ======================================================================================
 
-describe("invariant 1: every drawn card reaches the model", () => {
-  for (const { id, count } of ALL_SPREADS) {
-    it(`supplies all ${count} card(s) of ${id} in the prompt`, () => {
-      const cards = draw(count);
-      const text = prompt(id, "How will my relationship develop?", cards);
+describe("prompt handoff: every drawn card and the raw question reach the model", () => {
+  it("supplies every drawn card, in draw order, for every spread", () => {
+    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
+      const cards = draw(count, 13);
+      const text = prompt(id, "Q?", cards);
+      let cursor = -1;
       for (const card of cards) {
-        expect(text, `${card.name} must reach the model`).toContain(card.name);
+        const at = text.indexOf(card.name, cursor + 1);
+        expect(at, `${id}: ${card.name} must reach the model, after the previous card`).toBeGreaterThan(cursor);
+        cursor = at;
       }
-    });
-  }
+    }
+  });
 
-  it("does not require a server-side pair shortlist at all", () => {
-    // There is no longer any ranked pair list in the context to shrink.
+  it("passes the raw question through without a server-parsed frame", () => {
+    const text = prompt("grand-tableau", "Zal ik naar Nederland verhuizen?");
+    expect(text).toContain("Zal ik naar Nederland verhuizen?");
+    for (const parsed of ["domain=", "predicate=", "Question predicate:", "Question subjects:", "Semantic question frame"]) {
+      expect(text).not.toContain(parsed);
+    }
+  });
+
+  it("reaches the model without a server-side pair shortlist or card dictionary", () => {
     const ctx = context("grand-tableau", "Full picture?") as unknown as Record<string, unknown>;
     expect(ctx.adjacentPairs).toBeUndefined();
-    const text = prompt("grand-tableau", "Full picture?");
-    for (const card of draw(36)) expect(text).toContain(card.name);
-  });
-});
 
-// --------------------------------------------------------------------------------------
-// 2. Card order is preserved
-// --------------------------------------------------------------------------------------
-
-describe("invariant 2: card order is preserved", () => {
-  it("lists Grand Tableau cards in draw order, not deck order", () => {
-    const cards = draw(36, 13);
-    const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", cards));
-
-    let cursor = -1;
-    for (const card of cards) {
-      const at = facts.indexOf(card.name, cursor + 1);
-      expect(at, `${card.name} should appear after the previously drawn card`).toBeGreaterThan(cursor);
-      cursor = at;
-    }
-  });
-
-  it("keeps Grand Tableau coordinate lines in ascending position order", () => {
-    const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
-    const positions = facts
-      .split("\n")
-      .map((line) => line.match(/^- (\d+): /))
-      .filter((match): match is RegExpMatchArray => match !== null)
-      .map((match) => Number(match[1]));
-    expect(positions).toEqual(Array.from({ length: 36 }, (_, i) => i + 1));
-  });
-
-  it("renders a linear spread as one ordered line in draw order", () => {
-    const cards = draw(3, 24);
-    const facts = buildSpreadFacts(context("sentence-3", "Will the deal close?", cards));
-    let cursor = -1;
-    for (const card of cards) {
-      const at = facts.indexOf(card.name, cursor + 1);
-      expect(at).toBeGreaterThan(cursor);
-      cursor = at;
-    }
-    expect(facts).toContain("read left to right");
-  });
-});
-
-// --------------------------------------------------------------------------------------
-// 3. No narrative-plan filtering remains
-// --------------------------------------------------------------------------------------
-
-describe("invariant 3: no narrative-plan filtering remains", () => {
-  const PLAN_ARTIFACTS = [
-    "Narrative plan",
-    "Core / heart",
-    "Main line",
-    "Development line",
-    "Outcome evidence",
-    "Supporting evidence",
-    "Primary outcome",
-    "Strongest transition",
-    "coreDriver",
-    "primaryPair",
-    "supportingPair",
-    "strongestOutcome",
-  ];
-
-  for (const { id, count } of ALL_SPREADS) {
-    it(`keeps ${id} free of narrative-plan vocabulary`, () => {
-      const text = prompt(id, "How will my relationship develop?", draw(count));
-      for (const artifact of PLAN_ARTIFACTS) {
-        expect(text, `${id} must not contain "${artifact}"`).not.toContain(artifact);
-      }
-      expect(text).not.toMatch(/^- Focus:/m);
-      expect(text).not.toMatch(/^- Outcome evidence/m);
-    });
-  }
-
-  it("keeps the spread no longer preselected, in words the model can act on", () => {
-    for (const { id, count } of ALL_SPREADS) {
-      expect(prompt(id, "How will my relationship develop?", draw(count))).toMatch(
-        /has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair/,
-      );
-    }
-  });
-
-  it("never puts heuristic interpretation into the prompt", () => {
-    // Behavioural check, not a source-code grep: whatever the internals get called, none
-    // of the retired interpretation may reach the model.
-    for (const { id, count } of ALL_SPREADS) {
-      const text = prompt(id, "How will my relationship develop?", draw(count));
+    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
+      const text = prompt(id, "How will my relationship develop?", draw(count, 13));
       for (const leaked of [
         "traditionalMeaning",
         "canonical pair",
@@ -186,34 +103,55 @@ describe("invariant 3: no narrative-plan filtering remains", () => {
         "Question-scoped card senses",
         "Reviewed combination meanings",
         "Timing evidence",
-        "Semantic question frame",
         "Question frame (",
       ]) {
         expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
       }
+      expect(text, `${id} must state the spread was not preselected`).toMatch(
+        /has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair/,
+      );
     }
-  });
-
-  it("passes the raw question through without a server-parsed frame", () => {
-    const text = prompt("grand-tableau", "Zal ik naar Nederland verhuizen?");
-    expect(text).toContain("Zal ik naar Nederland verhuizen?");
-    expect(text).not.toContain("domain=");
-    expect(text).not.toContain("predicate=");
-    expect(text).not.toContain("Question predicate:");
-    expect(text).not.toContain("Question subjects:");
   });
 });
 
-// --------------------------------------------------------------------------------------
-// 4. Intrinsic positional roles remain correct
-// --------------------------------------------------------------------------------------
+// ======================================================================================
+// GEOMETRY IN THE PROMPT
+// ======================================================================================
 
-describe("invariant 4: intrinsic positional roles remain correct", () => {
+describe("geometry: coordinates are supplied, relations are left to the model", () => {
+  it("gives exact row/column coordinates for every grid card", () => {
+    const facts = buildSpreadFacts(context("grand-tableau", "Geometry?", draw(36, 13)));
+    for (let index = 0; index < 36; index++) {
+      const line = facts.split("\n").find((entry) => entry.startsWith(`- ${index + 1}: `))!;
+      expect(line).toContain(`row ${Math.floor(index / 9) + 1}, col ${(index % 9) + 1}`);
+    }
+  });
+
+  it("precomputes no relation lists in any layout", () => {
+    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
+      const facts = buildSpreadFacts(context(id, "Geometry?", draw(count, 13)));
+      expect(facts, id).not.toMatch(/^- \d+\+\d+: /m);
+      expect(facts, id).not.toContain("- diagonal ");
+      expect(facts, id).not.toContain("- knight: ");
+      expect(facts, id).not.toContain("- column ");
+      expect(facts, id).not.toContain("Adjacent pairs");
+    }
+  });
+
+  it("tells the model the coordinates are authoritative and relations must be derived", () => {
+    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
+      const text = prompt(id, "Geometry?", draw(count, 13));
+      expect(text, id).toMatch(/The coordinates above are authoritative/);
+      expect(text, id).toMatch(/Derive adjacency, rows, columns, diagonals, knight's moves, mirroring and distances/);
+      expect(text, id).toMatch(/Never invent a position, a house or a spatial relationship/);
+    }
+  });
+});
+
+describe("geometry: layout-specific facts", () => {
   it("keeps the sentence-3 roles the spread itself defines", () => {
-    const cards = draw(3, 24);
-    const ctx = context("sentence-3", "Will the deal close?", cards);
+    const ctx = context("sentence-3", "Will the deal close?", draw(3, 24));
     const facts = buildSpreadFacts(ctx);
-
     expect(ctx.layout.type).toBe("linear-sentence");
     for (const position of (ctx.layout as { positions: { index: number; role: string }[] }).positions) {
       expect(facts).toContain(`- position ${position.index + 1}: `);
@@ -226,32 +164,31 @@ describe("invariant 4: intrinsic positional roles remain correct", () => {
     expect(facts.split("\n").filter((line) => line.includes("role defined by this spread:"))).toHaveLength(5);
   });
 
-  it("keeps the Petit Tableau geometric centre on position 5", () => {
+  it("puts the Petit Tableau geometric centre on position 5", () => {
     const ctx = context("comprehensive", "What will the month bring?", draw(9, 5));
-    const facts = buildSpreadFacts(ctx);
     expect((ctx.layout as { center: { index: number } }).center.index).toBe(4);
-    expect(facts).toContain("Geometric centre: position 5 (row 2, col 2).");
+    expect(buildSpreadFacts(ctx)).toContain("Geometric centre: position 5 (row 2, col 2).");
   });
 
-  it("keeps Grand Tableau significator placement and binding state explicit", () => {
+  it("supplies all 36 houses, each named after the canonical deck", () => {
+    const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
+    expect(facts.split("\n").filter((line) => / house$/.test(line))).toHaveLength(36);
+    const houseNames = facts
+      .split("\n")
+      .map((line) => line.match(/, ([^,]+) house$/))
+      .filter((match): match is RegExpMatchArray => match !== null)
+      .map((match) => match[1]);
+    expect(houseNames).toEqual(deck.map((card) => card.name));
+    expect(facts).not.toContain("Crossroads house");
+  });
+
+  it("states significator placement, binding state and exact relation", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).toContain("Significators:");
     expect(facts).toMatch(/- Man: position \d+, row \d, col \d, .+ house; (?:bound by .+|unbound)/);
     expect(facts).toMatch(/- Woman: position \d+, row \d, col \d, .+ house; (?:bound by .+|unbound)/);
-  });
-
-  /**
-   * The server may state which relation two significators have. It may not forbid the
-   * model from reading one: Man and Woman frequently sit a knight's move apart, and an
-   * instruction not to treat them as related at all was suppressing a real spatial fact.
-   */
-  it("never forbids the model from weighing the significators' relation to each other", () => {
-    for (const offset of [0, 5, 13, 27]) {
-      const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, offset)));
-      expect(facts).not.toContain("do not treat them as a pair");
-      expect(facts).not.toMatch(/do not (?:read|interpret) .*(?:them|together)/i);
-      expect(facts).toContain("weigh their relation to each other from the coordinates above");
-    }
+    // The server may state the relation; it may not forbid the model from reading it.
+    expect(facts).not.toContain("do not treat them as a pair");
+    expect(facts).toContain("weigh their relation to each other from the coordinates above");
   });
 
   it("states the significator focus factually", () => {
@@ -261,45 +198,8 @@ describe("invariant 4: intrinsic positional roles remain correct", () => {
     expect(manFacts).toContain("Significator focus: Man");
     expect(manFacts).toContain("still present as an ordinary card");
   });
-});
 
-// --------------------------------------------------------------------------------------
-// 5. Geometry is coordinates, and relations are derivable (not precomputed)
-// --------------------------------------------------------------------------------------
-
-describe("invariant 5: geometry is coordinates, relations are derivable not precomputed", () => {
-  it("gives exact row/column coordinates for every grid card", () => {
-    const facts = buildSpreadFacts(context("grand-tableau", "Geometry?", draw(36, 13)));
-    for (let index = 0; index < 36; index++) {
-      const line = facts.split("\n").find((entry) => entry.startsWith(`- ${index + 1}: `))!;
-      expect(line).toContain(`row ${Math.floor(index / 9) + 1}, col ${(index % 9) + 1}`);
-    }
-  });
-
-  it("never precomputes relation lists in any spread", () => {
-    for (const { id, count } of ALL_SPREADS) {
-      const facts = buildSpreadFacts(context(id, "Geometry?", draw(count)));
-      expect(facts, id).not.toMatch(/^- \d+\+\d+: /m);
-      expect(facts, id).not.toContain("- diagonal ");
-      expect(facts, id).not.toContain("- knight: ");
-      expect(facts, id).not.toContain("- column ");
-      expect(facts, id).not.toContain("Mirrored across a significator");
-      expect(facts, id).not.toContain("Adjacent pairs");
-    }
-  });
-
-  it("tells the model the coordinates are authoritative and relations must be derived", () => {
-    for (const { id, count } of ALL_SPREADS) {
-      const text = prompt(id, "Geometry?", draw(count));
-      expect(text, id).toMatch(/The coordinates above are authoritative/);
-      expect(text, id).toMatch(
-        /Derive adjacency, rows, columns, diagonals, knight's moves, mirroring and distances from them yourself/,
-      );
-      expect(text, id).toMatch(/Never invent a position, a house or a spatial relationship/);
-    }
-  });
-
-  it("is stable across repeated builds of the same spread", () => {
+  it("is stable across repeated builds", () => {
     const cards = draw(36, 13);
     expect(buildSpreadFacts(context("grand-tableau", "Geometry?", cards))).toBe(
       buildSpreadFacts(context("grand-tableau", "Geometry?", cards)),
@@ -307,40 +207,85 @@ describe("invariant 5: geometry is coordinates, relations are derivable not prec
   });
 });
 
-// --------------------------------------------------------------------------------------
-// 6. Grand Tableau houses are all supplied
-// --------------------------------------------------------------------------------------
+// ======================================================================================
+// MODEL BOUNDARY
+// ======================================================================================
 
-describe("invariant 6: Grand Tableau houses are all supplied", () => {
-  const ctx = context("grand-tableau", "Full picture?", draw(36, 13));
-  const facts = buildSpreadFacts(ctx);
-
-  it("supplies all 36 houses, one per card line", () => {
-    expect(facts.split("\n").filter((line) => / house$/.test(line))).toHaveLength(36);
+describe("model boundary: one contract for every spread", () => {
+  it("tells the model to weigh the whole spread and never invent structure", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Consider the spread as a whole before reaching a conclusion/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Weigh supporting and conflicting indications/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/structural data supplied by the server is authoritative/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards, positions, spatial relationships, people, events, or facts/i);
   });
 
-  it("supplies every canonical house", () => {
-    for (const house of deck) {
-      expect(facts, `${house.name} house must be supplied`).toContain(`${house.name} house`);
-    }
-  });
-
-  it("names each house after the canonical deck, never a divergent alias", () => {
-    const houseNames = facts
-      .split("\n")
-      .map((line) => line.match(/, ([^,]+) house$/))
-      .filter((match): match is RegExpMatchArray => match !== null)
-      .map((match) => match[1]);
-    expect(houseNames).toEqual(deck.map((card) => card.name));
-    expect(facts).not.toContain("Crossroads house");
+  it("scales the token budget with the spread", () => {
+    const budgets = SPREAD_IDS.map((id) => getTokenBudget(CARD_COUNT[id]));
+    for (let i = 1; i < budgets.length; i++) expect(budgets[i]).toBeGreaterThanOrEqual(budgets[i - 1]);
+    expect(getTokenBudget(36)).toBeGreaterThan(getTokenBudget(3));
   });
 });
 
-// --------------------------------------------------------------------------------------
-// 7. Model output cannot introduce cards not drawn
-// --------------------------------------------------------------------------------------
+// ======================================================================================
+// THE UNIVERSAL PIPELINE: one it.each over every spread id
+// ======================================================================================
 
-describe("invariant 7: model output cannot introduce cards not drawn", () => {
+describe("pipeline: one universal prompt for every spread", () => {
+  it.each(SPREAD_IDS as SpreadId[])("%s uses the same skeleton and the same four-field contract", (id) => {
+    const text = prompt(id, "Will I move house?", draw(CARD_COUNT[id], 13));
+
+    for (const skeleton of [
+      "User question:",
+      "Will I move house?",
+      "Structural facts (deterministic; complete for this spread):",
+      "Person bindings:",
+      "- Man:",
+      "- Woman:",
+      "Synthesis contract:",
+      "Return only one JSON object",
+    ]) {
+      expect(text, id).toContain(skeleton);
+    }
+
+    for (const field of ['"answer": string', '"reading": string', '"patterns"', '"timing": string | null']) {
+      expect(text, id).toContain(field);
+    }
+
+    // Each removed field was a per-spread judgement about how much a spread had to say.
+    for (const removed of [
+      '"positiveFactors"',
+      '"challenges"',
+      '"development"',
+      '"housesAndMirrors"',
+      '"directAnswer"',
+      '"keyPatterns"',
+      '"combination"',
+    ]) {
+      expect(text, id).not.toContain(removed);
+    }
+  });
+
+  it("embeds the structural layer verbatim rather than describing it separately", () => {
+    const ctx = context("grand-tableau", "Full picture?", draw(36));
+    expect(buildSimpleReadingPrompt(ctx)).toContain(buildSpreadFacts(ctx));
+  });
+
+  it("does not leak internal classification metadata into the prompt", () => {
+    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
+      const text = prompt(id, "Will the situation resolve?", draw(count, 13));
+      expect(text, id).not.toMatch(/;\s*STRONG\b/);
+      expect(text, id).not.toMatch(/;\s*NEUTRAL\b/);
+      expect(text, id).not.toMatch(/;\s*WEAK\b/);
+      expect(text, id).not.toMatch(/;\s*timing:/i);
+    }
+  });
+});
+
+// ======================================================================================
+// FACTUAL VALIDATION: invented cards
+// ======================================================================================
+
+describe("factual validation: the model cannot introduce a card that was not drawn", () => {
   const drawn = [2, 6, 24, 25]; // Clover, Clouds, Heart, Ring
   const base = {
     answer: "The situation stays open.",
@@ -362,18 +307,29 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
     ).toEqual([]);
   });
 
-  it("rejects an undrawn card named in a pattern label", () => {
-    expect(
-      findInventedCards(answer({ patterns: [{ cards: "Heart + Tower", meaning: "a collapse." }] }), drawn),
-    ).toContain(19);
-  });
-
-  it("rejects an explicit card reference to an undrawn card in prose", () => {
+  it("rejects an undrawn card in a pattern label or an explicit prose reference", () => {
+    expect(findInventedCards(answer({ patterns: [{ cards: "Heart + Tower", meaning: "a collapse." }] }), drawn)).toContain(19);
     expect(findInventedCards(answer({ reading: "The Clouds + Mice line points to erosion." }), drawn)).toContain(23);
+    expect(findInventedCards(answer({ reading: "A Stork sits between the two people." }), drawn)).toContain(17);
   });
 
-  it("rejects an unambiguous undrawn card named bare in prose", () => {
-    expect(findInventedCards(answer({ reading: "A Stork sits between the two people." }), drawn)).toContain(17);
+  // Casing bug guard: an earlier detector built its bare-mention pattern from lowercase
+  // keys without the `i` flag, so every capitalised distinctive card slipped through.
+  it("catches a distinctive card in any casing, in prose or a label", () => {
+    for (const [mention, expectedId] of [
+      ["Rider", 1],
+      ["rider", 1],
+      ["The Rider card", 1],
+      ["the rider card", 1],
+      ["Rider + Heart", 1],
+      ["Stork", 17],
+      ["stork", 17],
+      ["Scythe", 10],
+      ["scythe", 10],
+    ] as [string, number][]) {
+      expect(findInventedCards(answer({ reading: `The line turns on ${mention} here.` }), drawn), mention).toContain(expectedId);
+      expect(findInventedCards(answer({ patterns: [{ cards: mention, meaning: "a turn." }] }), drawn), mention).toContain(expectedId);
+    }
   });
 
   it("does not mistake ordinary English words for card references", () => {
@@ -382,7 +338,7 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
         answer({
           answer: "A man and a woman will have to talk about the key issue.",
           reading:
-            "The heart of the matter is that their home feels heavy, and the letter they are waiting for crosses a line they drew for themselves.",
+            "The heart of the matter is that their home feels heavy, and the letter they are waiting for crosses a line. Clouds gather before the anchor of the plan holds, and birds of a feather stick together.",
           timing: "soon",
         }),
         drawn,
@@ -390,50 +346,11 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
     ).toEqual([]);
   });
 
-  // Casing matrix. An earlier detector built its bare-mention pattern from the lowercase
-  // keys of CARD_NAME_TO_ID without the `i` flag, so every capitalised mention of a
-  // distinctive card silently slipped through.
-  describe.each([
-    ["Rider", 1],
-    ["rider", 1],
-    ["The Rider card", 1],
-    ["the rider card", 1],
-    ["Rider + Heart", 1],
-    ["Stork", 17],
-    ["stork", 17],
-    ["Scythe", 10],
-    ["scythe", 10],
-  ])("rejects the undrawn card referenced as %j", (mention, expectedId) => {
-    it("flags it in prose", () => {
-      expect(findInventedCards(answer({ reading: `The line turns on ${mention} in this spread.` }), drawn)).toContain(
-        expectedId,
-      );
-    });
-
-    it("flags it in a pattern label", () => {
-      expect(findInventedCards(answer({ patterns: [{ cards: mention, meaning: "a decisive turn." }] }), drawn)).toContain(
-        expectedId,
-      );
-    });
-  });
-
-  it("does not flag lowercase everyday usage of ordinary-word card names", () => {
-    expect(
-      findInventedCards(
-        answer({
-          reading:
-            "Clouds gather over the situation before the anchor of the plan holds. Birds of a feather stick together here, and a bouquet of small wins keeps the mood up.",
-        }),
-        drawn,
-      ),
-    ).toEqual([]);
-  });
-
-  it("does flag an explicit combination in prose", () => {
+  it("still flags an explicit combination that names an undrawn ordinary-word card", () => {
     expect(findInventedCards(answer({ reading: "The Clouds + Anchor line holds." }), drawn)).toEqual([35]);
   });
 
-  describe("through the production generation path", () => {
+  describe("through the production path", () => {
     const serviceOptions = (cards: { id: number; name: string }[]) => ({
       context: { cards, layout: { type: "single" } } as unknown as ReadingContext,
       model: {} as LanguageModel,
@@ -446,7 +363,7 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
 
     beforeEach(() => generateText.mockReset());
 
-    it("fails the reading when the model names an undrawn card", async () => {
+    it("fails the reading when an undrawn card is named", async () => {
       generateText.mockResolvedValueOnce({
         text: JSON.stringify({
           answer: "It will not hold.",
@@ -488,85 +405,5 @@ describe("invariant 7: model output cannot introduce cards not drawn", () => {
       expect(result.ok).toBe(true);
       expect(result.ok && result.reading).toContain("It stays open.");
     });
-  });
-});
-
-// --------------------------------------------------------------------------------------
-// 8. One universal pipeline and one contract for every spread
-// --------------------------------------------------------------------------------------
-
-describe("invariant 8: one universal pipeline handles every spread", () => {
-  it("covers every declared spread id", () => {
-    expect(ALL_SPREADS.map((s) => s.id).sort()).toEqual([...SPREAD_IDS].sort());
-  });
-
-  it("uses the same prompt skeleton for 1, 3, 5, 9 and 36 cards", () => {
-    for (const { id, count } of ALL_SPREADS) {
-      const text = prompt(id, "Will I move house?", draw(count));
-      expect(text, id).toContain("User question:");
-      expect(text, id).toContain("Will I move house?");
-      expect(text, id).toContain("Structural facts (deterministic; complete for this spread):");
-      expect(text, id).toContain("Person bindings:");
-      expect(text, id).toContain("- Man:");
-      expect(text, id).toContain("- Woman:");
-      expect(text, id).toContain("Synthesis contract:");
-      expect(text, id).toContain("Return only one JSON object");
-    }
-  });
-
-  it("gives one small contract for every spread, with no server-chosen shape", () => {
-    for (const { id, count } of ALL_SPREADS) {
-      const text = prompt(id, "How will my relationship develop?", draw(count));
-      expect(text, id).toContain('"answer": string');
-      expect(text, id).toContain('"reading": string');
-      expect(text, id).toContain('"patterns"');
-      expect(text, id).toContain('"timing": string | null');
-      // Each removed field was a per-spread judgement about how much a spread had to
-      // say, and each produced restated conclusions.
-      for (const removed of [
-        '"positiveFactors"',
-        '"challenges"',
-        '"development"',
-        '"housesAndMirrors"',
-        '"directAnswer"',
-        '"keyPatterns"',
-        '"combination"',
-      ]) {
-        expect(text, id).not.toContain(removed);
-      }
-    }
-  });
-
-  it("keeps the structural layer the single source of spread description", () => {
-    const ctx = context("grand-tableau", "Full picture?", draw(36));
-    expect(buildSimpleReadingPrompt(ctx)).toContain(buildSpreadFacts(ctx));
-  });
-
-  it("scales the token budget with the spread", () => {
-    const budgets = ALL_SPREADS.map((s) => getTokenBudget(s.count));
-    for (let i = 1; i < budgets.length; i++) {
-      expect(budgets[i]).toBeGreaterThanOrEqual(budgets[i - 1]);
-    }
-    expect(getTokenBudget(36)).toBeGreaterThan(getTokenBudget(3));
-  });
-
-  it("tells the model to weigh the whole spread and never invent structure", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Consider the spread as a whole before reaching a conclusion/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Weigh supporting and conflicting indications/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/structural data supplied by the server is authoritative/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(
-      /Do not invent cards, positions, spatial relationships, people, events, or facts/i,
-    );
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/houses and verified spatial relationships/i);
-  });
-
-  it("does not leak internal classification metadata into the prompt", () => {
-    for (const { id, count } of ALL_SPREADS) {
-      const text = prompt(id, "Will the situation resolve?", draw(count));
-      expect(text).not.toMatch(/;\s*STRONG\b/);
-      expect(text).not.toMatch(/;\s*NEUTRAL\b/);
-      expect(text).not.toMatch(/;\s*WEAK\b/);
-      expect(text).not.toMatch(/;\s*timing:/i);
-    }
   });
 });

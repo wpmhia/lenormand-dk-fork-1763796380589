@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
+import { getDefinition } from "@/lib/spread-definitions";
 
 /**
  * ReadingContext is deliberately small: cards, their layout, and explicit bindings.
@@ -43,11 +44,26 @@ describe("reading-context: layout is positional and factual", () => {
     expect(buildReadingContext("single-card", "Q?", draw(1), cardsMap).layout.type).toBe("single");
   });
 
-  it("gives the 3-card sentence its traditional roles", () => {
+  it("sources the 3-card roles from the canonical spread definition", () => {
     const ctx = buildReadingContext("sentence-3", "Q?", draw(3), cardsMap);
     expect(ctx.layout.type).toBe("linear-sentence");
     if (ctx.layout.type !== "linear-sentence") return;
-    expect(ctx.layout.positions.map((p) => p.role)).toEqual(["Opening card", "Central card", "Closing card"]);
+    const defined = getDefinition("sentence-3")?.positions ?? [];
+    expect(ctx.layout.positions.map((p) => p.role)).toEqual(defined.map((p) => p.label));
+    expect(ctx.layout.positions.map((p) => p.role)).toEqual(["Opening", "Central", "Closing"]);
+  });
+
+  /**
+   * The prompt and the UI must describe a line identically. If this ever fails, the
+   * product is teaching one method while the model reads another.
+   */
+  it("sources every linear spread's roles from the canonical spread definition", () => {
+    for (const id of ["sentence-3", "sentence-5"] as const) {
+      const ctx = buildReadingContext(id, "Q?", draw(id === "sentence-3" ? 3 : 5), cardsMap);
+      if (ctx.layout.type !== "linear-sentence") throw new Error("expected a line");
+      const defined = getDefinition(id)?.positions ?? [];
+      expect(ctx.layout.positions.map((p) => p.role), id).toEqual(defined.map((p) => p.label));
+    }
   });
 
   it("gives the 5-card line neutral ordinal roles, not an outcome position", () => {
@@ -61,7 +77,7 @@ describe("reading-context: layout is positional and factual", () => {
       "Fifth card",
     ]);
     for (const position of ctx.layout.positions) {
-      expect(position.role).not.toMatch(/outcome|result|answer|foundation|subject/i);
+      expect(position.role).not.toMatch(/outcome|result|answer|foundation|subject|focus/i);
     }
   });
 

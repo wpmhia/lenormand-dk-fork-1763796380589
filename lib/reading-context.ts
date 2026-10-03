@@ -1,7 +1,7 @@
 import type { Card } from "@/lib/types";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { NormalizedCard, SpreadId } from "@/lib/reading-contract";
-import { getLayoutType } from "@/lib/spread-definitions";
+import { getDefinition, getLayoutType } from "@/lib/spread-definitions";
 
 /**
  * The reading context is the cards, where they sit, and who the user bound them to.
@@ -81,26 +81,16 @@ export interface ReadingContext {
 }
 
 /**
- * The 3-card sentence is the one linear spread with traditional position meanings, so its
- * roles are supplied. The 5-card line is a house construct: it gets neutral ordinal labels
- * and no "this position is the outcome" claim, which would licence the model to treat the
- * last card as a verdict.
+ * Linear position labels come straight from the canonical spread definition, so the
+ * prompt and the UI can never describe a line differently. The server supplies these as
+ * positional descriptors only; it does not assert that the last card is an outcome.
  */
-const SENTENCE_3_POSITIONS: LinearSentencePosition[] = [
-  { index: 0, role: "Opening card" },
-  { index: 1, role: "Central card" },
-  { index: 2, role: "Closing card" },
-];
-
-function ordinal(index: number): string {
-  return ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"][index] ?? `Card ${index + 1}`;
-}
-
-function buildLinearSentenceLayout(cards: NormalizedCard[]): LinearSentenceLayout {
+function buildLinearSentenceLayout(spreadId: SpreadId, cards: NormalizedCard[]): LinearSentenceLayout {
+  const defined = getDefinition(spreadId)?.positions ?? [];
   const positions =
-    cards.length === 3
-      ? SENTENCE_3_POSITIONS
-      : cards.map((_, index) => ({ index, role: `${ordinal(index)} card` }));
+    defined.length > 0
+      ? defined.map((position) => ({ index: position.index, role: position.label }))
+      : cards.map((_, index) => ({ index, role: `Card ${index + 1}` }));
   return { type: "linear-sentence", positions };
 }
 
@@ -158,7 +148,7 @@ export function buildReadingContext(
 
   switch (layoutType) {
     case "linear-sentence":
-      layout = buildLinearSentenceLayout(cards);
+      layout = buildLinearSentenceLayout(spreadId, cards);
       break;
     case "petit-tableau":
       layout = buildPetitTableauLayout(cards);
