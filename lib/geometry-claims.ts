@@ -123,30 +123,40 @@ export function validateRelation(
 }
 
 /**
- * Checks every pattern that claims a geometry relation. `combination` patterns assert
- * nothing geometric and are skipped. Cards that were not drawn are reported by
- * `findInventedCards`, not here.
+ * Returns the patterns whose claimed geometry the layout does not support, with their
+ * index in `patterns` so the caller can drop exactly those.
+ *
+ * A false spatial claim is locally repairable: the rest of the reading is still usable,
+ * so this reports rather than rejects. Discarding a whole Grand Tableau because one of
+ * ten patterns mis-declared `row` throws away a good reading over a detail.
+ *
+ * `combination` patterns assert nothing geometric and are skipped. Cards that were not
+ * drawn are reported by `findInventedCards`, which stays fatal.
  */
-export function findFalseGeometryClaims(answer: SimpleAnswer, context: ReadingContext): string[] {
+export function findInvalidGeometryPatterns(
+  answer: SimpleAnswer,
+  context: ReadingContext,
+): { index: number; message: string }[] {
   const geometry = geometryOf(context);
-  const violations: string[] = [];
+  const invalid: { index: number; message: string }[] = [];
 
-  for (const pattern of answer.patterns) {
-    if (pattern.relation === "combination") continue;
+  answer.patterns.forEach((pattern, index) => {
+    if (pattern.relation === "combination") return;
 
     // Direct lookup per named card. No parsing, no regex, no combined-string splitting.
     const indices = pattern.cards
       .map((name) => CARD_NAME_TO_ID.get(name.trim().toLowerCase()))
       .map((id) => (id === undefined ? -1 : context.cards.findIndex((card) => card.id === id)));
 
-    if (indices.length < 2 || indices.some((index) => index < 0)) continue;
+    if (indices.length < 2 || indices.some((position) => position < 0)) return;
 
     if (!validateRelation(indices, pattern.relation, geometry)) {
-      violations.push(
-        `Pattern "${pattern.cards.join(" + ")}" claims relation "${pattern.relation}", but the coordinates do not support it.`,
-      );
+      invalid.push({
+        index,
+        message: `Pattern "${pattern.cards.join(" + ")}" claims relation "${pattern.relation}", but the coordinates do not support it.`,
+      });
     }
-  }
+  });
 
-  return violations;
+  return invalid;
 }

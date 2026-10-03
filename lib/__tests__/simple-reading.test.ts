@@ -198,6 +198,34 @@ describe("simple reading single-call output handling", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
+  it("drops an unsupported geometry pattern and keeps the rest of the reading", async () => {
+    const cards = [
+      { id: 1, name: "Rider" },
+      { id: 2, name: "Clover" },
+      { id: 3, name: "Ship" },
+    ];
+    const context = { cards, layout: { type: "linear-sentence", positions: [] } } as unknown as ReadingContext;
+
+    generateText.mockResolvedValueOnce(
+      textOutput({
+        answer: "The line reads as one movement.",
+        reading: "A connected sentence.",
+        patterns: [
+          { cards: ["Rider", "Clover"], relation: "combination", meaning: "kept pattern" },
+          { cards: ["Rider", "Ship"], relation: "row", meaning: "dropped pattern" },
+        ],
+      }),
+    );
+
+    const result = await generateReading(options({ context }));
+
+    // The reading is returned; only the pattern that made a false claim is removed.
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.reading).toContain("kept pattern");
+    expect(result.ok && result.reading).not.toContain("dropped pattern");
+    expect(result.ok && result.droppedGeometryPatterns).toHaveLength(1);
+  });
+
   it("does not leak the removed legacy sections into the rendered reading", async () => {
     generateText.mockResolvedValueOnce(
       textOutput({
