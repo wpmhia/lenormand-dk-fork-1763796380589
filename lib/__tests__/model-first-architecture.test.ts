@@ -276,25 +276,51 @@ describe("invariant 4: intrinsic positional roles remain correct", () => {
     expect(facts).toContain("Petit Tableau 3x3 grid");
     expect(facts).toContain("Row 1:");
     expect(facts).toContain("Row 3:");
-    expect(facts).toContain("Columns:");
-    expect(facts).toContain("Diagonals: main");
-    expect(facts).toContain("other");
+    expect(facts).toContain("Columns (top to bottom), 3 in total:");
+    expect(facts).toContain("Diagonal lines, 6 in total");
   });
 
   it("keeps Grand Tableau significator placement and binding state explicit", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
     expect(facts).toContain("Significators:");
-    expect(facts).toContain("Row ");
-    expect(facts).toContain("Column ");
     expect(facts).toMatch(/- Man: position \d+, Row \d, Column \d/);
     expect(facts).toMatch(/- Woman: position \d+, Row \d, Column \d/);
-    expect(facts).toContain("Significator selection:");
   });
 
-  it("states the significator selection rule explicitly", () => {
+  it("states the exact spatial relation between Man and Woman", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).toContain("Significator selection:");
-    expect(facts).toContain("read each one's own neighbourhood");
+    expect(facts).toMatch(/- Man to Woman: .*Row \d Column \d, Woman Row \d Column \d; \d+ row\(s\) and \d+ column\(s\) apart/);
+  });
+
+  /**
+   * The server may state which relation two significators have. It may not forbid the
+   * model from reading that relation: Man and Woman frequently sit a knight's move apart,
+   * and instructing the model not to treat them as related at all was suppressing a real
+   * spatial fact.
+   */
+  it("never forbids the model from weighing the significators' relation to each other", () => {
+    for (const offset of [0, 5, 13, 27]) {
+      const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, offset)));
+      expect(facts).not.toContain("do not treat them as a pair");
+      expect(facts).not.toMatch(/do not (?:read|interpret) .*(?:them|together)/i);
+    }
+  });
+
+  it("states the significator focus factually", () => {
+    const both = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
+    expect(both).toContain("Both significators are in this spread");
+    expect(both).toMatch(/weigh any spatial relation between them that is listed above/);
+
+    const manOnly = buildReadingContext(
+      "grand-tableau",
+      "Full picture?",
+      draw(36, 13),
+      cardsMap,
+      "man",
+    );
+    const manFacts = buildSpreadFacts(manOnly);
+    expect(manFacts).toContain("Significator focus: Man");
+    expect(manFacts).toContain("still present in the grid above as an ordinary card");
   });
 });
 
