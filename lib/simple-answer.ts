@@ -23,7 +23,8 @@ export const PATTERN_RELATIONS = [
 export type PatternRelation = (typeof PATTERN_RELATIONS)[number];
 
 export const PatternSchema = z.object({
-  cards: z.string().min(1),
+  /** The canonical card names this pattern is about. A list, never a combined string. */
+  cards: z.array(z.string().min(1)).min(1),
   /** Defaults to `combination`, which asserts no geometric relation to verify. */
   relation: z.enum(PATTERN_RELATIONS).default("combination"),
   meaning: z.string().min(1),
@@ -76,7 +77,7 @@ export function findProseInvariantViolation(answer: SimpleAnswer): string | null
   const prose = [
     answer.answer,
     answer.reading,
-    ...answer.patterns.flatMap((pattern) => [pattern.cards, pattern.meaning]),
+    ...answer.patterns.flatMap((pattern) => [...pattern.cards, pattern.meaning]),
     answer.timing || "",
   ].join("\n");
   const violation = INTERNAL_REFERENCE_PATTERNS.find((pattern) => pattern.test(prose));
@@ -85,7 +86,7 @@ export function findProseInvariantViolation(answer: SimpleAnswer): string | null
 
 export function renderSimpleAnswer(answer: SimpleAnswer): string {
   const patterns = answer.patterns.length
-    ? `\n\n## Patterns\n${answer.patterns.map((pattern) => `- **${pattern.cards}**: ${pattern.meaning}`).join("\n")}`
+    ? `\n\n## Patterns\n${answer.patterns.map((pattern) => `- **${pattern.cards.join(" + ")}**: ${pattern.meaning}`).join("\n")}`
     : "";
   const timing = answer.timing ? `\n\n## Timing\n${answer.timing}` : "";
   return `## Answer\n${answer.answer}\n\n## Reading\n${answer.reading}${patterns}${timing}`;

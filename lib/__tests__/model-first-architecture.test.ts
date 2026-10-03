@@ -305,7 +305,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
   const base = {
     answer: "The situation stays open.",
     reading: "The spread shows movement without a firm conclusion.",
-    patterns: [] as { cards: string; meaning: string }[],
+    patterns: [] as { cards: string[]; meaning: string }[],
     timing: null as string | null,
   };
   const answer = (overrides: Partial<typeof base> = {}) => SimpleAnswerSchema.parse({ ...base, ...overrides });
@@ -315,7 +315,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
       findInventedCards(
         answer({
           reading: "Clover beside Heart keeps a small emotional opening alive.",
-          patterns: [{ cards: "Clover + Heart", meaning: "a small favourable opening." }],
+          patterns: [{ cards: ["Clover", "Heart"], meaning: "a small favourable opening." }],
         }),
         drawn,
       ),
@@ -323,7 +323,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
   });
 
   it("rejects an undrawn card in a pattern label or an explicit prose reference", () => {
-    expect(findInventedCards(answer({ patterns: [{ cards: "Heart + Tower", meaning: "a collapse." }] }), drawn)).toContain(19);
+    expect(findInventedCards(answer({ patterns: [{ cards: ["Heart", "Tower"], meaning: "a collapse." }] }), drawn)).toContain(19);
     expect(findInventedCards(answer({ reading: "The Clouds + Mice line points to erosion." }), drawn)).toContain(23);
     expect(findInventedCards(answer({ reading: "A Stork sits between the two people." }), drawn)).toContain(17);
   });
@@ -343,7 +343,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
       ["scythe", 10],
     ] as [string, number][]) {
       expect(findInventedCards(answer({ reading: `The line turns on ${mention} here.` }), drawn), mention).toContain(expectedId);
-      expect(findInventedCards(answer({ patterns: [{ cards: mention, meaning: "a turn." }] }), drawn), mention).toContain(expectedId);
+      expect(findInventedCards(answer({ patterns: [{ cards: [mention], meaning: "a turn." }] }), drawn), mention).toContain(expectedId);
     }
   });
 
@@ -383,7 +383,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
         text: JSON.stringify({
           answer: "It will not hold.",
           reading: "The spread points elsewhere.",
-          patterns: [{ cards: "Clover + Scythe", meaning: "a sudden cut." }],
+          patterns: [{ cards: ["Clover", "Scythe"], meaning: "a sudden cut." }],
         }),
         finishReason: "stop",
       });
@@ -405,7 +405,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
         text: JSON.stringify({
           answer: "It stays open.",
           reading: "A small favourable opening remains.",
-          patterns: [{ cards: "Clover + Heart", meaning: "a small favourable opening." }],
+          patterns: [{ cards: ["Clover", "Heart"], meaning: "a small favourable opening." }],
         }),
         finishReason: "stop",
       });

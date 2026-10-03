@@ -13,7 +13,7 @@ vi.mock("ai", () => ({
 const validOutput = {
   answer: "The cards support a cautious opening.",
   reading: "The line combines a practical opening with uncertainty.",
-  patterns: [{ cards: "Clover + Ring", meaning: "A small opening around a bond." }],
+  patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening around a bond." }],
   timing: null,
 };
 
@@ -51,7 +51,7 @@ describe("simple reading contract", () => {
     const answer = SimpleAnswerSchema.parse({
       answer: "The cards support a cautious opening.",
       reading: "The line combines a practical opening with uncertainty.",
-      patterns: [{ cards: "Clover + Ring", meaning: "A small opening around a bond." }],
+      patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening around a bond." }],
       timing: null,
     });
     const rendered = renderSimpleAnswer(answer);
@@ -162,19 +162,22 @@ describe("simple reading single-call output handling", () => {
     expect(result).toMatchObject({ ok: false, reason: "empty-output" });
   });
 
-  it("normalizes a legacy string pattern without retrying", async () => {
+  it("drops a legacy string pattern without failing the reading", async () => {
+    // A pattern whose `cards` is not an array is malformed under the array contract.
+    // It is dropped rather than parsed from a combined string, and never fails the reading.
     generateText.mockResolvedValueOnce(textOutput({ ...validOutput, patterns: ["Clover + Ring: a small opening"] }));
 
     const result = await generateReading(options());
 
     expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toContain("Clover + Ring");
+    expect(result.ok && result.reading).not.toContain("Clover + Ring");
+    expect(result.ok && result.reading).toContain(validOutput.answer);
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
   it.each([
-    ["pattern object", { patterns: [{ cards: "Clover + Ring", meaning: "A small opening." }] }],
-    ["malformed pattern", { patterns: [{ cards: "Clover" }] }],
+    ["pattern object", { patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening." }] }],
+    ["malformed pattern", { patterns: [{ cards: ["Clover"] }] }],
     ["missing timing", {}],
     ["null timing", { timing: null }],
     ["extra legacy fields are ignored", {

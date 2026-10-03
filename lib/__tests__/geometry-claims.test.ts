@@ -47,11 +47,12 @@ describe("validateRelation: generic geometry, independent of any card", () => {
     expect(validateRelation([0, 1], "diagonal", GT)).toBe(false);
   });
 
-  it("checks knight moves as exactly one-and-two", () => {
+  it("checks knight moves as exactly one-and-two, between exactly two cards", () => {
     expect(validateRelation([0, 11], "knight", GT)).toBe(true); // (1,2)
     expect(validateRelation([0, 19], "knight", GT)).toBe(true); // (2,1)
     expect(validateRelation([0, 1], "knight", GT)).toBe(false);
     expect(validateRelation([0, 10], "knight", GT)).toBe(false); // diagonal
+    expect(validateRelation([0, 11, 20], "knight", GT)).toBe(false); // three cards is not a knight move
   });
 
   it("checks sequence only in a line", () => {
@@ -118,15 +119,15 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     return buildReadingContext("grand-tableau", "Q?", cards, cardsMap);
   }
 
-  const answer = (patterns: { cards: string; relation: PatternRelation; meaning: string }[]) =>
+  const answer = (patterns: { cards: string[]; relation: PatternRelation; meaning: string }[]) =>
     SimpleAnswerSchema.parse({ answer: "a", reading: "b", patterns, timing: null });
 
   it("accepts a true claim and rejects a false one for the same card pair", () => {
     const close = tableauAt({ 1: 0, 2: 1 }); // Rider and Clover adjacent
-    expect(findFalseGeometryClaims(answer([{ cards: "Rider + Clover", relation: "adjacent", meaning: "x" }]), close)).toEqual([]);
+    expect(findFalseGeometryClaims(answer([{ cards: ["Rider", "Clover"], relation: "adjacent", meaning: "x" }]), close)).toEqual([]);
 
     const far = tableauAt({ 1: 0, 2: 30 });
-    expect(findFalseGeometryClaims(answer([{ cards: "Rider + Clover", relation: "adjacent", meaning: "x" }]), far)).not.toEqual([]);
+    expect(findFalseGeometryClaims(answer([{ cards: ["Rider", "Clover"], relation: "adjacent", meaning: "x" }]), far)).not.toEqual([]);
   });
 
   it("never scans prose for relation words", () => {
@@ -134,7 +135,7 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     // "next to" appears only in the meaning, and the declared relation is combination.
     expect(
       findFalseGeometryClaims(
-        answer([{ cards: "Rider + Clover", relation: "combination", meaning: "uncertainty sits next to closure" }]),
+        answer([{ cards: ["Rider", "Clover"], relation: "combination", meaning: "uncertainty sits next to closure" }]),
         context,
       ),
     ).toEqual([]);
@@ -149,14 +150,33 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     }));
     const petit = buildReadingContext("comprehensive", "Q?", cards, cardsMap);
     expect(
-      findFalseGeometryClaims(answer([{ cards: "Rider + Clover", relation: "house", meaning: "x" }]), petit),
+      findFalseGeometryClaims(answer([{ cards: ["Rider", "Clover"], relation: "house", meaning: "x" }]), petit),
+    ).not.toEqual([]);
+  });
+
+  it("validates a multi-card column claim from an array of names", () => {
+    // Rider at row 1 col 1, and two filler cards placed down column 1: indices 0, 9, 18.
+    const column = tableauAt({ 1: 0, 2: 9, 3: 18 });
+    expect(
+      findFalseGeometryClaims(
+        answer([{ cards: ["Rider", "Clover", "Ship"], relation: "column", meaning: "x" }]),
+        column,
+      ),
+    ).toEqual([]);
+
+    // The same three cards called a diagonal do not form one.
+    expect(
+      findFalseGeometryClaims(
+        answer([{ cards: ["Rider", "Clover", "Ship"], relation: "diagonal", meaning: "x" }]),
+        column,
+      ),
     ).not.toEqual([]);
   });
 
   it("ignores a claim naming a card that was not drawn", () => {
     const context = tableauAt({ 1: 0 });
     expect(
-      findFalseGeometryClaims(answer([{ cards: "Rider + Nothing", relation: "knight", meaning: "x" }]), context),
+      findFalseGeometryClaims(answer([{ cards: ["Rider", "Nothing"], relation: "knight", meaning: "x" }]), context),
     ).toEqual([]);
   });
 });
