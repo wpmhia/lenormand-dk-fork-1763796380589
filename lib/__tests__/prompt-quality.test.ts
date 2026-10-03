@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext, getQuestionFrame } from "@/lib/reading-context";
-import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
+import { buildPromptFromContext, buildSimpleReadingPrompt, buildSystemPrompt, buildGrandTableauNarrativePlan, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
 import { Card } from "@/lib/types";
 
@@ -465,6 +465,66 @@ describe("production simple prompt evidence", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toContain("Preserve the question's predicate as the subject of the answer");
     expect(prompt).toContain("Fox — caution or something not entirely straightforward");
     expect(prompt).not.toContain("Fox — work or employment requiring caution");
+  });
+});
+
+describe("regression: Grand Tableau narrative anchors both significators and invents no outcome pair", () => {
+  const allIds = Array.from({ length: 36 }, (_, i) => i + 1);
+  // Neither gender-specific referent: no primary significator may be invented.
+  const bothPlan = buildGrandTableauNarrativePlan(
+    buildReadingContext("grand-tableau", "Wat betekent dit voor mijn situatie?", normalized(allIds), cardsMap, "both"),
+  );
+
+  it("keeps Man and Woman as equal relational anchors instead of promoting a topic card", () => {
+    expect(bothPlan.focus).toBeNull();
+    expect(bothPlan.anchors).toEqual([
+      "Woman (specific person/significator)",
+      "Man (specific person/significator)",
+    ]);
+  });
+
+  it("supplies local relations around both significators, not only around one", () => {
+    const relations = bothPlan.development.join(" | ");
+    expect(relations).toMatch(/Woman \(specific person\/significator\) \+/);
+    expect(relations).toMatch(/Man \(specific person\/significator\) \+/);
+    expect(bothPlan.development.length).toBeGreaterThan(1);
+  });
+
+  it("never supplies a universal outcome pair for the 9x4 Grand Tableau", () => {
+    expect(bothPlan.outcomeEvidence).toEqual([]);
+  });
+
+  it("renders GT-specific plan lines including combination fidelity", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("grand-tableau", "Wat betekent dit voor mijn situatie?", normalized(allIds), cardsMap, "both"),
+    );
+    expect(prompt).toContain("- Focus: no single primary significator; read from the relational anchors below");
+    expect(prompt).toContain("Relational anchors (read each as its own neighbourhood; they are not a pair)");
+    expect(prompt).toMatch(/Outcome evidence: none\. This 9x4 Grand Tableau has no universal outcome pair/);
+    expect(prompt).toMatch(/Combination fidelity: you may name a combination only if it appears in the lines above\./);
+  });
+
+  it("still focuses an explicitly selected significator", () => {
+    const explicit = buildGrandTableauNarrativePlan(
+      buildReadingContext("grand-tableau", "Wat betekent dit?", normalized(allIds), cardsMap, "woman"),
+    );
+    expect(explicit.focus).toBe("Woman (specific person/significator)");
+    expect(explicit.anchors).toEqual(["Woman (specific person/significator)"]);
+  });
+
+  it("every supplied relation comes from the layout's own adjacent pairs", () => {
+    const ctx = buildReadingContext("grand-tableau", "Wat betekent dit?", normalized(allIds), cardsMap, "both");
+    const supplied = new Set(
+      ctx.adjacentPairs.flatMap((pair) => [
+        `${pair.cardA.name} + ${pair.cardB.name}`,
+        `${pair.cardB.name} + ${pair.cardA.name}`,
+      ]),
+    );
+    expect(bothPlan.development.length).toBeGreaterThan(0);
+    for (const relation of bothPlan.development) {
+      const base = relation.replaceAll(" (specific person/significator)", "");
+      expect(supplied.has(base)).toBe(true);
+    }
   });
 });
 

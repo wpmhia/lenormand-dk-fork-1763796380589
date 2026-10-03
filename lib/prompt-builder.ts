@@ -1,5 +1,5 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
-import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout } from "@/lib/reading-context";
+import type { ReadingContext, AdjacentPair, PetitTableauLayout, GrandTableauLayout, SignificatorInfo } from "@/lib/reading-context";
 import { getDefinition } from "@/lib/spread-definitions";
 import { buildTimingEvidencePrompt } from "@/lib/timing";
 import { buildPredictionContext, formatPredictionEvidenceBlock } from "@/lib/prediction-context";
@@ -167,7 +167,7 @@ const LINEAR_HIERARCHY_NOTE = `For an outcome question, the closing card and the
 
 const PETIT_HIERARCHY_NOTE = `For an outcome question, the center card is the heart of the tableau. The middle line and the center column together carry the primary narrative. Diagonals are supporting axes; outer rows and outer columns are qualifier pairs. The closing card of the middle line (the rightmost middle-line card) is the directional outcome, and the strongest pair shown in the Prediction synthesis evidence is the most actionable pair.`;
 
-const GT_HIERARCHY_NOTE = `For an outcome question, the significator's surroundings are the most actionable area. Topic houses and proximity anchor long-term themes. In this documented 9x4 method, positions 33-36 are ordinary fourth-row positions, not a separate Fate row or universal outcome.`;
+const GT_HIERARCHY_NOTE = `For an outcome question, the significator's surroundings are the most actionable area. When both Man and Woman are drawn, read both as equal relational anchors and read each one's own neighbourhood; do not collapse them into a single centre and do not read them as a pair with each other. Topic houses and proximity anchor long-term themes. In this documented 9x4 method, positions 33-36 are ordinary fourth-row positions, not a separate Fate row or universal outcome, and the tableau has no closing card or single outcome pair: derive the answer from the significator neighbourhoods and the question-relevant houses together instead of naming one "strongest pair" as the result. Name a combination only when the supplied layout actually places those cards together; two cards that merely both appear somewhere in the tableau are not a combination, and no proximity, mirroring or house relationship may be asserted unless it is supplied.`;
 
 const PREDICTIVE_VOICE_LINEAR = `Answer the user's actual question directly. Write the reading as a three-part arc: Interpretation → Cards → Prediction.
 
@@ -330,6 +330,8 @@ function fmtAdjacentPairs(pairs: AdjacentPair[]): string {
 
 export interface NarrativePlan {
   focus: string | null;
+  /** Grand Tableau only: the person cards that anchor the reading. Multiple anchors are equal, not a pair. */
+  anchors?: string[];
   development: string[];
   supporting: string[];
   outcomeEvidence: string[];
@@ -377,28 +379,71 @@ export function buildPetitNarrativePlan(context: ReadingContext): NarrativePlan 
   };
 }
 
+const GT_MAX_ANCHOR_RELATIONS = 8;
+const GT_MAX_HOUSES = 4;
+const GT_MAX_MIRRORS = 4;
+
+/**
+ * Relational anchors for the Grand Tableau.
+ *
+ * With significatorPreference "both" the request is explicitly to read from both
+ * Man and Woman, and `buildGrandTableauPairs` weights the geometry around both of
+ * them. The narrative plan must therefore keep both as separate relational anchors
+ * instead of promoting one to a single focus. Only an explicitly selected
+ * significator ("man"/"woman") yields a single anchor.
+ *
+ * A topic card is never an anchor: a topic house is a long-term theme, not the
+ * querent's position in the tableau, and promoting `topicCards[0]` made an
+ * arbitrary card the centre of the reading.
+ */
+function grandTableauAnchors(layout: GrandTableauLayout): SignificatorInfo[] {
+  const drawn = [
+    layout.significators.woman,
+    layout.significators.man,
+  ].filter((sig): sig is SignificatorInfo => sig !== undefined);
+
+  if (layout.significatorPreference === "both") return drawn;
+  if (layout.primarySignificator) return [layout.primarySignificator];
+  return drawn;
+}
+
 export function buildGrandTableauNarrativePlan(context: ReadingContext): NarrativePlan {
   if (context.layout.type !== "grand-tableau") throw new Error("Grand Tableau narrative planner requires a Grand Tableau layout");
   const layout = context.layout;
-  const focus = layout.primarySignificator?.card
-    ?? layout.topicCards[0]?.card
-    ?? null;
-  const localPairs = context.adjacentPairs
-    .filter((pair) => focus && (pair.cardA.id === focus.id || pair.cardB.id === focus.id))
-    .slice(0, 4)
-    .map((pair) => `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`);
+
+  const anchors = grandTableauAnchors(layout);
+  const anchorIds = new Set(anchors.map((anchor) => anchor.card.id));
+
+  // Supplied geometry only. Every relation below contains an anchor card and comes
+  // straight from `context.adjacentPairs`, so the model is never handed a
+  // combination the layout did not actually establish.
+  const relations: string[] = [];
+  for (const pair of context.adjacentPairs) {
+    if (relations.length >= GT_MAX_ANCHOR_RELATIONS) break;
+    if (!anchorIds.has(pair.cardA.id) && !anchorIds.has(pair.cardB.id)) continue;
+    const relation = `${fmtCard(pair.cardA)} + ${fmtCard(pair.cardB)}`;
+    if (relations.includes(relation)) continue;
+    relations.push(relation);
+  }
+
   const houses = layout.houses
     .filter((house) => layout.topicCards.some((topic) => topic.cardId === house.houseCardId))
-    .slice(0, 4)
+    .slice(0, GT_MAX_HOUSES)
     .map((house) => `${house.houseName}: ${fmtCard(house.occupyingCard)}`);
-  const strongest = context.adjacentPairs
-    .slice()
-    .sort((a, b) => b.weight - a.weight)[0];
+
   return {
-    focus: focus ? fmtCard(focus) : null,
-    development: localPairs,
-    supporting: [...houses, ...layout.mirrors.slice(0, 4).map((pair) => `${fmtCard(pair.cardA)} ↔ ${fmtCard(pair.cardB)}`)],
-    outcomeEvidence: strongest ? [`${fmtCard(strongest.cardA)} + ${fmtCard(strongest.cardB)}`] : [],
+    focus: anchors.length === 1 ? fmtCard(anchors[0].card) : null,
+    anchors: anchors.map((anchor) => fmtCard(anchor.card)),
+    development: relations,
+    supporting: [
+      ...houses,
+      ...layout.mirrors.slice(0, GT_MAX_MIRRORS).map((pair) => `${fmtCard(pair.cardA)} ↔ ${fmtCard(pair.cardB)}`),
+    ],
+    // A 9x4 Grand Tableau has no closing card, no fate row and no universal outcome
+    // pair. `outcomeEvidence` stays empty on purpose: naming one arbitrary
+    // "strongest" pair here is what made the model build a story around an
+    // invented climax instead of the two significator neighbourhoods.
+    outcomeEvidence: [],
   };
 }
 
@@ -425,6 +470,19 @@ function formatNarrativePlan(plan: NarrativePlan, layoutType: ReadingContext["la
       `- Supporting evidence (diagonals): ${plan.supporting.slice(1).join("; ") || "none"}`,
        `- Outcome evidence: ${plan.outcomeEvidence.join("; ") || "not established"}`,
       "- Narrative priority: focus, development, outcome evidence, then supporting evidence only when it materially qualifies the story.",
+      "- Do not narrate every drawn card or use numeric positions in the answer.",
+    ].join("\n");
+  }
+  if (layoutType === "grand-tableau") {
+    return [
+      "Narrative plan (authoritative; write one coherent story from this spine):",
+      `- Focus: ${plan.focus || "no single primary significator; read from the relational anchors below"}`,
+      `- Relational anchors (read each as its own neighbourhood; they are not a pair): ${plan.anchors?.join(", ") || "not established"}`,
+      `- Supplied local relations around the anchors (ordered, not causal): ${plan.development.join(" | ") || "not established"}`,
+      `- Supporting evidence: ${plan.supporting.join("; ") || "none"}`,
+      "- Outcome evidence: none. This 9x4 Grand Tableau has no universal outcome pair, no closing card and no fate row. Do not present a single pair as the outcome; answer the question from the significator neighbourhoods and the question-relevant houses together.",
+      "- Combination fidelity: you may name a combination only if it appears in the lines above. Never build a combination out of two cards that merely both appear somewhere in the tableau, and never assert adjacency, mirroring or house occupancy that is not listed here.",
+      "- Narrative priority: relational anchors, their supplied local relations, then the question-relevant houses. Supporting evidence only when it materially qualifies the story.",
       "- Do not narrate every drawn card or use numeric positions in the answer.",
     ].join("\n");
   }
