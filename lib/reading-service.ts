@@ -9,10 +9,11 @@ import {
   findProseInvariantViolation,
   PATTERN_RELATIONS,
   type Pattern,
+  type SimpleAnswer,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
-import { findInventedCards } from "@/lib/invented-cards";
+import { findInventedCards, findUnresolvedCardLabels, type InventedCardMatch } from "@/lib/invented-cards";
 import { findInvalidGeometryPatterns } from "@/lib/geometry-claims";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
@@ -56,67 +57,147 @@ export function resolveThinkingMode(cardCount: number): { type: "enabled" | "dis
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const result = await generateOnce(options);
   if (result.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
-  if (result.kind === "valid") {
-    const drawnCardIds = options.context.cards.map((card) => card.id);
+  if (result.kind !== "valid") {
+    return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
+  }
 
-    // An undrawn card in a `patterns[].cards` label is a fabrication of that one pattern.
-    // Drop the pattern and keep the reading, exactly as a false geometry claim is handled;
-    // rejecting an otherwise complete interpretation over one bad pattern is a server-side
-    // overreach. Free prose is only checked for explicit references, and a genuinely
-    // explicit reference to an undrawn card stays fatal.
-    const firstPass = findInventedCards(result.answer, drawnCardIds);
-    const inventedPatternIndices = new Set(
-      firstPass.filter((match) => match.field === "pattern").map((match) => match.patternIndex!),
-    );
-    const trimmed = inventedPatternIndices.size === 0
-      ? result.answer
-      : {
-          ...result.answer,
-          patterns: result.answer.patterns.filter((_, index) => !inventedPatternIndices.has(index)),
-        };
+  const validation = validateAnswer(result.answer, options.context);
 
-    const droppedInventedPatterns = [...inventedPatternIndices]
-      .sort((a, b) => a - b)
-      .map((index) => {
-        const pattern = result.answer.patterns[index];
-        const names = [...new Set(firstPass.filter((match) => match.patternIndex === index).map((match) => match.name))];
-        return `Pattern "${pattern.cards.join(" + ")}" names undrawn card(s): ${names.join(", ")}`;
-      });
+  // An explicit card reference in free prose is an unrepairable factual statement, not a
+  // pattern detail: it is fatal on its own.
+  if (validation.proseIssues.length > 0) return inventedCardFailure(validation.proseIssues, result.diagnostics);
 
-    const proseInvented = findInventedCards(trimmed, drawnCardIds).filter((match) => match.field !== "pattern");
-    if (proseInvented.length > 0) {
-      return {
-        ok: false,
-        reason: "invented-card",
-        issues: proseInvented.map((match) => ({
-          type: "invented_card" as const,
-          message: `Reading names undrawn card ${match.name} (${match.id}) in "${match.field}": ${match.fragment}`,
-          field: match.field,
-          fragment: match.fragment,
-        })),
-        diagnostics: result.diagnostics,
-      };
-    }
-
-    // A false spatial claim is repaired locally too: drop the offending patterns and keep
-    // the reading. Rejecting the whole Grand Tableau over one mis-declared relation would
-    // throw away a usable reading for a detail.
-    const invalidGeometry = findInvalidGeometryPatterns(trimmed, options.context);
-    const answer = invalidGeometry.length === 0
-      ? trimmed
-      : {
-          ...trimmed,
-          patterns: trimmed.patterns.filter((_, index) => !invalidGeometry.some((item) => item.index === index)),
-        };
-
+  if (validation.droppedGeometry.length === 0 && validation.droppedInvented.length === 0) {
     return {
       ok: true,
-      reading: renderSimpleAnswer(answer),
-      droppedGeometryPatterns: invalidGeometry.map((item) => item.message),
-      droppedInventedPatterns,
+      reading: renderSimpleAnswer(validation.answer),
+      droppedGeometryPatterns: [],
+      droppedInventedPatterns: [],
     };
   }
-  return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };
+
+  // A pattern was rejected. Dropping it from `patterns[]` is not enough on its own: the
+  // model may already have restated that same false relationship in `answer` or `reading`.
+  // The narrative is therefore regenerated once from the verified patterns, so what ships
+  // is built from claims the server has actually checked rather than prose it just refuted.
+  const repaired = await generateOnce({ ...options, prompt: buildRepairPrompt(options.prompt, validation) });
+  if (repaired.kind === "valid") {
+    const finalAnswer = { ...repaired.answer, patterns: validation.verifiedPatterns };
+    const prose = findInventedCards(finalAnswer, options.context.cards.map((card) => card.id)).filter(
+      (match) => match.field !== "pattern",
+    );
+    if (prose.length === 0) {
+      return {
+        ok: true,
+        reading: renderSimpleAnswer(finalAnswer),
+        droppedGeometryPatterns: validation.droppedGeometry,
+        droppedInventedPatterns: validation.droppedInvented,
+      };
+    }
+    return inventedCardFailure(prose, repaired.diagnostics);
+  }
+
+  return {
+    ok: false,
+    reason: "schema-mismatch",
+    issues: [{
+      type: "structured-output",
+      message: "A reading with rejected structural claims could not be rewritten from the verified patterns.",
+    }],
+    diagnostics: repaired.kind === "invalid" ? repaired.diagnostics : undefined,
+  };
+}
+
+interface AnswerValidation {
+  /** The serving answer: every rejected pattern removed, prose untouched. */
+  answer: SimpleAnswer;
+  verifiedPatterns: Pattern[];
+  droppedInvented: string[];
+  droppedGeometry: string[];
+  proseIssues: InventedCardMatch[];
+}
+
+/**
+ * Everything deterministic the server can say about one candidate answer:
+ * which patterns fail the invented-card, unresolved-name and geometry gates, and which
+ * verified patterns survive. Free prose is only checked for explicit card references.
+ */
+function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): AnswerValidation {
+  const drawnCardIds = context.cards.map((card) => card.id);
+
+  const invented = findInventedCards(candidate, drawnCardIds).filter((match) => match.field === "pattern");
+  const unresolved = findUnresolvedCardLabels(candidate);
+  const badPatternIndices = new Set<number>();
+  candidate.patterns.forEach((_, index) => {
+    if (invented.some((match) => match.patternIndex === index) || unresolved.some((label) => label.patternIndex === index)) {
+      badPatternIndices.add(index);
+    }
+  });
+
+  const droppedInvented = [...badPatternIndices]
+    .sort((a, b) => a - b)
+    .map((index) => {
+      const pattern = candidate.patterns[index];
+      const names = [...new Set(invented.filter((match) => match.patternIndex === index).map((match) => match.name))];
+      const labels = [...new Set(unresolved.filter((label) => label.patternIndex === index).map((label) => label.label))];
+      const reasons: string[] = [];
+      if (names.length > 0) reasons.push(`names undrawn card(s): ${names.join(", ")}`);
+      if (labels.length > 0) reasons.push(`uses unrecognised card name(s): ${labels.join(", ")}`);
+      return `Pattern "${pattern.cards.join(" + ")}" ${reasons.join("; ")}`;
+    });
+
+  const afterLabels: SimpleAnswer = badPatternIndices.size === 0
+    ? candidate
+    : { ...candidate, patterns: candidate.patterns.filter((_, index) => !badPatternIndices.has(index)) };
+
+  const invalidGeometry = findInvalidGeometryPatterns(afterLabels, context);
+  const badGeometry = new Set(invalidGeometry.map((item) => item.index));
+  const verifiedPatterns = afterLabels.patterns.filter((_, index) => !badGeometry.has(index));
+
+  const verified: SimpleAnswer = { ...afterLabels, patterns: verifiedPatterns };
+  const proseIssues = findInventedCards(verified, drawnCardIds).filter((match) => match.field !== "pattern");
+
+  return {
+    answer: verified,
+    verifiedPatterns,
+    droppedInvented,
+    droppedGeometry: invalidGeometry.map((item) => item.message),
+    proseIssues,
+  };
+}
+
+function inventedCardFailure(matches: InventedCardMatch[], diagnostics?: StructuredOutputDiagnostics): ReadingServiceResult {
+  return {
+    ok: false,
+    reason: "invented-card",
+    issues: matches.map((match) => ({
+      type: "invented_card" as const,
+      message: `Reading names undrawn card ${match.name} (${match.id}) in "${match.field}": ${match.fragment}`,
+      field: match.field,
+      fragment: match.fragment,
+    })),
+    diagnostics,
+  };
+}
+
+function buildRepairPrompt(basePrompt: string, validation: AnswerValidation): string {
+  const verified = validation.verifiedPatterns.length > 0
+    ? validation.verifiedPatterns
+        .map((pattern) => `- ${pattern.cards.join(" + ")} [${pattern.relation}${pattern.house ? `, house: ${pattern.house}` : ""}]: ${pattern.meaning}`)
+        .join("\n")
+    : "- (none)";
+  const rejected = [...validation.droppedInvented, ...validation.droppedGeometry].map((message) => `- ${message}`).join("\n");
+
+  return `${basePrompt}
+
+Correction pass:
+Your previous answer asserted structural claims the coordinates do not support. These were rejected:
+${rejected}
+
+The verified patterns below are the only spatial claims you may use. Every statement about position, adjacency, sequence, rows, columns, diagonals, knight moves, houses or combinations in the narrative must come from this list:
+${verified}
+
+Rewrite "answer" and "reading" so they no longer repeat or paraphrase any rejected claim and reference only the verified patterns. Copy the "patterns" array exactly as listed above. Return the same JSON object shape and change nothing else.`;
 }
 
 type GenerationAttempt =
@@ -211,7 +292,8 @@ function normalizePattern(value: unknown): Pattern | null {
       typeof item.relation === "string" && (PATTERN_RELATIONS as readonly string[]).includes(item.relation)
         ? (item.relation as Pattern["relation"])
         : "combination";
-    return { cards, relation, meaning: item.meaning.trim() };
+    const house = typeof item.house === "string" && item.house.trim() ? item.house.trim() : null;
+    return { cards, relation, house, meaning: item.meaning.trim() };
   }
 
   return null;

@@ -14,6 +14,8 @@ interface PhysicalCardInputProps {
   targetCount: number;
   onSubmit: (cards: ReadingCard[]) => void;
   isSubmitting?: boolean;
+  /** Cards from a previous entry, restored when the user navigates back. */
+  initialCards?: ReadingCard[];
 }
 
 interface ParsedCardResult {
@@ -27,8 +29,13 @@ export function PhysicalCardInput({
   targetCount,
   onSubmit,
   isSubmitting = false,
+  initialCards,
 }: PhysicalCardInputProps) {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(() =>
+    (initialCards ?? [])
+      .map((card) => getCardById(allCards, card.id)?.name ?? String(card.id))
+      .join(", "),
+  );
   const [errors, setErrors] = useState<string[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [parsedCards, setParsedCards] = useState<ReadingCard[]>([]);

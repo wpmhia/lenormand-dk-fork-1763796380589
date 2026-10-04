@@ -437,15 +437,23 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
 
     beforeEach(() => generateText.mockReset());
 
-    it("drops a pattern that names an undrawn card instead of failing the reading", async () => {
+    it("drops a pattern that names an undrawn card and rewrites the narrative from verified claims", async () => {
       generateText.mockResolvedValueOnce({
         text: JSON.stringify({
           answer: "It will not hold.",
-          reading: "The spread points elsewhere.",
+          reading: "A draft that repeats the dropped claim.",
           patterns: [
             { cards: ["Clover", "Heart"], meaning: "kept pattern" },
             { cards: ["Clover", "Scythe"], meaning: "dropped pattern" },
           ],
+        }),
+        finishReason: "stop",
+      });
+      generateText.mockResolvedValueOnce({
+        text: JSON.stringify({
+          answer: "Verified.",
+          reading: "Rewritten from the verified patterns.",
+          patterns: [{ cards: ["Clover", "Heart"], meaning: "kept pattern" }],
         }),
         finishReason: "stop",
       });
@@ -458,9 +466,11 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
       );
 
       expect(result.ok).toBe(true);
+      expect(result.ok && result.reading).toContain("Rewritten from the verified patterns");
       expect(result.ok && result.reading).toContain("kept pattern");
       expect(result.ok && result.reading).not.toContain("dropped pattern");
       expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
+      expect(generateText).toHaveBeenCalledTimes(2);
     });
 
     it("fails only on an explicit prose reference to an undrawn card, with field and fragment", async () => {
