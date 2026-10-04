@@ -17,7 +17,7 @@ import { findInvalidGeometryPatterns } from "@/lib/geometry-claims";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
-  | { ok: true; reading: string; droppedGeometryPatterns: string[] }
+  | { ok: true; reading: string; droppedGeometryPatterns: string[]; droppedInventedPatterns: string[] }
   | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
@@ -57,34 +57,63 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const result = await generateOnce(options);
   if (result.kind === "empty") return { ok: false, reason: "empty-output", issues: [] };
   if (result.kind === "valid") {
-    const invented = findInventedCards(result.answer, options.context.cards.map((card) => card.id));
-    if (invented.length > 0) {
+    const drawnCardIds = options.context.cards.map((card) => card.id);
+
+    // An undrawn card in a `patterns[].cards` label is a fabrication of that one pattern.
+    // Drop the pattern and keep the reading, exactly as a false geometry claim is handled;
+    // rejecting an otherwise complete interpretation over one bad pattern is a server-side
+    // overreach. Free prose is only checked for explicit references, and a genuinely
+    // explicit reference to an undrawn card stays fatal.
+    const firstPass = findInventedCards(result.answer, drawnCardIds);
+    const inventedPatternIndices = new Set(
+      firstPass.filter((match) => match.field === "pattern").map((match) => match.patternIndex!),
+    );
+    const trimmed = inventedPatternIndices.size === 0
+      ? result.answer
+      : {
+          ...result.answer,
+          patterns: result.answer.patterns.filter((_, index) => !inventedPatternIndices.has(index)),
+        };
+
+    const droppedInventedPatterns = [...inventedPatternIndices]
+      .sort((a, b) => a - b)
+      .map((index) => {
+        const pattern = result.answer.patterns[index];
+        const names = [...new Set(firstPass.filter((match) => match.patternIndex === index).map((match) => match.name))];
+        return `Pattern "${pattern.cards.join(" + ")}" names undrawn card(s): ${names.join(", ")}`;
+      });
+
+    const proseInvented = findInventedCards(trimmed, drawnCardIds).filter((match) => match.field !== "pattern");
+    if (proseInvented.length > 0) {
       return {
         ok: false,
         reason: "invented-card",
-        issues: [{
-          type: "invented_card",
-          message: `Reading names ${invented.length} card(s) that were not drawn: ${invented.join(", ")}`,
-        }],
+        issues: proseInvented.map((match) => ({
+          type: "invented_card" as const,
+          message: `Reading names undrawn card ${match.name} (${match.id}) in "${match.field}": ${match.fragment}`,
+          field: match.field,
+          fragment: match.fragment,
+        })),
         diagnostics: result.diagnostics,
       };
     }
 
-    // A false spatial claim is repaired locally: drop the offending patterns and keep the
-    // reading. Rejecting the whole Grand Tableau over one mis-declared relation would throw
-    // away a usable reading for a detail.
-    const invalidGeometry = findInvalidGeometryPatterns(result.answer, options.context);
+    // A false spatial claim is repaired locally too: drop the offending patterns and keep
+    // the reading. Rejecting the whole Grand Tableau over one mis-declared relation would
+    // throw away a usable reading for a detail.
+    const invalidGeometry = findInvalidGeometryPatterns(trimmed, options.context);
     const answer = invalidGeometry.length === 0
-      ? result.answer
+      ? trimmed
       : {
-          ...result.answer,
-          patterns: result.answer.patterns.filter((_, index) => !invalidGeometry.some((item) => item.index === index)),
+          ...trimmed,
+          patterns: trimmed.patterns.filter((_, index) => !invalidGeometry.some((item) => item.index === index)),
         };
 
     return {
       ok: true,
       reading: renderSimpleAnswer(answer),
       droppedGeometryPatterns: invalidGeometry.map((item) => item.message),
+      droppedInventedPatterns,
     };
   }
   return { ok: false, reason: "schema-mismatch", issues: [schemaIssue(result.error)], diagnostics: result.diagnostics };

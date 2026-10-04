@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         phase: serviceResult.reason,
         spreadId: validated.spreadId,
         cardCount: cardCount,
-        issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message })),
+        issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message, field: i.field, fragment: i.fragment })),
         rawShape: serviceResult.diagnostics?.rawShape,
         finishReason: serviceResult.diagnostics?.finishReason,
         elapsedMs: Date.now() - startedAt,
@@ -115,12 +115,21 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
-    // A mis-declared spatial pattern is dropped, not fatal. Log it so the rate is measurable.
+    // Mis-declared spatial or invented-card patterns are dropped, not fatal. Log them so
+    // the rate is measurable.
     if (serviceResult.droppedGeometryPatterns.length > 0) {
       console.warn("interpret: dropped unsupported geometry patterns", {
         spreadId: validated.spreadId,
         cardCount: cardCount,
         dropped: serviceResult.droppedGeometryPatterns,
+        elapsedMs: Date.now() - startedAt,
+      });
+    }
+    if (serviceResult.droppedInventedPatterns.length > 0) {
+      console.warn("interpret: dropped invented-card patterns", {
+        spreadId: validated.spreadId,
+        cardCount: cardCount,
+        dropped: serviceResult.droppedInventedPatterns,
         elapsedMs: Date.now() - startedAt,
       });
     }
