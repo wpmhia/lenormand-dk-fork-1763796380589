@@ -177,6 +177,34 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
   return facts;
 }
 
+/**
+ * The significator-focus statement, derived only from the cards actually present.
+ *
+ * `both` is not a focus, and an explicitly selected card that is not in the spread must
+ * not be reported as one — the previous preference fallback turned "both with only Man
+ * present" into "focus: Woman", which named a card that was not there.
+ */
+export function significatorFocusFacts(
+  preference: "woman" | "man" | "both",
+  presentLabels: string[],
+): string[] {
+  const selectedFocus = preference === "man" ? "Man" : preference === "woman" ? "Woman" : null;
+
+  if (preference === "both" && presentLabels.length === 2) {
+    return ["- Both significators are in this spread; read each one's own surroundings, and weigh their relation to each other from the coordinates above."];
+  }
+
+  if (selectedFocus && presentLabels.includes(selectedFocus)) {
+    const others = presentLabels.filter((label) => label !== selectedFocus);
+    const otherClause = others.length > 0
+      ? ` The other person card (${others.join(", ")}) is still present as an ordinary card.`
+      : "";
+    return [`- Significator focus: ${selectedFocus}.${otherClause}`];
+  }
+
+  return [`- Person card(s) present: ${presentLabels.join(", ")}. No other person card is in this spread.`];
+}
+
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
   const facts = [
     `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
@@ -202,11 +230,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
       const binding = context.personBindings.find((item) => item.cardId === cardId);
       facts.push(`- ${label}: position ${info.index + 1}, row ${row}, col ${column}, ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
     }
-    if (layout.significatorPreference === "both" && significatorRows.length === 2) {
-      facts.push("- Both significators are in this spread; read each one's own surroundings, and weigh their relation to each other from the coordinates above.");
-    } else {
-      facts.push(`- Significator focus: ${layout.significatorPreference === "man" ? "Man" : "Woman"}. The other person card is still present as an ordinary card.`);
-    }
+    facts.push(...significatorFocusFacts(layout.significatorPreference, significatorRows.map((row) => row.label)));
   }
 
   facts.push("");

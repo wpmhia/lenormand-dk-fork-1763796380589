@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, significatorFocusFacts, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { Card } from "@/lib/types";
 
 function makeCard(id: number, name: string, keywords?: string[]): Card {
@@ -215,5 +215,29 @@ describe("prompt-builder: timing stays ungrounded rather than invented", () => {
     expect(buildSimpleReadingPrompt(ctx)).toMatch(/"timing": string \| null/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not force certainty when the spread is genuinely mixed/i);
+  });
+});
+
+describe("prompt-builder: significator focus follows actual card presence", () => {
+  it("does not invent a Woman focus when only Man is present under preference 'both'", () => {
+    // The old preference fallback returned "focus: Woman" here.
+    expect(significatorFocusFacts("both", ["Man"])).toEqual([
+      "- Person card(s) present: Man. No other person card is in this spread.",
+    ]);
+  });
+
+  it("does not claim another person card is present when it is not", () => {
+    expect(significatorFocusFacts("man", ["Man"])).toEqual(["- Significator focus: Man."]);
+  });
+
+  it("does not report a selected focus that is absent from the spread", () => {
+    expect(significatorFocusFacts("man", ["Woman"])).toEqual([
+      "- Person card(s) present: Woman. No other person card is in this spread.",
+    ]);
+  });
+
+  it("reports both significators only when both are actually present", () => {
+    expect(significatorFocusFacts("both", ["Man", "Woman"])[0]).toContain("Both significators are in this spread");
+    expect(significatorFocusFacts("man", ["Man", "Woman"])[0]).toContain("still present as an ordinary card");
   });
 });

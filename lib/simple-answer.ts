@@ -90,6 +90,18 @@ export function findProseInvariantViolation(answer: SimpleAnswer): string | null
   return violation?.source || null;
 }
 
+/**
+ * Whether a generated reading is complete enough to persist.
+ *
+ * `renderSimpleAnswer` always emits the four-field contract, and `aiReading` is only set
+ * after a successful server-validated generation, so a non-empty body is the signal. The
+ * retired per-spread regexes looked for "## Prediction" / "## Grand Tableau overview",
+ * which this renderer never emits, so they rejected valid readings.
+ */
+export function isReadingComplete(reading: string): boolean {
+  return reading.trim().length > 0;
+}
+
 export function renderSimpleAnswer(answer: SimpleAnswer): string {
   const patterns = answer.patterns.length
     ? `\n\n## Patterns\n${answer.patterns.map((pattern) => `- **${pattern.cards.join(" + ")}**: ${pattern.meaning}`).join("\n")}`

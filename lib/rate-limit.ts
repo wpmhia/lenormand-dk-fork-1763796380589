@@ -36,17 +36,42 @@ function hashIP(ip: string): string {
   return Math.abs(hash).toString(36);
 }
 
+/**
+ * The per-instance fallback. It still enforces `limit`, so a Redis outage degrades
+ * protection to one process rather than disabling it entirely. `degraded: true` lets the
+ * routes log/alert and is never reported as a normal, healthy rate-limit decision.
+ */
+function memoryRateLimit(key: string, limit: number): RateLimitResult {
+  const now = Date.now();
+  const memKey = `mem:${key}:${limit}`;
+  const entry = memCache.get(memKey);
+
+  if (entry && entry.resetTime >= now) {
+    if (entry.count >= limit) {
+      return { success: false, limit, remaining: 0, reset: entry.resetTime, degraded: true };
+    }
+    entry.count++;
+    return { success: true, limit, remaining: limit - entry.count, reset: entry.resetTime, degraded: true };
+  }
+
+  const resetTime = now + 60000;
+  memCache.set(memKey, { count: 1, resetTime });
+
+  if (memCache.size > MAX_CACHE_SIZE && Math.random() < CLEANUP_PROBABILITY) {
+    for (const [k, v] of memCache) {
+      if (v.resetTime < now) memCache.delete(k);
+    }
+  }
+
+  return { success: true, limit, remaining: limit - 1, reset: resetTime, degraded: true };
+}
+
 export async function rateLimit(
   ip: string,
   limit: number = 20,
   _windowMs?: number,
 ): Promise<RateLimitResult> {
   const key = hashIP(ip);
-
-  if (!redisConfigured && process.env.NODE_ENV === "production") {
-    console.warn("rate-limit: Redis is not configured in production; allowing request in degraded mode");
-    return { success: true, limit, remaining: limit - 1, reset: Date.now() + 60000, degraded: true };
-  }
 
   if (upstashRatelimit) {
     try {
@@ -61,34 +86,18 @@ export async function rateLimit(
 
       const { success, limit: l, remaining, reset } = await ratelimiter.limit(key);
       return { success, limit: l, remaining, reset: reset || Date.now() + 60000 };
-    } catch {
-      console.warn("rate-limit: Redis unavailable; allowing request in degraded mode");
-      return { success: true, limit, remaining: limit - 1, reset: Date.now() + 60000, degraded: true };
+    } catch (error) {
+      console.error("rate-limit: Redis unavailable; enforcing the in-memory fallback", {
+        message: error instanceof Error ? error.message : String(error),
+      });
+      return memoryRateLimit(key, limit);
     }
   }
 
-  const now = Date.now();
-  const memKey = `mem:${key}:${limit}`;
-  const entry = memCache.get(memKey);
-
-  if (entry && entry.resetTime >= now) {
-    if (entry.count >= limit) {
-      return { success: false, limit, remaining: 0, reset: entry.resetTime };
-    }
-    entry.count++;
-    return { success: true, limit, remaining: limit - entry.count, reset: entry.resetTime };
+  if (!redisConfigured && process.env.NODE_ENV === "production") {
+    console.error("rate-limit: Redis is not configured in production; enforcing the in-memory fallback");
   }
-
-  const resetTime = now + 60000;
-  memCache.set(memKey, { count: 1, resetTime });
-
-  if (memCache.size > MAX_CACHE_SIZE && Math.random() < CLEANUP_PROBABILITY) {
-    for (const [k, v] of memCache) {
-      if (v.resetTime < now) memCache.delete(k);
-    }
-  }
-
-  return { success: true, limit, remaining: limit - 1, reset: resetTime, degraded: true };
+  return memoryRateLimit(key, limit);
 }
 
 export function getClientIP(request: Request): string {

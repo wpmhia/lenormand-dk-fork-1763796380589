@@ -96,7 +96,7 @@ function NewReadingPageContent() {
   const { toast } = useToast();
   const { showInstallPrompt } = useInstallPrompt();
 
-  useAutoSaveReading(aiReading, aiLoading, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved, selectedSpread.id);
+  useAutoSaveReading(aiReading, aiLoading, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved);
 
   useEffect(() => {
     if (aiReading && !aiLoading && step === "results" && drawnCardTypes.length > 0) {

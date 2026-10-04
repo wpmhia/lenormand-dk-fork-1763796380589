@@ -6,7 +6,7 @@ import {
   SIMPLE_LENORMAND_SYSTEM_PROMPT,
   getTokenBudget,
 } from "@/lib/prompt-builder";
-import { findInventedCards } from "@/lib/invented-cards";
+import { findInventedCards, findInventedCardReferences } from "@/lib/invented-cards";
 import { SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import { SPREAD_IDS, type SpreadId } from "@/lib/spread-definitions";
@@ -349,6 +349,15 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
     expect(matches[0].fragment).toContain("Clouds + Anchor");
   });
 
+  it("grounds free-text follow-ups with the same unambiguous-reference rule", () => {
+    // Explicit references to undrawn cards are flagged ...
+    expect(findInventedCardReferences("The Scythe card cuts the line.", drawn)).toHaveLength(1);
+    expect(findInventedCardReferences("The Clouds + Anchor line holds.", drawn)[0].id).toBe(35);
+    // ... while ordinary prose, including a natural pairing, is not.
+    expect(findInventedCardReferences("The man and woman should talk.", drawn)).toEqual([]);
+    expect(findInventedCardReferences("Anchor and Crossroads are ordinary words here.", drawn)).toEqual([]);
+  });
+
   // Regression: a bare card word is ordinary language, never a card reference. The old
   // detector scanned prose with a list of loose card words and rejected valid readings.
   it("never treats a bare card name as a reference, whatever the casing", () => {
@@ -437,23 +446,15 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
 
     beforeEach(() => generateText.mockReset());
 
-    it("drops a pattern that names an undrawn card and rewrites the narrative from verified claims", async () => {
+    it("drops a pattern that names an undrawn card in a single generation", async () => {
       generateText.mockResolvedValueOnce({
         text: JSON.stringify({
           answer: "It will not hold.",
-          reading: "A draft that repeats the dropped claim.",
+          reading: "The spread points elsewhere.",
           patterns: [
             { cards: ["Clover", "Heart"], meaning: "kept pattern" },
             { cards: ["Clover", "Scythe"], meaning: "dropped pattern" },
           ],
-        }),
-        finishReason: "stop",
-      });
-      generateText.mockResolvedValueOnce({
-        text: JSON.stringify({
-          answer: "Verified.",
-          reading: "Rewritten from the verified patterns.",
-          patterns: [{ cards: ["Clover", "Heart"], meaning: "kept pattern" }],
         }),
         finishReason: "stop",
       });
@@ -466,11 +467,10 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
       );
 
       expect(result.ok).toBe(true);
-      expect(result.ok && result.reading).toContain("Rewritten from the verified patterns");
       expect(result.ok && result.reading).toContain("kept pattern");
       expect(result.ok && result.reading).not.toContain("dropped pattern");
       expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
-      expect(generateText).toHaveBeenCalledTimes(2);
+      expect(generateText).toHaveBeenCalledTimes(1);
     });
 
     it("fails only on an explicit prose reference to an undrawn card, with field and fragment", async () => {
@@ -517,5 +517,44 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
       expect(result.ok && result.reading).toContain("It stays open.");
       expect(result.ok && result.droppedInventedPatterns).toEqual([]);
     });
+  });
+});
+
+// ======================================================================================
+// END-TO-END REGRESSION: 1, 3, 5, 9 AND 36 CARDS
+// ======================================================================================
+
+describe("pipeline: every spread size generates once and serves verified patterns", () => {
+  beforeEach(() => generateText.mockReset());
+
+  it.each(SPREAD_IDS as SpreadId[])("%s serves a valid reading in one provider call", async (id) => {
+    const ctx = context(id, "Will I move?");
+    const first = ctx.cards[0].name;
+
+    generateText.mockResolvedValueOnce({
+      text: JSON.stringify({
+        answer: "Yes, movement is supported.",
+        reading: "A steady movement runs through the spread.",
+        patterns: [{ cards: [first], relation: "combination", meaning: "a step forward" }],
+        timing: null,
+      }),
+      finishReason: "stop",
+    });
+
+    const result = await generateReading({
+      context: ctx,
+      model: {} as LanguageModel,
+      system: "system",
+      prompt: "prompt",
+      cardCount: ctx.cards.length,
+      maxTokens: 500,
+      timeoutMs: 5_000,
+    });
+
+    expect(result.ok, id).toBe(true);
+    expect(result.ok && result.reading, id).toContain("step forward");
+    expect(result.ok && result.droppedGeometryPatterns, id).toEqual([]);
+    expect(result.ok && result.droppedInventedPatterns, id).toEqual([]);
+    expect(generateText, id).toHaveBeenCalledTimes(1);
   });
 });
