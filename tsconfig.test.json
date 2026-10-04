@@ -5,6 +5,7 @@
   },
   "include": [
     "lib/__tests__/**/*.ts",
+    "scripts/benchmark/**/*.ts",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
