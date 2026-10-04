@@ -4,48 +4,44 @@ import type { SimpleAnswer } from "@/lib/simple-answer";
 /**
  * Grounding check: the model may not introduce a card that was not drawn.
  *
- * This is the last deterministic gate before a reading reaches a user, and it is the
- * one guarantee a Lenormand reading cannot survive without: a fabricated card is not a
- * stylistic flaw, it is a false statement about the user's spread.
+ * The contract is split by how certain a mention is:
  *
- * The hard part is that roughly half of the deck is also an ordinary English word.
- * House, Tree, Bear, Heart, Ring, Sun, Moon, Key, Fish, Cross, Man, Woman, Child,
- * Dog, Letter, Book, Mice and friends all occur constantly in normal prose, so a naive
- * name scan would reject perfectly good readings ("the heart of it", "a key part",
- * "their home will feel lighter"). Detection is therefore split by field:
+ * - `patterns[].cards` is the strict, structured source of named cards. That field exists
+ *   precisely to name cards, so a canonical name there is unambiguous. An undrawn card in
+ *   it is a fabrication of the *pattern*, and the caller repairs it by dropping that one
+ *   pattern rather than rejecting the whole reading.
  *
- * - The pattern labels (`patterns[].cards`) exist precisely to name cards, so each
- *   element is scanned without ambiguity guards.
- * - Prose fields only flag a card on an explicit Lenormand reference (`A + B`, `the A
- *   card`, `card A`) or on a bare mention of a name that is not an everyday noun.
+ * - Free prose is only scanned for *explicit* card references: the app's `A + B`
+ *   combination syntax and `the A card` / `card A`. A bare card word is never treated as a
+ *   reference on its own. Roughly half the deck is an ordinary English (and Dutch) word —
+ *   man, woman, sun, moon, heart, ring, dog, house, tree, key — and "the man and woman
+ *   need to talk" is a sentence, not a combination. An earlier version scanned prose with a
+ *   list of loose card words and a generic `A and B` pairing; it rejected valid readings by
+ *   the thousand. TypeScript checks structure; it does not police language.
+ *
+ * Every rejection carries the field and the matched fragment, so a genuine hallucination
+ * can be told apart from an ordinary sentence.
  */
+
+export type InventedCardField = "pattern" | "answer" | "reading" | "pattern-meaning" | "timing";
+
+export interface InventedCardMatch {
+  id: number;
+  name: string;
+  field: InventedCardField;
+  /** Present when the mention sits in a `patterns[]` label or that pattern's meaning. */
+  patternIndex?: number;
+  /** The matched text with a little surrounding context, for logging. */
+  fragment: string;
+}
+
+const CARD_NAME_BY_ID = new Map(CARD_CATALOG.map((card) => [card.id, card.name]));
 
 const CANONICAL_CARD_NAMES = [...CARD_NAME_TO_ID.keys()];
 
-function namesOf(ids: Set<number>): string[] {
-  return CARD_CATALOG.filter((card) => ids.has(card.id)).map((card) => card.name);
+function nameOf(id: number): string {
+  return CARD_NAME_BY_ID.get(id) ?? String(id);
 }
-
-/**
- * Card names so unlikely in ordinary English that a bare mention is a card reference in
- * any casing. Matching these case-insensitively is safe: "coffin", "scythe", "clover",
- * "lily", "stork" and "rider" are not words a reading reaches for incidentally, so
- * "Rider", "rider" and "the rider card" are all caught.
- *
- * The remaining distinctive names (Clouds, Birds, Anchor, Whip, Bouquet, Snake, Fox) are
- * deliberately NOT matched bare. They are ordinary words that a sentence can begin with
- * ("Clouds gather over this", "Birds of a feather", "Anchors the plan"), and a false
- * positive here rejects an entire reading, so they are only caught through the strict
- * label scan or an explicit `A + B` / `the A card` reference.
- */
-const DISTINCTIVE_BARE_CARD_IDS = new Set([
-  1, // Rider
-  2, // Clover
-  8, // Coffin
-  10, // Scythe
-  17, // Stork
-  30, // Lily
-]);
 
 function escapeRegExp(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -59,81 +55,98 @@ function alternation(names: string[]): string {
     .join("|");
 }
 
+/** Any canonical name or alias, used only for the structured `cards[]` labels. */
 const ANY_CARD_PATTERN = new RegExp(`\\b(?:${alternation(CANONICAL_CARD_NAMES)})\\b`, "gi");
 
-/** `Rider + Heart`, `Rider+Heart`, `the Rider card`, `card Rider`, in any casing. */
+const NAMES = alternation(CANONICAL_CARD_NAMES);
+
+/**
+ * Unambiguous prose references only:
+ *
+ *   `Rider + Heart`   (the app's combination syntax)
+ *   `the Rider card`  / `de Rider kaart`
+ *   `card Rider`      / `kaart Rider`
+ *
+ * No bare names and no `A and B` / `A, B`: those are ordinary language.
+ */
 const EXPLICIT_REFERENCE_PATTERN = new RegExp(
-  `\\b(?:${alternation(CANONICAL_CARD_NAMES)})\\b\\s*(?:\\+|,|and)\\s*\\b(?:${alternation(CANONICAL_CARD_NAMES)})\\b` +
-    `|\\b(?:the\\s+)?(?:${alternation(CANONICAL_CARD_NAMES)})\\s+card\\b` +
-    `|\\bcard\\s+(?:${alternation(CANONICAL_CARD_NAMES)})\\b`,
+  `\\b(?:${NAMES})\\b\\s*\\+\\s*\\b(?:${NAMES})\\b` +
+    `|\\b(?:the|de|het)\\s+(?:${NAMES})\\s+(?:card|kaart)\\b` +
+    `|\\b(?:${NAMES})\\s+(?:card|kaart)\\b` +
+    `|\\b(?:card|kaart)\\s+(?:${NAMES})\\b`,
   "gi",
 );
 
-/** Bare mention of a distinctive name, lower- or capitalised. */
-const DISTINCTIVE_BARE_PATTERN = new RegExp(`\\b(?:${alternation(namesOf(DISTINCTIVE_BARE_CARD_IDS))})\\b`, "gi");
+const FRAGMENT_WINDOW = 24;
 
-function idsFrom(text: string, pattern: RegExp): number[] {
-  const ids: number[] = [];
+function fragmentOf(text: string, index: number, length: number): string {
+  const start = Math.max(0, index - FRAGMENT_WINDOW);
+  const end = Math.min(text.length, index + length + FRAGMENT_WINDOW);
+  const prefix = start > 0 ? "…" : "";
+  const suffix = end < text.length ? "…" : "";
+  return `${prefix}${text.slice(start, end).trim()}${suffix}`;
+}
+
+function matchesIn(text: string, pattern: RegExp, field: InventedCardField, patternIndex?: number): InventedCardMatch[] {
+  const matches: InventedCardMatch[] = [];
   pattern.lastIndex = 0;
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(text)) !== null) {
-    // A global regex that can match an empty string would never advance.
-    if (match[0] === "") pattern.lastIndex++;
-    for (const name of match[0].toLowerCase().split(/[^a-z]+/)) {
-      const id = CARD_NAME_TO_ID.get(name);
-      if (id) ids.push(id);
+    // A global regex that could match an empty string would never advance.
+    if (match[0] === "") {
+      pattern.lastIndex++;
+      continue;
+    }
+    const fragment = fragmentOf(text, match.index, match[0].length);
+    for (const token of match[0].toLowerCase().split(/[^a-z]+/)) {
+      const id = CARD_NAME_TO_ID.get(token);
+      if (id !== undefined) matches.push({ id, name: nameOf(id), field, patternIndex, fragment });
     }
   }
-  return ids;
+  return matches;
 }
 
-/**
- * Label fields whose stated purpose is to name cards. A canonical card name here that
- * was not drawn is always a fabrication, so these are scanned without ambiguity guards.
- */
-function labelText(answer: SimpleAnswer): string[] {
-  return answer.patterns.flatMap((pattern) => pattern.cards);
+/** Drops duplicate (field, pattern, card) rows while keeping the first fragment seen. */
+function dedupe(matches: InventedCardMatch[]): InventedCardMatch[] {
+  const seen = new Set<string>();
+  return matches.filter((match) => {
+    const key = `${match.field}|${match.patternIndex ?? ""}|${match.id}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
-/**
- * Everything the model writes as prose. Half the deck is an ordinary English word, so
- * these fields are only scanned for explicit card references.
- */
-function proseText(answer: SimpleAnswer): string[] {
-  return [
-    answer.answer,
-    answer.reading,
-    ...answer.patterns.map((pattern) => pattern.meaning),
-    answer.timing || "",
-  ];
-}
-
-/**
- * Every canonical card id named anywhere in `text`, in order. Used by the structural
- * validators, which operate on the model's own words rather than a precomputed list.
- */
-export function cardIdsInText(text: string): number[] {
-  return [...new Set(idsFrom(text, ANY_CARD_PATTERN))];
-}
-
-export function findInventedCards(answer: SimpleAnswer, drawnCardIds: number[]): number[] {
+export function findInventedCards(answer: SimpleAnswer, drawnCardIds: number[]): InventedCardMatch[] {
   const drawn = new Set(drawnCardIds);
-  const invented = new Set<number>();
+  const matches: InventedCardMatch[] = [];
 
-  for (const text of labelText(answer)) {
-    for (const id of idsFrom(text, ANY_CARD_PATTERN)) {
-      if (!drawn.has(id)) invented.add(id);
+  // Strict source: a canonical card name in a pattern label is always a card reference.
+  answer.patterns.forEach((pattern, patternIndex) => {
+    for (const label of pattern.cards) {
+      for (const match of matchesIn(label, ANY_CARD_PATTERN, "pattern", patternIndex)) {
+        if (!drawn.has(match.id)) matches.push(match);
+      }
+    }
+  });
+
+  // Prose: explicit references only.
+  const proseFields: { field: InventedCardField; text: string; patternIndex?: number }[] = [
+    { field: "answer", text: answer.answer },
+    { field: "reading", text: answer.reading },
+    ...answer.patterns.map((pattern, patternIndex) => ({
+      field: "pattern-meaning" as const,
+      text: pattern.meaning,
+      patternIndex,
+    })),
+  ];
+  if (answer.timing) proseFields.push({ field: "timing", text: answer.timing });
+
+  for (const { field, text, patternIndex } of proseFields) {
+    for (const match of matchesIn(text, EXPLICIT_REFERENCE_PATTERN, field, patternIndex)) {
+      if (!drawn.has(match.id)) matches.push(match);
     }
   }
 
-  for (const text of proseText(answer)) {
-    for (const id of idsFrom(text, EXPLICIT_REFERENCE_PATTERN)) {
-      if (!drawn.has(id)) invented.add(id);
-    }
-    for (const id of idsFrom(text, DISTINCTIVE_BARE_PATTERN)) {
-      if (!drawn.has(id)) invented.add(id);
-    }
-  }
-
-  return [...invented].sort((a, b) => a - b);
+  return dedupe(matches);
 }

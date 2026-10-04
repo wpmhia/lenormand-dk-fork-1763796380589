@@ -300,7 +300,7 @@ describe("pipeline: one universal prompt for every spread", () => {
 // FACTUAL VALIDATION: invented cards
 // ======================================================================================
 
-describe("factual validation: the model cannot introduce a card that was not drawn", () => {
+describe("factual validation: cards[] is the strict source, prose only explicit references", () => {
   const drawn = [2, 6, 24, 25]; // Clover, Clouds, Heart, Ring
   const base = {
     answer: "The situation stays open.",
@@ -309,6 +309,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
     timing: null as string | null,
   };
   const answer = (overrides: Partial<typeof base> = {}) => SimpleAnswerSchema.parse({ ...base, ...overrides });
+  const ids = (matches: ReturnType<typeof findInventedCards>) => matches.map((match) => match.id);
 
   it("accepts a reading that names only drawn cards", () => {
     expect(
@@ -322,32 +323,34 @@ describe("factual validation: the model cannot introduce a card that was not dra
     ).toEqual([]);
   });
 
-  it("rejects an undrawn card in a pattern label or an explicit prose reference", () => {
-    expect(findInventedCards(answer({ patterns: [{ cards: ["Heart", "Tower"], meaning: "a collapse." }] }), drawn)).toContain(19);
-    expect(findInventedCards(answer({ reading: "The Clouds + Mice line points to erosion." }), drawn)).toContain(23);
-    expect(findInventedCards(answer({ reading: "A Stork sits between the two people." }), drawn)).toContain(17);
+  it("flags an undrawn card in a pattern label with its field and fragment", () => {
+    const matches = findInventedCards(answer({ patterns: [{ cards: ["Heart", "Tower"], meaning: "a collapse." }] }), drawn);
+    expect(ids(matches)).toContain(19);
+    expect(matches[0]).toMatchObject({ id: 19, name: "Tower", field: "pattern", patternIndex: 0 });
+    expect(matches[0].fragment).toContain("Tower");
   });
 
-  // Casing bug guard: an earlier detector built its bare-mention pattern from lowercase
-  // keys without the `i` flag, so every capitalised distinctive card slipped through.
-  it("catches a distinctive card in any casing, in prose or a label", () => {
-    for (const [mention, expectedId] of [
-      ["Rider", 1],
-      ["rider", 1],
-      ["The Rider card", 1],
-      ["the rider card", 1],
-      ["Rider + Heart", 1],
-      ["Stork", 17],
-      ["stork", 17],
-      ["Scythe", 10],
-      ["scythe", 10],
-    ] as [string, number][]) {
-      expect(findInventedCards(answer({ reading: `The line turns on ${mention} here.` }), drawn), mention).toContain(expectedId);
-      expect(findInventedCards(answer({ patterns: [{ cards: [mention], meaning: "a turn." }] }), drawn), mention).toContain(expectedId);
+  it("flags only unambiguous prose references to an undrawn card", () => {
+    expect(ids(findInventedCards(answer({ reading: "The Clouds + Mice line points to erosion." }), drawn))).toContain(23);
+    expect(ids(findInventedCards(answer({ reading: "The Scythe card closes the line." }), drawn))).toContain(10);
+    expect(ids(findInventedCards(answer({ reading: "card Anchor sits apart." }), drawn))).toContain(35);
+  });
+
+  it("still flags an explicit combination that names an undrawn ordinary-word card", () => {
+    const matches = findInventedCards(answer({ reading: "The Clouds + Anchor line holds." }), drawn);
+    expect(ids(matches)).toEqual([35]);
+    expect(matches[0].fragment).toContain("Clouds + Anchor");
+  });
+
+  // Regression: a bare card word is ordinary language, never a card reference. The old
+  // detector scanned prose with a list of loose card words and rejected valid readings.
+  it("never treats a bare card name as a reference, whatever the casing", () => {
+    for (const mention of ["Rider", "rider", "The Rider", "Stork", "stork", "Scythe", "Coffin", "Clover", "Lily"]) {
+      expect(findInventedCards(answer({ reading: `The line turns on ${mention} here.` }), drawn), mention).toEqual([]);
     }
   });
 
-  it("does not mistake ordinary English words for card references", () => {
+  it("does not mistake ordinary English words or natural pairings for cards", () => {
     expect(
       findInventedCards(
         answer({
@@ -361,8 +364,57 @@ describe("factual validation: the model cannot introduce a card that was not dra
     ).toEqual([]);
   });
 
-  it("still flags an explicit combination that names an undrawn ordinary-word card", () => {
-    expect(findInventedCards(answer({ reading: "The Clouds + Anchor line holds." }), drawn)).toEqual([35]);
+  it("does not mistake ordinary Dutch prose for card references", () => {
+    expect(
+      findInventedCards(
+        answer({
+          answer: "De man en de vrouw moeten met elkaar praten.",
+          reading:
+            "Het hart van de zaak is dat hun huis zwaar voelt, en de brief waarop ze wachten kruist een grens. De zon en de maan doen allebei mee, en de hond blijft trouw.",
+          timing: "binnenkort",
+        }),
+        drawn,
+      ),
+    ).toEqual([]);
+  });
+
+  it("reports field and fragment for a pattern-label rejection", () => {
+    const matches = findInventedCards(
+      answer({ patterns: [{ cards: ["Clover", "Scythe"], meaning: "a sudden cut." }] }),
+      drawn,
+    );
+    expect(matches).toHaveLength(1);
+    expect(matches[0]).toMatchObject({ id: 10, field: "pattern", patternIndex: 0 });
+  });
+
+  it("keeps the language check plain for every spread without rejecting drawn cards", () => {
+    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
+      const cards = draw(count, 13).map((card, position) => ({
+        id: card.id,
+        name: card.name,
+        keywords: card.keywords,
+        position,
+      }));
+      const drawnIds = cards.map((card) => card.id);
+      const undrawn = deck.find((card) => !drawnIds.includes(card.id));
+      const prose = "A man and a woman should talk it through; the sun and moon both have a say.";
+      const reading = answer({
+        reading: prose,
+        patterns: [
+          { cards: [cards[0].name], meaning: "kept pattern" },
+          ...(undrawn ? [{ cards: [undrawn.name], meaning: "invented pattern" }] : []),
+        ],
+      });
+
+      const matches = findInventedCards(reading, drawnIds);
+      expect(matches.every((match) => match.field === "pattern"), id).toBe(true);
+      if (undrawn) {
+        expect(ids(matches), id).toEqual([undrawn.id]);
+        expect(matches[0].name, id).toBe(undrawn.name);
+      } else {
+        expect(matches, id).toEqual([]);
+      }
+    }
   });
 
   describe("through the production path", () => {
@@ -378,12 +430,38 @@ describe("factual validation: the model cannot introduce a card that was not dra
 
     beforeEach(() => generateText.mockReset());
 
-    it("fails the reading when an undrawn card is named", async () => {
+    it("drops a pattern that names an undrawn card instead of failing the reading", async () => {
       generateText.mockResolvedValueOnce({
         text: JSON.stringify({
           answer: "It will not hold.",
           reading: "The spread points elsewhere.",
-          patterns: [{ cards: ["Clover", "Scythe"], meaning: "a sudden cut." }],
+          patterns: [
+            { cards: ["Clover", "Heart"], meaning: "kept pattern" },
+            { cards: ["Clover", "Scythe"], meaning: "dropped pattern" },
+          ],
+        }),
+        finishReason: "stop",
+      });
+
+      const result = await generateReading(
+        serviceOptions([
+          { id: 2, name: "Clover" },
+          { id: 24, name: "Heart" },
+        ]),
+      );
+
+      expect(result.ok).toBe(true);
+      expect(result.ok && result.reading).toContain("kept pattern");
+      expect(result.ok && result.reading).not.toContain("dropped pattern");
+      expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
+    });
+
+    it("fails only on an explicit prose reference to an undrawn card, with field and fragment", async () => {
+      generateText.mockResolvedValueOnce({
+        text: JSON.stringify({
+          answer: "It will not hold.",
+          reading: "The Scythe card cuts the line short.",
+          patterns: [],
         }),
         finishReason: "stop",
       });
@@ -397,7 +475,8 @@ describe("factual validation: the model cannot introduce a card that was not dra
 
       expect(result.ok).toBe(false);
       expect(result.ok === false && result.reason).toBe("invented-card");
-      expect(result.ok === false && result.issues[0].type).toBe("invented_card");
+      expect(result.ok === false && result.issues[0]).toMatchObject({ type: "invented_card", field: "reading" });
+      expect(result.ok === false && result.issues[0].fragment).toContain("Scythe card");
     });
 
     it("returns the reading when the model stays inside the drawn set", async () => {
@@ -419,6 +498,7 @@ describe("factual validation: the model cannot introduce a card that was not dra
 
       expect(result.ok).toBe(true);
       expect(result.ok && result.reading).toContain("It stays open.");
+      expect(result.ok && result.droppedInventedPatterns).toEqual([]);
     });
   });
 });

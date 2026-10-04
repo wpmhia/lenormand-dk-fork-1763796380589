@@ -131,7 +131,8 @@ export function validateRelation(
  * ten patterns mis-declared `row` throws away a good reading over a detail.
  *
  * `combination` patterns assert nothing geometric and are skipped. Cards that were not
- * drawn are reported by `findInventedCards`, which stays fatal.
+ * drawn are reported separately by `findInventedCards`; the caller drops the offending
+ * pattern, so this function only ever sees patterns whose geometry it still checks.
  */
 export function findInvalidGeometryPatterns(
   answer: SimpleAnswer,

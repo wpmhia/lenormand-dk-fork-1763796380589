@@ -18,4 +18,8 @@ export interface ValidationIssue {
     | "structured-output";
   message: string;
   code?: string;
+  /** The answer field the problem was found in, when known. */
+  field?: string;
+  /** The exact matched fragment, so a fabrication can be told from ordinary prose. */
+  fragment?: string;
 }
