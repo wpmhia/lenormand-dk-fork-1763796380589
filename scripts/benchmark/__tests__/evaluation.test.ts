@@ -14,24 +14,24 @@ function normalized(ids: number[]): NormalizedCard[] {
 }
 
 describe("benchmark factual evaluation", () => {
-  it("separates an unknown label, an undrawn canonical card, and false geometry", () => {
+  it("separates an unknown label, an undrawn canonical card, and an unverified cluster", () => {
     const context = buildReadingContext("sentence-3", "Will this plan progress?", normalized([1, 2, 3]));
     const result = evaluateOutput(JSON.stringify({
       answer: "The plan may progress.",
       reading: "The line points to movement.",
       patterns: [
-        { cards: ["Rider", "Clover"], relation: "row", meaning: "row assertion" },
-        { cards: ["Rider", "Scythe"], relation: "combination", meaning: "undrawn card" },
-        { cards: ["Rider", "ImaginaryCard"], relation: "combination", meaning: "unknown label" },
+        { cards: ["Rider", "Clover"], meaning: "verified line segment" },
+        { cards: ["Rider", "Scythe"], meaning: "undrawn card" },
+        { cards: ["Rider", "ImaginaryCard"], meaning: "unknown label" },
       ],
       timing: null,
     }), "stop", context);
 
     expect(result.schemaValid).toBe(true);
-    expect(result.falseGeometry).toHaveLength(1);
+    expect(result.outsideClusters).toHaveLength(0);
     expect(result.inventedCards.some((match) => match.card === "Scythe" && match.field === "pattern")).toBe(true);
     expect(result.unknownCardLabels).toEqual([{ patternIndex: 2, label: "ImaginaryCard" }]);
-    expect(result.deliveredPatterns).toHaveLength(0);
+    expect(result.deliveredPatterns).toHaveLength(1);
   });
 
   it("counts explicit undrawn references in prose but not ordinary English", () => {
@@ -54,17 +54,17 @@ describe("benchmark factual evaluation", () => {
     expect(explicit.proseCardMentions[0].card).toBe("Scythe");
   });
 
-  it("checks a declared Grand Tableau house against actual occupancy", () => {
+  it("flags a Grand Tableau pattern outside the verified clusters", () => {
     const ids = Array.from({ length: 36 }, (_, index) => index + 1);
     const context = buildReadingContext("grand-tableau", "How will this develop?", normalized(ids));
     const result = evaluateOutput(JSON.stringify({
       answer: "The situation is active.",
       reading: "A continuing process.",
-      patterns: [{ cards: ["Man"], relation: "house", house: "Rider", meaning: "house claim" }],
+      patterns: [{ cards: ["Man", "Coffin"], meaning: "not a supplied cluster" }],
       timing: null,
     }), "stop", context);
-    expect(result.falseGeometry).toHaveLength(1);
-    expect(result.falseGeometry[0].relation).toBe("house");
+    expect(result.outsideClusters).toEqual([{ index: 0, cards: ["Man", "Coffin"] }]);
+    expect(result.deliveredPatterns).toEqual([]);
   });
 
   it("classifies malformed JSON and non-stop provider finish reasons distinctly", () => {

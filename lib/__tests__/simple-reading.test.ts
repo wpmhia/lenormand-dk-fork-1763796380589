@@ -1,8 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { findProseInvariantViolation, isReadingComplete, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
+import { buildReadingContext } from "@/lib/reading-context";
+import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
+
+const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 
 const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
 
@@ -214,32 +218,32 @@ describe("simple reading single-call output handling", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("drops an unsupported geometry pattern in a single pass and keeps the verified patterns", async () => {
-    const cards = [
-      { id: 1, name: "Rider" },
-      { id: 2, name: "Clover" },
-      { id: 3, name: "Ship" },
-    ];
-    const context = { cards, layout: { type: "linear-sentence", positions: [] } } as unknown as ReadingContext;
+  it("drops a pattern outside the verified clusters in a single pass", async () => {
+    const cards = Array.from({ length: 36 }, (_, index) => ({
+      id: index + 1,
+      name: deck[index].name,
+      keywords: [],
+    }));
+    [cards[13], cards[27]] = [cards[27], cards[13]];
+    const context = buildReadingContext("grand-tableau", "Q?", cards);
 
     generateText.mockResolvedValueOnce(
       textOutput({
-        answer: "The line reads as one movement.",
+        answer: "The tableau reads as one movement.",
         reading: "A connected sentence.",
         patterns: [
-          { cards: ["Rider", "Clover"], relation: "combination", meaning: "kept pattern" },
-          { cards: ["Rider", "Ship"], relation: "row", meaning: "dropped pattern" },
+          { cards: ["Man", "Fox"], meaning: "kept person cluster" },
+          { cards: ["Rider", "Ship"], meaning: "dropped cross-cluster pattern" },
         ],
       }),
     );
 
     const result = await generateReading(options({ context }));
 
-    // One generation: the false pattern is removed from the served patterns, no repair call.
     expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toContain("kept pattern");
-    expect(result.ok && result.reading).not.toContain("dropped pattern");
-    expect(result.ok && result.droppedGeometryPatterns).toHaveLength(1);
+    expect(result.ok && result.reading).toContain("kept person cluster");
+    expect(result.ok && result.reading).not.toContain("dropped cross-cluster pattern");
+    expect(result.ok && result.droppedUnverifiedPatterns).toHaveLength(1);
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
@@ -256,7 +260,7 @@ describe("simple reading single-call output handling", () => {
       textOutput({
         answer: "First draft.",
         reading: "First draft.",
-        patterns: [{ cards: ["Clover", "ImaginaryCard"], relation: "combination", meaning: "unknown claim" }],
+        patterns: [{ cards: ["Clover", "ImaginaryCard"], meaning: "unknown claim" }],
       }),
     );
 

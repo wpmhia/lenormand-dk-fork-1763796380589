@@ -108,7 +108,7 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
         expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
       }
       expect(text, `${id} must state the spread was not preselected`).toMatch(
-        /has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair/,
+        /The server has not ranked card meanings or chosen an outcome/,
       );
     }
   });
@@ -118,13 +118,10 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
 // GEOMETRY IN THE PROMPT
 // ======================================================================================
 
-describe("geometry: coordinates are supplied, relations are left to the model", () => {
-  it("gives exact row/column coordinates for every grid card", () => {
+describe("geometry: the full grid is supplied, relations are not", () => {
+  it("lays the Grand Tableau out as visual rows", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Geometry?", draw(36, 13)));
-    for (let index = 0; index < 36; index++) {
-      const line = facts.split("\n").find((entry) => entry.startsWith(`- ${index + 1}: `))!;
-      expect(line).toContain(`row ${Math.floor(index / 9) + 1}, col ${(index % 9) + 1}`);
-    }
+    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(4);
   });
 
   it("precomputes no relation lists in any layout", () => {
@@ -138,12 +135,12 @@ describe("geometry: coordinates are supplied, relations are left to the model", 
     }
   });
 
-  it("tells the model the coordinates are authoritative and relations must be derived", () => {
+  it("tells the model to use only the supplied verified clusters", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const text = prompt(id, "Geometry?", draw(count, 13));
-      expect(text, id).toMatch(/The coordinates above are authoritative/);
-      expect(text, id).toMatch(/Derive adjacency, rows, columns, diagonals, knight's moves, mirroring and distances/);
-      expect(text, id).toMatch(/Never invent a position, a house or a spatial relationship/);
+      expect(text, id).toContain("Verified clusters");
+      expect(text, id).toMatch(/Use only those clusters when describing how cards are physically related/);
+      expect(text, id).not.toMatch(/Derive adjacency, rows, columns/);
     }
   });
 });
@@ -164,39 +161,29 @@ describe("geometry: layout-specific facts", () => {
     expect(facts.split("\n").filter((line) => line.includes("role defined by this spread:"))).toHaveLength(5);
   });
 
-  it("puts the Petit Tableau geometric centre on position 5", () => {
+  it("names the Petit Tableau centre card", () => {
     const ctx = context("comprehensive", "What will the month bring?", draw(9, 5));
     expect((ctx.layout as { center: { index: number } }).center.index).toBe(4);
-    expect(buildSpreadFacts(ctx)).toContain("Geometric centre: position 5 (row 2, col 2).");
+    expect(buildSpreadFacts(ctx)).toContain("Centre card:");
   });
 
-  it("supplies all 36 houses, each named after the canonical deck", () => {
+  it("supplies all 36 houses with their occupants", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
-    expect(facts.split("\n").filter((line) => / house$/.test(line))).toHaveLength(36);
+    expect(facts.split("\n").filter((line) => / house: /.test(line))).toHaveLength(36);
     const houseNames = facts
       .split("\n")
-      .map((line) => line.match(/, ([^,]+) house$/))
+      .map((line) => line.match(/^- ([\w ]+) house: /))
       .filter((match): match is RegExpMatchArray => match !== null)
       .map((match) => match[1]);
     expect(houseNames).toEqual(deck.map((card) => card.name));
     expect(facts).not.toContain("Crossroads house");
   });
 
-  it("states significator placement, binding state and exact relation", () => {
+  it("states person bindings without coordinates", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).toMatch(/- Man: position \d+, row \d, col \d, .+ house; (?:bound by .+|unbound)/);
-    expect(facts).toMatch(/- Woman: position \d+, row \d, col \d, .+ house; (?:bound by .+|unbound)/);
-    // The server may state the relation; it may not forbid the model from reading it.
-    expect(facts).not.toContain("do not treat them as a pair");
-    expect(facts).toContain("weigh their relation to each other from the coordinates above");
-  });
-
-  it("states the significator focus factually", () => {
-    const manFacts = buildSpreadFacts(
-      buildReadingContext("grand-tableau", "Full picture?", draw(36, 13), cardsMap, "man"),
-    );
-    expect(manFacts).toContain("Significator focus: Man");
-    expect(manFacts).toContain("still present as an ordinary card");
+    expect(facts).not.toMatch(/- Man: position \d+, row \d, col \d/);
+    expect(facts).not.toMatch(/- Woman: position \d+, row \d, col \d/);
+    expect(facts).not.toContain("weigh their relation to each other from the coordinates above");
   });
 
   it("is stable across repeated builds", () => {
@@ -225,12 +212,12 @@ describe("model boundary: one contract for every spread", () => {
    * later telling the model to derive them from coordinates instead. Both halves now say
    * the same thing.
    */
-  it("grounds spatial claims in the coordinates, not in a relation list", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/only where the supplied coordinates support it/i);
+  it("grounds spatial claims in the verified clusters, not in a relation list", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not calculate or improvise geometry/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/only where the structural facts list it/i);
     // And the user prompt says the same thing, from the other direction.
     expect(buildSimpleReadingPrompt(context("grand-tableau", "Q?", draw(36)))).toMatch(
-      /The coordinates above are authoritative/,
+      /Use only those clusters when describing how cards are physically related/,
     );
   });
 
@@ -273,15 +260,12 @@ describe("pipeline: one universal prompt for every spread", () => {
       expect(text, id).toContain(field);
     }
 
-    // The model must declare the relation it claims, because the validator checks the
-    // declared relation rather than guessing it from prose.
-    expect(text, id).toContain('"relation": string');
-    expect(text, id).toContain('"combination"');
-    expect(text, id).toContain('"knight"');
-    expect(text, id).toContain("The server checks any non-");
+    // The model receives server-selected verified clusters and must not declare geometry.
+    expect(text, id).toContain("Verified clusters");
+    expect(text, id).not.toContain('"relation"');
+    expect(text, id).not.toContain('"knight"');
 
     // Each removed field was a per-spread judgement about how much a spread had to say.
-    // (`"combination"` is no longer listed: it is now a legitimate relation value.)
     for (const removed of ['"positiveFactors"', '"challenges"', '"development"', '"housesAndMirrors"', '"directAnswer"', '"keyPatterns"']) {
       expect(text, id).not.toContain(removed);
     }
@@ -435,7 +419,12 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
 
   describe("through the production path", () => {
     const serviceOptions = (cards: { id: number; name: string }[]) => ({
-      context: { cards, layout: { type: "single" } } as unknown as ReadingContext,
+      context: {
+        cards,
+        layout: cards.length === 1
+          ? { type: "single" }
+          : { type: "linear-sentence", positions: cards.map((_, index) => ({ index, role: `Card ${index + 1}` })) },
+      } as unknown as ReadingContext,
       model: {} as LanguageModel,
       system: "system",
       prompt: "prompt",
@@ -463,6 +452,7 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
         serviceOptions([
           { id: 2, name: "Clover" },
           { id: 24, name: "Heart" },
+          { id: 6, name: "Clouds" },
         ]),
       );
 
@@ -535,7 +525,7 @@ describe("pipeline: every spread size generates once and serves verified pattern
       text: JSON.stringify({
         answer: "Yes, movement is supported.",
         reading: "A steady movement runs through the spread.",
-        patterns: [{ cards: [first], relation: "combination", meaning: "a step forward" }],
+        patterns: [{ cards: [first], meaning: "a step forward" }],
         timing: null,
       }),
       finishReason: "stop",
@@ -553,7 +543,7 @@ describe("pipeline: every spread size generates once and serves verified pattern
 
     expect(result.ok, id).toBe(true);
     expect(result.ok && result.reading, id).toContain("step forward");
-    expect(result.ok && result.droppedGeometryPatterns, id).toEqual([]);
+    expect(result.ok && result.droppedUnverifiedPatterns, id).toEqual([]);
     expect(result.ok && result.droppedInventedPatterns, id).toEqual([]);
     expect(generateText, id).toHaveBeenCalledTimes(1);
   });

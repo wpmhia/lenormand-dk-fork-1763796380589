@@ -3,12 +3,11 @@ import {
   ModelAnswerSchema,
   SimpleAnswerSchema,
   SimpleAnswerTransportSchema,
-  PATTERN_RELATIONS,
   renderSimpleAnswer,
   type Pattern,
 } from "@/lib/simple-answer";
 import { findInventedCards, findUnresolvedCardLabels } from "@/lib/invented-cards";
-import { findInvalidGeometryPatterns } from "@/lib/geometry-claims";
+import { findPatternsOutsideVerifiedClusters } from "@/lib/verified-clusters";
 import type { ReadingContext } from "@/lib/reading-context";
 
 export interface Evaluation {
@@ -20,7 +19,7 @@ export interface Evaluation {
   outputFailure: string | null;
   inventedCards: { card: string; field: string; fragment: string }[];
   unknownCardLabels: { label: string; patternIndex: number }[];
-  falseGeometry: { patternIndex: number; message: string; relation: string }[];
+  outsideClusters: { index: number; cards: string[] }[];
   deliveredReading: string | null;
   deliveredAnswer: string | null;
   deliveredPatterns: unknown[];
@@ -55,11 +54,11 @@ export function evaluateOutput(raw: string, finishReason: string, context: Readi
   const drawnIds = context.cards.map((card) => card.id);
   const cardFindings = findInventedCards(answer, drawnIds);
   const labelFindings = findUnresolvedCardLabels(answer);
-  const geometryFindings = findInvalidGeometryPatterns(answer, context);
+  const clusterFindings = findPatternsOutsideVerifiedClusters(answer, context);
   const rejectedIndices = new Set<number>([
     ...cardFindings.filter((match) => match.field === "pattern").map((match) => match.patternIndex!),
     ...labelFindings.map((match) => match.patternIndex),
-    ...geometryFindings.map((match) => match.index),
+    ...clusterFindings.map((match) => match.index),
   ]);
   const delivered = {
     ...answer,
@@ -77,11 +76,7 @@ export function evaluateOutput(raw: string, finishReason: string, context: Readi
     outputFailure,
     inventedCards: cardFindings.map((match) => ({ card: match.name, field: match.field, fragment: match.fragment })),
     unknownCardLabels: labelFindings,
-    falseGeometry: geometryFindings.map((match) => ({
-      patternIndex: match.index,
-      message: match.message,
-      relation: answer.patterns[match.index]?.relation ?? "unknown",
-    })),
+    outsideClusters: clusterFindings,
     deliveredReading: renderSimpleAnswer(delivered),
     deliveredAnswer: answer.answer,
     deliveredPatterns: delivered.patterns,
@@ -99,7 +94,7 @@ function failedEvaluation(finishReason: string, failure: string): Evaluation {
     outputFailure: failure,
     inventedCards: [],
     unknownCardLabels: [],
-    falseGeometry: [],
+    outsideClusters: [],
     deliveredReading: null,
     deliveredAnswer: null,
     deliveredPatterns: [],
@@ -126,9 +121,5 @@ function normalizePattern(value: unknown): Pattern | null {
       ? [item.cards.trim()]
       : [];
   if (cards.length === 0 || typeof item.meaning !== "string" || !item.meaning.trim()) return null;
-  const relation = typeof item.relation === "string" && (PATTERN_RELATIONS as readonly string[]).includes(item.relation)
-    ? item.relation as Pattern["relation"]
-    : "combination";
-  const house = typeof item.house === "string" && item.house.trim() ? item.house.trim() : null;
-  return { cards, relation, house, meaning: item.meaning.trim() };
+  return { cards, meaning: item.meaning.trim() };
 }

@@ -167,7 +167,7 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
     expect(prompt).not.toMatch(/^- Development line/m);
     expect(prompt).not.toMatch(/^- Outcome evidence/m);
     expect(prompt).not.toMatch(/^- Supporting evidence/m);
-    expect(prompt).toMatch(/has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair/);
+    expect(prompt).toMatch(/The server has not ranked card meanings or chosen an outcome/);
   });
 
   it("returns the structured JSON contract instead of markdown pseudo-headings", () => {
@@ -186,10 +186,10 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
     expect(prompt).toMatch(/merely because a particular positive card was not drawn/);
   });
 
-  it("keeps the geometry-fidelity rule, now framed as derive-don't-invent", () => {
-    expect(prompt).toMatch(/Geometry fidelity\./);
-    expect(prompt).toMatch(/The coordinates above are authoritative/);
-    expect(prompt).toMatch(/Never invent a position, a house or a spatial relationship/);
+  it("keeps the spatial-fidelity rule framed as use-only-supplied-clusters", () => {
+    expect(prompt).toMatch(/Spatial fidelity\./);
+    expect(prompt).toMatch(/Use only those clusters when describing how cards are physically related/);
+    expect(prompt).toMatch(/Do not derive or assert other adjacency, rows, columns, diagonals, houses, distances or directions/);
   });
 });
 
