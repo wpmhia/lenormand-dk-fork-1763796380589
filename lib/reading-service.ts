@@ -7,18 +7,17 @@ import {
   SimpleAnswerSchema,
   SimpleAnswerTransportSchema,
   findProseInvariantViolation,
-  PATTERN_RELATIONS,
   type Pattern,
   type SimpleAnswer,
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
 import { findInventedCards, findUnresolvedCardLabels, type InventedCardMatch } from "@/lib/invented-cards";
-import { findInvalidGeometryPatterns } from "@/lib/geometry-claims";
+import { findPatternsOutsideVerifiedClusters } from "@/lib/verified-clusters";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
-  | { ok: true; reading: string; droppedGeometryPatterns: string[]; droppedInventedPatterns: string[] }
+  | { ok: true; reading: string; droppedUnverifiedPatterns: string[]; droppedInventedPatterns: string[] }
   | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
@@ -67,14 +66,12 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   // pattern detail: it is fatal on its own.
   if (validation.proseIssues.length > 0) return inventedCardFailure(validation.proseIssues, result.diagnostics);
 
-  // Deterministic, single-pass repair. Only patterns the server has checked survive into
-  // the served `patterns[]`, and the output contract confines the narrative's spatial
-  // claims to that list, so a rejected pattern's claim is removed with it. One provider
-  // call, no correction stage, no second chance to generate an unvalidated claim.
+  // One deterministic pass: patterns can only reference drawn canonical cards and
+  // server-selected clusters. There is no model-declared geometry to parse or infer.
   return {
     ok: true,
     reading: renderSimpleAnswer(validation.answer),
-    droppedGeometryPatterns: validation.droppedGeometry,
+    droppedUnverifiedPatterns: validation.droppedUnverified,
     droppedInventedPatterns: validation.droppedInvented,
   };
 }
@@ -83,13 +80,13 @@ interface AnswerValidation {
   /** The serving answer: every rejected pattern removed, prose untouched. */
   answer: SimpleAnswer;
   droppedInvented: string[];
-  droppedGeometry: string[];
+  droppedUnverified: string[];
   proseIssues: InventedCardMatch[];
 }
 
 /**
  * Everything deterministic the server can say about one candidate answer:
- * which patterns fail the invented-card, unresolved-name and geometry gates, and which
+ * which patterns fail the drawn-card, canonical-name and verified-cluster gates, and which
  * verified patterns survive. Free prose is only checked for explicit card references.
  */
 function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): AnswerValidation {
@@ -120,18 +117,20 @@ function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): Answe
     ? candidate
     : { ...candidate, patterns: candidate.patterns.filter((_, index) => !badPatternIndices.has(index)) };
 
-  const invalidGeometry = findInvalidGeometryPatterns(afterLabels, context);
-  const badGeometry = new Set(invalidGeometry.map((item) => item.index));
+  const outsideClusters = findPatternsOutsideVerifiedClusters(afterLabels, context);
+  const badClusterIndices = new Set(outsideClusters.map((item) => item.index));
   const verified: SimpleAnswer = {
     ...afterLabels,
-    patterns: afterLabels.patterns.filter((_, index) => !badGeometry.has(index)),
+    patterns: afterLabels.patterns.filter((_, index) => !badClusterIndices.has(index)),
   };
   const proseIssues = findInventedCards(verified, drawnCardIds).filter((match) => match.field !== "pattern");
 
   return {
     answer: verified,
     droppedInvented,
-    droppedGeometry: invalidGeometry.map((item) => item.message),
+    droppedUnverified: outsideClusters.map((item) =>
+      `Pattern "${item.cards.join(" + ")}" does not belong to a server-selected verified cluster`,
+    ),
     proseIssues,
   };
 }
@@ -238,12 +237,7 @@ function normalizePattern(value: unknown): Pattern | null {
 
     if (cards.length === 0 || typeof item.meaning !== "string" || !item.meaning.trim()) return null;
 
-    const relation =
-      typeof item.relation === "string" && (PATTERN_RELATIONS as readonly string[]).includes(item.relation)
-        ? (item.relation as Pattern["relation"])
-        : "combination";
-    const house = typeof item.house === "string" && item.house.trim() ? item.house.trim() : null;
-    return { cards, relation, house, meaning: item.meaning.trim() };
+    return { cards, meaning: item.meaning.trim() };
   }
 
   return null;

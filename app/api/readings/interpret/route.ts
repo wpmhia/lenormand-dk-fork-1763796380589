@@ -115,13 +115,13 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
-    // Mis-declared spatial or invented-card patterns are dropped, not fatal. Log them so
-    // the rate is measurable.
-    if (serviceResult.droppedGeometryPatterns.length > 0) {
-      console.warn("interpret: dropped unsupported geometry patterns", {
+    // Model patterns outside the server-selected clusters are dropped, not fatal. Log them
+    // separately from invented/unknown card labels so the two failure modes stay distinct.
+    if (serviceResult.droppedUnverifiedPatterns.length > 0) {
+      console.warn("interpret: dropped unverified pattern clusters", {
         spreadId: validated.spreadId,
         cardCount: cardCount,
-        dropped: serviceResult.droppedGeometryPatterns,
+        dropped: serviceResult.droppedUnverifiedPatterns,
         elapsedMs: Date.now() - startedAt,
       });
     }

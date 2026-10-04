@@ -4,8 +4,8 @@ import type {
   GrandTableauLayout,
   LinearSentenceLayout,
   PetitTableauLayout,
-  SignificatorInfo,
 } from "@/lib/reading-context";
+import { formatVerifiedClusters } from "@/lib/verified-clusters";
 
 /**
  * Model-first reading contract.
@@ -23,11 +23,11 @@ export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an expert traditional Len
 
 Interpret the complete supplied spread in relation to the user's exact question.
 
-Use traditional Lenormand reading methods appropriate to the supplied spread: card combinations, defined positions, lines, surrounding cards, and where applicable houses and verified spatial relationships. You know the traditional Lenormand deck; no card dictionary is supplied to you, and none is needed.
+Use traditional Lenormand reading methods appropriate to the supplied spread. Read concrete Lenormand first: prefer literal event meanings over psychological metaphors when both fit. You know the traditional Lenormand deck; no card dictionary is supplied to you, and none is needed.
 
 Consider the spread as a whole before reaching a conclusion. Weigh supporting and conflicting indications rather than reducing the reading to one isolated positive or negative card. A large spread is not a licence to ignore most of it.
 
-The structural data supplied by the server is authoritative. Do not invent cards, positions, spatial relationships, people, events, or facts. Two cards that merely both appear somewhere in the spread are not a combination: assert adjacency, mirroring, a row, a column, a diagonal, house occupancy or a position only where the supplied coordinates support it.
+The structural data supplied by the server is authoritative. Do not invent cards, positions, spatial relationships, people, events, or facts. Do not calculate or improvise geometry. The supplied verified clusters are the only groups you may describe spatially; do not claim adjacency, a row, a column, a diagonal, a house or a position beyond those clusters.
 
 Position roles that the spread itself defines are facts and may be used. Interpretive hierarchy that the spread does not define may not be invented. In a 5-card line, the fifth card is not an outcome card merely because it is last.
 
@@ -132,24 +132,6 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
 }
 
 /**
- * One row per card: position, card, and its coordinates.
- *
- * Deliberately exhaustive about *where* cards are and silent about *how they relate*.
- * Every relation a reader can use — adjacency, rows, columns, diagonals, knight's moves,
- * mirrors, distances — is derivable from these coordinates, and the validator recomputes
- * them on demand to check whatever the model actually claims. Enumerating the relations
- * here instead cost thousands of characters and pre-decided which ones looked relevant.
- */
-function coordinateFacts(cards: ReadingContext["cards"], rowCount: number, columnCount: number, houseNameAt?: (index: number) => string): string[] {
-  return cards.map((card, index) => {
-    const row = Math.floor(index / columnCount) + 1;
-    const column = (index % columnCount) + 1;
-    const house = houseNameAt ? `, ${houseNameAt(index)} house` : "";
-    return `- ${index + 1}: ${fmtCell(card, index + 1)}, row ${row}, col ${column}${house}`;
-  });
-}
-
-/**
  * The same grid laid out as visual rows.
  *
  * This is not interpretation and not a Lenormand rule: it is the identical deterministic
@@ -170,8 +152,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
   const facts = [
     `Petit Tableau, a 3x3 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
     ...gridRowFacts(context.cards, PETIT_GRID, PETIT_GRID),
-    ...coordinateFacts(context.cards, PETIT_GRID, PETIT_GRID),
-    `Geometric centre: position ${layout.center.index + 1} (row 2, col 2).`,
+    `Centre card: ${fmtCard(layout.center.card)}.`,
     "This grid defines no closing position and no outcome position; weigh the spread yourself.",
   ];
   return facts;
@@ -209,29 +190,9 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   const facts = [
     `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
     ...gridRowFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS),
-    ...coordinateFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS, (index) => layout.houses[index]?.houseName ?? "unknown"),
+    "House occupants:",
+    ...layout.houses.map((house) => `- ${house.houseName} house: ${fmtCard(house.occupyingCard)}`),
   ];
-
-  // Only person cards that were actually drawn are named. A significator that is not in
-  // the spread is not described as "not in this spread": it is simply left out, so the
-  // model is never prompted to reason about a card it cannot see.
-  const significatorRows: { label: string; cardId: 28 | 29; info: SignificatorInfo }[] = [
-    { label: "Man", cardId: 28, info: layout.significators.man },
-    { label: "Woman", cardId: 29, info: layout.significators.woman },
-  ].filter((row): row is { label: string; cardId: 28 | 29; info: SignificatorInfo } => row.info !== undefined);
-
-  if (significatorRows.length > 0) {
-    facts.push("");
-    facts.push("Significators:");
-    for (const { label, cardId, info } of significatorRows) {
-      const row = Math.floor(info.index / GT_GRID_COLUMNS) + 1;
-      const column = (info.index % GT_GRID_COLUMNS) + 1;
-      const houseName = layout.houses[info.index]?.houseName ?? "unknown";
-      const binding = context.personBindings.find((item) => item.cardId === cardId);
-      facts.push(`- ${label}: position ${info.index + 1}, row ${row}, col ${column}, ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
-    }
-    facts.push(...significatorFocusFacts(layout.significatorPreference, significatorRows.map((row) => row.label)));
-  }
 
   facts.push("");
   facts.push("The grid defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
@@ -241,10 +202,8 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
 /**
  * Deterministic structural facts for the spread, for every spread type.
  *
- * This layer supplies only what a model cannot compute reliably: card order, position
- * roles the spread itself defines, grid coordinates and house occupancy. It supplies no
- * relation lists, no focus, no ranked pairs and no outcome evidence — deriving what
- * matters, and which relations hold, is the model's job and the validator's check.
+ * The layer supplies the complete spread and a small set of deterministic spatial
+ * clusters. The model interprets them but is not asked to recompute geometry.
  */
 export function buildSpreadFacts(context: ReadingContext): string {
   const layout = context.layout;
@@ -274,22 +233,13 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
 {
   "answer": string,
   "reading": string,
-  "patterns": [{ "cards": string[], "relation": string, "house": string | null, "meaning": string }],
+  "patterns": [{ "cards": string[], "meaning": string }],
   "timing": string | null
 }
 - answer answers the question directly in one or two sentences.
-- reading is the reading itself as flowing prose. Give the spread the room it needs; a large spread may need several paragraphs. Every spatial statement in the narrative must be declared in "patterns" first; do not assert a position, adjacency, row, column, diagonal, knight move, house or combination in prose that is not in that list.
-- patterns lists the combinations and spatial patterns you actually used. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element; every element must be a real card name from the supplied spread. "relation" declares how those cards are related, and must be exactly one of:
-    "combination" (combined in meaning; makes no geometric claim)
-    "sequence"    (consecutive positions in a line)
-    "adjacent"    (side-by-side neighbours)
-    "row", "column", "diagonal"
-    "knight"      (exactly two cards a knight's move apart)
-    "house"       (a card occupies the house of another card; set "house" to that card's name)
-    "surrounding" (the other cards sit one step from the first named card)
-  Use "combination" whenever you are not asserting a spatial relation. The server checks any non-"combination" relation against the coordinates and will reject a claim the layout does not support.
-- "house" is required when "relation" is "house": the canonical name of the house card whose house the named occupant sits in. Set it to null otherwise.
-- "meaning" states the reading of that pattern.
+- reading is the reading itself as flowing prose. Give the spread the room it needs; a large spread may need several paragraphs. Do not calculate or describe a spatial relationship that is not listed in the verified clusters.
+- patterns lists the verified card groups you actually interpreted. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element. Every multi-card set must be drawn from one supplied verified cluster. Do not add relation or house fields.
+- "meaning" states the interpretation of that group.
 - timing is null when the spread does not ground a timing.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
@@ -330,8 +280,8 @@ function simplePromptHeader(context: ReadingContext): string {
 }
 
 const SYNTHESIS_CONTRACT = `Synthesis contract:
-- Read the complete spread yourself. The server has deliberately not chosen a focus, a main line, supporting evidence or an outcome pair for you, and has not ranked the cards. Weigh the spread with traditional Lenormand technique and decide which cards, combinations and spatial relationships answer this question.
-- Geometry fidelity. The coordinates above are authoritative. Derive adjacency, rows, columns, diagonals, knight's moves, mirroring and distances from them yourself; the server does not precompute these for you. Never invent a position, a house or a spatial relationship that the coordinates do not support.
+- Read the complete spread yourself. The server has not ranked card meanings or chosen an outcome. Weigh the full spread and answer the exact question.
+- Spatial fidelity. The server has precomputed verified clusters. Use only those clusters when describing how cards are physically related. Do not derive or assert other adjacency, rows, columns, diagonals, houses, distances or directions from the displayed tableau.
 - Adjacency is not a causal chain. Adjacent cards qualify and combine with each other; that A sits next to B does not establish that A causes B, nor that B causes whatever follows it. Do not infer the absence of recovery, reconciliation, return or any other outcome merely because a particular positive card was not drawn.
 - Calibrate certainty to the spread. Avoid absolute wording such as "final", "fated", "certain", "irreversible" or "no possibility of repair" unless the spread structure itself clearly supports that level of certainty.
 - Position roles that the spread itself defines may be used; interpretive hierarchy the spread does not define may not be invented.
@@ -346,14 +296,18 @@ const SYNTHESIS_CONTRACT = `Synthesis contract:
  * The production reading prompt, identical in shape for every spread type:
  * question + complete spread + deterministic structural facts -> model.
  *
- * Every drawn card reaches the model. Nothing is pre-selected, ranked, dropped or
- * pre-interpreted: the server contributes geometry and nothing else.
+ * Every drawn card reaches the model. The server contributes the full tableau and a
+ * small deterministic set of spatial clusters; it does not choose meanings or rank
+ * interpretive evidence.
  */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
   return `${simplePromptHeader(context)}
 
 Structural facts (deterministic; complete for this spread):
 ${buildSpreadFacts(context)}
+
+Verified clusters (server-selected; the only permitted spatial groupings):
+${formatVerifiedClusters(context)}
 
 ${SYNTHESIS_CONTRACT}
 ${OUTPUT_CONTRACT}`;
