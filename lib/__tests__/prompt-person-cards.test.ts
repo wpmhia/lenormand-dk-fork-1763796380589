@@ -83,11 +83,19 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
     expect(prompt).not.toContain("journey");
   });
 
-  it("reports the binding state of both person cards explicitly", () => {
+  it("reports the binding state of the person cards that are present only", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).toContain("- Man: unbound");
-    expect(prompt).toContain("- Woman: unbound");
+    expect(prompt).not.toContain("- Woman:");
+  });
+
+  it("omits the bindings block entirely when neither person card is drawn", () => {
+    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap);
+    const prompt = buildSimpleReadingPrompt(ctx);
+    expect(prompt).not.toContain("Person bindings:");
+    expect(prompt).not.toContain("- Man:");
+    expect(prompt).not.toContain("- Woman:");
   });
 });
 
@@ -98,9 +106,24 @@ describe("prompt-builder: production system prompt forbids relationship inferenc
    * description, and it is paired with the matching rule about the last card of a line.
    */
   it("forbids inferring who an unbound person card represents", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Never infer who Man or Woman represents/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Never infer who a person card represents/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/If a person card is unbound, treat it explicitly as unidentified/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/not a spouse, partner, named person or pronoun/i);
+  });
+
+  it("names Man or Woman in the rules only through the per-spread bindings", () => {
+    // The universal rules stay generic; the names appear only when the cards are drawn.
+    const without = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap),
+    );
+    expect(without).not.toMatch(/\bMan\b/);
+    expect(without).not.toMatch(/\bWoman\b/);
+
+    const withWoman = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([29, 1, 3]), cardsMap),
+    );
+    expect(withWoman).toContain("- Woman: unbound");
+    expect(withWoman).not.toContain("- Man:");
   });
 
   it("forbids treating the last card of a line as an outcome", () => {
@@ -120,12 +143,12 @@ describe("prompt-builder: production system prompt forbids relationship inferenc
   it("keeps the binding authority with the server, not the model", () => {
     // The system prompt forbids the model from deciding identity...
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/treat it explicitly as unidentified/i);
-    // ...and the bindings block is the only place that declares it.
+    // ...and the bindings block is the only place that declares it, for the cards present.
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).toContain("Person bindings:");
     expect(prompt).toContain("- Man: unbound");
-    expect(prompt).toContain("- Woman: unbound");
+    expect(prompt).not.toContain("- Woman:");
   });
 
   it("declares a binding in the prompt when the significator was explicitly chosen", () => {
