@@ -247,19 +247,26 @@ describe("model boundary: one contract for every spread", () => {
 
 describe("pipeline: one universal prompt for every spread", () => {
   it.each(SPREAD_IDS as SpreadId[])("%s uses the same skeleton and the same four-field contract", (id) => {
-    const text = prompt(id, "Will I move house?", draw(CARD_COUNT[id], 13));
+    const cards = draw(CARD_COUNT[id], 13);
+    const text = prompt(id, "Will I move house?", cards);
 
     for (const skeleton of [
       "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "Person bindings:",
-      "- Man:",
-      "- Woman:",
       "Synthesis contract:",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);
+    }
+
+    // Person cards are named only when they were drawn; otherwise the block is absent.
+    const presentIds = new Set(cards.map((card) => card.id));
+    if (presentIds.has(28) || presentIds.has(29)) {
+      expect(text, id).toContain("Person bindings:");
+      expect(text, id).toContain(`- ${presentIds.has(28) ? "Man" : "Woman"}:`);
+    } else {
+      expect(text, id).not.toContain("Person bindings:");
     }
 
     for (const field of ['"answer": string', '"reading": string', '"patterns"', '"timing": string | null']) {

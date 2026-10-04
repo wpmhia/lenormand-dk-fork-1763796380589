@@ -31,7 +31,7 @@ The structural data supplied by the server is authoritative. Do not invent cards
 
 Position roles that the spread itself defines are facts and may be used. Interpretive hierarchy that the spread does not define may not be invented. In a 5-card line, the fifth card is not an outcome card merely because it is last.
 
-Never infer who Man or Woman represents. If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
+Never infer who a person card represents. If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
 
 Be concrete, nuanced and predictive where the spread supports prediction. Do not force certainty when the spread is genuinely mixed.
 
@@ -184,27 +184,29 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
     ...coordinateFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS, (index) => layout.houses[index]?.houseName ?? "unknown"),
   ];
 
-  facts.push("");
-  facts.push("Significators:");
-  const significatorRows: { label: string; cardId: 28 | 29; info: SignificatorInfo | undefined }[] = [
+  // Only person cards that were actually drawn are named. A significator that is not in
+  // the spread is not described as "not in this spread": it is simply left out, so the
+  // model is never prompted to reason about a card it cannot see.
+  const significatorRows: { label: string; cardId: 28 | 29; info: SignificatorInfo }[] = [
     { label: "Man", cardId: 28, info: layout.significators.man },
     { label: "Woman", cardId: 29, info: layout.significators.woman },
-  ];
-  for (const { label, cardId, info } of significatorRows) {
-    if (!info) {
-      facts.push(`- ${label}: not in this spread`);
-      continue;
+  ].filter((row): row is { label: string; cardId: 28 | 29; info: SignificatorInfo } => row.info !== undefined);
+
+  if (significatorRows.length > 0) {
+    facts.push("");
+    facts.push("Significators:");
+    for (const { label, cardId, info } of significatorRows) {
+      const row = Math.floor(info.index / GT_GRID_COLUMNS) + 1;
+      const column = (info.index % GT_GRID_COLUMNS) + 1;
+      const houseName = layout.houses[info.index]?.houseName ?? "unknown";
+      const binding = context.personBindings.find((item) => item.cardId === cardId);
+      facts.push(`- ${label}: position ${info.index + 1}, row ${row}, col ${column}, ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
     }
-    const row = Math.floor(info.index / GT_GRID_COLUMNS) + 1;
-    const column = (info.index % GT_GRID_COLUMNS) + 1;
-    const houseName = layout.houses[info.index]?.houseName ?? "unknown";
-    const binding = context.personBindings.find((item) => item.cardId === cardId);
-    facts.push(`- ${label}: position ${info.index + 1}, row ${row}, col ${column}, ${houseName} house; ${binding ? `bound by ${binding.source}` : "unbound"}`);
-  }
-  if (layout.significatorPreference === "both") {
-    facts.push("- Both significators are in this spread; read each one's own surroundings, and weigh their relation to each other from the coordinates above.");
-  } else {
-    facts.push(`- Significator focus: ${layout.significatorPreference === "man" ? "Man" : "Woman"}. The other person card is still present as an ordinary card.`);
+    if (layout.significatorPreference === "both" && significatorRows.length === 2) {
+      facts.push("- Both significators are in this spread; read each one's own surroundings, and weigh their relation to each other from the coordinates above.");
+    } else {
+      facts.push(`- Significator focus: ${layout.significatorPreference === "man" ? "Man" : "Woman"}. The other person card is still present as an ordinary card.`);
+    }
   }
 
   facts.push("");
@@ -267,6 +269,28 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
 /**
+ * The person bindings for the cards that are actually present.
+ *
+ * A person card that was not drawn is not mentioned at all. Listing "Man: unbound" for a
+ * spread that does not contain Man invites the model to reason about a card it cannot see,
+ * which is exactly the fabrication the invented-card gate then rejects. The block is
+ * omitted entirely when neither person card is in the spread.
+ */
+function personBindings(context: ReadingContext): string {
+  const present = new Set(context.cards.map((card) => card.id));
+  const rows = ([28, 29] as const)
+    .filter((cardId) => present.has(cardId))
+    .map((cardId) => {
+      const binding = context.personBindings.find((item) => item.cardId === cardId);
+      const label = cardId === 28 ? "Man" : "Woman";
+      return binding
+        ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
+        : `- ${label}: unbound`;
+    });
+  return rows.length === 0 ? "" : `\n\nPerson bindings:\n${rows.join("\n")}`;
+}
+
+/**
  * Question, situation and person bindings. Identical for every spread.
  *
  * The raw question goes to the model unparsed. Supplying a server-derived domain, subject,
@@ -277,14 +301,7 @@ function simplePromptHeader(context: ReadingContext): string {
   const situation = context.situationContext.trim()
     ? `\n\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
     : "";
-  const personBindings = `\n\nPerson bindings:\n${([28, 29] as const).map((cardId) => {
-    const binding = context.personBindings.find((item) => item.cardId === cardId);
-    const label = cardId === 28 ? "Man" : "Woman";
-    return binding
-      ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
-      : `- ${label}: unbound`;
-  }).join("\n")}`;
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}${personBindings}${situation}`;
+  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}${personBindings(context)}${situation}`;
 }
 
 const SYNTHESIS_CONTRACT = `Synthesis contract:
@@ -293,7 +310,7 @@ const SYNTHESIS_CONTRACT = `Synthesis contract:
 - Adjacency is not a causal chain. Adjacent cards qualify and combine with each other; that A sits next to B does not establish that A causes B, nor that B causes whatever follows it. Do not infer the absence of recovery, reconciliation, return or any other outcome merely because a particular positive card was not drawn.
 - Calibrate certainty to the spread. Avoid absolute wording such as "final", "fated", "certain", "irreversible" or "no possibility of repair" unless the spread structure itself clearly supports that level of certainty.
 - Position roles that the spread itself defines may be used; interpretive hierarchy the spread does not define may not be invented.
-- Read Man and Woman as person cards only where the person bindings above bind them. An unbound card stays an unassigned person-card reference, never a partner, spouse or pronoun.
+- Read a person card as an individual only where the person bindings above bind it. An unbound person card stays an unassigned person-card reference, never a partner, spouse or pronoun.
 - Preserve the exact question subject and predicate. Do not replace a wellbeing, relocation, work or relationship question with another kind of question.
 - Do not invent cards, people, facts, exact timing, dates, prerequisites or implementation details. Leave timing null when the spread does not ground it.
 - Answer the user's exact question directly in the first sentence of the answer field.
