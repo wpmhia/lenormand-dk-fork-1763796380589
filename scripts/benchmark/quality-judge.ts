@@ -11,11 +11,24 @@ export function buildQualityJudgePrompt(
   context: ReadingContext,
   evaluation: Evaluation,
 ): string {
+  const gridSize = context.layout.type === "grand-tableau" ? 9 : context.layout.type === "petit-tableau" ? 3 : null;
+  const positionMap = gridSize
+    ? context.cards.map((card, index) => `position ${index + 1}: ${card.name}, row ${Math.floor(index / gridSize) + 1}, column ${(index % gridSize) + 1}`).join("\n")
+    : context.cards.map((card, index) => `position ${index + 1}: ${card.name}`).join("\n");
+  const houseMap = context.layout.type === "grand-tableau"
+    ? context.layout.houses.map((placement) => `position ${placement.position} is the ${placement.houseName} house; occupant=${placement.occupyingCard.name}`).join("\n")
+    : "No houses exist in this spread.";
   return `Blind review. Do not see or infer the benchmark's automated validator decisions.
 
 Question (${benchmarkCase.language}): ${benchmarkCase.question}
 Spread: ${benchmarkCase.spreadLabel} (${benchmarkCase.cardCount} cards)
-Cards in position order: ${context.cards.map((card, index) => `${index + 1}:${card.name}`).join(" | ")}
+Position map:
+${positionMap}
+
+House map:
+${houseMap}
+
+Apply only these geometric definitions (no card meanings): in a line, adjacency means consecutive positions; in a grid, adjacency includes horizontal, vertical and diagonal neighboring cells one step apart. A row or column has a constant row or column coordinate; a diagonal has constant row-column or row+column. A house claim names one occupant and the house card; check that occupant against the house map above. A sequence is consecutive positions in the supplied order.
 
 Delivered structured patterns:
 ${JSON.stringify(evaluation.deliveredPatterns, null, 2)}
@@ -29,24 +42,29 @@ ${evaluation.deliveredReading ?? "(none)"}
 Review the response on these general reader-facing dimensions (1=poor, 5=strong):
 - directness: answers the exact question rather than substituting another question
 - relevance: details are grounded in the user's context/question
-- depth: meaningful synthesis rather than generic filler or a card inventory; appropriate to spread size
-- spreadSynthesis: uses a coherent reading rather than cherry-picking or mechanically listing cards
+- depth: meaningful, specific synthesis rather than generic filler or a card inventory; appropriate to spread size
+- spreadSynthesis: makes meaningful use of the supplied spread as a whole, not merely a few convenient cards; do not require every card to be named
 - calibration: uncertainty and confidence feel proportionate, without unsupported certainty
 - naturalness: clear, fluent, human-sounding language
 - languageConsistency: consistently uses the question's language
 
 Also independently identify, without translating card names into fixed meanings:
-- prose claims of position/adjacency/row/column/diagonal/sequence/knight/house that are not supported by the listed positions or declared patterns;
-- conflicts between a spatial statement in prose and the delivered pattern list;
+- prose claims of position/adjacency/row/column/diagonal/sequence/knight/house contradicted by the position/house maps;
+- spatial claims that are geometrically true but absent from the patterns array (an undeclared claim, not false geometry);
+- conflicts where prose and a declared spatial pattern assert different relations;
 - explicit claims that a card is in the spread when it is not.
-Do not count neutral mentions or ordinary-language uses of words that happen to be card names. Do not require every drawn card to be named.
+- concrete user-specific assumptions (events, motives, facts, prerequisites) absent from the question and spread, and guarantees stated more strongly than the response's own evidence warrants. Do not call a prediction unsupported merely because it is a prediction; flag only concrete invented premises or unjustified certainty.
+Treat the declared pattern field named "meaning" as evidence; do not require the prose to copy it verbatim. Do not mark a plausible prediction unsupported merely because it is not a supplied biographical fact or appears only as an interpretive synthesis. Do not assess card meanings against a hidden rulebook. Do not count neutral mentions or ordinary-language uses of words that happen to be card names. Do not require every drawn card to be named.
+Keep every issue array to at most 3 highest-confidence examples; quote exact, short excerpts (under 20 words), give one concise reason and do not repeat the same issue in multiple arrays. Keep notes under 20 words.
 
 Return exactly this JSON shape:
 {
   "scores": {"directness": 1, "relevance": 1, "depth": 1, "spreadSynthesis": 1, "calibration": 1, "naturalness": 1, "languageConsistency": 1},
   "unsupportedSpatialClaims": [{"quote": "exact excerpt", "reason": "brief", "confidence": 0.0}],
+  "unlistedSpatialClaims": [{"quote": "exact excerpt", "relation": "brief", "confidence": 0.0}],
   "patternTextConflicts": [{"quote": "exact excerpt", "pattern": "pattern label", "reason": "brief", "confidence": 0.0}],
   "undrawnCardClaims": [{"quote": "exact excerpt", "card": "name", "confidence": 0.0}],
+  "unsupportedConclusions": [{"quote": "exact excerpt", "reason": "brief", "confidence": 0.0}],
   "overallConfidence": 0.0,
   "notes": "brief; no card meanings"
 }`;
@@ -57,6 +75,7 @@ export interface JudgeResult {
   raw: string;
   finishReason: string;
   rawFinishReason: string | null;
+  failureKind: "provider_error" | "truncated_json" | "invalid_json" | null;
   usage: {
     inputTokens: number | null;
     outputTokens: number | null;
@@ -81,18 +100,20 @@ export async function runQualityJudge(
       model,
       system: QUALITY_JUDGE_SYSTEM,
       prompt,
-      maxOutputTokens: 700,
+      maxOutputTokens: 1600,
       maxRetries: 0,
       providerOptions: { deepseek: { thinking: { type: "disabled" } } },
       timeout: { totalMs: timeoutMs },
     });
     const raw = result.text ?? "";
     const deepseekMetadata = (result.providerMetadata?.deepseek ?? {}) as Record<string, unknown>;
+    const value = parseJson(raw);
     return {
-      value: parseJson(raw),
+      value,
       raw,
       finishReason: result.finishReason,
       rawFinishReason: result.rawFinishReason ?? null,
+      failureKind: !value && result.finishReason === "length" ? "truncated_json" : value ? null : "invalid_json",
       usage: {
         inputTokens: result.usage.inputTokens ?? null,
         outputTokens: result.usage.outputTokens ?? null,
@@ -111,6 +132,7 @@ export async function runQualityJudge(
       raw: "",
       finishReason: "error",
       rawFinishReason: null,
+      failureKind: "provider_error",
       usage: { inputTokens: null, outputTokens: null, reasoningTokens: null, cacheHitTokens: null, cacheMissTokens: null },
       latencyMs: Date.now() - startedAt,
       error: error instanceof Error ? `${error.name}: ${error.message}` : String(error),

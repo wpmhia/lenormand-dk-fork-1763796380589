@@ -185,6 +185,38 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     ).not.toEqual([]);
   });
 
+  it("does not treat the referenced house card as a second occupant", () => {
+    // Woman sits in position 8, the Coffin house. The Coffin card itself is not the occupant.
+    const context = tableauAt({ 29: 7 });
+    expect(
+      findInvalidGeometryPatterns(
+        answer([{ cards: ["Woman", "Coffin"], relation: "house", house: "Coffin", meaning: "x" }]),
+        context,
+      ),
+    ).toEqual([]);
+    // `house` may also carry the house name without repeating it in cards[].
+    expect(
+      findInvalidGeometryPatterns(
+        answer([{ cards: ["Woman"], relation: "house", house: "Coffin", meaning: "x" }]),
+        context,
+      ),
+    ).toEqual([]);
+    // Naming a different house remains a factual error.
+    expect(
+      findInvalidGeometryPatterns(
+        answer([{ cards: ["Woman", "Coffin"], relation: "house", house: "Rider", meaning: "x" }]),
+        context,
+      ),
+    ).not.toEqual([]);
+    // A single house claim cannot assert that two occupants are in one house.
+    expect(
+      findInvalidGeometryPatterns(
+        answer([{ cards: ["Woman", "Man", "Coffin"], relation: "house", house: "Coffin", meaning: "x" }]),
+        context,
+      ),
+    ).not.toEqual([]);
+  });
+
   it("validates a multi-card column claim from an array of names", () => {
     // Rider at row 1 col 1, and two filler cards placed down column 1: indices 0, 9, 18.
     const column = tableauAt({ 1: 0, 2: 9, 3: 18 });

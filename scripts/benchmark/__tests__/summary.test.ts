@@ -53,4 +53,17 @@ describe("benchmark summaries", () => {
       validatorMissedFactRate: 0,
     });
   });
+
+  it("distinguishes truncated judge JSON from provider errors", () => {
+    const records = ["truncated_json", "provider_error", "invalid_json"].map((failureKind, index) => ({
+      case: { id: `case-${index}`, spreadId: "grand-tableau", cardCount: 36 },
+      run: { status: "ok", latencyMs: 100, responseModel: "deepseek-flash" },
+      usage: { inputTokens: 10, outputTokens: 5 },
+      evaluation: { parsed: true, schemaValid: true, inventedCards: [], unknownCardLabels: [], falseGeometry: [], proseCardMentions: [] },
+      validatorError: null,
+      judge: { failureKind, error: failureKind === "provider_error" ? "TimeoutError" : null, value: null, latencyMs: 50 },
+    }));
+    const judge = (summarize(records).total as any).judge;
+    expect(judge.failuresByKind).toEqual({ provider_error: 1, truncated_json: 1, invalid_json: 1 });
+  });
 });

@@ -6,6 +6,7 @@ export interface HumanReview {
   drawnCardAccuracy: string;
   automatedFlagReview: string;
   validatorMissedFact: string;
+  unsupportedConclusion: string;
 }
 
 function percentile(values: number[], p: number): number | null {
@@ -53,7 +54,9 @@ function groupSummary(records: any[]) {
   const judgeScores = Object.fromEntries(scoreDimensions.map((key) => [key, average(scoresFor(records, key))]));
   const judgeConflictCases = records.filter((record) => (record.judge?.value?.patternTextConflicts?.length ?? 0) > 0).length;
   const judgeUnsupportedSpatialCases = records.filter((record) => (record.judge?.value?.unsupportedSpatialClaims?.length ?? 0) > 0).length;
+  const judgeUnlistedSpatialCases = records.filter((record) => (record.judge?.value?.unlistedSpatialClaims?.length ?? 0) > 0).length;
   const judgeUndrawnClaimsCases = records.filter((record) => (record.judge?.value?.undrawnCardClaims?.length ?? 0) > 0).length;
+  const judgeUnsupportedConclusionCases = records.filter((record) => (record.judge?.value?.unsupportedConclusions?.length ?? 0) > 0).length;
   const inputTokens = records.reduce((sum, record) => sum + (record.usage?.inputTokens ?? 0), 0);
   const outputTokens = records.reduce((sum, record) => sum + (record.usage?.outputTokens ?? 0), 0);
   const reasoningTokens = records.reduce((sum, record) => sum + (record.usage?.reasoningTokens ?? 0), 0);
@@ -65,6 +68,17 @@ function groupSummary(records: any[]) {
   const mainCost = records.reduce((sum, record) => sum + (record.costUsd ?? 0), 0);
   const judgeCost = records.reduce((sum, record) => sum + (record.judge?.costUsd ?? 0), 0);
   const judgeCompleted = records.filter((record) => record.judge && !record.judge.error && record.judge.value).length;
+  const judgeFailureKind = (record: any): string | null => {
+    if (!record.judge) return null;
+    if (record.judge.failureKind) return record.judge.failureKind;
+    if (record.judge.error) return "provider_error";
+    if (record.judge.finishReason === "length") return "truncated_json";
+    return record.judge.value ? null : "invalid_json";
+  };
+  const judgeFailuresByKind = Object.fromEntries(["provider_error", "truncated_json", "invalid_json"].map((kind) => [
+    kind,
+    records.filter((record) => judgeFailureKind(record) === kind).length,
+  ]));
 
   return {
     attempted,
@@ -110,10 +124,13 @@ function groupSummary(records: any[]) {
     judge: {
       completed: judgeCompleted,
       failures: records.filter((record) => record.judge?.error || (record.judge && !record.judge.value)).length,
+      failuresByKind: judgeFailuresByKind,
       meanScores: judgeScores,
-      patternTextConflictRate: fraction(judgeConflictCases, judgeCompleted),
-      unsupportedSpatialClaimRate: fraction(judgeUnsupportedSpatialCases, judgeCompleted),
-      undrawnCardClaimRate: fraction(judgeUndrawnClaimsCases, judgeCompleted),
+      candidatePatternTextConflictRate: fraction(judgeConflictCases, judgeCompleted),
+      candidateFalseSpatialClaimRate: fraction(judgeUnsupportedSpatialCases, judgeCompleted),
+      candidateUndeclaredSpatialClaimRate: fraction(judgeUnlistedSpatialCases, judgeCompleted),
+      candidateUndrawnCardClaimRate: fraction(judgeUndrawnClaimsCases, judgeCompleted),
+      candidateUnsupportedConclusionRate: fraction(judgeUnsupportedConclusionCases, judgeCompleted),
       interpretation: "LLM judge is a screening signal, not ground truth; see human review annotations.",
     },
   };
@@ -139,6 +156,7 @@ export function parseHumanReviewTSV(contents: string): HumanReview[] {
       drawnCardAccuracy: row.drawnCardAccuracy_yes_no_unsure ?? "",
       automatedFlagReview: row.automatedFalsePositive_yes_no_unsure ?? "",
       validatorMissedFact: row.validatorMissedFinding_yes_no_unsure ?? "",
+      unsupportedConclusion: row.unsupportedConclusion_yes_no_unsure ?? "",
     };
   });
 }
@@ -155,6 +173,7 @@ export function humanSummary(reviews: HumanReview[]) {
     drawnCardInaccuracyRate: yesRate(reviewable.map((review) => review.drawnCardAccuracy)),
     automatedFlagFalsePositiveRate: yesRate(reviewable.map((review) => review.automatedFlagReview)),
     validatorMissedFactRate: yesRate(reviewable.map((review) => review.validatorMissedFact)),
+    unsupportedConclusionRate: yesRate(reviewable.map((review) => review.unsupportedConclusion)),
   };
 }
 

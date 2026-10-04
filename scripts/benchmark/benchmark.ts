@@ -200,7 +200,7 @@ function makeHumanReviewTSV(records: StoredRecord[]): string {
     "directness_1to5", "relevance_1to5", "depth_1to5", "spreadSynthesis_1to5", "calibration_1to5",
     "naturalness_1to5", "languageConsistency_1to5", "spatialAccuracy_yes_no_unsure",
     "narrativePatternConflict_yes_no_unsure", "drawnCardAccuracy_yes_no_unsure", "reviewerNotes",
-    "automatedFalsePositive_yes_no_unsure", "validatorMissedFinding_yes_no_unsure",
+    "automatedFalsePositive_yes_no_unsure", "validatorMissedFinding_yes_no_unsure", "unsupportedConclusion_yes_no_unsure",
   ];
   const esc = (value: unknown) => String(value ?? "").replace(/[\t\r\n]+/g, " ");
   const lines = [columns.join("\t")];
@@ -216,7 +216,7 @@ function makeHumanReviewTSV(records: StoredRecord[]): string {
       output?.deliveredAnswer ?? "",
       output?.deliveredReading ?? "",
       JSON.stringify(output?.deliveredPatterns ?? []),
-      "", "", "", "", "", "", "", "", "", "", "", "", "",
+      "", "", "", "", "", "", "", "", "", "", "", "", "", "",
     ].map(esc).join("\t"));
   }
   return `${lines.join("\n")}\n`;
