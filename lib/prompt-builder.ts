@@ -235,7 +235,7 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
   "timing": string | null
 }
 - answer answers the question directly in one or two sentences.
-- reading is the reading itself as flowing prose. Be concise: detail is useful only when it changes the answer. Do not calculate or describe a spatial relationship that is not listed in the verified clusters.
+- reading is the reading itself as flowing prose. Keep the reading as short as the question allows. Interpret only what the drawn cards support. Do not complete a story beyond the cards, and do not use absent cards as evidence. Do not calculate or describe a spatial relationship that is not listed in the verified clusters.
 - patterns lists the verified card groups you actually interpreted. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element. Every multi-card set must be drawn from one supplied verified cluster. Do not add relation or house fields.
 - "meaning" states the interpretation of that group.
 - timing is null when the spread does not ground a timing.
