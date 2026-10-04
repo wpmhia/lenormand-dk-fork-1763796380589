@@ -22,6 +22,8 @@ export interface LayoutGeometry {
   rowCount?: number;
   columnCount?: number;
   hasHouses?: boolean;
+  /** House name per position, present only when the layout has houses. */
+  houses?: string[];
 }
 
 export function geometryOf(context: ReadingContext): LayoutGeometry {
@@ -31,7 +33,13 @@ export function geometryOf(context: ReadingContext): LayoutGeometry {
     case "petit-tableau":
       return { kind: "grid", rowCount: 3, columnCount: 3, hasHouses: false };
     case "grand-tableau":
-      return { kind: "grid", rowCount: 4, columnCount: 9, hasHouses: true };
+      return {
+        kind: "grid",
+        rowCount: 4,
+        columnCount: 9,
+        hasHouses: true,
+        houses: context.layout.houses.map((house) => house.houseName),
+      };
     default:
       return { kind: "single" };
   }
@@ -72,13 +80,23 @@ export function validateRelation(
   indices: number[],
   relation: PatternRelation,
   geometry: LayoutGeometry,
+  claimedHouse?: string | null,
 ): boolean {
   if (relation === "combination") return true; // asserts no geometric relation
-  if (indices.length < 2) return true; // nothing to relate
   if (geometry.kind === "single") return false;
 
   const { kind, columnCount } = geometry;
   const columns = columnCount ?? 1;
+
+  // A house claim is one occupant against one named house, so it is checked before the
+  // "needs two cards" guard: a single card can sit in a house, a sequence cannot.
+  if (relation === "house") {
+    if (kind !== "grid" || geometry.hasHouses !== true || !geometry.houses) return false;
+    if (!claimedHouse) return false;
+    return indices.length > 0 && indices.every((position) => geometry.houses?.[position] === claimedHouse);
+  }
+
+  if (indices.length < 2) return true; // nothing else to relate
 
   switch (relation) {
     case "sequence":
@@ -113,10 +131,6 @@ export function validateRelation(
       // A knight's move is defined between exactly two cards.
       return kind === "grid" && indices.length === 2 && isKnightStep(indices[0], indices[1], columns);
 
-    case "house":
-      // A house relation can only be asserted where houses exist (the Grand Tableau).
-      return kind === "grid" && geometry.hasHouses === true;
-
     default:
       return true;
   }
@@ -134,6 +148,13 @@ export function validateRelation(
  * drawn are reported separately by `findInventedCards`; the caller drops the offending
  * pattern, so this function only ever sees patterns whose geometry it still checks.
  */
+function claimedHouseName(house: string | null, context: ReadingContext): string | null {
+  if (!house) return null;
+  const id = CARD_NAME_TO_ID.get(house.trim().toLowerCase());
+  if (id === undefined || context.layout.type !== "grand-tableau") return null;
+  return context.layout.houses.find((placement) => placement.houseCardId === id)?.houseName ?? null;
+}
+
 export function findInvalidGeometryPatterns(
   answer: SimpleAnswer,
   context: ReadingContext,
@@ -149,12 +170,22 @@ export function findInvalidGeometryPatterns(
       .map((name) => CARD_NAME_TO_ID.get(name.trim().toLowerCase()))
       .map((id) => (id === undefined ? -1 : context.cards.findIndex((card) => card.id === id)));
 
-    if (indices.length < 2 || indices.some((position) => position < 0)) return;
+    if (indices.some((position) => position < 0)) return;
 
-    if (!validateRelation(indices, pattern.relation, geometry)) {
+    // A house claim needs at least one occupant; every other relation needs two cards.
+    const minimum = pattern.relation === "house" ? 1 : 2;
+    if (indices.length < minimum) return;
+
+    const house = pattern.relation === "house" ? claimedHouseName(pattern.house, context) : undefined;
+
+    if (!validateRelation(indices, pattern.relation, geometry, house)) {
+      const claim =
+        pattern.relation === "house" && pattern.house
+          ? `relation "house" (${pattern.house})`
+          : `relation "${pattern.relation}"`;
       invalid.push({
         index,
-        message: `Pattern "${pattern.cards.join(" + ")}" claims relation "${pattern.relation}", but the coordinates do not support it.`,
+        message: `Pattern "${pattern.cards.join(" + ")}" claims ${claim}, but the coordinates do not support it.`,
       });
     }
   });

@@ -27,6 +27,12 @@ export const PatternSchema = z.object({
   cards: z.array(z.string().min(1)).min(1),
   /** Defaults to `combination`, which asserts no geometric relation to verify. */
   relation: z.enum(PATTERN_RELATIONS).default("combination"),
+  /**
+   * For `relation: "house"`, the canonical name of the house card that the named occupant
+   *(s) sit in. This is the explicit representation the validator needs: without it, a
+   * house claim can only be checked for "houses exist", not for occupancy.
+   */
+  house: z.string().min(1).nullable().default(null),
   meaning: z.string().min(1),
 });
 

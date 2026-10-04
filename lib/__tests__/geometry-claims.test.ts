@@ -19,6 +19,10 @@ const PETIT: LayoutGeometry = { kind: "grid", rowCount: 3, columnCount: 3, hasHo
 const LINE: LayoutGeometry = { kind: "line" };
 const SINGLE: LayoutGeometry = { kind: "single" };
 
+/** The Grand Tableau's houses, in position order: house 1 is named after card 1. */
+const GT_HOUSES = catalog.map((card) => card.name);
+const GT_WITH_HOUSES: LayoutGeometry = { ...GT, houses: GT_HOUSES };
+
 describe("validateRelation: generic geometry, independent of any card", () => {
   it("treats combination and single-card sets as unconstrained", () => {
     expect(validateRelation([0, 30], "combination", GT)).toBe(true);
@@ -66,10 +70,16 @@ describe("validateRelation: generic geometry, independent of any card", () => {
     expect(validateRelation([0, 5], "surrounding", GT)).toBe(false);
   });
 
-  it("checks house only where houses exist", () => {
-    expect(validateRelation([0, 20], "house", GT)).toBe(true);
-    expect(validateRelation([0, 4], "house", PETIT)).toBe(false);
-    expect(validateRelation([0, 1], "house", LINE)).toBe(false);
+  it("checks real house occupancy, not merely that houses exist", () => {
+    // Position 0 occupies the house named after card 1 (Rider).
+    expect(validateRelation([0], "house", GT_WITH_HOUSES, "Rider")).toBe(true);
+    // Position 20 is not in the Rider house.
+    expect(validateRelation([20], "house", GT_WITH_HOUSES, "Rider")).toBe(false);
+    // A house claim without a named house cannot be verified.
+    expect(validateRelation([0], "house", GT_WITH_HOUSES)).toBe(false);
+    // The same claim on a layout without houses is false.
+    expect(validateRelation([0], "house", PETIT, "Rider")).toBe(false);
+    expect(validateRelation([0, 1], "house", LINE, "Rider")).toBe(false);
   });
 
   it("returns false for grid-only relations asserted on a line", () => {
@@ -94,7 +104,13 @@ describe("geometryOf: layout to geometry, nothing else", () => {
   it("maps each layout to its geometry", () => {
     expect(geometryOf(context("sentence-3"))).toEqual({ kind: "line" });
     expect(geometryOf(context("comprehensive"))).toEqual({ kind: "grid", rowCount: 3, columnCount: 3, hasHouses: false });
-    expect(geometryOf(context("grand-tableau"))).toEqual({ kind: "grid", rowCount: 4, columnCount: 9, hasHouses: true });
+    expect(geometryOf(context("grand-tableau"))).toEqual({
+      kind: "grid",
+      rowCount: 4,
+      columnCount: 9,
+      hasHouses: true,
+      houses: GT_HOUSES,
+    });
   });
 
   it("maps a single-card spread to single", () => {
@@ -119,7 +135,7 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     return buildReadingContext("grand-tableau", "Q?", cards, cardsMap);
   }
 
-  const answer = (patterns: { cards: string[]; relation: PatternRelation; meaning: string }[]) =>
+  const answer = (patterns: { cards: string[]; relation: PatternRelation; house?: string | null; meaning: string }[]) =>
     SimpleAnswerSchema.parse({ answer: "a", reading: "b", patterns, timing: null });
 
   it("accepts a true claim and rejects a false one for the same card pair", () => {
@@ -151,6 +167,21 @@ describe("findFalseGeometryClaims: end to end on real spreads", () => {
     const petit = buildReadingContext("comprehensive", "Q?", cards, cardsMap);
     expect(
       findInvalidGeometryPatterns(answer([{ cards: ["Rider", "Clover"], relation: "house", meaning: "x" }]), petit),
+    ).not.toEqual([]);
+  });
+
+  it("validates a Grand Tableau house claim against real occupancy", () => {
+    const context = tableauAt({ 1: 0 }); // Rider occupies position 1, the Rider house
+    expect(
+      findInvalidGeometryPatterns(answer([{ cards: ["Rider"], relation: "house", house: "Rider", meaning: "x" }]), context),
+    ).toEqual([]);
+    // A valid card in the wrong house is rejected.
+    expect(
+      findInvalidGeometryPatterns(answer([{ cards: ["Rider"], relation: "house", house: "Clover", meaning: "x" }]), context),
+    ).not.toEqual([]);
+    // A house claim without a named house cannot be verified.
+    expect(
+      findInvalidGeometryPatterns(answer([{ cards: ["Rider"], relation: "house", meaning: "x" }]), context),
     ).not.toEqual([]);
   });
 

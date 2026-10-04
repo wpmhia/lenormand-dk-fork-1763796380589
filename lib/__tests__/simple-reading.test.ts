@@ -198,7 +198,7 @@ describe("simple reading single-call output handling", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("drops an unsupported geometry pattern and keeps the rest of the reading", async () => {
+  it("drops an unsupported geometry pattern and regenerates the narrative from verified claims", async () => {
     const cards = [
       { id: 1, name: "Rider" },
       { id: 2, name: "Clover" },
@@ -209,21 +209,57 @@ describe("simple reading single-call output handling", () => {
     generateText.mockResolvedValueOnce(
       textOutput({
         answer: "The line reads as one movement.",
-        reading: "A connected sentence.",
+        reading: "A first draft that repeats the false row claim.",
         patterns: [
           { cards: ["Rider", "Clover"], relation: "combination", meaning: "kept pattern" },
           { cards: ["Rider", "Ship"], relation: "row", meaning: "dropped pattern" },
         ],
       }),
     );
+    generateText.mockResolvedValueOnce(
+      textOutput({
+        answer: "Verified answer.",
+        reading: "Verified reading built from the kept pattern only.",
+        patterns: [{ cards: ["Rider", "Clover"], relation: "combination", meaning: "kept pattern" }],
+      }),
+    );
 
     const result = await generateReading(options({ context }));
 
-    // The reading is returned; only the pattern that made a false claim is removed.
+    // The false pattern is removed and the narrative is rewritten from verified claims.
     expect(result.ok).toBe(true);
+    expect(result.ok && result.reading).toContain("Verified reading");
     expect(result.ok && result.reading).toContain("kept pattern");
-    expect(result.ok && result.reading).not.toContain("dropped pattern");
+    expect(result.ok && result.reading).not.toContain("false row claim");
     expect(result.ok && result.droppedGeometryPatterns).toHaveLength(1);
+    expect(generateText).toHaveBeenCalledTimes(2);
+    expect(generateText.mock.calls[1][0].prompt).toContain("Correction pass");
+  });
+
+  it("drops a pattern with an unrecognised card name instead of letting it through", async () => {
+    const context = {
+      cards: [
+        { id: 2, name: "Clover" },
+        { id: 6, name: "Clouds" },
+      ],
+      layout: { type: "single" },
+    } as unknown as ReadingContext;
+
+    generateText.mockResolvedValueOnce(
+      textOutput({
+        answer: "First draft.",
+        reading: "First draft.",
+        patterns: [{ cards: ["Clover", "ImaginaryCard"], relation: "combination", meaning: "unknown claim" }],
+      }),
+    );
+    generateText.mockResolvedValueOnce(textOutput({ answer: "Verified.", reading: "Verified.", patterns: [] }));
+
+    const result = await generateReading(options({ context }));
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
+    expect(result.ok && result.droppedInventedPatterns[0]).toContain("unrecognised");
+    expect(result.ok && result.reading).toContain("Verified");
   });
 
   it("does not leak the removed legacy sections into the rendered reading", async () => {

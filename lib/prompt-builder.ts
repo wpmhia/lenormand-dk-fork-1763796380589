@@ -250,20 +250,21 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
 {
   "answer": string,
   "reading": string,
-  "patterns": [{ "cards": string[], "relation": string, "meaning": string }],
+  "patterns": [{ "cards": string[], "relation": string, "house": string | null, "meaning": string }],
   "timing": string | null
 }
 - answer answers the question directly in one or two sentences.
-- reading is the reading itself as flowing prose. Give the spread the room it needs; a large spread may need several paragraphs.
-- patterns lists the combinations and spatial patterns you actually used. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element. "relation" declares how those cards are related, and must be exactly one of:
+- reading is the reading itself as flowing prose. Give the spread the room it needs; a large spread may need several paragraphs. Every spatial statement in the narrative must be declared in "patterns" first; do not assert a position, adjacency, row, column, diagonal, knight move, house or combination in prose that is not in that list.
+- patterns lists the combinations and spatial patterns you actually used. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element; every element must be a real card name from the supplied spread. "relation" declares how those cards are related, and must be exactly one of:
     "combination" (combined in meaning; makes no geometric claim)
     "sequence"    (consecutive positions in a line)
     "adjacent"    (side-by-side neighbours)
     "row", "column", "diagonal"
     "knight"      (exactly two cards a knight's move apart)
-    "house"       (related through Grand Tableau houses)
+    "house"       (a card occupies the house of another card; set "house" to that card's name)
     "surrounding" (the other cards sit one step from the first named card)
   Use "combination" whenever you are not asserting a spatial relation. The server checks any non-"combination" relation against the coordinates and will reject a claim the layout does not support.
+- "house" is required when "relation" is "house": the canonical name of the house card whose house the named occupant sits in. Set it to null otherwise.
 - "meaning" states the reading of that pattern.
 - timing is null when the spread does not ground a timing.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;

@@ -171,27 +171,35 @@ function NewReadingPageContent() {
     updatedAt: new Date(),
   }), [question, selectedSpread.cards, drawnCards]);
 
-  // Auto-start AI analysis when entering results (one-shot per drawnCards)
-  const analysisStartedRef = useRef(false);
+  // The inputs that actually shape a reading. Re-running only when this signature changes
+  // refreshes the interpretation when the significator (or question/spread/cards) changes,
+  // while an unrelated re-render that recreates `startAnalysis` does not fire a duplicate.
+  const analysisKey = useMemo(() => {
+    if (step !== "results" || drawnCards.length === 0) return null;
+    const cardKey = drawnCards.map((card) => `${card.id}:${card.position}`).join(",");
+    return `${selectedSpread.id}|${question}|${significatorType}|${cardKey}`;
+  }, [step, drawnCards, selectedSpread.id, question, significatorType]);
+
+  const analysisKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (step === "results" && drawnCards.length > 0 && !analysisStartedRef.current) {
-      analysisStartedRef.current = true;
+    if (analysisKey && analysisKeyRef.current !== analysisKey) {
+      analysisKeyRef.current = analysisKey;
       startAnalysis();
     }
     if (step !== "results") {
-      analysisStartedRef.current = false;
+      analysisKeyRef.current = null;
     }
-  }, [step, drawnCards, startAnalysis]);
+  }, [step, analysisKey, startAnalysis]);
 
-  // Handle back navigation
+  // Handle back navigation. Going back to card entry keeps the drawn cards so a manual
+  // Grand Tableau or a virtual draw is not thrown away; only an explicit new reading or
+  // redraw clears them.
   const handleBack = useCallback(() => {
     if (step === "drawing") {
       setStep("setup");
       setMethod(null);
     } else if (step === "results") {
       setStep("drawing");
-      setDrawnCards([]);
-      setDrawnCardTypes([]);
       resetAnalysis();
     }
   }, [step, resetAnalysis]);
@@ -392,6 +400,7 @@ function NewReadingPageContent() {
                     allCards={allCards}
                     targetCount={selectedSpread.cards}
                     onSubmit={handlePhysicalSubmit}
+                    initialCards={drawnCards}
                   />
                 </div>
               )}
