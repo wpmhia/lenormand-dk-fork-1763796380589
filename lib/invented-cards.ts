@@ -142,6 +142,16 @@ function dedupe(matches: InventedCardMatch[]): InventedCardMatch[] {
   });
 }
 
+/**
+ * The same unambiguous prose scan, for free-text callers such as the follow-up route:
+ * returns only explicit references (`A + B`, `the A card`, `card A`) to undrawn cards.
+ * The initial-reading pathway uses `findInventedCards`, which also checks `patterns[]`.
+ */
+export function findInventedCardReferences(text: string, drawnCardIds: number[]): InventedCardMatch[] {
+  const drawn = new Set(drawnCardIds);
+  return dedupe(matchesIn(text, EXPLICIT_REFERENCE_PATTERN, "reading").filter((match) => !drawn.has(match.id)));
+}
+
 export function findInventedCards(answer: SimpleAnswer, drawnCardIds: number[]): InventedCardMatch[] {
   const drawn = new Set(drawnCardIds);
   const matches: InventedCardMatch[] = [];

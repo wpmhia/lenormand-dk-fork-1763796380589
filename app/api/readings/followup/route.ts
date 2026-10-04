@@ -7,13 +7,14 @@ import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { generateText } from "ai";
-import { DEFAULT_RATE_WINDOW_MS } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS, MAX_QUESTION_LENGTH } from "@/lib/constants";
 import staticCardsData from "@/public/data/cards.json";
 import { Card } from "@/lib/types";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildSpreadFacts } from "@/lib/prompt-builder";
+import { findInventedCardReferences } from "@/lib/invented-cards";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -77,8 +78,22 @@ export async function POST(request: Request) {
       followUpHistory?: unknown;
     };
 
-    if (!followUpQuestion || typeof followUpQuestion !== "string") {
+    if (typeof followUpQuestion !== "string") {
       return new Response(JSON.stringify({ error: "Follow-up question required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    const followUp = followUpQuestion.trim();
+    if (!followUp) {
+      return new Response(JSON.stringify({ error: "Follow-up question required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    if (followUp.length > MAX_QUESTION_LENGTH) {
+      return new Response(JSON.stringify({ error: `Follow-up question is too long (max ${MAX_QUESTION_LENGTH} characters)` }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
@@ -105,7 +120,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const activeQuestion = `${safeOriginalQuestion}\nActive follow-up: ${followUpQuestion}`;
+    const activeQuestion = `${safeOriginalQuestion}\nActive follow-up: ${followUp}`;
     const context = buildReadingContext(validated.spreadId, activeQuestion, validated.cards, cardsMap, validated.significatorPreference);
     const history = (followUpHistory as { role: "user" | "assistant"; content: string }[])
       .map((turn) => `${turn.role}: ${turn.content}`)
@@ -117,7 +132,7 @@ export async function POST(request: Request) {
 ${buildSpreadFacts(context)}
 
 Original question: ${safeOriginalQuestion || "(none)"}
-Active follow-up: ${followUpQuestion}
+Active follow-up: ${followUp}
 
 Answer the active follow-up from the complete spread above. Weigh the whole spread, not only the part the original reading emphasised. Previous AI wording and conversation history are context only and may be wrong; correct them when they conflict with the spread above.
 
@@ -135,7 +150,25 @@ ${history}`;
       timeout: { totalMs: 20_000 },
     });
 
-    return new Response(result.text, {
+    const text = result.text ?? "";
+
+    // The follow-up is free text, so it has no structured patterns to geometry-check, but
+    // the same grounding guarantee still applies: an explicit reference to a card that was
+    // not drawn is a false statement about the fixed spread and is not served.
+    const invented = findInventedCardReferences(text, validated.cards.map((card) => card.id));
+    if (invented.length > 0) {
+      console.error("followup: invented card reference", {
+        spreadId: validated.spreadId,
+        cardCount: validated.cards.length,
+        issues: invented.map((match) => ({ name: match.name, fragment: match.fragment })),
+      });
+      return new Response(
+        JSON.stringify({ error: "We couldn't generate the follow-up. Please try again.", retryable: true }),
+        { status: 502, headers: { "Content-Type": "application/json", ...corsHeaders } },
+      );
+    }
+
+    return new Response(text, {
       status: 200,
       headers: {
         "Content-Type": "text/plain; charset=utf-8",

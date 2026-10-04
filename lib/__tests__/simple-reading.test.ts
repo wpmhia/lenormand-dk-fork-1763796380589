@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { findProseInvariantViolation, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
+import { findProseInvariantViolation, isReadingComplete, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
@@ -84,6 +84,22 @@ describe("simple reading contract", () => {
     expect(rendered.indexOf("## Answer")).toBeLessThan(rendered.indexOf("## Reading"));
     expect(rendered).not.toContain("## Patterns");
     expect(rendered).not.toContain("## Timing");
+  });
+
+  it("treats a rendered four-field reading as complete for auto-save", () => {
+    const answer = SimpleAnswerSchema.parse({
+      answer: "The cards support a cautious opening.",
+      reading: "The line combines a practical opening with uncertainty.",
+      patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening around a bond." }],
+      timing: null,
+    });
+    const rendered = renderSimpleAnswer(answer);
+    // The retired "## Prediction" / "## Grand Tableau overview" headings are gone; the new
+    // contract must still register as complete.
+    expect(isReadingComplete(rendered)).toBe(true);
+    expect(rendered).not.toContain("## Prediction");
+    expect(isReadingComplete("")).toBe(false);
+    expect(isReadingComplete("   \n  ")).toBe(false);
   });
 
   it("rejects internal coordinates in user-facing prose", () => {
@@ -198,7 +214,7 @@ describe("simple reading single-call output handling", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("drops an unsupported geometry pattern and regenerates the narrative from verified claims", async () => {
+  it("drops an unsupported geometry pattern in a single pass and keeps the verified patterns", async () => {
     const cards = [
       { id: 1, name: "Rider" },
       { id: 2, name: "Clover" },
@@ -209,31 +225,22 @@ describe("simple reading single-call output handling", () => {
     generateText.mockResolvedValueOnce(
       textOutput({
         answer: "The line reads as one movement.",
-        reading: "A first draft that repeats the false row claim.",
+        reading: "A connected sentence.",
         patterns: [
           { cards: ["Rider", "Clover"], relation: "combination", meaning: "kept pattern" },
           { cards: ["Rider", "Ship"], relation: "row", meaning: "dropped pattern" },
         ],
       }),
     );
-    generateText.mockResolvedValueOnce(
-      textOutput({
-        answer: "Verified answer.",
-        reading: "Verified reading built from the kept pattern only.",
-        patterns: [{ cards: ["Rider", "Clover"], relation: "combination", meaning: "kept pattern" }],
-      }),
-    );
 
     const result = await generateReading(options({ context }));
 
-    // The false pattern is removed and the narrative is rewritten from verified claims.
+    // One generation: the false pattern is removed from the served patterns, no repair call.
     expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toContain("Verified reading");
     expect(result.ok && result.reading).toContain("kept pattern");
-    expect(result.ok && result.reading).not.toContain("false row claim");
+    expect(result.ok && result.reading).not.toContain("dropped pattern");
     expect(result.ok && result.droppedGeometryPatterns).toHaveLength(1);
-    expect(generateText).toHaveBeenCalledTimes(2);
-    expect(generateText.mock.calls[1][0].prompt).toContain("Correction pass");
+    expect(generateText).toHaveBeenCalledTimes(1);
   });
 
   it("drops a pattern with an unrecognised card name instead of letting it through", async () => {
@@ -252,14 +259,14 @@ describe("simple reading single-call output handling", () => {
         patterns: [{ cards: ["Clover", "ImaginaryCard"], relation: "combination", meaning: "unknown claim" }],
       }),
     );
-    generateText.mockResolvedValueOnce(textOutput({ answer: "Verified.", reading: "Verified.", patterns: [] }));
 
     const result = await generateReading(options({ context }));
 
     expect(result.ok).toBe(true);
     expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
     expect(result.ok && result.droppedInventedPatterns[0]).toContain("unrecognised");
-    expect(result.ok && result.reading).toContain("Verified");
+    expect(result.ok && result.reading).not.toContain("unknown claim");
+    expect(generateText).toHaveBeenCalledTimes(1);
   });
 
   it("does not leak the removed legacy sections into the rendered reading", async () => {

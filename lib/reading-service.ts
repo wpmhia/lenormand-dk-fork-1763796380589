@@ -67,51 +67,21 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   // pattern detail: it is fatal on its own.
   if (validation.proseIssues.length > 0) return inventedCardFailure(validation.proseIssues, result.diagnostics);
 
-  if (validation.droppedGeometry.length === 0 && validation.droppedInvented.length === 0) {
-    return {
-      ok: true,
-      reading: renderSimpleAnswer(validation.answer),
-      droppedGeometryPatterns: [],
-      droppedInventedPatterns: [],
-    };
-  }
-
-  // A pattern was rejected. Dropping it from `patterns[]` is not enough on its own: the
-  // model may already have restated that same false relationship in `answer` or `reading`.
-  // The narrative is therefore regenerated once from the verified patterns, so what ships
-  // is built from claims the server has actually checked rather than prose it just refuted.
-  const repaired = await generateOnce({ ...options, prompt: buildRepairPrompt(options.prompt, validation) });
-  if (repaired.kind === "valid") {
-    const finalAnswer = { ...repaired.answer, patterns: validation.verifiedPatterns };
-    const prose = findInventedCards(finalAnswer, options.context.cards.map((card) => card.id)).filter(
-      (match) => match.field !== "pattern",
-    );
-    if (prose.length === 0) {
-      return {
-        ok: true,
-        reading: renderSimpleAnswer(finalAnswer),
-        droppedGeometryPatterns: validation.droppedGeometry,
-        droppedInventedPatterns: validation.droppedInvented,
-      };
-    }
-    return inventedCardFailure(prose, repaired.diagnostics);
-  }
-
+  // Deterministic, single-pass repair. Only patterns the server has checked survive into
+  // the served `patterns[]`, and the output contract confines the narrative's spatial
+  // claims to that list, so a rejected pattern's claim is removed with it. One provider
+  // call, no correction stage, no second chance to generate an unvalidated claim.
   return {
-    ok: false,
-    reason: "schema-mismatch",
-    issues: [{
-      type: "structured-output",
-      message: "A reading with rejected structural claims could not be rewritten from the verified patterns.",
-    }],
-    diagnostics: repaired.kind === "invalid" ? repaired.diagnostics : undefined,
+    ok: true,
+    reading: renderSimpleAnswer(validation.answer),
+    droppedGeometryPatterns: validation.droppedGeometry,
+    droppedInventedPatterns: validation.droppedInvented,
   };
 }
 
 interface AnswerValidation {
   /** The serving answer: every rejected pattern removed, prose untouched. */
   answer: SimpleAnswer;
-  verifiedPatterns: Pattern[];
   droppedInvented: string[];
   droppedGeometry: string[];
   proseIssues: InventedCardMatch[];
@@ -152,14 +122,14 @@ function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): Answe
 
   const invalidGeometry = findInvalidGeometryPatterns(afterLabels, context);
   const badGeometry = new Set(invalidGeometry.map((item) => item.index));
-  const verifiedPatterns = afterLabels.patterns.filter((_, index) => !badGeometry.has(index));
-
-  const verified: SimpleAnswer = { ...afterLabels, patterns: verifiedPatterns };
+  const verified: SimpleAnswer = {
+    ...afterLabels,
+    patterns: afterLabels.patterns.filter((_, index) => !badGeometry.has(index)),
+  };
   const proseIssues = findInventedCards(verified, drawnCardIds).filter((match) => match.field !== "pattern");
 
   return {
     answer: verified,
-    verifiedPatterns,
     droppedInvented,
     droppedGeometry: invalidGeometry.map((item) => item.message),
     proseIssues,
@@ -178,26 +148,6 @@ function inventedCardFailure(matches: InventedCardMatch[], diagnostics?: Structu
     })),
     diagnostics,
   };
-}
-
-function buildRepairPrompt(basePrompt: string, validation: AnswerValidation): string {
-  const verified = validation.verifiedPatterns.length > 0
-    ? validation.verifiedPatterns
-        .map((pattern) => `- ${pattern.cards.join(" + ")} [${pattern.relation}${pattern.house ? `, house: ${pattern.house}` : ""}]: ${pattern.meaning}`)
-        .join("\n")
-    : "- (none)";
-  const rejected = [...validation.droppedInvented, ...validation.droppedGeometry].map((message) => `- ${message}`).join("\n");
-
-  return `${basePrompt}
-
-Correction pass:
-Your previous answer asserted structural claims the coordinates do not support. These were rejected:
-${rejected}
-
-The verified patterns below are the only spatial claims you may use. Every statement about position, adjacency, sequence, rows, columns, diagonals, knight moves, houses or combinations in the narrative must come from this list:
-${verified}
-
-Rewrite "answer" and "reading" so they no longer repeat or paraphrase any rejected claim and reference only the verified patterns. Copy the "patterns" array exactly as listed above. Return the same JSON object shape and change nothing else.`;
 }
 
 type GenerationAttempt =
