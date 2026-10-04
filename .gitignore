@@ -10,6 +10,7 @@ pnpm-lock.yaml
 
 # testing
 /coverage
+/benchmark/results/
 .nyc_output
 *.lcov
 .jest-cache
