@@ -40,11 +40,11 @@ Translate structure into natural language: never expose internal position number
 Return only the required JSON.`;
 
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 1) return 1_200;
-  if (cardCount <= 3) return 1_600;
-  if (cardCount <= 5) return 2_000;
-  if (cardCount <= 9) return 2_800;
-  return 3_600;
+  if (cardCount <= 1) return 800;
+  if (cardCount <= 3) return 1_100;
+  if (cardCount <= 5) return 1_400;
+  if (cardCount <= 9) return 2_000;
+  return 2_600;
 }
 
 export interface AIReadingResponse {
@@ -235,7 +235,7 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
   "timing": string | null
 }
 - answer answers the question directly in one or two sentences.
-- reading is the reading itself as flowing prose. Give the spread the room it needs; a large spread may need several paragraphs. Do not calculate or describe a spatial relationship that is not listed in the verified clusters.
+- reading is the reading itself as flowing prose. Be concise: detail is useful only when it changes the answer. Do not calculate or describe a spatial relationship that is not listed in the verified clusters.
 - patterns lists the verified card groups you actually interpreted. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element. Every multi-card set must be drawn from one supplied verified cluster. Do not add relation or house fields.
 - "meaning" states the interpretation of that group.
 - timing is null when the spread does not ground a timing.
@@ -278,8 +278,9 @@ function simplePromptHeader(context: ReadingContext): string {
 }
 
 const SYNTHESIS_CONTRACT = `Synthesis contract:
-- Answer only the question asked. Interpret every card and combination only insofar as it answers that question. Do not turn a question about current feelings into a prediction about future contact, return, reconciliation or relationship outcome.
+- Answer the exact question from the cards drawn. Use the minimum interpretation necessary. Do not complete a story beyond what the cards support. Do not infer meaning from cards that are absent. Do not turn neutral combinations into specific motives, emotions or events without direct support.
 - If the question naturally calls for a yes/no answer, give the clearest yes/no conclusion supported by the spread. If it asks how, why, what, which, or requests guidance, answer that question directly instead.
+- Be concise; detail is useful only when it changes the answer. The spread does not require a complete narrative; an honest "the cards do not say more" is preferable to invented certainty.
 - Read the complete spread yourself. The server has not ranked card meanings or chosen an outcome. Weigh the full spread as evidence for that answer.
 - Spatial fidelity. The server has precomputed verified clusters. Use only those clusters when describing how cards are physically related. Do not derive or assert other adjacency, rows, columns, diagonals, houses, distances or directions from the displayed tableau.
 - Adjacency is not a causal chain. Adjacent cards qualify and combine with each other; that A sits next to B does not establish that A causes B, nor that B causes whatever follows it. Do not infer an outcome merely because a particular positive or negative card was not drawn.

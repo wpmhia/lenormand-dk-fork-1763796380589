@@ -199,9 +199,9 @@ describe("geometry: layout-specific facts", () => {
 // ======================================================================================
 
 describe("model boundary: one contract for every spread", () => {
-  it("tells the model to weigh the whole spread and never invent structure", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Consider the spread as a whole before reaching a conclusion/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Weigh supporting and conflicting indications/i);
+  it("forbids overgeneration and never invents structure", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Be concrete, nuanced and predictive/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not force certainty when the spread is genuinely mixed/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/structural data supplied by the server is authoritative/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards, positions, spatial relationships, people, events, or facts/i);
   });

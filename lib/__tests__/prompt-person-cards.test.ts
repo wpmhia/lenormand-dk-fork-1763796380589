@@ -180,10 +180,13 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
     expect(prompt).not.toMatch(/\*\*Most likely development:\*\*/);
   });
 
-  it("keeps the two calibration rules that prevent overstated readings", () => {
+  it("keeps the minimal-interpretation rules that prevent narrative overgeneration", () => {
+    expect(prompt).toMatch(/Use the minimum interpretation necessary/);
+    expect(prompt).toMatch(/Do not complete a story beyond what the cards support/);
+    expect(prompt).toMatch(/Do not infer meaning from cards that are absent/);
     expect(prompt).toMatch(/Adjacency is not a causal chain/);
     expect(prompt).toMatch(/Calibrate certainty to the spread/);
-    expect(prompt).toMatch(/merely because a particular positive card was not drawn/);
+    expect(prompt).not.toMatch(/Give the spread the room it needs/);
   });
 
   it("keeps the spatial-fidelity rule framed as use-only-supplied-clusters", () => {
