@@ -66,6 +66,7 @@ Each local run is saved under `benchmark/results/<run-id>/` (ignored by git):
 - `plan.json` — only for `--plan-only`; all generated cases and prompts, with prompt hashes.
 - `results.jsonl` — one flushed row per completed test: case/cards/question, exact production prompt/hash, raw DeepSeek output, token/cache usage, generation/finish status and latency, parser/validator findings, filtered/delivered patterns, independent judge output/usage/latency/cost.
 - `summary.json` — current generation, error, factual finding, token, cost, latency and judge aggregates.
+- `case-details.txt` — optional case-by-case raw/delivered patterns and judge/validator diagnostics (`--details`).
 - `human-review.tsv` — reviewer-ready rows containing the question, draw, delivered interpretation **and delivered `patterns[]`**, with blank independent rating columns.
 - `run-state.json` — completion count and resumability status.
 
@@ -74,16 +75,19 @@ Rebuild the report after filling out the human annotations (yes means the stated
 ```bash
 npm run benchmark:report -- --input benchmark/results/pilot-20261004/results.jsonl \
   --human-review benchmark/results/pilot-20261004/human-review.tsv
+
+# Include per-case questions, retained/dropped patterns, validator messages and judge excerpts:
+npm run benchmark:report -- --input benchmark/results/pilot-20261004/results.jsonl --details
 ```
 
-The TSV's general quality dimensions (1–5) are directness, relevance, depth, spread synthesis, calibration, naturalness and language consistency. Defect columns ask about spatial inaccuracy, prose/pattern conflict, drawn-card accuracy, automated false positives and validator missed findings. `yes` means the named defect exists, `no` means it was reviewed and not found, and `unsure` preserves ambiguity; `reviewerNotes` should quote the exact text and explain disagreement. Prefer a Lenormand-literate reviewer. For content quality, include whether the answer addresses the precise question and feels specific, coherent, nuanced and natural. The benchmark deliberately supplies no “correct” card meanings: traditional interpretive quality has no code-generated gold answer.
+The TSV's general quality dimensions (1–5) are directness, relevance, depth, spread synthesis, calibration, naturalness and language consistency. Defect columns ask about spatial inaccuracy, prose/pattern conflict, drawn-card accuracy, automated false positives, validator missed findings and unsupported conclusions. `yes` means the named defect exists, `no` means it was reviewed and not found, and `unsure` preserves ambiguity; `reviewerNotes` should quote the exact text and explain disagreement. Prefer a Lenormand-literate reviewer. For content quality, include whether the answer addresses the precise question and feels specific, coherent, nuanced and natural. The benchmark deliberately supplies no “correct” card meanings: traditional interpretive quality has no code-generated gold answer.
 
 ## What the report distinguishes
 
 - **Provider/generation failures**: provider exception, empty/non-JSON response, and schema mismatch are failures. Non-`stop` finish reasons are reported separately as a provider warning; if usable JSON was returned, the current app parser may still serve it.
 - **DeepSeek factual output findings**: canonical card absent from the draw, unresolved `patterns[].cards` label, false declared geometry (including house occupancy), explicit undrawn prose card reference. Raw-output findings and “would production reject the request?” are separate rates.
 - **Validator implementation failures**: thrown errors are reported as `validatorExceptions`. Automated findings are not automatically called validator errors; a false positive/negative requires independent review. The TSV has explicit false-positive and missed-finding fields for that reason.
-- **Narrative/pattern inconsistency**: an independent LLM judge checks free-text spatial assertions against the supplied position map and returned patterns. These are candidate findings only; compare with human review. Ordinary-language card-name matches are not treated as facts by this judge instruction.
+- **Narrative/pattern inconsistency and unsupported conclusions**: an independent LLM judge receives explicit row/column/house maps and the app's generic geometry definitions. It separates geometrically false claims from true-but-undeclared spatial claims and prose/pattern conflicts. It also flags concrete assumptions, contradictions or guarantees, while being told not to mistake ordinary Lenormand synthesis for an unsupported fact. Issue lists are capped to three excerpts. All aggregate judge rates are explicitly **candidate** signals; pilot review found judge false positives, so only human-adjudicated TSV labels count as confirmed.
 - **Content quality**: LLM scores are reported dimension by dimension and distinctly from human ratings. The independent human ratings are the evidence to use for quality claims. Do not blend judge and human means.
 - **Latency/tokens/costs**: primary-reading values and judge values are separate, with combined token totals. Generation latency p50/p95 includes provider-error attempts; `successfulGeneration` is available separately. Percentiles use linear interpolation. Provider errors are included in failure rates but have no usage tokens unless the API returned usage.
 

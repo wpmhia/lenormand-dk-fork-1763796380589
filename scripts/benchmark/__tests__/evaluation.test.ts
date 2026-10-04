@@ -102,6 +102,8 @@ describe("benchmark factual evaluation", () => {
     const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
     expect(prompt).toContain("Blind review");
     expect(prompt).toContain("Will my project progress?");
+    expect(prompt).toContain("unsupportedConclusions");
+    expect(prompt).toContain("at most 3 highest-confidence examples");
     expect(prompt).not.toContain("falseGeometry");
     expect(prompt).not.toContain("validator finding");
   });

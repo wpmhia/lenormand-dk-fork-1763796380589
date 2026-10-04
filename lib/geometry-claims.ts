@@ -148,11 +148,12 @@ export function validateRelation(
  * drawn are reported separately by `findInventedCards`; the caller drops the offending
  * pattern, so this function only ever sees patterns whose geometry it still checks.
  */
-function claimedHouseName(house: string | null, context: ReadingContext): string | null {
+function claimedHouse(house: string | null, context: ReadingContext): { id: number; name: string } | null {
   if (!house) return null;
   const id = CARD_NAME_TO_ID.get(house.trim().toLowerCase());
   if (id === undefined || context.layout.type !== "grand-tableau") return null;
-  return context.layout.houses.find((placement) => placement.houseCardId === id)?.houseName ?? null;
+  const placement = context.layout.houses.find((item) => item.houseCardId === id);
+  return placement ? { id, name: placement.houseName } : null;
 }
 
 export function findInvalidGeometryPatterns(
@@ -166,19 +167,39 @@ export function findInvalidGeometryPatterns(
     if (pattern.relation === "combination") return;
 
     // Direct lookup per named card. No parsing, no regex, no combined-string splitting.
-    const indices = pattern.cards
-      .map((name) => CARD_NAME_TO_ID.get(name.trim().toLowerCase()))
-      .map((id) => (id === undefined ? -1 : context.cards.findIndex((card) => card.id === id)));
+    const ids = pattern.cards.map((name) => CARD_NAME_TO_ID.get(name.trim().toLowerCase()));
+    const indices = ids.map((id) => (id === undefined ? -1 : context.cards.findIndex((card) => card.id === id)));
 
     if (indices.some((position) => position < 0)) return;
 
-    // A house claim needs at least one occupant; every other relation needs two cards.
-    const minimum = pattern.relation === "house" ? 1 : 2;
-    if (indices.length < minimum) return;
+    let relationIndices = indices;
+    let houseName: string | null = null;
+    if (pattern.relation === "house") {
+      const house = claimedHouse(pattern.house, context);
+      if (house) {
+        // `cards[]` can list both the occupant and the house card (e.g. Man + Fox),
+        // while `house` explicitly identifies the latter. That house-card label is not
+        // a second occupant to test; only the other card must occupy the named house.
+        // If `cards[]` contains only one card, it is the occupant even when the house
+        // name happens to be the same card. In a two-or-more card pair, remove the
+        // explicitly named house card from the occupant candidates.
+        relationIndices = indices.length === 1
+          ? indices
+          : indices.filter((_, cardIndex) => ids[cardIndex] !== house.id);
+        houseName = house.name;
+      }
+      if (!house || relationIndices.length !== 1) {
+        invalid.push({
+          index,
+          message: `Pattern "${pattern.cards.join(" + ")}" must name one occupant and one valid house card.`,
+        });
+        return;
+      }
+    } else if (indices.length < 2) {
+      return;
+    }
 
-    const house = pattern.relation === "house" ? claimedHouseName(pattern.house, context) : undefined;
-
-    if (!validateRelation(indices, pattern.relation, geometry, house)) {
+    if (!validateRelation(relationIndices, pattern.relation, geometry, houseName ?? undefined)) {
       const claim =
         pattern.relation === "house" && pattern.house
           ? `relation "house" (${pattern.house})`
