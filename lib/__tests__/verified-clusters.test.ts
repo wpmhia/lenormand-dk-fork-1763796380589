@@ -44,13 +44,13 @@ describe("verified clusters: deterministic group selection only", () => {
       "person-28", "person-29", "petit-center", "petit-corners",
     ]);
     expect(clusters.find((item) => item.id === "petit-center")?.cards).toHaveLength(9);
-    expect(clusters.find((item) => item.id === "person-28")?.facts).toContain("direct neighbors");
+    expect(clusters.find((item) => item.id === "person-28")?.facts).toContain("immediate neighbors");
   });
 
   it("provides four explicit Grand Tableau clusters and house/neighborhood facts", () => {
     const ids = Array.from({ length: 36 }, (_, index) => index + 1);
     const manIndex = ids.indexOf(28);
-    [ids[manIndex], ids[13]] = [ids[13], ids[manIndex]); // Put Man in the Fox house (position 14).
+    [ids[manIndex], ids[13]] = [ids[13], ids[manIndex]]; // Put Man in the Fox house (position 14).
     const context = buildReadingContext("grand-tableau", "Q?", cards(ids));
     const clusters = buildVerifiedClusters(context);
 
@@ -69,11 +69,13 @@ describe("verified clusters: deterministic group selection only", () => {
     [ids[manIndex], ids[13]] = [ids[13], ids[manIndex]];
     const context = buildReadingContext("grand-tableau", "Q?", cards(ids));
     const found = findPatternsOutsideVerifiedClusters(
-      answer([["Man", "Book"], ["Rider", "Coffin"], ["Rider"]]),
+      answer([["Man", "Fox"], ["Rider", "Ship"]]),
       context,
     );
 
-    expect(found).toEqual([{ index: 1, cards: ["Rider", "Coffin"] }]);
+    // Man+Fox is the person cluster; Rider+Ship are not in the same cluster.
+    expect(found).toEqual([{ index: 1, cards: ["Rider", "Ship"] }]);
     expect(findPatternsOutsideVerifiedClusters(answer([["Man", "Fox"]]), context)).toEqual([]);
+    expect(findPatternsOutsideVerifiedClusters(answer([["Rider", "Ship"]]), context)).toHaveLength(1);
   });
 });

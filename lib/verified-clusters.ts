@@ -124,7 +124,7 @@ export function formatVerifiedClusters(context: ReadingContext): string {
     .join("\n");
 }
 
-/** A multi-card pattern must be drawn from one selected cluster; singleton facts are free. */
+/** A multi-card pattern must be a subset of one selected cluster; singleton facts are free. */
 export function findPatternsOutsideVerifiedClusters(
   answer: SimpleAnswer,
   context: ReadingContext,
@@ -132,7 +132,13 @@ export function findPatternsOutsideVerifiedClusters(
   const drawnIds = new Set(context.cards.map((card) => card.id));
   const clusters = buildVerifiedClusters(context);
   return answer.patterns.flatMap((pattern, index) => {
-    const ids = pattern.cards.map((name) => CARD_NAME_TO_ID.get(name.trim().toLowerCase()));
+    // Resolve against the drawn cards only: CARD_NAME_TO_ID has duplicate lowercase
+    // keys (e.g. "coffin" is both Clouds and Coffin), so a global lookup is ambiguous.
+    const ids = pattern.cards.map((name) => {
+      const key = name.trim().toLowerCase();
+      const match = context.cards.find((card) => card.name.toLowerCase() === key);
+      return match?.id;
+    });
     if (ids.some((id) => id === undefined || !drawnIds.has(id))) return [];
     if (ids.length === 1) return [];
     const belongsToOneCluster = clusters.some((candidate) => {
