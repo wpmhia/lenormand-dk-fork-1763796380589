@@ -1,38 +1,9 @@
 import { z } from "zod";
 
-/**
- * The relation a pattern claims between the cards it names.
- *
- * The model declares the relation explicitly instead of the validator guessing it from
- * prose. That is what keeps geometry validation card-agnostic: the server receives card
- * names and a relation type, resolves names to positions, and checks the arithmetic. It
- * never needs to know that a card is a Tree, a Woman or a Paths.
- */
-export const PATTERN_RELATIONS = [
-  "combination",
-  "sequence",
-  "adjacent",
-  "row",
-  "column",
-  "diagonal",
-  "knight",
-  "house",
-  "surrounding",
-] as const;
-
-export type PatternRelation = (typeof PATTERN_RELATIONS)[number];
-
 export const PatternSchema = z.object({
-  /** The canonical card names this pattern is about. A list, never a combined string. */
+  /** Cards from one server-selected verified cluster, never a combined string. */
   cards: z.array(z.string().min(1)).min(1),
-  /** Defaults to `combination`, which asserts no geometric relation to verify. */
-  relation: z.enum(PATTERN_RELATIONS).default("combination"),
-  /**
-   * For `relation: "house"`, the canonical name of the house card that the named occupant
-   *(s) sit in. This is the explicit representation the validator needs: without it, a
-   * house claim can only be checked for "houses exist", not for occupancy.
-   */
-  house: z.string().min(1).nullable().default(null),
+  /** The model's interpretation of those cards within that verified cluster. */
   meaning: z.string().min(1),
 });
 
