@@ -176,9 +176,16 @@ export function significatorFocusFacts(
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
   const facts = [
     `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
-    ...gridRowFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS),
-    "House occupants:",
-    ...layout.houses.map((house) => `- ${house.houseName} house: ${fmtCard(house.occupyingCard)}`),
+    "Position map (every position with its drawn card and the house that card occupies):",
+    ...layout.houses.map((house, index) => {
+      const card = house.occupyingCard;
+      const row = Math.floor(index / GT_GRID_COLUMNS) + 1;
+      const column = (index % GT_GRID_COLUMNS) + 1;
+      // The card name and the house name are bound at this exact position. The "house" is
+      // a label, not a separate card: a card never "occupies" a house at another
+      // position; the card at position N and the house of position N are the same card.
+      return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card, index + 1)} — this card is also the ${house.houseName} house here.`;
+    }),
   ];
 
   // Explicit person-card binding. Only present when the request actually selected a
@@ -186,7 +193,9 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push(...personBindingFacts(context));
 
   facts.push("");
-  facts.push("The grid defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
+  facts.push("House rule: every position has exactly one card, and that same card is the house for that position. A card never occupies a house at another position. The only valid statement of the form (card A) is in the (card B) house is when A and B are the same card at the same position. Adjacent cards do not change each other's house.");
+  facts.push("");
+  facts.push("Synthesis: weigh any drawn person cards and their neighbours, the centre of the 9x4 grid, and the corners. Read supporting and conflicting indications together. Do not pull in cards that do not materially address the question, and do not turn a single negative card into a final verdict without counter-evidence. The grid has no fate row, no closing position and no single outcome position; your synthesis is yours to make.");
   return facts;
 }
 
@@ -241,9 +250,10 @@ Return only one JSON object with exactly these fields:
 }
 - answer answers the question directly in one or two sentences.
 - reading is the explanation as prose. Interpret only what the drawn cards support; do not complete a story beyond the cards and do not use absent cards as evidence.
-- patterns lists the card groups you actually interpreted. "cards" is an array of canonical card names, one name per element. Never put a combined string in one element.
-- "meaning" states the interpretation of that group.
+- patterns lists the card groups you actually interpreted. "cards" is an array of canonical English card names, one name per element. Never put a combined string in one element, and never translate these names into the user's language inside "cards".
+- "meaning" states the interpretation of that group; it may be written in the user's language.
 - timing is null when the spread does not ground a timing.
+- Internal references: every name inside "patterns[].cards" is the canonical English card name. "answer" and "reading" are written in the language of the user's question, using exactly one language throughout, and never contain English card names where the user's language has its own word for the same card.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
 /**
