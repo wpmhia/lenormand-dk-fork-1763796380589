@@ -43,7 +43,7 @@ function groupSummary(records: any[]) {
   const appServeCandidates = evaluations.filter((evaluation) => evaluation.schemaValid).length;
   const appServeFailures = evaluations.filter((evaluation) => evaluation.schemaValid && evaluation.appWouldServe === false).length;
   const factIssueRecords = evaluations.filter((evaluation) =>
-    evaluation.inventedCards?.length || evaluation.unknownCardLabels?.length || evaluation.falseGeometry?.length,
+    evaluation.inventedCards?.length || evaluation.unknownCardLabels?.length,
   );
   const explicitProseCardRecords = evaluations.filter((evaluation) => evaluation.proseCardMentions?.length);
   const validatorErrors = completedRequests.filter((record) => record.validatorError).length;
@@ -103,12 +103,12 @@ function groupSummary(records: any[]) {
     factualFindings: {
       undrawnOrRecognisedCardMentions: evaluations.reduce((sum, evaluation) => sum + (evaluation.inventedCards?.length ?? 0), 0),
       unknownStructuredCardNames: evaluations.reduce((sum, evaluation) => sum + (evaluation.unknownCardLabels?.length ?? 0), 0),
-      falseGeometryPatterns: evaluations.reduce((sum, evaluation) => sum + (evaluation.falseGeometry?.length ?? 0), 0),
-      falseHousePatterns: evaluations.reduce((sum, evaluation) => sum + (evaluation.falseGeometry?.filter((item: any) => item.relation === "house").length ?? 0), 0),
+      proseGeometryClaims: evaluations.reduce((sum, evaluation) => sum + (evaluation.proseGeometry?.length ?? 0), 0),
+      falseProseGeometryClaims: evaluations.reduce((sum, evaluation) =>
+        sum + (evaluation.proseGeometry?.filter((item: { ok: boolean }) => !item.ok).length ?? 0), 0),
       patternsDropped: evaluations.reduce((sum, evaluation) =>
         sum + (evaluation.inventedCards?.filter((item: any) => item.field === "pattern").length ?? 0)
-          + (evaluation.unknownCardLabels?.length ?? 0)
-          + (evaluation.falseGeometry?.length ?? 0), 0),
+          + (evaluation.unknownCardLabels?.length ?? 0), 0),
     },
     latencyMs: {
       generation: { p50: percentile(mainLatencies, 0.5), p95: percentile(mainLatencies, 0.95), mean: average(mainLatencies) },

@@ -76,7 +76,6 @@ const AUDIT_SOURCE_FILES = [
   "scripts/benchmark/summary.ts",
   "lib/prompt-builder.ts",
   "lib/reading-context.ts",
-  "lib/verified-clusters.ts",
   "lib/invented-cards.ts",
   "lib/simple-answer.ts",
   "lib/card-catalog.ts",
@@ -417,7 +416,7 @@ async function main() {
     records.push(stored);
     await appendFile(jsonlPath, `${JSON.stringify(stored)}\n`);
     const fatalOrModelFindings = stored.evaluation
-      ? stored.evaluation.inventedCards.length + stored.evaluation.unknownCardLabels.length + stored.evaluation.outsideClusters.length + stored.evaluation.proseCardMentions.length
+      ? stored.evaluation.inventedCards.length + stored.evaluation.unknownCardLabels.length + stored.evaluation.proseCardMentions.length
       : 0;
     const cachedCost = records.reduce((sum, record) => sum + (record.costUsd ?? 0) + (record.judge?.costUsd ?? 0), 0);
     console.log(`${records.length}/${cases.length} ${benchmarkCase.id} ${stored.run.status} ${stored.run.latencyMs}ms tokens=${stored.usage.totalTokens ?? "?"} validatorFindings=${fatalOrModelFindings} cost=${cachedCost.toFixed(4)} USD`);

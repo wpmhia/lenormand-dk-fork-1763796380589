@@ -5,34 +5,18 @@ import type {
   LinearSentenceLayout,
   PetitTableauLayout,
 } from "@/lib/reading-context";
-import { formatVerifiedClusters } from "@/lib/verified-clusters";
 
 /**
- * Minimal Lenormand-reader prompt.
+ * The server supplies the question and the drawn cards. The model is the only thing
+ * that interprets them. No additional rules on rhetoric, calibration, identity, or house
+ * semantics: every extra rule steers the model toward a server-chosen reading before it
+ * has looked at the spread. The contract lives in the user prompt so the model sees it
+ * exactly once, alongside the structural facts.
  *
- * The server supplies the question and the drawn cards. The model is the only thing that
- * interprets them. No rules on rhetoric, narrative length, calibration of certainty, person
- * identity or house semantics: every additional rule steers the model toward a server-chosen
- * reading before it has looked at the spread. The contract below says only what is forbidden
- * and how to package the result.
+ * `SIMPLE_LENORMAND_SYSTEM_PROMPT` is kept as an empty string for backward compatibility
+ * with callers; new code should pass an empty system prompt.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are a traditional Lenormand reader.
-
-Read the drawn cards in their supplied order or structure.
-Use only meanings and combinations supported by the drawn cards.
-Prefer literal Lenormand meanings over psychological metaphor.
-Do not infer from cards that were not drawn.
-Do not fill gaps with a story.
-
-Answer the exact question asked.
-For yes/no questions, answer yes/no first.
-Keep the explanation only as long as needed.
-
-If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
-
-Answer in the language of the user's question, using exactly one language throughout.
-
-Return only the required JSON.`;
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 800;
@@ -121,7 +105,16 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
     facts.push(`- position ${position.index + 1}: ${fmtCell(position.card, position.index + 1)}${suffix}`);
   }
   facts.push("Adjacency in this spread means consecutive positions. There is no other geometry.");
+  facts.push(...personBindingFacts(context));
   return facts;
+}
+
+function personBindingFacts(context: ReadingContext): string[] {
+  const drawn = new Set(context.cards.map((card) => card.id));
+  const binding = context.personBindings.find((item) => drawn.has(item.cardId));
+  if (!binding) return [];
+  const cardName = binding.cardId === 28 ? "Man" : binding.cardId === 29 ? "Woman" : String(binding.cardId);
+  return [`- Person binding ${cardName}: bound by ${binding.source}; ${binding.evidence}`];
 }
 
 /**
@@ -148,6 +141,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
     `Centre card: ${fmtCard(layout.center.card)}.`,
     "This grid defines no closing position and no outcome position; weigh the spread yourself.",
   ];
+  facts.push(...personBindingFacts(context));
   return facts;
 }
 
@@ -187,6 +181,10 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
     ...layout.houses.map((house) => `- ${house.houseName} house: ${fmtCard(house.occupyingCard)}`),
   ];
 
+  // Explicit person-card binding. Only present when the request actually selected a
+  // significator and that card was drawn.
+  facts.push(...personBindingFacts(context));
+
   facts.push("");
   facts.push("The grid defines no fate row, no closing position and no single outcome position; weigh the spread yourself.");
   return facts;
@@ -222,7 +220,19 @@ export function buildSpreadFacts(context: ReadingContext): string {
  * field set to the card count was itself a server-side judgement about how much a spread
  * had to say, which is the model's call.
  */
-const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
+/**
+ * The output request: a four-field contract, nothing conditional.
+ */
+const OUTPUT_CONTRACT = `Answer the exact question asked.
+For yes/no questions, answer yes/no first.
+Use only meanings and combinations supported by the drawn cards.
+Do not infer from cards that were not drawn.
+Do not complete a story beyond what the cards support.
+Keep the explanation as short as the question allows.
+Answer in the language of the user's question, using exactly one language.
+If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
+
+Return only one JSON object with exactly these fields:
 {
   "answer": string,
   "reading": string,
@@ -230,72 +240,36 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
   "timing": string | null
 }
 - answer answers the question directly in one or two sentences.
-- reading is the explanation as prose, kept as short as the question allows. Interpret only what the drawn cards support; do not complete a story beyond the cards and do not use absent cards as evidence.
+- reading is the explanation as prose. Interpret only what the drawn cards support; do not complete a story beyond the cards and do not use absent cards as evidence.
 - patterns lists the card groups you actually interpreted. "cards" is an array of canonical card names, one name per element. Never put a combined string in one element.
 - "meaning" states the interpretation of that group.
 - timing is null when the spread does not ground a timing.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
 /**
- * The person bindings for the cards that are actually present.
+ * Question header. Identical for every spread.
  *
- * A person card that was not drawn is not mentioned at all. Listing "Man: unbound" for a
- * spread that does not contain Man invites the model to reason about a card it cannot see,
- * which is exactly the fabrication the invented-card gate then rejects. The block is
- * omitted entirely when neither person card is in the spread.
- */
-function personBindings(context: ReadingContext): string {
-  const present = new Set(context.cards.map((card) => card.id));
-  const rows = ([28, 29] as const)
-    .filter((cardId) => present.has(cardId))
-    .map((cardId) => {
-      const binding = context.personBindings.find((item) => item.cardId === cardId);
-      const label = cardId === 28 ? "Man" : "Woman";
-      return binding
-        ? `- ${label}: bound by ${binding.source}; ${binding.evidence}`
-        : `- ${label}: unbound`;
-    });
-  return rows.length === 0 ? "" : `\n\nPerson bindings:\n${rows.join("\n")}`;
-}
-
-/**
- * Question, situation and person bindings. Identical for every spread.
- *
- * The raw question goes to the model unparsed. Supplying a server-derived domain, subject,
- * predicate or semantic frame told the model what the question was about before it had
- * read it, and the model already has the question itself.
+ * The raw question goes to the model unparsed. Any voluntary situation context follows the
+ * same rule: it is supplied verbatim and is not evidence.
  */
 function simplePromptHeader(context: ReadingContext): string {
   const situation = context.situationContext.trim()
     ? `\n\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
     : "";
-  return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}${personBindings(context)}${situation}`;
+  return `User question:\n${context.question}${situation}`;
 }
 
-const SYNTHESIS_CONTRACT = `Synthesis:
-- Read the complete spread in the order or structure the server supplies.
-- Use only meanings and combinations supported by the drawn cards.
-- Do not infer from cards that were not drawn.
-- Do not complete a story beyond what the cards support.
-- For yes/no questions, answer yes/no first; otherwise answer the exact question asked.
-- Keep the explanation only as long as needed.`;
-
 /**
- * The production reading prompt: question, complete spread, and only for the Grand Tableau
- * the server-selected verified clusters that anchor its spatial structure. Three or five card
- * lines and the Petit Tableau already encode their own structure as position order; adding
- * more there only invites the model to read non-existent geometry.
+ * The production reading prompt: question, complete spread, no server-side cluster
+ * selection. The structural facts are the authoritative map of where every card is; the
+ * model is the only thing that interprets them.
  */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
-  const clusters = context.layout.type === "grand-tableau"
-    ? `\n\nVerified clusters (the only permitted spatial groupings in this tableau):\n${formatVerifiedClusters(context)}`
-    : "";
   return `${simplePromptHeader(context)}
 
 Structural facts (deterministic; complete for this spread):
-${buildSpreadFacts(context)}${clusters}
+${buildSpreadFacts(context)}
 
-${SYNTHESIS_CONTRACT}
 ${OUTPUT_CONTRACT}`;
 }
 

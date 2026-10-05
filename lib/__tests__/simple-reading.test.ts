@@ -218,35 +218,6 @@ describe("simple reading single-call output handling", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("drops a pattern outside the verified clusters in a single pass", async () => {
-    const cards = Array.from({ length: 36 }, (_, index) => ({
-      id: index + 1,
-      name: deck[index].name,
-      keywords: [],
-    }));
-    [cards[13], cards[27]] = [cards[27], cards[13]];
-    const context = buildReadingContext("grand-tableau", "Q?", cards);
-
-    generateText.mockResolvedValueOnce(
-      textOutput({
-        answer: "The tableau reads as one movement.",
-        reading: "A connected sentence.",
-        patterns: [
-          { cards: ["Man", "Fox"], meaning: "kept person cluster" },
-          { cards: ["Rider", "Ship"], meaning: "dropped cross-cluster pattern" },
-        ],
-      }),
-    );
-
-    const result = await generateReading(options({ context }));
-
-    expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toContain("kept person cluster");
-    expect(result.ok && result.reading).not.toContain("dropped cross-cluster pattern");
-    expect(result.ok && result.droppedUnverifiedPatterns).toHaveLength(1);
-    expect(generateText).toHaveBeenCalledTimes(1);
-  });
-
   it("drops a pattern with an unrecognised card name instead of letting it through", async () => {
     const context = {
       cards: [
@@ -267,9 +238,31 @@ describe("simple reading single-call output handling", () => {
     const result = await generateReading(options({ context }));
 
     expect(result.ok).toBe(true);
-    expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
-    expect(result.ok && result.droppedInventedPatterns[0]).toContain("unrecognised");
+    expect(result.ok && result.droppedPatterns).toHaveLength(1);
+    expect(result.ok && result.droppedPatterns[0]).toContain("unrecognised");
     expect(result.ok && result.reading).not.toContain("unknown claim");
+    expect(generateText).toHaveBeenCalledTimes(1);
+  });
+
+  it("drops a pattern that names a card that was not drawn", async () => {
+    generateText.mockResolvedValueOnce(
+      textOutput({
+        answer: "First draft.",
+        reading: "First draft.",
+        patterns: [
+          { cards: ["Clover", "Heart"], meaning: "kept pattern" },
+          { cards: ["Clover", "Scythe"], meaning: "undrawn card" },
+        ],
+      }),
+    );
+
+    const result = await generateReading(options());
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.droppedPatterns).toHaveLength(1);
+    expect(result.ok && result.droppedPatterns[0]).toContain("undrawn");
+    expect(result.ok && result.reading).toContain("kept pattern");
+    expect(result.ok && result.reading).not.toContain("undrawn card");
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
