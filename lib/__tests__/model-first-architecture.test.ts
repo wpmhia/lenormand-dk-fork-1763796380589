@@ -119,9 +119,11 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
 // ======================================================================================
 
 describe("geometry: the full grid is supplied, relations are not", () => {
-  it("lays the Grand Tableau out as visual rows", () => {
+  it("gives every Grand Tableau position its row, column, card and house on one line", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Geometry?", draw(36, 13)));
-    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(4);
+    const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
+    expect(positionLines).toHaveLength(36);
+    expect(positionLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
   });
 
   it("precomputes no relation lists in any layout", () => {
@@ -167,10 +169,10 @@ describe("geometry: layout-specific facts", () => {
 
   it("supplies all 36 houses with their occupants", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
-    expect(facts.split("\n").filter((line) => / house: /.test(line))).toHaveLength(36);
+    expect(facts.split("\n").filter((line) => / — this card is also the \w+ house here\./.test(line))).toHaveLength(36);
     const houseNames = facts
       .split("\n")
-      .map((line) => line.match(/^- ([\w ]+) house: /))
+      .map((line) => line.match(/this card is also the ([\w ]+) house here/))
       .filter((match): match is RegExpMatchArray => match !== null)
       .map((match) => match[1]);
     expect(houseNames).toEqual(deck.map((card) => card.name));
@@ -182,6 +184,13 @@ describe("geometry: layout-specific facts", () => {
     expect(facts).not.toMatch(/- Man: position \d+, row \d, col \d/);
     expect(facts).not.toMatch(/- Woman: position \d+, row \d, col \d/);
     expect(facts).not.toContain("weigh their relation to each other from the coordinates above");
+  });
+
+  it("adds the GT synthesis guidance so the model weighs person cards, neighbours and contradicting indications", () => {
+    const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
+    expect(facts).toMatch(/Synthesis: weigh any drawn person cards and their neighbours/);
+    expect(facts).toMatch(/Read supporting and conflicting indications together/);
+    expect(facts).toMatch(/do not turn a single negative card into a final verdict without counter-evidence/);
   });
 
   it("is stable across repeated builds", () => {

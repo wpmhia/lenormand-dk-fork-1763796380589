@@ -29,16 +29,41 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
     expect(facts).toContain("numbering runs left to right, then top to bottom");
   });
 
-  it("lays the grid out as visual rows, for reliable model reading", () => {
-    const rowLines = facts.split("\n").filter((line) => /^Row \d+: /.test(line));
-    expect(rowLines).toHaveLength(4);
-    expect(rowLines[0]).toMatch(/^Row 1: .+ \| .+ \| /);
-    expect(rowLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
+  it("gives every position as position, row, column, card and house on one line", () => {
+    const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
+    expect(positionLines).toHaveLength(36);
+    expect(positionLines[0]).toMatch(/- position 1 \(row 1, col 1\): .+ — this card is also the Rider house here\./);
+    // The card at position N and the house at position N are the same card, but the prompt
+    // does not conflate them. The drawn card at position N follows the test draw's offset
+    // (draw[i][13]); the house label is always the canonical deck name at position N
+    // (sorted by id).
+    const drawOffset = 13;
+    for (const line of positionLines) {
+      const match = line.match(/^- position (\d+) \(row \d+, col \d+\): (.+?) — this card is also the (.+?) house here\.$/);
+      expect(match, line).not.toBeNull();
+      const position = Number(match![1]);
+      const card = match![2].trim();
+      const house = match![3].trim();
+      const expectedCard = deck[(position - 1 + drawOffset) % deck.length].name;
+      const expectedHouse = deck[position - 1].name;
+      expect(card).toBe(expectedCard);
+      expect(house).toBe(expectedHouse);
+    }
+  });
+
+  it("includes the GT synthesis guidance for weighing the spread", () => {
+    expect(facts).toMatch(/Synthesis: weigh any drawn person cards and their neighbours/);
+    expect(facts).toMatch(/no fate row, no closing position and no single outcome position/);
+  });
+
+  it("states the house rule so the model does not invert occupant and house", () => {
+    expect(facts).toMatch(/House rule: every position has exactly one card/);
+    expect(facts).toMatch(/a card never occupies a house at another position/);
   });
 
   it("names every house exactly once, alongside its occupant", () => {
     expect(deck.every((card) => facts.includes(`${card.name} house`))).toBe(true);
-    expect(facts.split("\n").filter((line) => / house: /.test(line))).toHaveLength(36);
+    expect(facts.split("\n").filter((line) => / — this card is also the \w+ house here\./.test(line))).toHaveLength(36);
   });
 
   it("never precomputes a relation list or coordinate line", () => {
@@ -51,8 +76,10 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
     expect(facts).not.toContain("Mirrored across a significator");
   });
 
-  it("supplies no interpretation anywhere", () => {
+  it("supplies no card-meaning interpretation anywhere", () => {
     for (const line of facts.split("\n")) {
+      // The Synthesis line carries procedural weighting instructions, not card interpretation.
+      if (line.startsWith("Synthesis:")) continue;
       expect(line, `structural facts carry interpretation: ${line}`).not.toMatch(
         /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative|luck/i,
       );
