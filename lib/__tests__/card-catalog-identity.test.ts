@@ -78,7 +78,7 @@ describe("card catalog: downstream registries use canonical names", () => {
 
     const houseNames = facts
       .split("\n")
-      .map((line) => line.match(/this card is also the ([\w ]+) house here/))
+      .map((line) => line.match(/ — ([\w ]+) house$/))
       .filter((match): match is RegExpMatchArray => match !== null)
       .map((match) => match[1]);
 

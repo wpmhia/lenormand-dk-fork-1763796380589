@@ -181,10 +181,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
       const card = house.occupyingCard;
       const row = Math.floor(index / GT_GRID_COLUMNS) + 1;
       const column = (index % GT_GRID_COLUMNS) + 1;
-      // The card name and the house name are bound at this exact position. The "house" is
-      // a label, not a separate card: a card never "occupies" a house at another
-      // position; the card at position N and the house of position N are the same card.
-      return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card, index + 1)} — this card is also the ${house.houseName} house here.`;
+      return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card)} — ${house.houseName} house`;
     }),
   ];
 
@@ -193,7 +190,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push(...personBindingFacts(context));
 
   facts.push("");
-  facts.push("House rule: every position has exactly one card, and that same card is the house for that position. A card never occupies a house at another position. The only valid statement of the form (card A) is in the (card B) house is when A and B are the same card at the same position. Adjacent cards do not change each other's house.");
+  facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position.");
   facts.push("");
   facts.push("Synthesis: weigh any drawn person cards and their neighbours, the centre of the 9x4 grid, and the corners. Read supporting and conflicting indications together. Do not pull in cards that do not materially address the question, and do not turn a single negative card into a final verdict without counter-evidence. The grid has no fate row, no closing position and no single outcome position; your synthesis is yours to make.");
   return facts;

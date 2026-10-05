@@ -169,10 +169,10 @@ describe("geometry: layout-specific facts", () => {
 
   it("supplies all 36 houses with their occupants", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
-    expect(facts.split("\n").filter((line) => / — this card is also the \w+ house here\./.test(line))).toHaveLength(36);
+    expect(facts.split("\n").filter((line) => / — [\w ]+ house$/.test(line))).toHaveLength(36);
     const houseNames = facts
       .split("\n")
-      .map((line) => line.match(/this card is also the ([\w ]+) house here/))
+      .map((line) => line.match(/ — ([\w ]+) house$/))
       .filter((match): match is RegExpMatchArray => match !== null)
       .map((match) => match[1]);
     expect(houseNames).toEqual(deck.map((card) => card.name));
