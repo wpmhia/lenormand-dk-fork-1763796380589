@@ -8,34 +8,29 @@ import type {
 import { formatVerifiedClusters } from "@/lib/verified-clusters";
 
 /**
- * Model-first reading contract.
+ * Minimal Lenormand-reader prompt.
  *
- * The LLM is the Lenormand interpreter. This layer is responsible for exactly one
- * thing: handing it the complete, deterministic truth about where the cards are.
- * It must never pre-interpret. Card dictionaries (CARD_SENSES), reviewed pair
- * meanings and weighted pair rankings are deliberately absent from the production
- * prompt: shipping them steers the model into a server-chosen reading before it has
- * looked at the spread as a whole, which is the failure mode this architecture exists
- * to remove. Those dictionaries remain in lib/ for the fallback reader and the
- * educational UI.
+ * The server supplies the question and the drawn cards. The model is the only thing that
+ * interprets them. No rules on rhetoric, narrative length, calibration of certainty, person
+ * identity or house semantics: every additional rule steers the model toward a server-chosen
+ * reading before it has looked at the spread. The contract below says only what is forbidden
+ * and how to package the result.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an expert traditional Lenormand reader.
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are a traditional Lenormand reader.
 
-Interpret the complete supplied spread in relation to the user's exact question.
+Read the drawn cards in their supplied order or structure.
+Use only meanings and combinations supported by the drawn cards.
+Prefer literal Lenormand meanings over psychological metaphor.
+Do not infer from cards that were not drawn.
+Do not fill gaps with a story.
 
-Use traditional Lenormand reading methods appropriate to the supplied spread. Read concrete Lenormand first: prefer literal event meanings over psychological metaphors when both fit. You know the traditional Lenormand deck; no card dictionary is supplied to you, and none is needed.
+Answer the exact question asked.
+For yes/no questions, answer yes/no first.
+Keep the explanation only as long as needed.
 
-The structural data supplied by the server is authoritative. Do not invent cards, positions, spatial relationships, people, events, or facts. Do not calculate or improvise geometry. The supplied verified clusters are the only groups you may describe spatially; do not claim adjacency, a row, a column, a diagonal, a house or a position beyond those clusters.
+If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
 
-Position roles that the spread itself defines are facts and may be used. Interpretive hierarchy that the spread does not define may not be invented. In a 5-card line, the fifth card is not an outcome card merely because it is last.
-
-Never infer who a person card represents. If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
-
-Do not force certainty when the spread is genuinely mixed.
-
-Answer in the language of the user's question, using exactly one language throughout. If ambiguous, use English.
-
-Translate structure into natural language: never expose internal position numbers, card indices, pair identifiers or geometry labels in user-facing prose.
+Answer in the language of the user's question, using exactly one language throughout.
 
 Return only the required JSON.`;
 
@@ -235,8 +230,8 @@ const OUTPUT_CONTRACT = `Return only one JSON object with exactly these fields:
   "timing": string | null
 }
 - answer answers the question directly in one or two sentences.
-- reading is the reading itself as flowing prose. Keep the reading as short as the question allows. Interpret only what the drawn cards support. Do not complete a story beyond the cards, and do not use absent cards as evidence. Do not calculate or describe a spatial relationship that is not listed in the verified clusters.
-- patterns lists the verified card groups you actually interpreted. "cards" is an array of canonical card names, one name per element, for example ["Clouds", "Coffin"]. Never put a combined string in one element. Every multi-card set must be drawn from one supplied verified cluster. Do not add relation or house fields.
+- reading is the explanation as prose, kept as short as the question allows. Interpret only what the drawn cards support; do not complete a story beyond the cards and do not use absent cards as evidence.
+- patterns lists the card groups you actually interpreted. "cards" is an array of canonical card names, one name per element. Never put a combined string in one element.
 - "meaning" states the interpretation of that group.
 - timing is null when the spread does not ground a timing.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
@@ -277,34 +272,28 @@ function simplePromptHeader(context: ReadingContext): string {
   return `You are an experienced traditional Lenormand reader.\n\nUser question:\n${context.question}${personBindings(context)}${situation}`;
 }
 
-const SYNTHESIS_CONTRACT = `Synthesis contract:
-- Answer the exact question from the cards drawn. Use the minimum interpretation necessary. Do not complete a story beyond what the cards support. Do not infer meaning from cards that are absent. Do not turn neutral combinations into specific motives, emotions or events without direct support.
-- If the question naturally calls for a yes/no answer, give the clearest yes/no conclusion supported by the spread. If it asks how, why, what, which, or requests guidance, answer that question directly instead.
-- Be concise; detail is useful only when it changes the answer. The spread does not require a complete narrative; an honest "the cards do not say more" is preferable to invented certainty.
-- Read the complete spread yourself. The server has not ranked card meanings or chosen an outcome. Weigh the full spread as evidence for that answer.
-- Spatial fidelity. The server has precomputed verified clusters. Use only those clusters when describing how cards are physically related. Do not derive or assert other adjacency, rows, columns, diagonals, houses, distances or directions from the displayed tableau.
-- Adjacency is not a causal chain. Adjacent cards qualify and combine with each other; that A sits next to B does not establish that A causes B, nor that B causes whatever follows it. Do not infer an outcome merely because a particular positive or negative card was not drawn.
-- Calibrate certainty to the spread. Avoid absolute wording such as "final", "fated", "certain", "irreversible" or "no possibility of repair" unless the spread structure itself clearly supports that level of certainty.
-- Position roles that the spread itself defines may be used; interpretive hierarchy the spread does not define may not be invented.
-- Read a person card as an individual only where the person bindings above bind it. An unbound person card stays an unassigned person-card reference, never a partner, spouse or pronoun.
-- Do not invent cards, people, facts, exact timing, dates, prerequisites or implementation details. Leave timing null when the spread does not ground it.`;
+const SYNTHESIS_CONTRACT = `Synthesis:
+- Read the complete spread in the order or structure the server supplies.
+- Use only meanings and combinations supported by the drawn cards.
+- Do not infer from cards that were not drawn.
+- Do not complete a story beyond what the cards support.
+- For yes/no questions, answer yes/no first; otherwise answer the exact question asked.
+- Keep the explanation only as long as needed.`;
 
 /**
- * The production reading prompt, identical in shape for every spread type:
- * question + complete spread + deterministic structural facts -> model.
- *
- * Every drawn card reaches the model. The server contributes the full tableau and a
- * small deterministic set of spatial clusters; it does not choose meanings or rank
- * interpretive evidence.
+ * The production reading prompt: question, complete spread, and only for the Grand Tableau
+ * the server-selected verified clusters that anchor its spatial structure. Three or five card
+ * lines and the Petit Tableau already encode their own structure as position order; adding
+ * more there only invites the model to read non-existent geometry.
  */
 export function buildSimpleReadingPrompt(context: ReadingContext): string {
+  const clusters = context.layout.type === "grand-tableau"
+    ? `\n\nVerified clusters (the only permitted spatial groupings in this tableau):\n${formatVerifiedClusters(context)}`
+    : "";
   return `${simplePromptHeader(context)}
 
 Structural facts (deterministic; complete for this spread):
-${buildSpreadFacts(context)}
-
-Verified clusters (server-selected; the only permitted spatial groupings):
-${formatVerifiedClusters(context)}
+${buildSpreadFacts(context)}${clusters}
 
 ${SYNTHESIS_CONTRACT}
 ${OUTPUT_CONTRACT}`;

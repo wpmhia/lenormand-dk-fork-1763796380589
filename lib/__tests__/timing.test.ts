@@ -63,6 +63,5 @@ describe("timing: no server-side timing model in the prompt", () => {
   it("leaves timing to the model as a nullable field", () => {
     const prompt = buildSimpleReadingPrompt(contextFor([32, 27, 26]));
     expect(prompt).toMatch(/"timing": string \| null/);
-    expect(prompt).toMatch(/Leave timing null when the spread does not ground it/);
   });
 });

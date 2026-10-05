@@ -100,19 +100,11 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
 });
 
 describe("prompt-builder: production system prompt forbids relationship inference", () => {
-  /**
-   * Readings were still asserting "the querent is probably a woman" and treating an
-   * unbound Woman as the outcome. The rule is stated as an explicit prohibition, not a
-   * description, and it is paired with the matching rule about the last card of a line.
-   */
   it("forbids inferring who an unbound person card represents", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Never infer who a person card represents/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/If a person card is unbound, treat it explicitly as unidentified/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/not a spouse, partner, named person or pronoun/i);
   });
 
-  it("names Man or Woman in the rules only through the per-spread bindings", () => {
-    // The universal rules stay generic; the names appear only when the cards are drawn.
+  it("names Man or Woman in the prompt only when the cards are drawn", () => {
     const without = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap),
     );
@@ -126,29 +118,12 @@ describe("prompt-builder: production system prompt forbids relationship inferenc
     expect(withWoman).not.toContain("- Man:");
   });
 
-  it("forbids treating the last card of a line as an outcome", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(
-      /In a 5-card line, the fifth card is not an outcome card merely because it is last/i,
-    );
-  });
-
   it("keeps the person-card label out of the structural layer", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 29, 1]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).not.toContain("specific person/significator");
     expect(prompt).toContain("- Man: unbound");
     expect(prompt).toContain("- Woman: unbound");
-  });
-
-  it("keeps the binding authority with the server, not the model", () => {
-    // The system prompt forbids the model from deciding identity...
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/treat it explicitly as unidentified/i);
-    // ...and the bindings block is the only place that declares it, for the cards present.
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
-    const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).toContain("Person bindings:");
-    expect(prompt).toContain("- Man: unbound");
-    expect(prompt).not.toContain("- Woman:");
   });
 
   it("declares a binding in the prompt when the significator was explicitly chosen", () => {
@@ -161,15 +136,6 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
   const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([12, 27, 26]), cardsMap);
   const prompt = buildSimpleReadingPrompt(ctx);
 
-  it("contains no narrative plan, focus, development line or outcome evidence", () => {
-    expect(prompt).not.toContain("Narrative plan");
-    expect(prompt).not.toMatch(/^- Focus:/m);
-    expect(prompt).not.toMatch(/^- Development line/m);
-    expect(prompt).not.toMatch(/^- Outcome evidence/m);
-    expect(prompt).not.toMatch(/^- Supporting evidence/m);
-    expect(prompt).toMatch(/The server has not ranked card meanings or chosen an outcome/);
-  });
-
   it("returns the structured JSON contract instead of markdown pseudo-headings", () => {
     expect(prompt).toContain('"answer": string');
     expect(prompt).toContain('"reading": string');
@@ -180,19 +146,12 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
     expect(prompt).not.toMatch(/\*\*Most likely development:\*\*/);
   });
 
-  it("keeps the minimal-interpretation rules that prevent narrative overgeneration", () => {
-    expect(prompt).toMatch(/Use the minimum interpretation necessary/);
-    expect(prompt).toMatch(/Do not complete a story beyond what the cards support/);
-    expect(prompt).toMatch(/Do not infer meaning from cards that are absent/);
-    expect(prompt).toMatch(/Adjacency is not a causal chain/);
-    expect(prompt).toMatch(/Calibrate certainty to the spread/);
+  it("uses the minimal-interpretation contract without narrative prompt rules", () => {
+    expect(prompt).toMatch(/Do not complete a story beyond the cards support/);
+    expect(prompt).toMatch(/Do not infer from cards that were not drawn/);
     expect(prompt).not.toMatch(/Give the spread the room it needs/);
-  });
-
-  it("keeps the spatial-fidelity rule framed as use-only-supplied-clusters", () => {
-    expect(prompt).toMatch(/Spatial fidelity\./);
-    expect(prompt).toMatch(/Use only those clusters when describing how cards are physically related/);
-    expect(prompt).toMatch(/Do not derive or assert other adjacency, rows, columns, diagonals, houses, distances or directions/);
+    expect(prompt).not.toMatch(/narrative plan/i);
+    expect(prompt).not.toMatch(/development line/i);
   });
 });
 
@@ -214,10 +173,8 @@ describe("prompt-builder: timing stays ungrounded rather than invented", () => {
 
   it("instructs the model to leave timing null when the spread does not ground it", () => {
     const ctx = buildReadingContext("sentence-5", "Will I move?", normalized([1, 2, 3, 12, 27]), cardsMap);
-    expect(buildSimpleReadingPrompt(ctx)).toMatch(/Leave timing null when the spread does not ground it/);
     expect(buildSimpleReadingPrompt(ctx)).toMatch(/"timing": string \| null/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not force certainty when the spread is genuinely mixed/i);
+    expect(buildSimpleReadingPrompt(ctx)).toMatch(/"timing": string \| null/);
   });
 });
 

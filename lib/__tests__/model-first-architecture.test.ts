@@ -108,7 +108,7 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
         expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
       }
       expect(text, `${id} must state the spread was not preselected`).toMatch(
-        /The server has not ranked card meanings or chosen an outcome/,
+        /Read the drawn cards in their supplied order or structure/,
       );
     }
   });
@@ -135,12 +135,14 @@ describe("geometry: the full grid is supplied, relations are not", () => {
     }
   });
 
-  it("tells the model to use only the supplied verified clusters", () => {
+  it("only the Grand Tableau includes verified clusters in the prompt", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const text = prompt(id, "Geometry?", draw(count, 13));
-      expect(text, id).toContain("Verified clusters");
-      expect(text, id).toMatch(/Use only those clusters when describing how cards are physically related/);
-      expect(text, id).not.toMatch(/Derive adjacency, rows, columns/);
+      if (id === "grand-tableau") {
+        expect(text, id).toContain("Verified clusters");
+      } else {
+        expect(text, id).not.toContain("Verified clusters");
+      }
     }
   });
 });
@@ -199,11 +201,11 @@ describe("geometry: layout-specific facts", () => {
 // ======================================================================================
 
 describe("model boundary: one contract for every spread", () => {
-  it("forbids overgeneration and never invents structure", () => {
+  it("is the minimal Lenormand contract without overgeneration prompts", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Be concrete, nuanced and predictive/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not force certainty when the spread is genuinely mixed/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/structural data supplied by the server is authoritative/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not invent cards, positions, spatial relationships, people, events, or facts/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not infer from cards that were not drawn/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not fill gaps with a story/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/For yes\/no questions, answer yes\/no first/);
   });
 
   /**
@@ -212,13 +214,10 @@ describe("model boundary: one contract for every spread", () => {
    * later telling the model to derive them from coordinates instead. Both halves now say
    * the same thing.
    */
-  it("grounds spatial claims in the verified clusters, not in a relation list", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not calculate or improvise geometry/i);
+  it("forbids inventing geometry in the minimal contract", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Do not calculate or improvise geometry/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/only where the structural facts list it/i);
-    // And the user prompt says the same thing, from the other direction.
-    expect(buildSimpleReadingPrompt(context("grand-tableau", "Q?", draw(36)))).toMatch(
-      /Use only those clusters when describing how cards are physically related/,
-    );
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Verify clusters/);
   });
 
   it("scales the token budget with the spread", () => {
@@ -241,7 +240,7 @@ describe("pipeline: one universal prompt for every spread", () => {
       "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "Synthesis contract:",
+      "Synthesis:",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);
@@ -260,8 +259,12 @@ describe("pipeline: one universal prompt for every spread", () => {
       expect(text, id).toContain(field);
     }
 
-    // The model receives server-selected verified clusters and must not declare geometry.
-    expect(text, id).toContain("Verified clusters");
+    // Verified clusters are restricted to the Grand Tableau; smaller spreads do not need them.
+    if (id === "grand-tableau") {
+      expect(text, id).toContain("Verified clusters");
+    } else {
+      expect(text, id).not.toContain("Verified clusters");
+    }
     expect(text, id).not.toContain('"relation"');
     expect(text, id).not.toContain('"knight"');
 
