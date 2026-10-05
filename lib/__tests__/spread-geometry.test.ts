@@ -32,22 +32,18 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
   it("gives every position as position, row, column, card and house on one line", () => {
     const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
     expect(positionLines).toHaveLength(36);
-    expect(positionLines[0]).toMatch(/- position 1 \(row 1, col 1\): .+ — this card is also the Rider house here\./);
-    // The card at position N and the house at position N are the same card, but the prompt
-    // does not conflate them. The drawn card at position N follows the test draw's offset
-    // (draw[i][13]); the house label is always the canonical deck name at position N
-    // (sorted by id).
-    const drawOffset = 13;
+    expect(positionLines[0]).toMatch(/- position 1 \(row 1, col 1\): .+ — Rider house/);
+    // The card at position N is drawn at that position; the house at position N is always
+    // the canonical card with deck number N, independent of the draw.
     for (const line of positionLines) {
-      const match = line.match(/^- position (\d+) \(row \d+, col \d+\): (.+?) — this card is also the (.+?) house here\.$/);
+      const match = line.match(/^- position (\d+) \(row \d+, col \d+\): (.+?) — (.+?) house$/);
       expect(match, line).not.toBeNull();
       const position = Number(match![1]);
       const card = match![2].trim();
       const house = match![3].trim();
-      const expectedCard = deck[(position - 1 + drawOffset) % deck.length].name;
       const expectedHouse = deck[position - 1].name;
-      expect(card).toBe(expectedCard);
       expect(house).toBe(expectedHouse);
+      expect(card).not.toBe(house);
     }
   });
 
@@ -57,13 +53,13 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
   });
 
   it("states the house rule so the model does not invert occupant and house", () => {
-    expect(facts).toMatch(/House rule: every position has exactly one card/);
-    expect(facts).toMatch(/a card never occupies a house at another position/);
+    expect(facts).toMatch(/A card at position N occupies the house of the card with deck number N/);
+    expect(facts).toMatch(/Adjacent cards do not change each other's house/);
   });
 
   it("names every house exactly once, alongside its occupant", () => {
     expect(deck.every((card) => facts.includes(`${card.name} house`))).toBe(true);
-    expect(facts.split("\n").filter((line) => / — this card is also the \w+ house here\./.test(line))).toHaveLength(36);
+    expect(facts.split("\n").filter((line) => / — [\w ]+ house$/.test(line))).toHaveLength(36);
   });
 
   it("never precomputes a relation list or coordinate line", () => {
