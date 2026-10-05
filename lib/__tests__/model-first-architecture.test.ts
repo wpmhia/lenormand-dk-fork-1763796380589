@@ -108,7 +108,7 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
         expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
       }
       expect(text, `${id} must state the spread was not preselected`).toMatch(
-        /Read the drawn cards in their supplied order or structure/,
+        /Use only meanings and combinations supported by the drawn cards/,
       );
     }
   });
@@ -135,14 +135,10 @@ describe("geometry: the full grid is supplied, relations are not", () => {
     }
   });
 
-  it("only the Grand Tableau includes verified clusters in the prompt", () => {
+  it("never embeds verified clusters in any spread prompt", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const text = prompt(id, "Geometry?", draw(count, 13));
-      if (id === "grand-tableau") {
-        expect(text, id).toContain("Verified clusters");
-      } else {
-        expect(text, id).not.toContain("Verified clusters");
-      }
+      expect(text, id).not.toContain("Verified clusters");
     }
   });
 });
@@ -201,23 +197,26 @@ describe("geometry: layout-specific facts", () => {
 // ======================================================================================
 
 describe("model boundary: one contract for every spread", () => {
-  it("is the minimal Lenormand contract without overgeneration prompts", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Be concrete, nuanced and predictive/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not infer from cards that were not drawn/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not fill gaps with a story/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/For yes\/no questions, answer yes\/no first/);
+  it("uses a single user-prompt contract without overgeneration prompts", () => {
+    const text = buildSimpleReadingPrompt(context("comprehensive", "Q?", draw(9)));
+    expect(text).not.toMatch(/Be concrete, nuanced and predictive/);
+    expect(text).toMatch(/Do not infer from cards that were not drawn/);
+    expect(text).toMatch(/do not complete a story beyond what the cards support/i);
+    expect(text).toMatch(/For yes\/no questions, answer yes\/no first/);
+    // The structural layer contains no preselected spaces, no clusters, no narrative
+    // planning, and no surrogate minimum-interpretation rules besides the contract.
+    expect(text).not.toMatch(/Verified clusters/);
+    expect(text).not.toMatch(/narrative plan/i);
+    expect(text).not.toMatch(/development line/i);
   });
 
   /**
-   * The prompt must not contradict itself. It used to say relations may be asserted "only
-   * where the structural facts list it" while the facts deliberately list no relations,
-   * later telling the model to derive them from coordinates instead. Both halves now say
-   * the same thing.
+   * The legacy system prompt no longer carries instructions of its own. The contract
+   * lives in the user prompt so the model sees it exactly once. Producers can therefore
+   * pass an empty system prompt and trust the user prompt to be self-contained.
    */
-  it("forbids inventing geometry in the minimal contract", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Do not calculate or improvise geometry/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/only where the structural facts list it/i);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Verify clusters/);
+  it("does not duplicate rules in the system prompt", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toBe("");
   });
 
   it("scales the token budget with the spread", () => {
@@ -240,31 +239,20 @@ describe("pipeline: one universal prompt for every spread", () => {
       "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "Synthesis:",
+      "Answer the exact question asked",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);
     }
 
-    // Person cards are named only when they were drawn; otherwise the block is absent.
-    const presentIds = new Set(cards.map((card) => card.id));
-    if (presentIds.has(28) || presentIds.has(29)) {
-      expect(text, id).toContain("Person bindings:");
-      expect(text, id).toContain(`- ${presentIds.has(28) ? "Man" : "Woman"}:`);
-    } else {
-      expect(text, id).not.toContain("Person bindings:");
-    }
+    // No per-spread Person bindings block: every drawn card already appears in structural facts.
+    expect(text, id).not.toContain("Person bindings:");
 
     for (const field of ['"answer": string', '"reading": string', '"patterns"', '"timing": string | null']) {
       expect(text, id).toContain(field);
     }
 
-    // Verified clusters are restricted to the Grand Tableau; smaller spreads do not need them.
-    if (id === "grand-tableau") {
-      expect(text, id).toContain("Verified clusters");
-    } else {
-      expect(text, id).not.toContain("Verified clusters");
-    }
+    expect(text, id).not.toContain("Verified clusters");
     expect(text, id).not.toContain('"relation"');
     expect(text, id).not.toContain('"knight"');
 
@@ -462,7 +450,7 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
       expect(result.ok).toBe(true);
       expect(result.ok && result.reading).toContain("kept pattern");
       expect(result.ok && result.reading).not.toContain("dropped pattern");
-      expect(result.ok && result.droppedInventedPatterns).toHaveLength(1);
+      expect(result.ok && result.droppedPatterns).toHaveLength(1);
       expect(generateText).toHaveBeenCalledTimes(1);
     });
 
@@ -508,7 +496,7 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
 
       expect(result.ok).toBe(true);
       expect(result.ok && result.reading).toContain("It stays open.");
-      expect(result.ok && result.droppedInventedPatterns).toEqual([]);
+      expect(result.ok && result.droppedPatterns).toEqual([]);
     });
   });
 });
@@ -546,8 +534,7 @@ describe("pipeline: every spread size generates once and serves verified pattern
 
     expect(result.ok, id).toBe(true);
     expect(result.ok && result.reading, id).toContain("step forward");
-    expect(result.ok && result.droppedUnverifiedPatterns, id).toEqual([]);
-    expect(result.ok && result.droppedInventedPatterns, id).toEqual([]);
+    expect(result.ok && result.droppedPatterns, id).toEqual([]);
     expect(generateText, id).toHaveBeenCalledTimes(1);
   });
 });

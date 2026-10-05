@@ -115,21 +115,12 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
-    // Model patterns outside the server-selected clusters are dropped, not fatal. Log them
-    // separately from invented/unknown card labels so the two failure modes stay distinct.
-    if (serviceResult.droppedUnverifiedPatterns.length > 0) {
-      console.warn("interpret: dropped unverified pattern clusters", {
+    // Dropped patterns are not fatal but stay observable so the rate can be tracked.
+    if (serviceResult.droppedPatterns.length > 0) {
+      console.warn("interpret: dropped patterns", {
         spreadId: validated.spreadId,
         cardCount: cardCount,
-        dropped: serviceResult.droppedUnverifiedPatterns,
-        elapsedMs: Date.now() - startedAt,
-      });
-    }
-    if (serviceResult.droppedInventedPatterns.length > 0) {
-      console.warn("interpret: dropped invented-card patterns", {
-        spreadId: validated.spreadId,
-        cardCount: cardCount,
-        dropped: serviceResult.droppedInventedPatterns,
+        dropped: serviceResult.droppedPatterns,
         elapsedMs: Date.now() - startedAt,
       });
     }

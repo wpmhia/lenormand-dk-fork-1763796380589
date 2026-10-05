@@ -1,39 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildSimpleReadingPrompt, significatorFocusFacts, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
-import { Card } from "@/lib/types";
+import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 
-function makeCard(id: number, name: string, keywords?: string[]): Card {
-  return {
-    id,
-    name,
-    number: id,
-    keywords: keywords || [name],
-    uprightMeaning: `Meaning of ${name}`,
-    meaning: { general: "", positive: [], negative: [] },
-    combos: [],
-    imageUrl: null,
-  };
-}
-
-const cards: Card[] = [
-  makeCard(28, "Man", ["masculine", "husband", "father", "authority", "logic"]),
-  makeCard(29, "Woman", ["feminine", "wife", "mother", "intuition", "emotion"]),
-  makeCard(1, "Rider", ["news", "arrival"]),
-  makeCard(3, "Ship", ["travel", "journey"]),
-  makeCard(2, "Clover", ["luck", "chance"]),
-  makeCard(12, "Birds", ["communication", "anxiety"]),
-  makeCard(27, "Letter", ["message", "document"]),
-  makeCard(26, "Book", ["knowledge", "secret"]),
-  makeCard(17, "Stork", ["change", "transformation"]),
-];
-
-const cardsMap = new Map<number, Card>(cards.map((c) => [c.id, c]));
+const cardsMap = getCardCatalogMap();
 
 function normalized(ids: number[]) {
   return ids.map((id) => {
-    const c = cardsMap.get(id)!;
-    return { id: c.id, name: c.name, keywords: c.keywords };
+    const card = CARD_CATALOG.find((candidate) => candidate.id === id);
+    return {
+      id,
+      name: card?.name ?? cardsMap.get(id)?.name ?? String(id),
+      keywords: card?.keywords ?? [],
+    };
   });
 }
 
@@ -59,13 +38,12 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
    * a specific person pushed the model toward reading a concrete individual even when
    * nothing bound it; only the `Person bindings` block may assert that.
    */
-  it("writes Man and Woman plainly, with personhood left to the bindings", () => {
+  it("writes Man and Woman plainly, without assigning them a role", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).not.toContain("specific person/significator");
     expect(prompt).not.toMatch(/Man\s*\(\s*masculine/i);
     expect(prompt).toContain("Man");
-    expect(prompt).toContain("- Man: unbound");
   });
 
   it("sends no card dictionary at all, only card names and structure", () => {
@@ -82,53 +60,58 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
     expect(prompt).not.toContain("luck, chance");
     expect(prompt).not.toContain("journey");
   });
-
-  it("reports the binding state of the person cards that are present only", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
-    const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).toContain("- Man: unbound");
-    expect(prompt).not.toContain("- Woman:");
-  });
-
-  it("omits the bindings block entirely when neither person card is drawn", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap);
-    const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).not.toContain("Person bindings:");
-    expect(prompt).not.toContain("- Man:");
-    expect(prompt).not.toContain("- Woman:");
-  });
 });
 
-describe("prompt-builder: production system prompt forbids relationship inference", () => {
+describe("prompt-builder: production prompt forbids relationship inference", () => {
   it("forbids inferring who an unbound person card represents", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/not a spouse, partner, named person or pronoun/i);
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap),
+    );
+    expect(prompt).toMatch(/not a spouse, partner, named person or pronoun/i);
   });
 
-  it("names Man or Woman in the prompt only when the cards are drawn", () => {
+  it("names Man or Woman in the structural layer only when the cards are drawn", () => {
     const without = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap),
     );
     expect(without).not.toMatch(/\bMan\b/);
     expect(without).not.toMatch(/\bWoman\b/);
+  });
 
+  it("passes an explicit significator binding to the model when that person card is drawn", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap, "man"),
+    );
+    expect(prompt).toContain("- Person binding Man: bound by explicit-significator");
+    expect(prompt).not.toContain("Person binding Woman");
+
+    const petit = buildSimpleReadingPrompt(
+      buildReadingContext("comprehensive", "How will the month bring?", normalized([28, 1, 2, 3, 12, 27, 26, 17, 29]), cardsMap, "woman"),
+    );
+    expect(petit).toContain("- Person binding Woman: bound by explicit-significator");
+  });
+
+  it("omits the binding when the chosen significator is not drawn", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([1, 2, 3]), cardsMap, "man"),
+    );
+    expect(prompt).not.toContain("Person binding");
+    expect(prompt).not.toContain("bound by explicit-significator");
+  });
+
+  it("passes the binding through to a Grand Tableau when the chosen card is drawn", () => {
+    const knownIds = CARD_CATALOG.map((card) => card.id).slice(0, 36);
+    const ctx = buildReadingContext("grand-tableau", "Full picture?", normalized(knownIds), cardsMap, "woman");
+    const prompt = buildSimpleReadingPrompt(ctx);
+    expect(prompt).toContain("- Person binding Woman: bound by explicit-significator");
+  });
+
+  it("names the drawn person card even without an explicit significator preference", () => {
     const withWoman = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will I move?", normalized([29, 1, 3]), cardsMap),
     );
-    expect(withWoman).toContain("- Woman: unbound");
-    expect(withWoman).not.toContain("- Man:");
-  });
-
-  it("keeps the person-card label out of the structural layer", () => {
-    const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 29, 1]), cardsMap);
-    const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).not.toContain("specific person/significator");
-    expect(prompt).toContain("- Man: unbound");
-    expect(prompt).toContain("- Woman: unbound");
-  });
-
-  it("declares a binding in the prompt when the significator was explicitly chosen", () => {
-    const ctx = buildReadingContext("sentence-3", "Q?", normalized([28, 1, 3]), cardsMap, "man");
-    expect(buildSimpleReadingPrompt(ctx)).toContain("- Man: bound by explicit-significator");
+    expect(withWoman).toContain("Woman");
+    expect(withWoman).not.toContain("Person binding");
   });
 });
 
@@ -147,11 +130,10 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
   });
 
   it("uses the minimal-interpretation contract without narrative prompt rules", () => {
-    expect(prompt).toMatch(/Do not complete a story beyond the cards support/);
-    expect(prompt).toMatch(/Do not infer from cards that were not drawn/);
     expect(prompt).not.toMatch(/Give the spread the room it needs/);
     expect(prompt).not.toMatch(/narrative plan/i);
     expect(prompt).not.toMatch(/development line/i);
+    expect(prompt).not.toMatch(/Recovery, reconciliation|recovery, reconciliation/);
   });
 });
 

@@ -13,11 +13,10 @@ import {
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
 import { findInventedCards, findUnresolvedCardLabels, type InventedCardMatch } from "@/lib/invented-cards";
-import { findPatternsOutsideVerifiedClusters } from "@/lib/verified-clusters";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
-  | { ok: true; reading: string; droppedUnverifiedPatterns: string[]; droppedInventedPatterns: string[] }
+  | { ok: true; reading: string; droppedPatterns: string[] }
   | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
@@ -66,28 +65,25 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   // pattern detail: it is fatal on its own.
   if (validation.proseIssues.length > 0) return inventedCardFailure(validation.proseIssues, result.diagnostics);
 
-  // One deterministic pass: patterns can only reference drawn canonical cards and
-  // server-selected clusters. There is no model-declared geometry to parse or infer.
   return {
     ok: true,
     reading: renderSimpleAnswer(validation.answer),
-    droppedUnverifiedPatterns: validation.droppedUnverified,
-    droppedInventedPatterns: validation.droppedInvented,
+    droppedPatterns: validation.droppedPatterns,
   };
 }
 
 interface AnswerValidation {
   /** The serving answer: every rejected pattern removed, prose untouched. */
   answer: SimpleAnswer;
-  droppedInvented: string[];
-  droppedUnverified: string[];
+  droppedPatterns: string[];
   proseIssues: InventedCardMatch[];
 }
 
 /**
- * Everything deterministic the server can say about one candidate answer:
- * which patterns fail the drawn-card, canonical-name and verified-cluster gates, and which
- * verified patterns survive. Free prose is only checked for explicit card references.
+ * The server-side contract for one candidate answer: patterns may only list drawn
+ * canonical cards and every card name must resolve; any pattern that fails these checks is
+ * dropped from `patterns[]` before rendering. Free prose is only checked for explicit
+ * card references.
  */
 function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): AnswerValidation {
   const drawnCardIds = context.cards.map((card) => card.id);
@@ -101,7 +97,7 @@ function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): Answe
     }
   });
 
-  const droppedInvented = [...badPatternIndices]
+  const droppedPatterns = [...badPatternIndices]
     .sort((a, b) => a - b)
     .map((index) => {
       const pattern = candidate.patterns[index];
@@ -113,26 +109,12 @@ function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): Answe
       return `Pattern "${pattern.cards.join(" + ")}" ${reasons.join("; ")}`;
     });
 
-  const afterLabels: SimpleAnswer = badPatternIndices.size === 0
+  const verified: SimpleAnswer = badPatternIndices.size === 0
     ? candidate
     : { ...candidate, patterns: candidate.patterns.filter((_, index) => !badPatternIndices.has(index)) };
-
-  const outsideClusters = findPatternsOutsideVerifiedClusters(afterLabels, context);
-  const badClusterIndices = new Set(outsideClusters.map((item) => item.index));
-  const verified: SimpleAnswer = {
-    ...afterLabels,
-    patterns: afterLabels.patterns.filter((_, index) => !badClusterIndices.has(index)),
-  };
   const proseIssues = findInventedCards(verified, drawnCardIds).filter((match) => match.field !== "pattern");
 
-  return {
-    answer: verified,
-    droppedInvented,
-    droppedUnverified: outsideClusters.map((item) =>
-      `Pattern "${item.cards.join(" + ")}" does not belong to a server-selected verified cluster`,
-    ),
-    proseIssues,
-  };
+  return { answer: verified, droppedPatterns, proseIssues };
 }
 
 function inventedCardFailure(matches: InventedCardMatch[], diagnostics?: StructuredOutputDiagnostics): ReadingServiceResult {

@@ -14,13 +14,13 @@ function normalized(ids: number[]): NormalizedCard[] {
 }
 
 describe("benchmark factual evaluation", () => {
-  it("separates an unknown label, an undrawn canonical card, and an unverified cluster", () => {
+  it("separates an unknown label and an undrawn canonical card", () => {
     const context = buildReadingContext("sentence-3", "Will this plan progress?", normalized([1, 2, 3]));
     const result = evaluateOutput(JSON.stringify({
       answer: "The plan may progress.",
       reading: "The line points to movement.",
       patterns: [
-        { cards: ["Rider", "Clover"], meaning: "verified line segment" },
+        { cards: ["Rider", "Clover"], meaning: "drawn combination" },
         { cards: ["Rider", "Scythe"], meaning: "undrawn card" },
         { cards: ["Rider", "ImaginaryCard"], meaning: "unknown label" },
       ],
@@ -28,7 +28,6 @@ describe("benchmark factual evaluation", () => {
     }), "stop", context);
 
     expect(result.schemaValid).toBe(true);
-    expect(result.outsideClusters).toHaveLength(0);
     expect(result.inventedCards.some((match) => match.card === "Scythe" && match.field === "pattern")).toBe(true);
     expect(result.unknownCardLabels).toEqual([{ patternIndex: 2, label: "ImaginaryCard" }]);
     expect(result.deliveredPatterns).toHaveLength(1);
@@ -54,16 +53,16 @@ describe("benchmark factual evaluation", () => {
     expect(explicit.proseCardMentions[0].card).toBe("Scythe");
   });
 
-  it("flags a Grand Tableau pattern outside the verified clusters", () => {
-    const ids = Array.from({ length: 36 }, (_, index) => index + 1);
-    const context = buildReadingContext("grand-tableau", "How will this develop?", normalized(ids));
+  it("flags a Grand Tableau pattern that names an undrawn card", () => {
+    const drawn = Array.from({ length: 36 }, (_, index) => index + 1).filter((id) => id !== 14);
+    const context = buildReadingContext("grand-tableau", "How will this develop?", normalized(drawn));
     const result = evaluateOutput(JSON.stringify({
       answer: "The situation is active.",
       reading: "A continuing process.",
-      patterns: [{ cards: ["Man", "Coffin"], meaning: "not a supplied cluster" }],
+      patterns: [{ cards: ["Man", "Fox"], meaning: "Fox was not drawn" }],
       timing: null,
     }), "stop", context);
-    expect(result.outsideClusters).toEqual([{ index: 0, cards: ["Man", "Coffin"] }]);
+    expect(result.inventedCards).toContainEqual(expect.objectContaining({ card: "Fox", field: "pattern" }));
     expect(result.deliveredPatterns).toEqual([]);
   });
 
@@ -104,7 +103,7 @@ describe("benchmark factual evaluation", () => {
     expect(prompt).toContain("Will my project progress?");
     expect(prompt).toContain("unsupportedConclusions");
     expect(prompt).toContain("at most 3 highest-confidence examples");
-    expect(prompt).not.toContain("falseGeometry");
+    expect(prompt).not.toContain("verified cluster");
     expect(prompt).not.toContain("validator finding");
   });
 });

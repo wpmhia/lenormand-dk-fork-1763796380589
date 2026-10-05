@@ -8,7 +8,7 @@ describe("benchmark summaries", () => {
         case: { id: "a", seed: 1, spreadId: "sentence-3", cardCount: 3 },
         run: { status: "ok", latencyMs: 100, finishReason: "stop", responseModel: "deepseek-flash" },
         usage: { inputTokens: 10, outputTokens: 5, reasoningTokens: 0, cacheHitTokens: 0 }, costUsd: 0.01,
-        evaluation: { parsed: true, schemaValid: true, outputFailure: null, inventedCards: [], unknownCardLabels: [], falseGeometry: [], proseCardMentions: [] },
+        evaluation: { parsed: true, schemaValid: true, outputFailure: null, inventedCards: [], unknownCardLabels: [], proseCardMentions: [] },
         validatorError: null,
         judge: null,
       },
@@ -16,7 +16,7 @@ describe("benchmark summaries", () => {
         case: { id: "b", seed: 2, spreadId: "sentence-3", cardCount: 3 },
         run: { status: "ok", latencyMs: 500, finishReason: "stop", responseModel: "deepseek-flash" },
         usage: { inputTokens: 20, outputTokens: 10, reasoningTokens: 2, cacheHitTokens: 5 }, costUsd: 0.02,
-        evaluation: { parsed: true, schemaValid: true, outputFailure: null, inventedCards: [{ field: "pattern" }], unknownCardLabels: [], falseGeometry: [{ relation: "house" }], proseCardMentions: [] },
+        evaluation: { parsed: true, schemaValid: true, outputFailure: null, inventedCards: [{ field: "pattern" }], unknownCardLabels: [], proseCardMentions: [] },
         validatorError: "simulated checker error",
         judge: null,
       },
@@ -34,7 +34,7 @@ describe("benchmark summaries", () => {
     expect(total.providerErrors).toBe(1);
     expect(total.modelFactualIssueCases).toBe(1);
     expect(total.validatorExceptions).toBe(1);
-    expect(total.factualFindings.falseHousePatterns).toBe(1);
+    expect(total.factualFindings.patternsDropped).toBe(1);
   });
 
   it("imports human numeric scores and defect annotations from the review TSV", () => {
@@ -59,7 +59,7 @@ describe("benchmark summaries", () => {
       case: { id: `case-${index}`, spreadId: "grand-tableau", cardCount: 36 },
       run: { status: "ok", latencyMs: 100, responseModel: "deepseek-flash" },
       usage: { inputTokens: 10, outputTokens: 5 },
-      evaluation: { parsed: true, schemaValid: true, inventedCards: [], unknownCardLabels: [], falseGeometry: [], proseCardMentions: [] },
+      evaluation: { parsed: true, schemaValid: true, inventedCards: [], unknownCardLabels: [], proseCardMentions: [] },
       validatorError: null,
       judge: { failureKind, error: failureKind === "provider_error" ? "TimeoutError" : null, value: null, latencyMs: 50 },
     }));
