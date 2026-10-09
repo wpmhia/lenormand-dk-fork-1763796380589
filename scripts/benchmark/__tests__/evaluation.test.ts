@@ -99,7 +99,7 @@ describe("benchmark factual evaluation", () => {
     expect(prompt).not.toContain("validator finding");
   });
 
-  it("feeds the observed Alex claims into the content-regression judge", () => {
+  it("feeds the observed unsupported-contact claims into the content-regression judge", () => {
     const benchmarkCase = createContentRegressionCases().find((item) => item.id === "content-assumption-suggestive-nl-001")!;
     const context = buildReadingContext(
       benchmarkCase.spreadId,
@@ -109,7 +109,7 @@ describe("benchmark factual evaluation", () => {
       benchmarkCase.significatorPreference,
     );
     const evaluation = evaluateOutput(JSON.stringify({
-      answer: "Alex communiceert nog met other people via een zichtbaar kanaal.",
+      answer: "This person still communicates with other people via een zichtbaar kanaal.",
       reading: "Het contact verloopt eerst zichtbaar, wordt bevestigd in een afspraak, verandert van vorm en loopt uiteindelijk vast.",
       patterns: [
         { cards: ["Sun", "Paths"], meaning: "Contact verloopt openlijk via een kanaal." },
@@ -122,7 +122,7 @@ describe("benchmark factual evaluation", () => {
     const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
 
     expect(prompt).toContain(benchmarkCase.question);
-    expect(prompt).toContain("Alex communiceert nog met other people");
+    expect(prompt).toContain("This person still communicates with other people");
     expect(prompt).toContain("Regression target");
     expect(prompt).toMatch(/ongoing contact.*extramarital.*communication channel/i);
   });

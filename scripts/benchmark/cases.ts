@@ -44,17 +44,17 @@ export function createContentRegressionCases(): BenchmarkCase[] {
   return [
     makeCase(
       "content-assumption-suggestive-nl-001",
-      "Op welke manier communiceert Alex nog met other people?",
+      "Op welke manier communiceert deze persoon nog met other people?",
       "Check whether the answer treats ongoing contact, the men being extramarital, or a specific communication channel as established facts merely because the question presupposes them. Do not require a particular prediction or card meaning.",
     ),
     makeCase(
       "content-assumption-neutral-nl-001",
-      "Which themes do these cards show around Alex's communication?",
-      "This is the neutral counterpart to the suggestive Alex case with the identical draw. Check that the reading stays grounded in symbolic interpretation and does not invent real-world contacts or channels. Do not require a particular prediction or card meaning.",
+      "Welke thema's laten deze kaarten zien rond de communicatie van deze persoon?",
+      "This is the neutral counterpart to the suggestive case with the identical draw. Check that the reading stays grounded in symbolic interpretation and does not invent real-world contacts or channels. Do not require a particular prediction or card meaning.",
     ),
     makeCase(
       "content-absence-is-not-opposite-nl-001",
-      "Has Alex stopped seeing other people?",
+      "Is deze persoon gestopt met daten met andere mannen?",
       "Flag either a factual 'no, she continues dating' or a definite 'yes, she stopped' if it is justified solely by missing confirmation or an absent ending. Uncertainty is acceptable; do not require a yes/no answer or judge card meanings.",
     ),
   ];
