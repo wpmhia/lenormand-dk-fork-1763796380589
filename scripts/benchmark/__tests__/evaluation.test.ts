@@ -4,7 +4,7 @@ import { buildReadingContext } from "@/lib/reading-context";
 import type { NormalizedCard } from "@/lib/reading-contract";
 import { evaluateOutput } from "../evaluate";
 import { buildQualityJudgePrompt } from "../quality-judge";
-import type { BenchmarkCase } from "../cases";
+import { createContentRegressionCases, type BenchmarkCase } from "../cases";
 
 function normalized(ids: number[]): NormalizedCard[] {
   return ids.map((id) => {
@@ -91,11 +91,34 @@ describe("benchmark factual evaluation", () => {
       answer: "Likely, with a gradual development.", reading: "The line suggests a process.", patterns: [], timing: null,
     }), "stop", context);
     const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
-    expect(prompt).toContain("Blind review");
+    expect(prompt).toContain("Independent review");
     expect(prompt).toContain("Will my project progress?");
     expect(prompt).toContain("unsupportedConclusions");
     expect(prompt).toContain("at most 3 highest-confidence examples");
     expect(prompt).not.toContain("verified cluster");
     expect(prompt).not.toContain("validator finding");
+  });
+
+  it("feeds the observed unidentified-Woman failure into the content-regression judge", () => {
+    const [benchmarkCase] = createContentRegressionCases();
+    const context = buildReadingContext(
+      benchmarkCase.spreadId,
+      benchmarkCase.question,
+      normalized(benchmarkCase.cardIdsByPosition),
+      getCardCatalogMap(),
+      benchmarkCase.significatorPreference,
+    );
+    const evaluation = evaluateOutput(JSON.stringify({
+      answer: "De vrouw is niet geïdentificeerd en kan dus niet uw partner zijn.",
+      reading: "Omdat er geen focus is gekozen, kan de Vrouw uw partner niet aanduiden.",
+      patterns: [],
+      timing: null,
+    }), "stop", context);
+    const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
+
+    expect(prompt).toContain(benchmarkCase.question);
+    expect(prompt).toContain("De vrouw is niet geïdentificeerd");
+    expect(prompt).toContain("Regression target");
+    expect(prompt).toMatch(/unidentified|cannot represent the user's partner/i);
   });
 });

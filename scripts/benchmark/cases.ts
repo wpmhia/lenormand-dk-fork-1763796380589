@@ -19,6 +19,27 @@ export interface BenchmarkCase {
   language: "en" | "nl";
   cardIdsByPosition: number[];
   significatorPreference: "woman" | "man" | "both";
+  regressionTarget?: string;
+}
+
+/**
+ * Fixed qualitative regression cases stay out of seeded default runs so they add no
+ * unexpected provider calls. Run them explicitly to assess known reader-facing failures.
+ */
+export function createContentRegressionCases(): BenchmarkCase[] {
+  const definition = SPREAD_DEFINITIONS["sentence-3"];
+  return [{
+    id: "content-person-card-without-focus-nl-001",
+    seed: 0,
+    spreadId: "sentence-3",
+    spreadLabel: definition.label,
+    cardCount: 3,
+    question: "Hoe ontwikkelt mijn relatie met mijn partner zich?",
+    language: "nl",
+    cardIdsByPosition: [29, 24, 25],
+    significatorPreference: "both",
+    regressionTarget: "Flag a claim that the Woman card is unidentified or cannot represent the user's partner solely because no specific significator focus was selected. Do not require a particular prediction or card meaning.",
+  }];
 }
 
 type Random = () => number;

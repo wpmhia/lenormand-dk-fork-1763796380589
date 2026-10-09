@@ -107,25 +107,17 @@ describe("reading-context: layout is positional and factual", () => {
   });
 });
 
-describe("reading-context: bindings are user-declared only", () => {
-  it("binds nothing when no significator was explicitly chosen", () => {
-    // The old grammar heuristic would bind Man/Woman from "my husband"/"my wife".
+describe("reading-context: significator preference is focus metadata, not identity", () => {
+  it("keeps the default preference without creating person bindings", () => {
     const ctx = buildReadingContext("sentence-3", "Will my husband and I stay together?", draw(3), cardsMap);
-    expect(ctx.personBindings).toEqual([]);
+    expect(ctx.significatorPreference).toBe("both");
+    expect(ctx).not.toHaveProperty("personBindings");
   });
 
-  it("binds the explicitly selected significator", () => {
+  it("preserves an explicit preference as focus metadata only", () => {
     const ctx = buildReadingContext("grand-tableau", "Q?", draw(36, 7), cardsMap, "man");
-    expect(ctx.personBindings).toEqual([
-      { cardId: 28, source: "explicit-significator", evidence: expect.stringContaining("explicitly selected Man") },
-    ]);
-  });
-
-  it("binds Woman when she is explicitly selected", () => {
-    const ctx = buildReadingContext("grand-tableau", "Q?", draw(36, 7), cardsMap, "woman");
-    expect(ctx.personBindings).toEqual([
-      { cardId: 29, source: "explicit-significator", evidence: expect.stringContaining("explicitly selected Woman") },
-    ]);
+    expect(ctx.significatorPreference).toBe("man");
+    expect(ctx).not.toHaveProperty("personBindings");
   });
 });
 

@@ -58,18 +58,21 @@ describe("regression: house occupancy matches the drawn card at that position", 
   });
 });
 
-describe("regression: explicit person binding is preserved through the prompt", () => {
-  it("shows the explicit-significator binding only when that card was drawn", () => {
+describe("regression: optional reading focus applies only to a drawn card", () => {
+  it("shows a focus label, never a person binding", () => {
     const manInDeck = deck.findIndex((card) => card.id === 28);
     const withMan = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Q?", draw(3, manInDeck), cardsMap, "man"),
     );
-    expect(withMan).toContain("- Person binding Man: bound by explicit-significator");
+    expect(withMan).toContain("- Reading focus: Man.");
+    expect(withMan).not.toContain("Person binding");
+    expect(withMan).not.toContain("bound by explicit-significator");
 
     const withoutDrawnMan = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Q?", draw(3, 0), cardsMap, "man"),
+      buildReadingContext("sentence-3", "Q?", draw(3, deck.findIndex((card) => card.id === 29)), cardsMap, "man"),
     );
-    expect(withoutDrawnMan).not.toContain("Person binding");
+    expect(withoutDrawnMan).not.toContain("Reading focus:");
+    expect(withoutDrawnMan).not.toContain("Man");
   });
 });
 

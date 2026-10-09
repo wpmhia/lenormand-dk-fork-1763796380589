@@ -51,10 +51,8 @@ function sanitizeInput(input: string, maxLength: number): string {
  * into synthesis prompts, or the model will fabricate prose like
  * "the weak energy of the opening cards" out of nothing.
  *
- * Man and Woman are written plainly. An earlier version appended
- * "(specific person/significator)" to every occurrence, which pushed the model toward
- * reading a concrete individual even when nothing bound that card. The `Person bindings`
- * block is the only thing entitled to say whether a person card is bound.
+ * Man and Woman are written plainly. A significator preference is only an optional
+ * reading focus; it does not identify a person or relationship.
  */
 function fmtCard(card: { name: string; keywords?: string[]; strength?: string }): string {
   return sanitizeInput(card.name, MAX_CARD_NAME_LENGTH);
@@ -105,16 +103,7 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
     facts.push(`- position ${position.index + 1}: ${fmtCell(position.card, position.index + 1)}${suffix}`);
   }
   facts.push("Adjacency in this spread means consecutive positions. There is no other geometry.");
-  facts.push(...personBindingFacts(context));
   return facts;
-}
-
-function personBindingFacts(context: ReadingContext): string[] {
-  const drawn = new Set(context.cards.map((card) => card.id));
-  const binding = context.personBindings.find((item) => drawn.has(item.cardId));
-  if (!binding) return [];
-  const cardName = binding.cardId === 28 ? "Man" : binding.cardId === 29 ? "Woman" : String(binding.cardId);
-  return [`- Person binding ${cardName}: bound by ${binding.source}; ${binding.evidence}`];
 }
 
 /**
@@ -141,16 +130,12 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
     `Centre card: ${fmtCard(layout.center.card)}.`,
     "This grid defines no closing position and no outcome position; weigh the spread yourself.",
   ];
-  facts.push(...personBindingFacts(context));
   return facts;
 }
 
 /**
- * The significator-focus statement, derived only from the cards actually present.
- *
- * `both` is not a focus, and an explicitly selected card that is not in the spread must
- * not be reported as one — the previous preference fallback turned "both with only Man
- * present" into "focus: Woman", which named a card that was not there.
+ * The optional reading-focus statement, derived only from the selected preference and
+ * cards actually present. It makes no assertion about who a person card represents.
  */
 export function significatorFocusFacts(
   preference: "woman" | "man" | "both",
@@ -158,19 +143,10 @@ export function significatorFocusFacts(
 ): string[] {
   const selectedFocus = preference === "man" ? "Man" : preference === "woman" ? "Woman" : null;
 
-  if (preference === "both" && presentLabels.length === 2) {
-    return ["- Both significators are in this spread; read each one's own surroundings, and weigh their relation to each other from the coordinates above."];
-  }
-
   if (selectedFocus && presentLabels.includes(selectedFocus)) {
-    const others = presentLabels.filter((label) => label !== selectedFocus);
-    const otherClause = others.length > 0
-      ? ` The other person card (${others.join(", ")}) is still present as an ordinary card.`
-      : "";
-    return [`- Significator focus: ${selectedFocus}.${otherClause}`];
+    return [`- Reading focus: ${selectedFocus}.`];
   }
-
-  return [`- Person card(s) present: ${presentLabels.join(", ")}. No other person card is in this spread.`];
+  return [];
 }
 
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
@@ -184,10 +160,6 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
       return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card)} — ${house.houseName} house`;
     }),
   ];
-
-  // Explicit person-card binding. Only present when the request actually selected a
-  // significator and that card was drawn.
-  facts.push(...personBindingFacts(context));
 
   facts.push("");
   facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position.");
@@ -216,7 +188,12 @@ export function buildSpreadFacts(context: ReadingContext): string {
         return grandTableauSpreadFacts(context, layout).join("\n");
     }
   })();
-  return hasDisplacedCards(context) ? `${DISPLACED_CARD_LEGEND}\n${body}` : body;
+  const presentPeople = context.cards.flatMap((card) =>
+    card.id === 28 ? ["Man"] : card.id === 29 ? ["Woman"] : [],
+  );
+  const focus = significatorFocusFacts(context.significatorPreference, presentPeople);
+  const completeBody = [body, ...focus].join("\n");
+  return hasDisplacedCards(context) ? `${DISPLACED_CARD_LEGEND}\n${completeBody}` : completeBody;
 }
 
 /**
@@ -233,7 +210,6 @@ const OUTPUT_CONTRACT = `Answer the exact question asked.
 Use only meanings and combinations supported by the drawn cards.
 Do not infer from cards that were not drawn.
 Answer in the language of the user's question, using exactly one language.
-If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
 
 Return only one JSON object with exactly these fields:
 {

@@ -18,6 +18,20 @@ The card draw, order, question language, question selection and significator pre
 
 The default run enables a separate DeepSeek V4 Pro quality/factuality judge (`deepseek-v4-pro`), so a complete run can make up to **1,000 paid calls** (500 reading calls + up to 500 judge calls). The judge is reported separately and is not ground truth. An independently completed human review is required before making claims about interpretive quality.
 
+## Fixed content regression cases
+
+Use `--content-regressions-only` to run the small, fixed qualitative cases separately from the seeded default set. The current case reproduces the identity failure where a drawn Woman card is called unidentified and ruled unable to represent the partner solely because no specific focus was selected. It asks the judge to check only for that failure; it does not prescribe a prediction or card meaning. The separate “no ending visible, therefore dating continues” inference is not part of this fix.
+
+```bash
+# Inspect the exact prompt and case first; this does not contact a provider:
+npm run benchmark:readings -- --run-id person-identity-plan --pricing-period off-peak --content-regressions-only --plan-only
+
+# Optional: after reviewing the plan, run the case and judge (up to two paid calls):
+npm run benchmark:readings -- --run-id person-identity-check --pricing-period off-peak --content-regressions-only --confirm-paid-run
+```
+
+Review both the judge finding and `human-review.tsv`; judge output is a candidate signal, not ground truth. The TSV includes the regression target to guide independent review.
+
 ## Safe start: inspect a reproducible plan
 
 Requires Node 20.12+ for the built-in `.env` loader. The runner reads `DEEPSEEK_API` from the ignored project `.env` if present, or from the shell environment. It never writes/prints the key.
@@ -53,6 +67,7 @@ The official price page distinguishes cached input, uncached input, output, mode
 --timeout-ms INTEGER          Main/judge per-request timeout (default production 15s)
 --output DIRECTORY            Artifact root (default benchmark/results)
 --plan-only                   Store deterministic cases + exact prompts, do not call provider
+--content-regressions-only    Run only fixed qualitative regression cases instead of seeded cases
 --confirm-paid-run            Required for real provider calls
 ```
 

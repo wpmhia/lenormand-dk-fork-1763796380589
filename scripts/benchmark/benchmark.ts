@@ -11,7 +11,7 @@ import { buildSimpleReadingPrompt, getTokenBudget, SIMPLE_LENORMAND_SYSTEM_PROMP
 import { resolveThinkingMode } from "@/lib/reading-service";
 import { READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import type { SpreadId } from "@/lib/spread-definitions";
-import { createBenchmarkCases, type BenchmarkCase } from "./cases";
+import { createBenchmarkCases, createContentRegressionCases, type BenchmarkCase } from "./cases";
 import { evaluateOutput } from "./evaluate";
 import { calculateCostUsd, pricingFor, type PricingPeriod } from "./pricing";
 import { buildQualityJudgePrompt, runQualityJudge, type JudgeResult } from "./quality-judge";
@@ -28,6 +28,7 @@ interface Options {
   runId: string;
   resume: boolean;
   planOnly: boolean;
+  contentRegressionsOnly: boolean;
   confirmPaidRun: boolean;
   maxCostUsd?: number;
   priceOverride?: { inputCacheHitUsd: number; inputCacheMissUsd: number; outputUsd: number };
@@ -89,7 +90,7 @@ function parseArgs(argv: string[]): Options {
   const flags = new Set<string>();
   for (let index = 0; index < argv.length; index++) {
     const arg = argv[index];
-    if (arg === "--no-judge" || arg === "--plan-only" || arg === "--resume" || arg === "--confirm-paid-run") {
+    if (arg === "--no-judge" || arg === "--plan-only" || arg === "--resume" || arg === "--confirm-paid-run" || arg === "--content-regressions-only") {
       flags.add(arg);
       continue;
     }
@@ -139,6 +140,7 @@ function parseArgs(argv: string[]): Options {
     runId,
     resume: flags.has("--resume"),
     planOnly: flags.has("--plan-only"),
+    contentRegressionsOnly: flags.has("--content-regressions-only"),
     confirmPaidRun: flags.has("--confirm-paid-run"),
     maxCostUsd: values.has("--max-cost-usd") ? Number(values.get("--max-cost-usd")) : undefined,
     priceOverride,
@@ -195,7 +197,7 @@ function cardCountBySpread(cases: BenchmarkCase[]): Record<string, number> {
 
 function makeHumanReviewTSV(records: StoredRecord[]): string {
   const columns = [
-    "caseId", "spreadId", "cardCount", "language", "question", "cardsByPosition", "deliveredAnswer", "deliveredReading", "deliveredPatterns",
+    "caseId", "spreadId", "cardCount", "language", "question", "regressionTarget", "cardsByPosition", "deliveredAnswer", "deliveredReading", "deliveredPatterns",
     "directness_1to5", "relevance_1to5", "depth_1to5", "spreadSynthesis_1to5", "calibration_1to5",
     "naturalness_1to5", "languageConsistency_1to5", "spatialAccuracy_yes_no_unsure",
     "narrativePatternConflict_yes_no_unsure", "drawnCardAccuracy_yes_no_unsure", "reviewerNotes",
@@ -211,6 +213,7 @@ function makeHumanReviewTSV(records: StoredRecord[]): string {
       record.case.cardCount,
       record.case.language,
       record.case.question,
+      record.case.regressionTarget ?? "",
       record.case.cardIdsByPosition.map((id, index) => `${index + 1}:${CARD_CATALOG.find((card) => card.id === id)?.name ?? id}`).join(" | "),
       output?.deliveredAnswer ?? "",
       output?.deliveredReading ?? "",
@@ -239,7 +242,9 @@ async function main() {
   if (options.maxCostUsd !== undefined && (!Number.isFinite(options.maxCostUsd) || options.maxCostUsd <= 0)) {
     throw new Error("--max-cost-usd must be a finite positive number");
   }
-  const cases = createBenchmarkCases(options.seed, options.count);
+  const cases = options.contentRegressionsOnly
+    ? createContentRegressionCases()
+    : createBenchmarkCases(options.seed, options.count);
   const harnessSourceSha256 = await hashSourceFiles(AUDIT_SOURCE_FILES);
   const runDir = join(options.outputRoot, options.runId);
   const jsonlPath = join(runDir, "results.jsonl");
@@ -254,7 +259,8 @@ async function main() {
     createdAt: new Date().toISOString(),
     runId: options.runId,
     seed: options.seed,
-    countPerSpread: options.count,
+    countPerSpread: options.contentRegressionsOnly ? null : options.count,
+    contentRegressionsOnly: options.contentRegressionsOnly,
     plannedCases: cases.length,
     caseSetSha256: hash(JSON.stringify(cases)),
     harnessSourceSha256,
@@ -285,7 +291,7 @@ async function main() {
     try {
       const prior = JSON.parse(await readFile(manifestPath, "utf8"));
       for (const key of [
-        "seed", "countPerSpread", "caseSetSha256", "harnessSourceSha256", "model", "judgeModel",
+        "seed", "countPerSpread", "contentRegressionsOnly", "caseSetSha256", "harnessSourceSha256", "model", "judgeModel",
         "judgeEnabled", "pricingPeriod", "pricingModel", "judgePricingModel", "timeoutMs", "modelThinkingBySpread",
       ]) {
         if (JSON.stringify(prior[key]) !== JSON.stringify((manifest as any)[key])) {
@@ -305,7 +311,8 @@ async function main() {
     ? (options.judgeModel === options.model && options.priceOverride ? options.priceOverride : pricingFor(options.judgeModel, options.pricingPeriod))
     : null;
 
-  console.log(`Run ${options.runId}: ${cases.length} readings, ${options.count} each: ${JSON.stringify(cardCountBySpread(cases))}`);
+  const caseDescription = options.contentRegressionsOnly ? "fixed content regression cases" : `${options.count} each`;
+  console.log(`Run ${options.runId}: ${cases.length} readings (${caseDescription}): ${JSON.stringify(cardCountBySpread(cases))}`);
   console.log(`Model=${options.model}; judge=${options.judge ? options.judgeModel : "off"}; pricing=${options.pricingPeriod}; pending=${remaining.length}`);
   if (options.planOnly) {
     const plan = cases.map((benchmarkCase) => {

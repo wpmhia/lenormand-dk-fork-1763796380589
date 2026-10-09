@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CARD_CATALOG } from "@/lib/card-catalog";
-import { BENCHMARK_SPREADS, createBenchmarkCases } from "../cases";
+import { BENCHMARK_SPREADS, createBenchmarkCases, createContentRegressionCases } from "../cases";
 
 describe("benchmark cases", () => {
   it("creates exactly 100 seeded cases for every required spread size", () => {
@@ -40,5 +40,18 @@ describe("benchmark cases", () => {
   it("rejects invalid sample sizes", () => {
     expect(() => createBenchmarkCases(1, 0)).toThrow(/positive integer/);
     expect(() => createBenchmarkCases(1, 1.5)).toThrow(/positive integer/);
+  });
+
+  it("defines the missing-focus relationship case as an explicit content regression", () => {
+    const [regression] = createContentRegressionCases();
+    expect(regression).toMatchObject({
+      id: "content-person-card-without-focus-nl-001",
+      spreadId: "sentence-3",
+      language: "nl",
+      question: "Hoe ontwikkelt mijn relatie met mijn partner zich?",
+      cardIdsByPosition: [29, 24, 25],
+      significatorPreference: "both",
+    });
+    expect(regression.regressionTarget).toMatch(/unidentified|cannot represent the user's partner/i);
   });
 });
