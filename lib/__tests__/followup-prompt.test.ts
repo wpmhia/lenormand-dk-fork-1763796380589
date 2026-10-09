@@ -5,24 +5,19 @@ import {
 } from "@/lib/followup-prompt";
 
 describe("follow-up system prompt", () => {
-  it("caps output at 1-2 sentences", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/1-2 short sentences/i);
+  it("allows enough explanation to address the active follow-up", () => {
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Answer the active follow-up directly, with enough explanation to address what was asked/i);
   });
 
-  it("forbids headings, sections, bullets, or a new reading", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not produce headings, sections, bullets, card-by-card explanations, or a new reading/i);
+  it("does not force a conclusion-first or fixed short-answer format", () => {
+    expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/conclusion first|state that conclusion immediately/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/1-2 short sentences|1-4 concise sentences/i);
   });
 
-  it("forbids repeating the previous interpretation", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not repeat the previous interpretation/i);
-  });
-
-  it("instructs the model to answer yes/no or one clear likely outcome directly", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/If the question can be answered yes\/no or with one clear likely outcome, state that conclusion immediately/i);
-  });
-
-  it("instructs the model to condense when the follow-up repeats the original question", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/If the follow-up substantially repeats the original question/i);
+  it("keeps the spread fixed and grounded in supplied evidence", () => {
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/The cards and positions are fixed/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Use only spatial relationships supported by the supplied coordinates/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Previous AI wording and conversation history are context, not evidence/i);
   });
 
   it("is much shorter than the full reading system prompt and stays under 50 lines", () => {
