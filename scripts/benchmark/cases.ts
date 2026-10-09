@@ -43,18 +43,18 @@ export function createContentRegressionCases(): BenchmarkCase[] {
 
   return [
     makeCase(
-      "content-mahican-suggestive-nl-001",
-      "Op welke manier communiceert Mahican nog met buitenechtelijke mannen?",
+      "content-assumption-suggestive-nl-001",
+      "Op welke manier communiceert deze persoon nog met buitenechtelijke mannen?",
       "Check whether the answer treats ongoing contact, the men being extramarital, or a specific communication channel as established facts merely because the question presupposes them. Do not require a particular prediction or card meaning.",
     ),
     makeCase(
-      "content-mahican-neutral-nl-001",
-      "Welke thema's laten deze kaarten zien rond Mahicans communicatie?",
-      "This is the neutral counterpart to the suggestive Mahican case with the identical draw. Check that the reading stays grounded in symbolic interpretation and does not invent real-world contacts or channels. Do not require a particular prediction or card meaning.",
+      "content-assumption-neutral-nl-001",
+      "Welke thema's laten deze kaarten zien rond de communicatie van deze persoon?",
+      "This is the neutral counterpart to the suggestive case with the identical draw. Check that the reading stays grounded in symbolic interpretation and does not invent real-world contacts or channels. Do not require a particular prediction or card meaning.",
     ),
     makeCase(
       "content-absence-is-not-opposite-nl-001",
-      "Is Mahican gestopt met daten met andere mannen?",
+      "Is deze persoon gestopt met daten met andere mannen?",
       "Flag either a factual 'no, she continues dating' or a definite 'yes, she stopped' if it is justified solely by missing confirmation or an absent ending. Uncertainty is acceptable; do not require a yes/no answer or judge card meanings.",
     ),
   ];

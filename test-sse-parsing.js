@@ -103,10 +103,10 @@ console.log("NEW (fixed):  ", parseSSE_NewFixed(splitPackets));
 
 // === TEST 3: Worst case - split mid-Unicode ===
 console.log("\nTEST 3: Split at UTF-8 boundary (emoji)");
-// "Mahican's 🎴 reading" - emoji is 4 bytes in UTF-8
-const emojiContent = 'Mahican\'s 🎴 reading';
+// "Reader's 🎴 reading" - emoji is 4 bytes in UTF-8
+const emojiContent = 'Reader\'s 🎴 reading';
 const emojiPackets = [
-  new TextEncoder().encode(`data: {"type":"chunk","content":"Mahican's `),
+  new TextEncoder().encode(`data: {"type":"chunk","content":"Reader's `),
   new Uint8Array([240, 159, 142, 180]), // emoji split: first 3 bytes
   new Uint8Array([32, 114, 101, 97, 100, 105, 110, 103, 34, 125, 10, 10]), // last byte + rest
 ];

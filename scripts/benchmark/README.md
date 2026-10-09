@@ -20,7 +20,7 @@ The default run enables a separate DeepSeek V4 Pro quality/factuality judge (`de
 
 ## Fixed content regression cases
 
-Use `--content-regressions-only` to run the fixed qualitative cases separately from the seeded default set. Three cases use the same Sun, Paths, Ring, Stork and Mountain draw: the original suggestive Mahican question, a neutral wording for comparison, and a question about whether dating has stopped. Their review targets catch unsupported assumptions about ongoing/extramarital contact or channels, and the leap from “not confirmed” to “no” or “the opposite.” They do not prescribe a prediction or card meaning.
+Use `--content-regressions-only` to run the fixed qualitative cases separately from the seeded default set. Three cases use the same Sun, Paths, Ring, Stork and Mountain draw: a suggestive question about a person's contact with extramarital men, a neutral wording for comparison, and a question about whether dating has stopped. Their review targets catch unsupported assumptions about ongoing/extramarital contact or channels, and the leap from “not confirmed” to “no” or “the opposite.” They do not prescribe a prediction or card meaning.
 
 ```bash
 # Inspect the exact prompt and case first; this does not contact a provider:
