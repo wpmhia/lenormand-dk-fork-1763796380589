@@ -27,19 +27,37 @@ export interface BenchmarkCase {
  * unexpected provider calls. Run them explicitly to assess known reader-facing failures.
  */
 export function createContentRegressionCases(): BenchmarkCase[] {
-  const definition = SPREAD_DEFINITIONS["sentence-3"];
-  return [{
-    id: "content-person-card-without-focus-nl-001",
+  const cardIdsByPosition = [31, 22, 25, 17, 21]; // Sun, Paths, Ring, Stork, Mountain
+  const makeCase = (id: string, question: string, regressionTarget: string): BenchmarkCase => ({
+    id,
     seed: 0,
-    spreadId: "sentence-3",
-    spreadLabel: definition.label,
-    cardCount: 3,
-    question: "Hoe ontwikkelt mijn relatie met mijn partner zich?",
+    spreadId: "sentence-5",
+    spreadLabel: SPREAD_DEFINITIONS["sentence-5"].label,
+    cardCount: cardIdsByPosition.length,
+    question,
     language: "nl",
-    cardIdsByPosition: [29, 24, 25],
+    cardIdsByPosition: [...cardIdsByPosition],
     significatorPreference: "both",
-    regressionTarget: "Flag a claim that the Woman card is unidentified or cannot represent the user's partner solely because no specific significator focus was selected. Do not require a particular prediction or card meaning.",
-  }];
+    regressionTarget,
+  });
+
+  return [
+    makeCase(
+      "content-assumption-suggestive-nl-001",
+      "Op welke manier communiceert Alex nog met other people?",
+      "Check whether the answer treats ongoing contact, the men being extramarital, or a specific communication channel as established facts merely because the question presupposes them. Do not require a particular prediction or card meaning.",
+    ),
+    makeCase(
+      "content-assumption-neutral-nl-001",
+      "Which themes do these cards show around Alex's communication?",
+      "This is the neutral counterpart to the suggestive Alex case with the identical draw. Check that the reading stays grounded in symbolic interpretation and does not invent real-world contacts or channels. Do not require a particular prediction or card meaning.",
+    ),
+    makeCase(
+      "content-absence-is-not-opposite-nl-001",
+      "Has Alex stopped seeing other people?",
+      "Flag either a factual 'no, she continues dating' or a definite 'yes, she stopped' if it is justified solely by missing confirmation or an absent ending. Uncertainty is acceptable; do not require a yes/no answer or judge card meanings.",
+    ),
+  ];
 }
 
 type Random = () => number;

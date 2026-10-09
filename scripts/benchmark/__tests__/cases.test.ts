@@ -42,16 +42,24 @@ describe("benchmark cases", () => {
     expect(() => createBenchmarkCases(1, 1.5)).toThrow(/positive integer/);
   });
 
-  it("defines the missing-focus relationship case as an explicit content regression", () => {
-    const [regression] = createContentRegressionCases();
-    expect(regression).toMatchObject({
-      id: "content-person-card-without-focus-nl-001",
-      spreadId: "sentence-3",
-      language: "nl",
-      question: "Hoe ontwikkelt mijn relatie met mijn partner zich?",
-      cardIdsByPosition: [29, 24, 25],
-      significatorPreference: "both",
-    });
-    expect(regression.regressionTarget).toMatch(/unidentified|cannot represent the user's partner/i);
+  it("pairs suggestive and neutral Alex questions over the same draw", () => {
+    const cases = createContentRegressionCases();
+    const suggestive = cases.find((item) => item.id === "content-assumption-suggestive-nl-001")!;
+    const neutral = cases.find((item) => item.id === "content-assumption-neutral-nl-001")!;
+
+    expect(suggestive.question).toBe("Op welke manier communiceert Alex nog met other people?");
+    expect(neutral.question).toBe("Which themes do these cards show around Alex's communication?");
+    expect(suggestive.cardIdsByPosition).toEqual([31, 22, 25, 17, 21]);
+    expect(neutral.cardIdsByPosition).toEqual(suggestive.cardIdsByPosition);
+    expect(suggestive.significatorPreference).toBe("both");
+    expect(suggestive.regressionTarget).toMatch(/ongoing contact.*extramarital.*communication channel/i);
+  });
+
+  it("checks that missing confirmation does not become a negative or opposite fact", () => {
+    const regression = createContentRegressionCases().find((item) => item.id === "content-absence-is-not-opposite-nl-001")!;
+    expect(regression.question).toBe("Has Alex stopped seeing other people?");
+    expect(regression.cardIdsByPosition).toEqual([31, 22, 25, 17, 21]);
+    expect(regression.regressionTarget).toMatch(/continues dating.*stopped/i);
+    expect(regression.regressionTarget).toMatch(/Uncertainty is acceptable.*do not require a yes\/no/i);
   });
 });
