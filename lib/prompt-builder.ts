@@ -133,6 +133,42 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
   return facts;
 }
 
+function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): string[] {
+  const facts = ["Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping):"];
+
+  for (const person of [
+    { id: 28, name: "Man" },
+    { id: 29, name: "Woman" },
+  ]) {
+    const index = cards.findIndex((card) => card.id === person.id);
+    if (index < 0) continue;
+
+    const row = Math.floor(index / GT_GRID_COLUMNS);
+    const column = index % GT_GRID_COLUMNS;
+    const neighbours: string[] = [];
+
+    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+      for (let columnOffset = -1; columnOffset <= 1; columnOffset++) {
+        if (rowOffset === 0 && columnOffset === 0) continue;
+
+        const neighbourRow = row + rowOffset;
+        const neighbourColumn = column + columnOffset;
+        if (
+          neighbourRow < 0 || neighbourRow >= GT_GRID_ROWS
+          || neighbourColumn < 0 || neighbourColumn >= GT_GRID_COLUMNS
+        ) continue;
+
+        const neighbour = cards[neighbourRow * GT_GRID_COLUMNS + neighbourColumn];
+        if (neighbour) neighbours.push(fmtCard(neighbour));
+      }
+    }
+
+    facts.push(`- ${person.name}: row ${row + 1}, column ${column + 1}; immediate neighbours: ${neighbours.length ? neighbours.join(", ") : "none"}.`);
+  }
+
+  return facts;
+}
+
 /**
  * The optional reading-focus statement, derived only from the selected preference and
  * cards actually present. It makes no assertion about who a person card represents.
@@ -152,6 +188,7 @@ export function significatorFocusFacts(
 function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLayout): string[] {
   const facts = [
     `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
+    ...gridRowFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS),
     "Position map (every position with its drawn card and the house that card occupies):",
     ...layout.houses.map((house, index) => {
       const card = house.occupyingCard;
@@ -160,6 +197,10 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
       return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card)} — ${house.houseName} house`;
     }),
   ];
+
+  facts.push("");
+  facts.push(...grandTableauPersonNeighbourFacts(context.cards));
+  facts.push("Immediate adjacency and occupying another card's house are separate relationships; neither implies the other.");
 
   facts.push("");
   facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position.");
