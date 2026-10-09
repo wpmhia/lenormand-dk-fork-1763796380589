@@ -20,13 +20,13 @@ The default run enables a separate DeepSeek V4 Pro quality/factuality judge (`de
 
 ## Fixed content regression cases
 
-Use `--content-regressions-only` to run the fixed qualitative cases separately from the seeded default set. Three cases use the same Sun, Paths, Ring, Stork and Mountain draw: a suggestive question about a person's contact with extramarital men, a neutral wording for comparison, and a question about whether dating has stopped. Their review targets catch unsupported assumptions about ongoing/extramarital contact or channels, and the leap from “not confirmed” to “no” or “the opposite.” They do not prescribe a prediction or card meaning.
+Use `--content-regressions-only` to run the fixed qualitative cases separately from the seeded default set. Three cases use the same Sun, Paths, Ring, Stork and Mountain draw: a suggestive question about a person's contact with extramarital men, a neutral wording for comparison, and a question about whether dating has stopped. Their review targets catch unsupported assumptions and the leap from “not confirmed” to “no” or “the opposite.” A fourth Grand Tableau case uses a fixed 4x9 layout and the question “Will my marriage with Mahican work out?”; its review target concerns spatial accuracy only, not the desired interpretation. No case prescribes a card meaning.
 
 ```bash
 # Inspect the exact prompt and case first; this does not contact a provider:
 npm run benchmark:readings -- --run-id person-identity-plan --pricing-period off-peak --content-regressions-only --plan-only
 
-# Optional: after reviewing the plan, run the cases and judge (up to six paid calls):
+# Optional: after reviewing the plan, run the cases and judge (up to eight paid calls):
 npm run benchmark:readings -- --run-id person-identity-check --pricing-period off-peak --content-regressions-only --confirm-paid-run
 ```
 

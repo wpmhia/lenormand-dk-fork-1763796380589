@@ -62,4 +62,24 @@ describe("benchmark cases", () => {
     expect(regression.regressionTarget).toMatch(/continues dating.*stopped/i);
     expect(regression.regressionTarget).toMatch(/Uncertainty is acceptable.*do not require a yes\/no/i);
   });
+
+  it("uses the exact requested Grand Tableau fixture and English spatial-regression question", () => {
+    const regression = createContentRegressionCases().find((item) => item.id === "content-grand-tableau-neighbour-map-en-001")!;
+    expect(regression).toMatchObject({
+      spreadId: "grand-tableau",
+      spreadLabel: "Grand Tableau",
+      cardCount: 36,
+      question: "Will my marriage with Mahican work out?",
+      language: "en",
+      cardIdsByPosition: [
+        28, 7, 14, 17, 1, 20, 13, 15, 18,
+        33, 26, 25, 30, 21, 35, 19, 11, 29,
+        3, 31, 12, 27, 8, 24, 16, 34, 2,
+        23, 10, 4, 36, 9, 32, 6, 22, 5,
+      ],
+    });
+    expect(regression.regressionTarget).toMatch(/spatial accuracy only/i);
+    expect(regression.regressionTarget).toMatch(/Tower is two columns left.*not an immediate neighbour/i);
+    expect(regression.regressionTarget).toMatch(/Woman occupies the Dog house.*Dog is also above Woman/i);
+  });
 });

@@ -118,17 +118,24 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
 // GEOMETRY IN THE PROMPT
 // ======================================================================================
 
-describe("geometry: the full grid is supplied, relations are not", () => {
-  it("gives every Grand Tableau position its row, column, card and house on one line", () => {
+describe("geometry: the full grid and bounded person-neighbour facts are supplied", () => {
+  it("gives every Grand Tableau position and all four visual rows", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Geometry?", draw(36, 13)));
     const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
     expect(positionLines).toHaveLength(36);
+    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(4);
+    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping):");
     expect(positionLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
   });
 
-  it("precomputes no relation lists in any layout", () => {
+  it("precomputes no generic relation lists in any layout", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const facts = buildSpreadFacts(context(id, "Geometry?", draw(count, 13)));
+      if (id === "grand-tableau") {
+        expect(facts, id).toContain("Immediate neighbours");
+      } else {
+        expect(facts, id).not.toContain("Immediate neighbours");
+      }
       expect(facts, id).not.toMatch(/^- \d+\+\d+: /m);
       expect(facts, id).not.toContain("- diagonal ");
       expect(facts, id).not.toContain("- knight: ");
@@ -179,10 +186,12 @@ describe("geometry: layout-specific facts", () => {
     expect(facts).not.toContain("Crossroads house");
   });
 
-  it("states person bindings without coordinates", () => {
+  it("does not assign person cards to the user or their partner", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
     expect(facts).not.toMatch(/- Man: position \d+, row \d, col \d/);
     expect(facts).not.toMatch(/- Woman: position \d+, row \d, col \d/);
+    expect(facts).not.toMatch(/Man is (?:the user|you)/i);
+    expect(facts).not.toMatch(/Woman is (?:the user's partner|your partner)/i);
     expect(facts).not.toContain("weigh their relation to each other from the coordinates above");
   });
 

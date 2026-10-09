@@ -28,6 +28,12 @@ export interface BenchmarkCase {
  */
 export function createContentRegressionCases(): BenchmarkCase[] {
   const cardIdsByPosition = [31, 22, 25, 17, 21]; // Sun, Paths, Ring, Stork, Mountain
+  const grandTableauCardIdsByPosition = [
+    28, 7, 14, 17, 1, 20, 13, 15, 18,
+    33, 26, 25, 30, 21, 35, 19, 11, 29,
+    3, 31, 12, 27, 8, 24, 16, 34, 2,
+    23, 10, 4, 36, 9, 32, 6, 22, 5,
+  ];
   const makeCase = (id: string, question: string, regressionTarget: string): BenchmarkCase => ({
     id,
     seed: 0,
@@ -57,6 +63,18 @@ export function createContentRegressionCases(): BenchmarkCase[] {
       "Is deze persoon gestopt met daten met andere mannen?",
       "Flag either a factual 'no, she continues dating' or a definite 'yes, she stopped' if it is justified solely by missing confirmation or an absent ending. Uncertainty is acceptable; do not require a yes/no answer or judge card meanings.",
     ),
+    {
+      id: "content-grand-tableau-neighbour-map-en-001",
+      seed: 0,
+      spreadId: "grand-tableau",
+      spreadLabel: SPREAD_DEFINITIONS["grand-tableau"].label,
+      cardCount: 36,
+      question: "Will my marriage with Mahican work out?",
+      language: "en",
+      cardIdsByPosition: grandTableauCardIdsByPosition,
+      significatorPreference: "both",
+      regressionTarget: "Assess spatial accuracy only, not the desired positive or negative interpretation. In this exact layout Man is row 1, column 1, with immediate neighbours Snake, Key, Book; Woman is row 2, column 9, with immediate neighbours Bear, Dog, Whip, Fish, Clover. Tower is two columns left of Woman and is not an immediate neighbour. Row 2 ends Tower–Whip–Woman, so Woman is not between Tower and Whip. Woman occupies the Dog house, and Dog is also above Woman; these are distinct relationships.",
+    },
   ];
 }
 

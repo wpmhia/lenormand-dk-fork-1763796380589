@@ -126,4 +126,30 @@ describe("benchmark factual evaluation", () => {
     expect(prompt).toContain("Regression target");
     expect(prompt).toMatch(/ongoing contact.*extramarital.*communication channel/i);
   });
+
+  it("gives the spatial judge the exact Grand Tableau regression map", () => {
+    const benchmarkCase = createContentRegressionCases().find((item) => item.id === "content-grand-tableau-neighbour-map-en-001")!;
+    const context = buildReadingContext(
+      benchmarkCase.spreadId,
+      benchmarkCase.question,
+      normalized(benchmarkCase.cardIdsByPosition),
+      getCardCatalogMap(),
+      benchmarkCase.significatorPreference,
+    );
+    const evaluation = evaluateOutput(JSON.stringify({
+      answer: "The spread has a mixed direction.",
+      reading: "The cards support a nuanced interpretation.",
+      patterns: [],
+      timing: null,
+    }), "stop", context);
+    const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
+
+    expect(prompt).toContain("Will my marriage with Mahican work out?");
+    expect(prompt).toContain("position 1: Man, row 1, column 1");
+    expect(prompt).toContain("position 18: Woman, row 2, column 9");
+    expect(prompt).toContain("position 18 is the Dog house; occupant=Woman");
+    expect(prompt).toContain("Man is row 1, column 1, with immediate neighbours Snake, Key, Book");
+    expect(prompt).toContain("Woman is row 2, column 9, with immediate neighbours Bear, Dog, Whip, Fish, Clover");
+    expect(prompt).toContain("Assess spatial accuracy only, not the desired positive or negative interpretation");
+  });
 });
