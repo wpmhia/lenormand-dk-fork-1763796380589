@@ -18,10 +18,14 @@ export function buildQualityJudgePrompt(
   const houseMap = context.layout.type === "grand-tableau"
     ? context.layout.houses.map((placement) => `position ${placement.position} is the ${placement.houseName} house; occupant=${placement.occupyingCard.name}`).join("\n")
     : "No houses exist in this spread.";
-  return `Blind review. Do not see or infer the benchmark's automated validator decisions.
+  const regressionTarget = benchmarkCase.regressionTarget
+    ? `\nRegression target (check only whether this known failure occurs; do not require a particular prediction or card meaning):\n${benchmarkCase.regressionTarget}\n`
+    : "";
+  return `Independent review. Do not see or infer the benchmark's automated validator decisions.
 
 Question (${benchmarkCase.language}): ${benchmarkCase.question}
 Spread: ${benchmarkCase.spreadLabel} (${benchmarkCase.cardCount} cards)
+${regressionTarget}
 
 Layout type: ${context.layout.type}
 Position map:

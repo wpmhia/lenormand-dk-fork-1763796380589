@@ -4,20 +4,9 @@ import type { NormalizedCard, SpreadId } from "@/lib/reading-contract";
 import { getDefinition, getLayoutType } from "@/lib/spread-definitions";
 
 /**
- * The reading context is the cards, where they sit, and who the user bound them to.
- *
- * It no longer contains a question domain, a question frame, a parsed semantic question,
- * weighted adjacency pairs, traditional pair meanings, timing evidence or topic focus.
- * Every one of those was the server forming an opinion about the reading before the model
- * saw it. What remains is either user-declared (a binding) or positional (a layout), which
- * is exactly the line this architecture draws: code knows where the cards are.
+ * The reading context contains the cards, their positions, and an optional user-selected
+ * reading focus. It does not identify people or infer relationships from that selection.
  */
-
-export interface PersonBinding {
-  cardId: 28 | 29;
-  source: "explicit-significator";
-  evidence: string;
-}
 
 export interface SingleCardLayout {
   type: "single";
@@ -77,7 +66,7 @@ export interface ReadingContext {
   situationContext: string;
   cards: NormalizedCard[];
   layout: ReadingLayout;
-  personBindings: PersonBinding[];
+  significatorPreference: "woman" | "man" | "both";
 }
 
 /**
@@ -119,22 +108,6 @@ function buildGrandTableauLayout(
   return { type: "grand-tableau", houses, significators, significatorPreference };
 }
 
-/**
- * A person card is bound only when the user explicitly selected it. The previous grammar
- * heuristic that guessed at husband/wife/partner from the question text is gone: it
- * fabricated identity, and a card the user did not bind is simply an unassigned person
- * reference the model must not turn into a specific individual.
- */
-function explicitPersonBindings(preference: "woman" | "man" | "both"): PersonBinding[] {
-  if (preference === "woman") {
-    return [{ cardId: 29, source: "explicit-significator", evidence: "The request explicitly selected Woman as the significator." }];
-  }
-  if (preference === "man") {
-    return [{ cardId: 28, source: "explicit-significator", evidence: "The request explicitly selected Man as the significator." }];
-  }
-  return [];
-}
-
 export function buildReadingContext(
   spreadId: SpreadId,
   question: string,
@@ -166,6 +139,6 @@ export function buildReadingContext(
     situationContext,
     cards,
     layout,
-    personBindings: explicitPersonBindings(significatorPreference),
+    significatorPreference,
   };
 }

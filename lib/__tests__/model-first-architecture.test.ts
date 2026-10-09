@@ -265,7 +265,7 @@ describe("pipeline: one universal prompt for every spread", () => {
       expect(text, id).toContain(skeleton);
     }
 
-    // No per-spread Person bindings block: every drawn card already appears in structural facts.
+    // No person-binding block: every drawn card already appears in structural facts.
     expect(text, id).not.toContain("Person bindings:");
 
     for (const field of ['"answer": string', '"reading": string', '"patterns"', '"timing": string | null']) {

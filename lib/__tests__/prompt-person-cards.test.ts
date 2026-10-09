@@ -33,11 +33,7 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
     expect(prompt).not.toContain("feminine");
   });
 
-  /**
-   * The structural layer writes "Man" and "Woman" plainly. Annotating the card itself as
-   * a specific person pushed the model toward reading a concrete individual even when
-   * nothing bound it; only the `Person bindings` block may assert that.
-   */
+  /** The structural layer writes "Man" and "Woman" plainly, without assigning a role. */
   it("writes Man and Woman plainly, without assigning them a role", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
@@ -62,56 +58,52 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
   });
 });
 
-describe("prompt-builder: production prompt forbids relationship inference", () => {
-  it("forbids inferring who an unbound person card represents", () => {
+describe("prompt-builder: significator preference is an optional reading focus", () => {
+  it("does not make identity or relationship claims when no preference is selected", () => {
     const prompt = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap),
+      buildReadingContext("sentence-3", "Will my partner and I reconcile?", normalized([29, 1, 3]), cardsMap),
     );
-    expect(prompt).toMatch(/not a spouse, partner, named person or pronoun/i);
-  });
-
-  it("names Man or Woman in the structural layer only when the cards are drawn", () => {
-    const without = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap),
-    );
-    expect(without).not.toMatch(/\bMan\b/);
-    expect(without).not.toMatch(/\bWoman\b/);
-  });
-
-  it("passes an explicit significator binding to the model when that person card is drawn", () => {
-    const prompt = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Will I move?", normalized([28, 1, 3]), cardsMap, "man"),
-    );
-    expect(prompt).toContain("- Person binding Man: bound by explicit-significator");
-    expect(prompt).not.toContain("Person binding Woman");
-
-    const petit = buildSimpleReadingPrompt(
-      buildReadingContext("comprehensive", "How will the month bring?", normalized([28, 1, 2, 3, 12, 27, 26, 17, 29]), cardsMap, "woman"),
-    );
-    expect(petit).toContain("- Person binding Woman: bound by explicit-significator");
-  });
-
-  it("omits the binding when the chosen significator is not drawn", () => {
-    const prompt = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Will I move?", normalized([1, 2, 3]), cardsMap, "man"),
-    );
+    expect(prompt).toContain("Will my partner and I reconcile?");
+    expect(prompt).toContain("Woman");
+    expect(prompt).not.toContain("unidentified");
     expect(prompt).not.toContain("Person binding");
     expect(prompt).not.toContain("bound by explicit-significator");
+    expect(prompt).not.toContain("Reading focus:");
   });
 
-  it("passes the binding through to a Grand Tableau when the chosen card is drawn", () => {
+  it("adds only a reading-focus hint when the selected person card is drawn", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([29, 1, 3]), cardsMap, "woman"),
+    );
+    expect(prompt).toContain("- Reading focus: Woman.");
+    expect(prompt).not.toContain("Person binding");
+    expect(prompt).not.toContain("unidentified");
+  });
+
+  it("omits the focus if the selected person card was not drawn", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([29, 1, 3]), cardsMap, "man"),
+    );
+    expect(prompt).toContain("Woman");
+    expect(prompt).not.toContain("Reading focus:");
+    expect(prompt).not.toContain("Man");
+  });
+
+  it("passes a focus hint through to a Grand Tableau when the chosen card is drawn", () => {
     const knownIds = CARD_CATALOG.map((card) => card.id).slice(0, 36);
     const ctx = buildReadingContext("grand-tableau", "Full picture?", normalized(knownIds), cardsMap, "woman");
     const prompt = buildSimpleReadingPrompt(ctx);
-    expect(prompt).toContain("- Person binding Woman: bound by explicit-significator");
+    expect(prompt).toContain("- Reading focus: Woman.");
+    expect(prompt).not.toContain("Person binding");
   });
 
-  it("names the drawn person card even without an explicit significator preference", () => {
-    const withWoman = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Will I move?", normalized([29, 1, 3]), cardsMap),
+  it("keeps the default 'both' as no specific reading focus", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will I move?", normalized([28, 29, 3]), cardsMap),
     );
-    expect(withWoman).toContain("Woman");
-    expect(withWoman).not.toContain("Person binding");
+    expect(prompt).toContain("Man");
+    expect(prompt).toContain("Woman");
+    expect(prompt).not.toContain("Reading focus:");
   });
 });
 
@@ -161,25 +153,15 @@ describe("prompt-builder: timing stays ungrounded rather than invented", () => {
 });
 
 describe("prompt-builder: significator focus follows actual card presence", () => {
-  it("does not invent a Woman focus when only Man is present under preference 'both'", () => {
-    // The old preference fallback returned "focus: Woman" here.
-    expect(significatorFocusFacts("both", ["Man"])).toEqual([
-      "- Person card(s) present: Man. No other person card is in this spread.",
-    ]);
+  it("returns no focus for the default preference", () => {
+    expect(significatorFocusFacts("both", ["Man", "Woman"])).toEqual([]);
   });
 
-  it("does not claim another person card is present when it is not", () => {
-    expect(significatorFocusFacts("man", ["Man"])).toEqual(["- Significator focus: Man."]);
+  it("labels the selected, present card as a reading focus only", () => {
+    expect(significatorFocusFacts("man", ["Man", "Woman"])).toEqual(["- Reading focus: Man."]);
   });
 
-  it("does not report a selected focus that is absent from the spread", () => {
-    expect(significatorFocusFacts("man", ["Woman"])).toEqual([
-      "- Person card(s) present: Woman. No other person card is in this spread.",
-    ]);
-  });
-
-  it("reports both significators only when both are actually present", () => {
-    expect(significatorFocusFacts("both", ["Man", "Woman"])[0]).toContain("Both significators are in this spread");
-    expect(significatorFocusFacts("man", ["Man", "Woman"])[0]).toContain("still present as an ordinary card");
+  it("does not report a selected focus absent from the spread", () => {
+    expect(significatorFocusFacts("man", ["Woman"])).toEqual([]);
   });
 });
