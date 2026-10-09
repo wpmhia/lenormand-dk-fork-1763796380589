@@ -43,9 +43,8 @@ function groupSummary(records: any[]) {
   const appServeCandidates = evaluations.filter((evaluation) => evaluation.schemaValid).length;
   const appServeFailures = evaluations.filter((evaluation) => evaluation.schemaValid && evaluation.appWouldServe === false).length;
   const factIssueRecords = evaluations.filter((evaluation) =>
-    evaluation.inventedCards?.length || evaluation.unknownCardLabels?.length,
+    evaluation.inventedCards?.some((item: { field: string }) => item.field === "pattern") || evaluation.unknownCardLabels?.length,
   );
-  const explicitProseCardRecords = evaluations.filter((evaluation) => evaluation.proseCardMentions?.length);
   const validatorErrors = completedRequests.filter((record) => record.validatorError).length;
   const mainLatencies = records.map((record) => record.run?.latencyMs).filter((value: unknown): value is number => typeof value === "number" && Number.isFinite(value));
   const successfulLatencies = completedRequests.map((record) => record.run.latencyMs).filter(Number.isFinite);
@@ -96,8 +95,6 @@ function groupSummary(records: any[]) {
     // These are machine-detected DeepSeek output defects, not validator implementation errors.
     modelFactualIssueCases: factIssueRecords.length,
     modelFactualIssueRate: fraction(factIssueRecords.length, evaluations.length),
-    explicitUndrawnProseCases: explicitProseCardRecords.length,
-    appFatalGroundingRate: fraction(explicitProseCardRecords.length, evaluations.length),
     validatorExceptions: validatorErrors,
     validatorExceptionRate: fraction(validatorErrors, completedRequests.length),
     factualFindings: {

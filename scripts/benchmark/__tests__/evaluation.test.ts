@@ -33,24 +33,16 @@ describe("benchmark factual evaluation", () => {
     expect(result.deliveredPatterns).toHaveLength(1);
   });
 
-  it("counts explicit undrawn references in prose but not ordinary English", () => {
+  it("does not treat prose mentions as validation failures", () => {
     const context = buildReadingContext("sentence-3", "Will this plan progress?", normalized([1, 2, 3]));
-    const innocent = evaluateOutput(JSON.stringify({
-      answer: "The man and woman should discuss the key issue.",
-      reading: "The heart of the matter is to talk.",
-      patterns: [],
-      timing: null,
-    }), "stop", context);
-    expect(innocent.proseCardMentions).toEqual([]);
-
     const explicit = evaluateOutput(JSON.stringify({
-      answer: "The Scythe card marks a cut.",
-      reading: "The line points to change.",
+      answer: "The Scythe card was not drawn in this spread.",
+      reading: "It appeared in the previous reading.",
       patterns: [],
       timing: null,
     }), "stop", context);
-    expect(explicit.proseCardMentions).toHaveLength(1);
-    expect(explicit.proseCardMentions[0].card).toBe("Scythe");
+    expect(explicit.appWouldServe).toBe(true);
+    expect(explicit.inventedCards).toEqual([]);
   });
 
   it("flags a Grand Tableau pattern that names an undrawn card", () => {

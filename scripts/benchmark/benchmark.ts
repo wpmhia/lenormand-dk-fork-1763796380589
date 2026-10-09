@@ -415,11 +415,11 @@ async function main() {
 
     records.push(stored);
     await appendFile(jsonlPath, `${JSON.stringify(stored)}\n`);
-    const fatalOrModelFindings = stored.evaluation
-      ? stored.evaluation.inventedCards.length + stored.evaluation.unknownCardLabels.length + stored.evaluation.proseCardMentions.length
+    const detectedFindings = stored.evaluation
+      ? stored.evaluation.inventedCards.length + stored.evaluation.unknownCardLabels.length
       : 0;
     const cachedCost = records.reduce((sum, record) => sum + (record.costUsd ?? 0) + (record.judge?.costUsd ?? 0), 0);
-    console.log(`${records.length}/${cases.length} ${benchmarkCase.id} ${stored.run.status} ${stored.run.latencyMs}ms tokens=${stored.usage.totalTokens ?? "?"} validatorFindings=${fatalOrModelFindings} cost=${cachedCost.toFixed(4)} USD`);
+    console.log(`${records.length}/${cases.length} ${benchmarkCase.id} ${stored.run.status} ${stored.run.latencyMs}ms tokens=${stored.usage.totalTokens ?? "?"} detectedFindings=${detectedFindings} cost=${cachedCost.toFixed(4)} USD`);
     if (options.maxCostUsd !== undefined && cachedCost >= options.maxCostUsd) {
       console.warn(`Reached --max-cost-usd ${options.maxCostUsd}; stopped after writing ${basename(jsonlPath)}.`);
       break;

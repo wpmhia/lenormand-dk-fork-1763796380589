@@ -6,7 +6,7 @@ import {
   SIMPLE_LENORMAND_SYSTEM_PROMPT,
   getTokenBudget,
 } from "@/lib/prompt-builder";
-import { findInventedCards, findInventedCardReferences } from "@/lib/invented-cards";
+import { findInventedCards } from "@/lib/invented-cards";
 import { SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import { SPREAD_IDS, type SpreadId } from "@/lib/spread-definitions";
@@ -302,7 +302,7 @@ describe("pipeline: one universal prompt for every spread", () => {
 // FACTUAL VALIDATION: invented cards
 // ======================================================================================
 
-describe("factual validation: cards[] is the strict source, prose only explicit references", () => {
+describe("factual validation: structured pattern labels", () => {
   const drawn = [2, 6, 24, 25]; // Clover, Clouds, Heart, Ring
   const base = {
     answer: "The situation stays open.",
@@ -332,57 +332,12 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
     expect(matches[0].fragment).toContain("Tower");
   });
 
-  it("flags only unambiguous prose references to an undrawn card", () => {
-    expect(ids(findInventedCards(answer({ reading: "The Clouds + Mice line points to erosion." }), drawn))).toContain(23);
-    expect(ids(findInventedCards(answer({ reading: "The Scythe card closes the line." }), drawn))).toContain(10);
-    expect(ids(findInventedCards(answer({ reading: "card Anchor sits apart." }), drawn))).toContain(35);
-  });
-
-  it("still flags an explicit combination that names an undrawn ordinary-word card", () => {
-    const matches = findInventedCards(answer({ reading: "The Clouds + Anchor line holds." }), drawn);
-    expect(ids(matches)).toEqual([35]);
-    expect(matches[0].fragment).toContain("Clouds + Anchor");
-  });
-
-  it("grounds free-text follow-ups with the same unambiguous-reference rule", () => {
-    // Explicit references to undrawn cards are flagged ...
-    expect(findInventedCardReferences("The Scythe card cuts the line.", drawn)).toHaveLength(1);
-    expect(findInventedCardReferences("The Clouds + Anchor line holds.", drawn)[0].id).toBe(35);
-    // ... while ordinary prose, including a natural pairing, is not.
-    expect(findInventedCardReferences("The man and woman should talk.", drawn)).toEqual([]);
-    expect(findInventedCardReferences("Anchor and Crossroads are ordinary words here.", drawn)).toEqual([]);
-  });
-
-  // Regression: a bare card word is ordinary language, never a card reference. The old
-  // detector scanned prose with a list of loose card words and rejected valid readings.
-  it("never treats a bare card name as a reference, whatever the casing", () => {
-    for (const mention of ["Rider", "rider", "The Rider", "Stork", "stork", "Scythe", "Coffin", "Clover", "Lily"]) {
-      expect(findInventedCards(answer({ reading: `The line turns on ${mention} here.` }), drawn), mention).toEqual([]);
-    }
-  });
-
-  it("does not mistake ordinary English words or natural pairings for cards", () => {
+  it("does not scan prose mentions because they may be negations or refer to another spread", () => {
     expect(
       findInventedCards(
         answer({
-          answer: "A man and a woman will have to talk about the key issue.",
-          reading:
-            "The heart of the matter is that their home feels heavy, and the letter they are waiting for crosses a line. Clouds gather before the anchor of the plan holds, and birds of a feather stick together.",
-          timing: "soon",
-        }),
-        drawn,
-      ),
-    ).toEqual([]);
-  });
-
-  it("does not mistake ordinary Dutch prose for card references", () => {
-    expect(
-      findInventedCards(
-        answer({
-          answer: "De man en de vrouw moeten met elkaar praten.",
-          reading:
-            "Het hart van de zaak is dat hun huis zwaar voelt, en de brief waarop ze wachten kruist een grens. De zon en de maan doen allebei mee, en de hond blijft trouw.",
-          timing: "binnenkort",
+          answer: "The Woman card is not present in this spread.",
+          reading: "The Scythe card appeared in the previous spread.",
         }),
         drawn,
       ),
@@ -398,7 +353,7 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
     expect(matches[0]).toMatchObject({ id: 10, field: "pattern", patternIndex: 0 });
   });
 
-  it("keeps the language check plain for every spread without rejecting drawn cards", () => {
+  it("flags only undrawn structured card labels across spread sizes", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const cards = draw(count, 13).map((card, position) => ({
         id: card.id,
@@ -408,9 +363,7 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
       }));
       const drawnIds = cards.map((card) => card.id);
       const undrawn = deck.find((card) => !drawnIds.includes(card.id));
-      const prose = "A man and a woman should talk it through; the sun and moon both have a say.";
       const reading = answer({
-        reading: prose,
         patterns: [
           { cards: [cards[0].name], meaning: "kept pattern" },
           ...(undrawn ? [{ cards: [undrawn.name], meaning: "invented pattern" }] : []),
@@ -474,11 +427,11 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
       expect(generateText).toHaveBeenCalledTimes(1);
     });
 
-    it("fails only on an explicit prose reference to an undrawn card, with field and fragment", async () => {
+    it("serves prose that mentions a card absent from this spread", async () => {
       generateText.mockResolvedValueOnce({
         text: JSON.stringify({
-          answer: "It will not hold.",
-          reading: "The Scythe card cuts the line short.",
+          answer: "The Woman card is not present in this spread.",
+          reading: "That card appeared in the previous spread, not this one.",
           patterns: [],
         }),
         finishReason: "stop",
@@ -491,10 +444,8 @@ describe("factual validation: cards[] is the strict source, prose only explicit 
         ]),
       );
 
-      expect(result.ok).toBe(false);
-      expect(result.ok === false && result.reason).toBe("invented-card");
-      expect(result.ok === false && result.issues[0]).toMatchObject({ type: "invented_card", field: "reading" });
-      expect(result.ok === false && result.issues[0].fragment).toContain("Scythe card");
+      expect(result.ok).toBe(true);
+      expect(result.ok && result.reading).toContain("The Woman card is not present in this spread.");
     });
 
     it("returns the reading when the model stays inside the drawn set", async () => {

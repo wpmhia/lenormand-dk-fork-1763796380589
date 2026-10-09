@@ -28,7 +28,6 @@ export interface Evaluation {
   deliveredReading: string | null;
   deliveredAnswer: string | null;
   deliveredPatterns: unknown[];
-  proseCardMentions: { card: string; field: string; fragment: string }[];
 }
 
 function cardIndexByName(context: ReadingContext, name: string): number {
@@ -169,8 +168,8 @@ export function evaluateOutput(raw: string, finishReason: string, context: Readi
     parseMode = "recovered";
   }
 
-  // Pattern-level findings are recorded before deterministic repair. The delivered object
-  // mirrors the production service's pattern drops and prose grounding failure.
+  // The delivered object mirrors production: invalid pattern labels are dropped. Prose is
+  // not scanned for card names because a mention may be a negation or refer to another spread.
   const drawnIds = context.cards.map((card) => card.id);
   const cardFindings = findInventedCards(answer, drawnIds);
   const labelFindings = findUnresolvedCardLabels(answer);
@@ -182,7 +181,6 @@ export function evaluateOutput(raw: string, finishReason: string, context: Readi
     ...answer,
     patterns: answer.patterns.filter((_, index) => !rejectedIndices.has(index)),
   };
-  const proseCardMentions = findInventedCards(delivered, drawnIds).filter((match) => match.field !== "pattern");
   const outputFailure = finishReason !== "stop" ? `finish_reason_${finishReason}` : null;
   const proseGeometry = [
     ...detectSpatialClaims(context, answer.answer ?? ""),
@@ -193,7 +191,7 @@ export function evaluateOutput(raw: string, finishReason: string, context: Readi
     parsed: true,
     schemaValid: true,
     parseMode,
-    appWouldServe: proseCardMentions.length === 0,
+    appWouldServe: true,
     finishReason,
     outputFailure,
     inventedCards: cardFindings.map((match) => ({ card: match.name, field: match.field, fragment: match.fragment })),
@@ -202,7 +200,6 @@ export function evaluateOutput(raw: string, finishReason: string, context: Readi
     deliveredReading: renderSimpleAnswer(delivered),
     deliveredAnswer: answer.answer,
     deliveredPatterns: delivered.patterns,
-    proseCardMentions: proseCardMentions.map((match) => ({ card: match.name, field: match.field, fragment: match.fragment })),
   };
 }
 
@@ -220,7 +217,6 @@ function failedEvaluation(finishReason: string, failure: string): Evaluation {
     deliveredReading: null,
     deliveredAnswer: null,
     deliveredPatterns: [],
-    proseCardMentions: [],
   };
 }
 
