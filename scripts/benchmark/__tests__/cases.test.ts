@@ -42,16 +42,24 @@ describe("benchmark cases", () => {
     expect(() => createBenchmarkCases(1, 1.5)).toThrow(/positive integer/);
   });
 
-  it("defines the missing-focus relationship case as an explicit content regression", () => {
-    const [regression] = createContentRegressionCases();
-    expect(regression).toMatchObject({
-      id: "content-person-card-without-focus-nl-001",
-      spreadId: "sentence-3",
-      language: "nl",
-      question: "Hoe ontwikkelt mijn relatie met mijn partner zich?",
-      cardIdsByPosition: [29, 24, 25],
-      significatorPreference: "both",
-    });
-    expect(regression.regressionTarget).toMatch(/unidentified|cannot represent the user's partner/i);
+  it("pairs suggestive and neutral Mahican questions over the same draw", () => {
+    const cases = createContentRegressionCases();
+    const suggestive = cases.find((item) => item.id === "content-mahican-suggestive-nl-001")!;
+    const neutral = cases.find((item) => item.id === "content-mahican-neutral-nl-001")!;
+
+    expect(suggestive.question).toBe("Op welke manier communiceert Mahican nog met buitenechtelijke mannen?");
+    expect(neutral.question).toBe("Welke thema's laten deze kaarten zien rond Mahicans communicatie?");
+    expect(suggestive.cardIdsByPosition).toEqual([31, 22, 25, 17, 21]);
+    expect(neutral.cardIdsByPosition).toEqual(suggestive.cardIdsByPosition);
+    expect(suggestive.significatorPreference).toBe("both");
+    expect(suggestive.regressionTarget).toMatch(/ongoing contact.*extramarital.*communication channel/i);
+  });
+
+  it("checks that missing confirmation does not become a negative or opposite fact", () => {
+    const regression = createContentRegressionCases().find((item) => item.id === "content-absence-is-not-opposite-nl-001")!;
+    expect(regression.question).toBe("Is Mahican gestopt met daten met andere mannen?");
+    expect(regression.cardIdsByPosition).toEqual([31, 22, 25, 17, 21]);
+    expect(regression.regressionTarget).toMatch(/continues dating.*stopped/i);
+    expect(regression.regressionTarget).toMatch(/Uncertainty is acceptable.*do not require a yes\/no/i);
   });
 });

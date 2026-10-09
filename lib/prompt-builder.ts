@@ -207,6 +207,7 @@ export function buildSpreadFacts(context: ReadingContext): string {
  * The output request: a four-field contract, nothing conditional.
  */
 const OUTPUT_CONTRACT = `Answer the exact question asked.
+The question sets the topic, not the facts: do not treat its unconfirmed assumptions as established. Interpret the cards symbolically and distinguish what they suggest from what remains unknown. Lack of confirmation proves neither the opposite nor continued activity; do not force a yes/no conclusion, and keep the answer and reading consistent.
 Use only meanings and combinations supported by the drawn cards.
 Do not infer from cards that were not drawn.
 Answer in the language of the user's question, using exactly one language.

@@ -20,13 +20,13 @@ The default run enables a separate DeepSeek V4 Pro quality/factuality judge (`de
 
 ## Fixed content regression cases
 
-Use `--content-regressions-only` to run the small, fixed qualitative cases separately from the seeded default set. The current case reproduces the identity failure where a drawn Woman card is called unidentified and ruled unable to represent the partner solely because no specific focus was selected. It asks the judge to check only for that failure; it does not prescribe a prediction or card meaning. The separate “no ending visible, therefore dating continues” inference is not part of this fix.
+Use `--content-regressions-only` to run the fixed qualitative cases separately from the seeded default set. Three cases use the same Sun, Paths, Ring, Stork and Mountain draw: the original suggestive Mahican question, a neutral wording for comparison, and a question about whether dating has stopped. Their review targets catch unsupported assumptions about ongoing/extramarital contact or channels, and the leap from “not confirmed” to “no” or “the opposite.” They do not prescribe a prediction or card meaning.
 
 ```bash
 # Inspect the exact prompt and case first; this does not contact a provider:
 npm run benchmark:readings -- --run-id person-identity-plan --pricing-period off-peak --content-regressions-only --plan-only
 
-# Optional: after reviewing the plan, run the case and judge (up to two paid calls):
+# Optional: after reviewing the plan, run the cases and judge (up to six paid calls):
 npm run benchmark:readings -- --run-id person-identity-check --pricing-period off-peak --content-regressions-only --confirm-paid-run
 ```
 
