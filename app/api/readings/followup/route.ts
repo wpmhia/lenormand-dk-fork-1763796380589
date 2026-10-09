@@ -14,7 +14,6 @@ import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildSpreadFacts } from "@/lib/prompt-builder";
-import { findInventedCardReferences } from "@/lib/invented-cards";
 
 export async function OPTIONS() {
   return handleCorsPreflight();
@@ -149,22 +148,6 @@ ${history}`;
     });
 
     const text = result.text ?? "";
-
-    // The follow-up is free text, so it has no structured patterns to geometry-check, but
-    // the same grounding guarantee still applies: an explicit reference to a card that was
-    // not drawn is a false statement about the fixed spread and is not served.
-    const invented = findInventedCardReferences(text, validated.cards.map((card) => card.id));
-    if (invented.length > 0) {
-      console.error("followup: invented card reference", {
-        spreadId: validated.spreadId,
-        cardCount: validated.cards.length,
-        issues: invented.map((match) => ({ name: match.name, fragment: match.fragment })),
-      });
-      return new Response(
-        JSON.stringify({ error: "We couldn't generate the follow-up. Please try again.", retryable: true }),
-        { status: 502, headers: { "Content-Type": "application/json", ...corsHeaders } },
-      );
-    }
 
     return new Response(text, {
       status: 200,

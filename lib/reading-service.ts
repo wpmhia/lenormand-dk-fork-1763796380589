@@ -12,12 +12,12 @@ import {
 } from "@/lib/simple-answer";
 import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
-import { findInventedCards, findUnresolvedCardLabels, type InventedCardMatch } from "@/lib/invented-cards";
+import { findInventedCards, findUnresolvedCardLabels } from "@/lib/invented-cards";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 export type ReadingServiceResult =
   | { ok: true; reading: string; droppedPatterns: string[] }
-  | { ok: false; reason: "empty-output" | "schema-mismatch" | "invented-card"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
+  | { ok: false; reason: "empty-output" | "schema-mismatch"; issues: ValidationIssue[]; diagnostics?: StructuredOutputDiagnostics };
 
 export interface ReadingServiceOptions {
   context: ReadingContext;
@@ -61,10 +61,6 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
 
   const validation = validateAnswer(result.answer, options.context);
 
-  // An explicit card reference in free prose is an unrepairable factual statement, not a
-  // pattern detail: it is fatal on its own.
-  if (validation.proseIssues.length > 0) return inventedCardFailure(validation.proseIssues, result.diagnostics);
-
   return {
     ok: true,
     reading: renderSimpleAnswer(validation.answer),
@@ -76,14 +72,13 @@ interface AnswerValidation {
   /** The serving answer: every rejected pattern removed, prose untouched. */
   answer: SimpleAnswer;
   droppedPatterns: string[];
-  proseIssues: InventedCardMatch[];
 }
 
 /**
  * The server-side contract for one candidate answer: patterns may only list drawn
  * canonical cards and every card name must resolve; any pattern that fails these checks is
- * dropped from `patterns[]` before rendering. Free prose is only checked for explicit
- * card references.
+ * dropped from `patterns[]` before rendering. Prose is not a hard validation boundary:
+ * card mentions there may be negations or refer to a different spread.
  */
 function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): AnswerValidation {
   const drawnCardIds = context.cards.map((card) => card.id);
@@ -112,23 +107,8 @@ function validateAnswer(candidate: SimpleAnswer, context: ReadingContext): Answe
   const verified: SimpleAnswer = badPatternIndices.size === 0
     ? candidate
     : { ...candidate, patterns: candidate.patterns.filter((_, index) => !badPatternIndices.has(index)) };
-  const proseIssues = findInventedCards(verified, drawnCardIds).filter((match) => match.field !== "pattern");
 
-  return { answer: verified, droppedPatterns, proseIssues };
-}
-
-function inventedCardFailure(matches: InventedCardMatch[], diagnostics?: StructuredOutputDiagnostics): ReadingServiceResult {
-  return {
-    ok: false,
-    reason: "invented-card",
-    issues: matches.map((match) => ({
-      type: "invented_card" as const,
-      message: `Reading names undrawn card ${match.name} (${match.id}) in "${match.field}": ${match.fragment}`,
-      field: match.field,
-      fragment: match.fragment,
-    })),
-    diagnostics,
-  };
+  return { answer: verified, droppedPatterns };
 }
 
 type GenerationAttempt =

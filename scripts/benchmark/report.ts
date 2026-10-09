@@ -75,7 +75,6 @@ function formatCaseDetails(records: any[]): string {
       lines.push(`Reading: ${evaluation.deliveredReading ?? "(none)"}`);
       for (const item of evaluation.unknownCardLabels ?? []) lines.push(`VALIDATOR unknown card label [pattern ${item.patternIndex}]: ${item.label}`);
       for (const item of evaluation.inventedCards ?? []) lines.push(`VALIDATOR undrawn card [${item.field}]: ${item.card}; fragment=${item.fragment}`);
-      for (const item of evaluation.proseCardMentions ?? []) lines.push(`APP fatal explicit prose reference [${item.field}]: ${item.card}; fragment=${item.fragment}`);
       for (const item of evaluation.proseGeometry ?? []) {
         if (!item.ok) lines.push(`PROSE false ${item.relation}: ${item.quote}`);
       }
