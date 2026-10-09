@@ -210,13 +210,24 @@ describe("model boundary: one contract for every spread", () => {
     const text = buildSimpleReadingPrompt(context("comprehensive", "Q?", draw(9)));
     expect(text).not.toMatch(/Be concrete, nuanced and predictive/);
     expect(text).toMatch(/Do not infer from cards that were not drawn/);
-    expect(text).toMatch(/do not complete a story beyond what the cards support/i);
-    expect(text).toMatch(/For yes\/no questions, answer yes\/no first/);
+    expect(text).not.toMatch(/For yes\/no questions, answer yes\/no first/i);
+    expect(text).not.toMatch(/Keep the explanation as short as the question allows/i);
+    expect(text).not.toMatch(/answer.*in one or two sentences/i);
     // The structural layer contains no preselected spaces, no clusters, no narrative
     // planning, and no surrogate minimum-interpretation rules besides the contract.
     expect(text).not.toMatch(/Verified clusters/);
     expect(text).not.toMatch(/narrative plan/i);
     expect(text).not.toMatch(/development line/i);
+  });
+
+  it.each([
+    ["why", "Why has my plan stalled?"],
+    ["how", "How could my position change?"],
+  ])("passes %s questions through without imposing a yes/no format", (_, question) => {
+    const text = buildSimpleReadingPrompt(context("comprehensive", question, draw(9)));
+
+    expect(text).toContain(`User question:\n${question}`);
+    expect(text).not.toMatch(/yes\/no first|one or two sentences|short as the question allows/i);
   });
 
   /**

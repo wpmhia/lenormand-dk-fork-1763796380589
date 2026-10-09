@@ -230,11 +230,8 @@ export function buildSpreadFacts(context: ReadingContext): string {
  * The output request: a four-field contract, nothing conditional.
  */
 const OUTPUT_CONTRACT = `Answer the exact question asked.
-For yes/no questions, answer yes/no first.
 Use only meanings and combinations supported by the drawn cards.
 Do not infer from cards that were not drawn.
-Do not complete a story beyond what the cards support.
-Keep the explanation as short as the question allows.
 Answer in the language of the user's question, using exactly one language.
 If a person card is unbound, treat it explicitly as unidentified: it is not a spouse, partner, named person or pronoun.
 
@@ -245,8 +242,8 @@ Return only one JSON object with exactly these fields:
   "patterns": [{ "cards": string[], "meaning": string }],
   "timing": string | null
 }
-- answer answers the question directly in one or two sentences.
-- reading is the explanation as prose. Interpret only what the drawn cards support; do not complete a story beyond the cards and do not use absent cards as evidence.
+- answer responds directly to the question.
+- reading explains the interpretation in prose.
 - patterns lists the card groups you actually interpreted. "cards" is an array of canonical English card names, one name per element. Never put a combined string in one element, and never translate these names into the user's language inside "cards".
 - "meaning" states the interpretation of that group; it may be written in the user's language.
 - timing is null when the spread does not ground a timing.

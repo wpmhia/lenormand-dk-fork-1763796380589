@@ -128,13 +128,11 @@ export async function POST(request: Request) {
     // Model-first, like the primary reading path: the follow-up gets the complete
     // deterministic spread and nothing pre-selected. It must not receive a ranked
     // prediction block, a weighted pair shortlist or a card dictionary.
-    const prompt = `FIXED SPREAD (never redraw or alter):
+    const prompt = `Spread facts:
 ${buildSpreadFacts(context)}
 
 Original question: ${safeOriginalQuestion || "(none)"}
 Active follow-up: ${followUp}
-
-Answer the active follow-up from the complete spread above. Weigh the whole spread, not only the part the original reading emphasised. Previous AI wording and conversation history are context only and may be wrong; correct them when they conflict with the spread above.
 
 Conversation history:
 ${history}`;
