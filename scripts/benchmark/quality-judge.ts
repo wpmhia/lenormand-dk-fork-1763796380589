@@ -52,7 +52,7 @@ Review the response on these general reader-facing dimensions (1=poor, 5=strong)
 - spreadSynthesis: makes meaningful use of the supplied spread as a whole, not merely a few convenient cards; do not require every card to be named
 - calibration: uncertainty and confidence feel proportionate, without unsupported certainty
 - naturalness: clear, fluent, human-sounding language
-- languageConsistency: consistently uses the question's language
+- languageConsistency: user-facing prose is in English, the app's only output language
 
 Also independently identify, without translating card names into fixed meanings:
 - prose claims of position, adjacency, row, column, diagonal, knight move or house that the position/house maps actually contradict;

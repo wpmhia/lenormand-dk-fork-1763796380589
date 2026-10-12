@@ -14,7 +14,7 @@ Default: **100 generated cases for each of five sizes** (500 primary DeepSeek ca
 | 9 | Petit Tableau |
 | 36 | Grand Tableau |
 
-The card draw, order, question language, question selection and significator preference are determined by the seed. Questions are varied English/Dutch user-style questions about work, relationships, education, relocation, projects and decisions. They contain no expected answer, card meaning, or injected interpretation rule. DeepSeek output itself remains stochastic: the provider call has no fixed generation seed, which is stated in every run manifest.
+The card draw, order, English question selection and significator preference are determined by the seed. Questions cover work, relationships, education, relocation, projects and decisions. They contain no expected answer, card meaning, or injected interpretation rule. DeepSeek output itself remains stochastic: the provider call has no fixed generation seed, which is stated in every run manifest.
 
 The default run enables a separate DeepSeek V4 Pro quality/factuality judge (`deepseek-v4-pro`), so a complete run can make up to **1,000 paid calls** (500 reading calls + up to 500 judge calls). The judge is reported separately and is not ground truth. An independently completed human review is required before making claims about interpretive quality.
 

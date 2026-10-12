@@ -5,7 +5,6 @@ import type {
   LinearSentenceLayout,
   PetitTableauLayout,
 } from "@/lib/reading-context";
-import { detectQuestionLanguage } from "@/lib/question-language";
 
 /**
  * The server supplies the current question, drawn cards, deterministic spread facts, and
@@ -14,7 +13,7 @@ import { detectQuestionLanguage } from "@/lib/question-language";
  * lives in the user prompt beside the evidence. The system prompt only locks the output
  * language; it does not add an interpretation method or card meanings.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Match the exact natural language of the user's question in every user-facing prose field. English card references do not change the response language. Never switch languages. Keep canonical English names only in patterns[].cards.";
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Write every user-facing prose field in English. Do not switch languages. Keep canonical English names in patterns[].cards.";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 800;
@@ -170,7 +169,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
 }
 
 function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): string[] {
-  const facts = ["Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping):"];
+  const facts = ["Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:"];
 
   for (const person of [
     { id: 28, name: "Man" },
@@ -200,6 +199,16 @@ function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): strin
     }
 
     facts.push(`- ${person.name}: row ${row + 1}, column ${column + 1}; immediate neighbours: ${neighbours.length ? neighbours.join(", ") : "none"}.`);
+
+    const twoColumnsAway = [-2, 2].flatMap((offset) => {
+      const separatedColumn = column + offset;
+      if (separatedColumn < 0 || separatedColumn >= GT_GRID_COLUMNS) return [];
+      const separated = cards[row * GT_GRID_COLUMNS + separatedColumn];
+      return separated ? [`${fmtCard(separated)} (${offset < 0 ? "two columns left" : "two columns right"})`] : [];
+    });
+    if (twoColumnsAway.length > 0) {
+      facts.push(`- Non-neighbours exactly two columns from ${person.name} in the same row: ${twoColumnsAway.join(", ")}.`);
+    }
   }
 
   return facts;
@@ -287,13 +296,13 @@ export function buildSpreadFacts(context: ReadingContext): string {
  */
 const OUTPUT_CONTRACT = `Answer the exact question asked.
 The question sets the topic, not the facts: do not treat its unconfirmed assumptions as established. Interpret the cards symbolically and distinguish what they suggest from what remains unknown. Lack of confirmation proves neither the opposite nor continued activity; do not force a yes/no conclusion, and keep the answer and reading consistent.
-Do not map Man or Woman to the querent, partner, or a named person unless that identity is explicit in the current question or selected reading focus. A person-card label alone does not establish identity or relationship.
+Do not map Man or Woman to the querent, partner, or a named person unless the user explicitly identifies that mapping. Merely mentioning a partner or name does not specify which person card represents them. A selected reading focus directs attention only; it does not identify a real person.
 Use the core meanings as inputs for a contextual synthesis, not as definitions to concatenate. Relate combinations to the current question, the neighboring cards, and the spread's actual positions.
 In a linear spread, preserve the given left-to-right order; do not silently reverse a pair or assume both orders mean the same thing. Explain the dominant supported interpretation first, then acknowledge material contrary indications. Use only meanings and combinations supported by the drawn cards.
 Only describe a pairing as established Lenormand doctrine when a source-reviewed pair entry is supplied. Without one, describe the pairing as contextual interpretation rather than a fixed traditional rule.
 For predictive questions, give the strongest symbolically supported tendency without guarantees or invented probabilities. Avoid generic coaching, unsupported concrete events or motives, and repeated hedging that obscures the reading.
 Do not infer from cards that were not drawn.
-Keep user-facing prose in the question's language.
+Write all user-facing prose in English.
 
 Return only one JSON object with exactly these fields:
 {
@@ -305,9 +314,9 @@ Return only one JSON object with exactly these fields:
 - answer responds directly to the question.
 - reading explains the interpretation in prose.
 - patterns lists the card groups you actually interpreted. "cards" is an array of canonical English card names, one name per element. Never put a combined string in one element, and never translate these names into the user's language inside "cards".
-- "meaning" states the interpretation of that group; it may be written in the user's language.
+- "meaning" states the interpretation of that group in English.
 - timing is null when the spread does not ground a timing.
-- Internal references: every name inside "patterns[].cards" is the canonical English card name. "answer" and "reading" are written in the language of the user's question, using exactly one language throughout, and never contain English card names where the user's language has its own word for the same card.
+ - Internal references: every name inside "patterns[].cards" is the canonical English card name. All user-facing prose, including "answer", "reading", and "patterns[].meaning", is written in English.
 - Do not rename, add, or remove fields. Do not use Markdown fences.`;
 
 /**
@@ -317,9 +326,7 @@ Return only one JSON object with exactly these fields:
  * interpretation input.
  */
 function simplePromptHeader(context: ReadingContext): string {
-  const language = detectQuestionLanguage(context.question);
-  const hint = language ? `; identified as ${language}` : "; no reliable language hint";
-  return `User question (answer only in the same language${hint}):\n${context.question}`;
+  return `User question (the app responds in English):\n${context.question}`;
 }
 
 /**

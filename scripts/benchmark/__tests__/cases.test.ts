@@ -23,7 +23,7 @@ describe("benchmark cases", () => {
     expect(createBenchmarkCases(42, 10)).not.toEqual(createBenchmarkCases(43, 10));
   });
 
-  it("uses the canonical deck without replacement and varies natural question language", () => {
+  it("uses the canonical deck without replacement and English questions only", () => {
     const allowedIds = new Set(CARD_CATALOG.map((card) => card.id));
     const cases = createBenchmarkCases(13579, 50);
     for (const benchmarkCase of cases) {
@@ -33,8 +33,7 @@ describe("benchmark cases", () => {
       expect(benchmarkCase.question.length).toBeGreaterThan(40);
     }
     expect(new Set(cases.filter((item) => item.spreadId === "sentence-5").map((item) => item.question)).size).toBeGreaterThan(10);
-    expect(cases.some((item) => item.language === "en")).toBe(true);
-    expect(cases.some((item) => item.language === "nl")).toBe(true);
+    expect(cases.every((item) => item.language === "en")).toBe(true);
   });
 
   it("rejects invalid sample sizes", () => {
@@ -51,11 +50,11 @@ describe("benchmark cases", () => {
 
   it("pairs suggestive and neutral questions over the same draw", () => {
     const cases = createContentRegressionCases();
-    const suggestive = cases.find((item) => item.id === "content-assumption-suggestive-nl-001")!;
-    const neutral = cases.find((item) => item.id === "content-assumption-neutral-nl-001")!;
+    const suggestive = cases.find((item) => item.id === "content-assumption-suggestive-en-001")!;
+    const neutral = cases.find((item) => item.id === "content-assumption-neutral-en-001")!;
 
-    expect(suggestive.question).toBe("Op welke manier communiceert deze persoon nog met other people?");
-    expect(neutral.question).toBe("Welke thema's laten deze kaarten zien rond de communicatie van deze persoon?");
+    expect(suggestive.question).toBe("How is this person still communicating with extramarital men?");
+    expect(neutral.question).toBe("What themes do these cards show around this person's communication?");
     expect(suggestive.cardIdsByPosition).toEqual([31, 22, 25, 17, 21]);
     expect(neutral.cardIdsByPosition).toEqual(suggestive.cardIdsByPosition);
     expect(suggestive.significatorPreference).toBe("both");
@@ -63,8 +62,8 @@ describe("benchmark cases", () => {
   });
 
   it("checks that missing confirmation does not become a negative or opposite fact", () => {
-    const regression = createContentRegressionCases().find((item) => item.id === "content-absence-is-not-opposite-nl-001")!;
-    expect(regression.question).toBe("Is deze persoon gestopt met daten met andere mannen?");
+    const regression = createContentRegressionCases().find((item) => item.id === "content-absence-is-not-opposite-en-001")!;
+    expect(regression.question).toBe("Has this person stopped dating other men?");
     expect(regression.cardIdsByPosition).toEqual([31, 22, 25, 17, 21]);
     expect(regression.regressionTarget).toMatch(/continues dating.*stopped/i);
     expect(regression.regressionTarget).toMatch(/Uncertainty is acceptable.*do not require a yes\/no/i);

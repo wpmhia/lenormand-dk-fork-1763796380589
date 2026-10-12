@@ -61,13 +61,14 @@ describe("follow-up system prompt", () => {
     expect(JSON.stringify(payload)).not.toContain("Private note");
   });
 
-  it("locks clear Dutch follow-ups to Dutch without adding translations", () => {
+  it("keeps follow-up output English", () => {
     const prompt = buildFollowupPrompt({
-      spreadFacts: "positie 1: Ruiter",
-      originalQuestion: "Verandert mijn situatie?",
-      activeQuestion: "Wat wijst op vertraging?",
+      spreadFacts: "position 1: Rider",
+      originalQuestion: "Will the situation change?",
+      activeQuestion: "What suggests a delay?",
     });
-    expect(prompt).toContain("Respond in Dutch only.");
+    expect(prompt).toContain("Respond in English only.");
+    expect(prompt).toContain("Active follow-up: What suggests a delay?");
   });
 
   it("is much shorter than the full reading system prompt and stays under 50 lines", () => {

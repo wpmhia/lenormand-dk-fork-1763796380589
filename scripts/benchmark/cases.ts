@@ -16,7 +16,7 @@ export interface BenchmarkCase {
   spreadLabel: string;
   cardCount: number;
   question: string;
-  language: "en" | "nl";
+  language: "en";
   cardIdsByPosition: number[];
   significatorPreference: "woman" | "man" | "both";
   regressionTarget?: string;
@@ -34,14 +34,14 @@ export function createContentRegressionCases(): BenchmarkCase[] {
     3, 31, 12, 27, 8, 24, 16, 34, 2,
     23, 10, 4, 36, 9, 32, 6, 22, 5,
   ];
-  const makeCase = (id: string, question: string, regressionTarget: string): BenchmarkCase => ({
+  const makeEnglishLineCase = (id: string, question: string, regressionTarget: string): BenchmarkCase => ({
     id,
     seed: 0,
     spreadId: "sentence-5",
     spreadLabel: SPREAD_DEFINITIONS["sentence-5"].label,
     cardCount: cardIdsByPosition.length,
     question,
-    language: "nl",
+    language: "en",
     cardIdsByPosition: [...cardIdsByPosition],
     significatorPreference: "both",
     regressionTarget,
@@ -66,19 +66,19 @@ export function createContentRegressionCases(): BenchmarkCase[] {
   });
 
   return [
-    makeCase(
-      "content-assumption-suggestive-nl-001",
-      "Op welke manier communiceert deze persoon nog met other people?",
+    makeEnglishLineCase(
+      "content-assumption-suggestive-en-001",
+      "How is this person still communicating with extramarital men?",
       "Check whether the answer treats ongoing contact, the men being extramarital, or a specific communication channel as established facts merely because the question presupposes them. Do not require a particular prediction or card meaning.",
     ),
-    makeCase(
-      "content-assumption-neutral-nl-001",
-      "Welke thema's laten deze kaarten zien rond de communicatie van deze persoon?",
+    makeEnglishLineCase(
+      "content-assumption-neutral-en-001",
+      "What themes do these cards show around this person's communication?",
       "This is the neutral counterpart to the suggestive case with the identical draw. Check that the reading stays grounded in symbolic interpretation and does not invent real-world contacts or channels. Do not require a particular prediction or card meaning.",
     ),
-    makeCase(
-      "content-absence-is-not-opposite-nl-001",
-      "Is deze persoon gestopt met daten met andere mannen?",
+    makeEnglishLineCase(
+      "content-absence-is-not-opposite-en-001",
+      "Has this person stopped dating other men?",
       "Flag either a factual 'no, she continues dating' or a definite 'yes, she stopped' if it is justified solely by missing confirmation or an absent ending. Uncertainty is acceptable; do not require a yes/no answer or judge card meanings.",
     ),
     {
@@ -176,29 +176,6 @@ const EN_QUESTIONS = [
   "I'm trying to work out whether a recent change is temporary or a lasting shift. What does the spread suggest?",
 ];
 
-const NL_QUESTIONS = [
-  "Ik heb binnenkort een sollicitatiegesprek voor een functie die ik graag wil. Hoe kan deze kans zich de komende weken ontwikkelen?",
-  "Mijn partner en ik praten over samenwonen. Welke richting laat deze relatie op dit moment zien?",
-  "Ik wacht op nieuws over de verlenging van mijn contract. Hoe ziet de ontwikkeling op mijn werk eruit?",
-  "Ik heb me aangemeld voor een opleiding die mijn loopbaan kan veranderen. Wat is belangrijk om te begrijpen over deze keuze?",
-  "Een vriend en ik hadden een lastig gesprek en sindsdien is het afstandelijk. Hoe kan dit contact zich ontwikkelen?",
-  "Ik overweeg dichter bij familie te gaan wonen, maar twijfel over het moment. Wat zegt de legging over die keuze?",
-  "Ik ben met een collega een project begonnen en we beslissen of we er meer tijd in steken. Hoe ziet het er nu uit?",
-  "Misschien kan ik op mijn werk meer verantwoordelijkheid krijgen. Wordt dit waarschijnlijk een concrete kans?",
-  "Ik twijfel of ik een gespannen familieband moet herstellen. Hoe kan het verlopen als ik contact zoek?",
-  "Ik date nu een paar maanden met iemand en wil weten waar we staan. Welke ontwikkeling is het meest waarschijnlijk?",
-  "Voor een verhuizing moet ik nog een paar praktische beslissingen nemen. Wat kan ik op korte termijn verwachten?",
-  "Ik twijfel tussen twee studierichtingen en moet binnenkort kiezen. Wat laat de legging over mijn beslissing zien?",
-  "Mijn team wordt opnieuw ingedeeld. Hoe kan mijn positie op het werk veranderen?",
-  "Ik heb een voorstel naar een mogelijke klant gestuurd en wacht op antwoord. Wat is de waarschijnlijke volgende stap?",
-  "Ik voel me onzeker over een nieuwe vriendschap. Wat kan deze legging vertellen over het contact zoals het nu is?",
-  "Ik beslis of ik in mijn huidige functie blijf of verder zoek. Welke richting wordt op dit moment meer gesteund?",
-  "Een plan waar ik al lang aan werk is stilgevallen. Pakt dit waarschijnlijk weer op?",
-  "Ik wil graag een open gesprek voeren met iemand die belangrijk voor me is. Wat kan daarvan komen?",
-  "Ik heb binnenkort een deadline voor een persoonlijk doel. Hoe ziet de komende maand er waarschijnlijk uit?",
-  "Ik probeer te begrijpen of een recente verandering tijdelijk is of blijvend. Wat suggereert de legging?",
-];
-
 function shuffled<T>(items: T[], random: Random): T[] {
   const result = [...items];
   for (let index = result.length - 1; index > 0; index--) {
@@ -221,8 +198,6 @@ export function createBenchmarkCases(seed: number, countPerSpread = 100): Benchm
     return Array.from({ length: countPerSpread }, (_, index) => {
       const caseSeed = hashSeed(seed, `${id}:${index}`);
       const random = seededRandom(caseSeed);
-      const language = random() < 0.5 ? "en" : "nl";
-      const questions = language === "en" ? EN_QUESTIONS : NL_QUESTIONS;
       const cardIdsByPosition = shuffled(deck, random).slice(0, count).map((card) => card.id);
       const focus = random();
       const significatorPreference = focus < 1 / 3 ? "man" : focus < 2 / 3 ? "woman" : "both";
@@ -232,8 +207,8 @@ export function createBenchmarkCases(seed: number, countPerSpread = 100): Benchm
         spreadId: id,
         spreadLabel: definition.label,
         cardCount: count,
-        question: questions[Math.floor(random() * questions.length)],
-        language,
+        question: EN_QUESTIONS[Math.floor(random() * EN_QUESTIONS.length)],
+        language: "en",
         cardIdsByPosition,
         significatorPreference,
       };

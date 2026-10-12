@@ -1,5 +1,3 @@
-import { detectQuestionLanguage } from "@/lib/question-language";
-
 export const FOLLOWUP_SYSTEM_PROMPT = `You answer an active follow-up question about a fixed Lenormand spread.
 
 Interpret this follow-up independently from only the supplied fixed spread, original question, and active follow-up question. Do not rely on previous readings, predictions, outcomes, notes, or personal history.
@@ -10,7 +8,7 @@ Answer the active follow-up directly, with enough explanation to address what wa
 
 If the spread does not distinguish between alternatives, say so rather than inventing a distinction.
 Do not use Tarot/New Age language.
-Do not invent cards that were not drawn. Use the language of the follow-up question throughout; if it is ambiguous, use English.
+Do not invent cards that were not drawn. Write every user-facing field in English.
 
 Use card combinations and positions within the active question frame. Isolated card meanings do not override the question domain.`;
 
@@ -41,7 +39,5 @@ export function buildFollowupRequestPayload(input: FollowupRequestPayloadInput) 
 }
 
 export function buildFollowupPrompt(input: FollowupPromptInput): string {
-  const language = detectQuestionLanguage(input.activeQuestion) ?? detectQuestionLanguage(input.originalQuestion);
-  const languageHint = language ? `Respond in ${language} only.` : "Respond in the active question's language.";
-  return `${languageHint}\n\nFixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
+  return `Respond in English only.\n\nFixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
 }

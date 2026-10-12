@@ -144,7 +144,9 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
   it("handles corner boundaries and includes diagonal neighbours without row wrapping", () => {
     expect(facts).toContain("- Man: row 1, column 1; immediate neighbours: Snake, Key, Book.");
     expect(facts).toContain("- Woman: row 2, column 9; immediate neighbours: Bear, Dog, Whip, Fish, Clover.");
-    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping):");
+    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:");
+    expect(facts).toContain("- Non-neighbours exactly two columns from Man in the same row: Fox (two columns right).");
+    expect(facts).toContain("- Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
     const manNeighbours = facts.split("\n").find((line) => line.startsWith("- Man:"))!;
     const womanNeighbours = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
     expect(manNeighbours).not.toContain("Tree");

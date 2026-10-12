@@ -100,7 +100,7 @@ describe("benchmark factual evaluation", () => {
   });
 
   it("feeds the observed unsupported-contact claims into the content-regression judge", () => {
-    const benchmarkCase = createContentRegressionCases().find((item) => item.id === "content-assumption-suggestive-nl-001")!;
+    const benchmarkCase = createContentRegressionCases().find((item) => item.id === "content-assumption-suggestive-en-001")!;
     const context = buildReadingContext(
       benchmarkCase.spreadId,
       benchmarkCase.question,
@@ -109,20 +109,20 @@ describe("benchmark factual evaluation", () => {
       benchmarkCase.significatorPreference,
     );
     const evaluation = evaluateOutput(JSON.stringify({
-      answer: "This person still communicates with other people via een zichtbaar kanaal.",
-      reading: "Het contact verloopt eerst zichtbaar, wordt bevestigd in een afspraak, verandert van vorm en loopt uiteindelijk vast.",
+      answer: "This person is still communicating with extramarital men through a visible channel.",
+      reading: "The contact is open at first, becomes an agreement, changes form, and eventually meets a block.",
       patterns: [
-        { cards: ["Sun", "Paths"], meaning: "Contact verloopt openlijk via een kanaal." },
-        { cards: ["Paths", "Ring"], meaning: "De route wordt bevestigd in een afspraak." },
-        { cards: ["Ring", "Stork"], meaning: "De afspraak verandert." },
-        { cards: ["Stork", "Mountain"], meaning: "De verandering loopt vast." },
+        { cards: ["Sun", "Paths"], meaning: "Contact proceeds openly by a channel." },
+        { cards: ["Paths", "Ring"], meaning: "The route is confirmed in an agreement." },
+        { cards: ["Ring", "Stork"], meaning: "The agreement changes." },
+        { cards: ["Stork", "Mountain"], meaning: "The change is blocked." },
       ],
       timing: null,
     }), "stop", context);
     const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
 
     expect(prompt).toContain(benchmarkCase.question);
-    expect(prompt).toContain("This person still communicates with other people");
+    expect(prompt).toContain("This person is still communicating with extramarital men");
     expect(prompt).toContain("Regression target");
     expect(prompt).toMatch(/ongoing contact.*extramarital.*communication channel/i);
   });

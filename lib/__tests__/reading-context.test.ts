@@ -37,8 +37,8 @@ describe("reading-context: input invariants", () => {
   });
 
   it("keeps the exact question it was given", () => {
-    const ctx = buildReadingContext("sentence-3", "Hoe ontwikkelt mijn relatie zich?", draw(3), cardsMap);
-    expect(ctx.question).toBe("Hoe ontwikkelt mijn relatie zich?");
+    const ctx = buildReadingContext("sentence-3", "How might my relationship develop?", draw(3), cardsMap);
+    expect(ctx.question).toBe("How might my relationship develop?");
   });
 
   it("contains no situation context beyond the current question", () => {

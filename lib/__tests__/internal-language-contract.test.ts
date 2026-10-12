@@ -28,13 +28,14 @@ describe("prompt-builder: internal references keep one stable card vocabulary", 
     expect(prompt).toMatch(/never translate these names into the user's language inside "cards"/);
   });
 
-  it("explicitly separates the free-text language from the internal card vocabulary", () => {
+  it("keeps all free text English while card labels stay canonical English", () => {
     const prompt = buildSimpleReadingPrompt(
-      buildReadingContext("sentence-3", "Will I move?", draw(3, 0), cardsMap),
+      buildReadingContext("sentence-3", "How could this situation change?", draw(3, 0), cardsMap),
     );
     expect(prompt).toMatch(/every name inside "patterns\[\]\.cards" is the canonical English card name/);
-    expect(prompt).toMatch(/"answer" and "reading" are written in the language of the user's question/);
-    expect(prompt).toMatch(/never contain English card names where the user's language has its own word/);
+    expect(prompt).toContain("User question (the app responds in English)");
+    expect(prompt).toMatch(/Write all user-facing prose in English/);
+    expect(prompt).toMatch(/"answer", "reading", and "patterns\[\]\.meaning", is written in English/);
   });
 
   it("does not include or imply multilingual card aliases", () => {
