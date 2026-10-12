@@ -5,6 +5,7 @@ import type {
   LinearSentenceLayout,
   PetitTableauLayout,
 } from "@/lib/reading-context";
+import { detectQuestionLanguage } from "@/lib/question-language";
 
 /**
  * The server supplies the current question, drawn cards, deterministic spread facts, and
@@ -316,7 +317,9 @@ Return only one JSON object with exactly these fields:
  * interpretation input.
  */
 function simplePromptHeader(context: ReadingContext): string {
-  return `User question (respond only in the same language):\n${context.question}`;
+  const language = detectQuestionLanguage(context.question);
+  const hint = language ? `; identified as ${language}` : "; no reliable language hint";
+  return `User question (answer only in the same language${hint}):\n${context.question}`;
 }
 
 /**

@@ -244,7 +244,7 @@ describe("model boundary: one contract for every spread", () => {
   ])("passes %s questions through without imposing a yes/no format", (_, question) => {
     const text = buildSimpleReadingPrompt(context("comprehensive", question, draw(9)));
 
-    expect(text).toContain(`User question (respond only in the same language):\n${question}`);
+    expect(text).toContain(`User question (answer only in the same language; identified as English):\n${question}`);
     expect(text).not.toMatch(/yes\/no first|one or two sentences|short as the question allows/i);
   });
 
@@ -272,7 +272,7 @@ describe("pipeline: one universal prompt for every spread", () => {
     const text = prompt(id, "Will I move house?", cards);
 
     for (const skeleton of [
-      "User question (respond only in the same language):",
+      "User question (answer only in the same language; identified as English):",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
       "Answer the exact question asked",

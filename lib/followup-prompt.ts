@@ -1,3 +1,5 @@
+import { detectQuestionLanguage } from "@/lib/question-language";
+
 export const FOLLOWUP_SYSTEM_PROMPT = `You answer an active follow-up question about a fixed Lenormand spread.
 
 Interpret this follow-up independently from only the supplied fixed spread, original question, and active follow-up question. Do not rely on previous readings, predictions, outcomes, notes, or personal history.
@@ -39,5 +41,7 @@ export function buildFollowupRequestPayload(input: FollowupRequestPayloadInput) 
 }
 
 export function buildFollowupPrompt(input: FollowupPromptInput): string {
-  return `Fixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
+  const language = detectQuestionLanguage(input.activeQuestion) ?? detectQuestionLanguage(input.originalQuestion);
+  const languageHint = language ? `Respond in ${language} only.` : "Respond in the active question's language.";
+  return `${languageHint}\n\nFixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
 }
