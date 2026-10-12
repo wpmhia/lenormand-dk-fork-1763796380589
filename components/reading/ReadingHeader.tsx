@@ -89,7 +89,7 @@ export function ReadingHeader({
         {/* Significator selector for Grand Tableau */}
         {reading.layoutType === 36 && (
           <div className="flex items-center gap-2">
-            <span className="text-xs">Significator:</span>
+            <span className="text-xs">Reading focus:</span>
             <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-5 w-5 p-0">
@@ -98,9 +98,7 @@ export function ReadingHeader({
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
                   <p className="text-sm">
-                    The <strong>Significator</strong> represents the querent (person asking the question).
-                    Card 29 (Woman/Anima) or 28 (Man/Animus) marks their position in the spread,
-                    allowing directional readings (past/future from their perspective).
+                    Selecting Man (28) or Woman (29) focuses the reading on that card only. It does not identify the querent, a partner, or another person. Relative labels show positions in the grid, not universal past/future meanings.
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -118,13 +116,13 @@ export function ReadingHeader({
                 <SelectItem value="anima">
                   <div className="flex items-center gap-2">
                     <User className="h-3 w-3" />
-                    Anima (29)
+                  Woman (29)
                   </div>
                 </SelectItem>
                 <SelectItem value="animus">
                   <div className="flex items-center gap-2">
                     <User className="h-3 w-3" />
-                    Animus (28)
+                  Man (28)
                   </div>
                 </SelectItem>
               </SelectContent>

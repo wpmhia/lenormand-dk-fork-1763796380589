@@ -20,7 +20,15 @@ const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 function contextFor(ids: number[]) {
   const cards = ids.map((id, index) => {
     const card = deck.find((entry) => entry.id === id)!;
-    return { id: card.id, name: card.name, keywords: card.keywords, position: index };
+    return {
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+      position: index,
+    };
   });
   return buildReadingContext("sentence-5", "Will I hear back soon?", cards, cardsMap);
 }

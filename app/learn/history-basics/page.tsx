@@ -47,11 +47,11 @@ export default function HistoryBasicsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="leading-relaxed text-muted-foreground">
-            Lenormand is a form of cartomancy (divination using cards) that
-            originated in 18th century France. Unlike Tarot&apos;s esoteric
-            symbolism, Lenormand speaks in the language of everyday symbols and
-            practical wisdom. Its 36 cards represent concrete concepts, people,
-            and situations that mirror real life.
+            Petit Lenormand is a 36-card cartomancy deck that uses everyday
+            images. A related 36-card German parlour game, <em>Das Spiel der
+            Hoffnung</em>, was published around 1799. The later deck was
+            posthumously associated with Marie-Anne Lenormand; the exact history
+            of that connection is not fully documented.
           </p>
           <p className="leading-relaxed text-muted-foreground">
             The modern 36-card deck and its interpretation methods became known
@@ -59,11 +59,10 @@ export default function HistoryBasicsPage() {
             legendary French fortune teller Marie Anne Adelaide Lenormand.
             While she didn&apos;t leave behind a documented system for this
             specific deck, the symbolic language and reading traditions
-            connected to her name reflect the evolution of divination during and
-            after her era. This platform offers an interpretation inspired by
-            the spirit of Lenormand readings as they developed historically,
-            providing clear, direct guidance on relationships, career, health,
-            and life&apos;s important decisions.
+            connected to her name developed through later publishers and
+            practitioners. This platform provides a source-compared, symbolic
+            interpretation of the current question and drawn cards; it is not
+            evidence of events or a guaranteed forecast.
           </p>
         </CardContent>
       </Card>
@@ -97,10 +96,11 @@ export default function HistoryBasicsPage() {
               Das Spiel der Hoffnung (The Game of Hope)
             </h3>
             <p className="leading-relaxed text-muted-foreground">
-              The 36-card deck actually evolved from a German board game
-              published around 1799 by Johann Kaspar Hechtel. Originally
-              designed as a game of chance, the cards&apos; symbolic meanings
-              naturally lent themselves to divination.
+              <em>Das Spiel der Hoffnung</em> is a 36-card German parlour game
+              published around 1799 and associated with Johann Kaspar Hechtel.
+              Its surviving instructions describe the game and a playful oracle
+              layout; they do not give the modern fixed divinatory meanings for
+              every card.
             </p>
           </div>
 
@@ -118,12 +118,12 @@ export default function HistoryBasicsPage() {
 
           <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
             <p className="text-sm text-foreground">
-              <strong>Historical Note:</strong> While Lenormand was a legendary
-              diviner, she did not leave behind a documented system specifically
-              for the 36-card deck. The modern Lenormand system and
-              interpretations were developed and popularized{" "}
-              <em>after her death</em> by publishers and readers who honored her
-              legacy by associating the deck with her name.
+              <strong>Historical Note:</strong> The modern Petit Lenormand is
+              associated with her name, but the surviving record does not
+              establish that Marie-Anne Lenormand designed this 36-card deck or
+              authored its current card meanings and pair methods. Treat modern
+              keywords as later interpretations, not as direct quotations from
+              her practice.
             </p>
           </div>
         </CardContent>

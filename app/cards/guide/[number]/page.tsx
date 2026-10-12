@@ -133,7 +133,7 @@ export default async function CardGuidePage({ params }: CardGuidePageProps) {
         {/* Card Combinations */}
         <Card className="mb-8 border-border bg-card">
           <CardHeader>
-            <CardTitle id="combinations">Common Combinations</CardTitle>
+            <CardTitle id="combinations">Source-Reviewed Combinations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {card.combos && card.combos.length > 0 ? (
@@ -153,7 +153,7 @@ export default async function CardGuidePage({ params }: CardGuidePageProps) {
               })
             ) : (
               <div className="text-sm text-muted-foreground">
-                No combinations available for this card.
+                No pair interpretations for this card have been source-reviewed for publication as doctrine. Interpret combinations from the current question and actual spread context instead of treating uncatalogued pairs as fixed meanings.
               </div>
             )}
           </CardContent>

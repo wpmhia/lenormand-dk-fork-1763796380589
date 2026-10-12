@@ -2,15 +2,13 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Script from "next/script";
 import { getCardById, getCards } from "@/lib/data";
-import staticCardsData from "@/public/data/cards.json";
 import CardDetailClient from "./CardDetailClient";
-import { Card } from "@/lib/types";
 import { createSafeJsonLd } from "@/lib/sanitize";
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const cards = staticCardsData as Card[];
+  const cards = getCards();
   return cards.map((card) => ({
     id: card.id.toString(),
   }));
@@ -25,7 +23,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const cardId = parseInt(id);
-  const cards = staticCardsData as Card[];
+  const cards = getCards();
   const card = getCardById(cards, cardId);
 
   if (!card) {
@@ -85,7 +83,7 @@ export default async function CardDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const cards = staticCardsData as Card[];
+  const cards = getCards();
   const card = getCardById(cards, cardId);
   const allCards = getCards();
 

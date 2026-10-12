@@ -8,7 +8,14 @@ const cardsMap = getCardCatalogMap();
 function draw(count: number, offset = 0) {
   return Array.from({ length: count }, (_, index) => {
     const card = CARD_CATALOG[(index + offset) % CARD_CATALOG.length];
-    return { id: card.id, name: card.name, keywords: card.keywords };
+    return {
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+    };
   });
 }
 

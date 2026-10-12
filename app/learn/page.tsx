@@ -119,7 +119,7 @@ export default function LearnPage() {
       id: "advanced",
       title: "Advanced Concepts",
       description:
-        "Time associations, playing card connections, cultural interpretations, and esoteric Lenormand techniques.",
+        "Source-conscious notes on timing, playing-card insets, interpretive variation, and Grand Tableau method limits.",
       icon: Lightbulb,
       duration: "40 min",
       difficulty: "Advanced",
@@ -132,17 +132,17 @@ export default function LearnPage() {
     },
     {
       id: "marie-annes-system",
-      title: "Marie-Anne's System",
+      title: "Marie-Anne and the Petit Deck",
       description:
-        "Learn the historical methodology inspired by Marie-Anne Lenormand's practical, deadline-driven readings and authentic techniques.",
+        "Separate documented deck history from later reading methods and modern interpretations.",
       icon: Club,
       duration: "30 min",
       difficulty: "Advanced",
       color: "from-amber-500 to-amber-600",
       learningPoints: [
-        "Five core principles",
-        "Historical spreads",
-        "Authentic reading style",
+        "Source limitations",
+        "Deck history",
+        "Modern method status",
       ],
     },
   ];

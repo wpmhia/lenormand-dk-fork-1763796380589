@@ -298,7 +298,13 @@ export function ComboSection({ combos, getCardName }: ComboSectionProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  if (!combos || combos.length === 0) return null;
+  if (!combos || combos.length === 0) {
+    return (
+      <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+        No card pairs have been source-reviewed for publication as established meanings yet. In a reading, interpret the drawn cards in context; do not treat an uncatalogued pairing as fixed doctrine.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

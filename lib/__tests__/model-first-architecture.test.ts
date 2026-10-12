@@ -10,7 +10,7 @@ import { findInventedCards } from "@/lib/invented-cards";
 import { SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import { SPREAD_IDS, type SpreadId } from "@/lib/spread-definitions";
-import cardsData from "@/public/data/cards.json";
+import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 import type { Card } from "@/lib/types";
 import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
@@ -20,7 +20,8 @@ import type { LanguageModel } from "ai";
  *
  *   input -> geometry -> prompt handoff -> model boundary -> factual validation -> render
  *
- * The server places the cards; the model reads them; the validator checks hard facts.
+ * The server supplies canonical cards, source-compared meanings and geometry; the model
+ * synthesizes the reading; the validator checks schema and hard card-reference facts.
  * Tests are grouped by that pipeline rather than by the subsystem that once implemented it.
  *
  * Deliberately not duplicated: an invariant that is identical for a 1-card draw and a
@@ -31,8 +32,8 @@ import type { LanguageModel } from "ai";
 const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
 vi.mock("ai", () => ({ generateText }));
 
-const catalog = cardsData as Card[];
-const cardsMap = new Map<number, Card>(catalog.map((c) => [c.id, c]));
+const catalog = CARD_CATALOG;
+const cardsMap = getCardCatalogMap();
 const deck = [...catalog].sort((a, b) => a.id - b.id);
 
 const CARD_COUNT: Record<SpreadId, number> = {
@@ -48,7 +49,15 @@ const CARD_COUNT: Record<SpreadId, number> = {
 function draw(count: number, offset = 0) {
   return Array.from({ length: count }, (_, i) => {
     const card = deck[(i + offset) % deck.length];
-    return { id: card.id, name: card.name, keywords: card.keywords, position: i };
+    return {
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+      position: i,
+    };
   });
 }
 
@@ -86,22 +95,22 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
     }
   });
 
-  it("reaches the model without a server-side pair shortlist or card dictionary", () => {
+  it("supplies core meanings without legacy pair text or domain-expanded card fields", () => {
     const ctx = context("grand-tableau", "Full picture?") as unknown as Record<string, unknown>;
     expect(ctx.adjacentPairs).toBeUndefined();
 
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const text = prompt(id, "How will my relationship develop?", draw(count, 13));
+      expect(text, `${id} receives the drawn cards' core meanings`).toContain("Core card meaning references");
+      expect(text, `${id} must not receive old unreviewed pair prose`).not.toContain("Your lover may be acting unfaithful");
       for (const leaked of [
         "traditionalMeaning",
-        "canonical pair",
+        "legacy-combinations",
         "pair weight",
         "Narrative plan",
         "primaryPair",
         "supportingPair",
         "outcomeEvidence",
-        "Question-scoped card senses",
-        "Reviewed combination meanings",
         "Timing evidence",
         "Question frame (",
       ]) {
@@ -369,6 +378,9 @@ describe("factual validation: structured pattern labels", () => {
         id: card.id,
         name: card.name,
         keywords: card.keywords,
+        coreMeaning: card.coreMeaning,
+        secondaryMeanings: card.secondaryMeanings,
+        meaningReviewStatus: card.meaningReviewStatus,
         position,
       }));
       const drawnIds = cards.map((card) => card.id);

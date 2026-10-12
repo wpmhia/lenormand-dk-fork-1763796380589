@@ -15,10 +15,7 @@ import { MemoizedAnimatedCard } from "@/components/AnimatedCard";
 import { CardCell } from "./CardCell";
 import { getZoneIcon, getTopicIcon } from "./SpreadPositions";
 import {
-  Clock,
   Target,
-  Brain,
-  Eye,
   Zap,
   ChevronDown,
   ChevronUp,
@@ -79,23 +76,9 @@ export function GrandTableauLayout({
       </button>
 
       {showAdvancedAnalysis && significatorIndex !== -1 && (
-        <div className="mb-lg flex flex-wrap items-center justify-center gap-2 text-xs sm:gap-lg">
-          <div className="flex items-center gap-1 sm:gap-2">
-            <Clock className="gt-significator h-3 w-3 sm:h-4 sm:w-4" />
-            <span>Left = Past</span>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2">
-            <Target className="h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
-            <span>Right = Future</span>
-          </div>
-          <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Brain className="gt-context h-4 w-4" />
-            <span>Above = Visible</span>
-          </div>
-          <div className="hidden sm:flex sm:items-center sm:gap-2">
-            <Eye className="gt-center h-4 w-4" />
-            <span>Below = Hidden</span>
-          </div>
+        <div className="mb-lg flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <Target className="h-4 w-4" />
+          <span>Relative directions describe grid position only; they do not assign chronology or known/hidden facts.</span>
         </div>
       )}
 
@@ -145,7 +128,7 @@ export function GrandTableauLayout({
                       {pos.row + 1}-{pos.col + 1}
                     </span>
                     {isSignificator && (
-                         <Badge variant="default" className="bg-amber-600 text-[11px]">YOU</Badge>
+                      <Badge variant="default" className="bg-amber-600 text-[11px]">FOCUS</Badge>
                     )}
                     {showAdvancedAnalysis && (
                       <>
@@ -168,8 +151,8 @@ export function GrandTableauLayout({
                     onCardClick={onCardClick}
                     size="sm"
                     className="cursor-pointer"
-                    positionLabel={isSignificator ? "Significator (You)" : zone?.name || undefined}
-                    positionDescription={isSignificator ? "This card represents you in the reading" : zoneInfo.direction ? `${zone.description} - Distance: ${zoneInfo.distance}` : undefined}
+                    positionLabel={isSignificator ? `Reading focus (${card!.name})` : zone?.name || undefined}
+                    positionDescription={isSignificator ? "Selected focus only; no person identity is assigned" : zoneInfo.direction ? `${zone.description}; distance ${zoneInfo.distance}` : undefined}
                   />
 
                   {showAdvancedAnalysis && topicInfo && (

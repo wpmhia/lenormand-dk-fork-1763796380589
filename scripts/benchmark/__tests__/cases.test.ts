@@ -42,6 +42,13 @@ describe("benchmark cases", () => {
     expect(() => createBenchmarkCases(1, 1.5)).toThrow(/positive integer/);
   });
 
+  it("produces a balanced 30-case batch for independent review", () => {
+    const cases = createBenchmarkCases(20261004, 6);
+    expect(cases).toHaveLength(30);
+    expect(Object.fromEntries(BENCHMARK_SPREADS.map(({ id }) => [id, cases.filter((item) => item.spreadId === id).length])))
+      .toEqual({ "single-card": 6, "sentence-3": 6, "sentence-5": 6, comprehensive: 6, "grand-tableau": 6 });
+  });
+
   it("pairs suggestive and neutral questions over the same draw", () => {
     const cases = createContentRegressionCases();
     const suggestive = cases.find((item) => item.id === "content-assumption-suggestive-nl-001")!;
@@ -81,5 +88,14 @@ describe("benchmark cases", () => {
     expect(regression.regressionTarget).toMatch(/spatial accuracy only/i);
     expect(regression.regressionTarget).toMatch(/Tower is two columns left.*not an immediate neighbour/i);
     expect(regression.regressionTarget).toMatch(/Woman occupies the Dog house.*Dog is also above Woman/i);
+  });
+
+  it("includes the Cross, Fox, question-assumption, Petit Tableau, and forecast cases", () => {
+    const cases = createContentRegressionCases();
+    expect(cases.find((item) => item.id === "content-cross-is-not-paths-en-001")?.cardIdsByPosition).toEqual([36, 5, 18]);
+    expect(cases.find((item) => item.id === "content-fox-not-automatic-infidelity-en-001")?.cardIdsByPosition).toEqual([14, 3, 35]);
+    expect(cases.find((item) => item.id === "content-question-assumption-en-001")?.question).toBe("Why is the other person lying?");
+    expect(cases.find((item) => item.id === "content-petit-tableau-nine-card-en-001")?.cardIdsByPosition).toEqual([31, 29, 4, 14, 36, 30, 25, 5, 34]);
+    expect(cases.find((item) => item.id === "content-forecast-balance-en-001")?.cardIdsByPosition).toEqual([31, 6, 21, 33, 35]);
   });
 });

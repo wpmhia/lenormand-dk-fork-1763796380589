@@ -36,14 +36,13 @@ export default function HowReadingsWorkPage() {
               </p>
               <ul className="list-disc space-y-2 pl-6">
                 <li>
-                  <strong>Card meanings</strong> &mdash; Base meanings from the
-                  traditional Lenormand deck, stored in the app&apos;s card
-                  database.
+                  <strong>Card meanings</strong> &mdash; Source-compared core
+                  meanings for all 36 cards, with expert review status shown.
                 </li>
                 <li>
-                  <strong>Card combinations</strong> &mdash; Traditional pair
-                  meanings for adjacent cards, drawn from historical Lenormand
-                  reference.
+                  <strong>Card combinations</strong> &mdash; Interpreted in the
+                  question and spread context. No pair is called established
+                  doctrine unless it is source-reviewed in the canonical registry.
                 </li>
                 <li>
                   <strong>Spread geometry</strong> &mdash; The app knows whether
@@ -52,10 +51,10 @@ export default function HowReadingsWorkPage() {
                   accordingly.
                 </li>
                 <li>
-                  <strong>Grand Tableau logic</strong> &mdash; Houses,
-                  significators, corners, center four, mirror
-                  pairs, and vertical columns are computed from the card
-                  positions, not guessed by the model.
+                  <strong>Grand Tableau structure</strong> &mdash; The 4×9 grid,
+                  all houses, and immediate Man/Woman neighbours are supplied
+                  from actual coordinates. House occupancy and adjacency remain
+                  separate; unsupported mirror methods are not supplied.
                 </li>
               </ul>
             </div>
@@ -76,21 +75,19 @@ export default function HowReadingsWorkPage() {
               </p>
               <ul className="list-disc space-y-2 pl-6">
                 <li>The spread type and question</li>
-                <li>Card names, keywords, timing, and strength</li>
+                <li>Canonical card names and source-compared core meanings, plus supported secondary variants</li>
                 <li>
-                  Adjacent pair meanings from the traditional combination
-                  database
+                  Ordered positions and relevant structural lines; legacy pair prose is excluded
                 </li>
                 <li>
-                  Spread geometry &mdash; rows, columns, diagonals for Petit
-                  Tableau; houses, significator position, mirrors for Grand
-                  Tableau
+                  Spread geometry &mdash; rows, columns, diagonals for the Petit Tableau; rows, houses, and direct person-card neighbours for the Grand Tableau
                 </li>
               </ul>
               <p>
-                The AI is instructed as a traditional Lenormand reader, not a
-                Tarot reader. It is told to read combinations, not isolated
-                cards, and to produce concrete, practical interpretations.
+                The AI is asked to synthesize a direct Lenormand-style reading
+                from the current question and cards. It distinguishes symbolic
+                suggestions from facts and does not force a yes/no answer or
+                claim that an uncatalogued pair is fixed doctrine.
               </p>
             </div>
           </section>
@@ -132,33 +129,33 @@ export default function HowReadingsWorkPage() {
               </h2>
             </div>
             <div className="space-y-3 leading-relaxed text-muted-foreground">
-              <p>The app follows traditional Lenormand methodology:</p>
+              <p>The app uses a source-conscious Lenormand-style method and marks where review is still pending:</p>
               <ul className="list-disc space-y-2 pl-6">
                 <li>
-                  <strong>No reversals</strong> &mdash; Cards are always
-                  upright, as in traditional Lenormand.
+                  <strong>Upright-only in this app</strong> &mdash; This
+                  application does not interpret reversals; some contemporary
+                  schools use them.
                 </li>
                 <li>
                   <strong>Combination reading</strong> &mdash; Multi-card
-                  readings are interpreted through adjacent pairs and lines, not
-                  isolated card meanings.
+                  readings synthesize adjacent and relevant cards in context;
+                  uncatalogued pairs are not fixed doctrine.
                 </li>
                 <li>
                   <strong>Line reading</strong> &mdash; 3-card and 5-card
-                  spreads are read as sentences, with pairs carrying the
-                  meaning.
+                  spreads preserve left-to-right order; pair order is not
+                  silently reversed.
                 </li>
                 <li>
-                  <strong>Petit Tableau</strong> &mdash; The 9-card grid is read
-                  through rows, columns, diagonals, and the center card &mdash;
-                  not past/present/future positions.
+                  <strong>Petit Tableau</strong> &mdash; The 9-card grid supplies
+                  rows, columns, diagonals, and a central focal card; only
+                  question-relevant lines need synthesis, without chronology.
                 </li>
                 <li>
                   <strong>Grand Tableau</strong> &mdash; The full 36-card spread
-                  uses houses (card name defines the house topic), significator
-                  position, mirror pairs, corners, center four, and cards of
-                  fate. The model receives the actual grid structure, not a flat
-                  list.
+                  supplies the 4×9 grid, all 36 houses, and bounded immediate
+                  person-card neighbours. Adjacency and house occupancy are
+                  separate; mirror methods are not currently treated as doctrine.
                 </li>
               </ul>
             </div>

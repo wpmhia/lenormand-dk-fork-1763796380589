@@ -1,7 +1,7 @@
 import { Card, Reading, ReadingCard } from "./types";
-import staticCardsData from "@/public/data/cards.json";
+import { CANONICAL_PAIRS, CARD_CATALOG, type CanonicalPair } from "@/lib/card-catalog";
 
-const cards = staticCardsData as Card[];
+const cards = CARD_CATALOG;
 
 export function getCards(): Card[] {
   return cards;
@@ -42,10 +42,19 @@ export function getCombinationMeaning(
   const useCard1Perspective = card1Position !== undefined && card2Position !== undefined
     ? card1Position <= card2Position
     : true;
-  const primary = useCard1Perspective ? card1 : card2;
-  const secondary = useCard1Perspective ? card2 : card1;
-  const combos = Array.isArray(primary.combos) ? primary.combos : [];
-  return combos.find((c) => c.withCardId === secondary.id)?.meaning || null;
+  const first = useCard1Perspective ? card1 : card2;
+  const second = useCard1Perspective ? card2 : card1;
+  return getCanonicalPairMeaning(first.id, second.id);
+}
+
+export function getCanonicalPairMeaning(
+  firstCardId: number,
+  secondCardId: number,
+  pairs: CanonicalPair[] = CANONICAL_PAIRS,
+): string | null {
+  return pairs.find(
+    (pair) => pair.firstCardId === firstCardId && pair.secondCardId === secondCardId,
+  )?.meaning ?? null;
 }
 
 export function getLinearAdjacentCards(cards: ReadingCard[], currentIndex: number): ReadingCard[] {
@@ -57,22 +66,22 @@ export function getLinearAdjacentCards(cards: ReadingCard[], currentIndex: numbe
 }
 
 export function getGrandTableauAdjacentCards(cards: ReadingCard[], currentIndex: number): ReadingCard[] {
-  if (currentIndex < 0 || currentIndex >= 36) return [];
+  if (!Number.isInteger(currentIndex) || currentIndex < 0 || currentIndex >= 36) return [];
   const row = Math.floor(currentIndex / 9);
   const col = currentIndex % 9;
   const cardByPosition = new Map(cards.map((card) => [card.position, card]));
   const adjacent: ReadingCard[] = [];
-  const positions = [
-    { r: row - 1, c: col },
-    { r: row + 1, c: col },
-    { r: row, c: col - 1 },
-    { r: row, c: col + 1 },
-  ].filter((pos) => pos.r >= 0 && pos.r < 4 && pos.c >= 0 && pos.c < 9);
-  for (const pos of positions) {
-    const adjCard = cardByPosition.get(pos.r * 9 + pos.c);
-    if (adjCard) adjacent.push(adjCard);
+
+  for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+    for (let columnOffset = -1; columnOffset <= 1; columnOffset++) {
+      if (rowOffset === 0 && columnOffset === 0) continue;
+      const neighbourRow = row + rowOffset;
+      const neighbourColumn = col + columnOffset;
+      if (neighbourRow < 0 || neighbourRow >= 4 || neighbourColumn < 0 || neighbourColumn >= 9) continue;
+      const neighbour = cardByPosition.get(neighbourRow * 9 + neighbourColumn);
+      if (neighbour) adjacent.push(neighbour);
+    }
   }
+
   return adjacent;
 }
-
-

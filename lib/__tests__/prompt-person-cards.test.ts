@@ -12,6 +12,9 @@ function normalized(ids: number[]) {
       id,
       name: card?.name ?? cardsMap.get(id)?.name ?? String(id),
       keywords: card?.keywords ?? [],
+      coreMeaning: card?.meaning.general,
+      secondaryMeanings: card?.meaning.secondaryMeanings,
+      meaningReviewStatus: card?.meaning.reviewStatus,
     };
   });
 }
@@ -42,18 +45,18 @@ describe("prompt-builder: person cards never leak relationship keywords", () => 
     expect(prompt).toContain("Man");
   });
 
-  it("sends no card dictionary at all, only card names and structure", () => {
+  it("sends curated core meanings but no legacy or relationship-expanded card dictionary", () => {
     const ctx = buildReadingContext("sentence-3", "Will I move?", normalized([1, 3, 2]), cardsMap);
     const prompt = buildSimpleReadingPrompt(ctx);
     expect(prompt).toContain("Rider");
     expect(prompt).toContain("Ship");
     expect(prompt).toContain("Clover");
-    // Model-first: the server supplies geometry, never meaning.
-    expect(prompt).not.toContain("news, arrival, or movement");
+    expect(prompt).toContain("Core card meaning references");
+    expect(prompt).toContain("Rider: News, messages, arrival, movement.");
     expect(prompt).not.toMatch(/Question-scoped card senses/i);
     expect(prompt).not.toMatch(/Reviewed combination meanings/i);
-    // Raw catalog keywords must not leak either.
-    expect(prompt).not.toContain("luck, chance");
+    expect(prompt).not.toContain("Your lover may be acting unfaithful");
+    expect(prompt).not.toContain("relationship development");
     expect(prompt).not.toContain("journey");
   });
 });
@@ -126,6 +129,16 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
     expect(prompt).not.toMatch(/narrative plan/i);
     expect(prompt).not.toMatch(/development line/i);
     expect(prompt).not.toMatch(/Recovery, reconciliation|recovery, reconciliation/);
+  });
+
+  it("labels an accusation in the question as an unconfirmed premise", () => {
+    const question = "Why is the other person lying?";
+    const assumptionPrompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", question, normalized([6, 25, 33]), cardsMap),
+    );
+    expect(assumptionPrompt).toContain(question);
+    expect(assumptionPrompt).toContain("do not treat its unconfirmed assumptions as established");
+    expect(assumptionPrompt.match(/my partner lying/gi)).toHaveLength(1);
   });
 });
 

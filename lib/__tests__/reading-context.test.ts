@@ -17,7 +17,15 @@ const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 function draw(count: number, offset = 0) {
   return Array.from({ length: count }, (_, i) => {
     const card = deck[(i + offset) % deck.length];
-    return { id: card.id, name: card.name, keywords: card.keywords, position: i };
+    return {
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+      position: i,
+    };
   });
 }
 
@@ -33,9 +41,9 @@ describe("reading-context: input invariants", () => {
     expect(ctx.question).toBe("Hoe ontwikkelt mijn relatie zich?");
   });
 
-  it("keeps the exact situation context it was given", () => {
-    const ctx = buildReadingContext("sentence-3", "Q?", draw(3), cardsMap, "both", "We live apart.");
-    expect(ctx.situationContext).toBe("We live apart.");
+  it("contains no situation context beyond the current question", () => {
+    const ctx = buildReadingContext("sentence-3", "Q?", draw(3), cardsMap);
+    expect(ctx).not.toHaveProperty("situationContext");
   });
 });
 

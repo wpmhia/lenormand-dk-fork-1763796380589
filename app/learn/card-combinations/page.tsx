@@ -1,510 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, BookOpen, Combine, HelpCircle } from "lucide-react";
+import Link from "next/link";
 import { ModulePageClient } from "@/components/ModulePageClient";
-import { AccordionSection } from "@/components/CombinationAccordion";
-import {
-  Heart,
-  Coins,
-  Stethoscope,
-  Briefcase,
-  Zap,
-  Users,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = {
-  title: "Card Combinations | Lenormand Course",
-  description:
-    "Master the art of reading card combinations. Learn how two or more cards create new meanings through their interaction across different life contexts.",
+  title: "Reading Lenormand Combinations | Lenormand Course",
+  description: "A context-first approach to ordered Lenormand combinations without treating uncited pair lists as fixed doctrine.",
 };
-
-const combinationContexts = [
-  {
-    title: "Love & Relationships",
-    icon: <Heart className="h-6 w-6 text-red-500" />,
-    description:
-      "Combinations that reveal matters of the heart, relationships, and romantic connections",
-    combinations: [
-      {
-        cards: "Rider + Lover",
-        meaning:
-          "Fast-moving romantic news or a new romantic connection approaching",
-        context:
-          "Someone is coming to confess feelings or propose a romantic relationship",
-      },
-      {
-        cards: "Lover + Heart",
-        meaning: "Deep romantic love, passion, and emotional connection",
-        context:
-          "A sincere and heartfelt relationship or the confirmation of true love",
-      },
-      {
-        cards: "Lover + Ring",
-        meaning: "Marriage proposal, engagement, or long-term commitment",
-        context:
-          "A significant commitment is being made or promised in a relationship",
-      },
-      {
-        cards: "Lover + Clouds",
-        meaning:
-          "Relationship confusion, misunderstandings, or unclear feelings",
-        context: "Partners are not on the same page or emotions are mixed",
-      },
-      {
-        cards: "Lover + Whip",
-        meaning: "Passion and intensity, but also conflict and arguments",
-        context:
-          "A relationship with strong emotions - either very passionate or volatile",
-      },
-      {
-        cards: "Lover + Tower",
-        meaning: "Relationship breakdown, separation, or serious obstacles",
-        context: "A relationship faces significant challenges or is ending",
-      },
-      {
-        cards: "Lover + Clover",
-        meaning: "Light, happy love, pleasant romantic moments",
-        context: "A carefree, joyful period in a relationship",
-      },
-      {
-        cards: "Lover + Key",
-        meaning: "Relationship matters are resolved or clarified",
-        context:
-          "Finding the solution to a romantic issue or confirming a commitment",
-      },
-      {
-        cards: "Fox + Lover",
-        meaning: "Deception in love, hidden attraction, or manipulation",
-        context:
-          "Someone is not being truthful or is playing games in a relationship",
-      },
-      {
-        cards: "Snake + Lover",
-        meaning:
-          "Jealousy, betrayal, or a complicated woman affecting the relationship",
-        context: "Triangles, complications, or a femme fatale figure",
-      },
-    ],
-  },
-  {
-    title: "Money & Finance",
-    icon: <Coins className="h-6 w-6 text-yellow-600" />,
-    description:
-      "Combinations revealing financial situations, opportunities, and challenges",
-    combinations: [
-      {
-        cards: "Rider + Abundance",
-        meaning: "Money is coming toward you quickly",
-        context: "Quick financial gain, payment arrival, or income increase",
-      },
-      {
-        cards: "Abundance + Key",
-        meaning: "Financial success is certain or guaranteed",
-        context: "A secure financial outcome or confirmed money matter",
-      },
-      {
-        cards: "Abundance + Clouds",
-        meaning: "Financial confusion or unclear monetary situation",
-        context:
-          "Hidden costs, unclear financial terms, or money problems obscured",
-      },
-      {
-        cards: "Abundance + Whip",
-        meaning: "Financial struggle, repeated expenses, or stress about money",
-        context:
-          "Ongoing financial difficulties or repeated financial setbacks",
-      },
-      {
-        cards: "Abundance + Tower",
-        meaning: "Major financial loss or bankruptcy",
-        context: "Significant financial crisis or loss of money",
-      },
-      {
-        cards: "Fox + Abundance",
-        meaning: "Financial deception or hidden money matters",
-        context:
-          "Be cautious of financial schemes or look for hidden financial aspects",
-      },
-      {
-        cards: "Snake + Abundance",
-        meaning: "Complex financial situation with complications",
-        context: "Tangled finances or indirect path to money",
-      },
-      {
-        cards: "Abundance + Scythe",
-        meaning: "Sudden financial loss or cuts to finances",
-        context: "Abrupt money situation change, redundancy, or financial cuts",
-      },
-      {
-        cards: "Abundance + Anchor",
-        meaning: "Stable finances or fixed financial situation",
-        context:
-          "Secure financial foundation or locked-in financial arrangement",
-      },
-      {
-        cards: "Rider + Abundance + Key",
-        meaning:
-          "Quick confirmation of financial gain or fast money resolution",
-        context: "Money is coming quickly and the outcome is certain",
-      },
-    ],
-  },
-  {
-    title: "Health & Well-being",
-    icon: <Stethoscope className="h-6 w-6 text-green-600" />,
-    description:
-      "Combinations related to physical health, healing, and wellness",
-    combinations: [
-      {
-        cards: "Clover + Medicine",
-        meaning: "Quick recovery or healing with ease",
-        context: "Swift improvement in health, effective treatment",
-      },
-      {
-        cards: "Tower + Medicine",
-        meaning: "Serious health issues requiring professional treatment",
-        context: "Major health concern, hospitalization, or serious diagnosis",
-      },
-      {
-        cards: "Clouds + Medicine",
-        meaning: "Unclear diagnosis or confusing health situation",
-        context:
-          "Health condition is difficult to identify or treatment is unclear",
-      },
-      {
-        cards: "Whip + Medicine",
-        meaning: "Painful treatment or difficult health process",
-        context: "Surgery, intense therapy, or difficult medical procedure",
-      },
-      {
-        cards: "Medicine + Key",
-        meaning: "Health situation is resolved or cure is found",
-        context: "Finding the right treatment or recovery is assured",
-      },
-      {
-        cards: "Scythe + Medicine",
-        meaning: "Sudden health crisis or unexpected illness",
-        context: "Acute condition or sudden health emergency",
-      },
-      {
-        cards: "Medicine + Anchor",
-        meaning: "Long-term health condition or chronic situation",
-        context: "Ongoing health management or stable health condition",
-      },
-      {
-        cards: "Clover + Heart",
-        meaning: "Emotional health and happiness, joy",
-        context: "Good mental health, emotional well-being, contentment",
-      },
-      {
-        cards: "Clouds + Heart",
-        meaning: "Emotional distress or mental health concerns",
-        context: "Emotional confusion, anxiety, or mental health struggles",
-      },
-      {
-        cards: "Tower + Heart",
-        meaning: "Emotional breakdown or serious emotional trauma",
-        context: "Major emotional crisis or relationship heartbreak",
-      },
-    ],
-  },
-  {
-    title: "Career & Work",
-    icon: <Briefcase className="h-6 w-6 text-blue-600" />,
-    description:
-      "Combinations for job situations, career growth, and professional matters",
-    combinations: [
-      {
-        cards: "Rider + Whip",
-        meaning: "Job offer or employment news arriving quickly",
-        context: "Job opportunity coming fast or quick work communication",
-      },
-      {
-        cards: "Whip + Key",
-        meaning: "Work problem is resolved or solution is found",
-        context: "Overcoming a workplace challenge or finding work solution",
-      },
-      {
-        cards: "Tower + Whip",
-        meaning: "Job loss, redundancy, or workplace conflict",
-        context: "Career setback, firing, or serious workplace issues",
-      },
-      {
-        cards: "Clouds + Whip",
-        meaning: "Unclear job situation or confusing work circumstances",
-        context: "Job uncertainty or confused workplace dynamics",
-      },
-      {
-        cards: "Whip + Anchor",
-        meaning: "Stable long-term job or secure employment",
-        context: "Job security or permanent employment position",
-      },
-      {
-        cards: "Fox + Whip",
-        meaning: "Workplace deception or cunning required at work",
-        context:
-          "Office politics, workplace trickery, or strategic workplace moves",
-      },
-      {
-        cards: "Snake + Whip",
-        meaning: "Complex work situation with complications",
-        context:
-          "Tangled workplace issues or complicated professional dynamics",
-      },
-      {
-        cards: "Abundance + Whip",
-        meaning: "Hard work leading to financial reward",
-        context: "Success through effort or earning through work",
-      },
-      {
-        cards: "Clover + Whip",
-        meaning: "Light work responsibilities or easy job",
-        context: "Simple job tasks or enjoyable work",
-      },
-      {
-        cards: "Rider + Abundance + Whip",
-        meaning: "Job offer with good pay or quick work success",
-        context: "Profitable employment opportunity arriving quickly",
-      },
-    ],
-  },
-  {
-    title: "Personal Growth & Spirituality",
-    icon: <Zap className="h-6 w-6 text-purple-600" />,
-    description:
-      "Combinations for personal development, spirituality, and inner wisdom",
-    combinations: [
-      {
-        cards: "Key + Heart",
-        meaning: "Understanding your true feelings or emotional breakthrough",
-        context: "Clarity about what you really want emotionally",
-      },
-      {
-        cards: "Clouds + Key",
-        meaning: "Confusion preventing clarity or delayed understanding",
-        context: "The answer isn't clear yet, clarity will come later",
-      },
-      {
-        cards: "Tower + Key",
-        meaning:
-          "Major life breakthrough or significant personal transformation",
-        context: "Breaking through a major obstacle, major life change",
-      },
-      {
-        cards: "Clover + Key",
-        meaning: "Simple solution or easy answer",
-        context: "The answer is simpler than expected",
-      },
-      {
-        cards: "Scythe + Key",
-        meaning: "Sudden clarity or quick realization",
-        context: "An 'aha moment' or sudden understanding",
-      },
-      {
-        cards: "Whip + Key",
-        meaning: "Through struggle comes wisdom",
-        context: "Learning from difficult experiences",
-      },
-      {
-        cards: "Snake + Clouds",
-        meaning: "Complex emotional confusion or twisted thoughts",
-        context: "Tangled emotions or confusing spiritual path",
-      },
-      {
-        cards: "Heart + Anchor",
-        meaning: "Emotional stability or secure loving foundation",
-        context: "Strong emotional grounding or stable relationship",
-      },
-      {
-        cards: "Rider + Key",
-        meaning: "News that brings understanding or clarity comes quickly",
-        context: "Quick answer to a question or swift understanding",
-      },
-      {
-        cards: "Star + Key",
-        meaning: "Spiritual insight or seeing your true path",
-        context: "Clarity about your life purpose or spiritual direction",
-      },
-    ],
-  },
-  {
-    title: "Social & Community",
-    icon: <Users className="h-6 w-6 text-indigo-600" />,
-    description:
-      "Combinations for relationships, friendships, and social interactions",
-    combinations: [
-      {
-        cards: "Rider + Lover",
-        meaning: "Someone important is coming or news about someone special",
-        context:
-          "A key person is arriving or communicating about a relationship",
-      },
-      {
-        cards: "Fox + Clover",
-        meaning: "Small deception or minor dishonesty among friends",
-        context: "Light social trickery or minor social lie",
-      },
-      {
-        cards: "Snake + Clover",
-        meaning: "Mixed feelings in a friendship or complicated friendship",
-        context: "A complicated relationship with both good and bad aspects",
-      },
-      {
-        cards: "Clouds + Lover",
-        meaning:
-          "Unclear relationship status or confused feelings about someone",
-        context: "Ambiguous relationship or undefined romantic situation",
-      },
-      {
-        cards: "Tower + Lover",
-        meaning: "Relationship ending or major separation",
-        context: "Breakup, divorce, or relationship dissolution",
-      },
-      {
-        cards: "Clover + Lover",
-        meaning: "Happy friendship or pleasant romantic relationship",
-        context: "Easy, light, enjoyable social connection",
-      },
-      {
-        cards: "Heart + Lover",
-        meaning: "Deep love and genuine affection",
-        context: "True love or heartfelt friendship",
-      },
-      {
-        cards: "Key + Lover",
-        meaning: "Relationship is clarified or commitment is confirmed",
-        context: "Understanding your relationship or confirming feelings",
-      },
-      {
-        cards: "Whip + Lover",
-        meaning: "Arguments, passion, or conflict in relationship",
-        context: "Passionate but turbulent relationship dynamics",
-      },
-      {
-        cards: "Rider + Lover + Clover",
-        meaning: "Good news about a pleasant romantic connection arriving",
-        context: "Happy news about a relationship coming quickly",
-      },
-    ],
-  },
-  {
-    title: "Significator Combinations (Man & Woman)",
-    icon: <Users className="h-6 w-6 text-pink-600" />,
-    description:
-      "The Man (Card 28) and Woman (Card 29) are significator cards representing people. When combined with other cards, they reveal how situations specifically affect or involve the querent or important people in their life.",
-    combinations: [
-      {
-        cards: "Man + Woman",
-        meaning: "Couple, romantic partnership, or male-female dynamic",
-        context: "The relationship between two people, marriage, or partnership",
-      },
-      {
-        cards: "Rider + Man/Woman",
-        meaning: "News or message about/from a specific person",
-        context: "Someone is communicating or arriving in the querent's life",
-      },
-      {
-        cards: "Snake + Man/Woman",
-        meaning: "Deceptive or complicated person, potential rival",
-        context: "Be cautious of this person's intentions; may indicate betrayal",
-      },
-      {
-        cards: "Coffin + Man/Woman",
-        meaning: "Transformation in the person's life, illness, or ending",
-        context: "Major life change, health concern, or relationship ending",
-      },
-      {
-        cards: "Heart + Man/Woman",
-        meaning: "Person in love, emotional involvement, or romantic interest",
-        context: "Someone has romantic feelings or is emotionally invested",
-      },
-      {
-        cards: "Ring + Man/Woman",
-        meaning: "Committed person, married figure, or contractual bond",
-        context: "Someone in a committed relationship or bound by agreement",
-      },
-      {
-        cards: "Fox + Man/Woman",
-        meaning: "Cunning or strategic person, someone at work",
-        context: "This person is clever, possibly deceptive, or career-focused",
-      },
-      {
-        cards: "Bear + Man/Woman",
-        meaning: "Powerful, authoritative, or protective person",
-        context: "Someone with strength, possibly a boss or parent figure",
-      },
-      {
-        cards: "Stork + Woman",
-        meaning: "Woman undergoing change, pregnancy, or relocation",
-        context: "Significant life transition, often literal or metaphorical birth",
-      },
-      {
-        cards: "Lily + Man/Woman",
-        meaning: "Wise, mature, or peaceful person; elder figure",
-        context: "Someone with experience, possibly an older mentor or parent",
-      },
-    ],
-  },
-  {
-    title: "Universal Pair Combinations",
-    icon: <Zap className="h-6 w-6 text-orange-600" />,
-    description: "Fundamental combinations that work across all contexts",
-    combinations: [
-      {
-        cards: "Key + Any Card",
-        meaning: "That card's meaning is confirmed or certain",
-        context: "Success, certainty, and resolution of the card's meaning",
-      },
-      {
-        cards: "Clouds + Any Card",
-        meaning: "That card's meaning is unclear, delayed, or confused",
-        context: "Uncertainty or confusion about the card's topic",
-      },
-      {
-        cards: "Scythe + Any Card",
-        meaning: "That card's meaning happens suddenly or is cut short",
-        context: "Sudden change regarding that card's topic",
-      },
-      {
-        cards: "Anchor + Any Card",
-        meaning: "That card's meaning is stable, lasting, or permanent",
-        context: "Long-term, fixed, or secure outcome",
-      },
-      {
-        cards: "Clover + Any Card",
-        meaning: "That card's meaning is lightened or improved slightly",
-        context: "Small improvement or light positive influence",
-      },
-      {
-        cards: "Whip + Any Card",
-        meaning:
-          "That card's meaning involves struggle, repetition, or intensity",
-        context: "Difficulty, stress, or repeated situations",
-      },
-      {
-        cards: "Tower + Any Card",
-        meaning: "That card's meaning experiences major disruption or crisis",
-        context: "Significant problem or major change",
-      },
-      {
-        cards: "Fox + Any Card",
-        meaning: "That card's meaning involves deception or requires caution",
-        context: "Dishonesty, manipulation, or strategic moves needed",
-      },
-      {
-        cards: "Snake + Any Card",
-        meaning:
-          "That card's meaning is complicated, delayed, or involves jealousy",
-        context: "Complex situation, complications, or negative emotions",
-      },
-      {
-        cards: "Rider + Any Card",
-        meaning: "That card's meaning arrives quickly or brings news",
-        context: "Speed, movement toward, or news about the card's topic",
-      },
-    ],
-  },
-];
 
 export default function CardCombinationsPage() {
   return (
@@ -512,11 +15,11 @@ export default function CardCombinationsPage() {
       moduleId="card-combinations"
       moduleNumber={4}
       totalModules={8}
-      title="Card Combinations"
-      description="Master how cards interact and create new meanings together. Learn key combinations across different life contexts."
-      duration="25 minutes"
+      title="Reading Card Combinations"
+      description="Build a contextual reading from ordered cards, the question, and the actual spread."
+      duration="15 minutes"
       difficulty="Intermediate"
-      icon={<Zap className="h-8 w-8 text-white" />}
+      icon={<Combine className="h-8 w-8 text-white" />}
       prevModule={{ id: "reading-fundamentals", title: "Reading Fundamentals" }}
       nextModule={{ id: "spreads", title: "Spreads & Techniques" }}
       breadcrumbs={[
@@ -525,120 +28,54 @@ export default function CardCombinationsPage() {
         { name: "Card Combinations", url: "/learn/card-combinations" },
       ]}
     >
-      {/* Core Concept Section */}
-      <Card className="mb-8 border-border bg-card">
+      <Card className="mb-8 border-primary/20 bg-card">
         <CardHeader>
-          <CardTitle id="core-concepts">
-            How Card Combinations Work
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5" />
+            A context-first method
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h3 className="mb-3 font-semibold text-foreground">
-              The Principle of Interaction
-            </h3>
-            <p className="text-muted-foreground">
-              In Lenormand, cards don&apos;t exist in isolation. When two cards
-              appear together, they modify and enhance each other&apos;s
-              meanings. The combination creates a new, unified message that&apos;s
-              more specific than either card alone.
-            </p>
-          </div>
-          <div>
-            <h3 className="mb-3 font-semibold text-foreground">
-              Modifier Cards
-            </h3>
-            <p className="text-muted-foreground">
-              Certain cards act as &quot;modifiers&quot; - they change the meaning
-              of adjacent cards. The Key adds certainty, Clouds add confusion,
-              the Scythe adds suddenness. Learning to identify these modifiers
-              is crucial to accurate combination reading.
-            </p>
-          </div>
-          <div>
-            <h3 className="mb-3 font-semibold text-foreground">
-              Context Matters
-            </h3>
-            <p className="text-muted-foreground">
-              The same combination can have different meanings depending on the
-              context of the reading. A Lover + Tower in a love question might
-              mean relationship breakup, but in a career question it might
-              indicate conflict with a colleague.
-            </p>
-          </div>
-          <div>
-            <h3 className="mb-3 font-semibold text-foreground">
-              Reading Direction
-            </h3>
-            <p className="text-muted-foreground">
-              In most Lenormand spreads, cards are read left to right, creating
-              a narrative flow. The first card influences the second, and
-              together they tell a story. Pay attention to the order and
-              direction of your cards.
-            </p>
-          </div>
+        <CardContent className="space-y-4 text-muted-foreground">
+          <p>
+            A card pairing is an interpretive synthesis, not automatically a fixed dictionary entry. Start with the user’s current question, the core meanings of the cards actually drawn, their order, and their positions. Explain the best-supported reading in plain language; do not turn a symbol into a proven real-world event.
+          </p>
+          <ol className="list-decimal space-y-2 pl-5">
+            <li>Identify what the question is asking without treating its assumptions as evidence.</li>
+            <li>Read consecutive cards in the line from left to right. Order can affect emphasis; do not assume the reverse order says exactly the same thing.</li>
+            <li>Combine meanings in context rather than listing a memorized phrase for every pair.</li>
+            <li>Use only combinations that contribute to the question. Explain material support and conflict without forcing every card into a story.</li>
+            <li>Separate symbolic suggestions from claims about a named person, event, motive, or guaranteed outcome.</li>
+          </ol>
         </CardContent>
       </Card>
 
-      {/* Combination Contexts with Accordion */}
-      {combinationContexts.map((context, index) => (
-        <AccordionSection key={index} context={context} index={index} />
-      ))}
-
-      {/* Practice Tips Section */}
-      <Card className="mb-8 border-border bg-card">
+      <Card className="mb-8 border-border bg-muted/20">
         <CardHeader>
-          <CardTitle id="practice-tips">
-            Tips for Mastering Combinations
+          <CardTitle className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5" />
+            Keep the symbols distinct
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {[
-            {
-              num: 1,
-              title: "Start Simple",
-              description:
-                "Begin with 2-card combinations before progressing to complex spreads. Master the fundamentals first.",
-            },
-            {
-              num: 2,
-              title: "Identify Modifiers",
-              description:
-                "Look for Key, Clouds, Scythe, and Anchor cards first - these change the meaning of nearby cards.",
-            },
-            {
-              num: 3,
-              title: "Read the Flow",
-              description:
-                "Read combinations left to right as a narrative. What story do the cards tell together?",
-            },
-            {
-              num: 4,
-              title: "Consider Context",
-              description:
-                "Always consider the question and context of the reading. The same combination means different things in different situations.",
-            },
-            {
-              num: 5,
-              title: "Practice Consistently",
-              description:
-                "The best way to master combinations is through regular practice. Do daily 2-3 card readings to build muscle memory.",
-            },
-          ].map((tip) => (
-            <div key={tip.num} className="flex gap-3">
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <span className="text-sm font-semibold text-primary">
-                  {tip.num}
-                </span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-foreground">{tip.title}</h4>
-                <p className="text-sm text-muted-foreground">
-                  {tip.description}
-                </p>
-              </div>
-            </div>
-          ))}
+        <CardContent className="space-y-3 text-muted-foreground">
+          <p><strong>Paths (#22)</strong> concerns choices, alternatives, and decisions. <strong>Cross (#36)</strong> concerns burden, hardship, duty, and suffering; it is not a synonym for Paths.</p>
+          <p><strong>Fox (#14)</strong> can concern work, strategy, self-interest, caution, or deception depending on context. Fox alone does not prove infidelity.</p>
+          <p>Other secondary meanings can vary by school. For example, some readers associate Lily with sexuality or Fish with independence; those are contextual variants, not automatic conclusions.</p>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8 border-border bg-card">
+        <CardHeader>
+          <CardTitle>Pair-reference review status</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-muted-foreground">
+          <p>
+            The old generated pair list contained uncited, highly specific statements and is quarantined from the reading model. No pair meanings are currently marked source-reviewed in the canonical registry, so this course does not present a generic pair list as established tradition. Novel combinations may still be interpreted from the reviewed core meanings and the current spread.
+          </p>
+          <Link href="/cards">
+            <Button variant="outline" className="gap-2">
+              Browse the 36 core card meanings <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     </ModulePageClient>

@@ -25,6 +25,7 @@ import {
   SIGNIFICATOR_CARDS,
 } from "@/lib/spreads";
 import { getCardTimingKnowledge } from "@/lib/timing";
+import { CARD_MEANING_SOURCES } from "@/lib/card-catalog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,7 @@ export default function CardDetailClient({
   const nextCardId = card.id < 36 ? card.id + 1 : 1;
 
   const meaning = card.meaning;
+  const meaningSources = CARD_MEANING_SOURCES.filter((source) => meaning.sourceIds?.includes(source.id));
 
   return (
     <div className="page-layout">
@@ -262,22 +264,6 @@ export default function CardDetailClient({
                 </Card>
               </div>
 
-              {card.historicalMeaning && (
-                <Card className="border-border">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl">
-                      <BookOpen className="h-5 w-5 text-primary" />
-                      Historical Context
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="leading-relaxed text-muted-foreground">
-                      {card.historicalMeaning}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
               <Card className="border-primary/20 bg-gradient-to-br from-amber-900/5 to-transparent">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-xl">
@@ -287,38 +273,16 @@ export default function CardDetailClient({
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4 md:grid-cols-2">
-                    {card.id === SIGNIFICATOR_CARDS.anima && (
+                    {(card.id === SIGNIFICATOR_CARDS.anima || card.id === SIGNIFICATOR_CARDS.animus) && (
                       <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
                         <div className="mb-2 flex items-center gap-2">
                           <Crown className="h-5 w-5 text-amber-600" />
                           <h4 className="font-semibold text-foreground">
-                            Significator (Anima)
+                            Person card / optional focus
                           </h4>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                           This card represents the{" "}
-                           <strong>female querent</strong> in the Grand Tableau.
-                           All reading flows from this card - cards to the left
-                           represent past influences, cards above represent visible
-                           or known influences, and diagonals show influences and
-                           possibilities.
-                        </p>
-                      </div>
-                    )}
-                    {card.id === SIGNIFICATOR_CARDS.animus && (
-                      <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-950/30">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Crown className="h-5 w-5 text-amber-600" />
-                          <h4 className="font-semibold text-foreground">
-                            Significator (Animus)
-                          </h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                           This card represents the <strong>male querent</strong>{" "}
-                           in the Grand Tableau. All reading flows from this card
-                           - cards to the left represent past influences, cards above
-                           represent visible or known influences, and diagonals show
-                           influences and possibilities.
+                          Man and Woman may be read as person cards or used as an explicitly selected reading focus. Neither card automatically identifies the querent, a partner, or another specific person. Interpret their placement from the actual spread rather than assigning universal past/future meanings to directions.
                         </p>
                       </div>
                     )}
@@ -370,6 +334,40 @@ export default function CardDetailClient({
                     content={meaning.general}
                   />
 
+                  <Card className="border-border bg-muted/30">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">Source & review status</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm text-muted-foreground">
+                      <p>{meaning.reviewStatus ?? "Review status not recorded."}</p>
+                      {meaningSources.length > 0 && (
+                        <ul className="list-inside list-disc space-y-1">
+                          {meaningSources.map((source) => (
+                            <li key={source.id}>
+                              <a href={source.url} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-foreground">
+                                {source.title}
+                              </a>
+                              <span>: {source.scope}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {meaning.secondaryMeanings && meaning.secondaryMeanings.length > 0 && (
+                    <Card className="border-border">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">Context-dependent secondary interpretations</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
+                          {meaning.secondaryMeanings.map((secondary, index) => <li key={index}>{secondary}</li>)}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
+
                   <TwoColumnAspects
                     positiveTitle="When Favorable"
                     positiveAspects={meaning.positive}
@@ -407,17 +405,6 @@ export default function CardDetailClient({
                     </div>
                   )}
 
-                  {card.historicalMeaning && (
-                    <div className="rounded-lg border border-border bg-muted/50 p-6">
-                      <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-foreground">
-                        <BookOpen className="h-5 w-5 text-primary" />
-                        Historical Context
-                      </h3>
-                      <p className="leading-relaxed text-muted-foreground">
-                        {card.historicalMeaning}
-                      </p>
-                    </div>
-                  )}
                 </>
               )}
             </TabsContent>

@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { XCircle } from "lucide-react";
 import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
-import { decodeReadingFromUrl, getCardById } from "@/lib/data";
-import staticCardsData from "@/public/data/cards.json";
+import { decodeReadingFromUrl, getCardById, getCards } from "@/lib/data";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 
@@ -40,7 +39,7 @@ function getSpreadIdFromLayoutType(layoutType: number): string {
 }
 
 export default function SharedReadingPage({ params }: PageProps) {
-  const cardsData = staticCardsData as CardType[];
+  const cardsData = getCards();
   const [reading, setReading] = useState<Reading | null>(null);
   const [allCards, setAllCards] = useState<CardType[]>(cardsData);
   const [loading, setLoading] = useState(true);

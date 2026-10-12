@@ -3,16 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { ModulePageClient } from "@/components/ModulePageClient";
 import {
   Compass,
-  Target,
-  Users,
-  TrendingUp,
-  Clock,
   MapPin,
+  Target,
+  TrendingUp,
   Star,
-  Sun,
-  Moon,
-  Key,
-  Fish,
 } from "lucide-react";
 
 export const metadata = {
@@ -24,20 +18,20 @@ export const metadata = {
 const spreads = [
   {
     category: "Single Card",
-    description: "The simplest and fastest reading method for daily guidance",
+    description: "A single-card symbolic reading for a concise question",
     spreads: [
       {
         name: "Single Card Draw",
         description:
-          "One card for direct, immediate answers and daily guidance",
+          "One card as a focused symbolic prompt for a concise question",
         layout: "One Card",
-        useCase: "Daily guidance, quick questions, immediate answers",
+        useCase: "A concise question or single-card reflection; not a guaranteed answer",
         difficulty: "Beginner",
         isPrimary: true,
         positions: [
           {
-            name: "The Answer",
-            description: "Direct response to your question or situation",
+            name: "Drawn card",
+            description: "Interpret the card in relation to the actual question",
           },
         ],
       },
@@ -45,12 +39,12 @@ const spreads = [
   },
    {
      category: "3-Card Spreads",
-     description: "Perfect for quick insights and daily guidance - Lenormand's most popular method",
+      description: "A short ordered line for a focused question",
      spreads: [
        {
          name: "3-Card Sentence Reading",
-         description:
-           "Three cards flowing as a narrative sentence using pair-reading - the core Lenormand method",
+          description:
+            "Three ordered cards read as a connected line; interpretation stays with the question and draw",
          layout: "Card 1 → Card 2 → Card 3 (combine pairs: 1+2, then 2+3)",
          useCase: "Universal reading, foundational technique, any question",
          difficulty: "Beginner",
@@ -74,24 +68,24 @@ const spreads = [
          ],
        },
        {
-         name: "3-Card: Situation-Challenge-Advice",
-         description: "Diagnostic spread for problem-solving using Lenormand pair-reading",
-         layout: "Situation → Challenge → Advice (read pairs 1+2 and 2+3)",
-         useCase: "Problem analysis, decision making, troubleshooting",
+          name: "Optional 3-Card Situation-Challenge-Advice Frame",
+          description: "A reader-selected modern framing; it is not the app's sentence-3 preset or a universal Lenormand rule",
+          layout: "Situation → Challenge → Advice (optional labels applied to a 3-card line)",
+          useCase: "A chosen reflection structure; positions do not guarantee advice or resolution",
          difficulty: "Beginner",
          isPrimary: false,
          positions: [
            {
              name: "Situation",
-             description: "What's currently happening (combined with Challenge shows the problem)",
+              description: "The first card's position in this optional layout",
            },
            {
              name: "Challenge",
-             description: "What's blocking or opposing you (read with Advice to see the solution path)",
+              description: "The second card's position in this optional layout",
            },
            {
              name: "Advice",
-             description: "What to do about it (the resolution that follows from the challenge)",
+              description: "The third card's position in this optional layout; it is not guaranteed advice or a resolution",
            },
          ],
        },
@@ -105,7 +99,7 @@ const spreads = [
         name: "5-Card Sentence Reading",
         description: "Extended narrative read as a grammatical sentence flowing left to right",
         layout: "Card 1 → Card 2 → Card 3 → Card 4 → Card 5",
-        useCase: "General readings, seeing development over time, understanding influencing factors",
+        useCase: "A focused question with more ordered card context",
         difficulty: "Intermediate",
         isPrimary: true,
         positions: [
@@ -121,14 +115,14 @@ const spreads = [
 
    {
      category: "9-Card Spreads",
-     description: "Petit Grand Tableau - Master spread for comprehensive life insights using authentic Lenormand row-reading",
+      description: "A nine-card Petit Tableau arranged as a 3×3 grid",
      spreads: [
        {
-         name: "9-Card Petit Grand Tableau",
-         description: "Complete life reading using traditional 3x3 grid layout read as three rows with pair combinations",
+          name: "9-Card Petit Tableau",
+          description: "A 3×3 layout with a geometric centre and relevant lines considered in relation to the question",
          layout:
            "3x3 Grid (3 rows). No row is designated main or underlying; the centre is structurally special. Read rows, columns, diagonals and surrounding cards together",
-         useCase: "Major life decisions, deep insight, complex situations",
+          useCase: "A broad question where a 3×3 view may add useful context",
          difficulty: "Intermediate",
          isPrimary: true,
          positions: [
@@ -154,7 +148,7 @@ const spreads = [
            {
              name: "Row 2, Card 2 (CENTER)",
              description:
-               "The geometric centre of the grid. Read with the surrounding cards for its full meaning",
+                "The geometric centre of the grid; use it as a focal influence without treating it as a predetermined outcome",
            },
            {
              name: "Row 2, Card 3",
@@ -180,58 +174,58 @@ const spreads = [
      ],
    },
   {
-    category: "36-Card Master Reading",
-    description: "Complete deck reading for comprehensive guidance",
+     category: "36-Card Grand Tableau",
+     description: "A full-deck 4×9 layout for a broad reading of the current question",
     spreads: [
        {
          name: "Grand Tableau (36-Card Reading)",
-         description:
-           "The most comprehensive Lenormand reading using all 36 cards in a 4×9 grid - authentic French salon method",
-         layout: "4 rows of 9 cards (traditional salon formation) - read left-to-right by row with pair combinations",
-         useCase:
-           "Major life decisions, year-ahead readings, complex situations, complete life picture",
+          description:
+            "A full-deck layout arranged as four rows of nine cards; traditions differ on advanced techniques",
+          layout: "4 rows × 9 columns; card order and houses are mapped separately",
+          useCase:
+            "Broad questions that benefit from the full deck; it does not guarantee a year-ahead forecast",
          difficulty: "Expert",
          isPrimary: true,
          positions: [
            {
              name: "Significator",
-             description:
-               "The card representing you (usually Man #28 or Woman #29) - the anchor point for directional reading",
+              description:
+                "Man (#28) or Woman (#29) may be selected as a reading focus; neither is automatically assigned to the querent or a partner",
            },
            {
              name: "Row-by-Row Reading",
-             description:
-               "Read all 36 cards left-to-right by row, combining adjacent cards (pairs) to build narrative",
+              description:
+                "Rows provide exact order and position; interpret relevant lines rather than forcing a story from every pair",
            },
            {
              name: "Directional Zones",
-             description:
-               "Cards to LEFT of significator = past influences | RIGHT = future possibilities | ABOVE = conscious thoughts | BELOW = unconscious forces",
+              description:
+                "Left, right, above, below, and diagonal are geometric relations only; do not assign universal chronology or hidden/visible meanings",
            },
            {
              name: "Four Corners",
-             description:
-               "Cards 1, 9, 28, 36 (or 1, 9, 27, 36) - represent the strongest foundational influences and extreme energies",
+              description:
+                "The four corner cells are geometric reference points; their significance depends on the question and reading method",
            },
            {
              name: "Center Area",
-             description:
-               "Central cards around middle of grid - reveal what's at the heart of the situation",
+              description:
+                "The four middle cells occupy the centre of the 4×9 grid; centre does not mean a guaranteed answer",
            },
             {
               name: "Fourth-row positions",
               description:
-                "Positions 33–36 are ordinary fourth-row positions in this documented 9×4 method; interpret them through houses and relationships.",
+                 "Positions 33–36 are ordinary cells in the fourth row; they are not a special fate or outcome row.",
             },
            {
              name: "Topic Cards",
-             description:
-               "Specific positions carry traditional meanings: health, love, career, money (research position associations)",
+              description:
+                "Topic-relevant cards may receive attention when supported by the question; no separate topic card is assumed",
            },
            {
              name: "Pair Reading",
-             description:
-               "Read adjacent cards in rows as pairs for flowing narrative - same pair-reading method as 3-card and 9-card spreads",
+              description:
+                "Adjacency is a spatial fact. Pair interpretations remain contextual unless a source-reviewed pair is available",
            },
          ],
        },
@@ -241,45 +235,19 @@ const spreads = [
 
 const techniques = [
   {
-    name: "Card Pairing",
-    description: "Reading cards in pairs to understand relationships",
-    icon: Users,
-    examples: [
-      "Rider + Letter = Important message or news",
-      "Heart + Ring = Committed relationship",
-      "Snake + Book = Hidden knowledge or secrets",
-    ],
-  },
-  {
-    name: "Directional Flow",
-    description: "Following the energy flow from left to right",
+    name: "Ordered lines",
+    description: "Keep the supplied order and read a linear spread from left to right; do not assume reversing a pair leaves the emphasis unchanged.",
     icon: TrendingUp,
-    examples: [
-      "Mountain → Sun = Overcoming obstacles leads to success",
-      "Clouds → Key = Confusion finds clarity",
-      "Coffin → Stork = Ending leads to new beginning",
-    ],
   },
   {
-    name: "Knights Move",
-    description: "Reading cards in an L-shaped pattern like a chess knight",
+    name: "Relevant geometry",
+    description: "Use only rows, columns, diagonals, adjacency, and houses that exist in the current spread and materially address its question.",
+    icon: Compass,
+  },
+  {
+    name: "Houses and adjacency",
+    description: "In a Grand Tableau, house occupancy and immediate neighbouring cells are separate relationships.",
     icon: Target,
-    examples: [
-      "Card 1 → Card 6 → Card 11 (in a 3x4 grid)",
-      "Card 2 → Card 7 → Card 12",
-      "Reveals underlying patterns and connections",
-    ],
-  },
-  {
-    name: "Time Associations",
-    description: "Using cards to indicate timing of events",
-    icon: Clock,
-    examples: [
-      "Rider = Days or very soon",
-      "Ship = Weeks or months",
-      "House = Months or years",
-      "Tree = Years or long-term",
-    ],
   },
 ];
 
@@ -453,27 +421,17 @@ export default function SpreadsPage() {
         <CardHeader>
           <CardTitle className="flex items-center text-2xl text-foreground">
             <MapPin className="mr-3 h-6 w-6 text-primary" />
-            The Grand Tableau: Historical Salon Method (1809)
+            The Grand Tableau: 4×9 Structure
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <p className="leading-relaxed text-card-foreground">
-            The Grand Tableau is Marie-Anne Lenormand&apos;s most powerful
-            reading technique, using all 36 cards in a 4×9 layout (four rows of
-            nine cards). This is the exact method documented in 1820s handbooks
-            and by eyewitnesses who watched her read for Joséphine and Napoleon.
+            The Grand Tableau uses all 36 cards in four rows of nine. The surviving 1799 Game of Hope source documents a game and a playful oracle layout; it does not establish every modern Grand Tableau technique or fixed card meaning.
           </p>
 
           <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
             <p className="text-sm text-card-foreground">
-              <strong>Historical Note:</strong> In Marie-Anne Lenormand&apos;s
-              French tradition, the{" "}
-              <strong>Man card represents the central focus</strong> (the
-              questioner or primary subject), while the{" "}
-              <strong>
-                Woman card represents another key person or secondary influence
-              </strong>
-              .
+              <strong>Person cards:</strong> Man (#28) and Woman (#29) can serve as person cards or an explicitly selected reading focus. Do not automatically identify either card as the querent, their partner, or another real person.
             </p>
           </div>
 
@@ -494,7 +452,7 @@ export default function SpreadsPage() {
                   ))}
                 </div>
                 <p className="mt-3 text-xs text-primary dark:text-primary/80">
-                  4 rows × 9 columns (documented 9×4 formation; not a universal historical claim)
+                  Four rows × nine columns; positions are numbered left-to-right, top-to-bottom
                 </p>
               </div>
             </div>

@@ -11,7 +11,15 @@ const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 function draw(count: number, offset = 0) {
   return Array.from({ length: count }, (_, i) => {
     const card = deck[(i + offset) % deck.length];
-    return { id: card.id, name: card.name, keywords: card.keywords, position: i };
+    return {
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+      position: i,
+    };
   });
 }
 
@@ -25,7 +33,14 @@ const regressionLayoutIds = [
 function drawIds(ids: number[]) {
   return ids.map((id) => {
     const card = cardsMap.get(id)!;
-    return { id, name: card.name, keywords: card.keywords };
+    return {
+      id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+    };
   });
 }
 
@@ -87,14 +102,18 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
     expect(facts).not.toContain("Mirrored across a significator");
   });
 
-  it("supplies no card-meaning interpretation anywhere", () => {
-    for (const line of facts.split("\n")) {
-      // The Synthesis line carries procedural weighting instructions, not card interpretation.
+  it("keeps geometry structural and supplies core meanings in a separate section", () => {
+    const meaningHeader = facts.indexOf("Core card meaning references");
+    expect(meaningHeader).toBeGreaterThan(0);
+    const structuralLines = facts.slice(0, meaningHeader).split("\n");
+    for (const line of structuralLines) {
       if (line.startsWith("Synthesis:")) continue;
       expect(line, `structural facts carry interpretation: ${line}`).not.toMatch(
         /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative|luck/i,
       );
     }
+    expect(facts).toContain("Core card meaning references (source-compared");
+    expect(facts).toContain("Rider: News, messages, arrival, movement.");
   });
 });
 
@@ -147,6 +166,41 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     expect(prompt).not.toContain("Man is the user");
     expect(prompt).not.toContain("Woman is the user's partner");
     expect(prompt).toContain('"answer": string');
+  });
+});
+
+describe("nine-card Petit Tableau regression", () => {
+  const cards = drawIds([31, 29, 4, 14, 36, 30, 25, 5, 34]);
+  const context = buildReadingContext(
+    "comprehensive",
+    "How might this relationship develop?",
+    cards,
+    cardsMap,
+  );
+  const facts = buildSpreadFacts(context);
+  const prompt = buildSimpleReadingPrompt(context);
+
+  it("recognizes the centre, rows, columns, and diagonals from exact positions", () => {
+    expect(facts).toContain("Centre card: Cross.");
+    expect(facts).toContain("Row 1: Sun | Woman | House");
+    expect(facts).toContain("Row 2: Fox | Cross | Lily");
+    expect(facts).toContain("Row 3: Ring | Tree | Fish");
+    expect(facts).toContain("Column 1: Sun | Fox | Ring");
+    expect(facts).toContain("Column 2: Woman | Cross | Tree");
+    expect(facts).toContain("Column 3: House | Lily | Fish");
+    expect(facts).toContain("Diagonal (top-left to bottom-right): Sun | Cross | Fish");
+    expect(facts).toContain("Diagonal (top-right to bottom-left): House | Cross | Ring");
+  });
+
+  it("uses contextual core meanings without inventing a relationship or a fixed outcome", () => {
+    expect(prompt).toContain("Cross: Burden, hardship, suffering, duty, difficult circumstances.");
+    expect(prompt).not.toContain("Paths:");
+    expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
+    expect(prompt).toContain("not proof of infidelity or a specific act");
+    expect(prompt).toContain("Ring: Commitment, agreement, contract, partnership, cycle.");
+    expect(prompt).toContain("Tree: Health, growth, roots, vitality, long duration.");
+    expect(prompt).toContain("without guarantees or invented probabilities");
+    expect(prompt).toContain("do not force every line into the reading or impose chronology");
   });
 });
 

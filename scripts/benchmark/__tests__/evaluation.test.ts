@@ -152,4 +152,28 @@ describe("benchmark factual evaluation", () => {
     expect(prompt).toContain("Woman is row 2, column 9, with immediate neighbours Bear, Dog, Whip, Fish, Clover");
     expect(prompt).toContain("Assess spatial accuracy only, not the desired positive or negative interpretation");
   });
+
+  it("gives the reviewer the fixed nine-card geometry and non-polarity target", () => {
+    const benchmarkCase = createContentRegressionCases().find((item) => item.id === "content-petit-tableau-nine-card-en-001")!;
+    const context = buildReadingContext(
+      benchmarkCase.spreadId,
+      benchmarkCase.question,
+      normalized(benchmarkCase.cardIdsByPosition),
+      getCardCatalogMap(),
+      benchmarkCase.significatorPreference,
+    );
+    const evaluation = evaluateOutput(JSON.stringify({
+      answer: "A contextual reading, with no fixed outcome.",
+      reading: "The spread has a central card and surrounding lines.",
+      patterns: [],
+      timing: null,
+    }), "stop", context);
+    const prompt = buildQualityJudgePrompt(benchmarkCase, context, evaluation);
+
+    expect(prompt).toContain("How might this relationship develop?");
+    expect(prompt).toContain("position 5: Cross, row 2, column 2");
+    expect(prompt).toContain("Assess positions/lines against the supplied 3x3 map");
+    expect(prompt).toContain("Ring with Tree may support continuity or gradual commitment, but must not guarantee an outcome");
+    expect(prompt).toContain("Assess spatial and factual accuracy, not a desired prediction polarity");
+  });
 });

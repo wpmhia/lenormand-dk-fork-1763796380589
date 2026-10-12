@@ -157,7 +157,6 @@ export function useAIAnalysis(
             cards: mapCards(),
             spreadId: selectedSpreadId,
             significatorPreference: significatorToPreference(significatorType),
-            followUpHistory: priorHistory,
           }),
           signal: controller.signal,
         });

@@ -20,17 +20,25 @@ The default run enables a separate DeepSeek V4 Pro quality/factuality judge (`de
 
 ## Fixed content regression cases
 
-Use `--content-regressions-only` to run the fixed qualitative cases separately from the seeded default set. Three cases use the same Sun, Paths, Ring, Stork and Mountain draw: a suggestive question about a person's contact with extramarital men, a neutral wording for comparison, and a question about whether dating has stopped. Their review targets catch unsupported assumptions and the leap from “not confirmed” to “no” or “the opposite.” A fourth Grand Tableau case uses a fixed 4x9 layout and the question “Will the shared plan work out?”; its review target concerns spatial accuracy only, not the desired interpretation. No case prescribes a card meaning.
+Use `--content-regressions-only` to run fixed qualitative cases separately from the seeded default set. They cover assumption handling, uncertainty, Cross versus Paths, Fox without automatic infidelity, a nine-card geometry fixture, forecast calibration, and Grand Tableau neighbours/houses. Targets guide independent review; none prescribes a prediction or card meaning.
 
 ```bash
 # Inspect the exact prompt and case first; this does not contact a provider:
 npm run benchmark:readings -- --run-id person-identity-plan --pricing-period off-peak --content-regressions-only --plan-only
 
-# Optional: after reviewing the plan, run the cases and judge (up to eight paid calls):
+# Optional: after reviewing the plan, run the cases and judge (up to eighteen paid calls):
 npm run benchmark:readings -- --run-id person-identity-check --pricing-period off-peak --content-regressions-only --confirm-paid-run
 ```
 
 Review both the judge finding and `human-review.tsv`; judge output is a candidate signal, not ground truth. The TSV includes the regression target to guide independent review.
+
+To prepare a 30-case balanced review batch (six cases per spread size), generate and inspect a plan before any provider run:
+
+```bash
+npm run benchmark:readings -- --seed 20261004 --count 6 --run-id reviewed-30-plan --pricing-period off-peak --plan-only
+```
+
+The generated batch is not “independently reviewed” until the human-review ratings are completed by a qualified reviewer. Do not report expert-quality metrics from plan-only or judge output alone.
 
 ## Safe start: inspect a reproducible plan
 

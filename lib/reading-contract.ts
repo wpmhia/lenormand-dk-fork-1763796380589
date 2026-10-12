@@ -34,7 +34,6 @@ const rawCardSchema = z.object({
 
 const bodySchema = z.object({
   question: z.string().max(MAX_QUESTION_LENGTH).optional().default(""),
-  situationContext: z.string().max(MAX_QUESTION_LENGTH).optional().default(""),
   spreadId: spreadIdSchema,
   cards: z.array(rawCardSchema).min(1),
   significatorPreference: z.enum(["woman", "man", "both"]).optional().default("both"),
@@ -47,13 +46,15 @@ export interface NormalizedCard {
   name: string;
   keywords: string[];
   strength?: string;
+  coreMeaning?: string;
+  secondaryMeanings?: string[];
+  meaningReviewStatus?: string;
 }
 
 type SignificatorPreference = "woman" | "man" | "both";
 
 interface NormalizedReadingRequest {
   question: string;
-  situationContext: string;
   spreadId: SpreadId;
   cards: NormalizedCard[];
   significatorPreference: SignificatorPreference;
@@ -113,6 +114,9 @@ export function normalizeReadingRequest(
       name: cardData.name,
       keywords: cardData.keywords || [],
       strength: cardData.strength,
+      coreMeaning: cardData.meaning.general || cardData.uprightMeaning,
+      secondaryMeanings: cardData.meaning.secondaryMeanings ?? [],
+      meaningReviewStatus: cardData.meaning.reviewStatus,
     });
   }
 
@@ -142,7 +146,6 @@ export function normalizeReadingRequest(
 
   return {
     question: normalizedQuestion,
-    situationContext: normalizeQuestion(data.situationContext),
     spreadId: data.spreadId,
     cards,
     significatorPreference,

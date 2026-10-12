@@ -2,8 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getPositionInfo } from "@/components/reading/SpreadPositions";
-import cardsData from "@/public/data/cards.json";
-import type { Card } from "@/lib/types";
+import { CARD_CATALOG } from "@/lib/card-catalog";
 
 const HARD_BANNED = [
   "shadow work",
@@ -29,11 +28,18 @@ const REVIEW_TERMS = [
   "intuition",
 ];
 
-const catalog = cardsData as Card[];
-const cardsMap = new Map<number, Card>(catalog.map((card) => [card.id, card]));
+const catalog = CARD_CATALOG;
+const cardsMap = new Map(catalog.map((card) => [card.id, card]));
 const allCards = [...catalog].sort((a, b) => a.id - b.id);
 const normalized = (count: number) =>
-  allCards.slice(0, count).map((card) => ({ id: card.id, name: card.name, keywords: card.keywords }));
+  allCards.slice(0, count).map((card) => ({
+    id: card.id,
+    name: card.name,
+    keywords: card.keywords,
+    coreMeaning: card.meaning.general,
+    secondaryMeanings: card.meaning.secondaryMeanings,
+    meaningReviewStatus: card.meaning.reviewStatus,
+  }));
 
 /** Every production prompt the model can actually receive, one per spread. */
 function extractSpreadPrompts(): string[] {
@@ -103,7 +109,7 @@ describe("Lenormand purity", () => {
 
   describe("card data integrity", () => {
   it("no card meaning or combo contains banned New Age terms", () => {
-    const data = cardsData as any[];
+    const data = CARD_CATALOG;
     const banned = [
       "unique energy and insights",
       "combined with",
@@ -130,7 +136,7 @@ describe("Lenormand purity", () => {
   });
 
   it("every card has a meaning.general", () => {
-    const data = cardsData as any[];
+    const data = CARD_CATALOG;
     for (const card of data) {
       expect(card.meaning?.general).toBeTruthy();
     }
@@ -141,11 +147,12 @@ describe("review terms in spread prompts", () => {
     it("past/present/future appear only in Grand Tableau context or as anti-instructions", () => {
       for (const term of ["past", "present", "future"]) {
         for (const text of spreadPrompts) {
-          if (text.toLowerCase().includes(term)) {
-            const idx = text.toLowerCase().indexOf(term);
+          const termPattern = new RegExp(`\\b${term}\\b`, "i");
+          if (termPattern.test(text)) {
+            const idx = text.toLowerCase().search(termPattern);
             const context = text.slice(Math.max(0, idx - 60), idx + 60).toLowerCase();
             const isAllowedContext = context.includes("significator") || context.includes("left of") || context.includes("right of") || context.includes("do not assign") || context.includes("do not use");
-            expect(isAllowedContext).toBe(true);
+            expect(isAllowedContext, `unexpected direction term "${term}" near: ${context}`).toBe(true);
           }
         }
       }

@@ -5,11 +5,11 @@ import { getCards } from "@/lib/data";
 export const metadata: Metadata = {
   title: "The Lenormand Deck - All 36 Cards with Meanings",
   description:
-    "Explore all 36 Lenormand cards with their meanings, keywords, and combinations. Complete guide to Marie-Anne Lenormand's card system.",
+    "Explore source-compared core meanings for all 36 Petit Lenormand cards, with school-dependent variants kept separate.",
   openGraph: {
     title: "The Lenormand Deck - All 36 Cards",
     description:
-      "Complete guide to all 36 Lenormand cards with meanings and combinations.",
+      "Source-compared core meanings for the 36-card Petit Lenormand deck.",
     type: "website",
   },
   alternates: {

@@ -46,6 +46,24 @@ export function createContentRegressionCases(): BenchmarkCase[] {
     significatorPreference: "both",
     regressionTarget,
   });
+  const makeEnglishCase = (
+    id: string,
+    spreadId: SpreadId,
+    cardIdsByPosition: number[],
+    question: string,
+    regressionTarget: string,
+  ): BenchmarkCase => ({
+    id,
+    seed: 0,
+    spreadId,
+    spreadLabel: SPREAD_DEFINITIONS[spreadId].label,
+    cardCount: cardIdsByPosition.length,
+    question,
+    language: "en",
+    cardIdsByPosition: [...cardIdsByPosition],
+    significatorPreference: "both",
+    regressionTarget,
+  });
 
   return [
     makeCase(
@@ -75,6 +93,41 @@ export function createContentRegressionCases(): BenchmarkCase[] {
       significatorPreference: "both",
       regressionTarget: "Assess spatial accuracy only, not the desired positive or negative interpretation. In this exact layout Man is row 1, column 1, with immediate neighbours Snake, Key, Book; Woman is row 2, column 9, with immediate neighbours Bear, Dog, Whip, Fish, Clover. Tower is two columns left of Woman and is not an immediate neighbour. Row 2 ends Tower–Whip–Woman, so Woman is not between Tower and Whip. Woman occupies the Dog house, and Dog is also above Woman; these are distinct relationships.",
     },
+    makeEnglishCase(
+      "content-cross-is-not-paths-en-001",
+      "sentence-3",
+      [36, 5, 18],
+      "What is weighing on this situation?",
+      "Assess whether Cross is read as burden, hardship, duty, or suffering rather than as Paths/choice. Card 22 Paths is not drawn. Do not require a positive or negative answer.",
+    ),
+    makeEnglishCase(
+      "content-fox-not-automatic-infidelity-en-001",
+      "sentence-3",
+      [14, 3, 35],
+      "What is the current relationship dynamic?",
+      "Assess whether the response asserts cheating or an affair from Fox alone. Ship and Anchor do not add a specific infidelity fact. Do not require a particular positive or negative interpretation.",
+    ),
+    makeEnglishCase(
+      "content-question-assumption-en-001",
+      "sentence-3",
+      [6, 25, 33],
+      "Why is the other person lying?",
+      "Assess whether the answer accepts that the partner is lying as established fact. It may address the concern symbolically while keeping the accusation unverified; do not force a denial or a yes/no answer.",
+    ),
+    makeEnglishCase(
+      "content-petit-tableau-nine-card-en-001",
+      "comprehensive",
+      [31, 29, 4, 14, 36, 30, 25, 5, 34],
+      "How might this relationship develop?",
+      "Assess positions/lines against the supplied 3x3 map. Cross is central, not Paths; Fox alone does not establish adultery. Ring with Tree may support continuity or gradual commitment, but must not guarantee an outcome. Assess spatial and factual accuracy, not a desired prediction polarity.",
+    ),
+    makeEnglishCase(
+      "content-forecast-balance-en-001",
+      "sentence-5",
+      [31, 6, 21, 33, 35],
+      "Will this project succeed?",
+      "Assess whether the answer gives a direct, best-supported forecast, acknowledges material conflicting indications, avoids a guarantee or invented probability, and does not retreat into generic coaching. Do not require a particular yes/no polarity.",
+    ),
   ];
 }
 

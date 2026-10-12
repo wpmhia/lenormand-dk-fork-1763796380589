@@ -9,6 +9,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getCards } from "@/lib/data";
 import { getCardTimingKnowledge } from "@/lib/timing";
+import { CARD_MEANING_SOURCES } from "@/lib/card-catalog";
 
 export const revalidate = 3600;
 
@@ -28,6 +29,7 @@ export default async function CardMeaningPage({ params }: PageProps) {
 
   const previousCardId = Math.max(1, card.id - 1);
   const nextCardId = Math.min(36, card.id + 1);
+  const meaningSources = CARD_MEANING_SOURCES.filter((source) => card.meaning.sourceIds?.includes(source.id));
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8">
@@ -102,6 +104,32 @@ export default async function CardMeaningPage({ params }: PageProps) {
                       {card.uprightMeaning}
                     </p>
 
+                    <p className="mb-3 text-xs text-muted-foreground">
+                      Review status: {card.meaning.reviewStatus ?? "not recorded"}
+                    </p>
+
+                    {card.meaning.secondaryMeanings && card.meaning.secondaryMeanings.length > 0 && (
+                      <div className="mb-4 rounded-lg border border-border bg-muted/30 p-3">
+                        <h4 className="mb-2 font-medium">Context-dependent secondary interpretations</h4>
+                        <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
+                          {card.meaning.secondaryMeanings.map((secondary, index) => <li key={index}>{secondary}</li>)}
+                        </ul>
+                      </div>
+                    )}
+
+                    {meaningSources.length > 0 && (
+                      <div className="mb-4 text-xs text-muted-foreground">
+                        Sources: {meaningSources.map((source, index) => (
+                          <span key={source.id}>
+                            {index > 0 ? "; " : ""}
+                            <a href={source.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+                              {source.title}
+                            </a>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
                     {getCardTimingKnowledge(card.id) && (
                       <>
                         <h3 className="mb-2 text-lg font-semibold">
@@ -113,16 +141,6 @@ export default async function CardMeaningPage({ params }: PageProps) {
                       </>
                     )}
 
-                    {card.historicalMeaning && (
-                      <>
-                        <h3 className="mb-2 mt-4 text-lg font-semibold">
-                          Historical Meaning
-                        </h3>
-                        <p className="leading-relaxed text-muted-foreground">
-                          {card.historicalMeaning}
-                        </p>
-                      </>
-                    )}
                   </div>
                 </div>
               </CardContent>

@@ -83,6 +83,7 @@ const AUDIT_SOURCE_FILES = [
   "lib/reading-service.ts",
   "lib/spread-definitions.ts",
   "public/data/cards.json",
+  "public/data/canonical-pairs.json",
 ];
 
 function parseArgs(argv: string[]): Options {
@@ -184,7 +185,14 @@ function contextFor(benchmarkCase: BenchmarkCase) {
   const cards = benchmarkCase.cardIdsByPosition.map((id) => {
     const card = cardsMap.get(id);
     if (!card) throw new Error(`Card id ${id} is not in the card catalog`);
-    return { id, name: card.name, keywords: card.keywords ?? [] };
+    return {
+      id,
+      name: card.name,
+      keywords: card.keywords ?? [],
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings ?? [],
+      meaningReviewStatus: card.meaning.reviewStatus,
+    };
   });
   return buildReadingContext(benchmarkCase.spreadId, benchmarkCase.question, cards, cardsMap, benchmarkCase.significatorPreference);
 }

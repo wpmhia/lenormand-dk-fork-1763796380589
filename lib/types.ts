@@ -4,6 +4,9 @@ export interface CardMeaning {
   negative: string[];
   relationships?: string;
   careerFinance?: string;
+  secondaryMeanings?: string[];
+  reviewStatus?: string;
+  sourceIds?: string[];
 }
 
 export interface Card {

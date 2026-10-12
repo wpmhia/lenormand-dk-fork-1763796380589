@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  buildFollowupPrompt,
   FOLLOWUP_SYSTEM_PROMPT,
   FOLLOWUP_MAX_OUTPUT_TOKENS,
 } from "@/lib/followup-prompt";
@@ -17,7 +18,22 @@ describe("follow-up system prompt", () => {
   it("keeps the spread fixed and grounded in supplied evidence", () => {
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/The cards and positions are fixed/i);
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Use only spatial relationships supported by the supplied coordinates/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Previous AI wording and conversation history are context, not evidence/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Interpret this follow-up independently/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not rely on previous readings, predictions, outcomes, notes, or personal history/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/conversation history/i);
+  });
+
+  it("builds follow-up input only from the fixed spread and current questions", () => {
+    const prompt = buildFollowupPrompt({
+      spreadFacts: "position 1: Rider",
+      originalQuestion: "Will the project advance?",
+      activeQuestion: "What suggests a delay?",
+    });
+    expect(prompt).toContain("position 1: Rider");
+    expect(prompt).toContain("Original question: Will the project advance?");
+    expect(prompt).toContain("Active follow-up: What suggests a delay?");
+    expect(prompt).not.toContain("Earlier assistant answer");
+    expect(prompt).not.toContain("previous outcome");
   });
 
   it("is much shorter than the full reading system prompt and stays under 50 lines", () => {

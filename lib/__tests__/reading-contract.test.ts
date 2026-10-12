@@ -32,6 +32,21 @@ function validBody(overrides: Record<string, unknown> = {}) {
 }
 
 describe("normalizeReadingRequest", () => {
+  it("ignores history, notes, and removed situation context", () => {
+    const base = normalizeReadingRequest(validBody(), cardsMap);
+    const withExtraHistory = normalizeReadingRequest(validBody({
+      situationContext: "Private relationship history",
+      readingHistory: [{ question: "Earlier?", answer: "Earlier answer" }],
+      notes: "Private note",
+      previousPrediction: "Earlier prediction",
+    }), cardsMap);
+
+    expect(withExtraHistory).toEqual(base);
+    expect(withExtraHistory).not.toHaveProperty("situationContext");
+    expect(withExtraHistory).not.toHaveProperty("readingHistory");
+    expect(withExtraHistory).not.toHaveProperty("notes");
+  });
+
   it("rejects non-object body", () => {
     expect(() => normalizeReadingRequest(null, cardsMap)).toThrow(ValidationError);
     expect(() => normalizeReadingRequest("string", cardsMap)).toThrow(ValidationError);

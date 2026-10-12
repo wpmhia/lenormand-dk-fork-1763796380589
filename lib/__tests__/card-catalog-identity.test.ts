@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { CARD_CATALOG, CARD_NAME_TO_ID, getCardCatalogMap } from "@/lib/card-catalog";
+import { CANONICAL_PAIRS, CARD_CATALOG, CARD_MEANING_SOURCES, CARD_NAME_TO_ID, getCardCatalogMap } from "@/lib/card-catalog";
 import { CARD_TIMING_KNOWLEDGE, TIMING_CARDS } from "@/lib/timing";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildSpreadFacts } from "@/lib/prompt-builder";
+import { getCanonicalPairMeaning, getCombinationMeaning } from "@/lib/data";
 
 /**
  * The card catalog is the single source of truth for card identity.
@@ -45,6 +46,52 @@ describe("card catalog: canonical identity is single-sourced", () => {
     expect(new Set(CARD_CATALOG.map((card) => card.name.toLowerCase())).size).toBe(36);
   });
 
+  it("source-tracks every core entry without claiming expert sign-off", () => {
+    const sourceIds = new Set(CARD_MEANING_SOURCES.map((source) => source.id));
+    for (const card of CARD_CATALOG) {
+      expect(card.meaning.reviewStatus).toMatch(/source-compared; expert review pending/);
+      expect(card.meaning.sourceIds?.length, `${card.name} needs source references`).toBeGreaterThan(0);
+      for (const sourceId of card.meaning.sourceIds ?? []) {
+        expect(sourceIds.has(sourceId), `${card.name} refers to missing source ${sourceId}`).toBe(true);
+      }
+    }
+  });
+
+  it("keeps Cross and Paths distinct and avoids single-card relationship verdicts", () => {
+    const cross = CARD_CATALOG.find((card) => card.id === 36)!;
+    const paths = CARD_CATALOG.find((card) => card.id === 22)!;
+    const fox = CARD_CATALOG.find((card) => card.id === 14)!;
+    const lily = CARD_CATALOG.find((card) => card.id === 30)!;
+    const fish = CARD_CATALOG.find((card) => card.id === 34)!;
+
+    expect(cross.meaning.general).toMatch(/burden.*hardship.*suffering.*duty/i);
+    expect(cross.meaning.general).not.toMatch(/choice|crossroads/i);
+    expect(paths.meaning.general).toMatch(/choices.*alternatives.*options.*decisions/i);
+    expect(fox.meaning.general).toMatch(/work.*employment.*strategy.*self-interest/i);
+    expect(fox.meaning.general).not.toMatch(/infidelity|affair/i);
+    expect(fox.meaning.secondaryMeanings?.join(" ")).toMatch(/not proof of infidelity/i);
+    expect(lily.meaning.secondaryMeanings?.join(" ")).toMatch(/tradition-dependent/i);
+    expect(fish.meaning.general).toMatch(/money.*business.*commerce.*resources/i);
+  });
+
+  it("does not promote any legacy pair text as source-reviewed doctrine", () => {
+    expect(CANONICAL_PAIRS).toEqual([]);
+    expect(CARD_CATALOG.every((card) => card.combos.length === 0)).toBe(true);
+    expect(getCombinationMeaning(CARD_CATALOG[35], CARD_CATALOG[21], 0, 1)).toBeNull();
+  });
+
+  it("uses ordered source-reviewed pair keys without treating reversal as identical", () => {
+    const reviewedPair = {
+      firstCardId: 36,
+      secondCardId: 22,
+      meaning: "test fixture only",
+      sourceIds: ["test-source"],
+      reviewStatus: "test",
+    };
+    expect(getCanonicalPairMeaning(36, 22, [reviewedPair])).toBe("test fixture only");
+    expect(getCanonicalPairMeaning(22, 36, [reviewedPair])).toBeNull();
+  });
+
   it("exposes the catalog map keyed by id", () => {
     const map = getCardCatalogMap();
     expect(map.size).toBe(36);
@@ -73,7 +120,13 @@ describe("card catalog: downstream registries use canonical names", () => {
 
   it("announces Grand Tableau houses under the canonical deck names", () => {
     const cardsMap = getCardCatalogMap();
-    const drawn = CARD_CATALOG.map((card) => ({ id: card.id, name: card.name, keywords: card.keywords }));
+    const drawn = CARD_CATALOG.map((card) => ({
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+    }));
     const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "Full picture?", drawn, cardsMap));
 
     const houseNames = facts

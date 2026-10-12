@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference, validated.situationContext);
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
     generationStartedAt = Date.now();

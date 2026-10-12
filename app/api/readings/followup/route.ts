@@ -8,10 +8,9 @@ import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { generateText } from "ai";
 import { DEFAULT_RATE_WINDOW_MS, MAX_QUESTION_LENGTH } from "@/lib/constants";
-import staticCardsData from "@/public/data/cards.json";
-import { Card } from "@/lib/types";
+import { getCardCatalogMap } from "@/lib/card-catalog";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
-import { FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
+import { buildFollowupPrompt, FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildSpreadFacts } from "@/lib/prompt-builder";
 
@@ -22,8 +21,7 @@ export async function OPTIONS() {
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
-const allCards = staticCardsData as Card[];
-const cardsMap = new Map<number, Card>(allCards.map((c) => [c.id, c]));
+const cardsMap = getCardCatalogMap();
 
 
 export async function POST(request: Request) {
@@ -68,13 +66,12 @@ export async function POST(request: Request) {
       });
     }
 
-    const { followUpQuestion, originalQuestion, cards, spreadId, significatorPreference, followUpHistory } = body as {
+    const { followUpQuestion, originalQuestion, cards, spreadId, significatorPreference } = body as {
       followUpQuestion?: unknown;
       originalQuestion?: unknown;
       cards?: unknown;
       spreadId?: unknown;
       significatorPreference?: unknown;
-      followUpHistory?: unknown;
     };
 
     if (typeof followUpQuestion !== "string") {
@@ -100,15 +97,6 @@ export async function POST(request: Request) {
 
     const safeOriginalQuestion = typeof originalQuestion === "string" ? originalQuestion : "";
 
-    if (!Array.isArray(followUpHistory) || followUpHistory.length > 12 || followUpHistory.some((turn) =>
-      !turn || (turn.role !== "user" && turn.role !== "assistant") || typeof turn.content !== "string" || turn.content.length > 1200
-    )) {
-      return new Response(JSON.stringify({ error: "Invalid follow-up history" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
-
     let validated;
     try {
       validated = normalizeReadingRequest({ spreadId, cards, question: safeOriginalQuestion, significatorPreference }, cardsMap);
@@ -119,22 +107,15 @@ export async function POST(request: Request) {
       });
     }
 
-    const activeQuestion = `${safeOriginalQuestion}\nActive follow-up: ${followUp}`;
-    const context = buildReadingContext(validated.spreadId, activeQuestion, validated.cards, cardsMap, validated.significatorPreference);
-    const history = (followUpHistory as { role: "user" | "assistant"; content: string }[])
-      .map((turn) => `${turn.role}: ${turn.content}`)
-      .join("\n");
+    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     // Model-first, like the primary reading path: the follow-up gets the complete
-    // deterministic spread and nothing pre-selected. It must not receive a ranked
-    // prediction block, a weighted pair shortlist or a card dictionary.
-    const prompt = `Spread facts:
-${buildSpreadFacts(context)}
-
-Original question: ${safeOriginalQuestion || "(none)"}
-Active follow-up: ${followUp}
-
-Conversation history:
-${history}`;
+    // deterministic spread plus only the original and active question. The client may
+    // retain follow-up turns for display, but none are accepted as model evidence.
+    const prompt = buildFollowupPrompt({
+      spreadFacts: buildSpreadFacts(context),
+      originalQuestion: validated.question,
+      activeQuestion: followUp,
+    });
 
     const result = await generateText({
       model: readingModel,

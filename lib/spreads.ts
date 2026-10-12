@@ -70,46 +70,43 @@ export const GRAND_TABLEAU_CENTER_CARDS = [13, 14, 22, 23];
 
 export const DIRECTIONAL_ZONES: Record<string, DirectionalZone> = {
   left: {
-    name: "Past",
-    description:
-      "Cards to the left of the significator represent influences from the past",
+    name: "Left",
+    description: "This card is left of the selected focus in its row",
     color: "text-amber-600",
   },
   right: {
-    name: "Future",
-    description:
-      "Cards to the right of the significator represent potential outcomes",
+    name: "Right",
+    description: "This card is right of the selected focus in its row",
     color: "text-blue-600",
   },
   above: {
-    name: "Visible",
-    description: "Cards above the significator represent visible or known influences",
+    name: "Above",
+    description: "This card is above the selected focus",
     color: "text-purple-600",
   },
   below: {
-    name: "Hidden",
-    description: "Cards below the significator represent hidden or underlying influences",
+    name: "Below",
+    description: "This card is below the selected focus",
     color: "text-emerald-600",
   },
   "top-left": {
-    name: "Visible Influences",
-    description:
-      "Top-left diagonal - visible or known forces influencing the situation",
+    name: "Upper left",
+    description: "This card is diagonally upper-left of the selected focus",
     color: "text-violet-600",
   },
   "bottom-left": {
-    name: "Hidden Influences",
-    description: "Bottom-left diagonal - hidden or underlying influences",
+    name: "Lower left",
+    description: "This card is diagonally lower-left of the selected focus",
     color: "text-teal-600",
   },
   "top-right": {
-    name: "Visible Possibilities",
-    description: "Top-right diagonal - potential outcomes that are becoming visible",
+    name: "Upper right",
+    description: "This card is diagonally upper-right of the selected focus",
     color: "text-indigo-600",
   },
   "bottom-right": {
-    name: "Hidden Possibilities",
-    description: "Bottom-right diagonal - potential outcomes still hidden",
+    name: "Lower right",
+    description: "This card is diagonally lower-right of the selected focus",
     color: "text-cyan-600",
   },
 };

@@ -6,6 +6,7 @@ import { SimpleAnswerSchema } from "@/lib/simple-answer";
 import { renderSimpleAnswer } from "@/lib/simple-answer";
 import { findInventedCards } from "@/lib/invented-cards";
 import { findUnresolvedCardLabels } from "@/lib/invented-cards";
+import { getGrandTableauAdjacentCards } from "@/lib/data";
 
 const cardsMap = getCardCatalogMap();
 const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
@@ -13,7 +14,14 @@ const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 function draw(count: number, offset = 0) {
   return Array.from({ length: count }, (_, index) => {
     const card = deck[(index + offset) % deck.length];
-    return { id: card.id, name: card.name, keywords: card.keywords };
+    return {
+      id: card.id,
+      name: card.name,
+      keywords: card.keywords,
+      coreMeaning: card.meaning.general,
+      secondaryMeanings: card.meaning.secondaryMeanings,
+      meaningReviewStatus: card.meaning.reviewStatus,
+    };
   });
 }
 
@@ -55,6 +63,33 @@ describe("regression: house occupancy matches the drawn card at that position", 
     expect(ctx.layout.houses[0].houseName).toBe(deck[0].name);
     expect(ctx.layout.houses[0].occupyingCard.name).toBe(deck[0].name);
     void ids;
+  });
+});
+
+describe("regression: Grand Tableau UI neighbours use bounded eight-cell geometry", () => {
+  const ids = [
+    28, 7, 14, 17, 1, 20, 13, 15, 18,
+    33, 26, 25, 30, 21, 35, 19, 11, 29,
+    3, 31, 12, 27, 8, 24, 16, 34, 2,
+    23, 10, 4, 36, 9, 32, 6, 22, 5,
+  ];
+  const cards = ids.map((id, position) => ({ id, position }));
+
+  it("includes orthogonal and diagonal neighbours at the top-left boundary", () => {
+    expect(getGrandTableauAdjacentCards(cards, 0).map((card) => card.id)).toEqual([7, 33, 26]);
+  });
+
+  it("includes all five neighbours at the right edge without row wrapping", () => {
+    const neighbours = getGrandTableauAdjacentCards(cards, 17).map((card) => card.id);
+    expect(neighbours).toEqual([15, 18, 11, 34, 2]);
+    expect(neighbours).not.toContain(19); // Tower is two columns left.
+    expect(neighbours).not.toContain(3); // Ship is on the next row's far left; no wrap.
+  });
+
+  it("rejects invalid coordinates", () => {
+    expect(getGrandTableauAdjacentCards(cards, -1)).toEqual([]);
+    expect(getGrandTableauAdjacentCards(cards, 36)).toEqual([]);
+    expect(getGrandTableauAdjacentCards(cards, 1.5)).toEqual([]);
   });
 });
 

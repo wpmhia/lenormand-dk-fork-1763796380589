@@ -4,8 +4,8 @@ import type { NormalizedCard, SpreadId } from "@/lib/reading-contract";
 import { getDefinition, getLayoutType } from "@/lib/spread-definitions";
 
 /**
- * The reading context contains the cards, their positions, and an optional user-selected
- * reading focus. It does not identify people or infer relationships from that selection.
+ * The reading context contains the current question, drawn cards, their positions, and an
+ * optional user-selected reading focus. It carries no situation notes or reading history.
  */
 
 export interface SingleCardLayout {
@@ -63,7 +63,6 @@ export type ReadingLayout =
 export interface ReadingContext {
   spreadId: SpreadId;
   question: string;
-  situationContext: string;
   cards: NormalizedCard[];
   layout: ReadingLayout;
   significatorPreference: "woman" | "man" | "both";
@@ -114,7 +113,6 @@ export function buildReadingContext(
   cards: NormalizedCard[],
   _cardsMap?: Map<number, Card>,
   significatorPreference: "woman" | "man" | "both" = "both",
-  situationContext = "",
 ): ReadingContext {
   const layoutType = getLayoutType(spreadId);
   let layout: ReadingLayout;
@@ -136,7 +134,6 @@ export function buildReadingContext(
   return {
     spreadId,
     question,
-    situationContext,
     cards,
     layout,
     significatorPreference,

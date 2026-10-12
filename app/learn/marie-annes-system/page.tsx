@@ -1,18 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BookOpen, History, Link2 } from "lucide-react";
 import { ModulePageClient } from "@/components/ModulePageClient";
-import {
-  Crown,
-  Zap,
-  Target,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = {
-  title: "Marie-Anne's System | Lenormand Course",
-  description:
-    "Learn the historical methodology inspired by Marie-Anne Lenormand's practical, deadline-driven readings and authentic techniques.",
+  title: "Marie-Anne Lenormand and the Petit Deck | Lenormand Course",
+  description: "What historical sources do and do not establish about Marie-Anne Lenormand and the 36-card deck named after her.",
 };
 
 export default function MarieAnnesSystemPage() {
@@ -21,311 +13,60 @@ export default function MarieAnnesSystemPage() {
       moduleId="marie-annes-system"
       moduleNumber={7}
       totalModules={8}
-      title="Marie-Anne's System"
-      description="Learn the historical methodology inspired by Marie-Anne Lenormand's practical, deadline-driven readings and authentic techniques."
-      duration="30 minutes"
-      difficulty="Advanced"
-      icon={<Crown className="h-8 w-8 text-white" />}
+      title="Marie-Anne Lenormand and the Petit Deck"
+      description="Separate documented history from later methods and modern interpretations."
+      duration="10 minutes"
+      difficulty="Intermediate"
+      icon={<History className="h-8 w-8 text-white" />}
       prevModule={{ id: "advanced", title: "Advanced Concepts" }}
       breadcrumbs={[
         { name: "Home", url: "/" },
         { name: "Learn", url: "/learn" },
-        { name: "Marie-Anne's System", url: "/learn/marie-annes-system" },
+        { name: "Marie-Anne Lenormand", url: "/learn/marie-annes-system" },
       ]}
     >
-      {/* Who She Was */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle
-            id="who-was-marie-anne"
-            className="flex items-center gap-2"
-          >
-            <Crown className="h-5 w-5 text-amber-500" />
-            Who Was Marie-Anne Lenormand?
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-foreground">
-          <p>
-            Marie-Anne Adelaide Lenormand (1772-1843) was the most celebrated
-            fortune-teller of the Napoleonic era. She read for Empress
-            Josephine, revolutionary leaders, and thousands of clients in her
-            Paris salon. Her reputation for sharp, practical readings made her
-            legendary.
-          </p>
-          <p>
-            While she did not leave behind a documented system for the 36-card
-            deck now bearing her name, the modern Lenormand deck evolved from
-            German fortune-telling games like{" "}
-            <em>Das Spiel der Hoffnung</em> (The Game of Hope). After her death,
-            the deck became posthumously associated with her legacy, and modern
-            interpretations have developed to honor the spirit of reading
-            traditions from her era.
-          </p>
-          <p>
-            This page explores reading principles inspired by the historical
-            Lenormand tradition-practical, direct guidance drawn from the
-            symbolic language and techniques that became known as Lenormand
-            divination.
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Five Core Principles */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle
-            id="five-core-principles"
-            className="flex items-center gap-2"
-          >
-            <Zap className="h-5 w-5 text-amber-500" />
-            Her Five Core Principles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-foreground">
-          <div className="space-y-4">
-            <div className="border-l-2 border-amber-500 pl-4">
-              <h3 className="font-semibold">
-                1. The Significator is Sacred
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Every reading begins with a significator. Choose the{" "}
-                <strong>Man card (first person)</strong> to represent the
-                querent&apos;s perspective, or the{" "}
-                <strong>Woman card (second person)</strong> for the other
-                person&apos;s perspective. The significator is the center, the
-                anchor, the heart of the reading.
-              </p>
-            </div>
-
-            <div className="border-l-2 border-amber-500 pl-4">
-              <h3 className="font-semibold">2. Deadline-First Always</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Every reading ends with a specific deadline: &quot;by Thursday
-                evening,&quot; &quot;next Monday morning,&quot; &quot;within three
-                days.&quot; Her querents were working women who needed to know:{" "}
-                <strong>when</strong>. No vague &quot;when the time is
-                right.&quot;
-              </p>
-            </div>
-
-            <div className="border-l-2 border-amber-500 pl-4">
-              <h3 className="font-semibold">3. Action Required</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                A reading without action is worthless. Marie-Anne always ended
-                with an imperative: &quot;Send word to him before Friday,&quot;
-                &quot;Make the decision by Wednesday,&quot; &quot;Prepare for
-                this by tomorrow.&quot; The cards show what is, action reveals
-                what&apos;s possible.
-              </p>
-            </div>
-
-            <div className="border-l-2 border-amber-500 pl-4">
-              <h3 className="font-semibold">4. No Reversals</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Marie-Anne read only upright meanings. No reversed cards adding
-                confusion or ambiguity. The Mountain is obstacles. The Sun is
-                clarity. Simple. Direct. Unambiguous.
-              </p>
-            </div>
-
-            <div className="border-l-2 border-amber-500 pl-4">
-              <h3 className="font-semibold">5. Card Strength Matters</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Some cards carry weight (Strong): Sun, Key, Ring. Others modify
-                (Weak): Clouds, Mice, Child. Her readings reflected this
-                hierarchy-strong cards as the foundation, weak cards as context.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Original Spreads */}
       <Card className="mb-8 border-border bg-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-amber-500" />
-            Marie-Anne&apos;s Original Spreads
+            <BookOpen className="h-5 w-5" />
+            What the record supports
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-foreground">
-          <p>These are the spreads she actually used in her salon:</p>
-
-          <div className="space-y-3">
-            <div className="rounded-lg bg-muted p-4">
-              <h4 className="font-semibold">Single Card</h4>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Quick daily guidance. One card, one answer, immediate action.
-              </p>
-            </div>
-
-             <div className="rounded-lg bg-muted p-4">
-               <h4 className="font-semibold">3-Card Sentence (Pair-Reading)</h4>
-               <p className="mt-1 text-sm text-muted-foreground">
-                 Her daily workhorse. Combines pairs: Card 1 → Cards 1+2 development → Cards 2+3 outcome. 
-                 Always with deadline and practical action.
-               </p>
-             </div>
-
-            <div className="rounded-lg bg-muted p-4">
-              <h4 className="font-semibold">9-Card Petit Grand Tableau</h4>
-              <p className="mt-1 text-sm text-muted-foreground">
-                3x3 grid. Deeper exploration without overwhelming complexity.
-                For situations requiring more nuance.
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-muted p-4">
-              <h4 className="font-semibold">36-Card Grand Tableau</h4>
-              <p className="mt-1 text-sm text-muted-foreground">
-                The complete 4x9 grid. Her reading. The entire situation visible
-                at once. She read by rows, diagonals, and the
-                significator&apos;s position.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Modern Spreads Through Her Lens */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-amber-500" />
-            Modern Spreads (Applied with Her Methodology)
-          </CardTitle>
-        </CardHeader>
-         <CardContent className="space-y-4 text-foreground">
-           <p>
-             Spreads like Situation-Challenge-Advice and 3-Card Sentence Reading
-            were developed after Marie-Anne&apos;s time. But we apply{" "}
-            <strong>her methodology</strong> to all of them:
-          </p>
-
-          <ul className="space-y-2 text-sm">
-            <li className="flex gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-              <span>
-                <strong>Deadline-driven:</strong> Every modern spread ends with
-                a specific day and time
-              </span>
-            </li>
-            <li className="flex gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-              <span>
-                <strong>Action-oriented:</strong> Never interpretation
-                alone-always prescribe action
-              </span>
-            </li>
-            <li className="flex gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-              <span>
-                <strong>Direct language:</strong> Her commanding, practical
-                voice guides every reading
-              </span>
-            </li>
-            <li className="flex gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-              <span>
-                <strong>Card strength respected:</strong> Strong cards carry
-                weight, weak cards modify
-              </span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* How to Read Like Marie-Anne */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-amber-500" />
-            How to Read Like Marie-Anne
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-foreground">
-          <div className="space-y-3">
-            <div>
-              <h4 className="mb-2 font-semibold">
-                Step 1: Choose or Draw the Significator
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                <strong>Man (First Person):</strong> Use to represent the
-                querent&apos;s primary perspective.{" "}
-                <strong>Woman (Second Person):</strong> Use to represent another
-                person&apos;s perspective or the secondary focus. These
-                positional significators work with any person, regardless of
-                gender.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-2 font-semibold">
-                Step 2: Ask a Direct Question
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                No vague questions. &quot;What should I do about my job?&quot;
-                not &quot;What does the universe think?&quot; Marie-Anne read
-                for practical people with real problems.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-2 font-semibold">Step 3: Draw the Spread</h4>
-              <p className="text-sm text-muted-foreground">
-                Single card, 3-card, 9-card, or 36-card. Focus on the cards that
-                appear and their story together.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-2 font-semibold">
-                Step 4: Read the Cards&apos; Story
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                What is the sequence of events? Where is the friction? What
-                breaks it? What&apos;s the outcome? Don&apos;t interpret each
-                card separately-see how they flow together.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-2 font-semibold">
-                Step 5: State the Outcome & Action
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                &quot;This is what will happen. Here&apos;s what you do about
-                it. Do this by [specific day/time].&quot; Clear. Commanding.
-                Actionable.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Why This Matters */}
-      <Card className="mb-8 border-border bg-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-amber-500" />
-            Why This Matters
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-foreground">
+        <CardContent className="space-y-4 text-muted-foreground">
           <p>
-            Marie-Anne wasn&apos;t a mystic or a spiritual guide. She was a
-            problem-solver. Her querents came with real questions: Should I
-            marry this man? Should I leave my job? When will my son return? How
-            do I survive this winter?
+            Marie-Anne Adelaide Lenormand (1772–1843) was a well-known French fortune-teller. The 36-card Petit Lenormand deck that later bore her name is not securely documented as a deck she designed or as a system whose instructions she authored.
           </p>
           <p>
-            She gave them answers. Direct, practical, deadline-driven,
-            action-oriented answers. That&apos;s the soul of her system.
+            <em>Das Spiel der Hoffnung</em>, published around 1799, is an earlier 36-card German parlour game with related motifs. Its surviving instructions describe game rules and a playful oracle layout around the Man/Woman cards. They do not provide the modern fixed meanings for all 36 cards or a source-reviewed dictionary of pairs.
           </p>
-          <p className="text-sm italic text-muted-foreground">
-            This app brings that methodology back-not as history, but as a
-            living, practical tool for real guidance in the modern world.
+          <p>
+            Later publishers and readers developed and varied divinatory interpretations. This course therefore does not attribute deadlines, action prescriptions, directional rules, or a precise five-step Grand Tableau method to Lenormand without documentary evidence.
           </p>
+        </CardContent>
+      </Card>
+
+      <Card className="mb-8 border-border bg-muted/30">
+        <CardHeader>
+          <CardTitle>How this application describes its method</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <p>Current readings use the current question, actual cards, exact order/positions, and optional reading focus. Reading history and prior predictions are not generation inputs.</p>
+          <p>Core meanings are source-compared editorial summaries. Expert review is pending. No pair is presented as established doctrine until its sources and review status are recorded.</p>
+          <p>Methods differ. A modern school-specific technique may be useful, but it should be identified as such rather than retroactively attributed to Marie-Anne Lenormand.</p>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border bg-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Link2 className="h-5 w-5" />
+            Sources
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm">
+          <p><a className="underline underline-offset-2" href="https://archive.org/details/bub_gb_kU9CAAAAcAAJ" target="_blank" rel="noreferrer">Humoristische Blätter für Kopf und Herz (1799), Internet Archive</a> — historical game publication.</p>
+          <p><a className="underline underline-offset-2" href="https://www.lenormandreader.com/blog/the-game-of-hope" target="_blank" rel="noreferrer">The Game of Hope, Lenormand Reader</a> — discussion of the surviving game instructions and later meanings.</p>
+          <p><a className="underline underline-offset-2" href="https://www.lenormandreader.com/about-mlle-lenormand" target="_blank" rel="noreferrer">Who Was Mlle Lenormand?, Lenormand Reader</a> — overview of attribution uncertainty.</p>
         </CardContent>
       </Card>
     </ModulePageClient>

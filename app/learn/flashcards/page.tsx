@@ -23,45 +23,13 @@ import {
   Shuffle,
 } from "lucide-react";
 
-// Lenormand card data - simplified for flashcards
-const FLASHCARDS = [
-  { id: 1, name: "The Rider", keywords: ["News", "Messages", "Speed", "Visitor"], meaning: "Quick news, messages, or a visitor approaching" },
-  { id: 2, name: "The Clover", keywords: ["Luck", "Opportunity", "Brief", "Risk"], meaning: "Small luck, opportunity, or a chance to take" },
-  { id: 3, name: "The Ship", keywords: ["Travel", "Journey", "Distance", "Commerce"], meaning: "Travel, journey, or business ventures" },
-  { id: 4, name: "The House", keywords: ["Home", "Family", "Security", "Base"], meaning: "Home, family, security, and foundation" },
-  { id: 5, name: "The Tree", keywords: ["Health", "Growth", "Time", "Stability"], meaning: "Health, growth, and long-term stability" },
-  { id: 6, name: "The Clouds", keywords: ["Confusion", "Doubt", "Uncertainty", "Temp"], meaning: "Confusion, doubt, or temporary problems" },
-  { id: 7, name: "The Snake", keywords: ["Deception", "Wisdom", "Desire", "Problem"], meaning: "Deception, wisdom, or complicated desires" },
-  { id: 8, name: "The Coffin", keywords: ["Ending", "Transformation", "Loss", "Sick"], meaning: "Endings, transformation, or illness" },
-  { id: 9, name: "The Bouquet", keywords: ["Happiness", "Gift", "Beauty", "Joy"], meaning: "Happiness, gifts, beauty, and joy" },
-  { id: 10, name: "The Scythe", keywords: ["Cut", "Danger", "Accident", "Quick"], meaning: "Sudden cuts, danger, or quick endings" },
-  { id: 11, name: "The Whip", keywords: ["Conflict", "Passion", "Repeat", "Discipline"], meaning: "Conflict, passion, or repetitive actions" },
-  { id: 12, name: "The Birds", keywords: ["Gossip", "Nervous", "Communication", "Pair"], meaning: "Gossip, nervousness, or communication" },
-  { id: 13, name: "The Child", keywords: ["New", "Small", "Innocent", "Begin"], meaning: "New beginnings, small things, or innocence" },
-  { id: 14, name: "The Fox", keywords: ["Deception", "Work", "Cunning", "Trick"], meaning: "Deception at work, cunning, or tricks" },
-  { id: 15, name: "The Bear", keywords: ["Power", "Authority", "Mother", "Food"], meaning: "Power, authority, mother figure, or food" },
-  { id: 16, name: "The Stars", keywords: ["Hope", "Dreams", "Guidance", "Online"], meaning: "Hope, dreams, guidance, or online matters" },
-  { id: 17, name: "The Stork", keywords: ["Change", "Move", "Delivery", "Return"], meaning: "Change, moving, delivery, or returning" },
-  { id: 18, name: "The Dog", keywords: ["Friend", "Loyalty", "Trust", "Companion"], meaning: "Friendship, loyalty, trust, or companions" },
-  { id: 19, name: "The Tower", keywords: ["Authority", "Isolation", "Company", "Pride"], meaning: "Authority, isolation, or institutions" },
-  { id: 20, name: "The Garden", keywords: ["Public", "Social", "Event", "Many"], meaning: "Public life, social events, or gatherings" },
-  { id: 21, name: "The Mountain", keywords: ["Obstacle", "Delay", "Challenge", "Block"], meaning: "Obstacles, delays, or challenges" },
-  { id: 22, name: "The Crossroads", keywords: ["Choices", "Decision", "Path", "Options"], meaning: "Choices, decisions, or multiple paths" },
-  { id: 23, name: "The Mice", keywords: ["Worry", "Loss", "Nagging", "Reduce"], meaning: "Worries, small losses, or nagging issues" },
-  { id: 24, name: "The Heart", keywords: ["Love", "Passion", "Romance", "Emotion"], meaning: "Love, romance, passion, and emotions" },
-  { id: 25, name: "The Ring", keywords: ["Commitment", "Contract", "Cycle", "Promise"], meaning: "Commitment, contracts, cycles, or promises" },
-  { id: 26, name: "The Book", keywords: ["Secrets", "Knowledge", "Education", "Hidden"], meaning: "Secrets, knowledge, education, or mysteries" },
-  { id: 27, name: "The Letter", keywords: ["Document", "Message", "Written", "Info"], meaning: "Documents, messages, or written communication" },
-  { id: 28, name: "The Man", keywords: ["Male", "Querent", "Partner", "Self"], meaning: "Male figure, querent (if male), or partner" },
-  { id: 29, name: "The Woman", keywords: ["Female", "Querent", "Partner", "Other"], meaning: "Female figure, querent (if female), or partner" },
-  { id: 30, name: "The Lily", keywords: ["Peace", "Maturity", "Wisdom", "Elder"], meaning: "Peace, maturity, wisdom, or older person" },
-  { id: 31, name: "The Sun", keywords: ["Success", "Happiness", "Victory", "Energy"], meaning: "Success, happiness, victory, and clarity" },
-  { id: 32, name: "The Moon", keywords: ["Emotions", "Intuition", "Reputation", "Fame"], meaning: "Emotions, intuition, reputation, or creativity" },
-  { id: 33, name: "The Key", keywords: ["Solution", "Answer", "Unlock", "Certain"], meaning: "Solutions, answers, unlocking, or certainty" },
-  { id: 34, name: "The Fish", keywords: ["Money", "Abundance", "Business", "Flow"], meaning: "Money, abundance, business, or cash flow" },
-  { id: 35, name: "The Anchor", keywords: ["Stability", "Work", "Long-term", "Security"], meaning: "Stability, work, long-term security" },
-  { id: 36, name: "The Cross", keywords: ["Burden", "Fate", "Suffering", "Spiritual"], meaning: "Burden, fate, suffering, or spirituality" },
-];
+// Flashcards consume the same source-reviewed core meanings as readings and card pages.
+const FLASHCARDS = CARD_CATALOG.map((card) => ({
+  id: card.id,
+  name: `The ${card.name}`,
+  keywords: card.keywords.map((keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1)),
+  meaning: card.uprightMeaning,
+}));
 
 function getCardImageUrl(cardId: number): string {
   return CARD_CATALOG.find((card) => card.id === cardId)?.imageUrl || "/images/cards-placeholder.jpg";

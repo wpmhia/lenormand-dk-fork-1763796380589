@@ -1,7 +1,29 @@
-import staticCardsData from "@/public/data/cards.json";
+import cardCatalogData from "@/public/data/cards.json";
+import canonicalPairsData from "@/public/data/canonical-pairs.json";
 import type { Card } from "@/lib/types";
 
-export const CARD_CATALOG = staticCardsData as Card[];
+export interface CanonicalPair {
+  firstCardId: number;
+  secondCardId: number;
+  meaning: string;
+  sourceIds: string[];
+  reviewStatus: string;
+}
+
+export interface CardMeaningSource {
+  id: string;
+  title: string;
+  url: string;
+  kind: string;
+  scope: string;
+}
+
+const catalog = cardCatalogData as { cards: Card[]; sources: CardMeaningSource[] };
+const pairRegistry = canonicalPairsData as { pairs: CanonicalPair[] };
+
+export const CARD_CATALOG = catalog.cards;
+export const CARD_MEANING_SOURCES = catalog.sources;
+export const CANONICAL_PAIRS = pairRegistry.pairs;
 
 // Names that readers may use while the numbered catalog remains canonical.
 // Card 22 is canonically "Paths" in cards.json. "Crossroads" is the traditional name for

@@ -7,11 +7,10 @@ import type {
 } from "@/lib/reading-context";
 
 /**
- * The server supplies the question and the drawn cards. The model is the only thing
- * that interprets them. No additional rules on rhetoric, calibration, identity, or house
- * semantics: every extra rule steers the model toward a server-chosen reading before it
- * has looked at the spread. The contract lives in the user prompt so the model sees it
- * exactly once, alongside the structural facts.
+ * The server supplies the current question, drawn cards, deterministic spread facts, and
+ * concise source-compared card meanings. The model performs the contextual synthesis; the
+ * server does not select an outcome or send unreviewed pair prose. The response contract
+ * lives in the user prompt so the model sees it once beside the evidence.
  *
  * `SIMPLE_LENORMAND_SYSTEM_PROMPT` is kept as an empty string for backward compatibility
  * with callers; new code should pass an empty system prompt.
@@ -123,12 +122,50 @@ function gridRowFacts(cards: ReadingContext["cards"], rowCount: number, columnCo
   return facts;
 }
 
+function gridColumnFacts(cards: ReadingContext["cards"], rowCount: number, columnCount: number): string[] {
+  const facts: string[] = [];
+  for (let column = 0; column < columnCount; column++) {
+    const cells = Array.from({ length: rowCount }, (_, row) => row * columnCount + column);
+    facts.push(`Column ${column + 1}: ${cells.map((cell) => fmtCard(cards[cell])).join(" | ")}`);
+  }
+  return facts;
+}
+
+function gridDiagonalFacts(cards: ReadingContext["cards"], size: number): string[] {
+  const topLeftToBottomRight = Array.from({ length: size }, (_, index) => index * size + index);
+  const topRightToBottomLeft = Array.from({ length: size }, (_, index) => index * size + (size - index - 1));
+  return [
+    `Diagonal (top-left to bottom-right): ${topLeftToBottomRight.map((cell) => fmtCard(cards[cell])).join(" | ")}`,
+    `Diagonal (top-right to bottom-left): ${topRightToBottomLeft.map((cell) => fmtCard(cards[cell])).join(" | ")}`,
+  ];
+}
+
+function reviewedCardMeaningFacts(cards: ReadingContext["cards"]): string[] {
+  const withCore = cards.filter((card) => card.coreMeaning);
+  if (withCore.length === 0) return [];
+
+  const facts = [
+    "Core card meaning references (source-compared; expert review pending; symbolic reference, not proof of events):",
+    ...withCore.map((card) => `- ${fmtCard(card)}: ${card.coreMeaning}`),
+  ];
+  const secondary = cards.flatMap((card) =>
+    (card.secondaryMeanings ?? []).map((meaning) => `- ${fmtCard(card)} — context-dependent secondary sense: ${meaning}`),
+  );
+  if (secondary.length > 0) {
+    facts.push("Secondary interpretations are tradition-dependent and require support from this question and spread:");
+    facts.push(...secondary);
+  }
+  return facts;
+}
+
 function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): string[] {
   const facts = [
     `Petit Tableau, a 3x3 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
     ...gridRowFacts(context.cards, PETIT_GRID, PETIT_GRID),
+    ...gridColumnFacts(context.cards, PETIT_GRID, PETIT_GRID),
+    ...gridDiagonalFacts(context.cards, PETIT_GRID),
     `Centre card: ${fmtCard(layout.center.card)}.`,
-    "This grid defines no closing position and no outcome position; weigh the spread yourself.",
+    "The centre is a focal influence, not a predetermined outcome. Consider only rows, columns, diagonals, and neighbours that materially address the question; do not force every line into the reading or impose chronology.",
   ];
   return facts;
 }
@@ -210,10 +247,10 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
 }
 
 /**
- * Deterministic structural facts for the spread, for every spread type.
+ * Deterministic geometry and source-compared core meaning references for every spread.
  *
- * The layer supplies the complete spread and a small set of deterministic spatial
- * clusters. The model interprets them but is not asked to recompute geometry.
+ * The layer supplies the complete spread and only factual geometry. The model interprets
+ * the sourced card meanings in context and is not asked to recompute positions.
  */
 export function buildSpreadFacts(context: ReadingContext): string {
   const layout = context.layout;
@@ -233,7 +270,8 @@ export function buildSpreadFacts(context: ReadingContext): string {
     card.id === 28 ? ["Man"] : card.id === 29 ? ["Woman"] : [],
   );
   const focus = significatorFocusFacts(context.significatorPreference, presentPeople);
-  const completeBody = [body, ...focus].join("\n");
+  const meanings = reviewedCardMeaningFacts(context.cards);
+  const completeBody = [body, ...focus, "", ...meanings].join("\n");
   return hasDisplacedCards(context) ? `${DISPLACED_CARD_LEGEND}\n${completeBody}` : completeBody;
 }
 
@@ -249,7 +287,10 @@ export function buildSpreadFacts(context: ReadingContext): string {
  */
 const OUTPUT_CONTRACT = `Answer the exact question asked.
 The question sets the topic, not the facts: do not treat its unconfirmed assumptions as established. Interpret the cards symbolically and distinguish what they suggest from what remains unknown. Lack of confirmation proves neither the opposite nor continued activity; do not force a yes/no conclusion, and keep the answer and reading consistent.
-Use only meanings and combinations supported by the drawn cards.
+Use the core meanings as inputs for a contextual synthesis, not as definitions to concatenate. Relate combinations to the current question, the neighboring cards, and the spread's actual positions.
+In a linear spread, preserve the given left-to-right order; do not silently reverse a pair or assume both orders mean the same thing. Explain the dominant supported interpretation first, then acknowledge material contrary indications. Use only meanings and combinations supported by the drawn cards.
+Only describe a pairing as established Lenormand doctrine when a source-reviewed pair entry is supplied. Without one, describe the pairing as contextual interpretation rather than a fixed traditional rule.
+For predictive questions, give the strongest symbolically supported tendency without guarantees or invented probabilities. Avoid generic coaching, unsupported concrete events or motives, and repeated hedging that obscures the reading.
 Do not infer from cards that were not drawn.
 Answer in the language of the user's question, using exactly one language.
 
@@ -271,14 +312,11 @@ Return only one JSON object with exactly these fields:
 /**
  * Question header. Identical for every spread.
  *
- * The raw question goes to the model unparsed. Any voluntary situation context follows the
- * same rule: it is supplied verbatim and is not evidence.
+ * The raw current question goes to the model unparsed; it is the only user-authored
+ * interpretation input.
  */
 function simplePromptHeader(context: ReadingContext): string {
-  const situation = context.situationContext.trim()
-    ? `\n\nKnown situation context (specificity guidance, not card evidence): ${context.situationContext}`
-    : "";
-  return `User question:\n${context.question}${situation}`;
+  return `User question:\n${context.question}`;
 }
 
 /**

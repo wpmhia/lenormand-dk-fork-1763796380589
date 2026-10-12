@@ -263,9 +263,8 @@ export default function EthicsPage() {
               &ldquo;With knowledge comes responsibility.&rdquo;
             </p>
             <p className="text-muted-foreground">
-              Lenormand is a powerful tool for insight and guidance. Use it wisely, 
-              ethically, and always with the highest good of all involved in mind. 
-              The cards reveal possibilities-not certainties-and should empower 
+              Lenormand is a reflective practice. Use it with care, respect, and clarity. 
+              Cards can suggest possibilities, not establish facts or certainties, and should empower 
               people to make informed choices, not create dependency or fear.
             </p>
           </CardContent>

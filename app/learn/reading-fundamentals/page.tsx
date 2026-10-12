@@ -297,7 +297,7 @@ export default function ReadingFundamentalsPage() {
               </p>
               <p>
                 <strong className="text-card-foreground">3. The Answer:</strong>{" "}
-                Direct response to your question, synthesizing the cards into actionable guidance.
+                A direct symbolic response to the current question, grounded in the actual cards and positions.
               </p>
             </div>
           </div>
@@ -307,10 +307,7 @@ export default function ReadingFundamentalsPage() {
               Dynamic Reading Depth
             </h3>
             <p className="text-sm text-muted-foreground">
-              Reading length adapts to your spread: 3-card spreads get 
-              240-token readings (~160 words), 9-card spreads use 260 tokens 
-              for row analysis, and Grand Tableau (36-card) readings use 280 tokens 
-              for focused significator analysis. Every reading completes fully.
+              The generation token budget scales with spread size (800, 1,100, 1,400, 2,000, or 2,600 tokens). These are output limits, not promised word counts or guarantees that every provider response will complete.
             </p>
           </div>
 
@@ -320,18 +317,16 @@ export default function ReadingFundamentalsPage() {
             </h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>
-                <strong>3-Card:</strong> Read as sentence flow with adjacent pair blending (1+2, 2+3).
+                <strong>3-Card:</strong> Preserve order and read the line as a connected phrase; pair interpretations remain contextual unless source-reviewed.
               </p>
               <p>
-                <strong>5-Card:</strong> Extended narrative using chain pair-reading (1+2, 2+3, 3+4, 4+5).
+                <strong>5-Card:</strong> Preserve left-to-right order, use relevant neighbouring combinations, and do not impose a universal ending-card rule.
               </p>
               <p>
-                <strong>9-Card:</strong> Row-by-row analysis (opening → development → resolution) 
-                with center card as the heart of the matter.
+                <strong>9-Card:</strong> The centre is a focal influence; consider relevant rows, columns, diagonals, and neighbours without assigning a fixed chronology.
               </p>
               <p>
-                <strong>Grand Tableau:</strong> Significator focus with directional zones 
-                (left=past, right=future, above=conscious, below=unconscious) and corner analysis.
+                <strong>Grand Tableau:</strong> Use actual positions, houses, immediate neighbours, and an optional selected focus. Directions are geometric, not universal past/future or conscious/unconscious labels.
               </p>
             </div>
           </div>
@@ -348,9 +343,9 @@ export default function ReadingFundamentalsPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <p className="leading-relaxed text-muted-foreground">
-            Lenormand excels at practical, everyday questions. Unlike Tarot
-            focus on psychological depth, Lenormand answers &quot;how&quot; and
-            &quot;when&quot; about real-world situations.
+            Lenormand is commonly used for practical questions about everyday
+            situations. The cards offer a symbolic interpretation; they do not
+            establish that an event, accusation, or prediction is fact.
           </p>
 
           <div className="grid gap-4 md:grid-cols-2">

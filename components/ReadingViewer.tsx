@@ -213,7 +213,7 @@ export const ReadingViewer = memo(function ReadingViewer({
                                     </div>
                                     <div className="line-clamp-2 text-xs text-muted-foreground/80">
                                       {combination ||
-                                        "These cards combine to create meaning in your reading."}
+                                        "No source-reviewed pair meaning is catalogued; read these cards in the context of the current question and spread."}
                                     </div>
                                   </div>
                                 </div>

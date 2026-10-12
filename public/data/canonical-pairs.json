@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "No pair meanings are currently source-reviewed for publication as established doctrine.",
+  "policy": "A pair may be listed here only with an explicit source citation, a scope note, and a review status. Pair order is part of the key; reverse order is a separate entry when the cited method treats it differently. An absent pair is unknown, not a canonical meaning.",
+  "legacyData": {
+    "status": "quarantined",
+    "path": "lib/legacy-cards-unreviewed.json",
+    "reason": "The former card file contained specific, uncited pair claims, including personal events and relationship allegations. These are retained only for audit and are not used in prompts, the reviewed catalog, or the pair lookup."
+  },
+  "pairs": []
+}
