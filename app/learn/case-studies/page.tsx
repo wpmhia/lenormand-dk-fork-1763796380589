@@ -28,120 +28,120 @@ import {
 const CASE_STUDIES = [
   {
     id: 1,
-    title: "Sarah&apos;s Career Crossroads",
+    title: "Career Relocation Question",
     category: "Career",
     icon: Briefcase,
     question: "Should I accept the promotion that requires relocating?",
-    context: "Sarah, 32, has been offered a senior position in another city. She&apos;s torn between career advancement and leaving her close-knit community.",
+    context: "Fictional practice scenario. No actual offer, relocation, or outcome is supplied as evidence.",
     spread: "5-Card Line",
     cards: [
-      { id: 3, name: "The Ship", meaning: "The opportunity represents a journey and significant change" },
-      { id: 21, name: "The Mountain", meaning: "Obstacles and challenges await in the new location" },
-      { id: 33, name: "The Key", meaning: "Success is possible if she takes decisive action" },
-      { id: 4, name: "The House", meaning: "Home and family considerations are central" },
-      { id: 31, name: "The Sun", meaning: "Long-term happiness and success likely" },
+      { id: 3, name: "The Ship", meaning: "Travel, distance, or trade" },
+      { id: 21, name: "The Mountain", meaning: "Obstacle, delay, or difficulty" },
+      { id: 33, name: "The Key", meaning: "Access, an answer, or a solution" },
+      { id: 4, name: "The House", meaning: "Home, household, family, or security" },
+      { id: 31, name: "The Sun", meaning: "Success, vitality, or clarity" },
     ],
     stepByStep: [
-      { step: 1, focus: "The Opening (Ship)", analysis: "The Ship as the first card immediately signals this is about journey and change. The opportunity itself is valid and represents real movement forward." },
-      { step: 2, focus: "The Challenge (Mountain)", analysis: "The Mountain in position 2 warns that this won&apos;t be easy. There will be obstacles - likely the emotional difficulty of leaving her community and establishing herself in a new place." },
-      { step: 3, focus: "The Action (Key)", analysis: "The Key advises that Sarah has the power to unlock this situation. She needs to make a definitive choice rather than staying in indecision." },
-      { step: 4, focus: "The Foundation (House)", analysis: "The House here suggests her current home/community is deeply important. This isn&apos;t a decision to make lightly - her roots matter." },
-      { step: 5, focus: "The Outcome (Sun)", analysis: "The Sun is very positive for long-term success. If she takes the opportunity, despite the challenges, happiness awaits." },
+      { step: 1, focus: "Opening position (Ship)", analysis: "Travel, distance, or trade themes open the line; this does not verify that a specific job offer exists." },
+      { step: 2, focus: "Second position (Mountain)", analysis: "The Mountain adds an obstacle or delay theme, not proof of a particular problem." },
+      { step: 3, focus: "Central position (Key)", analysis: "The Key brings an access or solution theme; it does not guarantee success." },
+      { step: 4, focus: "Fourth position (House)", analysis: "Home or security is relevant symbolically, without identifying a real family situation." },
+      { step: 5, focus: "Final position (Sun)", analysis: "The Sun adds a success or clarity theme. The last position is not a guaranteed outcome." },
     ],
-    synthesis: "The reading suggests Sarah should take the promotion. While there will be challenges (Mountain), the combination of Key + Sun indicates success is achievable and will lead to long-term happiness. The House appearing suggests she should maintain strong connections to her current community while building her new life.",
-    advice: "Accept the position, but plan regular visits home and stay connected digitally. The challenges are temporary; the success is lasting.",
+    synthesis: "The ordered line combines distance, difficulty, a possible opening, home/security, and a favorable clarity theme. It supports a mixed but potentially constructive symbolic reading; it cannot determine whether to accept an actual offer or guarantee long-term success.",
+    advice: "Use the reading as reflection. Evaluate the real offer, costs, and preferences separately.",
   },
   {
     id: 2,
-    title: "Marcus&apos;s Relationship Question",
+    title: "Relationship Uncertainty Question",
     category: "Love",
     icon: Heart,
     question: "Is this new relationship going to last?",
-    context: "Marcus, 28, has been dating someone for 3 months. Things feel good but he&apos;s been hurt before and wants to know if this has potential.",
+    context: "Fictional practice scenario. No relationship history or partner behavior is supplied as evidence.",
     spread: "3-Card Spread",
     cards: [
-      { id: 24, name: "The Heart", meaning: "Strong emotional connection and love present" },
-      { id: 6, name: "The Clouds", meaning: "Confusion, uncertainty, or hidden issues" },
-      { id: 25, name: "The Ring", meaning: "Commitment, cycles, and lasting bonds" },
+      { id: 24, name: "The Heart", meaning: "Affection or emotional matters" },
+      { id: 6, name: "The Clouds", meaning: "Uncertainty or lack of clarity" },
+      { id: 25, name: "The Ring", meaning: "Commitment, agreement, or cycles" },
     ],
     stepByStep: [
-      { step: 1, focus: "The Present (Heart)", analysis: "The Heart confirms genuine feelings exist. This isn&apos;t just infatuation - there&apos;s real emotional connection between them." },
-      { step: 2, focus: "The Challenge (Clouds)", analysis: "The Clouds indicate something isn&apos;t clear. Perhaps Marcus&apos;s own past trauma (being hurt before) is clouding his perception, or there are things they haven&apos;t fully shared with each other yet." },
-      { step: 3, focus: "The Potential (Ring)", analysis: "The Ring is excellent for relationship questions - it suggests commitment and cyclical growth. This relationship has the potential to become something lasting." },
+      { step: 1, focus: "Opening position (Heart)", analysis: "The Heart puts affection or emotional concerns in focus; it cannot confirm another person's feelings." },
+      { step: 2, focus: "Central position (Clouds)", analysis: "Clouds introduces uncertainty or lack of clarity; it does not prove deception or hidden facts." },
+      { step: 3, focus: "Final position (Ring)", analysis: "Ring raises commitment/agreement themes. Its position does not guarantee that a relationship will last." },
     ],
-    synthesis: "This relationship has genuine potential (Heart + Ring). However, the Clouds indicate that clarity is needed. Marcus should focus on open communication rather than seeking reassurance through readings. The cards suggest longevity is possible if they work through uncertainties together.",
-    advice: "Have an honest conversation about where you&apos;re both headed. The cards show potential, but you need to address the &apos;clouds&apos; through communication, not divination.",
+    synthesis: "Affection and commitment themes appear alongside uncertainty. A balanced reading can acknowledge both without asserting a partner's feelings or predicting relationship duration.",
+    advice: "Treat the spread as symbolic reflection, not evidence about another person's private thoughts or conduct.",
   },
   {
     id: 3,
-    title: "The Missing Family Heirloom",
+    title: "Missing Item Search Question",
     category: "Lost Object",
     icon: Search,
     question: "Where is my grandmother&apos;s necklace?",
-    context: "A family heirloom necklace has been missing for two weeks. The querent suspects it was lost during recent home renovations.",
-    spread: "3-Card Location Spread",
+    context: "Fictional practice scenario. The cards cannot verify the object's location or who moved it.",
+    spread: "3-Card Line",
     cards: [
-      { id: 4, name: "The House", meaning: "The object is definitely in the home" },
-      { id: 17, name: "The Stork", meaning: "Associated with change, movement, or transition areas" },
-      { id: 22, name: "The Crossroads", meaning: "Near a decision point or where paths diverge" },
+      { id: 4, name: "The House", meaning: "Home, household, or security" },
+      { id: 17, name: "The Stork", meaning: "Change, movement, or transition" },
+      { id: 22, name: "The Paths", meaning: "Choices, alternatives, or routes" },
     ],
     stepByStep: [
-      { step: 1, focus: "Location Confirmation (House)", analysis: "The House confirms it&apos;s in the home - it wasn&apos;t lost outside or taken by someone. This narrows the search significantly." },
-      { step: 2, focus: "Context (Stork)", analysis: "The Stork connects to the renovations - it&apos;s in an area that was recently changed, moved, or disrupted. Think packing boxes, moved furniture, or renovation zones." },
-      { step: 3, focus: "Specific Location (Crossroads)", analysis: "The Crossroads suggests it&apos;s near a threshold, doorway, or where decisions are made. Check near entrances, hallways, or where renovation materials were staged." },
+      { step: 1, focus: "Opening position (House)", analysis: "House raises home/household themes; it does not confirm that the item remains inside the home." },
+      { step: 2, focus: "Central position (Stork)", analysis: "Stork adds change or movement as a symbolic theme, not proof that someone moved the item." },
+      { step: 3, focus: "Final position (Paths)", analysis: "Paths concerns choices or routes; it does not pinpoint a doorway or physical location." },
     ],
-    synthesis: "The necklace is in the house, specifically in an area affected by renovations (Stork), near a transitional space like a doorway or hallway (Crossroads). It likely fell when furniture was moved or was placed in a box during packing.",
-    advice: "Check boxes from the renovation, look near doorways where furniture was carried through, and check any temporary storage areas. It will be found within 2-3 days of active searching.",
+    synthesis: "The line links household, change, and route/choice themes. These can suggest search prompts, but the spread cannot establish an exact location, cause, or recovery date.",
+    advice: "Use ordinary search records and practical checks to locate the item; do not treat the symbolic reading as location evidence.",
   },
   {
     id: 4,
-    title: "Elena&apos;s Home Purchase Dilemma",
+    title: "Home Purchase Question",
     category: "Home",
     icon: Home,
     question: "Should I buy this house I&apos;m considering?",
-    context: "Elena has found her dream home but it&apos;s at the top of her budget. She&apos;s worried about financial strain but loves the property.",
+    context: "Fictional practice scenario. No property inspection, offer, or financial record is supplied.",
     spread: "5-Card Decision Spread",
     cards: [
-      { id: 4, name: "The House", meaning: "The property itself is suitable and represents home" },
-      { id: 34, name: "The Fish", meaning: "Money and financial abundance themes" },
-      { id: 23, name: "The Mice", meaning: "Worries, small losses, or nagging concerns" },
-      { id: 35, name: "The Anchor", meaning: "Long-term stability and security" },
-      { id: 36, name: "The Cross", meaning: "Burden, responsibility, or fated decision" },
+      { id: 4, name: "The House", meaning: "Home, household, or property" },
+      { id: 34, name: "The Fish", meaning: "Money, commerce, or resources" },
+      { id: 23, name: "The Mice", meaning: "Loss, worry, or gradual erosion" },
+      { id: 35, name: "The Anchor", meaning: "Stability, security, or persistence" },
+      { id: 36, name: "The Cross", meaning: "Burden, hardship, duty, or suffering" },
     ],
     stepByStep: [
-      { step: 1, focus: "The Property (House)", analysis: "The House confirms this is a genuine home - not just a property. It has the right energy for living and family." },
-      { step: 2, focus: "Financial Aspect (Fish)", analysis: "The Fish suggests money is available or will flow, but combined with the Mice next, indicates financial stress." },
-      { step: 3, focus: "The Concern (Mice)", analysis: "The Mice reveals the core issue: ongoing worry and small financial drains. This suggests the budget strain will create persistent anxiety." },
-      { step: 4, focus: "Long-term (Anchor)", analysis: "The Anchor suggests long-term stability is possible, but the Cross following it complicates this." },
-      { step: 5, focus: "Outcome (Cross)", analysis: "The Cross as outcome suggests this would be a burden. While the house is good, the financial stretch creates a heavy responsibility." },
+      { step: 1, focus: "Opening position (House)", analysis: "House places home/property themes in the line; it does not assess the building's condition." },
+      { step: 2, focus: "Second position (Fish)", analysis: "Fish brings money/resources into the reading, without confirming affordability or available funds." },
+      { step: 3, focus: "Central position (Mice)", analysis: "Mice adds loss, worry, or erosion as a concern; no actual cost is known from the draw." },
+      { step: 4, focus: "Fourth position (Anchor)", analysis: "Anchor contributes stability/security themes, not a financial guarantee." },
+      { step: 5, focus: "Final position (Cross)", analysis: "Cross adds burden/hardship themes; the final position is not a predetermined verdict." },
     ],
-    synthesis: "The house itself is good (House + Anchor), but the financial stretch creates a burden (Mice + Cross). The Fish + Mice combination specifically suggests money worries. This is a cautionary reading - the house is right but the timing/financial situation may not be.",
-    advice: "Either negotiate the price down, find a more affordable option, or wait until you have more financial cushion. The burden isn&apos;t worth it, despite how much you love the property."
+    synthesis: "Home/property and financial-resource themes are present, with Mice and Cross adding worry/loss and burden themes; Anchor supplies a countervailing stability theme. The spread cannot assess the property, budget, or whether to buy.",
+    advice: "Base a real purchase decision on inspection, affordability, and independent financial advice; use the reading only as reflection."
   },
   {
     id: 5,
-    title: "David&apos;s Business Partnership",
+    title: "Potential Business Partnership Question",
     category: "Business",
     icon: Lightbulb,
     question: "Should I partner with this investor?",
-    context: "David has a startup and has been approached by an investor. The money would help growth, but he&apos;s unsure about giving up equity and control.",
+    context: "Fictional practice scenario. No investor, offer, or contract details are independently supplied.",
     spread: "5-Card Business Spread",
     cards: [
-      { id: 34, name: "The Fish", meaning: "Money and business opportunity present" },
-      { id: 14, name: "The Fox", meaning: "Cunning, potential deception, or clever dealing" },
-      { id: 33, name: "The Key", meaning: "Solutions and successful outcomes possible" },
-      { id: 19, name: "The Tower", meaning: "Institution, authority, or corporate structure" },
-      { id: 11, name: "The Whip", meaning: "Conflict, repetition, or ongoing struggle" },
+      { id: 34, name: "The Fish", meaning: "Money, business, commerce, or resources" },
+      { id: 14, name: "The Fox", meaning: "Work, strategy, self-interest, or caution" },
+      { id: 33, name: "The Key", meaning: "Access, importance, or a possible solution" },
+      { id: 19, name: "The Tower", meaning: "Institution, authority, boundaries, or distance" },
+      { id: 11, name: "The Whip", meaning: "Conflict, repetition, or argument" },
     ],
     stepByStep: [
-      { step: 1, focus: "Opportunity (Fish)", analysis: "The Fish confirms genuine financial opportunity. The money is real and would help the business." },
-      { step: 2, focus: "The Warning (Fox)", analysis: "The Fox is a major warning. This investor may have hidden agendas, clever terms that favor them, or may not be fully transparent." },
-      { step: 3, focus: "Potential Success (Key)", analysis: "The Key shows the partnership could work, but it is positioned after the Fox - meaning success depends on navigating the clever/deceptive elements." },
-      { step: 4, focus: "Structure (Tower)", analysis: "The Tower suggests the investor represents institutional/corporate thinking. They may impose structures that do not fit David&apos;s vision." },
-      { step: 5, focus: "Ongoing Dynamic (Whip)", analysis: "The Whip as outcome suggests ongoing conflict or repetitive issues. This would not be a smooth partnership." },
+      { step: 1, focus: "Opening position (Fish)", analysis: "Fish raises money/business/resource themes, not proof that funding exists." },
+      { step: 2, focus: "Second position (Fox)", analysis: "Fox can suggest work, strategy, self-interest, or caution; it does not prove this person is deceptive." },
+      { step: 3, focus: "Central position (Key)", analysis: "Key adds importance/access/solution themes, not a guaranteed successful agreement." },
+      { step: 4, focus: "Fourth position (Tower)", analysis: "Tower adds institutional or boundary themes without identifying the investor's motives." },
+      { step: 5, focus: "Final position (Whip)", analysis: "Whip adds conflict/repetition themes; this is not a certainty that a partnership will fail." },
     ],
-    synthesis: "This is a cautionary reading. While the money is real (Fish), the Fox + Tower + Whip combination suggests the investor has their own agenda and the relationship would involve ongoing conflict. The Key offers hope, but only if David can out-negotiate or structure the deal very carefully.",
-    advice: "Proceed with extreme caution. Get a lawyer to review everything. Consider if there are alternative funding sources. If you do proceed, maintain as much control as possible and get everything in writing."
+    synthesis: "Business/resources and work/strategy themes sit beside importance, institutional structure, and conflict/repetition themes. The draw does not establish that money exists, the investor's motives, or the future of a partnership.",
+    advice: "Review actual terms and evidence independently; do not treat Fox alone as proof of dishonesty."
   },
 ];
 
@@ -194,7 +194,7 @@ export default function CaseStudiesPage() {
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="gap-1">
                 <BookOpen className="h-3 w-3" />
-                Real Examples
+                Fictional Examples
               </Badge>
             </div>
           </div>
@@ -205,10 +205,10 @@ export default function CaseStudiesPage() {
         {/* Title */}
         <div className="mb-8 text-center">
           <h1 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-            Sample Reading Case Studies
+            Illustrative Reading Case Studies
           </h1>
           <p className="text-lg text-muted-foreground">
-            Real-world examples with step-by-step interpretation analysis
+            Fictional practice scenarios. These interpretations are examples, not validated outcomes or evidence about specific people.
           </p>
         </div>
 

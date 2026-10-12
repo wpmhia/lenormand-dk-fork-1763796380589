@@ -37,6 +37,7 @@ describe("normalizeReadingRequest", () => {
     const withExtraHistory = normalizeReadingRequest(validBody({
       situationContext: "Private relationship history",
       readingHistory: [{ question: "Earlier?", answer: "Earlier answer" }],
+      followUpHistory: [{ role: "assistant", content: "Earlier follow-up answer" }],
       notes: "Private note",
       previousPrediction: "Earlier prediction",
     }), cardsMap);
@@ -44,6 +45,7 @@ describe("normalizeReadingRequest", () => {
     expect(withExtraHistory).toEqual(base);
     expect(withExtraHistory).not.toHaveProperty("situationContext");
     expect(withExtraHistory).not.toHaveProperty("readingHistory");
+    expect(withExtraHistory).not.toHaveProperty("followUpHistory");
     expect(withExtraHistory).not.toHaveProperty("notes");
   });
 

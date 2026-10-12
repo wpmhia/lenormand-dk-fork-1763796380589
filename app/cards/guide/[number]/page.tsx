@@ -33,18 +33,17 @@ export async function generateMetadata({ params }: CardGuidePageProps) {
   }
 
   return {
-    title: `${card.name} (Card #${card.id}) - Lenormand Meanings & Combinations`,
-    description: `Learn meaning of ${card.name} card in Lenormand. Keywords: ${card.keywords.join(", ")}.`,
+    title: `${card.name} (Card #${card.id}) - Lenormand Core Meaning`,
+    description: `Source-compared core meaning of ${card.name} in Petit Lenormand. Keywords: ${card.keywords.join(", ")}.`,
     keywords: [
       `${card.name} card`,
       "lenormand",
       "card meaning",
-      "card combinations",
       ...card.keywords,
     ],
     openGraph: {
       title: `${card.name} Lenormand Card`,
-      description: `Master the meaning of ${card.name} Lenormand card with keywords, combinations, and interpretations.`,
+      description: `Explore the source-compared core meaning of ${card.name} in the 36-card Petit Lenormand.`,
     },
   };
 }

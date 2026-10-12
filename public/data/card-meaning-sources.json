@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "methodologyNote": "Core entries are source-compared editorial summaries of contemporary Lenormand practice; expert review is still pending. The 1799 Game of Hope source documents a game and a playful oracle layout, not this glossary of fixed divinatory meanings.",
+  "sources": [
+    {
+      "id": "game-of-hope-1799",
+      "title": "Humoristische Blätter für Kopf und Herz (1799), containing Das Spiel der Hoffnung",
+      "url": "https://archive.org/details/bub_gb_kU9CAAAAcAAJ",
+      "kind": "primary historical artifact",
+      "scope": "Deck/game provenance and historical oracle-layout context only; not a source for the modern card keyword glossary or fixed pair doctrine."
+    },
+    {
+      "id": "lenormand-reader-card-meanings",
+      "title": "Learn Lenormand Card Meanings in Depth",
+      "url": "https://www.lenormandreader.com/lenormand-card-meanings",
+      "kind": "modern practitioner reference",
+      "scope": "Contemporary keywords for all 36 cards; author-specific interpretations, not historical proof."
+    },
+    {
+      "id": "lenormand-reader-cross",
+      "title": "The Cross (36)",
+      "url": "https://www.lenormandreader.com/the-cross",
+      "kind": "modern practitioner reference",
+      "scope": "Cross meanings and acknowledged contemporary spiritual/destiny variants."
+    },
+    {
+      "id": "lisa-boswell-crossroads",
+      "title": "Lenormand Crossroads Meanings and Combinations",
+      "url": "https://divinationandfortunetelling.com/articles/crossroads-meanings-and-combinations",
+      "kind": "modern practitioner reference",
+      "scope": "Paths/Roads meanings: choices, alternatives, options, and decisions."
+    },
+    {
+      "id": "lisa-boswell-fox",
+      "title": "Accurate Fox Meanings and Combinations",
+      "url": "https://divinationandfortunetelling.com/articles/fox-meanings-and-combinations",
+      "kind": "modern practitioner reference",
+      "scope": "Fox has work/employment and cunning/deception readings; context matters."
+    },
+    {
+      "id": "lenormand-reader-lily",
+      "title": "The Lily (30)",
+      "url": "https://www.lenormandreader.com/the-lily",
+      "kind": "modern practitioner reference",
+      "scope": "Maturity, experience, peace, and a tradition-dependent sexuality interpretation."
+    },
+    {
+      "id": "lenormand-reader-fish",
+      "title": "The Fish (34)",
+      "url": "https://www.lenormandreader.com/the-fish",
+      "kind": "modern practitioner reference",
+      "scope": "Money, assets, business, trade, and resources; some secondary readings extend this to independence or flow."
+    }
+  ]
+}

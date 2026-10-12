@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const title = `${card.name} Lenormand Card Meaning | Card #${card.id}`;
-  const description = `Discover the meaning of ${card.name} in Lenormand readings. Keywords: ${card.keywords.slice(0, 5).join(", ")}. Learn about ${card.name.toLowerCase()} combinations and interpretations.`;
+  const description = `Explore the source-compared core meaning of ${card.name} in Petit Lenormand. Keywords: ${card.keywords.slice(0, 5).join(", ")}. Secondary interpretations and review status are shown separately.`;
 
   return {
     title,
@@ -45,7 +45,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `Lenormand card ${card.id}`,
       ...card.keywords,
       "Lenormand divination",
-      "card combinations",
       "cartomancy",
     ],
     openGraph: {

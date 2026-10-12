@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   buildFollowupPrompt,
+  buildFollowupRequestPayload,
   FOLLOWUP_SYSTEM_PROMPT,
   FOLLOWUP_MAX_OUTPUT_TOKENS,
 } from "@/lib/followup-prompt";
@@ -34,6 +35,29 @@ describe("follow-up system prompt", () => {
     expect(prompt).toContain("Active follow-up: What suggests a delay?");
     expect(prompt).not.toContain("Earlier assistant answer");
     expect(prompt).not.toContain("previous outcome");
+  });
+
+  it("serializes only current follow-up inputs, even when display history exists", () => {
+    const input = {
+      followUpQuestion: "What suggests a delay?",
+      originalQuestion: "Will the project advance?",
+      cards: [{ id: 1, name: "Rider", position: 0 }],
+      spreadId: "sentence-3",
+      significatorPreference: "both" as const,
+      followUpHistory: [{ role: "assistant", content: "Earlier assistant answer" }],
+      notes: "Private note",
+    };
+    const payload = buildFollowupRequestPayload(input);
+
+    expect(payload).toEqual({
+      followUpQuestion: input.followUpQuestion,
+      originalQuestion: input.originalQuestion,
+      cards: input.cards,
+      spreadId: input.spreadId,
+      significatorPreference: "both",
+    });
+    expect(JSON.stringify(payload)).not.toContain("Earlier assistant answer");
+    expect(JSON.stringify(payload)).not.toContain("Private note");
   });
 
   it("is much shorter than the full reading system prompt and stays under 50 lines", () => {

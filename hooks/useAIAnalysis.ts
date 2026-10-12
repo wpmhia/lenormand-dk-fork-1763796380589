@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
+import { buildFollowupRequestPayload } from "@/lib/followup-prompt";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 import { SignificatorType } from "@/lib/spreads";
@@ -151,13 +152,13 @@ export function useAIAnalysis(
         const response = await fetch("/api/readings/followup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+          body: JSON.stringify(buildFollowupRequestPayload({
             followUpQuestion,
             originalQuestion: question,
             cards: mapCards(),
             spreadId: selectedSpreadId,
             significatorPreference: significatorToPreference(significatorType),
-          }),
+          })),
           signal: controller.signal,
         });
 

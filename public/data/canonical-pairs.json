@@ -7,5 +7,6 @@
     "path": "lib/legacy-cards-unreviewed.json",
     "reason": "The former card file contained specific, uncited pair claims, including personal events and relationship allegations. These are retained only for audit and are not used in prompts, the reviewed catalog, or the pair lookup."
   },
+  "sources": [],
   "pairs": []
 }

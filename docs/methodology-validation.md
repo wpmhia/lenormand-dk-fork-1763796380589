@@ -4,7 +4,7 @@ Status: **Deterministic structure and source provenance implemented; independent
 
 ## Current coverage
 
-- All 36 canonical cards have concise source-compared core entries and per-card source IDs. Their status explicitly remains `expert review pending`.
+- All 36 canonical cards have concise source-compared core entries and per-card source IDs; source definitions are kept in `public/data/card-meaning-sources.json`. Their status explicitly remains `expert review pending`.
 - `public/data/canonical-pairs.json` exists and currently has zero reviewed pairs. Prior uncited pair phrases are archived and excluded from the public/runtime catalog and generation prompts.
 - Prompt-generation tests cover the preserved four-field schema, unconfirmed question assumptions, core/secondary meaning separation, and ordered line guidance.
 - Geometry tests cover all five spread sizes, Petit Tableau centre/rows/columns/diagonals, Grand Tableau rows/houses, direct neighbours, diagonal adjacency, and no row wrapping.

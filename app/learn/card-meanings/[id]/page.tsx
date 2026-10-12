@@ -8,7 +8,7 @@ import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { BackToTop } from "@/components/BackToTop";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getCards } from "@/lib/data";
-import { getCardTimingKnowledge } from "@/lib/timing";
+import { getCardTimingKnowledge, TIMING_METHOD_NOTE } from "@/lib/timing";
 import { CARD_MEANING_SOURCES } from "@/lib/card-catalog";
 
 export const revalidate = 3600;
@@ -133,11 +133,12 @@ export default async function CardMeaningPage({ params }: PageProps) {
                     {getCardTimingKnowledge(card.id) && (
                       <>
                         <h3 className="mb-2 text-lg font-semibold">
-                          Timing
+                          School-Specific Timing Reference
                         </h3>
                         <p className="leading-relaxed text-muted-foreground">
                           {getCardTimingKnowledge(card.id)?.learningLabel}
                         </p>
+                        <p className="mt-2 text-xs text-muted-foreground">{TIMING_METHOD_NOTE}</p>
                       </>
                     )}
 

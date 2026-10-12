@@ -8,7 +8,6 @@ import {
   getCombinationMeaning,
 } from "@/lib/data";
 import {
-  getTopicCardsInSpread,
   getDiagonalCards,
   SignificatorType,
   SIGNIFICATOR_CARDS,
@@ -70,11 +69,6 @@ export const ReadingViewer = memo(function ReadingViewer({
     (c) => c.id === significatorCardId,
   );
 
-  const topicCards = useMemo(() => {
-    if (reading.layoutType !== 36) return [];
-    return getTopicCardsInSpread(reading.cards.map((c) => c.id));
-  }, [reading]);
-
   const diagonals = useMemo(() => {
     if (reading.layoutType !== 36 || significatorIndex === -1) return null;
     return getDiagonalCards(
@@ -127,7 +121,6 @@ export const ReadingViewer = memo(function ReadingViewer({
             }
             onCardClick={setSelectedCard}
             significatorIndex={significatorIndex}
-            topicCards={topicCards}
             diagonals={diagonals}
             getCardByIdMemo={getCardByIdMemo}
           />

@@ -746,8 +746,8 @@ export default function CardMeaningsPage() {
                       Start with Keywords
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      Focus on the core keywords first. These represent the
-                      card&apos;s primary energy.
+                      Start with the source-compared core meanings; use them as
+                      symbolic references, not proof of a concrete event.
                     </p>
                   </div>
                 </div>

@@ -5,7 +5,6 @@ import {
   getGrandTableauPosition,
   getPositionZone,
   SIGNIFICATOR_CARDS,
-  GRAND_TABLEAU_TOPIC_CARDS,
   GRAND_TABLEAU_CORNERS,
   GRAND_TABLEAU_CENTER_CARDS,
   DIRECTIONAL_ZONES,
@@ -13,13 +12,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { MemoizedAnimatedCard } from "@/components/AnimatedCard";
 import { CardCell } from "./CardCell";
-import { getZoneIcon, getTopicIcon } from "./SpreadPositions";
+import { getZoneIcon } from "./SpreadPositions";
 import {
   Target,
   Zap,
   ChevronDown,
   ChevronUp,
-  Diamond,
 } from "lucide-react";
 
 interface GrandTableauLayoutProps {
@@ -30,18 +28,12 @@ interface GrandTableauLayoutProps {
   significatorIndex: number;
   onToggleAnalysis: () => void;
   onCardClick: (card: Card) => void;
-  topicCards: Array<{
-    cardId: number;
-    index: number;
-    topic: { type: string; label: string };
-  }>;
   diagonals: {
     topLeft: number[];
     bottomLeft: number[];
     topRight: number[];
     bottomRight: number[];
   } | null;
-  getCardByIdMemo: (id: number) => Card | undefined;
 }
 
 export function GrandTableauLayout({
@@ -52,9 +44,7 @@ export function GrandTableauLayout({
   significatorIndex,
   onToggleAnalysis,
   onCardClick,
-  topicCards,
   diagonals,
-  getCardByIdMemo,
 }: GrandTableauLayoutProps) {
   return (
     <div className="space-y-sm">
@@ -70,7 +60,7 @@ export function GrandTableauLayout({
         ) : (
           <>
             <ChevronDown className="h-4 w-4" />
-            Show Advanced Analysis (Significator, Directions, Topics)
+          Show Advanced Analysis (Reading focus and grid geometry)
           </>
         )}
       </button>
@@ -89,8 +79,6 @@ export function GrandTableauLayout({
             const isSignificator = index === significatorIndex;
             const isCorner = GRAND_TABLEAU_CORNERS.includes(index);
             const isCenter = GRAND_TABLEAU_CENTER_CARDS.includes(index);
-            const topicInfo = GRAND_TABLEAU_TOPIC_CARDS[card!.id];
-
             const zoneInfo =
               significatorIndex !== -1
                 ? getPositionZone(significatorIndex, index)
@@ -155,12 +143,6 @@ export function GrandTableauLayout({
                     positionDescription={isSignificator ? "Selected focus only; no person identity is assigned" : zoneInfo.direction ? `${zone.description}; distance ${zoneInfo.distance}` : undefined}
                   />
 
-                  {showAdvancedAnalysis && topicInfo && (
-                      <div className="flex items-center gap-1 rounded bg-primary/10 px-1.5 py-0.5 text-[11px] text-primary">
-                      {getTopicIcon(topicInfo.type)}
-                      <span>{topicInfo.label}</span>
-                    </div>
-                  )}
                 </MemoizedAnimatedCard>
               </div>
             );
@@ -192,37 +174,6 @@ export function GrandTableauLayout({
           </p>
         </div>
       </div>
-
-      {showAdvancedAnalysis && topicCards.length > 0 && (
-        <div className="mt-lg rounded-lg border border-border bg-card p-md">
-          <h4 className="mb-md flex items-center gap-2 text-sm font-semibold">
-            <Diamond className="h-4 w-4 text-primary" />
-            Topic Cards in This Reading
-          </h4>
-          <div className="flex flex-wrap gap-md">
-            {topicCards.map((tc) => {
-              const card = getCardByIdMemo(tc.cardId);
-              if (!card) return null;
-              return (
-                <div
-                  key={tc.cardId}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-card/50 px-3 py-2 transition-colors hover:bg-muted"
-                  onClick={() => {
-                    const cardElement = document.querySelector(`[data-card-index="${tc.index}"]`);
-                    cardElement?.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }}
-                >
-                  {getTopicIcon(tc.topic.type)}
-                  <div>
-                    <div className="text-xs font-medium">{card.name}</div>
-                    <div className="text-[10px] text-muted-foreground">{tc.topic.label}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {showAdvancedAnalysis && diagonals && (
         <div className="mt-lg grid gap-4 md:grid-cols-2 lg:grid-cols-4">

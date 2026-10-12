@@ -1,11 +1,12 @@
 /**
- * Timing as a knowledge source, not a prediction engine.
+ * Legacy timing correspondences for educational display only.
  *
- * The server used to build timing evidence, exclude time windows and compare a question's
- * timeframe against drawn cards. That was a rule-based timing model running beside the
- * LLM. What remains is a small reference table used by the educational UI; timing in a
- * reading is the model's call, grounded in the question and the spread.
+ * These entries are school-specific and have not been independently source-reviewed.
+ * They are not included in interpretation prompts and must not be treated as canonical
+ * Lenormand timing doctrine or as a forecast guarantee.
  */
+
+export const TIMING_METHOD_NOTE = "School-specific timing reference; not independently source-reviewed and not used as a prediction guarantee.";
 
 export type TimingRangeKey = "days" | "weeks" | "months" | "long-term";
 

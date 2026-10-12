@@ -10,12 +10,10 @@ import type {
  * The server supplies the current question, drawn cards, deterministic spread facts, and
  * concise source-compared card meanings. The model performs the contextual synthesis; the
  * server does not select an outcome or send unreviewed pair prose. The response contract
- * lives in the user prompt so the model sees it once beside the evidence.
- *
- * `SIMPLE_LENORMAND_SYSTEM_PROMPT` is kept as an empty string for backward compatibility
- * with callers; new code should pass an empty system prompt.
+ * lives in the user prompt beside the evidence. The system prompt only locks the output
+ * language; it does not add an interpretation method or card meanings.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "";
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Match the exact natural language of the user's question in every user-facing prose field. English card references do not change the response language. Never switch languages. Keep canonical English names only in patterns[].cards.";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 800;
@@ -145,7 +143,7 @@ function reviewedCardMeaningFacts(cards: ReadingContext["cards"]): string[] {
   if (withCore.length === 0) return [];
 
   const facts = [
-    "Core card meaning references (source-compared; expert review pending; symbolic reference, not proof of events):",
+    "Core card meaning references (symbolic reference, not proof of events):",
     ...withCore.map((card) => `- ${fmtCard(card)}: ${card.coreMeaning}`),
   ];
   const secondary = cards.flatMap((card) =>
@@ -226,6 +224,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   const facts = [
     `Grand Tableau, a 4x9 grid of ${context.cards.length} cards. Position 1 is row 1 column 1; numbering runs left to right, then top to bottom.`,
     ...gridRowFacts(context.cards, GT_GRID_ROWS, GT_GRID_COLUMNS),
+    `Central cells (a 4x9 grid has four, not one, centre cells): positions 14, 15, 23, 24 — ${[13, 14, 22, 23].map((index) => fmtCard(context.cards[index])).join(" | ")}.`,
     "Position map (every position with its drawn card and the house that card occupies):",
     ...layout.houses.map((house, index) => {
       const card = house.occupyingCard;
@@ -242,7 +241,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push("");
   facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position.");
   facts.push("");
-  facts.push("Synthesis: weigh any drawn person cards and their neighbours, the centre of the 9x4 grid, and the corners. Read supporting and conflicting indications together. Do not pull in cards that do not materially address the question, and do not turn a single negative card into a final verdict without counter-evidence. The grid has no fate row, no closing position and no single outcome position; your synthesis is yours to make.");
+  facts.push("Synthesis: weigh any drawn person cards and their neighbours, the four central cells, and the corners when relevant to the question. Read supporting and conflicting indications together. Do not pull in cards that do not materially address the question, and do not turn a single difficult card into a final verdict without counter-evidence. The grid has no fate row, no closing position and no single outcome position; your synthesis is yours to make.");
   return facts;
 }
 
@@ -287,12 +286,13 @@ export function buildSpreadFacts(context: ReadingContext): string {
  */
 const OUTPUT_CONTRACT = `Answer the exact question asked.
 The question sets the topic, not the facts: do not treat its unconfirmed assumptions as established. Interpret the cards symbolically and distinguish what they suggest from what remains unknown. Lack of confirmation proves neither the opposite nor continued activity; do not force a yes/no conclusion, and keep the answer and reading consistent.
+Do not map Man or Woman to the querent, partner, or a named person unless that identity is explicit in the current question or selected reading focus. A person-card label alone does not establish identity or relationship.
 Use the core meanings as inputs for a contextual synthesis, not as definitions to concatenate. Relate combinations to the current question, the neighboring cards, and the spread's actual positions.
 In a linear spread, preserve the given left-to-right order; do not silently reverse a pair or assume both orders mean the same thing. Explain the dominant supported interpretation first, then acknowledge material contrary indications. Use only meanings and combinations supported by the drawn cards.
 Only describe a pairing as established Lenormand doctrine when a source-reviewed pair entry is supplied. Without one, describe the pairing as contextual interpretation rather than a fixed traditional rule.
 For predictive questions, give the strongest symbolically supported tendency without guarantees or invented probabilities. Avoid generic coaching, unsupported concrete events or motives, and repeated hedging that obscures the reading.
 Do not infer from cards that were not drawn.
-Answer in the language of the user's question, using exactly one language.
+Keep user-facing prose in the question's language.
 
 Return only one JSON object with exactly these fields:
 {
@@ -316,7 +316,7 @@ Return only one JSON object with exactly these fields:
  * interpretation input.
  */
 function simplePromptHeader(context: ReadingContext): string {
-  return `User question:\n${context.question}`;
+  return `User question (respond only in the same language):\n${context.question}`;
 }
 
 /**

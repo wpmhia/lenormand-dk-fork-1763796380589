@@ -112,7 +112,7 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
         /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative|luck/i,
       );
     }
-    expect(facts).toContain("Core card meaning references (source-compared");
+    expect(facts).toContain("Core card meaning references (symbolic reference, not proof of events)");
     expect(facts).toContain("Rider: News, messages, arrival, movement.");
   });
 });
@@ -135,6 +135,10 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
       "Row 3: Ship | Sun | Birds | Letter | Coffin | Heart | Stars | Fish | Clover",
       "Row 4: Mice | Scythe | House | Cross | Bouquet | Moon | Clouds | Paths | Tree",
     ]);
+  });
+
+  it("identifies all four central cells rather than a single center card", () => {
+    expect(facts).toContain("Central cells (a 4x9 grid has four, not one, centre cells): positions 14, 15, 23, 24 — Mountain | Anchor | Coffin | Heart.");
   });
 
   it("handles corner boundaries and includes diagonal neighbours without row wrapping", () => {
@@ -163,6 +167,7 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     expect(prompt).toContain("- Man: row 1, column 1; immediate neighbours: Snake, Key, Book.");
     expect(prompt).toContain("- Woman: row 2, column 9; immediate neighbours: Bear, Dog, Whip, Fish, Clover.");
     expect(prompt).toContain("Woman — Dog house");
+    expect(prompt).toContain("Central cells (a 4x9 grid has four, not one, centre cells)");
     expect(prompt).not.toContain("Man is the user");
     expect(prompt).not.toContain("Woman is the user's partner");
     expect(prompt).toContain('"answer": string');

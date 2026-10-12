@@ -69,9 +69,9 @@ export default function HowReadingsWorkPage() {
             </div>
             <div className="space-y-3 leading-relaxed text-muted-foreground">
               <p>
-                The AI reads only the cards you drew. It does not draw extra
-                cards, invent new ones, or replace the structured card data. The
-                app sends the AI a formatted prompt containing:
+                The AI receives the current question and only the cards you
+                drew. It does not draw extra cards, invent new ones, or replace
+                the structured card data. The app sends a formatted prompt containing:
               </p>
               <ul className="list-disc space-y-2 pl-6">
                 <li>The spread type and question</li>

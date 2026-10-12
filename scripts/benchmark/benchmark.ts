@@ -83,6 +83,7 @@ const AUDIT_SOURCE_FILES = [
   "lib/reading-service.ts",
   "lib/spread-definitions.ts",
   "public/data/cards.json",
+  "public/data/card-meaning-sources.json",
   "public/data/canonical-pairs.json",
 ];
 

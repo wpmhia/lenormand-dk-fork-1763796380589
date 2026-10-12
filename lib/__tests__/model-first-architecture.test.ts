@@ -208,7 +208,7 @@ describe("geometry: layout-specific facts", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
     expect(facts).toMatch(/Synthesis: weigh any drawn person cards and their neighbours/);
     expect(facts).toMatch(/Read supporting and conflicting indications together/);
-    expect(facts).toMatch(/do not turn a single negative card into a final verdict without counter-evidence/);
+    expect(facts).toMatch(/do not turn a single difficult card into a final verdict without counter-evidence/);
   });
 
   it("is stable across repeated builds", () => {
@@ -244,17 +244,15 @@ describe("model boundary: one contract for every spread", () => {
   ])("passes %s questions through without imposing a yes/no format", (_, question) => {
     const text = buildSimpleReadingPrompt(context("comprehensive", question, draw(9)));
 
-    expect(text).toContain(`User question:\n${question}`);
+    expect(text).toContain(`User question (respond only in the same language):\n${question}`);
     expect(text).not.toMatch(/yes\/no first|one or two sentences|short as the question allows/i);
   });
 
-  /**
-   * The legacy system prompt no longer carries instructions of its own. The contract
-   * lives in the user prompt so the model sees it exactly once. Producers can therefore
-   * pass an empty system prompt and trust the user prompt to be self-contained.
-   */
-  it("does not duplicate rules in the system prompt", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toBe("");
+  it("keeps the system prompt to a language lock, not a second interpretation method", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Match the exact natural language of the user's question/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("The question sets the topic");
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("Lenormand");
   });
 
   it("scales the token budget with the spread", () => {
@@ -274,11 +272,12 @@ describe("pipeline: one universal prompt for every spread", () => {
     const text = prompt(id, "Will I move house?", cards);
 
     for (const skeleton of [
-      "User question:",
+      "User question (respond only in the same language):",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
       "Answer the exact question asked",
       "The question sets the topic, not the facts",
+      "Keep user-facing prose in the question's language",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);

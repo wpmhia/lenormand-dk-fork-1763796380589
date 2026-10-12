@@ -14,17 +14,15 @@ import {
   Calendar,
   Grid3X3,
   Crown,
-  Zap,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { CardImage } from "@/components/CardImage";
 import { Card as CardType } from "@/lib/types";
 import {
-  GRAND_TABLEAU_TOPIC_CARDS,
   SIGNIFICATOR_CARDS,
 } from "@/lib/spreads";
-import { getCardTimingKnowledge } from "@/lib/timing";
+import { getCardTimingKnowledge, TIMING_METHOD_NOTE } from "@/lib/timing";
 import { CARD_MEANING_SOURCES } from "@/lib/card-catalog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -196,7 +194,7 @@ export default function CardDetailClient({
               </TabsTrigger>
               <TabsTrigger value="combos" className="gap-1 sm:gap-2">
                 <Users className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">Combos ({combos.length})</span>
+                <span className="hidden sm:inline">Reviewed pairs ({combos.length})</span>
                 <span className="sm:hidden">({combos.length})</span>
               </TabsTrigger>
             </TabsList>
@@ -232,11 +230,12 @@ export default function CardDetailClient({
                     <CardHeader className="pb-3">
                       <CardTitle className="flex items-center gap-2 text-lg">
                         <Clock className="h-5 w-5 text-primary" />
-                        Timing Influence
+                        School-Specific Timing Reference
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground">{getCardTimingKnowledge(card.id)?.learningLabel}</p>
+                      <p className="mt-2 text-xs text-muted-foreground">{TIMING_METHOD_NOTE}</p>
                     </CardContent>
                   </Card>
                 )}
@@ -283,24 +282,6 @@ export default function CardDetailClient({
                         </div>
                         <p className="text-sm text-muted-foreground">
                           Man and Woman may be read as person cards or used as an explicitly selected reading focus. Neither card automatically identifies the querent, a partner, or another specific person. Interpret their placement from the actual spread rather than assigning universal past/future meanings to directions.
-                        </p>
-                      </div>
-                    )}
-
-                    {GRAND_TABLEAU_TOPIC_CARDS[card.id] && (
-                      <div className="rounded-lg bg-primary/10 p-4">
-                        <div className="mb-2 flex items-center gap-2">
-                          <Zap className="h-5 w-5 text-primary" />
-                          <h4 className="font-semibold text-foreground">
-                            Topic Card:{" "}
-                            {GRAND_TABLEAU_TOPIC_CARDS[card.id].label}
-                          </h4>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          When this card appears in the Grand Tableau, it acts
-                          as a <strong>focus point</strong> for that life area.
-                          Read the surrounding 8 cards as a mini 9-card spread
-                          to understand this aspect of life.
                         </p>
                       </div>
                     )}
@@ -398,8 +379,8 @@ export default function CardDetailClient({
                         />
                         <ContextualMeaning
                           icon={<Calendar className="h-5 w-5" />}
-                          title="Timing & Seasons"
-                          content={getCardTimingKnowledge(card.id)?.aiLabel}
+                          title="School-Specific Timing Reference"
+                          content={getCardTimingKnowledge(card.id)?.learningLabel}
                         />
                       </div>
                     </div>

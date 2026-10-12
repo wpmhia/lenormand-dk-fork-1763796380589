@@ -1,15 +1,6 @@
 "use client";
 
 import {
-  TreeDeciduous,
-  Home,
-  Heart,
-  Briefcase,
-  User,
-  Anchor,
-  Fish,
-  Ship,
-  Club,
   Clock,
   Target,
   Brain,
@@ -53,29 +44,6 @@ export const getPositionInfo = (position: number, spreadId?: string): PositionIn
     label: "Position " + (position + 1),
     meaning: "",
   };
-};
-
-export const getTopicIcon = (type: string) => {
-  switch (type) {
-    case "health":
-      return <TreeDeciduous className="h-3 w-3" />;
-    case "home":
-      return <Home className="h-3 w-3" />;
-    case "love":
-      return <Heart className="h-3 w-3" />;
-    case "job":
-      return <Briefcase className="h-3 w-3" />;
-    case "boss":
-      return <User className="h-3 w-3" />;
-    case "career":
-      return <Anchor className="h-3 w-3" />;
-    case "money":
-      return <Fish className="h-3 w-3" />;
-    case "travel":
-      return <Ship className="h-3 w-3" />;
-    default:
-      return <Club className="h-3 w-3" />;
-  }
 };
 
 export const getZoneIcon = (zone: string) => {

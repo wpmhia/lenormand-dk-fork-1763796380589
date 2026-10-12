@@ -129,37 +129,17 @@ export default function HistoryBasicsPage() {
         </CardContent>
       </Card>
 
-      {/* Lenormand vs Tarot */}
+      {/* Method scope */}
       <Card className="mb-8 border-border bg-card">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl text-foreground">
             <Star className="mr-3 h-6 w-6 text-primary" />
-            Lenormand vs. Tarot
+            How this app approaches the cards
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-3">
-              <h3 className="font-semibold text-foreground">Lenormand</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• 36 cards with concrete meanings</li>
-                <li>• No reversals - meanings are built-in</li>
-                <li>• Read as sentences, not individual symbols</li>
-                <li>• Practical, everyday guidance</li>
-                <li>• Focus on timing and relationships</li>
-              </ul>
-            </div>
-            <div className="space-y-3">
-              <h3 className="font-semibold text-foreground">Tarot</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• 78 cards with archetypal symbolism</li>
-                <li>• Reversals add complexity</li>
-                <li>• Intuitive, psychological readings</li>
-                <li>• Spiritual and esoteric guidance</li>
-                <li>• Focus on personal growth and transformation</li>
-              </ul>
-            </div>
-          </div>
+        <CardContent className="space-y-3 text-muted-foreground">
+          <p>The app preserves the current question, drawn cards, order, spread geometry, and optional selected focus. It supplies source-compared core meanings and treats combinations as contextual interpretation unless a reviewed source is recorded.</p>
+          <p>Cards can support reflection on a question, but do not establish that an event occurred or guarantee a future outcome. This app uses upright meanings; other contemporary practices may differ.</p>
         </CardContent>
       </Card>
 
@@ -178,10 +158,10 @@ export default function HistoryBasicsPage() {
                 <Target className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Direct Answers
+                    Question-led interpretation
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Get clear, practical guidance without esoteric interpretation
+                    The answer should address the question and explain how the drawn cards inform it
                   </p>
                 </div>
               </div>
@@ -189,10 +169,10 @@ export default function HistoryBasicsPage() {
                 <Heart className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Relationship Focus
+                    Context matters
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Excel at understanding interpersonal dynamics and emotions
+                    A relationship question does not by itself prove a partner&apos;s actions or identify a person card
                   </p>
                 </div>
               </div>
@@ -202,10 +182,10 @@ export default function HistoryBasicsPage() {
                 <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Timing Insights
+                    Timing is uncertain
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Understand when events will occur with remarkable accuracy
+                    Timing methods vary; the app does not promise that an event will occur by a date
                   </p>
                 </div>
               </div>
@@ -216,8 +196,7 @@ export default function HistoryBasicsPage() {
                     Accessible Learning
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Master the system quickly with concrete meanings and
-                    associations
+                    Learn the core meanings, positional structure, and source status of secondary variants
                   </p>
                 </div>
               </div>
@@ -236,9 +215,9 @@ export default function HistoryBasicsPage() {
         </CardHeader>
         <CardContent>
           <p className="mb-6 text-muted-foreground">
-            Lenormand excels at providing practical, everyday guidance. The
-            cards answer specific questions about real-life situations. Here are
-            common applications:
+            People commonly use Lenormand to reflect on practical questions. A
+            reading is symbolic interpretation, not independent evidence that a
+            real-world event or allegation is true. Common question areas include:
           </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div className="space-y-3">
@@ -248,7 +227,7 @@ export default function HistoryBasicsPage() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Single card for the day ahead - themes, energy, and focus areas
+                A single card as a prompt for reflection; it does not guarantee how the day will unfold
               </p>
             </div>
             <div className="space-y-3">
@@ -258,7 +237,7 @@ export default function HistoryBasicsPage() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Weigh options, see potential outcomes, find clarity on choices
+                Consider options symbolically without treating a forecast as certain
               </p>
             </div>
             <div className="space-y-3">
@@ -266,7 +245,7 @@ export default function HistoryBasicsPage() {
                 <h3 className="font-semibold text-foreground">Relationships</h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Understand dynamics, connections, and emotions between people
+                Reflect on relationship questions without assuming unprovided events or motives
               </p>
             </div>
             <div className="space-y-3">
@@ -276,7 +255,7 @@ export default function HistoryBasicsPage() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Job decisions, project outcomes, timing, and workplace dynamics
+                Reflect on work questions; timing and outcomes are not guaranteed
               </p>
             </div>
             <div className="space-y-3">
@@ -286,7 +265,7 @@ export default function HistoryBasicsPage() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                View situations from multiple angles, find hidden factors
+                Consider alternative interpretations without claiming access to hidden facts
               </p>
             </div>
             <div className="space-y-3">
@@ -296,17 +275,17 @@ export default function HistoryBasicsPage() {
                 </h3>
               </div>
               <p className="text-sm text-muted-foreground">
-                Gain objective perspective on personal matters and situations
+                Explore a different perspective on personal questions
               </p>
             </div>
           </div>
           <div className="mt-6 rounded-lg border border-amber-200/20 bg-amber-50/10 p-4 text-sm text-muted-foreground dark:bg-amber-950/10 dark:text-amber-400">
             <p className="font-medium text-amber-700 dark:text-amber-400">
-              Key Principle: The cards answer specifically what you ask.
+              Key Principle: The question focuses the interpretation; it does not prove its assumptions.
             </p>
             <p className="mt-1">
-              Be clear and specific in your questions. Vague questions lead to
-              vague answers. For best results, frame questions like: &quot;Should
+              Be clear and specific in your questions. A focused question helps
+              narrow the subject, but it does not guarantee an outcome. For example, ask: &quot;Should
               I accept this job offer?&quot; rather than &quot;What about my
               career?&quot;
             </p>

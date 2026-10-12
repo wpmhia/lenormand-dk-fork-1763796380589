@@ -14,11 +14,6 @@ interface ReadingLayoutProps {
   onToggleAnalysis: () => void;
   onCardClick: (card: Card) => void;
   significatorIndex: number;
-  topicCards: Array<{
-    cardId: number;
-    index: number;
-    topic: { type: string; label: string };
-  }>;
   diagonals: {
     topLeft: number[];
     bottomLeft: number[];
@@ -38,7 +33,6 @@ export function ReadingLayout({
   onToggleAnalysis,
   onCardClick,
   significatorIndex,
-  topicCards,
   diagonals,
   getCardByIdMemo,
 }: ReadingLayoutProps) {
@@ -71,9 +65,7 @@ export function ReadingLayout({
         significatorIndex={significatorIndex}
         onToggleAnalysis={onToggleAnalysis}
         onCardClick={onCardClick}
-        topicCards={topicCards}
         diagonals={diagonals}
-        getCardByIdMemo={getCardByIdMemo}
       />
     );
   }

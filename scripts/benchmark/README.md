@@ -24,10 +24,10 @@ Use `--content-regressions-only` to run fixed qualitative cases separately from 
 
 ```bash
 # Inspect the exact prompt and case first; this does not contact a provider:
-npm run benchmark:readings -- --run-id person-identity-plan --pricing-period off-peak --content-regressions-only --plan-only
+npm run benchmark:readings -- --run-id lenormand-quality-plan --pricing-period off-peak --content-regressions-only --plan-only
 
 # Optional: after reviewing the plan, run the cases and judge (up to eighteen paid calls):
-npm run benchmark:readings -- --run-id person-identity-check --pricing-period off-peak --content-regressions-only --confirm-paid-run
+npm run benchmark:readings -- --run-id lenormand-quality-check --pricing-period off-peak --content-regressions-only --confirm-paid-run
 ```
 
 Review both the judge finding and `human-review.tsv`; judge output is a candidate signal, not ground truth. The TSV includes the regression target to guide independent review.

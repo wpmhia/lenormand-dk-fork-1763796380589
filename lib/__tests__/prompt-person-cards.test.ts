@@ -89,7 +89,8 @@ describe("prompt-builder: significator preference is an optional reading focus",
     );
     expect(prompt).toContain("Woman");
     expect(prompt).not.toContain("Reading focus:");
-    expect(prompt).not.toContain("Man");
+    expect(prompt).not.toContain("- Reading focus: Man.");
+    expect(prompt).not.toContain("Male person card");
   });
 
   it("passes a focus hint through to a Grand Tableau when the chosen card is drawn", () => {
@@ -107,6 +108,15 @@ describe("prompt-builder: significator preference is an optional reading focus",
     expect(prompt).toContain("Man");
     expect(prompt).toContain("Woman");
     expect(prompt).not.toContain("Reading focus:");
+  });
+
+  it("does not infer a Man/Woman identity from a relationship question alone", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("sentence-3", "Will the two of us reconcile?", normalized([28, 29, 25]), cardsMap),
+    );
+    expect(prompt).toContain("Do not map Man or Woman to the querent, partner, or a named person");
+    expect(prompt).not.toContain("Man is the user");
+    expect(prompt).not.toContain("Woman is the user's partner");
   });
 });
 

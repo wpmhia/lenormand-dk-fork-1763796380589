@@ -8,7 +8,7 @@ Do not infer that two readings concern the same person or event. Do not use prio
 
 ## Card-meaning provenance
 
-`public/data/cards.json` contains concise source-compared core meanings for all 36 cards and source IDs. Its status is explicitly `source-compared; expert review pending`; this is not a claim of independent expert approval. A small number of documented secondary readings are listed separately and are context-dependent.
+`public/data/cards.json` preserves the public array shape and contains concise source-compared core meanings for all 36 cards with source IDs. `public/data/card-meaning-sources.json` defines those IDs and source scopes. Every card is explicitly `source-compared; expert review pending`; this is not a claim of independent expert approval. A small number of documented secondary readings are listed separately and are context-dependent.
 
 The surviving 1799 *Das Spiel der Hoffnung* publication is a primary artifact for the deck/game and its early playful oracle layout. It is **not** a source for the modern fixed divinatory keyword glossary. Modern practitioner references are cited per card/source ID. The sources and their scopes are recorded in the JSON and linked on the card pages.
 

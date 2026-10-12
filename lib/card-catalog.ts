@@ -1,5 +1,6 @@
 import cardCatalogData from "@/public/data/cards.json";
 import canonicalPairsData from "@/public/data/canonical-pairs.json";
+import cardMeaningSourceData from "@/public/data/card-meaning-sources.json";
 import type { Card } from "@/lib/types";
 
 export interface CanonicalPair {
@@ -18,11 +19,12 @@ export interface CardMeaningSource {
   scope: string;
 }
 
-const catalog = cardCatalogData as { cards: Card[]; sources: CardMeaningSource[] };
+const catalog = cardCatalogData as Card[];
+const meaningSourceRegistry = cardMeaningSourceData as { sources: CardMeaningSource[] };
 const pairRegistry = canonicalPairsData as { pairs: CanonicalPair[] };
 
-export const CARD_CATALOG = catalog.cards;
-export const CARD_MEANING_SOURCES = catalog.sources;
+export const CARD_CATALOG = catalog;
+export const CARD_MEANING_SOURCES = meaningSourceRegistry.sources;
 export const CANONICAL_PAIRS = pairRegistry.pairs;
 
 // Names that readers may use while the numbered catalog remains canonical.

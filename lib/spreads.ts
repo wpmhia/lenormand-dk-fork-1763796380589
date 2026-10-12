@@ -32,16 +32,6 @@ export interface GrandTableauPosition {
   col: number;
   isCorner: boolean;
   isCenter: boolean;
-  isTopicCard: boolean;
-  topicType?:
-    | "health"
-    | "home"
-    | "love"
-    | "job"
-    | "boss"
-    | "career"
-    | "money"
-    | "travel";
 }
 
 export interface DirectionalZone {
@@ -49,20 +39,6 @@ export interface DirectionalZone {
   description: string;
   color: string;
 }
-
-export const GRAND_TABLEAU_TOPIC_CARDS: Record<
-  number,
-  { type: string; label: string }
-> = {
-  5: { type: "health", label: "Health" },
-  4: { type: "home", label: "Home & Family" },
-  24: { type: "love", label: "Love" },
-  14: { type: "job", label: "Current Job" },
-  15: { type: "boss", label: "Boss/Authority" },
-  35: { type: "career", label: "Career" },
-  34: { type: "money", label: "Money" },
-  3: { type: "travel", label: "Travel" },
-};
 
 export const GRAND_TABLEAU_CORNERS = [0, 8, 27, 35];
 
@@ -128,8 +104,6 @@ export function getGrandTableauPosition(index: number): GrandTableauPosition {
     col,
     isCorner,
     isCenter,
-    isTopicCard: false,
-    topicType: undefined,
   };
 }
 
@@ -174,18 +148,6 @@ export function getPositionZone(
     distance: Math.round(distance * 10) / 10,
     direction: direction.replace("-", " "),
   };
-}
-
-export function getTopicCardsInSpread(
-  cards: number[],
-): { index: number; cardId: number; topic: { type: string; label: string } }[] {
-  return cards
-    .filter((id) => GRAND_TABLEAU_TOPIC_CARDS[id])
-    .map((id) => ({
-      index: cards.indexOf(id),
-      cardId: id,
-      topic: GRAND_TABLEAU_TOPIC_CARDS[id],
-    }));
 }
 
 export function getDiagonalCards(
