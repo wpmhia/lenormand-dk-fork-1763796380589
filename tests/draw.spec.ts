@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("Draw cards flow", async ({ page }) => {
+test("@smoke virtual-deck draw flow", async ({ page }) => {
   await page.goto("/read/new");
 
   await page.getByLabel("Your Question").fill("Will this situation move forward?");

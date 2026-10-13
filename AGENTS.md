@@ -9,19 +9,27 @@ Do **not** treat every edit as a release candidate. Match the verification to th
 | Change | What to run |
 | --- | --- |
 | Comment, copy, or trivial text | Nothing, or the one relevant test file |
-| Small logic change | The one relevant test file: `npx vitest run lib/__tests__/<file>.test.ts` |
-| Structural TypeScript change | Targeted tests + `npx tsc -p tsconfig.test.json --noEmit` |
-| Cross-cutting refactor | Full suite: `npx vitest run` |
+| Small logic change | The one relevant test file: `bun x vitest run lib/__tests__/<file>.test.ts` |
+| Structural TypeScript change | Targeted tests + `bun run tsc --noEmit` |
+| Cross-cutting refactor | Full suite: `bun run test -- --run` |
+
+### Playwright policy
+
+- **Do not run the full E2E suite after routine edits.** It covers multiple desktop and mobile projects and is reserved for release/merge CI or an explicit user request.
+- For a UI change, run the focused smoke set: `bun run test:e2e:smoke` (Chromium only, `@smoke` tests, one worker).
+- For a critical flow, run only the affected test by title/file, e.g. `bun run test:e2e -- --project=chromium --grep "virtual-deck draw flow"`.
+- Per-test timeout is 30 seconds; local E2E has a 5-minute global timeout and no retries. CI allows at most one retry and retains the full desktop/mobile E2E suite.
+- Reuse an existing development server when available. Do not rebuild or rerun the full suite repeatedly after a failure; inspect the failed test and report its relevant error first.
 
 ### At the end of a coherent change set
 
 Run these once — not after each step:
 
 ```bash
-npx vitest run          # full suite
-npx next lint           # lint
-npx tsc -p tsconfig.test.json --noEmit   # typecheck
-npx next build          # production build (warm)
+bun run test -- --run       # full Vitest suite
+bun run lint                # lint
+bun run tsc --noEmit        # typecheck
+bun run build               # production build (warm)
 ```
 
 ### Do not

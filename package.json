@@ -21,6 +21,7 @@
     "benchmark:report": "tsx scripts/benchmark/report.ts",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test --project=chromium --grep @smoke --workers=1",
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
