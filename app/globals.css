@@ -350,6 +350,38 @@
     }
   }
 
+  @keyframes stepEnterMobile {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes stepExitMobile {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .step-enter {
+      animation-name: stepEnterMobile;
+    }
+
+    .step-exit {
+      animation-name: stepExitMobile;
+    }
+  }
+
   /* Card Flip Animation - Meditative, slower */
   .card-flip-container {
     perspective: 1000px;

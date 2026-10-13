@@ -12,13 +12,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Routine feedback is bounded; retry at most once in CI and never locally. */
   timeout: 30_000,
-  globalTimeout: process.env.CI ? undefined : 5 * 60 * 1000,
+  globalTimeout: process.env.CI ? undefined : 4 * 60 * 1000,
   retries: process.env.CI ? 1 : 0,
   expect: { timeout: 5_000 },
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  /* Concise local output; CI annotations identify failing tests without serving a report. */
+  reporter: process.env.CI ? "github" : "list",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */

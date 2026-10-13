@@ -12,6 +12,7 @@ Status: **Deterministic structure and source provenance implemented; one live ni
 - The app UI and generated prose are English-only; no translation or localization layer is used.
 - Fixed qualitative regressions cover Cross versus Paths, Fox without automatic infidelity, accusation/presupposition handling, a nine-card grid, forecast calibration, and Grand Tableau geometry.
 - The CI workflow now uses the tracked `bun.lock` with `oven-sh/setup-bun` and frozen Bun installation; npm caching/`npm ci` were removed.
+- GitHub Actions Bun-based verification passed on runs #273 and #274. The full E2E suite is gated to pull requests and manual dispatch; a normal push runs verification only.
 
 ## Pair registry discrepancy reconciled
 
@@ -21,6 +22,8 @@ Earlier documentation named `public/data/canonical-pairs.json`, but that file di
 
 - The benchmark can generate a 30-case balanced review batch (`--count 6`, six per spread size) and produce a human-review TSV.
 - One live English-only run generated and judged the nine fixed regression cases (October 12, 2026; 9/9 completed; 0 provider/schema failures; combined estimated cost USD 0.0196). The independent LLM judge scored language consistency 5/5 and flagged candidate false-spatial claims 0%, undeclared spatial claims 44.4%, and unsupported conclusions 11.1%. Judge results are screening signals, not ground truth; these figures do not prove a general quality improvement.
+- The prior full Playwright run reported two virtual-draw failures and one 360px `/read/new` horizontal-overflow failure. The draw test did not select its expected three-card spread; the mobile overflow traced to the setup step's horizontal entrance transform. These are corrected with an explicit spread selection and a vertical-only mobile transition. A bounded smoke test is configured; it could not be completed locally because the Playwright browser binary was absent, and no new full suite was started.
+- GitHub Actions verification passed on runs #273 and #274. Their full E2E jobs were skipped on push by policy; this is not a claim that the complete Playwright suite passed.
 - A balanced 30-case plan (six per spread size) was generated, but those 30 cases have not been run or independently human-reviewed by a Lenormand expert. No human annotations are complete.
 - No repeated/paired live A/B run has been performed. Do not claim improvements in general interpretive quality, forecast quality, unsupported-claim rate, or consistency from one nine-case sample.
 - Automated card/geometry validators still validate structured card references; they do not prove all prose interpretations. The quality judge is a candidate signal; human adjudication is required.
