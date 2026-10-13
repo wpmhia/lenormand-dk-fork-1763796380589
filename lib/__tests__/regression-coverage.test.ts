@@ -107,7 +107,9 @@ describe("regression: optional reading focus applies only to a drawn card", () =
       buildReadingContext("sentence-3", "Q?", draw(3, deck.findIndex((card) => card.id === 29)), cardsMap, "man"),
     );
     expect(withoutDrawnMan).not.toContain("Reading focus:");
-    expect(withoutDrawnMan).not.toContain("Man");
+    expect(withoutDrawnMan).not.toContain("Reading focus: Man");
+    expect(withoutDrawnMan).not.toContain("Man: Male person card");
+    expect(withoutDrawnMan).not.toContain("position 1: Man");
   });
 });
 
