@@ -133,7 +133,7 @@ describe("geometry: the full grid and bounded person-neighbour facts are supplie
     const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
     expect(positionLines).toHaveLength(36);
     expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(4);
-    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping):");
+    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:");
     expect(positionLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
   });
 

@@ -114,7 +114,7 @@ describe("prompt-builder: significator preference is an optional reading focus",
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will the two of us reconcile?", normalized([28, 29, 25]), cardsMap),
     );
-    expect(prompt).toContain("Do not map Man or Woman to the querent, partner, or a named person");
+    expect(prompt).toContain("A marriage or partner question alone does not identify which person-card represents whom");
     expect(prompt).not.toContain("Man is the user");
     expect(prompt).not.toContain("Woman is the user's partner");
   });

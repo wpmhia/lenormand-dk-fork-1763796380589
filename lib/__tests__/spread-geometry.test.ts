@@ -168,6 +168,8 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     expect(prompt).toContain("Row 1: Man | Snake | Fox | Stork | Rider | Garden | Child | Bear | Dog");
     expect(prompt).toContain("- Man: row 1, column 1; immediate neighbours: Snake, Key, Book.");
     expect(prompt).toContain("- Woman: row 2, column 9; immediate neighbours: Bear, Dog, Whip, Fish, Clover.");
+    expect(prompt).toContain("Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
+    expect(prompt).toContain("A same-row card two columns away is not adjacent");
     expect(prompt).toContain("Woman — Dog house");
     expect(prompt).toContain("Central cells (a 4x9 grid has four, not one, centre cells)");
     expect(prompt).not.toContain("Man is the user");

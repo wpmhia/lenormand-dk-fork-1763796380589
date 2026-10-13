@@ -4,6 +4,8 @@
 
 Each generation is independent. Its only interpretive inputs are the current question, the cards actually drawn, their order/positions/spread geometry, and an explicitly selected reading focus. The primary request has no situation-context field. Reading history remains a user-facing feature but is not sent to generation. Follow-ups receive the fixed spread, original question, and active follow-up question; previous turns remain client-side display state only.
 
+The application and all generated user-facing prose are English-only. Reference meanings and patterns use canonical English card names.
+
 Do not infer that two readings concern the same person or event. Do not use prior predictions, outcomes, notes, profiles, or relationship history. No individual outcome is learned back into the system.
 
 ## Card-meaning provenance

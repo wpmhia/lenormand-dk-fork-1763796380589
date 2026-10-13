@@ -9,6 +9,7 @@ Status: **Deterministic structure and source provenance implemented; independent
 - Prompt-generation tests cover the preserved four-field schema, unconfirmed question assumptions, core/secondary meaning separation, and ordered line guidance.
 - Geometry tests cover all five spread sizes, Petit Tableau centre/rows/columns/diagonals, Grand Tableau rows/houses, direct neighbours, diagonal adjacency, and no row wrapping.
 - Primary request normalization ignores extra history/notes fields. Follow-up prompt construction accepts only the fixed spread, original question, and active follow-up; UI conversation turns are not sent to the model.
+- The app UI and generated prose are English-only; no translation or localization layer is used.
 - Fixed qualitative regressions cover Cross versus Paths, Fox without automatic infidelity, accusation/presupposition handling, a nine-card grid, forecast calibration, and Grand Tableau geometry.
 
 ## Pair registry discrepancy reconciled
