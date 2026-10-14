@@ -131,7 +131,7 @@ describe("reading-context: significator preference is focus metadata, not identi
 
 describe("reading-context: the removed heuristic fields stay removed", () => {
   it("carries no question domain, frame, semantic question, subjects, timing or topics", () => {
-    const ctx = buildReadingContext("grand-tableau", "Will I move to the Netherlands?", draw(36), cardsMap) as unknown as Record<string, unknown>;
+    const ctx = buildReadingContext("grand-tableau", "Will I move to a new city?", draw(36), cardsMap) as unknown as Record<string, unknown>;
     for (const removed of [
       "questionDomain",
       "questionFrame",

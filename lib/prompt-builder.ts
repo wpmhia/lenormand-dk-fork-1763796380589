@@ -316,7 +316,7 @@ Facts and assumptions:
 
 Card meaning:
 - Classical meanings come first. Use the core meanings as the basis of a contextual synthesis, not as definitions to concatenate.
-- Use a secondary meaning only when the question and the surrounding cards support it. For example, Lily may signal sexuality in a sexual question; Fox may signal deception or indirect self-interest when the spread supports it, and never by itself. A single negative card is never proof of infidelity or any specific act.
+- Use a secondary meaning only when the question and the surrounding cards support it. A secondary meaning never stands alone: it needs support from the question and from other drawn cards. A single negative card is never proof of any specific act.
 - Do not assign Man or Woman to a named person, the querent, or a relationship role unless the user explicitly supplies that mapping. This includes a question about a named partner or other person: the person card does not automatically become that person, so describe the card's symbolism rather than the person's conduct. Interpret person cards as naturally as possible without inventing identities. A selected reading focus only directs attention to a card.
 - For Grand Tableau adjacency claims about Man or Woman, use only cards in the supplied complete neighbour list. A same-row card two columns away is not adjacent.
 - In a linear spread, keep the given left-to-right order.

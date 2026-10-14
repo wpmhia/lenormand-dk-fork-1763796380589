@@ -205,7 +205,7 @@ describe("nine-card Petit Tableau regression", () => {
     expect(prompt).toContain("Cross: Burden, hardship, suffering, duty, difficult circumstances.");
     expect(prompt).not.toContain("Paths:");
     expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
-    expect(prompt).toContain("never by itself");
+    expect(prompt).toContain("A secondary meaning never stands alone");
     expect(prompt).toContain("Ring: Commitment, agreement, contract, partnership, cycle.");
     expect(prompt).toContain("Tree: Health, growth, roots, vitality, long duration.");
     expect(prompt).toContain("do not impose chronology");

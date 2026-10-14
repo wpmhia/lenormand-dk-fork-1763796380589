@@ -88,8 +88,8 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
   });
 
   it("passes the raw question through without a server-parsed frame", () => {
-    const text = prompt("grand-tableau", "Zal ik naar een nieuwe stad verhuizen?");
-    expect(text).toContain("Zal ik naar een nieuwe stad verhuizen?");
+    const text = prompt("grand-tableau", "Zal het nieuwe plan slagen?");
+    expect(text).toContain("Zal het nieuwe plan slagen?");
     for (const parsed of ["domain=", "predicate=", "Question predicate:", "Question subjects:", "Semantic question frame"]) {
       expect(text).not.toContain(parsed);
     }

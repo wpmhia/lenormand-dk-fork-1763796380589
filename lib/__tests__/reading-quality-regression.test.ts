@@ -43,7 +43,7 @@ describe("regression: Lily-Sun-Key-Fish-Moon keeps positive sensuality", () => {
 
   it("instructs the model to use a secondary sense only when the question supports it", () => {
     const prompt = promptFor("sentence-5", "Will this project reach its goal?", names);
-    expect(prompt).toMatch(/Lily may signal sexuality in a sexual question/);
+    expect(prompt).toMatch(/A secondary meaning never stands alone/);
   });
 
   it("keeps the positive cards in sequence without a fixed verdict", () => {
@@ -61,8 +61,8 @@ describe("regression: Fox-Anchor-Bouquet-Ring-Tree is contextual, not automatic 
   it("does not present Fox as deception without contextual support", () => {
     const prompt = promptFor("sentence-5", "Is the offer being presented honestly?", names);
     expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
-    expect(prompt).toContain("A single negative card is never proof of infidelity or any specific act.");
-    expect(prompt).toContain("Fox may signal deception or indirect self-interest when the spread supports it, and never by itself.");
+    expect(prompt).toContain("A single negative card is never proof of any specific act.");
+    expect(prompt).toContain("A secondary meaning never stands alone");
   });
 
   it("keeps the supporting cards' meanings available for self-protection, obligation and agreement", () => {
