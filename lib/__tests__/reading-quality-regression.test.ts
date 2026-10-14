@@ -112,7 +112,9 @@ describe("regression: Coffin-Garden-Sun-Scythe-Clouds recognises withdrawal with
 
   it("forbids inventing what happened, the cause, or a real-world event", () => {
     const prompt = promptFor("sentence-5", "Has this person withdrawn from our friendship?", names);
-    expect(prompt).toMatch(/Do not invent facts, names, places, dates or what a person did or felt/);
+    expect(prompt).toMatch(/Do not invent facts, names, places, dates or specific events and circumstances/);
+    expect(prompt).toMatch(/interpret motives and causes symbolically from the combination of drawn cards/);
+    expect(prompt).toMatch(/cannot be confirmed from the cards/);
     expect(prompt).toMatch(/Lack of confirmation proves neither the opposite nor continued activity/);
   });
 });
