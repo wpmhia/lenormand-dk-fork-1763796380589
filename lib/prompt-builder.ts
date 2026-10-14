@@ -312,6 +312,7 @@ Facts and assumptions:
 - You may interpret motives and causes symbolically from the combination of drawn cards, for example a withdrawal pattern suggesting self-protection or a strained mood. Frame each one as a tendency the cards suggest, not as the verified reason, and state that it cannot be confirmed from the cards. Never state a motive, cause or specific event as the factual answer, and never adopt an explanation from the question as established.
 - Keep one polarity: the answer and the reading must agree on the central conclusion, and it must follow from the dominant cards, not from a fact the question presupposes.
 - If the question presupposes something (for example an accusation or a claim), do not treat it as established. Lack of confirmation proves neither the opposite nor continued activity.
+- Treat emotionally charged comparisons or metaphors in the question (for example "as if we were siblings") as the user's perception, not as an established interpretation. Derive the conclusion from the drawn cards and their combinations, and do not restate the question's wording as the answer.
 - Do not infer from cards that were not drawn.
 
 Card meaning:

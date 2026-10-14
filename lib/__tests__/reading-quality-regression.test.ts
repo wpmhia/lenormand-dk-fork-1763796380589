@@ -92,6 +92,12 @@ describe("regression: mixed spreads recognise a genuine positive direction", () 
     expect(prompt).not.toMatch(/guaranteed|will definitely/i);
   });
 
+  it("treats a metaphor in the question as the user's perception, not as the conclusion", () => {
+    const prompt = promptFor("sentence-5", "Why does it sometimes feel like we are siblings?", ["Birds", "Tower", "Paths", "Mountain", "Moon"]);
+    expect(prompt).toMatch(/emotionally charged comparisons or metaphors in the question/);
+    expect(prompt).toMatch(/do not restate the question's wording as the answer/);
+  });
+
   it("tells the model to commit to the dominant reading and keep serious difficulty in view", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/English-only/);
     const prompt = promptFor("sentence-3", "Will this situation improve?", ["Mice", "Snake", "Cross"]);
