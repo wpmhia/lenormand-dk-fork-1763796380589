@@ -162,6 +162,12 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
     ...gridRowFacts(context.cards, PETIT_GRID, PETIT_GRID),
     ...gridColumnFacts(context.cards, PETIT_GRID, PETIT_GRID),
     ...gridDiagonalFacts(context.cards, PETIT_GRID),
+    "Position map (where each card sits in the grid):",
+    ...context.cards.map((card, index) => {
+      const row = Math.floor(index / PETIT_GRID) + 1;
+      const column = (index % PETIT_GRID) + 1;
+      return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card)}`;
+    }),
     `Centre card: ${fmtCard(layout.center.card)}.`,
     "The centre is the focal influence. Use the rows, columns, diagonals and neighbours that bear on the question; do not impose chronology.",
   ];
@@ -303,6 +309,7 @@ Decisiveness:
 
 Facts and assumptions:
 - Cards describe symbolic tendencies, not confirmed events, private motives or certain futures. Do not invent facts, names, places, dates or what a person did or felt.
+- Do not add motives, intentions, causes or concrete logistics (paperwork, costs, bureaucracy, messages, deliberate choices by anyone) unless a drawn card's meaning names them. Describe what each card signals, not an explanation of why it happened.
 - If the question presupposes something (for example an accusation or a claim), do not treat it as established. Lack of confirmation proves neither the opposite nor continued activity.
 - Do not infer from cards that were not drawn.
 
