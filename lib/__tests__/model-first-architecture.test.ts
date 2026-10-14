@@ -117,7 +117,7 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
         expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
       }
       expect(text, `${id} must state the spread was not preselected`).toMatch(
-        /Use only meanings and combinations supported by the drawn cards/,
+        /Do not infer from cards that were not drawn/,
       );
     }
   });
@@ -206,9 +206,8 @@ describe("geometry: layout-specific facts", () => {
 
   it("adds the GT synthesis guidance so the model weighs person cards, neighbours and contradicting indications", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).toMatch(/Synthesis: weigh any drawn person cards and their neighbours/);
-    expect(facts).toMatch(/Read supporting and conflicting indications together/);
-    expect(facts).toMatch(/do not turn a single difficult card into a final verdict without counter-evidence/);
+    expect(facts).toMatch(/Synthesis: focus on the cards and lines that bear on the question/);
+    expect(facts).toMatch(/person cards and their neighbours/);
   });
 
   it("is stable across repeated builds", () => {
@@ -228,9 +227,9 @@ describe("model boundary: one contract for every spread", () => {
     const text = buildSimpleReadingPrompt(context("comprehensive", "Q?", draw(9)));
     expect(text).not.toMatch(/Be concrete, nuanced and predictive/);
     expect(text).toMatch(/Do not infer from cards that were not drawn/);
-    expect(text).not.toMatch(/For yes\/no questions, answer yes\/no first/i);
     expect(text).not.toMatch(/Keep the explanation as short as the question allows/i);
-    expect(text).not.toMatch(/answer.*in one or two sentences/i);
+    expect(text).toMatch(/one or two sentences/);
+    expect(text).not.toMatch(/do not force a yes\/no conclusion/i);
     // The structural layer contains no preselected spaces, no clusters, no narrative
     // planning, and no surrogate minimum-interpretation rules besides the contract.
     expect(text).not.toMatch(/Verified clusters/);
@@ -244,12 +243,12 @@ describe("model boundary: one contract for every spread", () => {
   ])("passes %s questions through without imposing a yes/no format", (_, question) => {
     const text = buildSimpleReadingPrompt(context("comprehensive", question, draw(9)));
 
-    expect(text).toContain(`User question (the app responds in English):\n${question}`);
-    expect(text).not.toMatch(/yes\/no first|one or two sentences|short as the question allows/i);
+    expect(text).toContain(`User question:\n${question}`);
+    expect(text).not.toMatch(/short as the question allows/i);
   });
 
   it("keeps the system prompt to a language lock, not a second interpretation method", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Write every user-facing prose field in English/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/English-only: write every user-facing prose field in English/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("The question sets the topic");
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("Lenormand");
@@ -272,12 +271,10 @@ describe("pipeline: one universal prompt for every spread", () => {
     const text = prompt(id, "Will I move house?", cards);
 
     for (const skeleton of [
-      "User question (the app responds in English):",
+      "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "Answer the exact question asked",
-      "The question sets the topic, not the facts",
-      "Write all user-facing prose in English",
+      "Answer the question directly",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);

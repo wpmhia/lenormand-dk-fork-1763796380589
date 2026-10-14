@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildSimpleReadingPrompt } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 
 const cardsMap = getCardCatalogMap();
@@ -24,18 +24,16 @@ describe("prompt-builder: internal references keep one stable card vocabulary", 
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will I move?", draw(3, 0), cardsMap),
     );
-    expect(prompt).toMatch(/canonical English card names/);
-    expect(prompt).toMatch(/never translate these names into the user's language inside "cards"/);
+    expect(prompt).toMatch(/Card names inside "patterns\[\]\.cards" are the canonical English names/);
   });
 
-  it("keeps all free text English while card labels stay canonical English", () => {
+  it("keeps the language rule in the system prompt only, not repeated in the user prompt", () => {
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "How could this situation change?", draw(3, 0), cardsMap),
     );
-    expect(prompt).toMatch(/every name inside "patterns\[\]\.cards" is the canonical English card name/);
-    expect(prompt).toContain("User question (the app responds in English)");
-    expect(prompt).toMatch(/Write all user-facing prose in English/);
-    expect(prompt).toMatch(/"answer", "reading", and "patterns\[\]\.meaning", is written in English/);
+    expect(prompt).toContain("User question:");
+    expect(prompt).not.toMatch(/Write all user-facing prose in English/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/English-only/);
   });
 
   it("does not include or imply multilingual card aliases", () => {

@@ -78,8 +78,8 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
   });
 
   it("includes the GT synthesis guidance for weighing the spread", () => {
-    expect(facts).toMatch(/Synthesis: weigh any drawn person cards and their neighbours/);
-    expect(facts).toMatch(/no fate row, no closing position and no single outcome position/);
+    expect(facts).toMatch(/Synthesis: focus on the cards and lines that bear on the question/);
+    expect(facts).toMatch(/no fate row and no single outcome position/);
   });
 
   it("states the house rule so the model does not invert occupant and house", () => {
@@ -205,11 +205,10 @@ describe("nine-card Petit Tableau regression", () => {
     expect(prompt).toContain("Cross: Burden, hardship, suffering, duty, difficult circumstances.");
     expect(prompt).not.toContain("Paths:");
     expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
-    expect(prompt).toContain("not proof of infidelity or a specific act");
+    expect(prompt).toContain("never by itself");
     expect(prompt).toContain("Ring: Commitment, agreement, contract, partnership, cycle.");
     expect(prompt).toContain("Tree: Health, growth, roots, vitality, long duration.");
-    expect(prompt).toContain("without guarantees or invented probabilities");
-    expect(prompt).toContain("do not force every line into the reading or impose chronology");
+    expect(prompt).toContain("do not impose chronology");
   });
 });
 

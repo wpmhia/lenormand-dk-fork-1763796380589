@@ -13,7 +13,7 @@ import type {
  * lives in the user prompt beside the evidence. The system prompt only locks the output
  * language; it does not add an interpretation method or card meanings.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Write every user-facing prose field in English. Do not switch languages. Keep canonical English names in patterns[].cards.";
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "The app is English-only: write every user-facing prose field in English, whatever language the question is in. Keep canonical English card names in patterns[].cards.";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 800;
@@ -163,7 +163,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
     ...gridColumnFacts(context.cards, PETIT_GRID, PETIT_GRID),
     ...gridDiagonalFacts(context.cards, PETIT_GRID),
     `Centre card: ${fmtCard(layout.center.card)}.`,
-    "The centre is a focal influence, not a predetermined outcome. Consider only rows, columns, diagonals, and neighbours that materially address the question; do not force every line into the reading or impose chronology.",
+    "The centre is the focal influence. Use the rows, columns, diagonals and neighbours that bear on the question; do not impose chronology.",
   ];
   return facts;
 }
@@ -251,7 +251,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push("");
   facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position.");
   facts.push("");
-  facts.push("Synthesis: weigh any drawn person cards and their neighbours, the four central cells, and the corners when relevant to the question. Read supporting and conflicting indications together. Do not pull in cards that do not materially address the question, and do not turn a single difficult card into a final verdict without counter-evidence. The grid has no fate row, no closing position and no single outcome position; your synthesis is yours to make.");
+  facts.push("Synthesis: focus on the cards and lines that bear on the question (person cards and their neighbours, the four central cells, the corners). The grid has no fate row and no single outcome position.");
   return facts;
 }
 
@@ -294,16 +294,31 @@ export function buildSpreadFacts(context: ReadingContext): string {
 /**
  * The output request: a four-field contract, nothing conditional.
  */
-const OUTPUT_CONTRACT = `Answer the exact question asked.
-The question sets the topic, not the facts: do not treat its unconfirmed assumptions as established. Interpret the cards symbolically and distinguish what they suggest from what remains unknown. Lack of confirmation proves neither the opposite nor continued activity; do not force a yes/no conclusion, and keep the answer and reading consistent.
-Do not assign Man or Woman to a named person, the querent, or a relationship role unless the user explicitly supplies that mapping. A marriage or partner question alone does not identify which person-card represents whom. A selected reading focus directs attention to a card; it does not identify the person.
-For Grand Tableau adjacency claims about Man or Woman, use only cards in the supplied complete neighbour list. A same-row card two columns away is not adjacent; do not describe it as beside or next to the person card.
-Use the core meanings as inputs for a contextual synthesis, not as definitions to concatenate. Relate combinations to the current question, the neighboring cards, and the spread's actual positions.
-In a linear spread, preserve the given left-to-right order; do not silently reverse a pair or assume both orders mean the same thing. Explain the dominant supported interpretation first, then acknowledge material contrary indications. Use only meanings and combinations supported by the drawn cards.
-Only describe a pairing as established Lenormand doctrine when a source-reviewed pair entry is supplied. Without one, describe the pairing as contextual interpretation rather than a fixed traditional rule.
-For predictive questions, give the strongest symbolically supported tendency without guarantees or invented probabilities. Avoid generic coaching, unsupported concrete events or motives, and repeated hedging that obscures the reading.
-Do not infer from cards that were not drawn.
-Write all user-facing prose in English.
+const OUTPUT_CONTRACT = `Answer the question directly, using the strongest symbolic reading the spread supports.
+
+Decisiveness:
+- The "answer" is one or two sentences that state the conclusion. For a yes/no question, say clearly whether the tendency is positive, negative, or genuinely mixed (name the mix only when the cards really balance).
+- Commit to the dominant reading. Do not list every possibility or argue with your own conclusion.
+- State material uncertainty once, in a single sentence in the reading. Do not repeat hedges, and do not use uncertainty to avoid answering.
+
+Facts and assumptions:
+- Cards describe symbolic tendencies, not confirmed events, private motives or certain futures. Do not invent facts, names, places, dates or what a person did or felt.
+- If the question presupposes something (for example an accusation or a claim), do not treat it as established. Lack of confirmation proves neither the opposite nor continued activity.
+- Do not infer from cards that were not drawn.
+
+Card meaning:
+- Classical meanings come first. Use the core meanings as the basis of a contextual synthesis, not as definitions to concatenate.
+- Use a secondary meaning only when the question and the surrounding cards support it. For example, Lily may signal sexuality in a sexual question; Fox may signal deception or indirect self-interest when the spread supports it, and never by itself. A single negative card is never proof of infidelity or any specific act.
+- Do not assign Man or Woman to a named person, the querent, or a relationship role unless the user explicitly supplies that mapping. Interpret person cards as naturally as possible without inventing identities. A selected reading focus only directs attention to a card.
+- For Grand Tableau adjacency claims about Man or Woman, use only cards in the supplied complete neighbour list. A same-row card two columns away is not adjacent.
+- In a linear spread, keep the given left-to-right order.
+- Describe a pairing as established doctrine only when a source-reviewed pair entry is supplied; otherwise call it contextual interpretation.
+
+Output:
+- "reading" is a coherent classical interpretation in plain prose, about 100 to 200 words for 3, 5 or 9 cards. Keep it concrete and concise. Do not restate the answer at length.
+- "patterns" holds at most three of the most important combinations you actually used. Do not repeat the reading in them and do not generate every row, column or pair.
+- "timing" is null unless the spread meaningfully grounds a timeframe.
+- Card names inside "patterns[].cards" are the canonical English names, one per element.
 
 Return only one JSON object with exactly these fields:
 {
@@ -312,13 +327,7 @@ Return only one JSON object with exactly these fields:
   "patterns": [{ "cards": string[], "meaning": string }],
   "timing": string | null
 }
-- answer responds directly to the question.
-- reading explains the interpretation in prose.
-- patterns lists the card groups you actually interpreted. "cards" is an array of canonical English card names, one name per element. Never put a combined string in one element, and never translate these names into the user's language inside "cards".
-- "meaning" states the interpretation of that group in English.
-- timing is null when the spread does not ground a timing.
- - Internal references: every name inside "patterns[].cards" is the canonical English card name. All user-facing prose, including "answer", "reading", and "patterns[].meaning", is written in English.
-- Do not rename, add, or remove fields. Do not use Markdown fences.`;
+Do not rename, add or remove fields. Do not use Markdown fences.`;
 
 /**
  * Question header. Identical for every spread.
@@ -327,7 +336,7 @@ Return only one JSON object with exactly these fields:
  * interpretation input.
  */
 function simplePromptHeader(context: ReadingContext): string {
-  return `User question (the app responds in English):\n${context.question}`;
+  return `User question:\n${context.question}`;
 }
 
 /**

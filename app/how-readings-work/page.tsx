@@ -85,9 +85,9 @@ export default function HowReadingsWorkPage() {
               </ul>
               <p>
                 The AI is asked to synthesize a direct Lenormand-style reading
-                from the current question and cards. It distinguishes symbolic
-                suggestions from facts and does not force a yes/no answer or
-                claim that an uncatalogued pair is fixed doctrine.
+                from the current question and cards. It gives a direct answer,
+                separates symbolic suggestions from facts, and does not claim
+                that an uncatalogued pair is fixed doctrine.
               </p>
             </div>
           </section>
