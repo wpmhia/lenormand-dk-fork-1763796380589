@@ -185,6 +185,33 @@ function gridDirection(rowOffset: number, columnOffset: number): string {
   return vertical || horizontal;
 }
 
+/**
+ * Complete, deterministic spatial relations for every Grand Tableau card: its grid
+ * coordinates and every immediate neighbour with its direction. The model reads these
+ * facts instead of deriving positions, directions or adjacency itself.
+ */
+function grandTableauCardRelationFacts(cards: ReadingContext["cards"]): string[] {
+  const facts = [
+    "Spatial relations for every card (coordinates are row, column; neighbours are the complete list of immediate grid cells, horizontal, vertical and diagonal; no row wrapping; a card not listed is not adjacent):",
+  ];
+  cards.forEach((card, index) => {
+    const row = Math.floor(index / GT_GRID_COLUMNS);
+    const column = index % GT_GRID_COLUMNS;
+    const neighbours: string[] = [];
+    for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+      for (let columnOffset = -1; columnOffset <= 1; columnOffset++) {
+        if (rowOffset === 0 && columnOffset === 0) continue;
+        const r = row + rowOffset;
+        const c = column + columnOffset;
+        if (r < 0 || r >= GT_GRID_ROWS || c < 0 || c >= GT_GRID_COLUMNS) continue;
+        neighbours.push(`${fmtCard(cards[r * GT_GRID_COLUMNS + c])} (${gridDirection(rowOffset, columnOffset)})`);
+      }
+    }
+    facts.push(`- ${fmtCard(card)}: row ${row + 1}, column ${column + 1}; neighbours: ${neighbours.length ? neighbours.join(", ") : "none"}.`);
+  });
+  return facts;
+}
+
 function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): string[] {
   const facts = ["Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:"];
 
@@ -228,6 +255,15 @@ function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): strin
     }
   }
 
+  const manIndex = cards.findIndex((card) => card.id === 28);
+  const womanIndex = cards.findIndex((card) => card.id === 29);
+  if (manIndex >= 0 && womanIndex >= 0) {
+    const rowDistance = Math.abs(Math.floor(manIndex / GT_GRID_COLUMNS) - Math.floor(womanIndex / GT_GRID_COLUMNS));
+    const columnDistance = Math.abs((manIndex % GT_GRID_COLUMNS) - (womanIndex % GT_GRID_COLUMNS));
+    const adjacent = rowDistance <= 1 && columnDistance <= 1;
+    facts.push(`- Man and Woman: ${rowDistance} row(s) and ${columnDistance} column(s) apart${adjacent ? " (immediate neighbours)" : " (not immediate neighbours)"}.`);
+  }
+
   return facts;
 }
 
@@ -262,6 +298,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   ];
 
   facts.push("");
+  facts.push(...grandTableauCardRelationFacts(context.cards));
   facts.push(...grandTableauPersonNeighbourFacts(context.cards));
   facts.push("Immediate adjacency and occupying another card's house are separate relationships; neither implies the other.");
 

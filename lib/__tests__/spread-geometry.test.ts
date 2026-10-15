@@ -318,3 +318,37 @@ describe("spatial-claim rule: coordinates before any spatial statement", () => {
     expect(prompt).toContain("drop the spatial claim and interpret the symbolic card combination instead");
   });
 });
+
+describe("per-card spatial relations: every Grand Tableau card has coordinates and a complete neighbour list", () => {
+  const cards = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
+  const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "What is the outlook?", cards, cardsMap, "both"));
+  const relation = (name: string) => facts.split("\n").find((line) => line.startsWith(`- ${name}: row`) && line.includes("; neighbours:"))!;
+
+  it("gives one relation line for each of the 36 cards", () => {
+    expect(facts.split("\n").filter((line) => line.startsWith("- ") && line.includes("; neighbours:"))).toHaveLength(36);
+  });
+
+  it("gives exact coordinates and directions for a corner card (Paths, row 1 column 1)", () => {
+    expect(relation("Paths")).toBe("- Paths: row 1, column 1; neighbours: Stars (right), Heart (below), Tower (below-right).");
+  });
+
+  it("gives the Sun's coordinates and exact neighbour directions (row 4, column 1)", () => {
+    expect(relation("Sun")).toBe("- Sun: row 4, column 1; neighbours: Child (above), Coffin (above-right), Whip (right).");
+  });
+});
+
+describe("Man-Woman separation fact is computed from coordinates", () => {
+  it("reports 0 rows and 1 column apart, and immediate neighbours, for the b16 layout", () => {
+    // b16: Woman row 3 col 3, Man row 3 col 4
+    const b16 = drawIds([10, 21, 30, 23, 9, 34, 22, 15, 36, 8, 5, 17, 25, 32, 11, 35, 3, 12, 27, 1, 29, 28, 20, 19, 7, 16, 14, 31, 13, 4, 2, 33, 26, 6, 24, 18]);
+    const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "How will the relationship develop?", b16, cardsMap, "both"));
+    expect(facts).toContain("- Man and Woman: 0 row(s) and 1 column(s) apart (immediate neighbours).");
+  });
+
+  it("reports 3 rows and 5 columns apart, and not neighbours, for the p04 layout", () => {
+    // p04: Man row 1 col 9, Woman row 4 col 4
+    const p04 = drawIds([27, 9, 33, 7, 4, 11, 14, 16, 28, 5, 22, 34, 25, 15, 18, 10, 20, 17, 23, 6, 1, 24, 19, 3, 31, 2, 21, 30, 32, 12, 29, 26, 35, 13, 8, 36]);
+    const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "How is the relationship developing?", p04, cardsMap, "both"));
+    expect(facts).toContain("- Man and Woman: 3 row(s) and 5 column(s) apart (not immediate neighbours).");
+  });
+});
