@@ -303,3 +303,18 @@ describe("benchmark b17 regression: a house relation is not a spatial one", () =
     expect(man).not.toContain("Sun");
   });
 });
+
+describe("spatial-claim rule: coordinates before any spatial statement", () => {
+  const cards = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
+  const prompt = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "What is the outlook for my finances?", cards, cardsMap, "both"));
+
+  it("requires row and column checks and a one-row, one-column adjacency limit", () => {
+    expect(prompt).toContain("check the row and column of both cards in the grid facts");
+    expect(prompt).toContain("differ by at most one row and at most one column");
+    expect(prompt).toContain("never from card names, deck numbers or house numbers");
+  });
+
+  it("tells the model to drop an unsupported spatial claim rather than invent one", () => {
+    expect(prompt).toContain("drop the spatial claim and interpret the symbolic card combination instead");
+  });
+});
