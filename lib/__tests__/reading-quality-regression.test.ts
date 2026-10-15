@@ -99,7 +99,7 @@ describe("regression: mixed spreads recognise a genuine positive direction", () 
   });
 
   it("tells the model to commit to the dominant reading and keep serious difficulty in view", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/English-only/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
     const prompt = promptFor("sentence-3", "Will this situation improve?", ["Mice", "Snake", "Cross"]);
     expect(prompt).toMatch(/Commit to the dominant reading/);
     expect(prompt).toMatch(/genuinely mixed/);

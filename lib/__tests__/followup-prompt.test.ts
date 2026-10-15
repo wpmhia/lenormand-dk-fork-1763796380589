@@ -30,7 +30,7 @@ describe("follow-up system prompt", () => {
       originalQuestion: "Will the project advance?",
       activeQuestion: "What suggests a delay?",
     });
-    expect(prompt).toContain("Respond in English only.");
+    expect(prompt).toContain("Respond in the language of the active follow-up question.");
     expect(prompt).toContain("position 1: Rider");
     expect(prompt).toContain("Original question: Will the project advance?");
     expect(prompt).toContain("Active follow-up: What suggests a delay?");
@@ -67,7 +67,7 @@ describe("follow-up system prompt", () => {
       originalQuestion: "Will the situation change?",
       activeQuestion: "What suggests a delay?",
     });
-    expect(prompt).toContain("Respond in English only.");
+    expect(prompt).toContain("Respond in the language of the active follow-up question.");
     expect(prompt).toContain("Active follow-up: What suggests a delay?");
   });
 

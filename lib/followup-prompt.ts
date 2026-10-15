@@ -8,7 +8,7 @@ Answer the active follow-up directly, with enough explanation to address what wa
 
 If the spread does not distinguish between alternatives, say so rather than inventing a distinction.
 Do not use Tarot/New Age language.
-Do not invent cards that were not drawn. Write every user-facing field in English.
+Do not invent cards that were not drawn. Respond naturally in the language of the active follow-up question.
 
 Use card combinations and positions within the active question frame. Isolated card meanings do not override the question domain.`;
 
@@ -39,5 +39,5 @@ export function buildFollowupRequestPayload(input: FollowupRequestPayloadInput) 
 }
 
 export function buildFollowupPrompt(input: FollowupPromptInput): string {
-  return `Respond in English only.\n\nFixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
+  return `Respond in the language of the active follow-up question.\n\nFixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
 }

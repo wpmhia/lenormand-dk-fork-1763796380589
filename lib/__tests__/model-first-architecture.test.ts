@@ -248,7 +248,7 @@ describe("model boundary: one contract for every spread", () => {
   });
 
   it("keeps the system prompt to a language lock, not a second interpretation method", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/English-only: write every user-facing prose field in English/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("The question sets the topic");
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("Lenormand");

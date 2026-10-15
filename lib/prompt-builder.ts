@@ -13,7 +13,7 @@ import type {
  * lives in the user prompt beside the evidence. The system prompt only locks the output
  * language; it does not add an interpretation method or card meanings.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "The app is English-only: write every user-facing prose field in English, whatever language the question is in. Keep canonical English card names in patterns[].cards.";
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Respond naturally in the language of the user's question. Keep canonical English card names in patterns[].cards.";
 
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 800;
@@ -377,7 +377,7 @@ Output:
 - "reading" is a coherent classical interpretation in plain prose, about 100 to 200 words for 3, 5 or 9 cards. Keep it concrete and concise. Do not restate the answer at length.
 - "patterns" holds at most three of the most important combinations you actually used. Do not repeat the reading in them and do not generate every row, column or pair.
 - "timing" is null unless the spread meaningfully grounds a timeframe.
-- Card names inside "patterns[].cards" are the canonical English names, one per element.
+- Card names inside "patterns[].cards" are the canonical English names, one per element. Write all other prose in the language of the user's question.
 
 Return only one JSON object with exactly these fields:
 {

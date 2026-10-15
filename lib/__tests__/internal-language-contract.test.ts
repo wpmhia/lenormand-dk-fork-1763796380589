@@ -33,7 +33,7 @@ describe("prompt-builder: internal references keep one stable card vocabulary", 
     );
     expect(prompt).toContain("User question:");
     expect(prompt).not.toMatch(/Write all user-facing prose in English/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/English-only/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
   });
 
   it("does not include or imply multilingual card aliases", () => {
