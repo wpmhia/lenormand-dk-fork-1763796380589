@@ -43,7 +43,7 @@ describe("regression: Lily-Sun-Key-Fish-Moon keeps positive sensuality", () => {
 
   it("instructs the model to use a secondary sense only when the question supports it", () => {
     const prompt = promptFor("sentence-5", "Will this project reach its goal?", names);
-    expect(prompt).toMatch(/A secondary meaning never stands alone/);
+    expect(prompt).toMatch(/Use a secondary meaning only when the question and other drawn cards support it/);
   });
 
   it("keeps the positive cards in sequence without a fixed verdict", () => {
@@ -61,8 +61,8 @@ describe("regression: Fox-Anchor-Bouquet-Ring-Tree is contextual, not automatic 
   it("does not present Fox as deception without contextual support", () => {
     const prompt = promptFor("sentence-5", "Is the offer being presented honestly?", names);
     expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
-    expect(prompt).toContain("A single negative card is never proof of any specific act.");
-    expect(prompt).toContain("A secondary meaning never stands alone");
+    expect(prompt).toContain("Do not infer from cards that were not drawn.");
+    expect(prompt).toContain("Use a secondary meaning only when the question and other drawn cards support it");
   });
 
   it("keeps the supporting cards' meanings available for self-protection, obligation and agreement", () => {
@@ -92,17 +92,12 @@ describe("regression: mixed spreads recognise a genuine positive direction", () 
     expect(prompt).not.toMatch(/guaranteed|will definitely/i);
   });
 
-  it("treats a metaphor in the question as the user's perception, not as the conclusion", () => {
-    const prompt = promptFor("sentence-5", "Why does it sometimes feel like we are siblings?", ["Birds", "Tower", "Paths", "Mountain", "Moon"]);
-    expect(prompt).toMatch(/emotionally charged comparisons or metaphors in the question/);
-    expect(prompt).toMatch(/do not restate the question's wording as the answer/);
-  });
 
   it("tells the model to commit to the dominant reading and keep serious difficulty in view", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
     const prompt = promptFor("sentence-3", "Will this situation improve?", ["Mice", "Snake", "Cross"]);
-    expect(prompt).toMatch(/Commit to the dominant reading/);
-    expect(prompt).toMatch(/genuinely mixed/);
+    expect(prompt).toMatch(/give the strongest conclusion the spread supports/);
+    expect(prompt).toMatch(/Weigh the important cards that point the other way/);
   });
 });
 
@@ -118,10 +113,10 @@ describe("regression: Coffin-Garden-Sun-Scythe-Clouds recognises withdrawal with
 
   it("forbids inventing what happened, the cause, or a real-world event", () => {
     const prompt = promptFor("sentence-5", "Has this person withdrawn from our friendship?", names);
-    expect(prompt).toMatch(/Do not invent facts, names, places, dates or specific events and circumstances/);
-    expect(prompt).toMatch(/interpret motives and causes symbolically from the combination of drawn cards/);
-    expect(prompt).toMatch(/Never state an unverified motive, cause or specific event as established fact/);
-    expect(prompt).toMatch(/Lack of confirmation proves neither the opposite nor continued activity/);
+    expect(prompt).toMatch(/Do not invent names, places, dates, messages, meetings or what a person did or felt/);
+    expect(prompt).toMatch(/You may read motives and causes symbolically from the drawn cards/);
+    expect(prompt).toMatch(/Do not invent names, places, dates, messages, meetings or what a person did or felt/);
+    expect(prompt).toMatch(/Do not treat a presupposition in the question as established/);
   });
 });
 
@@ -129,8 +124,8 @@ describe("regression: the answer contract is decisive, concise and spatially exa
   it("asks for a one-or-two-sentence answer and a 100-200 word reading", () => {
     const prompt = promptFor("sentence-3", "Will I move?", ["Rider", "Ship", "Clover"]);
     expect(prompt).toMatch(/one or two sentences/);
-    expect(prompt).toMatch(/Let its length fit the spread/);
-    expect(prompt).toMatch(/Do not repeat the reading in them/);
+    expect(prompt).toMatch(/fuller for larger spreads and concise for small ones/);
+    expect(prompt).toMatch(/"answer": the direct conclusion, in one or two sentences/);
   });
 
   it("does not reintroduce indecision wording", () => {
@@ -143,7 +138,7 @@ describe("regression: the answer contract is decisive, concise and spatially exa
     const prompt = promptFor("comprehensive", "What will the month bring?", [
       "Sun", "Moon", "Key", "Fish", "Anchor", "Tree", "Ring", "Bear", "Heart",
     ]);
-    expect(prompt).toMatch(/Do not repeat the reading in them/);
+    expect(prompt).toMatch(/only combinations that add something to the reading/);
   });
 
   it("keeps Grand Tableau neighbour facts exact, with no adjacency for a same-row card two columns away", () => {
@@ -167,14 +162,6 @@ describe("regression: the answer contract is decisive, concise and spatially exa
   });
 });
 
-describe("specificity: predictions do not choose between options the cards do not distinguish", () => {
-  it("tells the model to stay at the level of direction when the cards do not separate the options", () => {
-    const prompt = promptFor("sentence-5", "Should I move to Rotterdam, another Dutch city or abroad?", ["Birds", "Tower", "Paths", "Mountain", "Moon"]);
-    expect(prompt).toMatch(/Be only as specific as the cards are/);
-    expect(prompt).toMatch(/do not name a preferred option/);
-    expect(prompt).toMatch(/Never choose a specific destination, place or person that no drawn card identifies/);
-  });
-});
 
 describe("linear synthesis: a five-card sentence is read as one connected whole", () => {
   // Child - Bear - Clouds - Clover - Lily (left to right)
@@ -187,7 +174,7 @@ describe("linear synthesis: a five-card sentence is read as one connected whole"
   });
 
   it("tells the model not to let one card's standalone meaning decide the conclusion", () => {
-    expect(prompt).toMatch(/Do not let one card's standalone meaning decide the conclusion; weigh the whole sequence/);
+    expect(prompt).toMatch(/read the cards as one sentence in the given left-to-right order/);
   });
 
   it("keeps the given left-to-right order of the cards", () => {

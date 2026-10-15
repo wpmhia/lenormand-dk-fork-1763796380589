@@ -341,37 +341,25 @@ export function buildSpreadFacts(context: ReadingContext): string {
  * The output request. One four-field contract for every spread. A smaller spread is not a
  * different shape; the model decides how much each spread needs to say.
  */
-const OUTPUT_CONTRACT = `Answer the question directly, using the strongest symbolic reading the spread supports.
+const OUTPUT_CONTRACT = `Interpret the complete spread for the question asked. Use the classical Lenormand meanings of the drawn cards, read in their positions and in combination, and give the strongest conclusion the spread supports. Weigh the important cards that point the other way, and let the final conclusion follow from the whole spread.
 
-Decisiveness:
-- The "answer" is one or two sentences that state the conclusion. For a yes/no question, say clearly whether the tendency is positive, negative, or genuinely mixed (name the mix only when the cards really balance).
-- Commit to the dominant reading. Do not list every possibility or argue with your own conclusion.
-- Make a clear prediction from the cards. Mention real uncertainty only where it genuinely matters, and never repeat it.
-- Be only as specific as the cards are. When the question asks to choose between options (a particular city, country or person) and the drawn cards do not distinguish between them, say that the cards point to a general direction and do not name a preferred option. Never choose a specific destination, place or person that no drawn card identifies.
-
-Facts and assumptions:
-- Cards describe symbolic tendencies, not confirmed events or private facts. Do not invent facts, names, places, dates or specific events and circumstances (messages, meetings, arguments, logistics, what a person did or said).
-- You may interpret motives and causes symbolically from the combination of drawn cards, for example a withdrawal pattern suggesting self-protection or a strained mood, and state them as the cards' tendency. Never state an unverified motive, cause or specific event as established fact, and never adopt an explanation from the question as established.
-- Keep one polarity: the answer and the reading must agree on the central conclusion, and it must follow from the dominant cards, not from a fact the question presupposes.
-- If the question presupposes something (for example an accusation or a claim), do not treat it as established. Lack of confirmation proves neither the opposite nor continued activity.
-- Treat emotionally charged comparisons or metaphors in the question (for example "as if we were siblings") as the user's perception, not as an established interpretation. Derive the conclusion from the drawn cards and their combinations, and do not restate the question's wording as the answer.
+Stay grounded:
+- Cards describe symbolic tendencies, not confirmed events, private facts, motives or outcomes. Do not invent names, places, dates, messages, meetings or what a person did or felt.
+- You may read motives and causes symbolically from the drawn cards, as a tendency, never as established fact.
+- Do not treat a presupposition in the question as established. Lack of confirmation proves neither the opposite nor continued activity.
 - Do not infer from cards that were not drawn.
-
-Card meaning:
-- Classical meanings come first. Use the core meanings as the basis of a contextual synthesis, not as definitions to concatenate.
-- Use a secondary meaning only when the question and the surrounding cards support it. A secondary meaning never stands alone: it needs support from the question and from other drawn cards. A single negative card is never proof of any specific act.
-- Do not assign Man or Woman to a named person, the querent, or a relationship role unless the user explicitly supplies that mapping. This includes a question about a named partner or other person: the person card does not automatically become that person, so describe the card's symbolism rather than the person's conduct. Interpret person cards as naturally as possible without inventing identities. A selected reading focus only directs attention to a card.
-- Before any spatial claim (next to, above, below, same row, rows apart, distance), check the row and column of both cards in the grid facts. Two cards are adjacent only when they differ by at most one row and at most one column. Derive distances from these coordinates, never from card names, deck numbers or house numbers.
-- For Grand Tableau adjacency claims about Man or Woman, use only cards in the supplied complete neighbour list. A same-row card two columns away is not adjacent.
-- If the coordinates do not support a spatial claim, drop the spatial claim and interpret the symbolic card combination instead; do not invent a relation.
-- In a linear spread, keep the given left-to-right order and read the cards as one sentence: interpret each card in the context of the question and of the cards around it, and let the final card complete the sentence. Do not let one card's standalone meaning decide the conclusion; weigh the whole sequence.
-- Describe a pairing as established doctrine only when a source-reviewed pair entry is supplied; otherwise call it contextual interpretation.
+- Do not assign Man or Woman to a named person, the querent, or a relationship role unless the user supplies that mapping. Describe the card's symbolism rather than any person's conduct.
+- Use a secondary meaning only when the question and other drawn cards support it. A single negative card is never proof of any specific act.
+- Make spatial claims only from the supplied coordinates and neighbour lists. Check the row and column of both cards first; two cards are adjacent only when they differ by at most one row and at most one column, so a same-row card two columns away is not adjacent. Derive distances from these coordinates, never from card names, deck numbers or house numbers. If the coordinates do not support a spatial claim, drop it and interpret the symbolic combination instead.
+- The Petit Tableau centre card is its focal point. Do not impose chronology on the grid. In a linear spread, read the cards as one sentence in the given left-to-right order.
+- Describe a pairing as established doctrine only when a source-reviewed pair entry is supplied.
 
 Output:
-- "reading" is a coherent classical interpretation in plain prose. Let its length fit the spread: concise for 3 and 5 cards, fuller for 9 and 36 cards. Do not restate the answer at length.
-- "patterns" lists the combinations you actually used and that matter most. Do not repeat the reading in them.
-- "timing" is null unless the spread or the question grounds a classical timeframe; then state it as the cards suggest.
-- Card names inside "patterns[].cards" are the canonical English names, one per element. Write all other prose in the language of the user's question.
+- "answer": the direct conclusion, in one or two sentences.
+- "reading": a coherent interpretation in plain prose, fuller for larger spreads and concise for small ones. Do not restate the answer at length.
+- "patterns": only combinations that add something to the reading; do not repeat the reading in them.
+- "timing": null unless the spread or the question gives a classical timeframe; a timeframe named only in the question is not timing.
+- Respond in the language of the user's question. Card names in "patterns[].cards" are the canonical English names, one per element.
 
 Return only one JSON object with exactly these fields:
 {

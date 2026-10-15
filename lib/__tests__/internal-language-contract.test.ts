@@ -24,7 +24,7 @@ describe("prompt-builder: internal references keep one stable card vocabulary", 
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will I move?", draw(3, 0), cardsMap),
     );
-    expect(prompt).toMatch(/Card names inside "patterns\[\]\.cards" are the canonical English names/);
+    expect(prompt).toMatch(/Card names in "patterns\[\]\.cards" are the canonical English names/);
   });
 
   it("keeps the language rule in the system prompt only, not repeated in the user prompt", () => {

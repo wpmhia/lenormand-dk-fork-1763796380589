@@ -184,7 +184,7 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     expect(prompt).toContain("- Man: row 1, column 1; immediate neighbours: Snake (right), Key (below), Book (below-right).");
     expect(prompt).toContain("- Woman: row 2, column 9; immediate neighbours: Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below).");
     expect(prompt).toContain("Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
-    expect(prompt).toContain("A same-row card two columns away is not adjacent");
+    expect(prompt).toContain("a same-row card two columns away is not adjacent");
     expect(prompt).toContain("Woman — Dog house");
     expect(prompt).toContain("Central cells (a 4x9 grid has four, not one, centre cells)");
     expect(prompt).not.toContain("Man is the user");
@@ -220,7 +220,7 @@ describe("nine-card Petit Tableau regression", () => {
     expect(prompt).toContain("Cross: Burden, hardship, suffering, duty, difficult circumstances.");
     expect(prompt).not.toContain("Paths:");
     expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
-    expect(prompt).toContain("A secondary meaning never stands alone");
+    expect(prompt).toContain("Use a secondary meaning only when the question and other drawn cards support it");
     expect(prompt).toContain("Ring: Commitment, agreement, contract, partnership, cycle.");
     expect(prompt).toContain("Tree: Health, growth, roots, vitality, long duration.");
     expect(prompt).toContain("do not impose chronology");
@@ -309,13 +309,13 @@ describe("spatial-claim rule: coordinates before any spatial statement", () => {
   const prompt = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "What is the outlook for my finances?", cards, cardsMap, "both"));
 
   it("requires row and column checks and a one-row, one-column adjacency limit", () => {
-    expect(prompt).toContain("check the row and column of both cards in the grid facts");
+    expect(prompt).toContain("Check the row and column of both cards first");
     expect(prompt).toContain("differ by at most one row and at most one column");
     expect(prompt).toContain("never from card names, deck numbers or house numbers");
   });
 
   it("tells the model to drop an unsupported spatial claim rather than invent one", () => {
-    expect(prompt).toContain("drop the spatial claim and interpret the symbolic card combination instead");
+    expect(prompt).toContain("drop it and interpret the symbolic combination instead");
   });
 });
 

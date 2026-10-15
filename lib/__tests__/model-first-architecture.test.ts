@@ -274,7 +274,7 @@ describe("pipeline: one universal prompt for every spread", () => {
       "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "Answer the question directly",
+      "Interpret the complete spread for the question asked",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);

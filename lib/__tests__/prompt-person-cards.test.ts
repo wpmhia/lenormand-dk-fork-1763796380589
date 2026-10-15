@@ -147,7 +147,7 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
       buildReadingContext("sentence-3", question, normalized([6, 25, 33]), cardsMap),
     );
     expect(assumptionPrompt).toContain(question);
-    expect(assumptionPrompt).toContain("do not treat it as established");
+    expect(assumptionPrompt).toContain("Do not treat a presupposition in the question as established");
     expect(assumptionPrompt.match(/other person lying/gi)).toHaveLength(1);
   });
 });
