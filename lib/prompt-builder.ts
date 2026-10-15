@@ -174,6 +174,17 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
   return facts;
 }
 
+/**
+ * Direction of a neighbour relative to the person card, from grid offsets (row, column).
+ * Row -1 is above, +1 below; column -1 is left, +1 right.
+ */
+function gridDirection(rowOffset: number, columnOffset: number): string {
+  const vertical = rowOffset < 0 ? "above" : rowOffset > 0 ? "below" : "";
+  const horizontal = columnOffset < 0 ? "left" : columnOffset > 0 ? "right" : "";
+  if (vertical && horizontal) return `${vertical}-${horizontal}`;
+  return vertical || horizontal;
+}
+
 function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): string[] {
   const facts = ["Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:"];
 
@@ -200,7 +211,7 @@ function grandTableauPersonNeighbourFacts(cards: ReadingContext["cards"]): strin
         ) continue;
 
         const neighbour = cards[neighbourRow * GT_GRID_COLUMNS + neighbourColumn];
-        if (neighbour) neighbours.push(fmtCard(neighbour));
+        if (neighbour) neighbours.push(`${fmtCard(neighbour)} (${gridDirection(rowOffset, columnOffset)})`);
       }
     }
 

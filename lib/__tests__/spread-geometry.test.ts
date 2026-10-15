@@ -142,8 +142,8 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
   });
 
   it("handles corner boundaries and includes diagonal neighbours without row wrapping", () => {
-    expect(facts).toContain("- Man: row 1, column 1; immediate neighbours: Snake, Key, Book.");
-    expect(facts).toContain("- Woman: row 2, column 9; immediate neighbours: Bear, Dog, Whip, Fish, Clover.");
+    expect(facts).toContain("- Man: row 1, column 1; immediate neighbours: Snake (right), Key (below), Book (below-right).");
+    expect(facts).toContain("- Woman: row 2, column 9; immediate neighbours: Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below).");
     expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:");
     expect(facts).toContain("- Non-neighbours exactly two columns from Man in the same row: Fox (two columns right).");
     expect(facts).toContain("- Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
@@ -151,6 +151,21 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     const womanNeighbours = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
     expect(manNeighbours).not.toContain("Tree");
     expect(womanNeighbours).not.toContain("Ship");
+  });
+
+  it("states the direction of every immediate neighbour relative to the person card", () => {
+    const woman = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
+    const man = facts.split("\n").find((line) => line.startsWith("- Man:"))!;
+    // Woman (row 2, col 9): Bear above-left, Dog above, Whip left, Fish below-left, Clover below.
+    expect(woman).toContain("Bear (above-left)");
+    expect(woman).toContain("Dog (above)");
+    expect(woman).toContain("Whip (left)");
+    expect(woman).toContain("Fish (below-left)");
+    expect(woman).toContain("Clover (below)");
+    // Man (row 1, col 1): Snake right, Key below, Book below-right.
+    expect(man).toContain("Snake (right)");
+    expect(man).toContain("Key (below)");
+    expect(man).toContain("Book (below-right)");
   });
 
   it("keeps row order, non-neighbour Tower and Dog-house occupancy distinct", () => {
@@ -166,8 +181,8 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
   it("carries the grid and neighbour facts into the final English production prompt", () => {
     expect(prompt).toContain("Will the shared plan work out?");
     expect(prompt).toContain("Row 1: Man | Snake | Fox | Stork | Rider | Garden | Child | Bear | Dog");
-    expect(prompt).toContain("- Man: row 1, column 1; immediate neighbours: Snake, Key, Book.");
-    expect(prompt).toContain("- Woman: row 2, column 9; immediate neighbours: Bear, Dog, Whip, Fish, Clover.");
+    expect(prompt).toContain("- Man: row 1, column 1; immediate neighbours: Snake (right), Key (below), Book (below-right).");
+    expect(prompt).toContain("- Woman: row 2, column 9; immediate neighbours: Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below).");
     expect(prompt).toContain("Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
     expect(prompt).toContain("A same-row card two columns away is not adjacent");
     expect(prompt).toContain("Woman — Dog house");
