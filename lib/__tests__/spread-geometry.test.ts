@@ -264,3 +264,23 @@ describe("buildSpreadFacts: the line supplies order and adjacency", () => {
     expect(facts).toContain("- position 3: Ship");
   });
 });
+
+describe("pilot p04 regression: Ring and Heart are in different rows, and Whip/Snake are not near the Woman", () => {
+  const cards = drawIds([27, 9, 33, 7, 4, 11, 14, 16, 28, 5, 22, 34, 25, 15, 18, 10, 20, 17, 23, 6, 1, 24, 19, 3, 31, 2, 21, 30, 32, 12, 29, 26, 35, 13, 8, 36]);
+  const context = buildReadingContext("grand-tableau", "How is the relationship developing?", cards, cardsMap, "both");
+  const facts = buildSpreadFacts(context);
+
+  it("places Ring and Heart in different rows (2 and 3), not the same row", () => {
+    const rows = facts.split("\n").filter((l) => /^Row \d+: /.test(l));
+    const rowOf = (name: string) => rows.findIndex((r) => r.split(": ")[1].split(" | ").includes(name));
+    expect(rowOf("Ring")).not.toBe(rowOf("Heart"));
+    expect(rowOf("Ring")).toBe(1);
+    expect(rowOf("Heart")).toBe(2);
+  });
+
+  it("does not list Whip or Snake among the Woman's immediate neighbours", () => {
+    const woman = facts.split("\n").find((l) => l.startsWith("- Woman:"))!;
+    expect(woman).not.toMatch(/\bWhip\b/);
+    expect(woman).not.toMatch(/\bSnake\b/);
+  });
+});
