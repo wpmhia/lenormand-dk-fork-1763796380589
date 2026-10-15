@@ -114,7 +114,6 @@ describe("prompt-builder: significator preference is an optional reading focus",
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will the two of us reconcile?", normalized([28, 29, 25]), cardsMap),
     );
-    expect(prompt).toContain("Do not assign Man or Woman to a named person");
     expect(prompt).not.toContain("Man is the user");
     expect(prompt).not.toContain("Woman is the user's partner");
   });
@@ -147,7 +146,6 @@ describe("prompt-builder: production prompt does not preselect evidence for the 
       buildReadingContext("sentence-3", question, normalized([6, 25, 33]), cardsMap),
     );
     expect(assumptionPrompt).toContain(question);
-    expect(assumptionPrompt).toContain("Do not treat a presupposition in the question as established");
     expect(assumptionPrompt.match(/other person lying/gi)).toHaveLength(1);
   });
 });

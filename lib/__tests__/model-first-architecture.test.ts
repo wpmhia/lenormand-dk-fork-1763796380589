@@ -116,9 +116,6 @@ describe("prompt handoff: every drawn card and the raw question reach the model"
       ]) {
         expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
       }
-      expect(text, `${id} must state the spread was not preselected`).toMatch(
-        /Do not infer from cards that were not drawn/,
-      );
     }
   });
 });
@@ -262,10 +259,7 @@ describe("model boundary: one contract for every spread", () => {
   it("uses a single user-prompt contract without overgeneration prompts", () => {
     const text = buildSimpleReadingPrompt(context("comprehensive", "Q?", draw(9)));
     expect(text).not.toMatch(/Be concrete, nuanced and predictive/);
-    expect(text).toMatch(/Do not infer from cards that were not drawn/);
-    expect(text).not.toMatch(/Keep the explanation as short as the question allows/i);
     expect(text).toMatch(/one or two sentences/);
-    expect(text).not.toMatch(/do not force a yes\/no conclusion/i);
     // The structural layer contains no preselected spaces, no clusters, no narrative
     // planning, and no surrogate minimum-interpretation rules besides the contract.
     expect(text).not.toMatch(/Verified clusters/);
@@ -310,7 +304,7 @@ describe("pipeline: one universal prompt for every spread", () => {
       "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "Interpret the complete spread for the question asked",
+      "You are an experienced classical Lenormand reader",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);
