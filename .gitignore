@@ -114,3 +114,15 @@ $RECYCLE.BIN/
 
 # Ideavo specific
 .ideavo/project
+
+# generated test and browser-automation artifacts (not source)
+/.playwright-mcp/
+/playwright-report/
+/test-results/
+/*.png
+/*-summary.txt
+/*SUMMARY.txt
+/*.yml
+/test-*.js
+/vercel.json.bak
+/.vercel-build-output.txt

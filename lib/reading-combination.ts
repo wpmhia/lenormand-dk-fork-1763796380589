@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { isValidElement } from "react";
 
-export const COMBINATION_PATTERN = /^\s*(?:\*\*\s*)?([A-Za-z][A-Za-z ]+?\s+\+\s+[A-Za-z][A-Za-z ]+?)\s*(?:\*\*)?\s*:\s*(.+)$/;
+const COMBINATION_PATTERN = /^\s*(?:\*\*\s*)?([A-Za-z][A-Za-z ]+?\s+\+\s+[A-Za-z][A-Za-z ]+?)\s*(?:\*\*)?\s*:\s*(.+)$/;
 
-export function nodeToString(node: ReactNode): string {
+function nodeToString(node: ReactNode): string {
   if (node == null || typeof node === "boolean") return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(nodeToString).join("");

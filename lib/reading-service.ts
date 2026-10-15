@@ -10,10 +10,20 @@ import {
   type Pattern,
   type SimpleAnswer,
 } from "@/lib/simple-answer";
-import type { ValidationIssue } from "@/lib/reading-validator";
 import { extractJsonObject } from "@/lib/model-json";
 import { findInventedCards, findUnresolvedCardLabels } from "@/lib/invented-cards";
 import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
+
+/** A problem found while generating or parsing one reading. */
+export interface ValidationIssue {
+  type: "invented_card" | "structured-output";
+  message: string;
+  code?: string;
+  /** The answer field the problem was found in, when known. */
+  field?: string;
+  /** The exact matched fragment, so a fabrication can be told from ordinary prose. */
+  fragment?: string;
+}
 
 export type ReadingServiceResult =
   | { ok: true; reading: string; droppedPatterns: string[] }
