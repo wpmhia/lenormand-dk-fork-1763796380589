@@ -166,3 +166,12 @@ describe("regression: the answer contract is decisive, concise and spatially exa
     expect(parsed.patterns.length).toBeLessThanOrEqual(3);
   });
 });
+
+describe("specificity: predictions do not choose between options the cards do not distinguish", () => {
+  it("tells the model to stay at the level of direction when the cards do not separate the options", () => {
+    const prompt = promptFor("sentence-5", "Should I move to Rotterdam, another Dutch city or abroad?", ["Birds", "Tower", "Paths", "Mountain", "Moon"]);
+    expect(prompt).toMatch(/Be only as specific as the cards are/);
+    expect(prompt).toMatch(/do not name a preferred option/);
+    expect(prompt).toMatch(/Never choose a specific destination, place or person that no drawn card identifies/);
+  });
+});
