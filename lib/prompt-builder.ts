@@ -168,9 +168,29 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
       return `- position ${index + 1} (row ${row}, col ${column}): ${fmtCard(card)}`;
     }),
     `Centre card: ${fmtCard(layout.center.card)}.`,
+    ...petitCentreDirectionFacts(context.cards),
     "The centre is the focal influence. Use the rows, columns, diagonals and neighbours that bear on the question; do not impose chronology.",
   ];
   return facts;
+}
+
+/**
+ * The eight directional neighbours of the Petit Tableau centre card, derived from the grid
+ * offsets. Each direction names the card in that cell, so the model reads direction from a
+ * fact instead of inferring it from a row or diagonal line. Nothing here depends on which
+ * cards were drawn.
+ */
+function petitCentreDirectionFacts(cards: ReadingContext["cards"]): string[] {
+  const centre = Math.floor(PETIT_GRID / 2);
+  const facts: string[] = [];
+  for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
+    for (let columnOffset = -1; columnOffset <= 1; columnOffset++) {
+      if (rowOffset === 0 && columnOffset === 0) continue;
+      const card = cards[(centre + rowOffset) * PETIT_GRID + (centre + columnOffset)];
+      if (card) facts.push(`- ${gridDirection(rowOffset, columnOffset)} of the centre: ${fmtCard(card)}`);
+    }
+  }
+  return ["Directional neighbours of the centre card (the eight cells around it):", ...facts];
 }
 
 /**

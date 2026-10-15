@@ -137,6 +137,39 @@ describe("geometry: the full grid and bounded person-neighbour facts are supplie
     expect(positionLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
   });
 
+  it("gives the 9-card Petit Tableau centre's eight directions exactly once, with correct cards", () => {
+    // Mice Garden Scythe / Child Anchor Key / Cross Letter Rider: centre Anchor.
+    const names = ["Mice", "Garden", "Scythe", "Child", "Anchor", "Key", "Cross", "Letter", "Rider"];
+    const cards = names.map((name) => {
+      const card = CARD_CATALOG.find((entry) => entry.name === name)!;
+      return {
+        id: card.id,
+        name: card.name,
+        keywords: card.keywords,
+        coreMeaning: card.meaning.general,
+        secondaryMeanings: card.meaning.secondaryMeanings,
+        meaningReviewStatus: card.meaning.reviewStatus,
+      };
+    });
+    const facts = buildSpreadFacts(buildReadingContext("comprehensive", "Geometry?", cards, cardsMap));
+    const lines = facts.split("\n");
+    const header = lines.indexOf("Directional neighbours of the centre card (the eight cells around it):");
+    expect(header).toBeGreaterThanOrEqual(0);
+    const block: string[] = [];
+    for (const line of lines.slice(header + 1)) {
+      if (!/^- [a-z-]+ of the centre: /.test(line)) break;
+      block.push(line);
+    }
+    expect(block).toHaveLength(8);
+    const directions = block.map((line) => line.replace(/^- /, "").split(" of the centre: ")[0]);
+    const expected = ["above-left", "above", "above-right", "left", "right", "below-left", "below", "below-right"];
+    expect([...directions].sort()).toEqual([...expected].sort());
+    expect(new Set(directions).size).toBe(8);
+    const entryFor = (direction: string) => block.find((line) => line.startsWith(`- ${direction} of the centre:`))!;
+    expect(entryFor("below-left")).toBe("- below-left of the centre: Cross");
+    expect(entryFor("below")).toBe("- below of the centre: Letter");
+  });
+
   it("precomputes no generic relation lists in any layout", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const facts = buildSpreadFacts(context(id, "Geometry?", draw(count, 13)));
@@ -144,6 +177,9 @@ describe("geometry: the full grid and bounded person-neighbour facts are supplie
         expect(facts, id).toContain("Immediate neighbours");
       } else {
         expect(facts, id).not.toContain("Immediate neighbours");
+      }
+      if (id !== "comprehensive") {
+        expect(facts, id).not.toContain("Directional neighbours of the centre card");
       }
       expect(facts, id).not.toMatch(/^- \d+\+\d+: /m);
       expect(facts, id).not.toContain("- diagonal ");
