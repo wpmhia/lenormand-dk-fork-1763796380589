@@ -32,10 +32,8 @@ function sanitizeInput(input: string, maxLength: number): string {
   if (!input || typeof input !== "string") return "";
   return input
     .slice(0, maxLength)
-    .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
-    .replace(/["]/g, '"')
-    .replace(/\\/g, "\\\\")
-    .replace(/\n|\r/g, " ");
+    .replace(/[\x00-\x20\x7F-\x9F]+/g, " ")
+    .trim();
 }
 
 /**
@@ -391,7 +389,7 @@ Do not rename, add or remove fields. Do not use Markdown fences.`;
  * interpretation input.
  */
 function simplePromptHeader(context: ReadingContext): string {
-  return `User question:\n${context.question}`;
+  return `User question:\n${sanitizeQuestion(context.question)}`;
 }
 
 /**

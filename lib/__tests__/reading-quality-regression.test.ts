@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildSimpleReadingPrompt, buildSpreadFacts, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt, buildSpreadFacts, sanitizeQuestion, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 import { SimpleAnswerSchema } from "@/lib/simple-answer";
 
@@ -194,5 +194,29 @@ describe("linear synthesis: a five-card sentence is read as one connected whole"
     const facts = buildSpreadFacts(buildReadingContext("sentence-5", "Q", cardsNamed(names), cardsMap));
     expect(facts).toContain("position 4: Clover");
     expect(facts).toContain("position 5: Lily");
+  });
+});
+
+describe("input sanitising: line breaks separate words and backslashes are kept as typed", () => {
+  it("turns a multi-line question into words separated by spaces, not joined words", () => {
+    const sanitized = sanitizeQuestion("Will my job\nchange soon?\r\nPlease tell me");
+    expect(sanitized).toBe("Will my job change soon? Please tell me");
+  });
+
+  it("keeps a backslash as typed, without doubling it", () => {
+    expect(sanitizeQuestion("path C:\\temp")).toBe("path C:\\temp");
+  });
+
+  it("trims and returns empty for non-string or empty input", () => {
+    expect(sanitizeQuestion("   ")).toBe("");
+    expect(sanitizeQuestion(undefined as unknown as string)).toBe("");
+  });
+});
+
+describe("input sanitising reaches the prompt", () => {
+  it("sends a multi-line question to the model as one line", () => {
+    const prompt = promptFor("sentence-3", "Will my job\nchange soon?", ["Sun", "Key", "Fish"]);
+    expect(prompt).toContain("User question:\nWill my job change soon?");
+    expect(prompt).not.toContain("Will my job\nchange soon?");
   });
 });
