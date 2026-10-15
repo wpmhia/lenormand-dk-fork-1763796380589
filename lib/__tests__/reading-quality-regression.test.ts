@@ -120,7 +120,7 @@ describe("regression: Coffin-Garden-Sun-Scythe-Clouds recognises withdrawal with
     const prompt = promptFor("sentence-5", "Has this person withdrawn from our friendship?", names);
     expect(prompt).toMatch(/Do not invent facts, names, places, dates or specific events and circumstances/);
     expect(prompt).toMatch(/interpret motives and causes symbolically from the combination of drawn cards/);
-    expect(prompt).toMatch(/cannot be confirmed from the cards/);
+    expect(prompt).toMatch(/Never state an unverified motive, cause or specific event as established fact/);
     expect(prompt).toMatch(/Lack of confirmation proves neither the opposite nor continued activity/);
   });
 });
@@ -129,8 +129,8 @@ describe("regression: the answer contract is decisive, concise and spatially exa
   it("asks for a one-or-two-sentence answer and a 100-200 word reading", () => {
     const prompt = promptFor("sentence-3", "Will I move?", ["Rider", "Ship", "Clover"]);
     expect(prompt).toMatch(/one or two sentences/);
-    expect(prompt).toMatch(/about 100 to 200 words/);
-    expect(prompt).toMatch(/at most three/);
+    expect(prompt).toMatch(/Let its length fit the spread/);
+    expect(prompt).toMatch(/Do not repeat the reading in them/);
   });
 
   it("does not reintroduce indecision wording", () => {
@@ -143,7 +143,7 @@ describe("regression: the answer contract is decisive, concise and spatially exa
     const prompt = promptFor("comprehensive", "What will the month bring?", [
       "Sun", "Moon", "Key", "Fish", "Anchor", "Tree", "Ring", "Bear", "Heart",
     ]);
-    expect(prompt).toMatch(/do not generate every row, column or pair/);
+    expect(prompt).toMatch(/Do not repeat the reading in them/);
   });
 
   it("keeps Grand Tableau neighbour facts exact, with no adjacency for a same-row card two columns away", () => {

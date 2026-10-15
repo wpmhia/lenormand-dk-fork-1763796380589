@@ -339,25 +339,19 @@ export function buildSpreadFacts(context: ReadingContext): string {
 }
 
 /**
- * The output request. One contract for every spread: four fields, nothing conditional.
- *
- * A smaller spread is not a different shape, it is less of the same shape. Tying the
- * field set to the card count was itself a server-side judgement about how much a spread
- * had to say, which is the model's call.
- */
-/**
- * The output request: a four-field contract, nothing conditional.
+ * The output request. One four-field contract for every spread. A smaller spread is not a
+ * different shape; the model decides how much each spread needs to say.
  */
 const OUTPUT_CONTRACT = `Answer the question directly, using the strongest symbolic reading the spread supports.
 
 Decisiveness:
 - The "answer" is one or two sentences that state the conclusion. For a yes/no question, say clearly whether the tendency is positive, negative, or genuinely mixed (name the mix only when the cards really balance).
 - Commit to the dominant reading. Do not list every possibility or argue with your own conclusion.
-- State material uncertainty once, in a single sentence in the reading. Do not repeat hedges, and do not use uncertainty to avoid answering.
+- Make a clear prediction from the cards. Mention real uncertainty only where it genuinely matters, and never repeat it.
 
 Facts and assumptions:
 - Cards describe symbolic tendencies, not confirmed events or private facts. Do not invent facts, names, places, dates or specific events and circumstances (messages, meetings, arguments, logistics, what a person did or said).
-- You may interpret motives and causes symbolically from the combination of drawn cards, for example a withdrawal pattern suggesting self-protection or a strained mood. Frame each one as a tendency the cards suggest, not as the verified reason, and state that it cannot be confirmed from the cards. Never state a motive, cause or specific event as the factual answer, and never adopt an explanation from the question as established.
+- You may interpret motives and causes symbolically from the combination of drawn cards, for example a withdrawal pattern suggesting self-protection or a strained mood, and state them as the cards' tendency. Never state an unverified motive, cause or specific event as established fact, and never adopt an explanation from the question as established.
 - Keep one polarity: the answer and the reading must agree on the central conclusion, and it must follow from the dominant cards, not from a fact the question presupposes.
 - If the question presupposes something (for example an accusation or a claim), do not treat it as established. Lack of confirmation proves neither the opposite nor continued activity.
 - Treat emotionally charged comparisons or metaphors in the question (for example "as if we were siblings") as the user's perception, not as an established interpretation. Derive the conclusion from the drawn cards and their combinations, and do not restate the question's wording as the answer.
@@ -374,9 +368,9 @@ Card meaning:
 - Describe a pairing as established doctrine only when a source-reviewed pair entry is supplied; otherwise call it contextual interpretation.
 
 Output:
-- "reading" is a coherent classical interpretation in plain prose, about 100 to 200 words for 3, 5 or 9 cards. Keep it concrete and concise. Do not restate the answer at length.
-- "patterns" holds at most three of the most important combinations you actually used. Do not repeat the reading in them and do not generate every row, column or pair.
-- "timing" is null unless the spread meaningfully grounds a timeframe.
+- "reading" is a coherent classical interpretation in plain prose. Let its length fit the spread: concise for 3 and 5 cards, fuller for 9 and 36 cards. Do not restate the answer at length.
+- "patterns" lists the combinations you actually used and that matter most. Do not repeat the reading in them.
+- "timing" is null unless the spread or the question grounds a classical timeframe; then state it as the cards suggest.
 - Card names inside "patterns[].cards" are the canonical English names, one per element. Write all other prose in the language of the user's question.
 
 Return only one JSON object with exactly these fields:

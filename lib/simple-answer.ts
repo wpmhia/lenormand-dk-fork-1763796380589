@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const PatternSchema = z.object({
-  /** Cards from one server-selected verified cluster, never a combined string. */
+  /** Canonical English card names, one per element, never a combined string. */
   cards: z.array(z.string().min(1)).min(1),
-  /** The model's interpretation of those cards within that verified cluster. */
+  /** The model's interpretation of those cards in context. */
   meaning: z.string().min(1),
 });
 
