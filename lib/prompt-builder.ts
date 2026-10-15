@@ -106,7 +106,7 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
     facts.push(`- position ${position.index + 1}: ${fmtCell(position.card, position.index + 1)}${suffix}`);
   }
   facts.push("Adjacency in this spread means consecutive positions. There is no other geometry.");
-  facts.push("Reading method: the cards form one sentence read left to right. Each card modifies the next, so every card's meaning is shaped by the card before it, and the last card completes the sentence.");
+  facts.push("Reading method: read the line as one connected Lenormand sequence, left to right. The line as a whole carries the meaning. The central card is the focal point. Adjacent combinations and the complete line together determine the interpretation. No card, including the last, is fixed in advance as the conclusion.");
   return facts;
 }
 

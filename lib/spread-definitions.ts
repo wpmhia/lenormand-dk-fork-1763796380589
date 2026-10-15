@@ -69,14 +69,14 @@ export const SPREAD_DEFINITIONS = {
     cardCount: 3,
     label: "3-Card Sentence",
     description:
-      "Three cards read left to right as one sentence. Opening, central and closing are positional descriptors, not a guaranteed sequence of cause and effect.",
+      "Three cards read left to right as one connected line. The central card is the focal point; the line as a whole, with its adjacent combinations, carries the meaning. No position is fixed in advance as the conclusion.",
     layoutType: "linear-sentence",
     tradition: "traditional",
     order: 2,
     positions: [
-      { index: 0, label: "Opening", meaning: "The first position in the line - where the sentence opens." },
-      { index: 1, label: "Central", meaning: "The middle position - the point the line turns on." },
-      { index: 2, label: "Closing", meaning: "The final position - where the line currently leads, not a guaranteed conclusion." },
+      { index: 0, label: "Opening", meaning: "The first position in the line; a neighbour of the central card." },
+      { index: 1, label: "Central", meaning: "The middle position; the focal point of the line." },
+      { index: 2, label: "Closing", meaning: "The final position in the line; not fixed in advance as the conclusion." },
     ],
   } as const,
   "sentence-5": {
@@ -84,16 +84,16 @@ export const SPREAD_DEFINITIONS = {
     cardCount: 5,
     label: "5-Card Sentence",
     description:
-      "Five cards read left to right as one connected sentence. Each card modifies the next; no card holds a fixed role.",
+      "Five cards read left to right as one connected line. The central card is the focal point; adjacent combinations and the whole line carry the meaning. No card is fixed in advance as the conclusion.",
     layoutType: "linear-sentence",
     tradition: "modern",
     order: 3,
     positions: [
-      { index: 0, label: "First card", meaning: "Position 1 of the line; read in sequence with its neighbour." },
-      { index: 1, label: "Second card", meaning: "Position 2 of the line; modifies and is modified by its neighbours." },
-      { index: 2, label: "Third card", meaning: "Position 3 of the line; modifies and is modified by its neighbours." },
-      { index: 3, label: "Fourth card", meaning: "Position 4 of the line; modifies and is modified by its neighbours." },
-      { index: 4, label: "Fifth card", meaning: "Position 5 of the line; the last card, not a predetermined conclusion." },
+      { index: 0, label: "First card", meaning: "Position 1 of the line; a neighbour of the second card." },
+      { index: 1, label: "Second card", meaning: "Position 2 of the line; a neighbour of the first and third cards." },
+      { index: 2, label: "Third card", meaning: "Position 3 of the line; the central card and focal point of the five-card line." },
+      { index: 3, label: "Fourth card", meaning: "Position 4 of the line; a neighbour of the third and fifth cards." },
+      { index: 4, label: "Fifth card", meaning: "Position 5 of the line; the end of the line, not fixed in advance as the conclusion." },
     ],
   } as const,
   comprehensive: {

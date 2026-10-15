@@ -138,13 +138,11 @@ describe("linear synthesis: a five-card sentence is read as one connected whole"
   const names = ["Child", "Bear", "Clouds", "Clover", "Lily"];
   const prompt = promptFor("sentence-5", "Will the child be well cared for?", names);
 
-  it("states the sentence reading method in the spread facts", () => {
-    expect(prompt).toContain("Reading method: the cards form one sentence read left to right");
-    expect(prompt).toContain("the last card completes the sentence");
-  });
-
-  it("keeps the sentence reading method in the spread facts", () => {
-    expect(prompt).toMatch(/Reading method: the cards form one sentence read left to right/);
+  it("reads the whole line with the central card as focus and no card fixed as the conclusion", () => {
+    expect(prompt).toContain("The line as a whole carries the meaning");
+    expect(prompt).toContain("The central card is the focal point");
+    expect(prompt).toContain("No card, including the last, is fixed in advance as the conclusion");
+    expect(prompt).not.toContain("the last card completes the sentence");
   });
 
   it("keeps the given left-to-right order of the cards", () => {
