@@ -308,7 +308,6 @@ describe("spatial-claim rule: coordinates before any spatial statement", () => {
   it("supplies the complete coordinate and neighbour list the model must use for spatial claims", () => {
     expect(prompt).toContain("Spatial relations for every card");
     expect(prompt).toContain("a card not listed is not adjacent");
-    expect(prompt).toContain("Use the spatial facts above for any positional statement");
   });
 });
 

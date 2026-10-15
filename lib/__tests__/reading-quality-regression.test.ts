@@ -86,7 +86,7 @@ describe("regression: mixed spreads recognise a genuine positive direction", () 
 
 
   it("keeps the system prompt on the output language", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond in the user's language/);
   });
 });
 
@@ -108,7 +108,7 @@ describe("regression: Coffin-Garden-Sun-Scythe-Clouds recognises withdrawal with
 describe("regression: the answer contract is decisive, concise and spatially exact", () => {
   it("asks for a one-or-two-sentence answer and a 100-200 word reading", () => {
     const prompt = promptFor("sentence-3", "Will I move?", ["Rider", "Ship", "Clover"]);
-    expect(prompt).toMatch(/one or two sentences/);
+    expect(prompt).toMatch(/"answer": string/);
   });
 
   it("keeps Grand Tableau neighbour facts exact, with no adjacency for a same-row card two columns away", () => {

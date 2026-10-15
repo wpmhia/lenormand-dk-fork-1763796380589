@@ -24,7 +24,7 @@ describe("prompt-builder: internal references keep one stable card vocabulary", 
     const prompt = buildSimpleReadingPrompt(
       buildReadingContext("sentence-3", "Will I move?", draw(3, 0), cardsMap),
     );
-    expect(prompt).toMatch(/canonical English card names in "cards"/);
+    expect(prompt).toMatch(/"patterns\[\]\.cards" uses canonical English card names/);
   });
 
   it("keeps the language rule in the system prompt only, not repeated in the user prompt", () => {
@@ -33,7 +33,7 @@ describe("prompt-builder: internal references keep one stable card vocabulary", 
     );
     expect(prompt).toContain("User question:");
     expect(prompt).not.toMatch(/Write all user-facing prose in English/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond in the user's language/);
   });
 
   it("does not include or imply multilingual card aliases", () => {

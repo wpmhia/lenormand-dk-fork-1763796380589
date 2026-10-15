@@ -10,10 +10,11 @@ import type {
  * The server supplies the current question, drawn cards, deterministic spread facts, and
  * concise source-compared card meanings. The model performs the contextual synthesis; the
  * server does not select an outcome or send unreviewed pair prose. The response contract
- * lives in the user prompt beside the evidence. The system prompt only locks the output
- * language; it does not add an interpretation method or card meanings.
+ * lives in the user prompt beside the evidence. The system prompt carries the reader role
+ * and the interpretation principles; the user prompt carries the spread's method and the
+ * JSON shape.
  */
-export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Respond naturally in the language of the user's question. Keep canonical English card names in patterns[].cards.";
+export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Interpret the complete spread using classical card meanings, positions and combinations. Read the cards as a coherent whole in relation to the question. Give a clear and direct answer, supported by the most relevant combinations. Let the cards determine the interpretation, whether positive, negative or mixed. Do not invent cards or unsupported concrete events. Respond in the user's language.`;
 
 /**
  * Output budget per spread. Thinking tokens count against this limit, so each value is the
@@ -362,17 +363,27 @@ export function buildSpreadFacts(context: ReadingContext): string {
 }
 
 /**
- * The output request. One four-field contract for every spread. A smaller spread is not a
- * different shape; the model decides how much each spread needs to say.
+ * One sentence per spread describing how its cards are read. Kept here, next to the method,
+ * and derived from the layout so the prompt cannot describe a different method than the one
+ * the server lays out.
  */
-const OUTPUT_CONTRACT = `You are an experienced classical Lenormand reader. Interpret the drawn cards in answer to the question: read each card by its classical meaning, in its position and in combination with the cards around it, and give one coherent conclusion. Use only the cards drawn in this spread. Use the spatial facts above for any positional statement and make no spatial claim they do not support.
+const LEGMETHOD_BY_LAYOUT: Record<string, string> = {
+  single: "Read the single card directly in relation to the question.",
+  "linear-sentence": "Read the line left to right as one connected sequence; the central card and adjacent combinations carry the meaning. The last card is not automatically the outcome.",
+  "petit-tableau": "Read the 3x3 grid around the centre card: rows, columns, diagonals and neighbours that bear on the question. Numbering is position, not time.",
+  "grand-tableau": "Read the 4x9 grid with the traditional Grand Tableau techniques: significators, houses, immediate neighbours and relevant lines. No single position is the outcome.",
+};
 
-Output:
-- "answer": the direct conclusion, in one or two sentences.
-- "reading": a coherent interpretation in plain prose.
-- "patterns": combinations that add something to the reading, with canonical English card names in "cards".
-- "timing": null unless the spread gives a classical timeframe.
-- Respond in the language of the user's question.
+/** The reading method of this spread, taken from its layout. */
+function legmethode(context: ReadingContext): string {
+  return LEGMETHOD_BY_LAYOUT[context.layout.type] ?? LEGMETHOD_BY_LAYOUT.single;
+}
+
+/**
+ * The output request. One contract for every spread: the reading method and the JSON shape.
+ */
+function outputContract(context: ReadingContext): string {
+  return `Method: ${legmethode(context)}
 
 Return only one JSON object with exactly these fields:
 {
@@ -381,7 +392,8 @@ Return only one JSON object with exactly these fields:
   "patterns": [{ "cards": string[], "meaning": string }],
   "timing": string | null
 }
-Do not rename, add or remove fields. Do not use Markdown fences.`;
+"answer" is the direct conclusion. "patterns[].cards" uses canonical English card names. "timing" is null unless the spread gives a classical timeframe. Do not rename, add or remove fields. Do not use Markdown fences.`;
+}
 
 /**
  * Question header. Identical for every spread.
@@ -404,7 +416,7 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
 Structural facts (deterministic; complete for this spread):
 ${buildSpreadFacts(context)}
 
-${OUTPUT_CONTRACT}`;
+${outputContract(context)}`;
 }
 
 export function sanitizeQuestion(question: string): string {

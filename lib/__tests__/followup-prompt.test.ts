@@ -8,7 +8,7 @@ import {
 
 describe("follow-up system prompt", () => {
   it("allows enough explanation to address the active follow-up", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Answer the active follow-up directly, with enough explanation to address what was asked/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Answer directly in relation to the follow-up question/i);
   });
 
   it("does not force a conclusion-first or fixed short-answer format", () => {
@@ -19,7 +19,7 @@ describe("follow-up system prompt", () => {
   it("keeps the spread fixed and grounded in supplied evidence", () => {
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/The cards and positions are fixed/i);
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Use only spatial relationships supported by the supplied coordinates/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Interpret this follow-up independently/i);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Answer the active follow-up question/i);
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not rely on previous readings, predictions, outcomes, notes, or personal history/i);
     expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/conversation history/i);
   });

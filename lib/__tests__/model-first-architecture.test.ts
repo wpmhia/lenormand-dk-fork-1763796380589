@@ -259,7 +259,7 @@ describe("model boundary: one contract for every spread", () => {
   it("uses a single user-prompt contract without overgeneration prompts", () => {
     const text = buildSimpleReadingPrompt(context("comprehensive", "Q?", draw(9)));
     expect(text).not.toMatch(/Be concrete, nuanced and predictive/);
-    expect(text).toMatch(/one or two sentences/);
+    expect(text).toMatch(/Method: Read the 3x3 grid/);
     // The structural layer contains no preselected spaces, no clusters, no narrative
     // planning, and no surrogate minimum-interpretation rules besides the contract.
     expect(text).not.toMatch(/Verified clusters/);
@@ -277,11 +277,10 @@ describe("model boundary: one contract for every spread", () => {
     expect(text).not.toMatch(/short as the question allows/i);
   });
 
-  it("keeps the system prompt to a language lock, not a second interpretation method", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond naturally in the language of the user/);
+  it("keeps the system prompt free of the JSON schema and of topic-setting text", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond in the user's language/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("The question sets the topic");
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("Lenormand");
   });
 
   it("scales the token budget with the spread", () => {
@@ -304,7 +303,7 @@ describe("pipeline: one universal prompt for every spread", () => {
       "User question:",
       "Will I move house?",
       "Structural facts (deterministic; complete for this spread):",
-      "You are an experienced classical Lenormand reader",
+      "Return only one JSON object with exactly these fields",
       "Return only one JSON object",
     ]) {
       expect(text, id).toContain(skeleton);
