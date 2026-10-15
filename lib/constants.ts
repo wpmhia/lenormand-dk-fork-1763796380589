@@ -45,8 +45,12 @@ export const DEFAULT_RATE_WINDOW_MS = 60 * 1000;
 /** Maximum route budget, including a possible validation repair. */
 export const API_REQUEST_TIMEOUT_MS = 60 * 1000;
 
-/** Stop waiting on a stalled reading-provider call after 15 seconds. */
-export const READING_GENERATION_TIMEOUT_MS = 15_000;
+/**
+ * Stop waiting on a stalled reading-provider call. Thinking mode needs more time than a plain
+ * completion. Grand Tableau gets the full route budget; the route's maxDuration is 60s.
+ */
+export const READING_GENERATION_TIMEOUT_MS = 45_000;
+export const GRAND_TABLEAU_GENERATION_TIMEOUT_MS = 60_000;
 
 // ============================================================================
 // Error Messages

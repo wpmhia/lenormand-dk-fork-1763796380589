@@ -11,7 +11,7 @@ import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { generateReading } from "@/lib/reading-service";
-import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
+import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, GRAND_TABLEAU_GENERATION_TIMEOUT_MS, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
@@ -89,6 +89,7 @@ export async function POST(request: Request) {
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildSimpleReadingPrompt(context);
     const maxTokens = getTokenBudget(cardCount);
+    modelTimeoutMs = cardCount >= GRAND_TABLEAU_CARD_COUNT ? GRAND_TABLEAU_GENERATION_TIMEOUT_MS : READING_GENERATION_TIMEOUT_MS;
     generationStartedAt = Date.now();
     const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt, cardCount, maxTokens, timeoutMs: modelTimeoutMs, signal: request.signal });
 

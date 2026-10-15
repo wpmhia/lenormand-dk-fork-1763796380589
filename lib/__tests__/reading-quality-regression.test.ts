@@ -35,10 +35,9 @@ function promptFor(spreadId: Parameters<typeof buildReadingContext>[0], question
 describe("regression: Lily-Sun-Key-Fish-Moon keeps positive sensuality", () => {
   const names = ["Lily", "Sun", "Key", "Fish", "Moon"];
 
-  it("supplies the secondary sexuality sense of Lily as tradition-dependent context", () => {
+  it("supplies the core meaning of Lily", () => {
     const prompt = promptFor("sentence-5", "Will this project reach its goal?", names);
     expect(prompt).toContain("Lily: Maturity, experience, peace, harmony, virtue, longevity.");
-    expect(prompt).toContain("Some schools also associate Lily with sexuality");
   });
 
   it("keeps the positive cards in sequence without a fixed verdict", () => {

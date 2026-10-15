@@ -12,7 +12,6 @@ import {
 } from "@/lib/simple-answer";
 import { extractJsonObject } from "@/lib/model-json";
 import { findInventedCards, findUnresolvedCardLabels } from "@/lib/invented-cards";
-import { GRAND_TABLEAU_CARD_COUNT } from "@/lib/constants";
 
 /** A problem found while generating or parsing one reading. */
 export interface ValidationIssue {
@@ -41,26 +40,13 @@ export interface ReadingServiceOptions {
 }
 
 /**
- * DeepSeek thinking mode.
- *
- * The AI SDK defaults to `enabled`; this project previously forced `disabled` for
- * every reading. Thinking is genuinely useful for a 36-card Grand Tableau, but it
- * is not free to switch on: reasoning tokens are drawn from the same
- * `maxOutputTokens` budget as the JSON body, and generation is capped at
- * READING_GENERATION_TIMEOUT_MS (15s). Enabling it without raising both turns thin
- * readings into truncated-JSON 502s and timeouts, so the default stays `off` and
- * the A/B test is a single env var.
- *
- * DEEPSEEK_THINKING=auto  -> on for grand-tableau (36 cards), off otherwise
- * DEEPSEEK_THINKING=on    -> always on
- * DEEPSEEK_THINKING=off   -> always off (default)
+ * DeepSeek thinking mode is always on for readings. It is fixed in code, not read from
+ * the environment, so a stale override cannot silently switch it off in production.
+ * Reasoning tokens share `maxOutputTokens` with the JSON body; the budget in
+ * prompt-builder reserves room for them.
  */
-export function resolveThinkingMode(cardCount: number): { type: "enabled" | "disabled" } {
-  const configured = (process.env.DEEPSEEK_THINKING || "off").toLowerCase();
-  if (configured === "on" || configured === "enabled") return { type: "enabled" };
-  if (configured === "auto") return { type: cardCount >= GRAND_TABLEAU_CARD_COUNT ? "enabled" : "disabled" };
-  return { type: "disabled" };
-}
+export const READING_THINKING = { type: "enabled" as const };
+export const READING_REASONING_EFFORT = "high" as const;
 
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
   const result = await generateOnce(options);
@@ -136,7 +122,7 @@ async function generateOnce(options: ReadingServiceOptions): Promise<GenerationA
     model: options.model,
     system: options.system,
     prompt: options.prompt,
-    providerOptions: { deepseek: { thinking: resolveThinkingMode(options.cardCount) } },
+    providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
     maxOutputTokens: options.maxTokens,
     maxRetries: 0,
     abortSignal: options.signal,

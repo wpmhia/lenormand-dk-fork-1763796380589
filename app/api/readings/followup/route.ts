@@ -6,6 +6,7 @@ import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
+import { READING_THINKING, READING_REASONING_EFFORT } from "@/lib/reading-service";
 import { generateText } from "ai";
 import { DEFAULT_RATE_WINDOW_MS, MAX_QUESTION_LENGTH } from "@/lib/constants";
 import { getCardCatalogMap } from "@/lib/card-catalog";
@@ -19,6 +20,9 @@ export async function OPTIONS() {
 }
 
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
+/** Thinking reserve plus a short answer; the route's maxDuration is 30s, so the call stays at 25s. */
+const FOLLOWUP_TOKEN_BUDGET = 4_256;
+const FOLLOWUP_TIMEOUT_MS = 25_000;
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
@@ -121,11 +125,11 @@ export async function POST(request: Request) {
       model: readingModel,
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
-      maxOutputTokens: 256,
-      providerOptions: { deepseek: { thinking: { type: "disabled" } } },
+      maxOutputTokens: FOLLOWUP_TOKEN_BUDGET,
+      providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
       maxRetries: 1,
       abortSignal: request.signal,
-      timeout: { totalMs: 20_000 },
+      timeout: { totalMs: FOLLOWUP_TIMEOUT_MS },
     });
 
     const text = result.text ?? "";

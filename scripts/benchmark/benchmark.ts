@@ -8,7 +8,7 @@ import { generateText, type LanguageModel } from "ai";
 import { buildReadingContext } from "@/lib/reading-context";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 import { buildSimpleReadingPrompt, getTokenBudget, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
-import { resolveThinkingMode } from "@/lib/reading-service";
+import { READING_THINKING } from "@/lib/reading-service";
 import { READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import type { SpreadId } from "@/lib/spread-definitions";
 import { createBenchmarkCases, createContentRegressionCases, type BenchmarkCase } from "./cases";
@@ -282,10 +282,7 @@ async function main() {
     pricingFetchedAt: options.priceOverride ? null : "2026-10-04",
     pricingModel: options.priceOverride ?? pricingFor(options.model, options.pricingPeriod),
     judgePricingModel: options.judge ? (options.judgeModel === options.model && options.priceOverride ? options.priceOverride : pricingFor(options.judgeModel, options.pricingPeriod)) : null,
-    modelThinkingBySpread: Object.fromEntries([...new Set(cases.map((item) => item.spreadId))].map((id) => [
-      id,
-      resolveThinkingMode(cases.find((item) => item.spreadId === id)!.cardCount),
-    ])),
+    modelThinkingBySpread: Object.fromEntries([...new Set(cases.map((item) => item.spreadId))].map((id) => [id, READING_THINKING])),
     timeoutMs: options.timeoutMs,
     gitCommit: process.env.GIT_COMMIT ?? currentGitCommit(),
     command: process.argv.slice(2),
@@ -358,7 +355,7 @@ async function main() {
         model: mainModel,
         system: SIMPLE_LENORMAND_SYSTEM_PROMPT,
         prompt,
-        providerOptions: { deepseek: { thinking: resolveThinkingMode(benchmarkCase.cardCount) } },
+        providerOptions: { deepseek: { thinking: READING_THINKING } },
         maxOutputTokens: getTokenBudget(benchmarkCase.cardCount),
         maxRetries: 0,
         timeout: { totalMs: timeoutMs },

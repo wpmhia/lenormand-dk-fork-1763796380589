@@ -15,12 +15,20 @@ import type {
  */
 export const SIMPLE_LENORMAND_SYSTEM_PROMPT = "Respond naturally in the language of the user's question. Keep canonical English card names in patterns[].cards.";
 
+/**
+ * Output budget per spread. Thinking tokens count against this limit, so each value is the
+ * JSON answer size plus a fixed reasoning reserve. The JSON share is unchanged.
+ */
+const REASONING_RESERVE_TOKENS = 4_000;
+
 export function getTokenBudget(cardCount: number): number {
-  if (cardCount <= 1) return 800;
-  if (cardCount <= 3) return 1_100;
-  if (cardCount <= 5) return 1_400;
-  if (cardCount <= 9) return 2_000;
-  return 2_600;
+  let jsonBudget: number;
+  if (cardCount <= 1) jsonBudget = 800;
+  else if (cardCount <= 3) jsonBudget = 1_100;
+  else if (cardCount <= 5) jsonBudget = 1_400;
+  else if (cardCount <= 9) jsonBudget = 2_000;
+  else jsonBudget = 2_600;
+  return jsonBudget + REASONING_RESERVE_TOKENS;
 }
 
 export interface AIReadingResponse {

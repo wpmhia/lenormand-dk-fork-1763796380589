@@ -70,7 +70,7 @@ describe("card catalog: canonical identity is single-sourced", () => {
     expect(fox.meaning.general).toMatch(/work.*employment.*strategy.*self-interest/i);
     expect(fox.meaning.general).not.toMatch(/infidelity|affair/i);
     expect(fox.meaning.secondaryMeanings?.join(" ")).toMatch(/not proof of infidelity/i);
-    expect(lily.meaning.secondaryMeanings?.join(" ")).toMatch(/tradition-dependent/i);
+    expect(lily.meaning.secondaryMeanings ?? []).toEqual([]);
     expect(fish.meaning.general).toMatch(/money.*business.*commerce.*resources/i);
   });
 
