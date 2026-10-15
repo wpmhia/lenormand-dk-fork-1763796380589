@@ -284,3 +284,22 @@ describe("pilot p04 regression: Ring and Heart are in different rows, and Whip/S
     expect(woman).not.toMatch(/\bSnake\b/);
   });
 });
+
+describe("benchmark b17 regression: a house relation is not a spatial one", () => {
+  // Paths Stars Clover Woman Bear House ... Sun Whip Book Anchor Fox Birds Dog Stork Man (36 cards)
+  const cards = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
+  const context = buildReadingContext("grand-tableau", "What is the outlook for my finances?", cards, cardsMap, "both");
+  const prompt = buildSimpleReadingPrompt(context);
+
+  it("states that occupying another card's house is not a spatial relation", () => {
+    expect(prompt).toContain("A house relation is not a spatial one");
+    expect(prompt).toContain("use the grid position and neighbour lists for spatial claims");
+  });
+
+  it("keeps the Sun-in-Man-house fact separate from Sun's grid position", () => {
+    const facts = buildSpreadFacts(context);
+    expect(facts).toContain("position 28 (row 4, col 1): Sun — Man house");
+    const man = facts.split("\n").find((line) => line.startsWith("- Man:"))!;
+    expect(man).not.toContain("Sun");
+  });
+});

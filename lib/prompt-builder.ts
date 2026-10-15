@@ -266,7 +266,7 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push("Immediate adjacency and occupying another card's house are separate relationships; neither implies the other.");
 
   facts.push("");
-  facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position.");
+  facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position. A house relation is not a spatial one: a card that occupies another card's house is not thereby next to, above or below that card; use the grid position and neighbour lists for spatial claims.");
   facts.push("");
   facts.push("Synthesis: focus on the cards and lines that bear on the question (person cards and their neighbours, the four central cells, the corners). The grid has no fate row and no single outcome position.");
   return facts;
