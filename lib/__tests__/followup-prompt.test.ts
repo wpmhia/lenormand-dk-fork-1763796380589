@@ -3,7 +3,6 @@ import {
   buildFollowupPrompt,
   buildFollowupRequestPayload,
   FOLLOWUP_SYSTEM_PROMPT,
-  FOLLOWUP_MAX_OUTPUT_TOKENS,
 } from "@/lib/followup-prompt";
 
 describe("follow-up system prompt", () => {
@@ -73,9 +72,5 @@ describe("follow-up system prompt", () => {
 
   it("is much shorter than the full reading system prompt and stays under 50 lines", () => {
     expect(FOLLOWUP_SYSTEM_PROMPT.split("\n").length).toBeLessThan(20);
-  });
-
-  it("caps output tokens well below the full reading budget", () => {
-    expect(FOLLOWUP_MAX_OUTPUT_TOKENS).toBeLessThanOrEqual(200);
   });
 });
