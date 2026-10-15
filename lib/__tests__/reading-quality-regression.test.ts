@@ -175,3 +175,24 @@ describe("specificity: predictions do not choose between options the cards do no
     expect(prompt).toMatch(/Never choose a specific destination, place or person that no drawn card identifies/);
   });
 });
+
+describe("linear synthesis: a five-card sentence is read as one connected whole", () => {
+  // Child - Bear - Clouds - Clover - Lily (left to right)
+  const names = ["Child", "Bear", "Clouds", "Clover", "Lily"];
+  const prompt = promptFor("sentence-5", "Will the child be well cared for?", names);
+
+  it("states the sentence reading method in the spread facts", () => {
+    expect(prompt).toContain("Reading method: the cards form one sentence read left to right");
+    expect(prompt).toContain("the last card completes the sentence");
+  });
+
+  it("tells the model not to let one card's standalone meaning decide the conclusion", () => {
+    expect(prompt).toMatch(/Do not let one card's standalone meaning decide the conclusion; weigh the whole sequence/);
+  });
+
+  it("keeps the given left-to-right order of the cards", () => {
+    const facts = buildSpreadFacts(buildReadingContext("sentence-5", "Q", cardsNamed(names), cardsMap));
+    expect(facts).toContain("position 4: Clover");
+    expect(facts).toContain("position 5: Lily");
+  });
+});

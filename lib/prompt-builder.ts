@@ -100,6 +100,7 @@ function linearSpreadFacts(context: ReadingContext, layout: LinearSentenceLayout
     facts.push(`- position ${position.index + 1}: ${fmtCell(position.card, position.index + 1)}${suffix}`);
   }
   facts.push("Adjacency in this spread means consecutive positions. There is no other geometry.");
+  facts.push("Reading method: the cards form one sentence read left to right. Each card modifies the next, so every card's meaning is shaped by the card before it, and the last card completes the sentence.");
   return facts;
 }
 
@@ -365,7 +366,7 @@ Card meaning:
 - Before any spatial claim (next to, above, below, same row, rows apart, distance), check the row and column of both cards in the grid facts. Two cards are adjacent only when they differ by at most one row and at most one column. Derive distances from these coordinates, never from card names, deck numbers or house numbers.
 - For Grand Tableau adjacency claims about Man or Woman, use only cards in the supplied complete neighbour list. A same-row card two columns away is not adjacent.
 - If the coordinates do not support a spatial claim, drop the spatial claim and interpret the symbolic card combination instead; do not invent a relation.
-- In a linear spread, keep the given left-to-right order.
+- In a linear spread, keep the given left-to-right order and read the cards as one sentence: interpret each card in the context of the question and of the cards around it, and let the final card complete the sentence. Do not let one card's standalone meaning decide the conclusion; weigh the whole sequence.
 - Describe a pairing as established doctrine only when a source-reviewed pair entry is supplied; otherwise call it contextual interpretation.
 
 Output:
