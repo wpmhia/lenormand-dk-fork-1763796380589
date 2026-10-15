@@ -59,7 +59,7 @@ export const SPREAD_DEFINITIONS = {
     id: "daily-card",
     cardCount: 1,
     label: "Daily Card",
-    description: "A single card for today.",
+    description: "A single card, read directly against your question.",
     layoutType: "single",
     tradition: "modern",
     order: 0,
@@ -101,7 +101,7 @@ export const SPREAD_DEFINITIONS = {
     cardCount: 9,
     label: "Petit Tableau",
     description:
-      "A 3x3 grid. The centre is structurally special; rows, columns, diagonals and surrounding cards may all be weighed. No row is singled out.",
+      "A 3x3 grid. The centre card is the focal point; rows, columns, diagonals and neighbours are read together. Numbering gives position only, not time order.",
     layoutType: "petit-tableau",
     tradition: "traditional",
     order: 4,
@@ -122,7 +122,7 @@ export const SPREAD_DEFINITIONS = {
     cardCount: 36,
     label: "Grand Tableau",
     description:
-      "All 36 cards in a 4x9 grid: every house, the significators, relative geometry and traditional Grand Tableau technique. No single position is predetermined as the final one.",
+      "All 36 cards in a 4x9 grid, read with the traditional Grand Tableau techniques: significators, houses, neighbours and relevant lines. No single position is predetermined as the final one.",
     layoutType: "grand-tableau",
     tradition: "traditional",
     order: 5,

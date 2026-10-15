@@ -77,13 +77,12 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
     }
   });
 
-  it("includes the GT synthesis guidance for weighing the spread", () => {
-    expect(facts).toMatch(/Synthesis: focus on the cards and lines that bear on the question/);
-    expect(facts).toMatch(/no fate row and no single outcome position/);
+  it("states that no single position is the outcome", () => {
+    expect(facts).toMatch(/No single position is the outcome; read the cards and lines that bear on the question together/);
   });
 
   it("states the house rule so the model does not invert occupant and house", () => {
-    expect(facts).toMatch(/A card at position N occupies the house of the card with deck number N/);
+    expect(facts).toMatch(/a card at position N occupies the house of the card with deck number N, not its own card's house/);
     expect(facts).toMatch(/Adjacent cards do not change each other's house/);
   });
 
@@ -107,7 +106,7 @@ describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupa
     expect(meaningHeader).toBeGreaterThan(0);
     const structuralLines = facts.slice(0, meaningHeader).split("\n");
     for (const line of structuralLines) {
-      if (line.startsWith("Synthesis:")) continue;
+      if (line.startsWith("No single position is the outcome")) continue;
       expect(line, `structural facts carry interpretation: ${line}`).not.toMatch(
         /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative|luck/i,
       );
@@ -175,7 +174,7 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     const womanNeighbours = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
     expect(womanNeighbours).toContain("Dog");
     expect(womanNeighbours).not.toContain("Tower");
-    expect(facts).toContain("Immediate adjacency and occupying another card's house are separate relationships; neither implies the other.");
+    expect(facts).toContain("A house relation is not a spatial one: occupying another card's house does not make two cards neighbours.");
   });
 
   it("carries the grid and neighbour facts into the final English production prompt", () => {
@@ -291,7 +290,7 @@ describe("benchmark b17 regression: a house relation is not a spatial one", () =
 
   it("states that occupying another card's house is not a spatial relation", () => {
     expect(prompt).toContain("A house relation is not a spatial one");
-    expect(prompt).toContain("use the grid position and neighbour lists for spatial claims");
+    expect(prompt).toContain("Use the grid positions and neighbour lists for spatial claims");
   });
 
   it("keeps the Sun-in-Man-house fact separate from Sun's grid position", () => {

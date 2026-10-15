@@ -177,7 +177,7 @@ function petitSpreadFacts(context: ReadingContext, layout: PetitTableauLayout): 
     }),
     `Centre card: ${fmtCard(layout.center.card)}.`,
     ...petitCentreDirectionFacts(context.cards),
-    "The centre is the focal influence. Use the rows, columns, diagonals and neighbours that bear on the question; do not impose chronology.",
+    "Numbering gives position only, not time order. The centre is the focal influence; read the rows, columns, diagonals and neighbours that bear on the question together.",
   ];
   return facts;
 }
@@ -327,12 +327,8 @@ function grandTableauSpreadFacts(context: ReadingContext, layout: GrandTableauLa
   facts.push("");
   facts.push(...grandTableauCardRelationFacts(context.cards));
   facts.push(...grandTableauPersonNeighbourFacts(context.cards));
-  facts.push("Immediate adjacency and occupying another card's house are separate relationships; neither implies the other.");
-
-  facts.push("");
-  facts.push("House rule: every position has exactly one card. A card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. To answer a house question, check the occupant at that position. A house relation is not a spatial one: a card that occupies another card's house is not thereby next to, above or below that card; use the grid position and neighbour lists for spatial claims.");
-  facts.push("");
-  facts.push("Synthesis: focus on the cards and lines that bear on the question (person cards and their neighbours, the four central cells, the corners). The grid has no fate row and no single outcome position.");
+  facts.push("House rule: a card at position N occupies the house of the card with deck number N, not its own card's house. Adjacent cards do not change each other's house. A house relation is not a spatial one: occupying another card's house does not make two cards neighbours. Use the grid positions and neighbour lists for spatial claims.");
+  facts.push("No single position is the outcome; read the cards and lines that bear on the question together.");
   return facts;
 }
 

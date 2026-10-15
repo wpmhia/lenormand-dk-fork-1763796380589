@@ -239,8 +239,8 @@ describe("geometry: layout-specific facts", () => {
 
   it("adds the GT synthesis guidance so the model weighs person cards, neighbours and contradicting indications", () => {
     const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).toMatch(/Synthesis: focus on the cards and lines that bear on the question/);
-    expect(facts).toMatch(/person cards and their neighbours/);
+    expect(facts).toMatch(/No single position is the outcome; read the cards and lines that bear on the question together/);
+    expect(facts).toMatch(/Immediate neighbours \(horizontal, vertical and diagonal/);
   });
 
   it("is stable across repeated builds", () => {
