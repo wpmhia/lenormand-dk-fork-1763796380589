@@ -1,6 +1,6 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { getEnv } from "@/lib/env";
@@ -22,11 +22,12 @@ export async function OPTIONS() {
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 /**
  * Thinking shares this budget with the answer, so it matches the reading budget for the same
- * spread size (a 9-card reading exhausted 4k tokens). The route's maxDuration is 30s; the call
- * stays under 25s so a slow generation fails with a clear timeout instead of a platform kill.
+ * spread size. A live nine-card follow-up took 24s, so the model timeout is 45s, inside the
+ * route's 60s maxDuration. A slow generation then fails as a provider timeout (504), not a
+ * platform kill.
  */
 const FOLLOWUP_TOKEN_BUDGET = 12_288;
-const FOLLOWUP_TIMEOUT_MS = 25_000;
+const FOLLOWUP_TIMEOUT_MS = 45_000;
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
@@ -167,7 +168,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
-    if (request.signal.aborted || error?.name === "AbortError") {
+    // Only the client's own signal means the user left. The SDK's total timeout also raises an
+    // AbortError, so the name alone cannot tell the two apart.
+    if (request.signal.aborted) {
       return new Response(JSON.stringify({ error: "Client closed the request" }), {
         status: 499,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -179,7 +182,7 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
-    const isTimeout = error.message?.includes("abort") || error.message?.includes("timeout");
+    const isTimeout = error?.name === "AbortError" || error?.name === "TimeoutError" || error.message?.includes("timed out");
     return new Response(
       JSON.stringify({ error: isTimeout ? "Response timed out" : "Processing failed" }),
       { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },

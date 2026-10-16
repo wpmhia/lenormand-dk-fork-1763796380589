@@ -75,4 +75,35 @@ describe("follow-up route: real handler with a mocked model", () => {
     expect(fields).toMatchObject({ cause: "output-budget-exhausted", finishReason: "length", reasoningTokens: 12200 });
     errorSpy.mockRestore();
   });
+
+  it("maps an SDK total timeout to HTTP 504, not 499, while the client is still connected", async () => {
+    const timeout = Object.assign(new Error("The operation was aborted due to timeout"), { name: "AbortError" });
+    generateText.mockRejectedValueOnce(timeout);
+    const { POST } = await import("@/app/api/readings/followup/route");
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(504);
+    expect(await response.json()).toEqual({ error: "Response timed out" });
+  });
+
+  it("maps a real client abort to HTTP 499", async () => {
+    const controller = new AbortController();
+    generateText.mockImplementationOnce(async () => {
+      controller.abort();
+      throw Object.assign(new Error("aborted"), { name: "AbortError" });
+    });
+    const { POST } = await import("@/app/api/readings/followup/route");
+
+    const response = await POST(
+      new Request("http://localhost/api/readings/followup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      }),
+    );
+
+    expect(response.status).toBe(499);
+  });
 });
