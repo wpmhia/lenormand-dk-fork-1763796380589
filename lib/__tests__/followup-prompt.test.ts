@@ -4,40 +4,42 @@ import {
   buildFollowupRequestPayload,
   FOLLOWUP_SYSTEM_PROMPT,
 } from "@/lib/followup-prompt";
+import { SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 
 describe("follow-up system prompt", () => {
-  it("allows enough explanation to address the active follow-up", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Answer directly in relation to the follow-up question/i);
+  it("builds on the same reader and principles as the reading", () => {
+    expect(FOLLOWUP_SYSTEM_PROMPT.startsWith(SIMPLE_LENORMAND_SYSTEM_PROMPT)).toBe(true);
   });
 
-  it("does not force a conclusion-first or fixed short-answer format", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/conclusion first|state that conclusion immediately/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/1-2 short sentences|1-4 concise sentences/i);
+  it("keeps the spread fixed and bounded to the supplied grid", () => {
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/The cards and positions are fixed/);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/only spatial relationships supported by the supplied grid/);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/do not rely on previous readings/i);
   });
+});
 
-  it("keeps the spread fixed and grounded in supplied evidence", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/The cards and positions are fixed/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Use only spatial relationships supported by the supplied coordinates/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Answer the active follow-up question/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not rely on previous readings, predictions, outcomes, notes, or personal history/i);
-    expect(FOLLOWUP_SYSTEM_PROMPT).not.toMatch(/conversation history/i);
-  });
-
-  it("builds follow-up input only from the fixed spread and current questions", () => {
+describe("follow-up prompt input", () => {
+  it("contains only the original question, the active follow-up and the spread facts", () => {
     const prompt = buildFollowupPrompt({
-      spreadFacts: "position 1: Rider",
+      spreadFacts: "Drawn cards, in order:\n1. Rider",
       originalQuestion: "Will the project advance?",
       activeQuestion: "What suggests a delay?",
     });
-    expect(prompt).toContain("Respond in the language of the active follow-up question.");
-    expect(prompt).toContain("position 1: Rider");
-    expect(prompt).toContain("Original question: Will the project advance?");
-    expect(prompt).toContain("Active follow-up: What suggests a delay?");
-    expect(prompt).not.toContain("Earlier assistant answer");
-    expect(prompt).not.toContain("previous outcome");
+    expect(prompt).toContain("Original question:\nWill the project advance?");
+    expect(prompt).toContain("Active follow-up question:\nWhat suggests a delay?");
+    expect(prompt).toContain("1. Rider");
   });
 
-  it("serializes only current follow-up inputs, even when display history exists", () => {
+  it("does not carry earlier assistant turns into the prompt", () => {
+    const prompt = buildFollowupPrompt({
+      spreadFacts: "1. Rider",
+      originalQuestion: "Q",
+      activeQuestion: "Follow-up",
+    });
+    expect(prompt).not.toContain("Earlier assistant answer");
+  });
+
+  it("serializes only the current follow-up inputs, even when display history exists", () => {
     const input = {
       followUpQuestion: "What suggests a delay?",
       originalQuestion: "Will the project advance?",
@@ -58,19 +60,5 @@ describe("follow-up system prompt", () => {
     });
     expect(JSON.stringify(payload)).not.toContain("Earlier assistant answer");
     expect(JSON.stringify(payload)).not.toContain("Private note");
-  });
-
-  it("keeps follow-up output English", () => {
-    const prompt = buildFollowupPrompt({
-      spreadFacts: "position 1: Rider",
-      originalQuestion: "Will the situation change?",
-      activeQuestion: "What suggests a delay?",
-    });
-    expect(prompt).toContain("Respond in the language of the active follow-up question.");
-    expect(prompt).toContain("Active follow-up: What suggests a delay?");
-  });
-
-  it("is much shorter than the full reading system prompt and stays under 50 lines", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT.split("\n").length).toBeLessThan(20);
   });
 });

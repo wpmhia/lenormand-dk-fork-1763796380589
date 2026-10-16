@@ -1,48 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { findProseInvariantViolation, isReadingComplete, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
+import { isReadingComplete, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
-import { buildReadingContext } from "@/lib/reading-context";
-import { CARD_CATALOG } from "@/lib/card-catalog";
-import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
 
-const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
-
 const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
-
-vi.mock("ai", () => ({
-  generateText,
-}));
+vi.mock("ai", () => ({ generateText }));
 
 const validOutput = {
   answer: "The cards support a cautious opening.",
   reading: "The line combines a practical opening with uncertainty.",
-  patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening around a bond." }],
-  timing: null,
 };
 
-/**
- * `generateReading` checks the reading against the drawn set, so the fixture has to carry
- * a real card list rather than `{}`. Clover and Ring are drawn because `validOutput`
- * names them.
- */
-const drawnCards = [
-  { id: 2, name: "Clover", keywords: [] },
-  { id: 6, name: "Clouds", keywords: [] },
-  { id: 24, name: "Heart", keywords: [] },
-  { id: 25, name: "Ring", keywords: [] },
-];
-
-function options(overrides: Partial<Parameters<typeof generateReading>[0]> = {}) {
+function options() {
   return {
-    context: { cards: drawnCards, layout: { type: "single" } } as unknown as ReadingContext,
     model: {} as LanguageModel,
     system: "system",
     prompt: "prompt",
-    cardCount: 3,
     maxTokens: 500,
     timeoutMs: 5_000,
-    ...overrides,
   };
 }
 
@@ -50,241 +25,92 @@ function textOutput(value: unknown, finishReason = "stop") {
   return { text: typeof value === "string" ? value : JSON.stringify(value), finishReason };
 }
 
-describe("simple reading contract", () => {
-  it("renders the four-field output with no legacy Prediction fields", () => {
-    const answer = SimpleAnswerSchema.parse({
-      answer: "The cards support a cautious opening.",
-      reading: "The line combines a practical opening with uncertainty.",
-      patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening around a bond." }],
-      timing: null,
-    });
-    const rendered = renderSimpleAnswer(answer);
-    expect(rendered).toContain("## Answer");
-    expect(rendered).toContain("The cards support a cautious opening.");
-    expect(rendered).toContain("## Patterns");
-    expect(rendered).not.toContain("Most likely development");
-    expect(rendered).not.toContain("## Positive factors");
-    expect(rendered).not.toContain("## Challenges");
-    expect(rendered).not.toContain("## Development");
-    expect(rendered).not.toContain("## Houses and mirrors");
+describe("rendering: the answer and reading as saved Markdown", () => {
+  it("renders the answer before the reading under the same headings saved readings use", () => {
+    const rendered = renderSimpleAnswer(SimpleAnswerSchema.parse(validOutput));
+    expect(rendered).toBe(
+      "## Answer\nThe cards support a cautious opening.\n\n## Reading\nThe line combines a practical opening with uncertainty.",
+    );
   });
 
-  it("defaults the optional fields instead of failing the reading", () => {
-    const answer = SimpleAnswerSchema.parse({
-      answer: "The cards support a cautious opening.",
-      reading: "The line combines a practical opening with uncertainty.",
-    });
-    expect(answer.patterns).toEqual([]);
-    expect(answer.timing).toBeNull();
-  });
-
-  it("renders the answer before the reading and omits empty patterns", () => {
-    const answer = SimpleAnswerSchema.parse({
-      answer: "The relationship can develop steadily.",
-      reading: "The cards show a gradual opening.",
-    });
-    const rendered = renderSimpleAnswer(answer);
-
-    expect(rendered.indexOf("## Answer")).toBeLessThan(rendered.indexOf("## Reading"));
-    expect(rendered).not.toContain("## Patterns");
-    expect(rendered).not.toContain("## Timing");
-  });
-
-  it("treats a rendered four-field reading as complete for auto-save", () => {
-    const answer = SimpleAnswerSchema.parse({
-      answer: "The cards support a cautious opening.",
-      reading: "The line combines a practical opening with uncertainty.",
-      patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening around a bond." }],
-      timing: null,
-    });
-    const rendered = renderSimpleAnswer(answer);
-    // The retired "## Prediction" / "## Grand Tableau overview" headings are gone; the new
-    // contract must still register as complete.
-    expect(isReadingComplete(rendered)).toBe(true);
-    expect(rendered).not.toContain("## Prediction");
+  it("treats a rendered reading as complete for auto-save and an empty one as not", () => {
+    expect(isReadingComplete(renderSimpleAnswer(SimpleAnswerSchema.parse(validOutput)))).toBe(true);
     expect(isReadingComplete("")).toBe(false);
     expect(isReadingComplete("   \n  ")).toBe(false);
   });
 
-  it("rejects internal coordinates in user-facing prose", () => {
-    const answer = SimpleAnswerSchema.parse({
-      answer: "The Tree at position 5 supports growth.",
-      reading: "The relationship develops gradually.",
-    });
-
-    expect(findProseInvariantViolation(answer)).not.toBeNull();
-  });
-
-  it("does not reject ordinary natural language causality", () => {
-    const answer = SimpleAnswerSchema.parse({
-      answer: "You must be cautious with this transition.",
-      reading: "The cards show a positive direction.",
-    });
-
-    expect(findProseInvariantViolation(answer)).toBeNull();
+  it("rejects an answer or reading that is empty after trimming", () => {
+    expect(SimpleAnswerSchema.safeParse({ answer: "   ", reading: "x" }).success).toBe(false);
+    expect(SimpleAnswerSchema.safeParse({ answer: "x", reading: "" }).success).toBe(false);
   });
 });
 
-describe("simple reading single-call output handling", () => {
-  beforeEach(() => {
-    generateText.mockReset();
-  });
+describe("generation: one model call, one parse path", () => {
+  beforeEach(() => generateText.mockReset());
 
-  it("returns a schema failure for truncated output without a second provider call", async () => {
-    generateText.mockResolvedValueOnce(textOutput('{"answer":"A cautious week ahead', "aborted"));
-
-    const result = await generateReading(options());
-
-    expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
-    expect(result.ok === false && result.diagnostics?.finishReason).toBe("aborted");
-    expect(generateText).toHaveBeenCalledTimes(1);
-    expect(generateText.mock.calls[0][0].timeout).toEqual({ totalMs: 5_000 });
-  });
-
-  it("parses plain model text into a valid reading", async () => {
+  it("parses a valid JSON answer and renders it", async () => {
     generateText.mockResolvedValueOnce(textOutput(validOutput));
 
     const result = await generateReading(options());
 
     expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toContain(validOutput.answer);
+    expect(result.ok && result.reading).toBe(renderSimpleAnswer(validOutput));
+    expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("recovers locally parseable output without retrying", async () => {
-    const locallyRecoverable = {
-      answer: validOutput.answer,
-      reading: validOutput.reading,
-      patterns: "not an array",
-    };
-    generateText.mockResolvedValueOnce(textOutput(locallyRecoverable));
+  it("accepts a JSON answer wrapped in a Markdown code fence", async () => {
+    generateText.mockResolvedValueOnce(textOutput("```json\n" + JSON.stringify(validOutput) + "\n```"));
 
     const result = await generateReading(options());
 
     expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toContain(validOutput.answer);
-    expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("returns schema-mismatch when local recovery cannot parse the response", async () => {
-    generateText.mockResolvedValueOnce(textOutput("still malformed"));
-
-    const result = await generateReading(options());
-
-    expect(result).toMatchObject({ ok: false, reason: "schema-mismatch" });
-    expect(generateText).toHaveBeenCalledTimes(1);
-  });
-
-  it("reports empty provider output", async () => {
+  it("reports empty provider output without a second call", async () => {
     generateText.mockResolvedValueOnce(textOutput("   "));
 
     const result = await generateReading(options());
 
-    expect(result).toMatchObject({ ok: false, reason: "empty-output" });
+    expect(result).toEqual({ ok: false, reason: "empty-output" });
+    expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("drops a legacy string pattern without failing the reading", async () => {
-    // A pattern whose `cards` is not an array is malformed under the array contract.
-    // It is dropped rather than parsed from a combined string, and never fails the reading.
-    generateText.mockResolvedValueOnce(textOutput({ ...validOutput, patterns: ["Clover + Ring: a small opening"] }));
+  it("reports truncated output as invalid without a second call", async () => {
+    generateText.mockResolvedValueOnce(textOutput('{"answer":"A cautious week ahead', "length"));
+
+    const result = await generateReading(options());
+
+    expect(result).toEqual({ ok: false, reason: "invalid-output" });
+    expect(generateText).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports output that is not a JSON object with both fields as invalid", async () => {
+    for (const bad of ["still malformed", JSON.stringify({ answer: "only an answer" }), JSON.stringify(["a", "b"])]) {
+      generateText.mockResolvedValueOnce(textOutput(bad));
+      const result = await generateReading(options());
+      expect(result, bad).toEqual({ ok: false, reason: "invalid-output" });
+    }
+  });
+
+  it("ignores extra fields the model may add, since only answer and reading are rendered", async () => {
+    generateText.mockResolvedValueOnce(textOutput({ ...validOutput, patterns: [], timing: null }));
 
     const result = await generateReading(options());
 
     expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).not.toContain("Clover + Ring");
-    expect(result.ok && result.reading).toContain(validOutput.answer);
-    expect(generateText).toHaveBeenCalledTimes(1);
+    expect(result.ok && result.reading).not.toContain("## Patterns");
+    expect(result.ok && result.reading).not.toContain("## Timing");
   });
 
-  it.each([
-    ["pattern object", { patterns: [{ cards: ["Clover", "Ring"], meaning: "A small opening." }] }],
-    ["malformed pattern", { patterns: [{ cards: ["Clover"] }] }],
-    ["missing timing", {}],
-    ["null timing", { timing: null }],
-    ["extra legacy fields are ignored", {
-      positiveFactors: ["a"],
-      challenges: ["b"],
-      development: "c",
-      housesAndMirrors: [{ house: "Heart house", meaning: "d" }],
-      cards: [{ combination: "Clover + Ring", meaning: "e" }],
-      directAnswer: "legacy",
-      interpretation: "legacy",
-    }],
-  ])("accepts %s without retrying", async (_, overrides) => {
-    generateText.mockResolvedValueOnce(textOutput({ ...validOutput, ...overrides }));
+  it("requests thinking and a bounded timeout on the single call", async () => {
+    generateText.mockResolvedValueOnce(textOutput(validOutput));
 
-    const result = await generateReading(options());
+    await generateReading(options());
 
-    expect(result.ok).toBe(true);
-    expect(generateText).toHaveBeenCalledTimes(1);
-  });
-
-  it("drops a pattern with an unrecognised card name instead of letting it through", async () => {
-    const context = {
-      cards: [
-        { id: 2, name: "Clover" },
-        { id: 6, name: "Clouds" },
-      ],
-      layout: { type: "single" },
-    } as unknown as ReadingContext;
-
-    generateText.mockResolvedValueOnce(
-      textOutput({
-        answer: "First draft.",
-        reading: "First draft.",
-        patterns: [{ cards: ["Clover", "ImaginaryCard"], meaning: "unknown claim" }],
-      }),
-    );
-
-    const result = await generateReading(options({ context }));
-
-    expect(result.ok).toBe(true);
-    expect(result.ok && result.droppedPatterns).toHaveLength(1);
-    expect(result.ok && result.droppedPatterns[0]).toContain("unrecognised");
-    expect(result.ok && result.reading).not.toContain("unknown claim");
-    expect(generateText).toHaveBeenCalledTimes(1);
-  });
-
-  it("drops a pattern that names a card that was not drawn", async () => {
-    generateText.mockResolvedValueOnce(
-      textOutput({
-        answer: "First draft.",
-        reading: "First draft.",
-        patterns: [
-          { cards: ["Clover", "Heart"], meaning: "kept pattern" },
-          { cards: ["Clover", "Scythe"], meaning: "undrawn card" },
-        ],
-      }),
-    );
-
-    const result = await generateReading(options());
-
-    expect(result.ok).toBe(true);
-    expect(result.ok && result.droppedPatterns).toHaveLength(1);
-    expect(result.ok && result.droppedPatterns[0]).toContain("undrawn");
-    expect(result.ok && result.reading).toContain("kept pattern");
-    expect(result.ok && result.reading).not.toContain("undrawn card");
-    expect(generateText).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not leak the removed legacy sections into the rendered reading", async () => {
-    generateText.mockResolvedValueOnce(
-      textOutput({
-        ...validOutput,
-        positiveFactors: ["a legacy positive"],
-        challenges: ["a legacy challenge"],
-        development: "a legacy development",
-        housesAndMirrors: [{ house: "Heart house", meaning: "a legacy house" }],
-      }),
-    );
-
-    const result = await generateReading(options());
-
-    expect(result.ok).toBe(true);
-    const reading = result.ok ? result.reading : "";
-    expect(reading).not.toContain("a legacy positive");
-    expect(reading).not.toContain("a legacy challenge");
-    expect(reading).not.toContain("a legacy development");
-    expect(reading).not.toContain("a legacy house");
-    expect(reading).not.toContain("Key combinations");
+    const call = generateText.mock.calls[0][0];
+    expect(call.providerOptions.deepseek.thinking).toEqual({ type: "enabled" });
+    expect(call.providerOptions.deepseek.reasoningEffort).toBe("high");
+    expect(call.timeout).toEqual({ totalMs: 5_000 });
+    expect(call.maxRetries).toBe(0);
   });
 });

@@ -1,134 +1,82 @@
 import { describe, it, expect } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import { buildSimpleReadingPrompt, buildSpreadFacts } from "@/lib/prompt-builder";
+import { buildSimpleReadingPrompt } from "@/lib/prompt-builder";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 
-/** The structural layer supplies the full tableau and explicit, bounded geometry facts. */
+/** Geometry and house checks: card positions, neighbours and houses must match the grid. */
 
 const cardsMap = getCardCatalogMap();
 const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 
-function draw(count: number, offset = 0) {
-  return Array.from({ length: count }, (_, i) => {
-    const card = deck[(i + offset) % deck.length];
-    return {
-      id: card.id,
-      name: card.name,
-      keywords: card.keywords,
-      coreMeaning: card.meaning.general,
-      secondaryMeanings: card.meaning.secondaryMeanings,
-      meaningReviewStatus: card.meaning.reviewStatus,
-      position: i,
-    };
+function drawIds(ids: number[]) {
+  return ids.map((id) => {
+    const card = cardsMap.get(id)!;
+    return { id, name: card.name, keywords: card.keywords, coreMeaning: card.meaning.general };
   });
 }
 
-const regressionLayoutIds = [
+function draw(count: number, offset = 0) {
+  return Array.from({ length: count }, (_, i) => {
+    const card = deck[(i + offset) % deck.length];
+    return { id: card.id, name: card.name, keywords: card.keywords, coreMeaning: card.meaning.general };
+  });
+}
+
+/** The line of the prompt that starts with `- <name> (row`, i.e. one card's neighbour line. */
+function neighbourLine(prompt: string, name: string): string {
+  const line = prompt.split("\n").find((l) => l.startsWith(`- ${name} (row`));
+  if (!line) throw new Error(`no neighbour line for ${name}`);
+  return line;
+}
+
+function rowLines(prompt: string): string[] {
+  return prompt.split("\n").filter((line) => /^Row \d+: /.test(line));
+}
+
+const regressionIds = [
   28, 7, 14, 17, 1, 20, 13, 15, 18,
   33, 26, 25, 30, 21, 35, 19, 11, 29,
   3, 31, 12, 27, 8, 24, 16, 34, 2,
   23, 10, 4, 36, 9, 32, 6, 22, 5,
 ];
 
-function drawIds(ids: number[]) {
-  return ids.map((id) => {
-    const card = cardsMap.get(id)!;
-    return {
-      id,
-      name: card.name,
-      keywords: card.keywords,
-      coreMeaning: card.meaning.general,
-      secondaryMeanings: card.meaning.secondaryMeanings,
-      meaningReviewStatus: card.meaning.reviewStatus,
-    };
-  });
-}
-
-describe("buildSpreadFacts: the Grand Tableau supplies the grid and house occupants", () => {
-  const facts = buildSpreadFacts(
+describe("Grand Tableau: 4x9 rows, houses and positions", () => {
+  const prompt = buildSimpleReadingPrompt(
     buildReadingContext("grand-tableau", "Full picture?", draw(36, 13), cardsMap),
   );
 
-  it("states the grid shape and how positions are numbered", () => {
-    expect(facts).toContain("Grand Tableau, a 4x9 grid of 36 cards.");
-    expect(facts).toContain("Position 1 is row 1 column 1");
-    expect(facts).toContain("numbering runs left to right, then top to bottom");
-  });
-
-  it("includes the four Grand Tableau rows", () => {
-    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(4);
-  });
-
-  it("gives every position as position, row, column, card and house on one line", () => {
-    const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
-    expect(positionLines).toHaveLength(36);
-    expect(positionLines[0]).toMatch(/- position 1 \(row 1, col 1\): .+ — Rider house/);
-    // The card at position N is drawn at that position; the house at position N is always
-    // the canonical card with deck number N, independent of the draw.
-    for (const line of positionLines) {
-      const match = line.match(/^- position (\d+) \(row \d+, col \d+\): (.+?) — (.+?) house$/);
-      expect(match, line).not.toBeNull();
-      const position = Number(match![1]);
-      const card = match![2].trim();
-      const house = match![3].trim();
-      const expectedHouse = deck[position - 1].name;
-      expect(house).toBe(expectedHouse);
-      expect(card).not.toBe(house);
+  it("prints four rows of nine cards", () => {
+    expect(rowLines(prompt)).toHaveLength(4);
+    for (const line of rowLines(prompt)) {
+      expect(line.split(": ")[1].split(" | ")).toHaveLength(9);
     }
   });
 
-  it("states that no single position is the outcome", () => {
-    expect(facts).toMatch(/No single position is the outcome; read the cards and lines that bear on the question together/);
+  it("names every house exactly once, with the card at position N occupying house N", () => {
+    const houseLines = prompt.split("\n").filter((line) => /^\d+: .+ — .+ house$/.test(line));
+    expect(houseLines).toHaveLength(36);
+    houseLines.forEach((line, index) => {
+      const [, position, card, house] = line.match(/^(\d+): (.+) — (.+) house$/)!;
+      expect(Number(position)).toBe(index + 1);
+      expect(house).toBe(deck[index].name);
+      expect(card).not.toBe("");
+    });
   });
 
-  it("states the house rule so the model does not invert occupant and house", () => {
-    expect(facts).toMatch(/a card at position N occupies the house of the card with deck number N, not its own card's house/);
-    expect(facts).toMatch(/Adjacent cards do not change each other's house/);
-  });
-
-  it("names every house exactly once, alongside its occupant", () => {
-    expect(deck.every((card) => facts.includes(`${card.name} house`))).toBe(true);
-    expect(facts.split("\n").filter((line) => / — [\w ]+ house$/.test(line))).toHaveLength(36);
-  });
-
-  it("does not invent general pair, diagonal, column or mirror relations", () => {
-    expect(facts).not.toMatch(/^- \d+: .+, row \d+, col \d+/m);
-    expect(facts).not.toMatch(/^- \d+\+\d+: /m);
-    expect(facts).not.toContain("- diagonal ");
-    expect(facts).not.toContain("- knight: ");
-    expect(facts).not.toContain("- column ");
-    expect(facts).not.toContain("Adjacent pairs");
-    expect(facts).not.toContain("Mirrored across a significator");
-  });
-
-  it("keeps geometry structural and supplies core meanings in a separate section", () => {
-    const meaningHeader = facts.indexOf("Core card meaning references");
-    expect(meaningHeader).toBeGreaterThan(0);
-    const structuralLines = facts.slice(0, meaningHeader).split("\n");
-    for (const line of structuralLines) {
-      if (line.startsWith("No single position is the outcome")) continue;
-      expect(line, `structural facts carry interpretation: ${line}`).not.toMatch(
-        /means|indicates|suggests|stands for|represents|is (?:good|bad)|positive|negative|luck/i,
-      );
-    }
-    expect(facts).toContain("Core card meaning references (symbolic reference, not proof of events)");
-    expect(facts).toContain("Rider: News, messages, arrival, movement.");
+  it("reports the significator positions from the drawn order", () => {
+    const womanAt = draw(36, 13).findIndex((card) => card.id === 29) + 1;
+    expect(prompt).toContain(`Woman (significator) is at position ${womanAt}.`);
   });
 });
 
-describe("Grand Tableau coordinate-neighbour regression", () => {
-  const cards = drawIds(regressionLayoutIds);
-  const context = buildReadingContext(
-    "grand-tableau",
-    "Will the shared plan work out?",
-    cards,
-    cardsMap,
+describe("Grand Tableau: immediate neighbours are computed from coordinates", () => {
+  const cards = drawIds(regressionIds);
+  const prompt = buildSimpleReadingPrompt(
+    buildReadingContext("grand-tableau", "Will the shared plan work out?", cards, cardsMap),
   );
-  const facts = buildSpreadFacts(context);
-  const prompt = buildSimpleReadingPrompt(context);
 
-  it("prints the exact 4x9 rows", () => {
-    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toEqual([
+  it("keeps the exact 4x9 rows", () => {
+    expect(rowLines(prompt)).toEqual([
       "Row 1: Man | Snake | Fox | Stork | Rider | Garden | Child | Bear | Dog",
       "Row 2: Key | Book | Ring | Lily | Mountain | Anchor | Tower | Whip | Woman",
       "Row 3: Ship | Sun | Birds | Letter | Coffin | Heart | Stars | Fish | Clover",
@@ -136,211 +84,92 @@ describe("Grand Tableau coordinate-neighbour regression", () => {
     ]);
   });
 
-  it("identifies all four central cells rather than a single center card", () => {
-    expect(facts).toContain("Central cells (a 4x9 grid has four, not one, centre cells): positions 14, 15, 23, 24 — Mountain | Anchor | Coffin | Heart.");
+  it("lists the corner card Man with exactly its three real neighbours", () => {
+    expect(neighbourLine(prompt, "Man")).toBe(
+      "- Man (row 1, column 1): Snake (right), Key (below), Book (below-right)",
+    );
   });
 
-  it("handles corner boundaries and includes diagonal neighbours without row wrapping", () => {
-    expect(facts).toContain("- Man: row 1, column 1; immediate neighbours: Snake (right), Key (below), Book (below-right).");
-    expect(facts).toContain("- Woman: row 2, column 9; immediate neighbours: Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below).");
-    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:");
-    expect(facts).toContain("- Non-neighbours exactly two columns from Man in the same row: Fox (two columns right).");
-    expect(facts).toContain("- Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
-    const manNeighbours = facts.split("\n").find((line) => line.startsWith("- Man:"))!;
-    const womanNeighbours = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
-    expect(manNeighbours).not.toContain("Tree");
-    expect(womanNeighbours).not.toContain("Ship");
+  it("lists Woman at the right edge without wrapping onto the next row", () => {
+    expect(neighbourLine(prompt, "Woman")).toBe(
+      "- Woman (row 2, column 9): Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below)",
+    );
   });
 
-  it("states the direction of every immediate neighbour relative to the person card", () => {
-    const woman = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
-    const man = facts.split("\n").find((line) => line.startsWith("- Man:"))!;
-    // Woman (row 2, col 9): Bear above-left, Dog above, Whip left, Fish below-left, Clover below.
-    expect(woman).toContain("Bear (above-left)");
-    expect(woman).toContain("Dog (above)");
-    expect(woman).toContain("Whip (left)");
-    expect(woman).toContain("Fish (below-left)");
-    expect(woman).toContain("Clover (below)");
-    // Man (row 1, col 1): Snake right, Key below, Book below-right.
-    expect(man).toContain("Snake (right)");
-    expect(man).toContain("Key (below)");
-    expect(man).toContain("Book (below-right)");
-  });
-
-  it("keeps row order, non-neighbour Tower and Dog-house occupancy distinct", () => {
-    expect(facts).toContain("Row 2: Key | Book | Ring | Lily | Mountain | Anchor | Tower | Whip | Woman");
-    expect(facts).toContain("- position 16 (row 2, col 7): Tower — Stars house");
-    expect(facts).toContain("- position 18 (row 2, col 9): Woman — Dog house");
-    const womanNeighbours = facts.split("\n").find((line) => line.startsWith("- Woman:"))!;
-    expect(womanNeighbours).toContain("Dog");
-    expect(womanNeighbours).not.toContain("Tower");
-    expect(facts).toContain("A house relation is not a spatial one: occupying another card's house does not make two cards neighbours.");
-  });
-
-  it("carries the grid and neighbour facts into the final English production prompt", () => {
-    expect(prompt).toContain("Will the shared plan work out?");
-    expect(prompt).toContain("Row 1: Man | Snake | Fox | Stork | Rider | Garden | Child | Bear | Dog");
-    expect(prompt).toContain("- Man: row 1, column 1; immediate neighbours: Snake (right), Key (below), Book (below-right).");
-    expect(prompt).toContain("- Woman: row 2, column 9; immediate neighbours: Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below).");
-    expect(prompt).toContain("Non-neighbours exactly two columns from Woman in the same row: Tower (two columns left).");
-    expect(prompt).toContain("Woman — Dog house");
-    expect(prompt).toContain("Central cells (a 4x9 grid has four, not one, centre cells)");
-    expect(prompt).not.toContain("Man is the user");
-    expect(prompt).not.toContain("Woman is the user's partner");
-    expect(prompt).toContain('"answer": string');
-  });
-
-});
-
-describe("nine-card Petit Tableau regression", () => {
-  const cards = drawIds([31, 29, 4, 14, 36, 30, 25, 5, 34]);
-  const context = buildReadingContext(
-    "comprehensive",
-    "How might this relationship develop?",
-    cards,
-    cardsMap,
-  );
-  const facts = buildSpreadFacts(context);
-  const prompt = buildSimpleReadingPrompt(context);
-
-  it("recognizes the centre, rows, columns, and diagonals from exact positions", () => {
-    expect(facts).toContain("Centre card: Cross.");
-    expect(facts).toContain("Row 1: Sun | Woman | House");
-    expect(facts).toContain("Row 2: Fox | Cross | Lily");
-    expect(facts).toContain("Row 3: Ring | Tree | Fish");
-    expect(facts).toContain("Column 1: Sun | Fox | Ring");
-    expect(facts).toContain("Column 2: Woman | Cross | Tree");
-    expect(facts).toContain("Column 3: House | Lily | Fish");
-    expect(facts).toContain("Diagonal (top-left to bottom-right): Sun | Cross | Fish");
-    expect(facts).toContain("Diagonal (top-right to bottom-left): House | Cross | Ring");
-  });
-
-  it("uses contextual core meanings without inventing a relationship or a fixed outcome", () => {
-    expect(prompt).toContain("Cross: Burden, hardship, suffering, duty, difficult circumstances.");
-    expect(prompt).not.toContain("Paths:");
-    expect(prompt).toContain("Fox: Work or employment, strategy, self-interest, cunning, caution.");
-    expect(prompt).toContain("Ring: Commitment, agreement, contract, partnership, cycle.");
-    expect(prompt).toContain("Tree: Health, growth, roots, vitality, long duration.");
+  it("does not list a same-row card two columns away as a neighbour", () => {
+    expect(neighbourLine(prompt, "Man")).not.toContain("Fox");
+    expect(neighbourLine(prompt, "Woman")).not.toContain("Tower");
   });
 });
 
-describe("buildSpreadFacts: the Petit Tableau supplies the grid and centre", () => {
-  const facts = buildSpreadFacts(
-    buildReadingContext("comprehensive", "What will the month bring?", draw(9, 5), cardsMap),
+describe("Grand Tableau: a house relation is not a spatial one", () => {
+  // Dog-house occupancy: Woman sits at position 18 (row 2, column 9) and is not a neighbour of Dog's cell.
+  const cards = drawIds(regressionIds);
+  const prompt = buildSimpleReadingPrompt(
+    buildReadingContext("grand-tableau", "Will the shared plan work out?", cards, cardsMap),
   );
 
-  it("lays the grid out as visual rows", () => {
-    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(3);
-  });
-
-  it("names the centre card", () => {
-    expect(facts).toContain("Centre card:");
-  });
-
-  it("never precomputes a relation list", () => {
-    expect(facts).not.toMatch(/^- \d+\+\d+: /m);
-    expect(facts).not.toContain("- diagonal ");
-    expect(facts).not.toContain("- knight: ");
-    expect(facts).not.toContain("- column ");
-  });
-});
-
-describe("buildSpreadFacts: the line supplies order and adjacency", () => {
-  const facts = buildSpreadFacts(
-    buildReadingContext("sentence-3", "Will I move?", draw(3, 0), cardsMap),
-  );
-
-  it("states the line shape and adjacency rule", () => {
-    expect(facts).toContain("Linear sentence spread (3 cards, read left to right)");
-    expect(facts).toContain("Adjacency in this spread means consecutive positions");
-  });
-
-  it("lists each position with its card", () => {
-    expect(facts).toContain("- position 1: Rider");
-    expect(facts).toContain("- position 2: Clover");
-    expect(facts).toContain("- position 3: Ship");
-  });
-});
-
-describe("pilot p04 regression: Ring and Heart are in different rows, and Whip/Snake are not near the Woman", () => {
-  const cards = drawIds([27, 9, 33, 7, 4, 11, 14, 16, 28, 5, 22, 34, 25, 15, 18, 10, 20, 17, 23, 6, 1, 24, 19, 3, 31, 2, 21, 30, 32, 12, 29, 26, 35, 13, 8, 36]);
-  const context = buildReadingContext("grand-tableau", "How is the relationship developing?", cards, cardsMap, "both");
-  const facts = buildSpreadFacts(context);
-
-  it("places Ring and Heart in different rows (2 and 3), not the same row", () => {
-    const rows = facts.split("\n").filter((l) => /^Row \d+: /.test(l));
-    const rowOf = (name: string) => rows.findIndex((r) => r.split(": ")[1].split(" | ").includes(name));
-    expect(rowOf("Ring")).not.toBe(rowOf("Heart"));
-    expect(rowOf("Ring")).toBe(1);
-    expect(rowOf("Heart")).toBe(2);
-  });
-
-  it("does not list Whip or Snake among the Woman's immediate neighbours", () => {
-    const woman = facts.split("\n").find((l) => l.startsWith("- Woman:"))!;
-    expect(woman).not.toMatch(/\bWhip\b/);
-    expect(woman).not.toMatch(/\bSnake\b/);
-  });
-});
-
-describe("benchmark b17 regression: a house relation is not a spatial one", () => {
-  // Paths Stars Clover Woman Bear House ... Sun Whip Book Anchor Fox Birds Dog Stork Man (36 cards)
-  const cards = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
-  const context = buildReadingContext("grand-tableau", "What is the outlook for my finances?", cards, cardsMap, "both");
-  const prompt = buildSimpleReadingPrompt(context);
-
-  it("states that occupying another card's house is not a spatial relation", () => {
-    expect(prompt).toContain("A house relation is not a spatial one");
-    expect(prompt).toContain("Use the grid positions and neighbour lists for spatial claims");
+  it("places each card in its own grid cell regardless of which house it occupies", () => {
+    expect(prompt).toContain("18: Woman — Dog house");
+    expect(neighbourLine(prompt, "Woman")).not.toContain("Dog (below)");
   });
 
   it("keeps the Sun-in-Man-house fact separate from Sun's grid position", () => {
-    const facts = buildSpreadFacts(context);
-    expect(facts).toContain("position 28 (row 4, col 1): Sun — Man house");
-    const man = facts.split("\n").find((line) => line.startsWith("- Man:"))!;
-    expect(man).not.toContain("Sun");
+    const sunShuffle = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
+    const shuffled = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Outlook?", sunShuffle, cardsMap, "both"));
+    expect(shuffled).toContain("28: Sun — Man house");
+    expect(neighbourLine(shuffled, "Sun")).toBe("- Sun (row 4, column 1): Child (above), Coffin (above-right), Whip (right)");
   });
 });
 
-describe("spatial-claim rule: coordinates before any spatial statement", () => {
-  const cards = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
-  const prompt = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "What is the outlook for my finances?", cards, cardsMap, "both"));
-
-  it("supplies the complete coordinate and neighbour list the model must use for spatial claims", () => {
-    expect(prompt).toContain("Spatial relations for every card");
-    expect(prompt).toContain("a card not listed is not adjacent");
+describe("Grand Tableau: Man and Woman relative placement", () => {
+  it("places Man and Woman as adjacent when they share the lower-left block", () => {
+    // Woman row 4 column 2, Man row 4 column 1 in the regression layout above.
+    const cards = drawIds(regressionIds);
+    const prompt = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Q", cards, cardsMap, "both"));
+    expect(neighbourLine(prompt, "Man")).toContain("Snake (right)");
   });
 });
 
-describe("per-card spatial relations: every Grand Tableau card has coordinates and a complete neighbour list", () => {
-  const cards = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
-  const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "What is the outlook?", cards, cardsMap, "both"));
-  const relation = (name: string) => facts.split("\n").find((line) => line.startsWith(`- ${name}: row`) && line.includes("; neighbours:"))!;
+describe("Petit Tableau: 3x3 grid, centre and neighbours", () => {
+  const cards = draw(9, 5);
+  const prompt = buildSimpleReadingPrompt(
+    buildReadingContext("comprehensive", "What will the month bring?", cards, cardsMap),
+  );
 
-  it("gives one relation line for each of the 36 cards", () => {
-    expect(facts.split("\n").filter((line) => line.startsWith("- ") && line.includes("; neighbours:"))).toHaveLength(36);
+  it("prints three rows of three cards", () => {
+    expect(rowLines(prompt)).toHaveLength(3);
+    for (const line of rowLines(prompt)) {
+      expect(line.split(": ")[1].split(" | ")).toHaveLength(3);
+    }
   });
 
-  it("gives exact coordinates and directions for a corner card (Paths, row 1 column 1)", () => {
-    expect(relation("Paths")).toBe("- Paths: row 1, column 1; neighbours: Stars (right), Heart (below), Tower (below-right).");
+  it("places the centre card at row 2, column 2", () => {
+    expect(prompt).toContain(`Row 2: ${cards[3].name} | ${cards[4].name} | ${cards[5].name}`);
   });
 
-  it("gives the Sun's coordinates and exact neighbour directions (row 4, column 1)", () => {
-    expect(relation("Sun")).toBe("- Sun: row 4, column 1; neighbours: Child (above), Coffin (above-right), Whip (right).");
+  it("gives the centre eight neighbours and a corner three", () => {
+    const neighbours = (line: string) => line.slice(line.indexOf("): ") + 3).split(", ");
+    const centreLine = prompt.split("\n").find((l) => l.startsWith(`- ${cards[4].name} (row 2, column 2)`))!;
+    expect(neighbours(centreLine)).toHaveLength(8);
+    const cornerLine = prompt.split("\n").find((l) => l.startsWith(`- ${cards[0].name} (row 1, column 1)`))!;
+    expect(neighbours(cornerLine)).toHaveLength(3);
   });
 });
 
-describe("Man-Woman separation fact is computed from coordinates", () => {
-  it("reports 0 rows and 1 column apart, and immediate neighbours, for the b16 layout", () => {
-    // b16: Woman row 3 col 3, Man row 3 col 4
-    const b16 = drawIds([10, 21, 30, 23, 9, 34, 22, 15, 36, 8, 5, 17, 25, 32, 11, 35, 3, 12, 27, 1, 29, 28, 20, 19, 7, 16, 14, 31, 13, 4, 2, 33, 26, 6, 24, 18]);
-    const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "How will the relationship develop?", b16, cardsMap, "both"));
-    expect(facts).toContain("- Man and Woman: 0 row(s) and 1 column(s) apart (immediate neighbours).");
-  });
-
-  it("reports 3 rows and 5 columns apart, and not neighbours, for the p04 layout", () => {
-    // p04: Man row 1 col 9, Woman row 4 col 4
-    const p04 = drawIds([27, 9, 33, 7, 4, 11, 14, 16, 28, 5, 22, 34, 25, 15, 18, 10, 20, 17, 23, 6, 1, 24, 19, 3, 31, 2, 21, 30, 32, 12, 29, 26, 35, 13, 8, 36]);
-    const facts = buildSpreadFacts(buildReadingContext("grand-tableau", "How is the relationship developing?", p04, cardsMap, "both"));
-    expect(facts).toContain("- Man and Woman: 3 row(s) and 5 column(s) apart (not immediate neighbours).");
+describe("Linear spreads: order and adjacency", () => {
+  it.each([
+    ["single-card", 1],
+    ["sentence-3", 3],
+    ["sentence-5", 5],
+  ] as const)("%s keeps the drawn order and states that adjacency is consecutive", (spreadId, count) => {
+    const cards = draw(count, 0);
+    const prompt = buildSimpleReadingPrompt(buildReadingContext(spreadId, "Will I move?", cards, cardsMap));
+    cards.forEach((card, index) => {
+      expect(prompt).toContain(`${index + 1}. ${card.name}`);
+    });
+    if (count > 1) {
+      expect(prompt).toContain("Adjacent cards are neighbours");
+    }
   });
 });

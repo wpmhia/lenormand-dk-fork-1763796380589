@@ -1,40 +1,27 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { buildReadingContext } from "@/lib/reading-context";
-import {
-  buildSimpleReadingPrompt,
-  buildSpreadFacts,
-  SIMPLE_LENORMAND_SYSTEM_PROMPT,
-  getTokenBudget,
-} from "@/lib/prompt-builder";
-import { findInventedCards } from "@/lib/invented-cards";
-import { SimpleAnswerSchema } from "@/lib/simple-answer";
+import { buildSimpleReadingPrompt, getTokenBudget, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { generateReading } from "@/lib/reading-service";
 import { SPREAD_IDS, type SpreadId } from "@/lib/spread-definitions";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
-import type { Card } from "@/lib/types";
 import type { ReadingContext } from "@/lib/reading-context";
 import type { LanguageModel } from "ai";
 
 /**
  * The model-first contract, in one suite:
  *
- *   input -> geometry -> prompt handoff -> model boundary -> factual validation -> render
+ *   input -> geometry -> prompt handoff -> one model call -> parse -> render
  *
- * The server supplies canonical cards, source-compared meanings and geometry; the model
- * synthesizes the reading; the validator checks schema and hard card-reference facts.
- * Tests are grouped by that pipeline rather than by the subsystem that once implemented it.
- *
- * Deliberately not duplicated: an invariant that is identical for a 1-card draw and a
- * 36-card tableau is asserted once. Invariants that genuinely differ by layout (roles,
- * coordinates, centres, houses) get their own case for each layout they differ in.
+ * The server supplies canonical cards, core meanings and geometry; DeepSeek interprets; the
+ * server parses one JSON object and renders it. The tests check the handoff and the shape of
+ * the contract, not the wording of the instructions.
  */
 
 const { generateText } = vi.hoisted(() => ({ generateText: vi.fn() }));
 vi.mock("ai", () => ({ generateText }));
 
-const catalog = CARD_CATALOG;
 const cardsMap = getCardCatalogMap();
-const deck = [...catalog].sort((a, b) => a.id - b.id);
+const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 
 const CARD_COUNT: Record<SpreadId, number> = {
   "single-card": 1,
@@ -56,7 +43,6 @@ function draw(count: number, offset = 0) {
       coreMeaning: card.meaning.general,
       secondaryMeanings: card.meaning.secondaryMeanings,
       meaningReviewStatus: card.meaning.reviewStatus,
-      position: i,
     };
   });
 }
@@ -69,490 +55,115 @@ function prompt(spreadId: SpreadId, question = "How will my relationship develop
   return buildSimpleReadingPrompt(context(spreadId, question, cards ?? draw(CARD_COUNT[spreadId])));
 }
 
-// ======================================================================================
-// INPUT -> PROMPT HANDOFF
-// ======================================================================================
-
-describe("prompt handoff: every drawn card and the raw question reach the model", () => {
-  it("supplies every drawn card, in draw order, for every spread", () => {
-    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
-      const cards = draw(count, 13);
-      const text = prompt(id, "Q?", cards);
-      let cursor = -1;
-      for (const card of cards) {
-        const at = text.indexOf(card.name, cursor + 1);
-        expect(at, `${id}: ${card.name} must reach the model, after the previous card`).toBeGreaterThan(cursor);
-        cursor = at;
-      }
+describe("prompt handoff: every drawn card reaches the model in draw order", () => {
+  it.each(Object.entries(CARD_COUNT) as [SpreadId, number][])("%s supplies every card in order", (id, count) => {
+    const cards = draw(count, 13);
+    const text = prompt(id, "Q?", cards);
+    let cursor = -1;
+    for (const [index, card] of cards.entries()) {
+      const at = text.indexOf(`${index + 1}. ${card.name}`, cursor + 1);
+      expect(at, `${id}: card ${index + 1} must follow card ${index}`).toBeGreaterThan(cursor);
+      cursor = at;
     }
   });
 
-  it("passes the raw question through without a server-parsed frame", () => {
+  it("passes the raw question through unchanged", () => {
     const text = prompt("grand-tableau", "Zal het nieuwe plan slagen?");
-    expect(text).toContain("Zal het nieuwe plan slagen?");
-    for (const parsed of ["domain=", "predicate=", "Question predicate:", "Question subjects:", "Semantic question frame"]) {
-      expect(text).not.toContain(parsed);
-    }
+    expect(text).toContain("User question:\nZal het nieuwe plan slagen?");
   });
 
-  it("supplies core meanings without legacy pair text or domain-expanded card fields", () => {
-    const ctx = context("grand-tableau", "Full picture?") as unknown as Record<string, unknown>;
-    expect(ctx.adjacentPairs).toBeUndefined();
-
-    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
-      const text = prompt(id, "How will my relationship develop?", draw(count, 13));
-      expect(text, `${id} receives the drawn cards' core meanings`).toContain("Core card meaning references");
-      expect(text, `${id} must not receive old unreviewed pair prose`).not.toContain("Your lover may be acting unfaithful");
-      for (const leaked of [
-        "traditionalMeaning",
-        "legacy-combinations",
-        "pair weight",
-        "Narrative plan",
-        "primaryPair",
-        "supportingPair",
-        "outcomeEvidence",
-        "Timing evidence",
-        "Question frame (",
-      ]) {
-        expect(text, `${id} must not expose "${leaked}"`).not.toContain(leaked);
-      }
+  it("supplies the classical core meaning of each drawn card", () => {
+    const text = prompt("sentence-3", "Q?", draw(3, 0));
+    for (const card of draw(3, 0)) {
+      expect(text).toContain(`- ${card.name}: ${card.coreMeaning}`);
     }
   });
 });
 
-// ======================================================================================
-// GEOMETRY IN THE PROMPT
-// ======================================================================================
-
-describe("geometry: the full grid and bounded person-neighbour facts are supplied", () => {
-  it("gives every Grand Tableau position and all four visual rows", () => {
-    const facts = buildSpreadFacts(context("grand-tableau", "Geometry?", draw(36, 13)));
-    const positionLines = facts.split("\n").filter((line) => /^- position \d+ \(row \d+, col \d+\):/.test(line));
-    expect(positionLines).toHaveLength(36);
-    expect(facts.split("\n").filter((line) => /^Row \d+: /.test(line))).toHaveLength(4);
-    expect(facts).toContain("Immediate neighbours (horizontal, vertical and diagonal grid cells; no row wrapping). Each list is complete; unlisted cards are not immediate neighbours:");
-    expect(positionLines.join(" ")).not.toMatch(/means|indicates|important|outcome/i);
+describe("geometry: spread structure is computed from coordinates", () => {
+  it("gives the Grand Tableau four rows of nine cards and all 36 houses", () => {
+    const text = prompt("grand-tableau", "Geometry?", draw(36, 13));
+    const rows = text.split("\n").filter((line) => /^Row \d+: /.test(line));
+    expect(rows).toHaveLength(4);
+    const houses = text.split("\n").filter((line) => /^\d+: .+ — .+ house$/.test(line));
+    expect(houses).toHaveLength(36);
   });
 
-  it("gives the 9-card Petit Tableau centre's eight directions exactly once, with correct cards", () => {
-    // Mice Garden Scythe / Child Anchor Key / Cross Letter Rider: centre Anchor.
-    const names = ["Mice", "Garden", "Scythe", "Child", "Anchor", "Key", "Cross", "Letter", "Rider"];
-    const cards = names.map((name) => {
-      const card = CARD_CATALOG.find((entry) => entry.name === name)!;
-      return {
-        id: card.id,
-        name: card.name,
-        keywords: card.keywords,
-        coreMeaning: card.meaning.general,
-        secondaryMeanings: card.meaning.secondaryMeanings,
-        meaningReviewStatus: card.meaning.reviewStatus,
-      };
-    });
-    const facts = buildSpreadFacts(buildReadingContext("comprehensive", "Geometry?", cards, cardsMap));
-    const lines = facts.split("\n");
-    const header = lines.indexOf("Directional neighbours of the centre card (the eight cells around it):");
-    expect(header).toBeGreaterThanOrEqual(0);
-    const block: string[] = [];
-    for (const line of lines.slice(header + 1)) {
-      if (!/^- [a-z-]+ of the centre: /.test(line)) break;
-      block.push(line);
-    }
-    expect(block).toHaveLength(8);
-    const directions = block.map((line) => line.replace(/^- /, "").split(" of the centre: ")[0]);
-    const expected = ["above-left", "above", "above-right", "left", "right", "below-left", "below", "below-right"];
-    expect([...directions].sort()).toEqual([...expected].sort());
-    expect(new Set(directions).size).toBe(8);
-    const entryFor = (direction: string) => block.find((line) => line.startsWith(`- ${direction} of the centre:`))!;
-    expect(entryFor("below-left")).toBe("- below-left of the centre: Cross");
-    expect(entryFor("below")).toBe("- below of the centre: Letter");
+  it("gives the Petit Tableau's centre card its eight directional neighbours", () => {
+    const cards = draw(9, 5);
+    const text = prompt("comprehensive", "Geometry?", cards);
+    const centreLine = text.split("\n").find((line) => line.startsWith(`- ${cards[4].name} (row 2, column 2)`))!;
+    const neighbours = centreLine.slice(centreLine.indexOf("): ") + 3).split(", ");
+    expect(neighbours).toHaveLength(8);
+    expect(new Set(neighbours.map((n) => n.match(/\((.+)\)$/)?.[1])).size).toBe(8);
   });
 
-  it("precomputes no generic relation lists in any layout", () => {
-    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
-      const facts = buildSpreadFacts(context(id, "Geometry?", draw(count, 13)));
-      if (id === "grand-tableau") {
-        expect(facts, id).toContain("Immediate neighbours");
-      } else {
-        expect(facts, id).not.toContain("Immediate neighbours");
-      }
-      if (id !== "comprehensive") {
-        expect(facts, id).not.toContain("Directional neighbours of the centre card");
-      }
-      expect(facts, id).not.toMatch(/^- \d+\+\d+: /m);
-      expect(facts, id).not.toContain("- diagonal ");
-      expect(facts, id).not.toContain("- knight: ");
-      expect(facts, id).not.toContain("- column ");
-      expect(facts, id).not.toContain("Adjacent pairs");
-    }
-  });
-
-  it("never embeds verified clusters in any spread prompt", () => {
+  it("states adjacency only for linear and grid spreads, never a generic relation list", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const text = prompt(id, "Geometry?", draw(count, 13));
+      expect(text, id).not.toMatch(/^- \d+\+\d+: /m);
+      expect(text, id).not.toContain("Adjacent pairs");
       expect(text, id).not.toContain("Verified clusters");
     }
   });
-});
 
-describe("geometry: layout-specific facts", () => {
-  it("keeps the sentence-3 roles the spread itself defines", () => {
-    const ctx = context("sentence-3", "Will the deal close?", draw(3, 24));
-    const facts = buildSpreadFacts(ctx);
-    expect(ctx.layout.type).toBe("linear-sentence");
-    for (const position of (ctx.layout as { positions: { index: number; role: string }[] }).positions) {
-      expect(facts).toContain(`- position ${position.index + 1}: `);
-      expect(facts).toContain(`(role defined by this spread: ${position.role})`);
-    }
-  });
-
-  it("keeps all five sentence-5 roles present", () => {
-    const facts = buildSpreadFacts(context("sentence-5", "Will I move?", draw(5, 10)));
-    expect(facts.split("\n").filter((line) => line.includes("role defined by this spread:"))).toHaveLength(5);
-  });
-
-  it("names the Petit Tableau centre card", () => {
-    const ctx = context("comprehensive", "What will the month bring?", draw(9, 5));
-    expect((ctx.layout as { center: { index: number } }).center.index).toBe(4);
-    expect(buildSpreadFacts(ctx)).toContain("Centre card:");
-  });
-
-  it("supplies all 36 houses with their occupants", () => {
-    const facts = buildSpreadFacts(context("grand-tableau", "Full picture?", draw(36, 13)));
-    expect(facts.split("\n").filter((line) => / — [\w ]+ house$/.test(line))).toHaveLength(36);
-    const houseNames = facts
-      .split("\n")
-      .map((line) => line.match(/ — ([\w ]+) house$/))
-      .filter((match): match is RegExpMatchArray => match !== null)
-      .map((match) => match[1]);
-    expect(houseNames).toEqual(deck.map((card) => card.name));
-    expect(facts).not.toContain("Crossroads house");
-  });
-
-  it("does not assign person cards to the user or their partner", () => {
-    const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).not.toMatch(/- Man: position \d+, row \d, col \d/);
-    expect(facts).not.toMatch(/- Woman: position \d+, row \d, col \d/);
-    expect(facts).not.toMatch(/Man is (?:the user|you)/i);
-    expect(facts).not.toMatch(/Woman is (?:the user's partner|your partner)/i);
-    expect(facts).not.toContain("weigh their relation to each other from the coordinates above");
-  });
-
-  it("adds the GT synthesis guidance so the model weighs person cards, neighbours and contradicting indications", () => {
-    const facts = buildSpreadFacts(context("grand-tableau", "Will we stay together?", draw(36, 13)));
-    expect(facts).toMatch(/No single position is the outcome; read the cards and lines that bear on the question together/);
-    expect(facts).toMatch(/Immediate neighbours \(horizontal, vertical and diagonal/);
+  it("states that a line is read left to right with consecutive adjacency", () => {
+    const text = buildSimpleReadingPrompt(context("sentence-5", "Will I move?", draw(5, 10)));
+    expect(text).toContain("5 cards in a line, read left to right");
   });
 
   it("is stable across repeated builds", () => {
     const cards = draw(36, 13);
-    expect(buildSpreadFacts(context("grand-tableau", "Geometry?", cards))).toBe(
-      buildSpreadFacts(context("grand-tableau", "Geometry?", cards)),
-    );
+    expect(prompt("grand-tableau", "Geometry?", cards)).toBe(prompt("grand-tableau", "Geometry?", cards));
   });
 });
 
-// ======================================================================================
-// MODEL BOUNDARY
-// ======================================================================================
-
-describe("model boundary: one contract for every spread", () => {
-  it("uses a single user-prompt contract without overgeneration prompts", () => {
-    const text = buildSimpleReadingPrompt(context("comprehensive", "Q?", draw(9)));
-    expect(text).not.toMatch(/Be concrete, nuanced and predictive/);
-    expect(text).toMatch(/Method: Read the 3x3 grid/);
-    // The structural layer contains no preselected spaces, no clusters, no narrative
-    // planning, and no surrogate minimum-interpretation rules besides the contract.
-    expect(text).not.toMatch(/Verified clusters/);
-    expect(text).not.toMatch(/narrative plan/i);
-    expect(text).not.toMatch(/development line/i);
-  });
-
-  it.each([
-    ["why", "Why has my plan stalled?"],
-    ["how", "How could my position change?"],
-  ])("passes %s questions through without imposing a yes/no format", (_, question) => {
-    const text = buildSimpleReadingPrompt(context("comprehensive", question, draw(9)));
-
-    expect(text).toContain(`User question:\n${question}`);
-    expect(text).not.toMatch(/short as the question allows/i);
-  });
-
-  it("keeps the system prompt free of the JSON schema and of topic-setting text", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Respond in the user's language/);
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("The question sets the topic");
+describe("model boundary: the prompt carries no interpretation rules", () => {
+  it("keeps the system prompt to the reader role and principles, without the JSON schema", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/experienced traditional Lenormand reader/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
   });
 
-  it("scales the token budget with the spread", () => {
-    const budgets = SPREAD_IDS.map((id) => getTokenBudget(CARD_COUNT[id]));
-    for (let i = 1; i < budgets.length; i++) expect(budgets[i]).toBeGreaterThanOrEqual(budgets[i - 1]);
-    expect(getTokenBudget(36)).toBeGreaterThan(getTokenBudget(3));
-  });
-});
-
-// ======================================================================================
-// THE UNIVERSAL PIPELINE: one it.each over every spread id
-// ======================================================================================
-
-describe("pipeline: one universal prompt for every spread", () => {
-  it.each(SPREAD_IDS as SpreadId[])("%s uses the same skeleton and the same four-field contract", (id) => {
-    const cards = draw(CARD_COUNT[id], 13);
-    const text = prompt(id, "Will I move house?", cards);
-
-    for (const skeleton of [
-      "User question:",
-      "Will I move house?",
-      "Structural facts (deterministic; complete for this spread):",
-      "Return only one JSON object with exactly these fields",
-      "Return only one JSON object",
-    ]) {
-      expect(text, id).toContain(skeleton);
-    }
-
-    // No person-binding block: every drawn card already appears in structural facts.
-    expect(text, id).not.toContain("Person bindings:");
-
-    for (const field of ['"answer": string', '"reading": string', '"patterns"', '"timing": string | null']) {
-      expect(text, id).toContain(field);
-    }
-
-    expect(text, id).not.toContain("Verified clusters");
-    expect(text, id).not.toContain('"relation"');
-    expect(text, id).not.toContain('"knight"');
-
-    // Each removed field was a per-spread judgement about how much a spread had to say.
-    for (const removed of ['"positiveFactors"', '"challenges"', '"development"', '"housesAndMirrors"', '"directAnswer"', '"keyPatterns"']) {
-      expect(text, id).not.toContain(removed);
-    }
-  });
-
-  it("embeds the structural layer verbatim rather than describing it separately", () => {
-    const ctx = context("grand-tableau", "Full picture?", draw(36));
-    expect(buildSimpleReadingPrompt(ctx)).toContain(buildSpreadFacts(ctx));
+  it("asks for the answer and reading as one JSON object", () => {
+    const text = prompt("comprehensive", "Q?", draw(9));
+    expect(text).toContain('{"answer": string, "reading": string}');
   });
 
   it("does not leak internal classification metadata into the prompt", () => {
     for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
       const text = prompt(id, "Will the situation resolve?", draw(count, 13));
-      expect(text, id).not.toMatch(/;\s*STRONG\b/);
-      expect(text, id).not.toMatch(/;\s*NEUTRAL\b/);
-      expect(text, id).not.toMatch(/;\s*WEAK\b/);
-      expect(text, id).not.toMatch(/;\s*timing:/i);
-    }
-  });
-});
-
-// ======================================================================================
-// FACTUAL VALIDATION: invented cards
-// ======================================================================================
-
-describe("factual validation: structured pattern labels", () => {
-  const drawn = [2, 6, 24, 25]; // Clover, Clouds, Heart, Ring
-  const base = {
-    answer: "The situation stays open.",
-    reading: "The spread shows movement without a firm conclusion.",
-    patterns: [] as { cards: string[]; meaning: string }[],
-    timing: null as string | null,
-  };
-  const answer = (overrides: Partial<typeof base> = {}) => SimpleAnswerSchema.parse({ ...base, ...overrides });
-  const ids = (matches: ReturnType<typeof findInventedCards>) => matches.map((match) => match.id);
-
-  it("accepts a reading that names only drawn cards", () => {
-    expect(
-      findInventedCards(
-        answer({
-          reading: "Clover beside Heart keeps a small emotional opening alive.",
-          patterns: [{ cards: ["Clover", "Heart"], meaning: "a small favourable opening." }],
-        }),
-        drawn,
-      ),
-    ).toEqual([]);
-  });
-
-  it("flags an undrawn card in a pattern label with its field and fragment", () => {
-    const matches = findInventedCards(answer({ patterns: [{ cards: ["Heart", "Tower"], meaning: "a collapse." }] }), drawn);
-    expect(ids(matches)).toContain(19);
-    expect(matches[0]).toMatchObject({ id: 19, name: "Tower", field: "pattern", patternIndex: 0 });
-    expect(matches[0].fragment).toContain("Tower");
-  });
-
-  it("does not scan prose mentions because they may be negations or refer to another spread", () => {
-    expect(
-      findInventedCards(
-        answer({
-          answer: "The Woman card is not present in this spread.",
-          reading: "The Scythe card appeared in the previous spread.",
-        }),
-        drawn,
-      ),
-    ).toEqual([]);
-  });
-
-  it("reports field and fragment for a pattern-label rejection", () => {
-    const matches = findInventedCards(
-      answer({ patterns: [{ cards: ["Clover", "Scythe"], meaning: "a sudden cut." }] }),
-      drawn,
-    );
-    expect(matches).toHaveLength(1);
-    expect(matches[0]).toMatchObject({ id: 10, field: "pattern", patternIndex: 0 });
-  });
-
-  it("flags only undrawn structured card labels across spread sizes", () => {
-    for (const [id, count] of Object.entries(CARD_COUNT) as [SpreadId, number][]) {
-      const cards = draw(count, 13).map((card, position) => ({
-        id: card.id,
-        name: card.name,
-        keywords: card.keywords,
-        coreMeaning: card.coreMeaning,
-        secondaryMeanings: card.secondaryMeanings,
-        meaningReviewStatus: card.meaningReviewStatus,
-        position,
-      }));
-      const drawnIds = cards.map((card) => card.id);
-      const undrawn = deck.find((card) => !drawnIds.includes(card.id));
-      const reading = answer({
-        patterns: [
-          { cards: [cards[0].name], meaning: "kept pattern" },
-          ...(undrawn ? [{ cards: [undrawn.name], meaning: "invented pattern" }] : []),
-        ],
-      });
-
-      const matches = findInventedCards(reading, drawnIds);
-      expect(matches.every((match) => match.field === "pattern"), id).toBe(true);
-      if (undrawn) {
-        expect(ids(matches), id).toEqual([undrawn.id]);
-        expect(matches[0].name, id).toBe(undrawn.name);
-      } else {
-        expect(matches, id).toEqual([]);
-      }
+      expect(text, id).not.toMatch(/;\s*(STRONG|NEUTRAL|WEAK)\b/);
+      expect(text, id).not.toMatch(/timing:/i);
     }
   });
 
-  describe("through the production path", () => {
-    const serviceOptions = (cards: { id: number; name: string }[]) => ({
-      context: {
-        cards,
-        layout: cards.length === 1
-          ? { type: "single" }
-          : { type: "linear-sentence", positions: cards.map((_, index) => ({ index, role: `Card ${index + 1}` })) },
-      } as unknown as ReadingContext,
-      model: {} as LanguageModel,
-      system: "system",
-      prompt: "prompt",
-      cardCount: cards.length,
-      maxTokens: 500,
-      timeoutMs: 5_000,
-    });
-
-    beforeEach(() => generateText.mockReset());
-
-    it("drops a pattern that names an undrawn card in a single generation", async () => {
-      generateText.mockResolvedValueOnce({
-        text: JSON.stringify({
-          answer: "It will not hold.",
-          reading: "The spread points elsewhere.",
-          patterns: [
-            { cards: ["Clover", "Heart"], meaning: "kept pattern" },
-            { cards: ["Clover", "Scythe"], meaning: "dropped pattern" },
-          ],
-        }),
-        finishReason: "stop",
-      });
-
-      const result = await generateReading(
-        serviceOptions([
-          { id: 2, name: "Clover" },
-          { id: 24, name: "Heart" },
-          { id: 6, name: "Clouds" },
-        ]),
-      );
-
-      expect(result.ok).toBe(true);
-      expect(result.ok && result.reading).toContain("kept pattern");
-      expect(result.ok && result.reading).not.toContain("dropped pattern");
-      expect(result.ok && result.droppedPatterns).toHaveLength(1);
-      expect(generateText).toHaveBeenCalledTimes(1);
-    });
-
-    it("serves prose that mentions a card absent from this spread", async () => {
-      generateText.mockResolvedValueOnce({
-        text: JSON.stringify({
-          answer: "The Woman card is not present in this spread.",
-          reading: "That card appeared in the previous spread, not this one.",
-          patterns: [],
-        }),
-        finishReason: "stop",
-      });
-
-      const result = await generateReading(
-        serviceOptions([
-          { id: 2, name: "Clover" },
-          { id: 24, name: "Heart" },
-        ]),
-      );
-
-      expect(result.ok).toBe(true);
-      expect(result.ok && result.reading).toContain("The Woman card is not present in this spread.");
-    });
-
-    it("returns the reading when the model stays inside the drawn set", async () => {
-      generateText.mockResolvedValueOnce({
-        text: JSON.stringify({
-          answer: "It stays open.",
-          reading: "A small favourable opening remains.",
-          patterns: [{ cards: ["Clover", "Heart"], meaning: "a small favourable opening." }],
-        }),
-        finishReason: "stop",
-      });
-
-      const result = await generateReading(
-        serviceOptions([
-          { id: 2, name: "Clover" },
-          { id: 24, name: "Heart" },
-        ]),
-      );
-
-      expect(result.ok).toBe(true);
-      expect(result.ok && result.reading).toContain("It stays open.");
-      expect(result.ok && result.droppedPatterns).toEqual([]);
-    });
+  it("gives the largest spread the largest output budget", () => {
+    expect(getTokenBudget(36)).toBeGreaterThan(getTokenBudget(3));
+    expect(getTokenBudget(1)).toBeLessThan(getTokenBudget(36));
   });
 });
 
-// ======================================================================================
-// END-TO-END REGRESSION: 1, 3, 5, 9 AND 36 CARDS
-// ======================================================================================
+describe("pipeline: one model call per reading, parsed and rendered", () => {
+  const serviceOptions = () => ({
+    model: {} as LanguageModel,
+    system: "system",
+    prompt: "prompt",
+    maxTokens: 500,
+    timeoutMs: 5_000,
+  });
 
-describe("pipeline: every spread size generates once and serves verified patterns", () => {
   beforeEach(() => generateText.mockReset());
 
   it.each(SPREAD_IDS as SpreadId[])("%s serves a valid reading in one provider call", async (id) => {
-    const ctx = context(id, "Will I move?");
-    const first = ctx.cards[0].name;
-
     generateText.mockResolvedValueOnce({
-      text: JSON.stringify({
-        answer: "Yes, movement is supported.",
-        reading: "A steady movement runs through the spread.",
-        patterns: [{ cards: [first], meaning: "a step forward" }],
-        timing: null,
-      }),
+      text: JSON.stringify({ answer: "Yes, movement is supported.", reading: "A steady movement runs through the spread." }),
       finishReason: "stop",
     });
 
-    const result = await generateReading({
-      context: ctx,
-      model: {} as LanguageModel,
-      system: "system",
-      prompt: "prompt",
-      cardCount: ctx.cards.length,
-      maxTokens: 500,
-      timeoutMs: 5_000,
-    });
+    const result = await generateReading(serviceOptions());
 
     expect(result.ok, id).toBe(true);
-    expect(result.ok && result.reading, id).toContain("step forward");
-    expect(result.ok && result.droppedPatterns, id).toEqual([]);
+    expect(result.ok && result.reading, id).toContain("## Answer\nYes, movement is supported.");
     expect(generateText, id).toHaveBeenCalledTimes(1);
   });
 });

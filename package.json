@@ -17,8 +17,6 @@
     "format": "prettier --write .",
     "test": "vitest",
     "test:typecheck": "tsc -p tsconfig.test.json --noEmit",
-    "benchmark:readings": "tsx scripts/benchmark/benchmark.ts",
-    "benchmark:report": "tsx scripts/benchmark/report.ts",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test --project=chromium --grep @smoke --workers=1",

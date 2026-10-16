@@ -1,4 +1,12 @@
-export const FOLLOWUP_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader. Answer the active follow-up question using the complete fixed spread, classical card meanings, positions and combinations. Answer directly in relation to the follow-up question. Let the cards determine the interpretation, whether positive, negative or mixed. The cards and positions are fixed; use only spatial relationships supported by the supplied coordinates. Do not rely on previous readings, predictions, outcomes, notes, or personal history. Do not invent cards or unsupported concrete events. Respond in the language of the follow-up question.`;
+import { SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
+
+/**
+ * The follow-up uses the same reader and principles as the reading. It differs only in that
+ * the spread is fixed and the answer addresses the active follow-up question.
+ */
+export const FOLLOWUP_SYSTEM_PROMPT = `${SIMPLE_LENORMAND_SYSTEM_PROMPT}
+
+This is a follow-up to an existing spread. The cards and positions are fixed; use only spatial relationships supported by the supplied grid. Answer the active follow-up question, not a new reading, and do not rely on previous readings or personal history.`;
 
 export interface FollowupPromptInput {
   spreadFacts: string;
@@ -25,5 +33,9 @@ export function buildFollowupRequestPayload(input: FollowupRequestPayloadInput) 
 }
 
 export function buildFollowupPrompt(input: FollowupPromptInput): string {
-  return `Respond in the language of the active follow-up question.\n\nFixed spread facts:\n${input.spreadFacts}\n\nOriginal question: ${input.originalQuestion || "(none)"}\nActive follow-up: ${input.activeQuestion}`;
+  return [
+    `Original question:\n${input.originalQuestion || "(none)"}`,
+    `Active follow-up question:\n${input.activeQuestion}`,
+    input.spreadFacts,
+  ].join("\n\n");
 }

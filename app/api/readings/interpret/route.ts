@@ -88,42 +88,25 @@ export async function POST(request: Request) {
 
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
     const prompt = buildSimpleReadingPrompt(context);
-    const maxTokens = getTokenBudget(cardCount);
     modelTimeoutMs = cardCount >= GRAND_TABLEAU_CARD_COUNT ? GRAND_TABLEAU_GENERATION_TIMEOUT_MS : READING_GENERATION_TIMEOUT_MS;
     generationStartedAt = Date.now();
-    const serviceResult = await generateReading({ context, model: readingModel, system: SIMPLE_LENORMAND_SYSTEM_PROMPT, prompt, cardCount, maxTokens, timeoutMs: modelTimeoutMs, signal: request.signal });
+    const serviceResult = await generateReading({
+      model: readingModel,
+      system: SIMPLE_LENORMAND_SYSTEM_PROMPT,
+      prompt,
+      maxTokens: getTokenBudget(cardCount),
+      timeoutMs: modelTimeoutMs,
+      signal: request.signal,
+    });
 
-    if (!serviceResult.ok && serviceResult.reason === "empty-output") {
-      console.error("interpret: empty model output", {
-        phase: "initial",
-        spreadId: validated.spreadId,
-        cardCount: cardCount,
-        finishReason: "empty-output",
-        elapsedMs: Date.now() - startedAt,
-      });
-      return generationFailedResponse(rateLimitResult, "empty-output");
-    }
     if (!serviceResult.ok) {
-      console.error("interpret: structured output failed", {
-        phase: serviceResult.reason,
+      console.error("interpret: generation rejected", {
+        reason: serviceResult.reason,
         spreadId: validated.spreadId,
-        cardCount: cardCount,
-        issues: serviceResult.issues.map((i) => ({ type: i.type, message: i.message, field: i.field, fragment: i.fragment })),
-        rawShape: serviceResult.diagnostics?.rawShape,
-        finishReason: serviceResult.diagnostics?.finishReason,
+        cardCount,
         elapsedMs: Date.now() - startedAt,
       });
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
-    }
-
-    // Dropped patterns are not fatal but stay observable so the rate can be tracked.
-    if (serviceResult.droppedPatterns.length > 0) {
-      console.warn("interpret: dropped patterns", {
-        spreadId: validated.spreadId,
-        cardCount: cardCount,
-        dropped: serviceResult.droppedPatterns,
-        elapsedMs: Date.now() - startedAt,
-      });
     }
 
     await incrementReadingCount();
