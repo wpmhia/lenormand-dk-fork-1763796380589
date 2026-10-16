@@ -20,8 +20,12 @@ export async function OPTIONS() {
 }
 
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
-/** Thinking reserve plus a short answer; the route's maxDuration is 30s, so the call stays at 25s. */
-const FOLLOWUP_TOKEN_BUDGET = 4_256;
+/**
+ * Thinking shares this budget with the answer, so it matches the reading budget for the same
+ * spread size (a 9-card reading exhausted 4k tokens). The route's maxDuration is 30s; the call
+ * stays under 25s so a slow generation fails with a clear timeout instead of a platform kill.
+ */
+const FOLLOWUP_TOKEN_BUDGET = 12_288;
 const FOLLOWUP_TIMEOUT_MS = 25_000;
 const RATE_LIMIT = 5;
 const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
@@ -121,18 +125,35 @@ export async function POST(request: Request) {
       activeQuestion: followUp,
     });
 
+    const startedAt = Date.now();
     const result = await generateText({
       model: readingModel,
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
       maxOutputTokens: FOLLOWUP_TOKEN_BUDGET,
       providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
-      maxRetries: 1,
+      maxRetries: 0,
       abortSignal: request.signal,
       timeout: { totalMs: FOLLOWUP_TIMEOUT_MS },
     });
 
-    const text = result.text ?? "";
+    const text = (result.text ?? "").trim();
+    if (!text) {
+      // Logged with the same safe fields as the reading path; the client gets a generation error.
+      console.error("followup: empty model output", {
+        cause: result.finishReason === "length" ? "output-budget-exhausted" : "unknown",
+        finishReason: result.finishReason,
+        maxTokens: FOLLOWUP_TOKEN_BUDGET,
+        outputTokens: result.usage?.outputTokens,
+        reasoningTokens: result.usage?.outputTokenDetails?.reasoningTokens,
+        textTokens: result.usage?.outputTokenDetails?.textTokens,
+        elapsedMs: Date.now() - startedAt,
+      });
+      return new Response(JSON.stringify({ error: "Generation failed", reason: "empty-output" }), {
+        status: 502,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     return new Response(text, {
       status: 200,

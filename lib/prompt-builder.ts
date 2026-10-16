@@ -17,6 +17,10 @@ Allow the reading to be positive, negative, or mixed. Do not force optimism or p
 
 Use the complete spread rather than treating one negative card or the final card as an automatic verdict.
 
+Distinguish uncertainty from evidence of deception. Do not infer a third party's dishonesty, infidelity or hidden motives unless a clearly supporting combination of cards shows it. Classical negative meanings remain valid when the spread supports them.
+
+Interpret card meanings symbolically and in the context of the question. Do not turn metaphorical meanings into literal contracts, accusations, obligations, or specific actions unless clearly supported by the cards and question.
+
 Write naturally in the user's language, with a direct answer followed by a coherent interpretation.`;
 
 /** Output budget covering DeepSeek's reasoning tokens and the final JSON answer. */
@@ -104,11 +108,9 @@ function structure(cards: ReadingContext["cards"]): string {
       return "Spread: a single card, read directly in relation to the question.";
     case 9:
       return [
-        "Spread: 3x3 grid. The centre card (row 2, column 2) is the focal point.",
+        "Spread: 3x3 grid. Rows run top to bottom, columns left to right. The centre card (row 2, column 2) is the focal point.",
         ...rowsOf(cards, PETIT_SIZE, PETIT_SIZE),
-        "Immediate neighbours of each card (a card not listed is not adjacent):",
-        ...neighbourLines(cards, PETIT_SIZE, PETIT_SIZE),
-        "Numbering is position only, not time order.",
+        "Grid positions are not time order. The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.",
       ].join("\n");
     case 36:
       return [

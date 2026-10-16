@@ -89,13 +89,13 @@ describe("geometry: spread structure is computed from coordinates", () => {
     expect(houses).toHaveLength(36);
   });
 
-  it("gives the Petit Tableau's centre card its eight directional neighbours", () => {
+  it("gives the Petit Tableau one unambiguous grid with the centre identified", () => {
     const cards = draw(9, 5);
     const text = prompt("comprehensive", "Geometry?", cards);
-    const centreLine = text.split("\n").find((line) => line.startsWith(`- ${cards[4].name} (row 2, column 2)`))!;
-    const neighbours = centreLine.slice(centreLine.indexOf("): ") + 3).split(", ");
-    expect(neighbours).toHaveLength(8);
-    expect(new Set(neighbours.map((n) => n.match(/\((.+)\)$/)?.[1])).size).toBe(8);
+    expect(text).toContain(`Row 2: ${cards[3].name} | ${cards[4].name} | ${cards[5].name}`);
+    expect(text).toContain("The centre card (row 2, column 2) is the focal point");
+    expect(text).not.toContain("Immediate neighbours of each card");
+    expect(text).toContain("The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.");
   });
 
   it("states adjacency only for linear and grid spreads, never a generic relation list", () => {

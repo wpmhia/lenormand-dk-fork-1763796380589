@@ -148,12 +148,8 @@ describe("Petit Tableau: 3x3 grid, centre and neighbours", () => {
     expect(prompt).toContain(`Row 2: ${cards[3].name} | ${cards[4].name} | ${cards[5].name}`);
   });
 
-  it("gives the centre eight neighbours and a corner three", () => {
-    const neighbours = (line: string) => line.slice(line.indexOf("): ") + 3).split(", ");
-    const centreLine = prompt.split("\n").find((l) => l.startsWith(`- ${cards[4].name} (row 2, column 2)`))!;
-    expect(neighbours(centreLine)).toHaveLength(8);
-    const cornerLine = prompt.split("\n").find((l) => l.startsWith(`- ${cards[0].name} (row 1, column 1)`))!;
-    expect(neighbours(cornerLine)).toHaveLength(3);
+  it("does not repeat the grid as a second neighbour list", () => {
+    expect(prompt).not.toContain("Immediate neighbours of each card");
   });
 });
 

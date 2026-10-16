@@ -40,6 +40,20 @@ async function readErrorMessage(response: Response, fallback: string): Promise<s
   }
 }
 
+/** Only errors thrown by followUpErrorMessage are shown verbatim; network errors are not. */
+function isOwnFollowUpError(err: unknown): err is Error {
+  return err instanceof Error && err.name === "Error" && !err.message.includes("fetch");
+}
+
+/** A safe, specific message for a failed follow-up, chosen by HTTP status. */
+function followUpErrorMessage(status: number, serverMessage: string): string {
+  if (status === 429) return "You've asked a lot of questions in a short time. Please wait a moment and try again.";
+  if (status === 504) return "The follow-up took too long to answer. Please try again.";
+  if (status === 503) return "Follow-up questions are not available right now.";
+  if (status === 400) return serverMessage || "This follow-up question could not be processed.";
+  return "We couldn't generate a follow-up answer. Please try again.";
+}
+
 export function useAIAnalysis(
   question: string,
   drawnCards: ReadingCard[],
@@ -163,7 +177,7 @@ export function useAIAnalysis(
         });
 
         if (!response.ok) {
-          throw new Error(await readErrorMessage(response, "Request failed"));
+          throw new Error(followUpErrorMessage(response.status, await readErrorMessage(response, "")));
         }
 
         fullResponse = await response.text();
@@ -179,7 +193,7 @@ export function useAIAnalysis(
         if (err.name === "AbortError") return;
         if (followUpAbortControllerRef.current === controller) {
           setFollowUpResponse(
-            fullResponse || "Sorry, I couldn't process your follow-up question. Please try again.",
+            fullResponse || (isOwnFollowUpError(err) ? err.message : "We couldn't generate a follow-up answer. Please try again."),
           );
         }
       } finally {
