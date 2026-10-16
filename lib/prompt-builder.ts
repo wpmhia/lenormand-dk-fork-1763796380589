@@ -126,8 +126,11 @@ function structure(cards: ReadingContext["cards"]): string {
         "Immediate neighbours of each card (horizontal, vertical or diagonal; no row wrapping; a card not listed is not adjacent). A house relation is not a spatial one:",
         ...neighbourLines(cards, GT_ROWS, GT_COLUMNS),
       ].join("\n");
-    default:
-      return `Spread: ${cards.length} cards in a line, read left to right. Adjacent cards are neighbours; there is no other geometry.`;
+    default: {
+      const middle = Math.floor(cards.length / 2);
+      const focal = cards.length % 2 === 1 ? ` The central card (position ${middle + 1}, ${cardName(cards[middle])}) is the focal point.` : "";
+      return `Spread: ${cards.length} cards in a line, read left to right. Adjacent cards are neighbours; there is no other geometry.${focal}`;
+    }
   }
 }
 
