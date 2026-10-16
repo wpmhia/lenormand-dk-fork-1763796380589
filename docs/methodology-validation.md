@@ -6,7 +6,7 @@ Status: **Deterministic structure and source provenance implemented; one live ni
 
 - All 36 canonical cards have concise source-compared core entries and per-card source IDs; source definitions are kept in `public/data/card-meaning-sources.json`. Their status explicitly remains `expert review pending`.
 - `public/data/canonical-pairs.json` exists and currently has zero reviewed pairs. Prior uncited pair phrases are archived and excluded from the public/runtime catalog and generation prompts.
-- Prompt-generation tests cover the preserved four-field schema, unconfirmed question assumptions, core/secondary meaning separation, and ordered line guidance.
+- Prompt-generation tests cover the two-field schema (reading generated before answer), unconfirmed question assumptions, core/secondary meaning separation, and ordered line guidance.
 - Geometry tests cover all five spread sizes, Petit Tableau centre/rows/columns/diagonals, Grand Tableau rows/houses, direct neighbours, diagonal adjacency, and no row wrapping.
 - Primary request normalization ignores extra history/notes fields. Follow-up prompt construction accepts only the fixed spread, original question, and active follow-up; UI conversation turns are not sent to the model.
 - The app UI and generated prose are English-only; no translation or localization layer is used.

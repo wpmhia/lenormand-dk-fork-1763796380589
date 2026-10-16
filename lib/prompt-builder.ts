@@ -9,19 +9,17 @@ import type { ReadingContext } from "@/lib/reading-context";
  */
 export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand reader.
 
-Interpret the drawn cards using their classical meanings, positions, combinations, and the user's question.
+Interpret the drawn cards in the context of the user's exact question, using their classical meanings, combinations, order and spread geometry.
 
-Read the spread as a connected whole. Identify its central theme and give a clear, specific answer supported by the most relevant cards.
+Read the spread as a connected whole. Choose the strongest interpretation supported by the cards, while acknowledging meaningful ambiguity or conflicting indications.
 
-Allow the reading to be positive, negative, or mixed. Do not force optimism or pessimism. Do not mechanically list every pair or invent events, motives, or facts about real people.
+Give a clear and specific symbolic reading. Do not force a yes/no conclusion when the cards are inconclusive. Do not invent events, motives, identities or consequences unsupported by the spread.
 
-Use the complete spread rather than treating one negative card or the final card as an automatic verdict.
+Only assign a specific identity to Man or Woman when the question or the explicitly selected reading focus makes that identity clear.
 
-Distinguish uncertainty from evidence of deception. Do not infer a third party's dishonesty, infidelity or hidden motives unless a clearly supporting combination of cards shows it. Classical negative meanings remain valid when the spread supports them.
+Do not use the absence of particular cards as evidence. Avoid generic coaching and unnecessary psychological speculation.
 
-Interpret card meanings symbolically and in the context of the question. Do not turn metaphorical meanings into literal contracts, accusations, obligations, or specific actions unless clearly supported by the cards and question.
-
-Write naturally in the user's language, with a direct answer followed by a coherent interpretation.`;
+Write naturally in the user's language.`;
 
 /** Output budget covering DeepSeek's reasoning tokens and the final JSON answer. */
 export function getTokenBudget(cardCount: number): number {
@@ -61,7 +59,13 @@ function orderedCards(cards: ReadingContext["cards"]): string {
 }
 
 function coreMeanings(cards: ReadingContext["cards"]): string {
-  const lines = cards.filter((card) => card.coreMeaning).map((card) => `- ${cardName(card)}: ${card.coreMeaning}`);
+  const lines = cards
+    .filter((card) => card.coreMeaning)
+    .map((card) => {
+      const secondary = (card.secondaryMeanings ?? []).filter(Boolean);
+      const extra = secondary.length ? ` Secondary (context-dependent): ${secondary.join(" ")}` : "";
+      return `- ${cardName(card)}: ${card.coreMeaning}${extra}`;
+    });
   return lines.length ? `Core meanings:\n${lines.join("\n")}` : "";
 }
 
@@ -108,7 +112,7 @@ function structure(cards: ReadingContext["cards"]): string {
       return "Spread: a single card, read directly in relation to the question.";
     case 9:
       return [
-        "Spread: 3x3 grid. Rows run top to bottom, columns left to right. The centre card (row 2, column 2) is the focal point.",
+        "Spread: 3x3 grid. Rows run top to bottom, columns left to right. The centre card (row 2, column 2) is the focal point: read the surrounding cards in relation to it.",
         ...rowsOf(cards, PETIT_SIZE, PETIT_SIZE),
         "Grid positions are not time order. The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.",
       ].join("\n");
@@ -163,6 +167,6 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
   return [
     `User question:\n${sanitizeQuestion(context.question)}`,
     buildSpreadFacts(context),
-    `Return only one JSON object with exactly these fields: {"answer": string, "reading": string}. "answer" is the direct answer in one or two sentences; "reading" is the coherent interpretation in plain prose. Do not use Markdown fences.`,
+    `Return only one JSON object with exactly these fields, in this order: {"reading": string, "answer": string}. "reading" is the coherent interpretation in plain prose, worked out from the spread first; "answer" is the direct answer to the question in one or two sentences, drawn from that reading. Do not use Markdown fences.`,
   ].join("\n\n");
 }

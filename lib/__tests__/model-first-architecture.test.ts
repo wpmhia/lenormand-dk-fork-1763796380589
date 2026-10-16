@@ -132,9 +132,18 @@ describe("model boundary: the prompt carries no interpretation rules", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
   });
 
-  it("asks for the answer and reading as one JSON object", () => {
+  it("asks for the reading before the answer as one JSON object", () => {
     const text = prompt("comprehensive", "Q?", draw(9));
-    expect(text).toContain('{"answer": string, "reading": string}');
+    expect(text).toContain('{"reading": string, "answer": string}');
+    expect(text.indexOf('"reading": string')).toBeLessThan(text.indexOf('"answer": string'));
+  });
+
+  it("passes secondary meanings of drawn cards into the prompt", () => {
+    const cards = draw(3, 0).map((card, index) =>
+      index === 0 ? { ...card, secondaryMeanings: ["Context-specific secondary sense."] } : card,
+    );
+    const text = prompt("sentence-3", "Q?", cards);
+    expect(text).toContain("Secondary (context-dependent): Context-specific secondary sense.");
   });
 
   it("does not leak internal classification metadata into the prompt", () => {

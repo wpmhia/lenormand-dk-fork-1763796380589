@@ -42,7 +42,7 @@ For line spreads, preserve order and read left-to-right; do not assume a pair is
 
 ## Output and validation boundary
 
-The primary output stays `{ answer, reading, patterns, timing }`. Deterministic validation enforces structure and canonical drawn-card labels; it does not prove the prose spatially or semantically correct. The source-reviewed geometry tests and independent quality review are therefore separate. No second interpretation engine or regex-based relationship/affair detector is used.
+The primary output is `{ reading, answer }`, generated in that order: the reading is worked out from the spread first, and the answer is drawn from it. The interface renders Answer above Reading. Deterministic validation enforces structure and canonical drawn-card labels; it does not prove the prose spatially or semantically correct. The source-reviewed geometry tests and independent quality review are therefore separate. No second interpretation engine or regex-based relationship/affair detector is used.
 
 ## Source ledger
 

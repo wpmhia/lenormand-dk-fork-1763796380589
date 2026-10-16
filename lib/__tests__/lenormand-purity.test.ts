@@ -57,7 +57,8 @@ function getCardCount(spreadId: string): number {
   if (spreadId === "grand-tableau") return 36;
   if (spreadId === "comprehensive") return 9;
   if (spreadId === "sentence-5") return 5;
-  return 3;
+  if (spreadId === "sentence-3") return 3;
+  return 1;
 }
 
 const systemPrompts = [SIMPLE_LENORMAND_SYSTEM_PROMPT];
