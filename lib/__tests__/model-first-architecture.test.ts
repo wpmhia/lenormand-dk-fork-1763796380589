@@ -59,6 +59,14 @@ describe("prompt handoff: every drawn card reaches the model in draw order", () 
   it.each(Object.entries(CARD_COUNT) as [SpreadId, number][])("%s supplies every card in order", (id, count) => {
     const cards = draw(count, 13);
     const text = prompt(id, "Q?", cards);
+    if (count === 9) {
+      // The 3x3 grid is the only card list for nine cards: each row holds its three cards in order.
+      for (let row = 0; row < 3; row++) {
+        const names = cards.slice(row * 3, row * 3 + 3).map((card) => card.name);
+        expect(text, `comprehensive row ${row + 1}`).toContain(`Row ${row + 1}: ${names.join(" | ")}`);
+      }
+      return;
+    }
     let cursor = -1;
     for (const [index, card] of cards.entries()) {
       const at = text.indexOf(`${index + 1}. ${card.name}`, cursor + 1);

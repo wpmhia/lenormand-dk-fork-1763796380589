@@ -146,8 +146,10 @@ function significatorFocus({ significatorPreference, cards }: ReadingContext): s
 
 /** The spread facts shared by the reading and the follow-up. */
 export function buildSpreadFacts(context: ReadingContext): string {
+  // The 3x3 Petit Tableau is supplied only as its grid: a numbered list would read as a sequence.
+  const cardList = context.cards.length === 9 ? "" : `Drawn cards, in order:\n${orderedCards(context.cards)}`;
   return [
-    `Drawn cards, in order:\n${orderedCards(context.cards)}`,
+    cardList,
     coreMeanings(context.cards),
     structure(context.cards),
     significatorFocus(context),
