@@ -4,8 +4,9 @@ FROM node:20-alpine AS base
 # Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund --legacy-peer-deps
+RUN npm install -g bun@1.4.0
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 # Build the app
 FROM deps AS builder
