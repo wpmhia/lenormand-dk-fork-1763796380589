@@ -82,6 +82,21 @@ function rowsOf(cards: ReadingContext["cards"], rows: number, columns: number): 
   });
 }
 
+/** The columns of a square grid, read top to bottom, computed from coordinates. */
+function columnsOf(cards: ReadingContext["cards"], size: number): string[] {
+  return Array.from({ length: size }, (_, col) => {
+    const names = Array.from({ length: size }, (_, row) => cardName(cards[row * size + col]));
+    return `Column ${col + 1}: ${names.join(" | ")}`;
+  });
+}
+
+/** The two diagonals of a square grid: top-left to bottom-right, and top-right to bottom-left. */
+function diagonalsOf(cards: ReadingContext["cards"], size: number): string[] {
+  const main = Array.from({ length: size }, (_, i) => cardName(cards[i * size + i]));
+  const anti = Array.from({ length: size }, (_, i) => cardName(cards[i * size + (size - 1 - i)]));
+  return [`Diagonal (top-left to bottom-right): ${main.join(" | ")}`, `Diagonal (top-right to bottom-left): ${anti.join(" | ")}`];
+}
+
 /**
  * Immediate neighbours of each grid cell, computed from coordinates. Only real cells count: no
  * row wrapping, and a card not listed is not adjacent. Kept to one line per card.
@@ -114,6 +129,8 @@ function structure(cards: ReadingContext["cards"]): string {
       return [
         "Spread: 3x3 grid. Rows run top to bottom, columns left to right. The centre card (row 2, column 2) is the focal point: read the surrounding cards in relation to it.",
         ...rowsOf(cards, PETIT_SIZE, PETIT_SIZE),
+        ...columnsOf(cards, PETIT_SIZE),
+        ...diagonalsOf(cards, PETIT_SIZE),
         "Grid positions are not time order. The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.",
       ].join("\n");
     case 36:
