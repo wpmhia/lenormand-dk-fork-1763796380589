@@ -4,10 +4,10 @@ import { SimpleAnswerSchema, renderSimpleAnswer } from "@/lib/simple-answer";
 /**
  * DeepSeek thinking mode is always on for readings. It is fixed in code, not read from the
  * environment, so a stale override cannot silently switch it off in production. Reasoning
- * tokens share `maxOutputTokens` with the JSON body; prompt-builder reserves room for them.
+ * tokens share `maxOutputTokens` with the JSON body; prompt-builder sizes that budget for both.
  */
 export const READING_THINKING = { type: "enabled" as const };
-export const READING_REASONING_EFFORT = "high" as const;
+export const READING_REASONING_EFFORT = "low" as const;
 
 export type ReadingServiceResult =
   | { ok: true; reading: string }
@@ -24,6 +24,7 @@ export interface ReadingServiceOptions {
 
 /** One model call, one parse path: the text must be a JSON object matching the answer schema. */
 export async function generateReading(options: ReadingServiceOptions): Promise<ReadingServiceResult> {
+  const startedAt = Date.now();
   const result = await generateText({
     model: options.model,
     system: options.system,
@@ -36,11 +37,39 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   });
 
   const raw = (result.text ?? "").trim();
-  if (!raw) return { ok: false, reason: "empty-output" };
+  if (!raw) {
+    logEmptyOutput(result, Date.now() - startedAt, options.maxTokens);
+    return { ok: false, reason: "empty-output" };
+  }
 
   const parsed = parseAnswer(raw);
   if (!parsed) return { ok: false, reason: "invalid-output" };
   return { ok: true, reading: renderSimpleAnswer(parsed) };
+}
+
+/**
+ * Logs diagnostics for an empty response: token counts, finish reason and timing only. The
+ * question, cards, reasoning text, raw output and credentials are never logged. A `length`
+ * finish means the output budget was exhausted, which is the known cause; any other finish
+ * reason leaves the cause unknown.
+ */
+function logEmptyOutput(
+  result: {
+    finishReason: string;
+    usage?: { outputTokens?: number; outputTokenDetails?: { textTokens?: number; reasoningTokens?: number } };
+  },
+  elapsedMs: number,
+  maxTokens: number,
+): void {
+  console.error("reading: empty model output", {
+    cause: result.finishReason === "length" ? "output-budget-exhausted" : "unknown",
+    finishReason: result.finishReason,
+    maxTokens,
+    outputTokens: result.usage?.outputTokens,
+    reasoningTokens: result.usage?.outputTokenDetails?.reasoningTokens,
+    textTokens: result.usage?.outputTokenDetails?.textTokens,
+    elapsedMs,
+  });
 }
 
 /** Parses the model's JSON object. Markdown fences are removed once; nothing else is recovered. */

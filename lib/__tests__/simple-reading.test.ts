@@ -75,6 +75,48 @@ describe("generation: one model call, one parse path", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
+  it("logs budget exhaustion with token counts and no content when reasoning consumed the output", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    generateText.mockResolvedValueOnce({
+      text: "",
+      finishReason: "length",
+      usage: { outputTokens: 12288, outputTokenDetails: { reasoningTokens: 12200, textTokens: 88 } },
+    });
+
+    const result = await generateReading({ ...options(), maxTokens: 12288 });
+
+    expect(result).toEqual({ ok: false, reason: "empty-output" });
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+    const [message, fields] = errorSpy.mock.calls[0];
+    expect(message).toBe("reading: empty model output");
+    expect(fields).toEqual({
+      cause: "output-budget-exhausted",
+      finishReason: "length",
+      maxTokens: 12288,
+      outputTokens: 12288,
+      reasoningTokens: 12200,
+      textTokens: 88,
+      elapsedMs: expect.any(Number),
+    });
+    errorSpy.mockRestore();
+  });
+
+  it("returns a normal successful reading without logging an empty-output error", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    generateText.mockResolvedValueOnce({
+      text: JSON.stringify(validOutput),
+      finishReason: "stop",
+      usage: { outputTokens: 900, outputTokenDetails: { reasoningTokens: 700, textTokens: 200 } },
+    });
+
+    const result = await generateReading(options());
+
+    expect(result.ok).toBe(true);
+    expect(result.ok && result.reading).toBe(renderSimpleAnswer(validOutput));
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
   it("reports truncated output as invalid without a second call", async () => {
     generateText.mockResolvedValueOnce(textOutput('{"answer":"A cautious week ahead', "length"));
 
@@ -109,7 +151,7 @@ describe("generation: one model call, one parse path", () => {
 
     const call = generateText.mock.calls[0][0];
     expect(call.providerOptions.deepseek.thinking).toEqual({ type: "enabled" });
-    expect(call.providerOptions.deepseek.reasoningEffort).toBe("high");
+    expect(call.providerOptions.deepseek.reasoningEffort).toBe("low");
     expect(call.timeout).toEqual({ totalMs: 5_000 });
     expect(call.maxRetries).toBe(0);
   });

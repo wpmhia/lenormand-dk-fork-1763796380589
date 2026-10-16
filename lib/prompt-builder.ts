@@ -19,17 +19,13 @@ Use the complete spread rather than treating one negative card or the final card
 
 Write naturally in the user's language, with a direct answer followed by a coherent interpretation.`;
 
-/** Output budget per spread: the JSON answer plus a fixed reserve for DeepSeek's reasoning tokens. */
-const REASONING_RESERVE_TOKENS = 4_000;
-
+/** Output budget covering DeepSeek's reasoning tokens and the final JSON answer. */
 export function getTokenBudget(cardCount: number): number {
-  let jsonBudget: number;
-  if (cardCount <= 1) jsonBudget = 800;
-  else if (cardCount <= 3) jsonBudget = 1_100;
-  else if (cardCount <= 5) jsonBudget = 1_400;
-  else if (cardCount <= 9) jsonBudget = 2_000;
-  else jsonBudget = 2_600;
-  return jsonBudget + REASONING_RESERVE_TOKENS;
+  if (cardCount <= 1) return 4096;
+  if (cardCount <= 3) return 6144;
+  if (cardCount <= 5) return 8192;
+  if (cardCount <= 9) return 12288;
+  return 16384;
 }
 
 export interface AIReadingResponse {
