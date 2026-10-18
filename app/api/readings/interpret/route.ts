@@ -10,7 +10,7 @@ import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
-import { generateReading } from "@/lib/reading-service";
+import { generateReading, isTimeoutError } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, GRAND_TABLEAU_GENERATION_TIMEOUT_MS, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
     }
     const clientAborted = request.signal.aborted;
     const providerAborted = error.name === "ResponseAborted";
-    const isTimeout = error.name === "TimeoutError" || error.name === "AbortError" || error.message?.includes("abort") || error.message?.includes("timeout");
+    const isTimeout = isTimeoutError(error);
     if (clientAborted) {
       return new Response(null, { status: 499 });
     }

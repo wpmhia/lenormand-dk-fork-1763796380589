@@ -6,8 +6,7 @@ import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
-import { READING_THINKING, READING_REASONING_EFFORT } from "@/lib/reading-service";
-import { generateText } from "ai";
+import { generateModelText, isTimeoutError } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, MAX_QUESTION_LENGTH } from "@/lib/constants";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
@@ -126,37 +125,25 @@ export async function POST(request: Request) {
       activeQuestion: followUp,
     });
 
-    const startedAt = Date.now();
-    const result = await generateText({
+    // Same shared model service as the reading path; only the accepted output format differs.
+    const generated = await generateModelText({
       model: readingModel,
       system: FOLLOWUP_SYSTEM_PROMPT,
       prompt,
-      maxOutputTokens: FOLLOWUP_TOKEN_BUDGET,
-      providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
-      maxRetries: 0,
-      abortSignal: request.signal,
-      timeout: { totalMs: FOLLOWUP_TIMEOUT_MS },
+      maxTokens: FOLLOWUP_TOKEN_BUDGET,
+      timeoutMs: FOLLOWUP_TIMEOUT_MS,
+      signal: request.signal,
+      logLabel: "followup",
     });
 
-    const text = (result.text ?? "").trim();
-    if (!text) {
-      // Logged with the same safe fields as the reading path; the client gets a generation error.
-      console.error("followup: empty model output", {
-        cause: result.finishReason === "length" ? "output-budget-exhausted" : "unknown",
-        finishReason: result.finishReason,
-        maxTokens: FOLLOWUP_TOKEN_BUDGET,
-        outputTokens: result.usage?.outputTokens,
-        reasoningTokens: result.usage?.outputTokenDetails?.reasoningTokens,
-        textTokens: result.usage?.outputTokenDetails?.textTokens,
-        elapsedMs: Date.now() - startedAt,
-      });
-      return new Response(JSON.stringify({ error: "Generation failed", reason: "empty-output" }), {
+    if (!generated.ok) {
+      return new Response(JSON.stringify({ error: "Generation failed", reason: generated.reason }), {
         status: 502,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    return new Response(text, {
+    return new Response(generated.text, {
       status: 200,
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
@@ -182,7 +169,7 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
-    const isTimeout = error?.name === "AbortError" || error?.name === "TimeoutError" || error.message?.includes("timed out");
+    const isTimeout = isTimeoutError(error);
     return new Response(
       JSON.stringify({ error: isTimeout ? "Response timed out" : "Processing failed" }),
       { status: isTimeout ? 504 : 500, headers: { "Content-Type": "application/json", ...corsHeaders } },

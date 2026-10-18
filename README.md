@@ -6,7 +6,7 @@ A Lenormand card reading web application built with Next.js 14 and TypeScript.
 
 - 36 Lenormand cards with detailed meanings
 - Multiple reading spreads (3-card, 9-card, Grand Tableau)
-- AI-powered interpretations with Mistral
+- AI-powered interpretations with DeepSeek
 - Learning modules and card combinations
 - Responsive design with dark/light theme
 
@@ -34,7 +34,8 @@ npm install
 Create `.env` with:
 
 ```bash
-MISTRAL_API_KEY=sk-your-key
+DEEPSEEK_API=sk-your-key
+DEEPSEEK_MODEL=deepseek-flash   # optional; this is the default
 ```
 
 ### Development
@@ -54,7 +55,7 @@ Open http://localhost:4000
 
 ## Deployment
 
-Push to GitHub and connect to Vercel. Set environment variables in Vercel dashboard.
+Push to GitHub and deploy with Railway (see `railway.toml`). Set the environment variables in the deployment dashboard; each deploy logs the resolved reading model id.
 
 ## License
 

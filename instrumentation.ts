@@ -1,3 +1,5 @@
+import { READING_MODEL_ID } from "@/lib/ai-model";
+
 export function register() {
   if (process.env.NEXT_PHASE === "phase-production-build") return;
 
@@ -8,5 +10,6 @@ export function register() {
   console.info("deployment", JSON.stringify({
     version,
     deploymentId: process.env.RAILWAY_DEPLOYMENT_ID,
+    readingModel: READING_MODEL_ID,
   }));
 }

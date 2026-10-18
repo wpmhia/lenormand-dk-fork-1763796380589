@@ -4,7 +4,7 @@
 
 Each generation is independent. Its only interpretive inputs are the current question, the cards actually drawn, their order/positions/spread geometry, and an explicitly selected reading focus. The primary request has no situation-context field. Reading history remains a user-facing feature but is not sent to generation. Follow-ups receive the fixed spread, original question, and active follow-up question; previous turns remain client-side display state only.
 
-The application and all generated user-facing prose are English-only. Reference meanings and patterns use canonical English card names.
+Generated readings are written in the user's language, as the system prompt prescribes. Reference meanings and prompt card names stay in canonical English.
 
 Do not infer that two readings concern the same person or event. Do not use prior predictions, outcomes, notes, profiles, or relationship history. No individual outcome is learned back into the system.
 
@@ -42,7 +42,19 @@ For line spreads, preserve order and read left-to-right; do not assume a pair is
 
 ## Output and validation boundary
 
-The primary output is `{ reading, answer }`, generated in that order: the reading is worked out from the spread first, and the answer is drawn from it. The interface renders Answer above Reading. Deterministic validation enforces structure and canonical drawn-card labels; it does not prove the prose spatially or semantically correct. The source-reviewed geometry tests and independent quality review are therefore separate. No second interpretation engine or regex-based relationship/affair detector is used.
+The primary output is `{ reading, answer }`, generated in that order: the reading is worked out from the spread first, and the answer is drawn from it. The interface renders Answer above Reading. Request normalization enforces canonical drawn-card labels; output validation only requires that `answer` and `reading` are non-empty. It does not prove the prose spatially or semantically correct. The source-reviewed geometry tests and independent quality review are therefore separate. No second interpretation engine or regex-based relationship/affair detector is used.
+
+Primary readings and follow-ups run through one shared model service: the same provider settings, thinking mode (enabled, reasoning effort low), timeout handling and empty-output diagnostics. Only the accepted output format differs — a JSON answer object for readings, plain prose for follow-ups.
+
+The model variant is resolved once from `DEEPSEEK_MODEL`, defaulting to `deepseek-flash`, and the resolved id is logged at every deployment start.
+
+## Manual acceptance check
+
+A small hand-maintained check replaces any automated quality benchmark. On a few representative questions (love, work, money, moving), a human reader judges:
+
+- **Directness:** the answer takes the direction the cards favour instead of explaining why no answer is possible.
+- **Card fidelity:** the interpretation is grounded in the drawn cards and their combinations; nothing is invented.
+- **Coherence:** the reading holds together as one argument and meets conflicting indications head-on.
 
 ## Source ledger
 
