@@ -128,8 +128,18 @@ describe("geometry: spread structure is computed from coordinates", () => {
 
 describe("model boundary: the prompt carries no interpretation rules", () => {
   it("keeps the system prompt to the reader role and principles, without the JSON schema", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/experienced traditional Lenormand reader/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/experienced traditional Lenormand card reader/);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
+  });
+
+  it("demands a decisive direction instead of a neutral hedge", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/choose the most convincing interpretation/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/give the direction the cards favour/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/rather than defaulting to neutrality/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/willing to deliver positive or negative readings/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Do not evade sensitive questions/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Do not force a yes\/no conclusion/i);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain("inconclusive");
   });
 
   it("asks for the reading before the answer as one JSON object", () => {
