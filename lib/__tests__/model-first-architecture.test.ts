@@ -132,6 +132,11 @@ describe("model boundary: the prompt carries no interpretation rules", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toContain('"answer": string');
   });
 
+  it("asks for a future-oriented prediction with weighed card combinations", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/For predictive questions, focus on the future development and likely outcome/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Weigh supporting and conflicting card combinations/);
+  });
+
   it("demands a decisive direction instead of a neutral hedge", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/choose the most convincing interpretation/i);
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/give the direction the cards favour/i);

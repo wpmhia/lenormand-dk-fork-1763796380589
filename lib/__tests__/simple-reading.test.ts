@@ -126,6 +126,30 @@ describe("generation: one model call, one parse path", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
+  it("logs a privacy-safe diagnosis for invalid output without the raw text", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    generateText.mockResolvedValueOnce(textOutput(JSON.stringify({ answer: "secret question text", extra: 1 })));
+
+    await generateReading(options());
+
+    expect(errorSpy).toHaveBeenCalledTimes(1);
+    const [message, fields] = errorSpy.mock.calls[0];
+    expect(message).toBe("reading: invalid model output");
+    expect(fields).toEqual({ cause: "schema", outputLength: expect.any(Number), invalidFields: ["reading"] });
+    expect(JSON.stringify(errorSpy.mock.calls)).not.toContain("secret question text");
+    errorSpy.mockRestore();
+  });
+
+  it("logs a JSON parse cause for malformed output", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    generateText.mockResolvedValueOnce(textOutput("still malformed"));
+
+    await generateReading(options());
+
+    expect(errorSpy.mock.calls[0][1]).toEqual({ cause: "json-parse", outputLength: "still malformed".length, invalidFields: undefined });
+    errorSpy.mockRestore();
+  });
+
   it("reports output that is not a JSON object with both fields as invalid", async () => {
     for (const bad of ["still malformed", JSON.stringify({ answer: "only an answer" }), JSON.stringify(["a", "b"])]) {
       generateText.mockResolvedValueOnce(textOutput(bad));

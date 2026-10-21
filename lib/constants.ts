@@ -50,7 +50,7 @@ export const API_REQUEST_TIMEOUT_MS = 60 * 1000;
  * completion. Grand Tableau gets the full route budget; the route's maxDuration is 60s.
  */
 export const READING_GENERATION_TIMEOUT_MS = 45_000;
-export const GRAND_TABLEAU_GENERATION_TIMEOUT_MS = 60_000;
+export const GRAND_TABLEAU_GENERATION_TIMEOUT_MS = 50_000;
 
 // ============================================================================
 // Error Messages

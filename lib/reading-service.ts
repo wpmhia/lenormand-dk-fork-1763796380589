@@ -1,5 +1,5 @@
 import { generateText, type LanguageModel } from "ai";
-import { SimpleAnswerSchema, renderSimpleAnswer } from "@/lib/simple-answer";
+import { SimpleAnswerSchema, renderSimpleAnswer, type SimpleAnswer } from "@/lib/simple-answer";
 
 /**
  * Shared model service for primary readings and follow-ups. Both paths use the same provider
@@ -60,9 +60,27 @@ export async function generateReading(options: ReadingServiceOptions): Promise<R
   const generated = await generateModelText({ ...options, logLabel: "reading" });
   if (!generated.ok) return generated;
   const parsed = parseAnswer(generated.text);
-  if (!parsed) return { ok: false, reason: "invalid-output" };
-  return { ok: true, reading: renderSimpleAnswer(parsed) };
+  if (!parsed.ok) {
+    logInvalidOutput(parsed.diagnosis, generated.text.length);
+    return { ok: false, reason: "invalid-output" };
+  }
+  return { ok: true, reading: renderSimpleAnswer(parsed.answer) };
 }
+
+/**
+ * Logs why a non-empty output was rejected: the failure class, the output length and the names
+ * of invalid schema fields. Field names come from our own schema, never from the model text, so
+ * the raw output, the question and the cards are never logged.
+ */
+function logInvalidOutput(diagnosis: ParseDiagnosis, outputLength: number): void {
+  console.error("reading: invalid model output", {
+    cause: diagnosis.cause,
+    outputLength,
+    invalidFields: diagnosis.cause === "schema" ? diagnosis.invalidFields : undefined,
+  });
+}
+
+type ParseDiagnosis = { cause: "json-parse" } | { cause: "schema"; invalidFields: string[] };
 
 /**
  * Shared timeout classification. The SDK's total timeout raises AbortError just like a real
@@ -103,14 +121,18 @@ function logEmptyOutput(
 }
 
 /** Parses the model's JSON object. Markdown fences are removed once; nothing else is recovered. */
-function parseAnswer(raw: string) {
+function parseAnswer(
+  raw: string,
+): { ok: true; answer: SimpleAnswer } | { ok: false; diagnosis: ParseDiagnosis } {
   const unfenced = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   let json: unknown;
   try {
     json = JSON.parse(unfenced);
   } catch {
-    return null;
+    return { ok: false, diagnosis: { cause: "json-parse" } };
   }
   const answer = SimpleAnswerSchema.safeParse(json);
-  return answer.success ? answer.data : null;
+  if (answer.success) return { ok: true, answer: answer.data };
+  const invalidFields = [...new Set(answer.error.issues.map((issue) => String(issue.path[0] ?? "(root)")))];
+  return { ok: false, diagnosis: { cause: "schema", invalidFields } };
 }
