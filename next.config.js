@@ -68,7 +68,7 @@ const nextConfig = {
           },
             {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gstat.up.railway.app; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self' data:; connect-src 'self' https://api.mistral.ai https://gstat.up.railway.app;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gstat.up.railway.app; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://storage.ko-fi.com data:; font-src 'self' data:; connect-src 'self' https://gstat.up.railway.app;",
           },
         ],
       },

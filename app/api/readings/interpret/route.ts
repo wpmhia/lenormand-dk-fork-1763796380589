@@ -36,6 +36,15 @@ function classifyGenerationFailure(error: Error & { name?: string; statusCode?: 
 }
 
 
+/** Safe, fixed messages for upstream provider failures. Provider text and credentials are never returned. */
+function upstreamFailure(error: { statusCode?: number; status?: number }): { reason: string; message: string } | null {
+  const status = error.statusCode ?? error.status;
+  if (status === 402) return { reason: "provider_balance", message: "The reading service is temporarily unavailable. Please try again later." };
+  if (status === 401 || status === 403) return { reason: "provider_auth", message: "The reading service is temporarily unavailable. Please try again later." };
+  if (status === 429) return { reason: "provider_rate_limit", message: "The reading service is busy. Please try again in a moment." };
+  return null;
+}
+
 export async function POST(request: Request) {
   const startedAt = Date.now();
   let modelTimeoutMs = READING_GENERATION_TIMEOUT_MS;
@@ -139,6 +148,13 @@ export async function POST(request: Request) {
       generationElapsedMs: generationStartedAt ? Date.now() - generationStartedAt : undefined,
       elapsedMs: Date.now() - startedAt,
     });
+    const upstream = upstreamFailure(error);
+    if (!isTimeout && upstream) {
+      return new Response(JSON.stringify({ error: upstream.message, reason: upstream.reason, retryable: true }), {
+        status: 503,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
     return new Response(
       JSON.stringify({
         error: isTimeout ? "Response timed out" : "Generation failed",
