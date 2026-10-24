@@ -24,15 +24,15 @@ test("@smoke classic analysis shows first; AI runs only after the button is pres
   await page.getByRole("button", { name: "Virtual Deck" }).click();
   await page.getByRole("button", { name: "Draw 3 Cards", exact: true }).click();
 
-  await expect(page.getByText("Classic analysis", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Interpret My Cards" })).toBeVisible();
+  await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Get AI Interpretation" })).toBeVisible();
   expect(interpretCalls).toBe(0);
 
-  await page.getByRole("button", { name: "Interpret My Cards" }).click();
+  await page.getByRole("button", { name: "Get AI Interpretation" }).click();
   await expect(page.getByText("Mocked answer.")).toBeVisible();
   expect(interpretCalls).toBe(1);
   // The classic analysis is still available after the AI result.
-  await expect(page.getByText("Classic analysis", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();
   expect(interpretCalls).toBe(1);
 });
 
@@ -67,11 +67,11 @@ test("@smoke shared link opens without a model call and offers the same AI butto
   const { encoded } = await share.json();
 
   await page.goto(`/read/shared/${encodeURIComponent(encoded)}`);
-  await expect(page.getByText("Classic analysis", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Interpret My Cards" })).toBeVisible();
+  await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Get AI Interpretation" })).toBeVisible();
   expect(interpretCalls).toBe(0);
 
-  await page.getByRole("button", { name: "Interpret My Cards" }).click();
+  await page.getByRole("button", { name: "Get AI Interpretation" }).click();
   await expect(page.getByText("Shared mocked answer.")).toBeVisible();
   expect(interpretCalls).toBe(1);
 });
