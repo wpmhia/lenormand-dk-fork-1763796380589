@@ -199,6 +199,7 @@ function NewReadingPageContent() {
     } else if (step === "results") {
       setStep("drawing");
       resetAnalysis();
+      setAiRequested(false);
     }
   }, [step, resetAnalysis]);
 

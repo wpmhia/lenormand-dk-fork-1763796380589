@@ -20,7 +20,8 @@ interface PageProps {
 }
 
 // Map layoutType (number of cards) to primary spread ID
-function getSpreadIdFromLayoutType(layoutType: number): string {
+/** The spread for a shared layout, or null when the layout is not a supported spread. */
+function getSpreadIdFromLayoutType(layoutType: number): string | null {
   switch (layoutType) {
     case 1:
       return "single-card";
@@ -28,14 +29,12 @@ function getSpreadIdFromLayoutType(layoutType: number): string {
       return "sentence-3";
     case 5:
       return "sentence-5";
-    case 7:
-      return "sentence-5";
     case 9:
       return "comprehensive";
     case 36:
       return "grand-tableau";
     default:
-      return "sentence-3"; // default
+      return null;
   }
 }
 
@@ -47,6 +46,7 @@ export default function SharedReadingPage({ params }: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestRef = useRef<AbortController | null>(null);
 
   // AI-related state
   const [aiReading, setAiReading] = useState<AIReadingResponse | null>(null);
@@ -103,6 +103,11 @@ export default function SharedReadingPage({ params }: PageProps) {
     async (readingCards: ReadingCard[]) => {
       if (!mountedRef.current || !reading) return;
 
+      // Cancel any request still in flight, so a late answer cannot overwrite the current state.
+      requestRef.current?.abort();
+      const controller = new AbortController();
+      requestRef.current = controller;
+
       setAiLoading(true);
       setAiError(null);
       setAiErrorDetails(null);
@@ -113,14 +118,16 @@ export default function SharedReadingPage({ params }: PageProps) {
         clearTimeout(timeoutRef.current);
       }
 
-       // Keep the client timeout below the route's 60s maxDuration without ending the UI wait while the API is still working.
+      // The client timeout is below the route's 60s maxDuration. On timeout the request is aborted,
+      // so a response that arrives later cannot appear after the timeout message.
       timeoutRef.current = setTimeout(() => {
-        if (mountedRef.current) {
+        controller.abort();
+        if (mountedRef.current && requestRef.current === controller) {
           setAiLoading(false);
           setAiError("AI analysis timed out. The reading is still available.");
         }
         timeoutRef.current = null;
-       }, 59000);
+      }, 59000);
 
       try {
         const aiRequest = {
@@ -131,13 +138,14 @@ export default function SharedReadingPage({ params }: PageProps) {
             name: getCardById(allCards, card.id)?.name || "Unknown",
             position: card.position,
           })),
-          spreadId: getSpreadIdFromLayoutType(reading.layoutType),
+          spreadId: getSpreadIdFromLayoutType(reading.layoutType) ?? "",
         };
 
         const response = await fetch("/api/readings/interpret", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(aiRequest),
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -152,7 +160,7 @@ export default function SharedReadingPage({ params }: PageProps) {
         }
 
         const data = await response.json();
-        if (mountedRef.current) {
+        if (mountedRef.current && requestRef.current === controller) {
           if (data?.reading) {
             setAiReading(data);
           } else {
@@ -160,7 +168,9 @@ export default function SharedReadingPage({ params }: PageProps) {
           }
         }
       } catch (error) {
-        if (mountedRef.current) {
+        // An aborted request was superseded or timed out; its outcome is already handled.
+        if (controller.signal.aborted) return;
+        if (mountedRef.current && requestRef.current === controller) {
           const errorMessage =
             error instanceof Error ? error.message : "AI analysis failed";
           setAiError(errorMessage);
@@ -211,6 +221,7 @@ export default function SharedReadingPage({ params }: PageProps) {
   const sharedClassicAnalysis = useMemo(() => {
     if (!reading?.cards?.length || typeof reading.layoutType !== "number") return null;
     const spreadId = getSpreadIdFromLayoutType(reading.layoutType);
+    if (!spreadId) return null;
     return buildClassicAnalysis(spreadId as never, reading.question ?? "", reading.cards, allCards);
   }, [reading, allCards]);
 
@@ -314,16 +325,13 @@ export default function SharedReadingPage({ params }: PageProps) {
           )}
 
           {aiError && !aiLoading && (
-            <div className="space-y-4 rounded-lg border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-800 dark:bg-amber-950/30">
-              <div className="font-medium text-amber-700 dark:text-amber-400">
-                Premium Spread
+            <div className="space-y-4 rounded-lg border border-border bg-card p-6 text-center">
+              <div className="font-medium text-foreground">
+                We couldn&apos;t generate this interpretation
               </div>
               <div className="text-sm text-muted-foreground">{aiError}</div>
-              <Button
-                onClick={() => (window.location.href = "/support")}
-                className="bg-amber-500 text-white hover:bg-amber-600"
-              >
-                Unlock with Support Code
+              <Button onClick={() => reading?.cards && performAIAnalysis(reading.cards)}>
+                Try Again
               </Button>
             </div>
           )}
