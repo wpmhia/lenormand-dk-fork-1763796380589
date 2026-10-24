@@ -30,13 +30,13 @@ describe("AIReadingDisplay: the original question stays visible in every state",
   it("shows the question during loading", () => {
     const html = render({ isLoading: true });
     expect(html).toContain(QUESTION);
-    expect(html).toContain("Consulting the cards");
+    expect(html).toContain("Interpreting your cards");
   });
 
   it("shows the question during streaming before any text arrives", () => {
     const html = render({ isStreaming: true, aiReading: null });
     expect(html).toContain(QUESTION);
-    expect(html).toContain("Consulting the cards");
+    expect(html).toContain("Interpreting your cards");
   });
 
   it("shows the question with a generation error and keeps the retry button", () => {
@@ -93,9 +93,9 @@ function renderWithClassic(props: Partial<Parameters<typeof AIReadingDisplay>[0]
 }
 
 describe("AIReadingDisplay: classic analysis and the AI action", () => {
-  it("before AI is requested shows the classic analysis and the English 'Interpret with AI' button", () => {
+  it("before AI is requested shows the classic analysis and the English 'Interpret My Cards' button", () => {
     const html = renderWithClassic({ aiRequested: false, aiReading: null, isLoading: false, error: null });
-    expect(html).toContain("Interpret with AI");
+    expect(html).toContain("Interpret My Cards");
     expect(html).toContain("Rider");
     expect(html).toContain("Line of 3 cards");
     expect(html).not.toContain("Interpreteer");
@@ -104,8 +104,8 @@ describe("AIReadingDisplay: classic analysis and the AI action", () => {
   it("after AI is requested the classic analysis stays visible above the AI state", () => {
     const html = renderWithClassic({ aiRequested: true, aiReading: null, isLoading: true });
     expect(html).toContain("Rider");
-    expect(html).toContain("Consulting the cards");
-    expect(html.indexOf("Rider")).toBeLessThan(html.indexOf("Consulting the cards"));
+    expect(html).toContain("Interpreting your cards");
+    expect(html.indexOf("Rider")).toBeLessThan(html.indexOf("Interpreting your cards"));
   });
 
   it("after AI has produced a reading, both the classic analysis and the AI text are shown", () => {
