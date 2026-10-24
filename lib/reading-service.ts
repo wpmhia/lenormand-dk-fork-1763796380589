@@ -29,6 +29,8 @@ export interface GenerationOptions {
   timeoutMs: number;
   signal?: AbortSignal;
   logLabel: "reading" | "followup";
+  /** Correlates the generation log with the route log. Never derived from user content. */
+  requestId?: string;
 }
 
 export type ReadingServiceOptions = Omit<GenerationOptions, "logLabel">;
@@ -36,23 +38,80 @@ export type ReadingServiceOptions = Omit<GenerationOptions, "logLabel">;
 /** One model call under the shared settings. The returned body is non-empty trimmed text. */
 export async function generateModelText(options: GenerationOptions): Promise<GenerationResult> {
   const startedAt = Date.now();
-  const result = await generateText({
-    model: options.model,
-    system: options.system,
-    prompt: options.prompt,
-    providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
-    maxOutputTokens: options.maxTokens,
-    maxRetries: 0,
-    abortSignal: options.signal,
-    timeout: { totalMs: options.timeoutMs },
-  });
+  let result;
+  try {
+    result = await generateText({
+      model: options.model,
+      system: options.system,
+      prompt: options.prompt,
+      providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
+      maxOutputTokens: options.maxTokens,
+      maxRetries: 0,
+      abortSignal: options.signal,
+      timeout: { totalMs: options.timeoutMs },
+    });
+  } catch (error) {
+    logGeneration(options, { outcome: "error", elapsedMs: Date.now() - startedAt, error: errorClass(error) });
+    throw error;
+  }
 
   const text = (result.text ?? "").trim();
+  logGeneration(options, {
+    outcome: text ? "ok" : "empty",
+    elapsedMs: Date.now() - startedAt,
+    finishReason: result.finishReason,
+    usage: result.usage,
+  });
   if (!text) {
     logEmptyOutput(options.logLabel, result, Date.now() - startedAt, options.maxTokens);
     return { ok: false, reason: "empty-output" };
   }
   return { ok: true, text };
+}
+
+type GenerationUsage = {
+  inputTokens?: number;
+  outputTokens?: number;
+  outputTokenDetails?: { textTokens?: number; reasoningTokens?: number };
+};
+
+/**
+ * One structured line per DeepSeek generation: request ID, timing against the configured limit,
+ * finish reason and token usage. The prompt, question, cards, output text and credentials are
+ * never included; only the error class name is kept for failures.
+ */
+export function logGeneration(
+  options: Pick<GenerationOptions, "logLabel" | "requestId" | "timeoutMs" | "maxTokens">,
+  fields: {
+    outcome: "ok" | "empty" | "error";
+    elapsedMs: number;
+    finishReason?: string;
+    usage?: GenerationUsage;
+    error?: string;
+  },
+): void {
+  console.info("deepseek generation", {
+    label: options.logLabel,
+    requestId: options.requestId,
+    model: READING_MODEL_LABEL,
+    outcome: fields.outcome,
+    elapsedMs: fields.elapsedMs,
+    timeoutMs: options.timeoutMs,
+    maxTokens: options.maxTokens,
+    finishReason: fields.finishReason,
+    inputTokens: fields.usage?.inputTokens,
+    outputTokens: fields.usage?.outputTokens,
+    reasoningTokens: fields.usage?.outputTokenDetails?.reasoningTokens,
+    textTokens: fields.usage?.outputTokenDetails?.textTokens,
+    error: fields.error,
+  });
+}
+
+const READING_MODEL_LABEL = process.env.DEEPSEEK_MODEL || "deepseek-flash";
+
+/** The error's class name only. Messages can echo request details, so they are not logged. */
+function errorClass(error: unknown): string {
+  return error instanceof Error ? error.name || "Error" : "UnknownError";
 }
 
 /** The reading path: one model call, one parse path. The text must be a JSON answer object. */

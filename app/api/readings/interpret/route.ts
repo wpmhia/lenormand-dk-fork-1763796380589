@@ -47,6 +47,7 @@ function upstreamFailure(error: { statusCode?: number; status?: number }): { rea
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
+  const requestId = crypto.randomUUID();
   let modelTimeoutMs = READING_GENERATION_TIMEOUT_MS;
   let generationStartedAt: number | undefined;
   try {
@@ -106,10 +107,12 @@ export async function POST(request: Request) {
       maxTokens: getTokenBudget(cardCount),
       timeoutMs: modelTimeoutMs,
       signal: request.signal,
+      requestId,
     });
 
     if (!serviceResult.ok) {
       console.error("interpret: generation rejected", {
+        requestId,
         reason: serviceResult.reason,
         spreadId: validated.spreadId,
         cardCount,
@@ -134,6 +137,7 @@ export async function POST(request: Request) {
       return new Response(null, { status: 499 });
     }
     console.error("interpret: generation error", {
+      requestId,
       phase: "generation",
       failureClass: classifyGenerationFailure(error, clientAborted),
       name: error.name,
