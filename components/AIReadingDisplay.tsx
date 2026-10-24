@@ -19,6 +19,19 @@ import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 import type { Card as CardType } from "@/lib/types";
 
+/** The original question, shown above every state so the user keeps their context. */
+function QuestionBlock({ question }: { question?: string }) {
+  if (!question?.trim()) return null;
+  return (
+    <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Question
+      </p>
+      <p className="text-sm text-foreground">{question.trim()}</p>
+    </div>
+  );
+}
+
 interface AIReadingDisplayProps {
   aiReading: AIReadingResponse | null;
   isLoading: boolean;
@@ -195,65 +208,77 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
 
   if (isLoading) {
     return (
-      <div className="consulting-glow rounded-2xl">
-        <AIThinkingIndicator
-          message="Consulting the cards..."
-          subtext="Reading the cards for clear, practical guidance"
-        />
-      </div>
+      <>
+        <QuestionBlock question={question} />
+        <div className="consulting-glow rounded-2xl">
+          <AIThinkingIndicator
+            message="Consulting the cards..."
+            subtext="Reading the cards for clear, practical guidance"
+          />
+        </div>
+      </>
     );
   }
 
   if (error && !isStreaming) {
     return (
-      <div className="state-card border-destructive/40 bg-destructive/5">
-        <div className="state-icon">
-          <AlertCircle className="h-10 w-10" aria-hidden="true" />
+      <>
+        <QuestionBlock question={question} />
+        <div className="state-card border-destructive/40 bg-destructive/5">
+          <div className="state-icon">
+            <AlertCircle className="h-10 w-10" aria-hidden="true" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground">
+            We couldn&apos;t generate this interpretation
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Please try again. Your card spread is still available.
+          </p>
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+            <Button onClick={onRetry} size="lg" className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Try Again
+            </Button>
+          </div>
         </div>
-        <h3 className="text-lg font-semibold text-foreground">
-          We couldn&apos;t generate this interpretation
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Please try again. Your card spread is still available.
-        </p>
-        <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
-          <Button onClick={onRetry} size="lg" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Try Again
-          </Button>
-        </div>
-      </div>
+      </>
     );
   }
 
   if (!aiReading?.reading && !isStreaming) {
     return (
-      <Card className="border-destructive/50 bg-destructive/5">
-        <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-          <AlertCircle className="text-destructive mb-4 h-12 w-12" />
-          <h3 className="mb-2 text-lg font-semibold text-foreground">
-            AI Reading Failed
-          </h3>
-          <p className="mb-6 text-sm text-muted-foreground">
-            The AI interpretation could not be generated. Please try again.
-          </p>
-          <Button onClick={onRetry} size="lg" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Retry Reading
-          </Button>
-        </CardContent>
-      </Card>
+      <>
+        <QuestionBlock question={question} />
+        <Card className="border-destructive/50 bg-destructive/5">
+          <CardContent className="flex flex-col items-center justify-center p-8 text-center">
+            <AlertCircle className="text-destructive mb-4 h-12 w-12" />
+            <h3 className="mb-2 text-lg font-semibold text-foreground">
+              AI Reading Failed
+            </h3>
+            <p className="mb-6 text-sm text-muted-foreground">
+              The AI interpretation could not be generated. Please try again.
+            </p>
+            <Button onClick={onRetry} size="lg" className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Retry Reading
+            </Button>
+          </CardContent>
+        </Card>
+      </>
     );
   }
 
   if (isStreaming && !aiReading?.reading) {
     return (
-      <div className="consulting-glow rounded-2xl">
-        <AIThinkingIndicator
-          message="Consulting the cards..."
-          subtext="Reading the cards for clear, practical guidance"
-        />
-      </div>
+      <>
+        <QuestionBlock question={question} />
+        <div className="consulting-glow rounded-2xl">
+          <AIThinkingIndicator
+            message="Consulting the cards..."
+            subtext="Reading the cards for clear, practical guidance"
+          />
+        </div>
+      </>
     );
   }
 
@@ -316,14 +341,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
         </div>
 
         <div className="reading-content space-y-4 text-foreground">
-          {question?.trim() && (
-            <div className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Question
-              </p>
-              <p className="text-sm text-foreground">{question.trim()}</p>
-            </div>
-          )}
+          <QuestionBlock question={question} />
           {aiReading?.reading && (
             <div className="leading-relaxed">
               <ReadingMarkdown>{aiReading.reading}</ReadingMarkdown>
