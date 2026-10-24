@@ -17,8 +17,12 @@ import {
 } from "lucide-react";
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
+import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
 import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
+import { CopyForAIButton } from "@/components/CopyForAIButton";
+import { CARD_CATALOG } from "@/lib/card-catalog";
+import type { ReadingCard } from "@/lib/types";
 
 /** The original question, shown above every state so the user keeps their context. */
 function QuestionBlock({ question }: { question?: string }) {
@@ -104,11 +108,14 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
 export function ClassicAnalysisWithAI({
   analysis,
   onStartAI,
+  allCards = CARD_CATALOG,
 }: {
   analysis: ClassicAnalysis;
   onStartAI: () => void;
+  allCards?: CardType[];
 }) {
-  const preview = buildCardPreview(analysis);
+  const preview = buildCardPreview(analysis, allCards);
+  const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -135,15 +142,23 @@ export function ClassicAnalysisWithAI({
         </div>
 
         <div className="flex flex-col gap-2 border-t border-border/60 pt-6">
-          <Button
-            onClick={() => {
-              trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
-              onStartAI();
-            }}
-            className="w-full sm:w-auto"
-          >
-            Get AI Interpretation
-          </Button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button
+              onClick={() => {
+                trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+                onStartAI();
+              }}
+              className="w-full sm:w-auto"
+            >
+              Get AI Interpretation
+            </Button>
+            <CopyForAIButton
+              spreadId={analysis.spreadId}
+              question={analysis.question}
+              drawn={drawn}
+              allCards={allCards}
+            />
+          </div>
           <p className="text-xs text-muted-foreground">
             Explore how the cards connect to your question.
           </p>
@@ -308,43 +323,6 @@ const AIStateView = memo(function AIStateView({
       setShareError(true);
       if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
       shareTimeoutRef.current = setTimeout(() => setShareError(false), 2000);
-      return false;
-    }
-  }
-
-  async function copyTextToClipboard(text: string): Promise<boolean> {
-    try {
-      if (
-        typeof navigator !== "undefined" &&
-        navigator.clipboard &&
-        window.isSecureContext
-      ) {
-        await navigator.clipboard.writeText(text);
-        return true;
-      }
-    } catch {
-      // Fall through to textarea fallback
-    }
-
-    try {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.setAttribute("readonly", "");
-      textarea.style.position = "fixed";
-      textarea.style.top = "-9999px";
-      textarea.style.left = "-9999px";
-      textarea.style.opacity = "0";
-
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      textarea.setSelectionRange(0, textarea.value.length);
-
-      const ok = document.execCommand("copy");
-      document.body.removeChild(textarea);
-
-      return ok;
-    } catch {
       return false;
     }
   }

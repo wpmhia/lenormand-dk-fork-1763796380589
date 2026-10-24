@@ -84,7 +84,7 @@ function coreMeanings(cards: ReadingContext["cards"]): string {
 }
 
 /** The canonical house name for position N: the card whose deck number is N. */
-function houseName(index: number): string {
+export function houseName(index: number): string {
   return CARD_CATALOG.find((card) => card.id === index + 1)?.name ?? `Position ${index + 1}`;
 }
 
@@ -140,7 +140,7 @@ function structure(cards: ReadingContext["cards"]): string {
   }
 }
 
-function significatorLines(cards: ReadingContext["cards"]): string[] {
+export function significatorLines(cards: ReadingContext["cards"]): string[] {
   const woman = cards.findIndex((card) => card.id === 29);
   const man = cards.findIndex((card) => card.id === 28);
   return [
