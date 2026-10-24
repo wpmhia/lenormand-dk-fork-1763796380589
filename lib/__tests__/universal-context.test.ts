@@ -67,7 +67,8 @@ describe("universal context: one canonical context for every spread", () => {
 
   it.each(SPREADS)("$id: the copied text is self-contained for a general-purpose model", ({ id, count }) => {
     const copy = buildCopyForAIText(id, "Will it rain?", legging(count));
-    expect(copy.startsWith("The text below is a complete Lenormand reading context in three sections")).toBe(true);
+    expect(copy.startsWith("LENORMAND INTELLIGENCE\n")).toBe(true);
+    expect(copy).toContain("The text below is a complete Lenormand reading context in three sections");
     expect(copy).toContain("## Output format");
     expect(copy).toContain("## Instructions");
     expect(copy).toContain("## Reading facts");

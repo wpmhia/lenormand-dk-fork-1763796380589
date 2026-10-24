@@ -94,7 +94,8 @@ describe("shared geometry: both paths receive the same geometry", () => {
   });
 
   it("the copied text is self-contained: it explains itself without the app", () => {
-    expect(copy.startsWith("The text below is a complete Lenormand reading context in three sections")).toBe(true);
+    expect(copy.startsWith("LENORMAND INTELLIGENCE\n")).toBe(true);
+    expect(copy).toContain("The text below is a complete Lenormand reading context in three sections");
     expect(copy).toContain("## Instructions");
     expect(copy).toContain("## Reading facts");
   });
