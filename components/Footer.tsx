@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 export function Footer() {
   return (
@@ -8,9 +8,6 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-9 md:grid-cols-3 md:gap-8">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="group inline-flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
-                <Sparkles className="size-4" aria-hidden="true" />
-              </span>
               <h3 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-lg font-bold text-transparent">
                 Lenormand
               </h3>

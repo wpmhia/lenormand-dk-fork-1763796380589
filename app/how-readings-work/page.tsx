@@ -2,7 +2,6 @@ import {
   BookOpen,
   Grid3X3,
   LayoutGrid,
-  Sparkles,
   Shield,
   Layers,
 } from "lucide-react";
@@ -62,7 +61,6 @@ export default function HowReadingsWorkPage() {
 
           <section>
             <div className="mb-4 flex items-center gap-3">
-              <Sparkles className="h-6 w-6 text-primary" />
               <h2 className="text-2xl font-bold text-foreground">
                 What the AI does
               </h2>

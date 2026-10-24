@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Coffee, Heart, Sparkles, Users, Code } from "lucide-react";
+import { Coffee, Heart, Users, Code } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Support - Lenormand Intelligence",
@@ -15,7 +15,7 @@ const whySupport = [
     description: "AI interpretations and hosting cost money. Your support helps cover these expenses.",
   },
   {
-    icon: <Sparkles className="h-6 w-6" />,
+    icon: null,
     title: "More Features",
     description: "Support enables new features like more spreads, better AI, and mobile apps.",
   },
@@ -67,7 +67,7 @@ export default function SupportPage() {
             {whySupport.map((reason, i) => (
               <Card key={i} className="border-border bg-card">
                 <CardHeader>
-                  <div className="mb-2 text-primary">{reason.icon}</div>
+                  {reason.icon && <div className="mb-2 text-primary">{reason.icon}</div>}
                   <CardTitle className="text-lg">{reason.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -189,7 +189,7 @@ export default function SupportPage() {
             </Button>
           </a>
           <p className="mt-4 text-sm text-muted-foreground">
-            Thank you for being here. ✨
+            Thank you for being here.
           </p>
         </div>
       </section>

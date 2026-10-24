@@ -18,15 +18,17 @@ test("@smoke classic analysis shows first; AI runs only after the button is pres
   await page.goto("/read/new");
   await page.getByLabel("Your Question").fill("Will this situation move forward?");
   await page.getByRole("combobox").first().click();
-  await page.getByRole("option", { name: /3-Card Sentence/ }).click();
+  const threeCard = page.getByRole("option", { name: /^3-Card Sentence/ });
+  await threeCard.waitFor({ state: "visible", timeout: 10_000 });
+  await threeCard.click();
   await page.getByRole("button", { name: "Virtual Deck" }).click();
   await page.getByRole("button", { name: "Draw 3 Cards", exact: true }).click();
 
   await expect(page.getByText("Classic analysis", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Interpret with AI" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Interpret My Cards" })).toBeVisible();
   expect(interpretCalls).toBe(0);
 
-  await page.getByRole("button", { name: "Interpret with AI" }).click();
+  await page.getByRole("button", { name: "Interpret My Cards" }).click();
   await expect(page.getByText("Mocked answer.")).toBeVisible();
   expect(interpretCalls).toBe(1);
   // The classic analysis is still available after the AI result.
@@ -66,10 +68,10 @@ test("@smoke shared link opens without a model call and offers the same AI butto
 
   await page.goto(`/read/shared/${encodeURIComponent(encoded)}`);
   await expect(page.getByText("Classic analysis", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Interpret with AI" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Interpret My Cards" })).toBeVisible();
   expect(interpretCalls).toBe(0);
 
-  await page.getByRole("button", { name: "Interpret with AI" }).click();
+  await page.getByRole("button", { name: "Interpret My Cards" }).click();
   await expect(page.getByText("Shared mocked answer.")).toBeVisible();
   expect(interpretCalls).toBe(1);
 });
