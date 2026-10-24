@@ -36,12 +36,16 @@ describe("system prompt: no overinterpretation", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/symbolic estimate, never as a fact/);
   });
 
-  it("asks for a direct answer before the detailed reading", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Answer first/);
+  it("orders the work: the reading is written first and the answer last, as the JSON fields are", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Work order: first weigh the cards and write the "reading"/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Then state the "answer"/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Answer first/);
   });
 
-  it("keeps the prompt compact", () => {
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT.length).toBeLessThan(2600);
+  it("keeps the system prompt within a bounded size", () => {
+    // The work-order clarification lengthened the system prompt to about 2.7k characters. The bound
+    // guards against further growth without forbidding the clarification.
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT.length).toBeLessThan(2800);
   });
 });
 

@@ -58,7 +58,8 @@ describe("universal context: one canonical context for every spread", () => {
 
   it.each(SPREADS)("$id: the copied text is self-contained for a general-purpose model", ({ id, count }) => {
     const copy = buildCopyForAIText(id, "Will it rain?", legging(count));
-    expect(copy.startsWith("The text below is a complete Lenormand reading context.")).toBe(true);
+    expect(copy.startsWith("The text below is a complete Lenormand reading context in three sections")).toBe(true);
+    expect(copy).toContain("## Output format");
     expect(copy).toContain("## Instructions");
     expect(copy).toContain("## Reading facts");
     expect(copy).not.toMatch(/\bAPI\b|\bendpoint\b|\broute\b|\bcookie\b|localStorage/);
@@ -229,14 +230,23 @@ describe("universal context: interpretation contract and answer order", () => {
     expect(facts).toMatch(/supporting and contradicting/i);
   });
 
-  it("asks for a direct answer and forbids inventing positions", () => {
-    expect(instructions).toMatch(/Answer first/);
+  it("asks for a direct answer last and forbids inventing positions", () => {
+    expect(instructions).toMatch(/Then state the "answer"/);
+    expect(instructions).not.toMatch(/Answer first/);
   });
 
-  it("keeps the response JSON contract as reading then answer", () => {
-    const user = buildLenormandContext("sentence-3", "Q", legging(3)).facts;
-    expect(user).toContain('{"reading": string, "answer": string}');
-    expect(user.indexOf('"reading"')).toBeLessThan(user.indexOf('"answer"'));
+  it("keeps the API JSON contract as reading then answer, outside the shared facts", () => {
+    const ctx = buildLenormandContext("sentence-3", "Q", legging(3));
+    expect(ctx.jsonOutput).toContain('{"reading": string, "answer": string}');
+    expect(ctx.jsonOutput.indexOf('"reading"')).toBeLessThan(ctx.jsonOutput.indexOf('"answer"'));
+    expect(ctx.facts).not.toContain("Return only one JSON object");
+  });
+
+  it("gives external assistants readable prose with the same reading and answer sections", () => {
+    const ctx = buildLenormandContext("sentence-3", "Q", legging(3));
+    expect(ctx.readableOutput).toContain('"Reading"');
+    expect(ctx.readableOutput).toContain('"Answer"');
+    expect(ctx.readableOutput).toMatch(/Do not return JSON/);
   });
 });
 

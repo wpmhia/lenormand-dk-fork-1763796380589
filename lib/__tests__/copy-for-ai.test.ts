@@ -56,7 +56,7 @@ describe("Copy for AI: complete, self-contained, from the shared context", () =>
 
   it("opens with a self-contained explanation that needs no access to the app", () => {
     const text = buildCopyForAIText("sentence-3", "Q", drawn(3));
-    expect(text.startsWith("The text below is a complete Lenormand reading context.")).toBe(true);
+    expect(text.startsWith("The text below is a complete Lenormand reading context in three sections")).toBe(true);
     expect(text).toContain("## Instructions");
     expect(text).toContain("## Reading facts");
   });

@@ -1,4 +1,9 @@
-import { SIMPLE_LENORMAND_SYSTEM_PROMPT, buildSimpleReadingPrompt } from "@/lib/prompt-builder";
+import {
+  SIMPLE_LENORMAND_SYSTEM_PROMPT,
+  buildReadingFacts,
+  JSON_OUTPUT_CONTRACT,
+  READABLE_OUTPUT_CONTRACT,
+} from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
@@ -17,6 +22,10 @@ export interface LenormandContext {
   instructions: string;
   /** The facts: question, spread, drawn cards in order, geometry, houses and significators. */
   facts: string;
+  /** The output contract the API parses. Only the API path uses it. */
+  jsonOutput: string;
+  /** The readable output contract for external assistants. Only Copy for AI uses it. */
+  readableOutput: string;
 }
 
 export interface RawDrawnCard {
@@ -48,7 +57,9 @@ export function buildLenormandContext(
   );
   return {
     instructions: SIMPLE_LENORMAND_SYSTEM_PROMPT,
-    facts: buildSimpleReadingPrompt(context),
+    facts: buildReadingFacts(context),
+    jsonOutput: JSON_OUTPUT_CONTRACT,
+    readableOutput: READABLE_OUTPUT_CONTRACT,
   };
 }
 

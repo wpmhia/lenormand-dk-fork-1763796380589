@@ -118,7 +118,7 @@ export async function POST(request: Request) {
     const serviceResult = await generateReading({
       model: readingModel,
       system: lenormand.instructions,
-      prompt: lenormand.facts,
+      prompt: [lenormand.facts, lenormand.jsonOutput].join("\n\n"),
       maxTokens: getTokenBudget(cardCount),
       timeoutMs: modelTimeoutMs,
       signal: request.signal,

@@ -30,7 +30,7 @@ Weigh counter-cards together. A card that resists a negative development, such a
 
 Timing: do not name specific periods such as months or weeks. If a time indication is useful, describe it as a symbolic estimate, never as a fact.
 
-Answer first: the "answer" is a clear, direct response to the question, stated plainly, before the detailed reading develops it.
+Work order: first weigh the cards and write the "reading". Then state the "answer": one or two plain sentences giving the direct response to the question, drawn from that reading. The "reading" is written first and the "answer" last, matching the JSON field order.
 
 Write naturally in the user's language.`;
 
@@ -212,13 +212,24 @@ export function buildSpreadFacts(context: ReadingContext): string {
     .join("\n\n");
 }
 
-/** The reading prompt: question, shared spread facts, then the JSON shape. */
-export function buildSimpleReadingPrompt(context: ReadingContext): string {
+/** The machine output contract for the API: exactly the JSON the route parses. */
+export const JSON_OUTPUT_CONTRACT = "Return only one JSON object with exactly these fields, in this order: {\"reading\": string, \"answer\": string}. \"reading\" is the coherent interpretation in plain prose, worked out from the spread first; \"answer\" is the direct answer to the question in one or two sentences, drawn from that reading. Do not use Markdown fences.";
+
+/** The readable output contract for external assistants: the same fields, written as plain prose. */
+export const READABLE_OUTPUT_CONTRACT =
+  "Write the interpretation as plain, readable prose for a person. Start with a short paragraph headed \"Reading\" that works through the spread: the relevant combinations, their order and geometry, the supporting and the contradicting evidence, and how they balance. Then give a heading \"Answer\" with one or two plain sentences that answer the question directly, drawn from that reading. Do not return JSON or code blocks.";
+
+/** The reading facts shared by both paths: question, spread, cards, geometry and significators. */
+export function buildReadingFacts(context: ReadingContext): string {
   return [
     `User question:\n${sanitizeQuestion(context.question)}`,
     buildSpreadFacts(context),
     `Interpret the supplied card geometry literally. Never recalculate or invent positions, neighbours, directions or card relationships. Distinguish direct horizontal, vertical and diagonal relations from house relations; a house is not a neighbour. Do not infer facing direction unless it is supplied. Weigh the strongest supporting and contradicting combinations before forming a conclusion, and do not ignore cards to support a preferred answer. Give a direct answer based on the overall balance of the spread, not on a single negative or positive card. Treat the reading as symbolic interpretation, not as evidence of what another person has done.`,
     `Build the reading around the single strongest relevant combination. Name a conflicting card only where it changes the outcome; do not list unrelated alternatives. Keep symbolic indications distinct from verified facts.`,
-    `Return only one JSON object with exactly these fields, in this order: {"reading": string, "answer": string}. "reading" is the coherent interpretation in plain prose, worked out from the spread first; "answer" is the direct answer to the question in one or two sentences, drawn from that reading. Do not use Markdown fences.`,
   ].join("\n\n");
+}
+
+/** The reading prompt for the API: the shared facts followed by the JSON contract. */
+export function buildSimpleReadingPrompt(context: ReadingContext): string {
+  return [buildReadingFacts(context), JSON_OUTPUT_CONTRACT].join("\n\n");
 }
