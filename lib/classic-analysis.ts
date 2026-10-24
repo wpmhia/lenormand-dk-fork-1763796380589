@@ -3,6 +3,15 @@ import { getCardById } from "@/lib/data";
 import { getGrandTableauAdjacentCards } from "@/lib/data";
 import type { Card, ReadingCard } from "@/lib/types";
 import type { SpreadId } from "@/lib/spread-definitions";
+import {
+  gridLinks,
+  resolveLinks,
+  selectMostRelevant,
+  sequenceLinks,
+  type ResolvedCombination,
+  type UnknownCombination,
+  type PairLink,
+} from "@/lib/combination-engine";
 
 /**
  * Deterministic classic analysis. No model call, no randomness, no invented events: it reports
@@ -24,6 +33,10 @@ export interface ClassicAnalysis {
   summary: string;
   cards: ClassicCardLine[];
   geometry: string[];
+  /** Curated combinations that apply to this spread. Empty when none are curated. */
+  combinations: ResolvedCombination[];
+  /** Pairs the engine selected but cannot interpret, shown as card meanings only. */
+  unknownCombinations: UnknownCombination[];
   note: string;
 }
 
@@ -102,6 +115,23 @@ function grandTableauNeighbours(cards: ReadingCard[], allCards: Card[]): string[
  * Builds the classic analysis for a drawn spread. Pure: the same inputs always give the same
  * output, and nothing here calls a model.
  */
+/** The links the engine reads for a spread, most relevant first. Geometry is never inferred from names. */
+function spreadLinks(spreadId: SpreadId, ids: number[]): PairLink[] {
+  switch (ids.length) {
+    case 1:
+      return [];
+    case 3:
+    case 5:
+      return sequenceLinks(ids);
+    case 9:
+      return selectMostRelevant(gridLinks(ids, 3, 3), [5], 12);
+    case 36:
+      return selectMostRelevant(gridLinks(ids, 4, 9), [28, 29], 16);
+    default:
+      return [];
+  }
+}
+
 export function buildClassicAnalysis(
   spreadId: SpreadId,
   question: string,
@@ -134,5 +164,18 @@ export function buildClassicAnalysis(
     ? `Single card: ${lines[0]?.name ?? ""}. Its traditional meaning is listed below.`
     : `${count} cards in the order drawn. Each card's traditional meaning and the spread's geometry are listed below.`;
 
-  return { spreadId, question, summary, cards: lines, geometry, note: NOTE };
+  const ids = cards.map((card) => card.id);
+  const names = new Map(ids.map((id) => [id, cardMeaning(getCardById(allCards, id), id).name]));
+  const { resolved, unknown } = resolveLinks(spreadLinks(spreadId, ids), names);
+
+  return {
+    spreadId,
+    question,
+    summary,
+    cards: lines,
+    geometry,
+    combinations: resolved,
+    unknownCombinations: unknown,
+    note: NOTE,
+  };
 }
