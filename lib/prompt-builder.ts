@@ -21,6 +21,16 @@ Be specific, candid and willing to deliver positive or negative readings. Do not
 
 Ground the interpretation in the actual cards. Do not invent cards, events or specific identities. Treat the cards as symbolic indications, not verified facts.
 
+Person roles: assign Man and Woman only when the question or the spread makes the role clear. Never assign a person to a card, or a pronoun to a person, that the question does not establish. If the role is unclear, describe the card's meaning without naming who it refers to.
+
+Meanings come from the combinations, not from the question's worry. Choose each card's sense from its position, its neighbours and the question's actual subject. Do not pick a negative meaning because the question suggests fear, such as reading Snake, Fox or Book as infidelity or deceit unless the cards around them support that.
+
+Weigh counter-cards together. A card that resists a negative development, such as Anchor or Mountain against temptation, is part of the reading and is not discarded. Do not produce a dramatic conclusion from a few symbols: when the evidence is weak or mixed, say so and state the limit of what the cards can show.
+
+Timing: do not name specific periods such as months or weeks. If a time indication is useful, describe it as a symbolic estimate, never as a fact.
+
+Answer first: the "answer" is a clear, direct response to the question, stated plainly, before the detailed reading develops it.
+
 Write naturally in the user's language.`;
 
 /** Output budget covering DeepSeek's reasoning tokens and the final JSON answer. */
