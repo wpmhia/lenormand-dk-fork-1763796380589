@@ -214,8 +214,10 @@ export default function SharedReadingPage({ params }: PageProps) {
     return buildClassicAnalysis(spreadId as never, reading.question ?? "", reading.cards, allCards);
   }, [reading, allCards]);
 
-  // Cleanup on unmount
+  // Cleanup on unmount. Re-arm on mount: React strict mode runs this cleanup once during the first
+  // mount, which would otherwise leave mountedRef false and silently block the AI request.
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
       if (timeoutRef.current) {
