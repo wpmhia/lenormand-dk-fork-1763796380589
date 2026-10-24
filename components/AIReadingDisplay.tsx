@@ -18,6 +18,7 @@ import {
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 import type { Card as CardType } from "@/lib/types";
+import type { ClassicAnalysis } from "@/lib/classic-analysis";
 
 /** The original question, shown above every state so the user keeps their context. */
 function QuestionBlock({ question }: { question?: string }) {
@@ -28,6 +29,38 @@ function QuestionBlock({ question }: { question?: string }) {
         Question
       </p>
       <p className="text-sm text-foreground">{question.trim()}</p>
+    </div>
+  );
+}
+
+/**
+ * The deterministic classic analysis, shown before any AI. It is read-only and needs no network
+ * call. Each line names a card with its traditional meaning, then the geometry.
+ */
+function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis }) {
+  return (
+    <div className="space-y-4" data-testid="classic-analysis">
+      <p className="text-sm font-semibold text-foreground">Classic analysis</p>
+      <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+      <ul className="space-y-2">
+        {analysis.cards.map((card) => (
+          <li key={card.position} className="text-sm text-foreground">
+            <span className="font-semibold">{card.position}. {card.name}</span>
+            {card.meaning ? <span className="text-muted-foreground"> — {card.meaning}</span> : null}
+          </li>
+        ))}
+      </ul>
+      {analysis.geometry.length > 0 && (
+        <details className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
+          <summary className="cursor-pointer text-sm font-semibold text-foreground">Spread geometry</summary>
+          <ul className="mt-2 space-y-1 font-mono text-xs text-muted-foreground">
+            {analysis.geometry.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </details>
+      )}
+      <p className="text-xs text-muted-foreground/80">{analysis.note}</p>
     </div>
   );
 }
@@ -48,6 +81,12 @@ interface AIReadingDisplayProps {
   question?: string;
   drawnCards?: { id: number; name: string }[];
   allCards?: CardType[];
+  /** Classic analysis shown before any AI. When absent, the component behaves as before. */
+  classicAnalysis?: ClassicAnalysis | null;
+  /** Starts the AI interpretation. Only called from the explicit button. */
+  onStartAI?: () => void;
+  /** Whether the AI interpretation has been requested by the user (shows the AI state). */
+  aiRequested?: boolean;
 }
 
 export const AIReadingDisplay = memo(function AIReadingDisplay({
@@ -66,6 +105,9 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   question,
   drawnCards,
   allCards,
+  classicAnalysis = null,
+  onStartAI,
+  aiRequested = true,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
   const [copyError, setCopyError] = useState(false);
@@ -205,6 +247,27 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   const hasUncommittedFollowUpResponse = Boolean(
     followUpResponse && followUpHistory.at(-1)?.content !== followUpResponse,
   );
+
+  // Before the user asks for AI: classic analysis first, then one explicit AI action.
+  if (classicAnalysis && !aiRequested) {
+    return (
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <QuestionBlock question={question} />
+          <ClassicAnalysisView analysis={classicAnalysis} />
+          <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
+            <Button onClick={onStartAI} size="lg" className="w-full gap-2 sm:w-auto">
+              <span aria-hidden="true">✨</span>
+              Interpreteer met AI
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Optional. Generates a personal interpretation of this same reading.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isLoading) {
     return (
