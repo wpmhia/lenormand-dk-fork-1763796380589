@@ -5,9 +5,9 @@ import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AIThinkingIndicator } from "@/components/ui/loading";
 import Link from "next/link";
 import {
+  Loader2,
   RefreshCw,
   Copy,
   Check,
@@ -18,6 +18,7 @@ import {
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 import type { Card as CardType } from "@/lib/types";
+import type { ClassicAnalysis } from "@/lib/classic-analysis";
 
 /** The original question, shown above every state so the user keeps their context. */
 function QuestionBlock({ question }: { question?: string }) {
@@ -29,6 +30,97 @@ function QuestionBlock({ question }: { question?: string }) {
       </p>
       <p className="text-sm text-foreground">{question.trim()}</p>
     </div>
+  );
+}
+
+/**
+ * Plain loading state for the AI interpretation: a spinner and one line of text. It uses the
+ * site's standard text and border styling, with no glow, pulse or ping effects.
+ */
+function InterpretingState() {
+  return (
+    <div
+      className="flex flex-col items-center gap-3 rounded-lg border border-border/60 bg-card px-4 py-8 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <Loader2 className="h-6 w-6 animate-spin text-primary" aria-hidden="true" />
+      <p className="text-sm font-medium text-foreground">Interpreting your cards…</p>
+    </div>
+  );
+}
+
+/**
+ * The deterministic classic analysis, shown before any AI. It is read-only and needs no network
+ * call. Each line names a card with its traditional meaning, then the geometry.
+ */
+export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis }) {
+  return (
+    <div className="space-y-4" data-testid="classic-analysis">
+      <p className="text-sm font-semibold text-foreground">Classic analysis</p>
+      <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+      <ul className="space-y-2">
+        {analysis.cards.map((card) => (
+          <li key={card.position} className="text-sm text-foreground">
+            <span className="font-semibold">{card.position}. {card.name}</span>
+            {card.meaning ? <span className="text-muted-foreground"> — {card.meaning}</span> : null}
+          </li>
+        ))}
+      </ul>
+      <div className="space-y-2" data-testid="classic-combinations">
+        <p className="text-sm font-semibold text-foreground">Combinations</p>
+        {(analysis.combinations?.length ?? 0) > 0 ? (
+          <ul className="space-y-2">
+            {analysis.combinations.map((combo) => (
+              <li key={`${combo.fromPosition}-${combo.toPosition}`} className="text-sm text-foreground">
+                <span className="font-semibold">
+                  {combo.fromPosition}. {combo.fromName} + {combo.toPosition}. {combo.toName}
+                </span>
+                <span className="text-muted-foreground"> ({combo.tone}, {combo.relation}) — {combo.meaning}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            No curated combination meaning is available for this spread. The card meanings and positions above are the classic reading as it stands.
+          </p>
+        )}
+      </div>
+      {analysis.geometry.length > 0 && (
+        <details className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
+          <summary className="cursor-pointer text-sm font-semibold text-foreground">Spread geometry</summary>
+          <ul className="mt-2 space-y-1 font-mono text-xs text-muted-foreground">
+            {analysis.geometry.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </details>
+      )}
+      <p className="text-xs text-muted-foreground/80">{analysis.note}</p>
+    </div>
+  );
+}
+
+/** The classic analysis with the single explicit AI action below it. Used by the results and shared pages. */
+export function ClassicAnalysisWithAI({
+  analysis,
+  onStartAI,
+}: {
+  analysis: ClassicAnalysis;
+  onStartAI: () => void;
+}) {
+  return (
+    <>
+      <ClassicAnalysisView analysis={analysis} />
+      <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
+        <Button onClick={onStartAI} className="w-full sm:w-auto">
+          Interpret My Cards
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Optional. Generates a personal interpretation of this same reading. The classic analysis stays available.
+        </p>
+      </div>
+    </>
   );
 }
 
@@ -48,9 +140,52 @@ interface AIReadingDisplayProps {
   question?: string;
   drawnCards?: { id: number; name: string }[];
   allCards?: CardType[];
+  /** Classic analysis shown before any AI. When absent, the component behaves as before. */
+  classicAnalysis?: ClassicAnalysis | null;
+  /** Starts the AI interpretation. Only called from the explicit button. */
+  onStartAI?: () => void;
+  /** Whether the AI interpretation has been requested by the user (shows the AI state). */
+  aiRequested?: boolean;
 }
 
-export const AIReadingDisplay = memo(function AIReadingDisplay({
+/**
+ * The classic analysis and the AI states together. Before AI is requested, the classic analysis
+ * and the single AI action are shown. After it is requested, the classic analysis stays visible
+ * above the AI state, so both can be read without another model call.
+ */
+export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingDisplayProps) {
+  const { classicAnalysis = null, onStartAI, aiRequested = true, question } = props;
+
+  if (classicAnalysis && !aiRequested && onStartAI) {
+    return (
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <QuestionBlock question={question} />
+          <ClassicAnalysisWithAI analysis={classicAnalysis} onStartAI={onStartAI} />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (classicAnalysis && aiRequested) {
+    return (
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <QuestionBlock question={question} />
+          <ClassicAnalysisView analysis={classicAnalysis} />
+          <div className="border-t border-border/60 pt-6">
+            <AIStateView {...props} />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return <AIStateView {...props} />;
+});
+
+/** The AI states only (loading, error, empty, reading), without the classic analysis. */
+const AIStateView = memo(function AIStateView({
   aiReading,
   isLoading,
   isStreaming = false,
@@ -66,6 +201,9 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   question,
   drawnCards,
   allCards,
+  classicAnalysis = null,
+  onStartAI,
+  aiRequested = true,
 }: AIReadingDisplayProps) {
   const [copyClicked, setCopyClicked] = useState(false);
   const [copyError, setCopyError] = useState(false);
@@ -210,12 +348,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
     return (
       <>
         <QuestionBlock question={question} />
-        <div className="consulting-glow rounded-2xl">
-          <AIThinkingIndicator
-            message="Consulting the cards..."
-            subtext="Reading the cards for clear, practical guidance"
-          />
-        </div>
+        <InterpretingState />
       </>
     );
   }
@@ -272,12 +405,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
     return (
       <>
         <QuestionBlock question={question} />
-        <div className="consulting-glow rounded-2xl">
-          <AIThinkingIndicator
-            message="Consulting the cards..."
-            subtext="Reading the cards for clear, practical guidance"
-          />
-        </div>
+        <InterpretingState />
       </>
     );
   }
@@ -430,9 +558,9 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
             </div>
             <div className="text-sm text-foreground/90">
               {followUpStreaming && !followUpResponse ? (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <div className="h-3 w-3 animate-pulse rounded-full bg-primary"></div>
-                  <span>Consulting the cards...</span>
+                <div className="flex items-center gap-2 text-muted-foreground" role="status" aria-live="polite">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
+                  <span>Interpreting your cards…</span>
                 </div>
               ) : (
                 <div className="leading-relaxed">
@@ -442,8 +570,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
             </div>
              {followUpStreaming && followUpResponse && (
               <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary"></div>
-                <span>typing...</span>
+                <span>Writing…</span>
               </div>
             )}
           </div>

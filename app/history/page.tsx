@@ -188,11 +188,17 @@ function ReadingItem({
           <div className="space-y-3">
             <div>
               <h4 className="mb-1 text-sm font-semibold text-foreground">
-                Interpretation
+                {reading.interpretationFull ? "AI interpretation" : "Classic analysis"}
               </h4>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                {reading.interpretationFull}
-              </p>
+              {reading.interpretationFull ? (
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                  {reading.interpretationFull}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Saved without an AI interpretation. The question and cards are shown above.
+                </p>
+              )}
             </div>
             {reading.notes && (
               <div>

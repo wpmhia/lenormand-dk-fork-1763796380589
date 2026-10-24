@@ -29,6 +29,25 @@ export async function getReadings(): Promise<SavedReading[]> {
   return readings.sort((a, b) => b.timestamp - a.timestamp);
 }
 
+/**
+ * Adds the AI interpretation to an existing saved reading, matched by id. The classic entry is
+ * kept as it was; nothing is duplicated. Returns false when the id is not stored.
+ */
+export async function attachAIInterpretation(
+  id: string,
+  interpretation: { preview: string; full: string },
+): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  const readings = getReadingsSafe();
+  const target = readings.find((r) => r.id === id);
+  if (!target) return false;
+  target.interpretationPreview = interpretation.preview;
+  target.interpretationFull = interpretation.full;
+  target.hasAIInterpretation = true;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(readings));
+  return true;
+}
+
 export async function deleteReading(id: string): Promise<void> {
   if (typeof window === "undefined") return;
   const readings = getReadingsSafe();

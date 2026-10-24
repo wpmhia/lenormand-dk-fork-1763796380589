@@ -16,7 +16,6 @@ import {
   Shield,
   BookOpen,
   Target,
-  Sparkles,
   Coffee,
 } from "lucide-react";
 
@@ -62,7 +61,6 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
                 <Button asChild size="lg" className="w-full gap-2 text-base sm:w-auto sm:text-sm">
                   <Link href="/read/new">
-                    <Sparkles className="h-5 w-5" />
                     Get Your Reading
                   </Link>
                 </Button>

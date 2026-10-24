@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Deck } from "@/components/Deck";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
+import { buildClassicAnalysis } from "@/lib/classic-analysis";
 import {
   TRADITIONAL_SPREADS,
   COMPREHENSIVE_SPREADS,
@@ -68,6 +69,8 @@ function NewReadingPageContent() {
   const [lastResetParam, setLastResetParam] = useState<string | null>(null);
   const [readingSaved, setReadingSaved] = useState(false);
   const [significatorType, setSignificatorType] = useState<SignificatorType>("none");
+  // The user decides on AI after the classic analysis. No model call happens until they press it.
+  const [aiRequested, setAiRequested] = useState(false);
 
   // AI Analysis
   const {
@@ -90,6 +93,17 @@ function NewReadingPageContent() {
     significatorType,
   );
   const aiStreaming = aiLoading && !aiReading;
+
+  // Classic analysis: deterministic, computed from the drawn cards and the existing catalogue.
+  const classicAnalysis = useMemo(() => {
+    if (step !== "results" || drawnCards.length === 0) return null;
+    return buildClassicAnalysis(selectedSpread.id as never, question, drawnCards, allCards);
+  }, [step, drawnCards, selectedSpread.id, question, allCards]);
+
+  const startAI = useCallback(() => {
+    setAiRequested(true);
+    startAnalysis();
+  }, [startAnalysis]);
 
   // Reading history
   const { saveReading } = useReadingHistory();
@@ -116,6 +130,7 @@ function NewReadingPageContent() {
       setError("");
       setReadingSaved(false);
       setSignificatorType("none");
+      setAiRequested(false);
 
       resetAnalysis();
 
@@ -171,25 +186,8 @@ function NewReadingPageContent() {
     updatedAt: new Date(),
   }), [question, selectedSpread.cards, drawnCards]);
 
-  // The inputs that actually shape a reading. Re-running only when this signature changes
-  // refreshes the interpretation when the significator (or question/spread/cards) changes,
-  // while an unrelated re-render that recreates `startAnalysis` does not fire a duplicate.
-  const analysisKey = useMemo(() => {
-    if (step !== "results" || drawnCards.length === 0) return null;
-    const cardKey = drawnCards.map((card) => `${card.id}:${card.position}`).join(",");
-    return `${selectedSpread.id}|${question}|${significatorType}|${cardKey}`;
-  }, [step, drawnCards, selectedSpread.id, question, significatorType]);
-
-  const analysisKeyRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (analysisKey && analysisKeyRef.current !== analysisKey) {
-      analysisKeyRef.current = analysisKey;
-      startAnalysis();
-    }
-    if (step !== "results") {
-      analysisKeyRef.current = null;
-    }
-  }, [step, analysisKey, startAnalysis]);
+  // AI is never started by reaching the results. It runs only after the user presses the AI
+  // button, so the classic analysis is shown first and no model call happens unasked.
 
   // Handle back navigation. Going back to card entry keeps the drawn cards so a manual
   // Grand Tableau or a virtual draw is not thrown away; only an explicit new reading or
@@ -442,6 +440,9 @@ function NewReadingPageContent() {
                   question={question}
                   drawnCards={drawnCardTypes.map((c) => ({ id: c.id, name: c.name }))}
                   allCards={allCards}
+                  classicAnalysis={classicAnalysis}
+                  onStartAI={startAI}
+                  aiRequested={aiRequested}
                 />
               </ErrorBoundary>
 
