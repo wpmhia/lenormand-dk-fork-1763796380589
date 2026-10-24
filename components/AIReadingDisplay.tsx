@@ -57,7 +57,6 @@ function InterpretingState() {
 export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis }) {
   return (
     <div className="space-y-4" data-testid="classic-analysis">
-      <p className="text-sm font-semibold text-foreground">Classic analysis</p>
       <p className="text-sm text-muted-foreground">{analysis.summary}</p>
       <ul className="space-y-2">
         {analysis.cards.map((card) => (
@@ -67,9 +66,9 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
           </li>
         ))}
       </ul>
-      <div className="space-y-2" data-testid="classic-combinations">
-        <p className="text-sm font-semibold text-foreground">Combinations</p>
-        {(analysis.combinations?.length ?? 0) > 0 ? (
+      {(analysis.combinations?.length ?? 0) > 0 && (
+        <div className="space-y-2" data-testid="classic-combinations">
+          <p className="text-sm font-semibold text-foreground">Combinations</p>
           <ul className="space-y-2">
             {analysis.combinations.map((combo) => (
               <li key={`${combo.fromPosition}-${combo.toPosition}`} className="text-sm text-foreground">
@@ -80,12 +79,8 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
               </li>
             ))}
           </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            No curated combination meaning is available for this spread. The card meanings and positions above are the classic reading as it stands.
-          </p>
-        )}
-      </div>
+        </div>
+      )}
       {analysis.geometry.length > 0 && (
         <details className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
           <summary className="cursor-pointer text-sm font-semibold text-foreground">Spread geometry</summary>
@@ -101,7 +96,11 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
   );
 }
 
-/** The classic analysis with the single explicit AI action below it. Used by the results and shared pages. */
+/**
+ * The results hierarchy: a short introduction and the single AI action first, then the traditional
+ * card meanings and geometry in a collapsed disclosure. The classic content is complete when
+ * expanded; nothing is removed, only moved behind the disclosure.
+ */
 export function ClassicAnalysisWithAI({
   analysis,
   onStartAI,
@@ -111,16 +110,35 @@ export function ClassicAnalysisWithAI({
 }) {
   return (
     <>
-      <ClassicAnalysisView analysis={analysis} />
-      <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
-        <Button onClick={onStartAI} className="w-full sm:w-auto">
-          Interpret My Cards
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          Optional. Generates a personal interpretation of this same reading. The classic analysis stays available.
+      <div className="flex flex-col gap-4">
+        <p className="text-sm text-muted-foreground">
+          Discover what your cards mean together and how they relate to your question.
         </p>
+        <div>
+          <Button onClick={() => {
+            trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+            onStartAI();
+          }} className="w-full sm:w-auto">
+            Get AI Interpretation
+          </Button>
+        </div>
       </div>
+      <ClassicAnalysisDisclosure analysis={analysis} />
     </>
+  );
+}
+
+/** The traditional meanings and geometry, collapsed by default and fully available when opened. */
+export function ClassicAnalysisDisclosure({ analysis }: { analysis: ClassicAnalysis }) {
+  return (
+    <details className="group rounded-lg border border-border/60 bg-muted/30 px-4 py-3" data-testid="classic-analysis-disclosure">
+      <summary className="focus-visible:ring-ring cursor-pointer select-none rounded text-sm font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2">
+        Traditional card meanings
+      </summary>
+      <div className="mt-4">
+        <ClassicAnalysisView analysis={analysis} />
+      </div>
+    </details>
   );
 }
 
@@ -172,7 +190,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingD
       <Card>
         <CardContent className="space-y-6 p-6">
           <QuestionBlock question={question} />
-          <ClassicAnalysisView analysis={classicAnalysis} />
+          <ClassicAnalysisDisclosure analysis={classicAnalysis} />
           <div className="border-t border-border/60 pt-6">
             <AIStateView {...props} />
           </div>

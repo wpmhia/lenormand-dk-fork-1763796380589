@@ -93,9 +93,9 @@ function renderWithClassic(props: Partial<Parameters<typeof AIReadingDisplay>[0]
 }
 
 describe("AIReadingDisplay: classic analysis and the AI action", () => {
-  it("before AI is requested shows the classic analysis and the English 'Interpret My Cards' button", () => {
+  it("before AI is requested shows the classic analysis and the English 'Get AI Interpretation' button", () => {
     const html = renderWithClassic({ aiRequested: false, aiReading: null, isLoading: false, error: null });
-    expect(html).toContain("Interpret My Cards");
+    expect(html).toContain("Get AI Interpretation");
     expect(html).toContain("Rider");
     expect(html).toContain("Line of 3 cards");
     expect(html).not.toContain("Interpreteer");
@@ -123,5 +123,30 @@ describe("AIReadingDisplay: classic analysis and the AI action", () => {
   it("all new interface text is English", () => {
     const html = renderWithClassic({ aiRequested: false });
     expect(html).not.toMatch(/Interpreteer|Optioneel|Klassieke|Geen|kaart/);
+  });
+});
+
+describe("results hierarchy: AI action first, traditional meanings collapsed", () => {
+  it("shows the introduction and the button before the collapsed disclosure", () => {
+    const html = renderWithClassic({ aiRequested: false });
+    const intro = html.indexOf("Discover what your cards mean together");
+    const button = html.indexOf("Get AI Interpretation");
+    const disclosure = html.indexOf("Traditional card meanings");
+    expect(intro).toBeGreaterThan(-1);
+    expect(intro).toBeLessThan(button);
+    expect(button).toBeLessThan(disclosure);
+  });
+
+  it("renders the traditional meanings inside a closed <details> element", () => {
+    const html = renderWithClassic({ aiRequested: false });
+    expect(html).toMatch(/<details[^>]*data-testid="classic-analysis-disclosure"/);
+    expect(html).not.toMatch(/<details[^>]*open/);
+    expect(html).toContain("<summary");
+  });
+
+  it("does not show the technical no-curated-combination message in the primary view", () => {
+    const html = renderWithClassic({ aiRequested: false });
+    expect(html).not.toContain("No curated combination");
+    expect(html.toLowerCase()).not.toContain("curated");
   });
 });
