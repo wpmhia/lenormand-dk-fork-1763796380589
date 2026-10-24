@@ -33,7 +33,7 @@ export function CopyForAIButton({ spreadId, question, drawn, allCards }: CopyFor
 
   const handleCopy = async () => {
     trackEvent("reading_copy_for_ai", { spreadId, cardCount: drawn.length });
-    const text = buildCopyForAIText(spreadId, question, drawn, allCards);
+    const text = buildCopyForAIText(spreadId, question, drawn);
     const ok = await copyTextToClipboard(text);
     setStatus(ok ? "copied" : "failed");
     if (timer.current) clearTimeout(timer.current);

@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT, getTokenBudget } from "@/lib/prompt-builder";
-import { buildReadingContext } from "@/lib/reading-context";
+import { getTokenBudget } from "@/lib/prompt-builder";
+import { buildLenormandContext } from "@/lib/lenormand-context";
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
@@ -105,14 +105,20 @@ export async function POST(request: Request) {
       });
     }
 
-    const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
-    const prompt = buildSimpleReadingPrompt(context);
+    // The same shared context that "Copy for AI" uses: one source of facts and instructions.
+    const lenormand = buildLenormandContext(
+      validated.spreadId,
+      validated.question,
+      // Validated cards are already in position order; the index is the position.
+      validated.cards.map((card, index) => ({ id: card.id, position: index })),
+      validated.significatorPreference,
+    );
     modelTimeoutMs = cardCount >= GRAND_TABLEAU_CARD_COUNT ? GRAND_TABLEAU_GENERATION_TIMEOUT_MS : READING_GENERATION_TIMEOUT_MS;
     generationStartedAt = Date.now();
     const serviceResult = await generateReading({
       model: readingModel,
-      system: SIMPLE_LENORMAND_SYSTEM_PROMPT,
-      prompt,
+      system: lenormand.instructions,
+      prompt: lenormand.facts,
       maxTokens: getTokenBudget(cardCount),
       timeoutMs: modelTimeoutMs,
       signal: request.signal,
