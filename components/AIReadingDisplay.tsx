@@ -141,14 +141,17 @@ export function ClassicAnalysisWithAI({
           )}
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-border/60 pt-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-center gap-4 border-t border-border/60 pt-6 text-center">
+          <p className="text-xs text-muted-foreground">
+            Explore how the cards connect to your question.
+          </p>
+          <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
             <Button
               onClick={() => {
                 trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
                 onStartAI();
               }}
-              className="w-full sm:w-auto"
+              className="h-12 w-full sm:w-auto"
             >
               Get AI Interpretation
             </Button>
@@ -159,9 +162,6 @@ export function ClassicAnalysisWithAI({
               allCards={allCards}
             />
           </div>
-          <p className="text-xs text-muted-foreground">
-            Explore how the cards connect to your question.
-          </p>
         </div>
       </div>
       <ClassicAnalysisDisclosure analysis={analysis} />

@@ -44,11 +44,11 @@ export function CopyForAIButton({ spreadId, question, drawn, allCards }: CopyFor
   const Icon = status === "copied" ? Check : status === "failed" ? AlertCircle : Copy;
 
   return (
-    <div className="flex flex-col gap-2">
+    <>
       <Button
         variant="outline"
         onClick={handleCopy}
-        className="w-full gap-2 sm:w-auto"
+        className="h-12 w-full gap-2 sm:w-auto"
         aria-live="polite"
         aria-label={status === "failed" ? "Copy failed. Select the text manually from the reading." : label}
       >
@@ -56,10 +56,10 @@ export function CopyForAIButton({ spreadId, question, drawn, allCards }: CopyFor
         {label}
       </Button>
       {status === "failed" && (
-        <p className="text-xs text-muted-foreground" role="status">
+        <p className="w-full text-center text-xs text-muted-foreground sm:order-last sm:basis-full" role="status">
           Your browser blocked clipboard access. Copy the reading manually from the page.
         </p>
       )}
-    </div>
+    </>
   );
 }
