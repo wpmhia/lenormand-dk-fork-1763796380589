@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { buildCopyForAIText } from "@/lib/copy-for-ai";
+import { buildCopyForAIText, copyInstructions } from "@/lib/copy-for-ai";
 import { buildLenormandContext } from "@/lib/lenormand-context";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import { getDefinition } from "@/lib/spread-definitions";
 import type { RawDrawnCard } from "@/lib/lenormand-context";
+
+/** The copied instructions equal the API instructions except for the one work-order sentence. */
+function expectCopyInstructionsMatch(copy: string, apiInstructions: string) {
+  const copied = copyInstructions(apiInstructions);
+  expect(copy).toContain(copied);
+  const apiLines = apiInstructions.split("\n");
+  const copyLines = copied.split("\n");
+  expect(copyLines.filter((l, i) => l !== apiLines[i])).toHaveLength(1);
+}
 
 const drawn = (n: number, offset = 0): RawDrawnCard[] =>
   Array.from({ length: n }, (_, i) => ({ id: CARD_CATALOG[(i + offset) % 36].id, position: i }));
@@ -50,7 +59,7 @@ describe("Copy for AI: complete, self-contained, from the shared context", () =>
     const cards = drawn(count, 2);
     const text = buildCopyForAIText(spreadId, "Q", cards);
     const shared = buildLenormandContext(spreadId, "Q", cards);
-    expect(text).toContain(shared.instructions);
+    expectCopyInstructionsMatch(text, shared.instructions);
     expect(text).toContain(shared.facts);
   });
 

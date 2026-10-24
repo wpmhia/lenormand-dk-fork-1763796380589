@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { buildLenormandContext, type RawDrawnCard } from "@/lib/lenormand-context";
-import { buildCopyForAIText } from "@/lib/copy-for-ai";
+import { buildCopyForAIText, copyInstructions } from "@/lib/copy-for-ai";
 import { gridRelations, SPREAD_GEOMETRY } from "@/lib/grid-relations";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import { getCardCatalogMap } from "@/lib/card-catalog";
+
+/** The copied instructions equal the API instructions except for the one work-order sentence. */
+function expectCopyInstructionsMatch(copy: string, apiInstructions: string) {
+  const copied = copyInstructions(apiInstructions);
+  expect(copy).toContain(copied);
+  const apiLines = apiInstructions.split("\n");
+  const copyLines = copied.split("\n");
+  expect(copyLines.filter((l, i) => l !== apiLines[i])).toHaveLength(1);
+}
 
 type SpreadId = "single-card" | "sentence-3" | "sentence-5" | "comprehensive" | "grand-tableau";
 
@@ -52,7 +61,7 @@ describe("universal context: one canonical context for every spread", () => {
     const cards = legging(count, 4);
     const ctx = buildLenormandContext(id, "Will it rain?", cards);
     const copy = buildCopyForAIText(id, "Will it rain?", cards);
-    expect(copy).toContain(ctx.instructions);
+    expectCopyInstructionsMatch(copy, ctx.instructions);
     expect(copy).toContain(ctx.facts);
   });
 

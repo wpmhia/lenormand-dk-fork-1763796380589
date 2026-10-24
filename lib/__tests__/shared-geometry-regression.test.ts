@@ -1,8 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { buildLenormandContext, type RawDrawnCard } from "@/lib/lenormand-context";
-import { buildCopyForAIText } from "@/lib/copy-for-ai";
+import { buildCopyForAIText, copyInstructions } from "@/lib/copy-for-ai";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import { gridRelations } from "@/lib/grid-relations";
+
+/** The copied instructions equal the API instructions except for the one work-order sentence. */
+function expectCopyInstructionsMatch(copy: string, apiInstructions: string) {
+  const copied = copyInstructions(apiInstructions);
+  expect(copy).toContain(copied);
+  const apiLines = apiInstructions.split("\n");
+  const copyLines = copied.split("\n");
+  expect(copyLines.filter((l, i) => l !== apiLines[i])).toHaveLength(1);
+}
 
 const id = (name: string) => CARD_CATALOG.find((c) => c.name === name)!.id;
 
@@ -81,7 +90,7 @@ describe("shared geometry: both paths receive the same geometry", () => {
   });
 
   it("Copy for AI carries exactly the same instructions as DeepSeek", () => {
-    expect(copy).toContain(ctx.instructions);
+    expectCopyInstructionsMatch(copy, ctx.instructions);
   });
 
   it("the copied text is self-contained: it explains itself without the app", () => {
