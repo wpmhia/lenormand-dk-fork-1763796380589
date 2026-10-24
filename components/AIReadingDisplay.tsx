@@ -20,6 +20,7 @@ import { trackEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
 import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
+import { getPreviewGeometry, gridColumnsClass } from "@/lib/preview-geometry";
 import { CopyForAIButton } from "@/components/CopyForAIButton";
 import { ActionInfoTooltip } from "@/components/ActionInfoTooltip";
 import type { SignificatorPreference } from "@/lib/significator";
@@ -118,7 +119,10 @@ export function ClassicAnalysisWithAI({
   allCards?: CardType[];
   significatorPreference?: SignificatorPreference;
 }) {
-  const preview = buildCardPreview(analysis, allCards);
+  const preview = {
+    ...buildCardPreview(analysis, allCards),
+    geometry: getPreviewGeometry(analysis.spreadId, analysis.cards.length),
+  };
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
   return (
     <>
@@ -129,17 +133,30 @@ export function ClassicAnalysisWithAI({
           <p className="text-sm text-muted-foreground">
             A first look at the traditional meanings behind your spread.
           </p>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5" data-testid="card-preview">
-            {preview.cards.map((card) => (
-              <li
-                key={card.position}
-                className="flex flex-col gap-1 rounded-lg border border-border/60 bg-muted/30 p-3"
-              >
-                <span className="text-sm font-semibold text-foreground">{card.name}</span>
-                <span className="text-xs text-muted-foreground">{card.phrase}</span>
-              </li>
-            ))}
-          </ul>
+          <div
+            className={preview.geometry?.scrollsOnMobile ? "-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0" : undefined}
+            role={preview.geometry?.scrollsOnMobile ? "region" : undefined}
+            aria-label={preview.geometry?.scrollsOnMobile ? "Drawn cards, horizontally scrollable" : undefined}
+            tabIndex={preview.geometry?.scrollsOnMobile ? 0 : undefined}
+          >
+            <ol
+              className={`grid gap-3 ${gridColumnsClass(preview.geometry?.columns ?? 3)} ${preview.geometry?.scrollsOnMobile ? "min-w-[600px] sm:min-w-0" : ""}`}
+              data-testid="card-preview"
+              data-layout={preview.geometry?.layoutType ?? "unknown"}
+              data-columns={preview.geometry?.columns ?? 0}
+              data-rows={preview.geometry?.rows ?? 0}
+            >
+              {preview.cards.map((card) => (
+                <li
+                  key={card.position}
+                  className="flex min-w-0 flex-col gap-1 rounded-lg border border-border/60 bg-muted/30 p-3"
+                >
+                  <span className="text-sm font-semibold text-foreground">{card.name}</span>
+                  <span className="text-xs text-muted-foreground">{card.phrase}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
           {preview.themes && (
             <p className="text-sm text-foreground" data-testid="card-themes">{preview.themes}</p>
           )}
