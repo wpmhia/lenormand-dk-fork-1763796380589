@@ -59,11 +59,22 @@ describe("prompt handoff: every drawn card reaches the model in draw order", () 
   it.each(Object.entries(CARD_COUNT) as [SpreadId, number][])("%s supplies every card in order", (id, count) => {
     const cards = draw(count, 13);
     const text = prompt(id, "Q?", cards);
-    if (count === 9) {
-      // The 3x3 grid is the only card list for nine cards: each row holds its three cards in order.
-      for (let row = 0; row < 3; row++) {
-        const names = cards.slice(row * 3, row * 3 + 3).map((card) => card.name);
-        expect(text, `comprehensive row ${row + 1}`).toContain(`Row ${row + 1}: ${names.join(" | ")}`);
+    if (count === 9 || count === 36) {
+      // Grid spreads have no numbered list: each row holds its cards in order. The 4x9 Grand
+      // Tableau also gives every position in its house list, which must follow the same order.
+      const size = count === 9 ? 3 : 9;
+      const rows = count === 9 ? 3 : 4;
+      for (let row = 0; row < rows; row++) {
+        const names = cards.slice(row * size, row * size + size).map((card) => card.name);
+        expect(text, `${id} row ${row + 1}`).toContain(`Row ${row + 1}: ${names.join(" | ")}`);
+      }
+      if (count === 36) {
+        let cursor = -1;
+        cards.forEach((card, index) => {
+          const at = text.indexOf(`${index + 1}: ${card.name} — `, cursor + 1);
+          expect(at, `house ${index + 1} must follow house ${index}`).toBeGreaterThan(cursor);
+          cursor = at;
+        });
       }
       return;
     }
