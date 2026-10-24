@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 globalThis.React = React;
 
@@ -14,7 +15,7 @@ const QUESTION = "Will my project advance this year?";
 
 function render(props: Partial<Parameters<typeof AIReadingDisplay>[0]>) {
   return renderToStaticMarkup(
-    React.createElement(AIReadingDisplay, {
+    React.createElement(TooltipProvider, null, React.createElement(AIReadingDisplay, {
       aiReading: null,
       isLoading: false,
       isStreaming: false,
@@ -22,7 +23,7 @@ function render(props: Partial<Parameters<typeof AIReadingDisplay>[0]>) {
       onRetry: () => {},
       question: QUESTION,
       ...props,
-    } as Parameters<typeof AIReadingDisplay>[0]),
+    } as Parameters<typeof AIReadingDisplay>[0])),
   );
 }
 

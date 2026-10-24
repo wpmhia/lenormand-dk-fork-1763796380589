@@ -21,6 +21,7 @@ import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
 import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
 import { CopyForAIButton } from "@/components/CopyForAIButton";
+import { ActionInfoTooltip } from "@/components/ActionInfoTooltip";
 import type { SignificatorPreference } from "@/lib/significator";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { ReadingCard } from "@/lib/types";
@@ -149,15 +150,21 @@ export function ClassicAnalysisWithAI({
             Explore how the cards connect to your question.
           </p>
           <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
-            <Button
-              onClick={() => {
-                trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
-                onStartAI();
-              }}
-              className="h-12 w-full sm:w-auto"
-            >
-              Get AI Interpretation
-            </Button>
+            <div className="flex w-full items-center gap-1 sm:w-auto">
+              <Button
+                onClick={() => {
+                  trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+                  onStartAI();
+                }}
+                className="h-12 w-full sm:w-auto"
+              >
+                Get AI Interpretation
+              </Button>
+              <ActionInfoTooltip
+                action="Get AI Interpretation"
+                text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
+              />
+            </div>
             <CopyForAIButton
               spreadId={analysis.spreadId}
               question={analysis.question}

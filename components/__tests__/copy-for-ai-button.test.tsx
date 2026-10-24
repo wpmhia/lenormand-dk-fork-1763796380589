@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import React from "react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 globalThis.React = React;
 
@@ -15,12 +16,12 @@ import { trackEvent } from "@/lib/analytics";
 const drawn = [1, 2, 3].map((id, i) => ({ id, position: i }));
 const rendered = () =>
   renderToStaticMarkup(
-    React.createElement(CopyForAIButton, {
+    React.createElement(TooltipProvider, null, React.createElement(CopyForAIButton, {
       spreadId: "sentence-3",
       question: "Private question about my health",
       drawn,
       allCards: CARD_CATALOG,
-    }),
+    })),
   );
 
 describe("Copy for AI button: presentation", () => {
