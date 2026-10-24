@@ -83,6 +83,8 @@ const classicAnalysis = {
     { position: 3, name: "Sun", keywords: [], meaning: "Success." },
   ],
   geometry: ["Line of 3 cards, read left to right in the order drawn."],
+  combinations: [],
+  unknownCombinations: [],
   note: "This classic analysis lists each card's traditional meaning, its position and the spread's geometry. It does not interpret card combinations and does not predict events.",
 };
 

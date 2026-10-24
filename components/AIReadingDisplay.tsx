@@ -50,6 +50,25 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
           </li>
         ))}
       </ul>
+      <div className="space-y-2" data-testid="classic-combinations">
+        <p className="text-sm font-semibold text-foreground">Combinations</p>
+        {(analysis.combinations?.length ?? 0) > 0 ? (
+          <ul className="space-y-2">
+            {analysis.combinations.map((combo) => (
+              <li key={`${combo.fromPosition}-${combo.toPosition}`} className="text-sm text-foreground">
+                <span className="font-semibold">
+                  {combo.fromPosition}. {combo.fromName} + {combo.toPosition}. {combo.toName}
+                </span>
+                <span className="text-muted-foreground"> ({combo.tone}, {combo.relation}) — {combo.meaning}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            No curated combination meaning is available for this spread. The card meanings and positions above are the classic reading as it stands.
+          </p>
+        )}
+      </div>
       {analysis.geometry.length > 0 && (
         <details className="rounded-lg border border-border/60 bg-muted/30 px-4 py-3">
           <summary className="cursor-pointer text-sm font-semibold text-foreground">Spread geometry</summary>
