@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Crimson_Pro, Inter } from "next/font/google";
 import Script from "next/script";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,19 +10,9 @@ import { Suspense } from "react";
 import { createSafeJsonLd } from "@/lib/sanitize";
 import { Providers } from "./providers";
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-  fallback: ["system-ui", "arial"],
-});
-
-const crimsonPro = Crimson_Pro({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-brand",
-  weight: ["600", "700"],
-});
+// System font stacks instead of next/font/google: the build must not fetch fonts from the network.
+const SANS_STACK = "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif";
+const BRAND_STACK = "Georgia, 'Times New Roman', serif";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lenormand.dk"),
@@ -223,7 +212,8 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.className} ${crimsonPro.variable} antialiased`}
+        className="antialiased"
+        style={{ fontFamily: SANS_STACK, ["--font-brand" as string]: BRAND_STACK }}
         suppressHydrationWarning
       >
         <a
