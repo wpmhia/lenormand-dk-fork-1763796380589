@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { ReadingViewer } from "@/components/ReadingViewer";
-import { AIReadingDisplay } from "@/components/AIReadingDisplay";
+import { AIReadingDisplay, ClassicAnalysisWithAI } from "@/components/AIReadingDisplay";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -10,6 +10,7 @@ import { XCircle } from "lucide-react";
 import { Card as CardType, Reading, ReadingCard } from "@/lib/types";
 import { decodeReadingFromUrl, getCardById, getCards } from "@/lib/data";
 import { AIReadingResponse } from "@/lib/prompt-builder";
+import { buildClassicAnalysis } from "@/lib/classic-analysis";
 import { AIThinkingIndicator } from "@/components/ui/loading";
 
 interface PageProps {
@@ -201,12 +202,17 @@ export default function SharedReadingPage({ params }: PageProps) {
     [reading, allCards, mountedRef],
   );
 
-  // Trigger AI analysis when reading is loaded
-  useEffect(() => {
-    if (reading && allCards.length > 0 && !aiAttempted && reading.cards) {
-      performAIAnalysis(reading.cards);
-    }
-  }, [reading, allCards.length, aiAttempted, performAIAnalysis]);
+  // Opening a shared link never calls the model. AI runs only when the visitor presses the button.
+  const startSharedAI = useCallback(() => {
+    if (reading?.cards) performAIAnalysis(reading.cards);
+  }, [reading, performAIAnalysis]);
+
+  // The classic analysis for the shared spread: deterministic, no model call.
+  const sharedClassicAnalysis = useMemo(() => {
+    if (!reading?.cards?.length || typeof reading.layoutType !== "number") return null;
+    const spreadId = getSpreadIdFromLayoutType(reading.layoutType);
+    return buildClassicAnalysis(spreadId as never, reading.question ?? "", reading.cards, allCards);
+  }, [reading, allCards]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -278,8 +284,16 @@ export default function SharedReadingPage({ params }: PageProps) {
 
         {/* Card meanings now accessed via hover on spread cards - removed redundant section */}
 
-        {/* AI Analysis Section */}
+        {/* Classic analysis and optional AI: AI starts only on the visitor's explicit press */}
         <div className="mt-6">
+          {!aiAttempted && sharedClassicAnalysis && (
+            <Card>
+              <CardContent className="space-y-6 p-6">
+                <ClassicAnalysisWithAI analysis={sharedClassicAnalysis} onStartAI={startSharedAI} />
+              </CardContent>
+            </Card>
+          )}
+
           {aiLoading && (
             <AIThinkingIndicator
               message="Consulting the cards..."

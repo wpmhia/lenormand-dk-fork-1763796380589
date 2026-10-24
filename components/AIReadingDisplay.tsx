@@ -37,7 +37,7 @@ function QuestionBlock({ question }: { question?: string }) {
  * The deterministic classic analysis, shown before any AI. It is read-only and needs no network
  * call. Each line names a card with its traditional meaning, then the geometry.
  */
-function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis }) {
+export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis }) {
   return (
     <div className="space-y-4" data-testid="classic-analysis">
       <p className="text-sm font-semibold text-foreground">Classic analysis</p>
@@ -62,6 +62,30 @@ function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis }) {
       )}
       <p className="text-xs text-muted-foreground/80">{analysis.note}</p>
     </div>
+  );
+}
+
+/** The classic analysis with the single explicit AI action below it. Used by the results and shared pages. */
+export function ClassicAnalysisWithAI({
+  analysis,
+  onStartAI,
+}: {
+  analysis: ClassicAnalysis;
+  onStartAI: () => void;
+}) {
+  return (
+    <>
+      <ClassicAnalysisView analysis={analysis} />
+      <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
+        <Button onClick={onStartAI} size="lg" className="w-full gap-2 sm:w-auto">
+          <span aria-hidden="true">✨</span>
+          Interpreteer met AI
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Optional. Generates a personal interpretation of this same reading.
+        </p>
+      </div>
+    </>
   );
 }
 
@@ -249,21 +273,12 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   );
 
   // Before the user asks for AI: classic analysis first, then one explicit AI action.
-  if (classicAnalysis && !aiRequested) {
+  if (classicAnalysis && !aiRequested && onStartAI) {
     return (
       <Card>
         <CardContent className="space-y-6 p-6">
           <QuestionBlock question={question} />
-          <ClassicAnalysisView analysis={classicAnalysis} />
-          <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
-            <Button onClick={onStartAI} size="lg" className="w-full gap-2 sm:w-auto">
-              <span aria-hidden="true">✨</span>
-              Interpreteer met AI
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Optional. Generates a personal interpretation of this same reading.
-            </p>
-          </div>
+          <ClassicAnalysisWithAI analysis={classicAnalysis} onStartAI={onStartAI ?? (() => {})} />
         </CardContent>
       </Card>
     );
