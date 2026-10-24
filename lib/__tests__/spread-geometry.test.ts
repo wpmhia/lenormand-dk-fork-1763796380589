@@ -58,7 +58,7 @@ describe("Grand Tableau: 4x9 rows, houses and positions", () => {
 
   it("reports the significator positions from the drawn order", () => {
     const womanAt = draw(36, 13).findIndex((card) => card.id === 29) + 1;
-    expect(prompt).toContain(`Woman (significator) is at position ${womanAt}.`);
+    expect(prompt).toContain(`Woman (significator) is at position ${womanAt}, row`);
   });
 });
 
@@ -83,8 +83,8 @@ describe("Grand Tableau: the grid carries the geometry, without a 36-card neighb
   });
 
   it("keeps the significator positions in the grid", () => {
-    expect(prompt).toContain(`Woman (significator) is at position ${regressionIds.indexOf(29) + 1}.`);
-    expect(prompt).toContain(`Man (significator) is at position ${regressionIds.indexOf(28) + 1}.`);
+    expect(prompt).toContain(`Woman (significator) is at position ${regressionIds.indexOf(29) + 1}, row`);
+    expect(prompt).toContain(`Man (significator) is at position ${regressionIds.indexOf(28) + 1}, row`);
   });
 });
 
@@ -138,7 +138,7 @@ describe("Linear spreads: order and adjacency", () => {
       expect(prompt).toContain(`${index + 1}. ${card.name}`);
     });
     if (count > 1) {
-      expect(prompt).toContain("Adjacent cards are neighbours");
+      expect(prompt).toContain("Each card's only direct neighbours are the cards immediately left and right of it.");
     }
   });
 });
@@ -168,7 +168,7 @@ describe("Prompt size and dominant-combination regression", () => {
 
   it("keeps the Petit Tableau centre and grid unchanged", () => {
     const petit = buildSimpleReadingPrompt(buildReadingContext("comprehensive", "Month?", drawIds(regressionIds.slice(0, 9)), cardsMap));
-    expect(petit).toContain("The centre card (row 2, column 2) is the focal point");
+    expect(petit).toContain("The centre card (position 5, row 2, column 2) is the focal point");
     expect(petit).not.toContain("Immediate neighbours");
   });
 });

@@ -92,8 +92,8 @@ describe("Copy for AI: Grand Tableau geometry and houses", () => {
   it("names the Woman and Man significators at their drawn positions", () => {
     const cards: RawDrawnCard[] = Array.from({ length: 36 }, (_, i) => ({ id: i + 1, position: i }));
     const text = buildCopyForAIText("grand-tableau", "Q", cards);
-    expect(text).toContain("Woman (significator) is at position 29.");
-    expect(text).toContain("Man (significator) is at position 28.");
+    expect(text).toContain("Woman (significator) is at position 29, row 4, column 2;");
+    expect(text).toContain("Man (significator) is at position 28, row 4, column 1;");
   });
 
   it("has four rows of nine with no wrap between rows", () => {

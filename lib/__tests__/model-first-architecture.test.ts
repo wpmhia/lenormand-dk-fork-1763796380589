@@ -112,7 +112,7 @@ describe("geometry: spread structure is computed from coordinates", () => {
     const cards = draw(9, 5);
     const text = prompt("comprehensive", "Geometry?", cards);
     expect(text).toContain(`Row 2: ${cards[3].name} | ${cards[4].name} | ${cards[5].name}`);
-    expect(text).toContain("The centre card (row 2, column 2) is the focal point");
+    expect(text).toContain("The centre card (position 5, row 2, column 2) is the focal point");
     expect(text).not.toContain("Immediate neighbours of each card");
     expect(text).toContain("The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.");
   });
@@ -128,7 +128,8 @@ describe("geometry: spread structure is computed from coordinates", () => {
 
   it("states that a line is read left to right with consecutive adjacency", () => {
     const text = buildSimpleReadingPrompt(context("sentence-5", "Will I move?", draw(5, 10)));
-    expect(text).toContain("5 cards in a line, read left to right");
+    expect(text).toContain("5 cards in one line, read left to right in the order drawn");
+    expect(text).toContain("The central card is position 3.");
   });
 
   it("is stable across repeated builds", () => {
