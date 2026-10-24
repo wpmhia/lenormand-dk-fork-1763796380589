@@ -6,14 +6,15 @@ import { Check, Copy, AlertCircle } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { buildCopyForAIText } from "@/lib/copy-for-ai";
-import type { Card, ReadingCard } from "@/lib/types";
+import type { ReadingCard } from "@/lib/types";
+import type { SignificatorPreference } from "@/lib/significator";
 import type { SpreadId } from "@/lib/spread-definitions";
 
 interface CopyForAIButtonProps {
   spreadId: SpreadId;
   question: string;
   drawn: ReadingCard[];
-  allCards: Card[];
+  significatorPreference?: SignificatorPreference;
 }
 
 const FEEDBACK_MS = 2500;
@@ -23,7 +24,12 @@ const FEEDBACK_MS = 2500;
  * external assistant. It calls no API and does not touch the DeepSeek pipeline. Only the spread
  * and the card count are tracked, never the question or the cards.
  */
-export function CopyForAIButton({ spreadId, question, drawn, allCards }: CopyForAIButtonProps) {
+export function CopyForAIButton({
+  spreadId,
+  question,
+  drawn,
+  significatorPreference = "both",
+}: CopyForAIButtonProps) {
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -33,7 +39,7 @@ export function CopyForAIButton({ spreadId, question, drawn, allCards }: CopyFor
 
   const handleCopy = async () => {
     trackEvent("reading_copy_for_ai", { spreadId, cardCount: drawn.length });
-    const text = buildCopyForAIText(spreadId, question, drawn);
+    const text = buildCopyForAIText(spreadId, question, drawn, significatorPreference);
     const ok = await copyTextToClipboard(text);
     setStatus(ok ? "copied" : "failed");
     if (timer.current) clearTimeout(timer.current);

@@ -6,6 +6,7 @@ import { buildFollowupRequestPayload } from "@/lib/followup-prompt";
 import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 import { SignificatorType } from "@/lib/spreads";
+import { significatorToPreference } from "@/lib/significator";
 
 interface UseAIAnalysisReturn {
   aiReading: AIReadingResponse | null;
@@ -23,12 +24,6 @@ interface UseAIAnalysisReturn {
 interface FollowUpTurn {
   role: "user" | "assistant";
   content: string;
-}
-
-function significatorToPreference(value: SignificatorType): "woman" | "man" | "both" {
-  if (value === "anima") return "woman";
-  if (value === "animus") return "man";
-  return "both";
 }
 
 async function readErrorMessage(response: Response, fallback: string): Promise<string> {

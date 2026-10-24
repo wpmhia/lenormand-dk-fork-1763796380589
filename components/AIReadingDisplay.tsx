@@ -21,6 +21,7 @@ import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
 import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
 import { CopyForAIButton } from "@/components/CopyForAIButton";
+import type { SignificatorPreference } from "@/lib/significator";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { ReadingCard } from "@/lib/types";
 
@@ -109,10 +110,12 @@ export function ClassicAnalysisWithAI({
   analysis,
   onStartAI,
   allCards = CARD_CATALOG,
+  significatorPreference = "both",
 }: {
   analysis: ClassicAnalysis;
   onStartAI: () => void;
   allCards?: CardType[];
+  significatorPreference?: SignificatorPreference;
 }) {
   const preview = buildCardPreview(analysis, allCards);
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
@@ -159,7 +162,7 @@ export function ClassicAnalysisWithAI({
               spreadId={analysis.spreadId}
               question={analysis.question}
               drawn={drawn}
-              allCards={allCards}
+              significatorPreference={significatorPreference}
             />
           </div>
         </div>
@@ -205,6 +208,8 @@ interface AIReadingDisplayProps {
   onStartAI?: () => void;
   /** Whether the AI interpretation has been requested by the user (shows the AI state). */
   aiRequested?: boolean;
+  /** The significator focus chosen in the UI, passed unchanged to every reading path. */
+  significatorPreference?: SignificatorPreference;
 }
 
 /**
@@ -220,7 +225,11 @@ export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingD
       <Card>
         <CardContent className="space-y-6 p-6">
           <QuestionBlock question={question} />
-          <ClassicAnalysisWithAI analysis={classicAnalysis} onStartAI={onStartAI} />
+          <ClassicAnalysisWithAI
+            analysis={classicAnalysis}
+            onStartAI={onStartAI}
+            significatorPreference={props.significatorPreference}
+          />
         </CardContent>
       </Card>
     );

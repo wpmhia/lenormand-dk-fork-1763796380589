@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Spade, ArrowLeft } from "lucide-react";
 import { getCards } from "@/lib/data";
 import { buildClassicAnalysis } from "@/lib/classic-analysis";
+import { significatorToPreference } from "@/lib/significator";
 import {
   TRADITIONAL_SPREADS,
   COMPREHENSIVE_SPREADS,
@@ -444,6 +445,7 @@ function NewReadingPageContent() {
                   classicAnalysis={classicAnalysis}
                   onStartAI={startAI}
                   aiRequested={aiRequested}
+                  significatorPreference={significatorToPreference(significatorType)}
                 />
               </ErrorBoundary>
 
