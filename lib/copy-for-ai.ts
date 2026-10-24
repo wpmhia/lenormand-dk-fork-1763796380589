@@ -11,8 +11,9 @@ export function buildCopyForAIText(
   spreadId: SpreadId,
   question: string,
   drawn: RawDrawnCard[],
+  significatorPreference: "woman" | "man" | "both" = "both",
 ): string {
-  const context = buildLenormandContext(spreadId, question, drawn);
+  const context = buildLenormandContext(spreadId, question, drawn, significatorPreference);
   return [
     "The text below is a complete Lenormand reading context. Follow the instructions in the first section and base your answer only on the facts in the second section. Every position, neighbour, direction and house relation is given explicitly; do not recalculate or invent any of them.",
     "",

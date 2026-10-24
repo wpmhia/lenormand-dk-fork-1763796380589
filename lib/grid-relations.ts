@@ -8,6 +8,18 @@
  * fact and is never a spatial neighbour.
  */
 
+/**
+ * The geometry of every supported spread, the single source of its dimensions. A single card has no
+ * relations; a line has one row; a grid has rows and columns. Houses apply to the 4x9 Grand Tableau.
+ */
+export const SPREAD_GEOMETRY = {
+  1: { kind: "single" },
+  3: { kind: "line", length: 3 },
+  5: { kind: "line", length: 5 },
+  9: { kind: "grid", rows: 3, columns: 3 },
+  36: { kind: "grid", rows: 4, columns: 9, houses: true },
+} as const;
+
 export type Direction =
   | "left"
   | "right"

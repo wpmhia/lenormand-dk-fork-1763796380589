@@ -1,7 +1,7 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { ReadingContext } from "@/lib/reading-context";
-import { gridRelations, describeRelations } from "@/lib/grid-relations";
+import { gridRelations, describeRelations, SPREAD_GEOMETRY } from "@/lib/grid-relations";
 
 /**
  * The reading prompt. DeepSeek interprets the spread; this module supplies the question, the
@@ -48,9 +48,9 @@ export interface AIReadingResponse {
   source?: string;
 }
 
-const GT_COLUMNS = 9;
-const GT_ROWS = 4;
-const PETIT_SIZE = 3;
+const GT_COLUMNS: number = SPREAD_GEOMETRY[36].columns;
+const GT_ROWS: number = SPREAD_GEOMETRY[36].rows;
+const PETIT_SIZE: number = SPREAD_GEOMETRY[9].rows;
 
 function sanitize(input: string, maxLength: number): string {
   return input.slice(0, maxLength).replace(/[\x00-\x20\x7F-\x9F]+/g, " ").trim();
@@ -112,48 +112,80 @@ function diagonalsOf(cards: ReadingContext["cards"], size: number): string[] {
   return [`Diagonal (top-left to bottom-right): ${main.join(" | ")}`, `Diagonal (top-right to bottom-left): ${anti.join(" | ")}`];
 }
 
-/** The spread's structure, chosen by the number of drawn cards. */
+/** Coordinates and directions for every card of a line or grid, one literal line per card. */
+function geometryBlock(cards: ReadingContext["cards"], rows: number, columns: number): string[] {
+  const names = cards.map((card) => cardName(card));
+  const relations = gridRelations(names, rows, columns);
+  return describeRelations(relations, (position) => names[position - 1]);
+}
+
+/**
+ * The spread's structure, chosen by the number of drawn cards. Every layout uses the same
+ * coordinate-derived facts: position, row, column and the directly adjacent cards by direction.
+ * Nothing is inferred from names, and a card at the end of a row is never adjacent to the next row.
+ */
 function structure(cards: ReadingContext["cards"]): string {
+  // Each layout states its geometry once, then its significator facts once. The significator
+  // columns follow the layout: a line has one row; the grids use their own column count.
+  const layout = (columns: number) => significatorLines(cards, columns);
   switch (cards.length) {
     case 1:
-      return "Spread: a single card, read directly in relation to the question.";
+      return [
+        "Spread: a single card, read directly in relation to the question. There are no card relationships in this spread.",
+        ...geometryBlock(cards, 1, 1),
+        ...layout(1),
+      ].join("\n");
+    case 3:
+    case 5: {
+      const middle = Math.floor(cards.length / 2) + 1;
+      return [
+        `Spread: ${cards.length} cards in one line, read left to right in the order drawn. Each card's only direct neighbours are the cards immediately left and right of it. The central card is position ${middle}.`,
+        ...geometryBlock(cards, 1, cards.length),
+        ...layout(cards.length),
+      ].join("\n");
+    }
     case 9:
       return [
-        "Spread: 3x3 grid. Rows run top to bottom, columns left to right. The centre card (row 2, column 2) is the focal point: read the surrounding cards in relation to it.",
+        "Spread: 3x3 grid. Rows run top to bottom, columns left to right. The centre card (position 5, row 2, column 2) is the focal point. Each card lists its eight directional neighbours where they exist.",
+        ...geometryBlock(cards, PETIT_SIZE, PETIT_SIZE),
         ...rowsOf(cards, PETIT_SIZE, PETIT_SIZE),
         ...columnsOf(cards, PETIT_SIZE),
         ...diagonalsOf(cards, PETIT_SIZE),
         "Grid positions are not time order. The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.",
+        ...layout(PETIT_SIZE),
       ].join("\n");
-    case 36: {
-      const names = cards.map((card) => cardName(card));
-      const relations = gridRelations(names, GT_ROWS, GT_COLUMNS);
+    case 36:
       return [
         "Spread: 4x9 grid of 36 cards. Positions run left to right, then top to bottom. Row and column are given for every card.",
         "Spatial facts are supplied below. They are literal: use them exactly and never recalculate or infer any other position, neighbour or direction.",
         ...rowsOf(cards, GT_ROWS, GT_COLUMNS),
         "Direct relations (only these cells are adjacent; a card at the end of one row is not adjacent to the start of the next):",
-        ...describeRelations(relations, (position) => names[position - 1]),
+        ...geometryBlock(cards, GT_ROWS, GT_COLUMNS),
         "House facts (not spatial): the card in position N belongs to the house of the card with deck number N.",
         ...cards.map((card, index) => `${index + 1}: ${cardName(card)} — ${houseName(index)} house`),
-        ...significatorLines(cards),
+        ...layout(GT_COLUMNS),
       ].join("\n");
-    }
-    default: {
-      const middle = Math.floor(cards.length / 2);
-      const focal = cards.length % 2 === 1 ? ` The central card (position ${middle + 1}, ${cardName(cards[middle])}) is the focal point.` : "";
-      return `Spread: ${cards.length} cards in a line, read left to right. Adjacent cards are neighbours; there is no other geometry.${focal}`;
-    }
+    default:
+      return `Spread: ${cards.length} cards. Read the cards in the order drawn.`;
   }
 }
 
-export function significatorLines(cards: ReadingContext["cards"]): string[] {
-  const woman = cards.findIndex((card) => card.id === 29);
-  const man = cards.findIndex((card) => card.id === 28);
-  return [
-    ...(woman >= 0 ? [`Woman (significator) is at position ${woman + 1}.`] : []),
-    ...(man >= 0 ? [`Man (significator) is at position ${man + 1}.`] : []),
-  ];
+export function significatorLines(cards: ReadingContext["cards"], columns: number = GT_COLUMNS): string[] {
+  const rows = Math.ceil(cards.length / columns);
+  const names = cards.map((card) => cardName(card));
+  const relations = gridRelations(names, rows, columns);
+  const describe = (id: number, label: string) => {
+    const index = cards.findIndex((card) => card.id === id);
+    if (index < 0) return [];
+    const cell = relations[index];
+    const around = Object.entries(cell.neighbours)
+      .map(([direction, other]) => `${direction}: ${other!.name}`)
+      .join("; ");
+    return [
+      `${label} (significator) is at position ${index + 1}, row ${cell.row}, column ${cell.column}; ${around || "no adjacent cards"}.`,
+    ];
+  };
+  return [...describe(29, "Woman"), ...describe(28, "Man")];
 }
 
 /** The chosen significator as a reading focus, only when that card is actually drawn. */
