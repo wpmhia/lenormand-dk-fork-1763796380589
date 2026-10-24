@@ -94,7 +94,7 @@ describe("Grand Tableau: a house relation is not a spatial one", () => {
       buildReadingContext("grand-tableau", "Will the shared plan work out?", drawIds(regressionIds), cardsMap),
     );
     expect(prompt).toContain("18: Woman — Dog house");
-    expect(prompt).toContain("A house relation is not a spatial one");
+    expect(prompt).toContain("House facts (not spatial)");
   });
 
   it("keeps the Sun-in-Man-house fact in the house list", () => {
@@ -148,10 +148,11 @@ describe("Prompt size and dominant-combination regression", () => {
   const grand = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Will the shared plan work out?", cards, cardsMap));
 
   it("keeps the 36-card prompt well below the previous neighbour-list size", () => {
-    const withoutNeighbours = grand.length;
-    const neighbourBlock = 36 * 90;
-    expect(withoutNeighbours).toBeLessThan(neighbourBlock + 6000);
-    expect(grand).not.toMatch(/\(above|\(below|\(left|\(right/);
+    // Explicit per-card directions make the 36-card prompt about twice the previous size. That cost
+    // is accepted for literal, verifiable geometry; this bound guards against further growth.
+    expect(grand.length).toBeLessThan(10500);
+    // Directions are supplied per card on the coordinate grid, not as an unbounded neighbour list.
+    expect(grand.match(/^[^\n]+ \(position \d+, row \d+, column \d+\) — /gm)).toHaveLength(36);
   });
 
   it("states the dominant-combination rule once, with contradictions kept only where they matter", () => {

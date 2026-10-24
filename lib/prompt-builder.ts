@@ -1,6 +1,7 @@
 import { MAX_QUESTION_LENGTH, MAX_CARD_NAME_LENGTH } from "./constants";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { ReadingContext } from "@/lib/reading-context";
+import { gridRelations, describeRelations } from "@/lib/grid-relations";
 
 /**
  * The reading prompt. DeepSeek interprets the spread; this module supplies the question, the
@@ -124,14 +125,20 @@ function structure(cards: ReadingContext["cards"]): string {
         ...diagonalsOf(cards, PETIT_SIZE),
         "Grid positions are not time order. The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.",
       ].join("\n");
-    case 36:
+    case 36: {
+      const names = cards.map((card) => cardName(card));
+      const relations = gridRelations(names, GT_ROWS, GT_COLUMNS);
       return [
-        "Spread: 4x9 grid of 36 cards. Positions are numbered left to right, then top to bottom.",
+        "Spread: 4x9 grid of 36 cards. Positions run left to right, then top to bottom. Row and column are given for every card.",
+        "Spatial facts are supplied below. They are literal: use them exactly and never recalculate or infer any other position, neighbour or direction.",
         ...rowsOf(cards, GT_ROWS, GT_COLUMNS),
-        "Houses (the card at position N occupies the house of the card with deck number N). A house relation is not a spatial one; neighbours are the cells adjacent in the grid:",
+        "Direct relations (only these cells are adjacent; a card at the end of one row is not adjacent to the start of the next):",
+        ...describeRelations(relations, (position) => names[position - 1]),
+        "House facts (not spatial): the card in position N belongs to the house of the card with deck number N.",
         ...cards.map((card, index) => `${index + 1}: ${cardName(card)} — ${houseName(index)} house`),
         ...significatorLines(cards),
       ].join("\n");
+    }
     default: {
       const middle = Math.floor(cards.length / 2);
       const focal = cards.length % 2 === 1 ? ` The central card (position ${middle + 1}, ${cardName(cards[middle])}) is the focal point.` : "";
@@ -178,6 +185,7 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
   return [
     `User question:\n${sanitizeQuestion(context.question)}`,
     buildSpreadFacts(context),
+    `Interpret the supplied card geometry literally. Never recalculate or invent positions, neighbours, directions or card relationships. Distinguish direct horizontal, vertical and diagonal relations from house relations; a house is not a neighbour. Do not infer facing direction unless it is supplied. Weigh the strongest supporting and contradicting combinations before forming a conclusion, and do not ignore cards to support a preferred answer. Give a direct answer based on the overall balance of the spread, not on a single negative or positive card. Treat the reading as symbolic interpretation, not as evidence of what another person has done.`,
     `Build the reading around the single strongest relevant combination. Name a conflicting card only where it changes the outcome; do not list unrelated alternatives. Keep symbolic indications distinct from verified facts.`,
     `Return only one JSON object with exactly these fields, in this order: {"reading": string, "answer": string}. "reading" is the coherent interpretation in plain prose, worked out from the spread first; "answer" is the direct answer to the question in one or two sentences, drawn from that reading. Do not use Markdown fences.`,
   ].join("\n\n");
