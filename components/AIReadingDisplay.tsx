@@ -79,10 +79,10 @@ export function ClassicAnalysisWithAI({
       <div className="flex flex-col items-center gap-2 border-t border-border/60 pt-6">
         <Button onClick={onStartAI} size="lg" className="w-full gap-2 sm:w-auto">
           <span aria-hidden="true">✨</span>
-          Interpreteer met AI
+          Interpret with AI
         </Button>
         <p className="text-xs text-muted-foreground">
-          Optional. Generates a personal interpretation of this same reading.
+          Optional. Generates a personal interpretation of this same reading. The classic analysis stays available.
         </p>
       </div>
     </>
@@ -113,7 +113,44 @@ interface AIReadingDisplayProps {
   aiRequested?: boolean;
 }
 
-export const AIReadingDisplay = memo(function AIReadingDisplay({
+/**
+ * The classic analysis and the AI states together. Before AI is requested, the classic analysis
+ * and the single AI action are shown. After it is requested, the classic analysis stays visible
+ * above the AI state, so both can be read without another model call.
+ */
+export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingDisplayProps) {
+  const { classicAnalysis = null, onStartAI, aiRequested = true, question } = props;
+
+  if (classicAnalysis && !aiRequested && onStartAI) {
+    return (
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <QuestionBlock question={question} />
+          <ClassicAnalysisWithAI analysis={classicAnalysis} onStartAI={onStartAI} />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (classicAnalysis && aiRequested) {
+    return (
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <QuestionBlock question={question} />
+          <ClassicAnalysisView analysis={classicAnalysis} />
+          <div className="border-t border-border/60 pt-6">
+            <AIStateView {...props} />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return <AIStateView {...props} />;
+});
+
+/** The AI states only (loading, error, empty, reading), without the classic analysis. */
+const AIStateView = memo(function AIStateView({
   aiReading,
   isLoading,
   isStreaming = false,
@@ -271,18 +308,6 @@ export const AIReadingDisplay = memo(function AIReadingDisplay({
   const hasUncommittedFollowUpResponse = Boolean(
     followUpResponse && followUpHistory.at(-1)?.content !== followUpResponse,
   );
-
-  // Before the user asks for AI: classic analysis first, then one explicit AI action.
-  if (classicAnalysis && !aiRequested && onStartAI) {
-    return (
-      <Card>
-        <CardContent className="space-y-6 p-6">
-          <QuestionBlock question={question} />
-          <ClassicAnalysisWithAI analysis={classicAnalysis} onStartAI={onStartAI ?? (() => {})} />
-        </CardContent>
-      </Card>
-    );
-  }
 
   if (isLoading) {
     return (

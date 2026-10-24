@@ -27,8 +27,9 @@ export interface ClassicAnalysis {
   note: string;
 }
 
+/** States exactly what this analysis covers: single card meanings and geometry, no combinations. */
 const NOTE =
-  "This is a traditional symbolic reading built from card meanings and their positions. It is not a prediction of events.";
+  "This classic analysis lists each card's traditional meaning, its position and the spread's geometry. It does not interpret card combinations and does not predict events.";
 
 function cardMeaning(card: Card | undefined, fallbackId: number): { name: string; keywords: string[]; meaning: string } {
   if (!card) return { name: `Card ${fallbackId}`, keywords: [], meaning: "" };
@@ -130,8 +131,8 @@ export function buildClassicAnalysis(
   }
 
   const summary = count === 1
-    ? `The card ${lines[0]?.name ?? ""} answers the question directly through its traditional meaning.`
-    : `The ${count}-card spread is read through its cards, their order and the geometry below.`;
+    ? `Single card: ${lines[0]?.name ?? ""}. Its traditional meaning is listed below.`
+    : `${count} cards in the order drawn. Each card's traditional meaning and the spread's geometry are listed below.`;
 
   return { spreadId, question, summary, cards: lines, geometry, note: NOTE };
 }

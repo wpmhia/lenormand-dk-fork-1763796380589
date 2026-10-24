@@ -14,15 +14,17 @@ describe("classic analysis: deterministic and model-free", () => {
     expect(buildClassicAnalysis("comprehensive", "Q", cards)).toEqual(buildClassicAnalysis("comprehensive", "Q", cards));
   });
 
-  it("always states that it is symbolic and not a prediction of events", () => {
+  it("always states that it does not predict events", () => {
     for (const [id, n] of [["single-card", 1], ["sentence-3", 3], ["sentence-5", 5], ["comprehensive", 9], ["grand-tableau", 36]] as const) {
-      expect(buildClassicAnalysis(id, "Q", drawn(n)).note).toMatch(/not a prediction of events/);
+      expect(buildClassicAnalysis(id, "Q", drawn(n)).note).toMatch(/does not predict events/);
     }
   });
 
-  it("does not invent combination meanings the catalogue does not hold", () => {
-    const text = JSON.stringify(buildClassicAnalysis("grand-tableau", "Q", drawn(36)));
-    expect(text).not.toMatch(/combination/i);
+  it("states that it does not interpret card combinations, and claims none", () => {
+    const analysis = buildClassicAnalysis("grand-tableau", "Q", drawn(36));
+    expect(analysis.note).toMatch(/does not interpret card combinations/);
+    const text = JSON.stringify(analysis);
+    expect(text).not.toMatch(/combinations? (suggests|means|reveals|indicates|shows)/i);
   });
 });
 
