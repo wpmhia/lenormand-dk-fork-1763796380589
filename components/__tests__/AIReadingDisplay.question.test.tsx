@@ -129,9 +129,9 @@ describe("AIReadingDisplay: classic analysis and the AI action", () => {
 describe("results hierarchy: AI action first, traditional meanings collapsed", () => {
   it("shows the introduction and the button before the collapsed disclosure", () => {
     const html = renderWithClassic({ aiRequested: false });
-    const intro = html.indexOf("Discover what your cards mean together");
+    const intro = html.indexOf("A first look at the traditional meanings");
     const button = html.indexOf("Get AI Interpretation");
-    const disclosure = html.indexOf("Traditional card meanings");
+    const disclosure = html.indexOf("Full traditional card meanings");
     expect(intro).toBeGreaterThan(-1);
     expect(intro).toBeLessThan(button);
     expect(button).toBeLessThan(disclosure);

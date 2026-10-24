@@ -22,6 +22,8 @@ import {
 
 export interface ClassicCardLine {
   position: number;
+  /** Catalogue id of the drawn card, used to read its core meaning without matching names. */
+  cardId: number;
   name: string;
   keywords: string[];
   meaning: string;
@@ -57,7 +59,7 @@ function cardMeaning(card: Card | undefined, fallbackId: number): { name: string
 function cardLines(cards: ReadingCard[], allCards: Card[]): ClassicCardLine[] {
   return cards.map((card, index) => {
     const data = cardMeaning(getCardById(allCards, card.id), card.id);
-    return { position: index + 1, ...data };
+    return { position: index + 1, cardId: card.id, ...data };
   });
 }
 
@@ -178,4 +180,60 @@ export function buildClassicAnalysis(
     unknownCombinations: unknown,
     note: NOTE,
   };
+}
+
+/** The first traditional phrase of a card's core meaning, at most three keywords, no invented text. */
+export function shortCardPhrase(general: string): string {
+  return general
+    .split(/[.;]/)[0]
+    .split(/,\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .join(", ");
+}
+
+/** "a, b and c" without any added meaning. */
+function joinWords(words: string[]): string {
+  if (words.length <= 1) return words.join("");
+  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
+}
+
+export interface CardPreview {
+  position: number;
+  name: string;
+  phrase: string;
+}
+
+/**
+ * The results-page preview: each drawn card with a short traditional phrase from its catalogue
+ * core meaning, plus a factual line naming the themes the cards carry. It only lists what the
+ * catalogue states. It makes no prediction and no combination claim.
+ */
+export function buildCardPreview(analysis: ClassicAnalysis, allCards: Card[] = CARD_CATALOG): {
+  cards: CardPreview[];
+  themes: string;
+} {
+  const cards = analysis.cards.map((line) => {
+    const data = getCardById(allCards, line.cardId);
+    return {
+      position: line.position,
+      name: line.name,
+      phrase: shortCardPhrase(data?.meaning?.general ?? ""),
+    };
+  });
+  // The first keyword of every drawn card, so each card is represented once and none is cut off.
+  // Person cards name a role, not a theme; the catalogue states that identity depends on the
+  // question, so they are shown neutrally as "a person" rather than as a keyword phrase.
+  const keywords = [...new Set(
+    analysis.cards.map((line) => {
+      const data = getCardById(allCards, line.cardId);
+      if (data?.keywords?.[0] === "female person card" || data?.keywords?.[0] === "male person card") return "a person";
+      return data?.keywords?.[0];
+    }).filter((k): k is string => Boolean(k)),
+  )];
+  const themes = keywords.length
+    ? `Your ${analysis.cards.length} cards carry themes of ${joinWords(keywords)}.`
+    : "";
+  return { cards, themes };
 }

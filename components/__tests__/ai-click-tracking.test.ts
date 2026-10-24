@@ -6,7 +6,7 @@ const source = readFileSync(resolve(__dirname, "../AIReadingDisplay.tsx"), "utf8
 
 describe("AI click tracking", () => {
   it("tracks the actual button click with the spread only, never the question", () => {
-    const handlerStart = source.indexOf("<Button onClick={() => {", source.indexOf("Discover what your cards mean"));
+    const handlerStart = source.indexOf("<Button", source.indexOf("Your reading"));
     const block = source.slice(handlerStart, source.indexOf("Get AI Interpretation", handlerStart));
     expect(block).toContain('trackEvent("ai_interpretation_requested"');
     expect(block).toMatch(/trackEvent\("ai_interpretation_requested", \{ spreadId: analysis\.spreadId \}\)/);

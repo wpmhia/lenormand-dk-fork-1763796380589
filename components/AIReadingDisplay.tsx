@@ -18,7 +18,7 @@ import {
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 import type { Card as CardType } from "@/lib/types";
-import type { ClassicAnalysis } from "@/lib/classic-analysis";
+import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
 
 /** The original question, shown above every state so the user keeps their context. */
 function QuestionBlock({ question }: { question?: string }) {
@@ -97,9 +97,9 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
 }
 
 /**
- * The results hierarchy: a short introduction and the single AI action first, then the traditional
- * card meanings and geometry in a collapsed disclosure. The classic content is complete when
- * expanded; nothing is removed, only moved behind the disclosure.
+ * The results hierarchy: a short, factual preview of the drawn cards and their traditional phrases,
+ * then the single AI action that connects the cards to the question, then the full traditional
+ * meanings in a collapsed disclosure. The preview is read from the catalogue; it makes no request.
  */
 export function ClassicAnalysisWithAI({
   analysis,
@@ -108,19 +108,45 @@ export function ClassicAnalysisWithAI({
   analysis: ClassicAnalysis;
   onStartAI: () => void;
 }) {
+  const preview = buildCardPreview(analysis);
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <p className="text-sm text-muted-foreground">
-          Discover what your cards mean together and how they relate to your question.
-        </p>
-        <div>
-          <Button onClick={() => {
-            trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
-            onStartAI();
-          }} className="w-full sm:w-auto">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading</p>
+          <h3 className="text-lg font-semibold text-foreground">What your cards reveal</h3>
+          <p className="text-sm text-muted-foreground">
+            A first look at the traditional meanings behind your spread.
+          </p>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5" data-testid="card-preview">
+            {preview.cards.map((card) => (
+              <li
+                key={card.position}
+                className="flex flex-col gap-1 rounded-lg border border-border/60 bg-muted/30 p-3"
+              >
+                <span className="text-sm font-semibold text-foreground">{card.name}</span>
+                <span className="text-xs text-muted-foreground">{card.phrase}</span>
+              </li>
+            ))}
+          </ul>
+          {preview.themes && (
+            <p className="text-sm text-foreground" data-testid="card-themes">{preview.themes}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-border/60 pt-6">
+          <Button
+            onClick={() => {
+              trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+              onStartAI();
+            }}
+            className="w-full sm:w-auto"
+          >
             Get AI Interpretation
           </Button>
+          <p className="text-xs text-muted-foreground">
+            Explore how the cards connect to your question.
+          </p>
         </div>
       </div>
       <ClassicAnalysisDisclosure analysis={analysis} />
@@ -133,7 +159,7 @@ export function ClassicAnalysisDisclosure({ analysis }: { analysis: ClassicAnaly
   return (
     <details className="group rounded-lg border border-border/60 bg-muted/30 px-4 py-3" data-testid="classic-analysis-disclosure">
       <summary className="focus-visible:ring-ring cursor-pointer select-none rounded text-sm font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2">
-        Traditional card meanings
+        Full traditional card meanings
       </summary>
       <div className="mt-4">
         <ClassicAnalysisView analysis={analysis} />
