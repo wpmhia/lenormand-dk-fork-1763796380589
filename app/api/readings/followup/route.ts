@@ -6,6 +6,7 @@ import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
+import { canGenerateAIReading } from "@/lib/ai-access";
 import { generateModelText, isTimeoutError } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, MAX_QUESTION_LENGTH } from "@/lib/constants";
 import { getCardCatalogMap } from "@/lib/card-catalog";
@@ -124,6 +125,14 @@ export async function POST(request: Request) {
       originalQuestion: validated.question,
       activeQuestion: followUp,
     });
+
+    const access = canGenerateAIReading({ kind: "followup" });
+    if (!access.allowed) {
+      return new Response(JSON.stringify({ error: "AI follow-up is not available for this request." }), {
+        status: 403,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     // Same shared model service as the reading path; only the accepted output format differs.
     const generated = await generateModelText({

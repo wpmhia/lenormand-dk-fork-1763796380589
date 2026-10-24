@@ -10,6 +10,7 @@ import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
+import { canGenerateAIReading } from "@/lib/ai-access";
 import { generateReading, isTimeoutError } from "@/lib/reading-service";
 import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, GRAND_TABLEAU_GENERATION_TIMEOUT_MS, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
@@ -94,6 +95,14 @@ export async function POST(request: Request) {
           },
         },
       );
+    }
+
+    const access = canGenerateAIReading({ kind: "reading" });
+    if (!access.allowed) {
+      return new Response(JSON.stringify({ error: "AI interpretation is not available for this request." }), {
+        status: 403,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
     const context = buildReadingContext(validated.spreadId, validated.question, validated.cards, cardsMap, validated.significatorPreference);
