@@ -3,7 +3,7 @@ import { buildReadingContext } from "@/lib/reading-context";
 import { buildSimpleReadingPrompt } from "@/lib/prompt-builder";
 import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
 
-/** Geometry and house checks: card positions, neighbours and houses must match the grid. */
+/** Geometry and house checks: card positions and houses must match the grid. */
 
 const cardsMap = getCardCatalogMap();
 const deck = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
@@ -20,13 +20,6 @@ function draw(count: number, offset = 0) {
     const card = deck[(i + offset) % deck.length];
     return { id: card.id, name: card.name, keywords: card.keywords, coreMeaning: card.meaning.general };
   });
-}
-
-/** The line of the prompt that starts with `- <name> (row`, i.e. one card's neighbour line. */
-function neighbourLine(prompt: string, name: string): string {
-  const line = prompt.split("\n").find((l) => l.startsWith(`- ${name} (row`));
-  if (!line) throw new Error(`no neighbour line for ${name}`);
-  return line;
 }
 
 function rowLines(prompt: string): string[] {
@@ -69,7 +62,7 @@ describe("Grand Tableau: 4x9 rows, houses and positions", () => {
   });
 });
 
-describe("Grand Tableau: immediate neighbours are computed from coordinates", () => {
+describe("Grand Tableau: the grid carries the geometry, without a 36-card neighbour list", () => {
   const cards = drawIds(regressionIds);
   const prompt = buildSimpleReadingPrompt(
     buildReadingContext("grand-tableau", "Will the shared plan work out?", cards, cardsMap),
@@ -84,50 +77,30 @@ describe("Grand Tableau: immediate neighbours are computed from coordinates", ()
     ]);
   });
 
-  it("lists the corner card Man with exactly its three real neighbours", () => {
-    expect(neighbourLine(prompt, "Man")).toBe(
-      "- Man (row 1, column 1): Snake (right), Key (below), Book (below-right)",
-    );
+  it("does not repeat a per-card neighbour list", () => {
+    expect(prompt).not.toContain("Immediate neighbours of each card");
+    expect(prompt.split("\n").filter((line) => line.startsWith("- ") && line.includes("(row "))).toHaveLength(0);
   });
 
-  it("lists Woman at the right edge without wrapping onto the next row", () => {
-    expect(neighbourLine(prompt, "Woman")).toBe(
-      "- Woman (row 2, column 9): Bear (above-left), Dog (above), Whip (left), Fish (below-left), Clover (below)",
-    );
-  });
-
-  it("does not list a same-row card two columns away as a neighbour", () => {
-    expect(neighbourLine(prompt, "Man")).not.toContain("Fox");
-    expect(neighbourLine(prompt, "Woman")).not.toContain("Tower");
+  it("keeps the significator positions in the grid", () => {
+    expect(prompt).toContain(`Woman (significator) is at position ${regressionIds.indexOf(29) + 1}.`);
+    expect(prompt).toContain(`Man (significator) is at position ${regressionIds.indexOf(28) + 1}.`);
   });
 });
 
 describe("Grand Tableau: a house relation is not a spatial one", () => {
-  // Dog-house occupancy: Woman sits at position 18 (row 2, column 9) and is not a neighbour of Dog's cell.
-  const cards = drawIds(regressionIds);
-  const prompt = buildSimpleReadingPrompt(
-    buildReadingContext("grand-tableau", "Will the shared plan work out?", cards, cardsMap),
-  );
-
   it("places each card in its own grid cell regardless of which house it occupies", () => {
+    const prompt = buildSimpleReadingPrompt(
+      buildReadingContext("grand-tableau", "Will the shared plan work out?", drawIds(regressionIds), cardsMap),
+    );
     expect(prompt).toContain("18: Woman — Dog house");
-    expect(neighbourLine(prompt, "Woman")).not.toContain("Dog (below)");
+    expect(prompt).toContain("A house relation is not a spatial one");
   });
 
-  it("keeps the Sun-in-Man-house fact separate from Sun's grid position", () => {
+  it("keeps the Sun-in-Man-house fact in the house list", () => {
     const sunShuffle = drawIds([22, 16, 2, 29, 15, 4, 23, 27, 9, 24, 19, 10, 7, 32, 33, 6, 3, 1, 13, 8, 21, 34, 20, 30, 5, 36, 25, 31, 11, 26, 35, 14, 12, 18, 17, 28]);
     const shuffled = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Outlook?", sunShuffle, cardsMap, "both"));
     expect(shuffled).toContain("28: Sun — Man house");
-    expect(neighbourLine(shuffled, "Sun")).toBe("- Sun (row 4, column 1): Child (above), Coffin (above-right), Whip (right)");
-  });
-});
-
-describe("Grand Tableau: Man and Woman relative placement", () => {
-  it("places Man and Woman as adjacent when they share the lower-left block", () => {
-    // Woman row 4 column 2, Man row 4 column 1 in the regression layout above.
-    const cards = drawIds(regressionIds);
-    const prompt = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Q", cards, cardsMap, "both"));
-    expect(neighbourLine(prompt, "Man")).toContain("Snake (right)");
   });
 });
 
@@ -167,5 +140,34 @@ describe("Linear spreads: order and adjacency", () => {
     if (count > 1) {
       expect(prompt).toContain("Adjacent cards are neighbours");
     }
+  });
+});
+
+describe("Prompt size and dominant-combination regression", () => {
+  const cards = drawIds(regressionIds);
+  const grand = buildSimpleReadingPrompt(buildReadingContext("grand-tableau", "Will the shared plan work out?", cards, cardsMap));
+
+  it("keeps the 36-card prompt well below the previous neighbour-list size", () => {
+    const withoutNeighbours = grand.length;
+    const neighbourBlock = 36 * 90;
+    expect(withoutNeighbours).toBeLessThan(neighbourBlock + 6000);
+    expect(grand).not.toMatch(/\(above|\(below|\(left|\(right/);
+  });
+
+  it("states the dominant-combination rule once, with contradictions kept only where they matter", () => {
+    expect(grand).toContain("Build the reading around the single strongest relevant combination");
+    expect(grand).toContain("do not list unrelated alternatives");
+    expect(grand).toContain("Keep symbolic indications distinct from verified facts");
+    expect(grand.match(/single strongest relevant combination/g)).toHaveLength(1);
+  });
+
+  it("gates secondary meanings behind question and card support", () => {
+    expect(grand).toContain("use a secondary meaning only when the question and the surrounding cards support it");
+  });
+
+  it("keeps the Petit Tableau centre and grid unchanged", () => {
+    const petit = buildSimpleReadingPrompt(buildReadingContext("comprehensive", "Month?", drawIds(regressionIds.slice(0, 9)), cardsMap));
+    expect(petit).toContain("The centre card (row 2, column 2) is the focal point");
+    expect(petit).not.toContain("Immediate neighbours");
   });
 });

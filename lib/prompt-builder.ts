@@ -4,8 +4,8 @@ import type { ReadingContext } from "@/lib/reading-context";
 
 /**
  * The reading prompt. DeepSeek interprets the spread; this module supplies the question, the
- * drawn cards in order, their core meanings and the spread's grid. Positions and neighbours
- * are computed from coordinates, never inferred from names.
+ * drawn cards in order, their core meanings and the spread's grid. Positions are computed from
+ * coordinates, never inferred from names; neighbour relations are left to the grid.
  */
 export const SIMPLE_LENORMAND_SYSTEM_PROMPT = `You are an experienced traditional Lenormand card reader.
 
@@ -68,7 +68,9 @@ function coreMeanings(cards: ReadingContext["cards"]): string {
       const extra = secondary.length ? ` Secondary (context-dependent): ${secondary.join(" ")}` : "";
       return `- ${cardName(card)}: ${card.coreMeaning}${extra}`;
     });
-  return lines.length ? `Core meanings:\n${lines.join("\n")}` : "";
+  return lines.length
+    ? `Core meanings (use a secondary meaning only when the question and the surrounding cards support it):\n${lines.join("\n")}`
+    : "";
 }
 
 /** The canonical house name for position N: the card whose deck number is N. */
@@ -99,29 +101,6 @@ function diagonalsOf(cards: ReadingContext["cards"], size: number): string[] {
   return [`Diagonal (top-left to bottom-right): ${main.join(" | ")}`, `Diagonal (top-right to bottom-left): ${anti.join(" | ")}`];
 }
 
-/**
- * Immediate neighbours of each grid cell, computed from coordinates. Only real cells count: no
- * row wrapping, and a card not listed is not adjacent. Kept to one line per card.
- */
-function neighbourLines(cards: ReadingContext["cards"], rows: number, columns: number): string[] {
-  const direction = (dr: number, dc: number) =>
-    [dr < 0 ? "above" : dr > 0 ? "below" : "", dc < 0 ? "left" : dc > 0 ? "right" : ""].filter(Boolean).join("-");
-  return cards.map((card, index) => {
-    const row = Math.floor(index / columns);
-    const col = index % columns;
-    const near: string[] = [];
-    for (let dr = -1; dr <= 1; dr++) {
-      for (let dc = -1; dc <= 1; dc++) {
-        const r = row + dr;
-        const c = col + dc;
-        if ((dr === 0 && dc === 0) || r < 0 || r >= rows || c < 0 || c >= columns) continue;
-        near.push(`${cardName(cards[r * columns + c])} (${direction(dr, dc)})`);
-      }
-    }
-    return `- ${cardName(card)} (row ${row + 1}, column ${col + 1}): ${near.join(", ") || "none"}`;
-  });
-}
-
 /** The spread's structure, chosen by the number of drawn cards. */
 function structure(cards: ReadingContext["cards"]): string {
   switch (cards.length) {
@@ -139,11 +118,9 @@ function structure(cards: ReadingContext["cards"]): string {
       return [
         "Spread: 4x9 grid of 36 cards. Positions are numbered left to right, then top to bottom.",
         ...rowsOf(cards, GT_ROWS, GT_COLUMNS),
-        "Houses (the card at position N occupies the house of the card with deck number N):",
+        "Houses (the card at position N occupies the house of the card with deck number N). A house relation is not a spatial one; neighbours are the cells adjacent in the grid:",
         ...cards.map((card, index) => `${index + 1}: ${cardName(card)} — ${houseName(index)} house`),
         ...significatorLines(cards),
-        "Immediate neighbours of each card (horizontal, vertical or diagonal; no row wrapping; a card not listed is not adjacent). A house relation is not a spatial one:",
-        ...neighbourLines(cards, GT_ROWS, GT_COLUMNS),
       ].join("\n");
     default: {
       const middle = Math.floor(cards.length / 2);
@@ -189,6 +166,7 @@ export function buildSimpleReadingPrompt(context: ReadingContext): string {
   return [
     `User question:\n${sanitizeQuestion(context.question)}`,
     buildSpreadFacts(context),
+    `Build the reading around the single strongest relevant combination. Name a conflicting card only where it changes the outcome; do not list unrelated alternatives. Keep symbolic indications distinct from verified facts.`,
     `Return only one JSON object with exactly these fields, in this order: {"reading": string, "answer": string}. "reading" is the coherent interpretation in plain prose, worked out from the spread first; "answer" is the direct answer to the question in one or two sentences, drawn from that reading. Do not use Markdown fences.`,
   ].join("\n\n");
 }
