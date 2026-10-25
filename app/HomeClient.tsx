@@ -55,13 +55,13 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               Lenormand Intelligence
             </p>
             <h1 className="hero-title logo-font relative mb-4 pb-2 font-bold leading-tight text-foreground">
-              <span className="block">Traditional Lenormand.</span>
+              <span className="block">Give your AI a</span>
               <span className="block bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                Your Choice of AI.
+                glimpse into the future.
               </span>
             </h1>
             <p className="lead mx-auto mb-8 max-w-[70ch] text-muted-foreground md:mx-0">
-              Ask your question, draw your cards, and generate a complete Lenormand interpretation prompt for your favorite AI.
+              Explore what comes next with traditional Lenormand readings, interpreted by the AI assistant that already knows your story. Symbolic exploration, not proven prediction.
             </p>
 
             <div className="flex flex-col items-center gap-5 md:items-start">

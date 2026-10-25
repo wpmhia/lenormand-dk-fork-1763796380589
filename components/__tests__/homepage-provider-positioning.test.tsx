@@ -95,7 +95,7 @@ describe("results: the same logo component is the clickable provider choice", ()
 
 describe("analytics: existing homepage events untouched", () => {
   it("does not add tracking to the homepage hero", () => {
-    const start = home.indexOf("Traditional Lenormand.");
+    const start = home.indexOf("Give your AI a");
     const hero = home.slice(start, home.indexOf("Choose a Spread", start));
     expect(hero).not.toMatch(/trackEvent/);
   });
