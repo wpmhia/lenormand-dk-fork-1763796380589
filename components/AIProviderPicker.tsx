@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, AlertCircle } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
-import { AIProviderMark } from "@/components/AIProviderMark";
 
 /**
  * The providers offered as one-action buttons. The URL is the provider's plain start page: the
@@ -83,38 +82,43 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <ul className="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto sm:justify-center sm:gap-3" aria-label="Choose an AI provider">
-        {AI_PROVIDERS.map((provider) => (
-          <li key={provider.id} className="flex">
-            <button
-              type="button"
-              onClick={() => handleProvider(provider)}
-              aria-label={`Copy the prompt and open ${provider.name}`}
-              className="focus-visible:ring-ring flex min-h-[72px] w-full flex-col items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/60 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 sm:w-28"
-            >
-              <AIProviderMark provider={provider.id} size={24} />
-              <span>{provider.name}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <p className="text-xs text-muted-foreground" aria-live="polite">
-        {status === "copied"
-          ? `Prompt copied. Paste it into ${activeId && activeId !== "any" ? AI_PROVIDERS.find((p) => p.id === activeId)?.name : "your AI"} to begin.`
-          : "Choose your AI. We will copy the complete interpretation prompt for you to paste."}
-      </p>
-
+    <div className="flex w-full flex-col items-center gap-3">
       <Button
         onClick={handleAny}
-        className="h-12 w-full gap-2 sm:w-auto"
+        className="h-12 w-full gap-2 sm:w-auto sm:min-w-[260px]"
         aria-live="polite"
         aria-label={status === "failed" ? "Copy failed. Select the text manually from the reading." : undefined}
       >
         {status === "copied" ? <Check className="h-4 w-4" aria-hidden="true" /> : status === "failed" ? <AlertCircle className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-        {status === "copied" ? "Prompt Copied" : status === "failed" ? "Copy failed" : "Copy Prompt for Any AI"}
+        {status === "copied" ? "Prompt copied" : status === "failed" ? "Copy failed" : "Copy for AI"}
       </Button>
+
+      <p className="text-xs text-muted-foreground" aria-live="polite">
+        {status === "copied"
+          ? "Open your AI to begin:"
+          : "ChatGPT · Claude · Gemini · Any AI"}
+      </p>
+
+      <nav aria-label="Open an AI assistant" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
+        {AI_PROVIDERS.map((provider, i) => (
+          <span key={provider.id} className="flex items-center gap-3">
+            {i > 0 && <span aria-hidden="true" className="text-muted-foreground/60">·</span>}
+            {status === "copied" ? (
+              <a
+                href={provider.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent("ai_provider_open", { provider: provider.id, spreadId })}
+                className="text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+              >
+                {provider.name}
+              </a>
+            ) : (
+              <span className="text-muted-foreground">{provider.name}</span>
+            )}
+          </span>
+        ))}
+      </nav>
 
       {status === "failed" && (
         <p className="w-full text-center text-xs text-muted-foreground" role="status">
@@ -137,7 +141,6 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
           />
         </div>
       )}
-
     </div>
   );
 }

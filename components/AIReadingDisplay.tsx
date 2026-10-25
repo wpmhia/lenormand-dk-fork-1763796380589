@@ -136,18 +136,11 @@ export function ClassicAnalysisWithAI({
   return (
     <>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col items-center gap-6 border-t border-border/60 pt-6 text-center">
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading is ready</p>
-            <h3 className="text-lg font-semibold text-foreground">Interpret with Your AI</h3>
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex flex-col items-center gap-1">
+            <h3 className="text-lg font-semibold text-foreground">Interpret your cards with AI</h3>
             <p className="max-w-prose text-sm text-muted-foreground">
-              More than just your cards. We have prepared a complete Lenormand interpretation prompt using traditional reading methods, card combinations, positions and spread geometry.
-            </p>
-            <p className="max-w-prose text-sm text-foreground">
-              Our Lenormand method. Your AI&apos;s understanding of you.
-            </p>
-            <p className="max-w-prose px-2 text-xs text-muted-foreground">
-              Your AI can interpret the reading with any personal context it already has, if that is available and your settings allow it.
+              Your complete Lenormand prompt is ready. Copy it into your favorite AI assistant.
             </p>
           </div>
 
@@ -158,25 +151,21 @@ export function ClassicAnalysisWithAI({
             }
           />
 
-          <div className="flex w-full flex-col items-center gap-3 border-t border-border/60 pt-6">
-            <p className="text-xs text-muted-foreground">Or interpret directly here</p>
-            <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
-                  onStartAI();
-                }}
-                className="h-12 w-full sm:w-auto"
-              >
-                Get AI Interpretation
-              </Button>
-              <ActionInfoTooltip
-                action="Get AI Interpretation"
-                text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
-              />
-            </div>
-            <p className="text-xs text-muted-foreground/80">Powered by DeepSeek · No external AI required</p>
+          <div className="flex items-center justify-center gap-1 pt-1">
+            <Button
+              variant="outline"
+              onClick={() => {
+                trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+                onStartAI();
+              }}
+              className="h-10 text-sm"
+            >
+              Get AI Interpretation
+            </Button>
+            <ActionInfoTooltip
+              action="Get AI Interpretation"
+              text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
+            />
           </div>
         </div>
 
