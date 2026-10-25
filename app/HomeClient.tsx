@@ -61,7 +61,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
               </span>
             </h1>
             <p className="lead mx-auto mb-8 max-w-[70ch] text-muted-foreground md:mx-0">
-              Explore what comes next with traditional Lenormand readings, interpreted by the AI assistant that already knows your story. Symbolic exploration, not proven prediction.
+              Bring traditional Lenormand readings into conversations with your personal AI. We provide the cards and the interpretation method. Your AI brings the understanding of your story.
             </p>
 
             <div className="flex flex-col items-center gap-5 md:items-start">
@@ -193,7 +193,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
             <div className="absolute -bottom-3 left-1/2 h-0.5 w-20 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Get your Lenormand reading in three simple steps
+            Add a traditional Lenormand reading to your AI in three steps
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
@@ -229,14 +229,17 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground">
                   3
                 </span>
-                <span>Get AI Insight</span>
+                <span>Interpret With Your AI</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="text-muted-foreground">
-              Receive an instant AI interpretation in plain language &mdash; practical, clear, and grounded in traditional Lenormand combinations.
+              Copy the complete reading prompt, including your question, cards, positions and combinations, and paste it into your own AI assistant. Or get a direct interpretation on this site.
             </CardContent>
           </Card>
         </div>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
+          Lenormand offers a symbolic view of what may come next, not a proven forecast.
+        </p>
       </div>
 
       {/* Learn Section */}
