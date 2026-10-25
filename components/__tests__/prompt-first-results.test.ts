@@ -84,3 +84,15 @@ describe("analytics: existing events kept, new outcome events carry no personal 
     }
   });
 });
+
+describe("results: keyword summary removed, completion tracked without personal data", () => {
+  it("no longer shows the keyword 'themes' summary line in the results", () => {
+    expect(display).not.toContain('data-testid="card-themes"');
+  });
+
+  it("tracks reading_completed with the spread and card count only", () => {
+    expect(display).toMatch(/trackEvent\("reading_completed", \{ spreadId, cardCount \}\)/);
+    const completed = display.match(/trackEvent\("reading_completed"[^;]*\);/g) ?? [];
+    expect(completed).toEqual(['trackEvent("reading_completed", { spreadId, cardCount });']);
+  });
+});

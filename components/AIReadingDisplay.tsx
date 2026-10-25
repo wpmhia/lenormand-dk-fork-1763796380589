@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, memo } from "react";
+import { useState, useRef, memo, useEffect } from "react";
 import { AIReadingResponse } from "@/lib/prompt-builder";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,6 +124,14 @@ export function ClassicAnalysisWithAI({
     geometry: getPreviewGeometry(analysis.spreadId, analysis.cards.length),
   };
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
+
+  // One completed reading per shown result. Only the spread and card count; never the question or cards.
+  const readingKey = `${analysis.spreadId}|${analysis.question}|${analysis.cards.map((c) => c.cardId).join(",")}`;
+  const cardCount = analysis.cards.length;
+  const spreadId = analysis.spreadId;
+  useEffect(() => {
+    trackEvent("reading_completed", { spreadId, cardCount });
+  }, [readingKey, spreadId, cardCount]);
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -157,9 +165,6 @@ export function ClassicAnalysisWithAI({
               ))}
             </ol>
           </div>
-          {preview.themes && (
-            <p className="text-sm text-foreground" data-testid="card-themes">{preview.themes}</p>
-          )}
         </div>
 
         <div className="flex flex-col items-center gap-4 border-t border-border/60 pt-6 text-center">
