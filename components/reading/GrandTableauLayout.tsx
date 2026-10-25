@@ -72,6 +72,10 @@ export function GrandTableauLayout({
         </div>
       )}
 
+      {/* Compact swipe hint on small screens where the grid overflows. Hidden on sm and up. */}
+      <p className="mb-1 text-center text-[11px] text-muted-foreground sm:hidden" role="note">
+        Swipe to view all 36 cards
+      </p>
       <div className="-mx-4 overflow-x-auto px-4 pb-2 [-webkit-overflow-scrolling:touch] [overscroll-behavior-x:contain] sm:mx-0 sm:px-0" aria-label="Grand Tableau, horizontally scrollable">
         <div className="grid min-w-[752px] grid-cols-9 gap-1 sm:gap-sm">
           {validCards.map(({ card, index }) => {

@@ -21,7 +21,7 @@ test("@smoke classic analysis shows first; AI runs only after the button is pres
   const threeCard = page.getByRole("option", { name: /^3-Card Sentence/ });
   await threeCard.waitFor({ state: "visible", timeout: 10_000 });
   await threeCard.click();
-  await page.getByRole("button", { name: "Virtual Deck" }).click();
+  await page.getByRole("button", { name: "Draw cards online" }).click();
   await page.getByRole("button", { name: "Draw 3 Cards", exact: true }).click();
 
   await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();

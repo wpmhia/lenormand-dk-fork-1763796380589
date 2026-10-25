@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Deck } from "@/components/Deck";
@@ -113,11 +113,15 @@ function NewReadingPageContent() {
 
   useAutoSaveReading(aiReading, aiLoading, step, drawnCardTypes, readingSaved, question, selectedSpread.label, setReadingSaved);
 
+  // Ask about installing only after a completed reading, once per session, never during
+  // the first seconds of page load or before cards exist.
+  const installPromptShownRef = useRef(false);
   useEffect(() => {
-    if (aiReading && !aiLoading && step === "results" && drawnCardTypes.length > 0) {
+    if (step === "results" && drawnCardTypes.length > 0 && !installPromptShownRef.current) {
+      installPromptShownRef.current = true;
       showInstallPrompt();
     }
-  }, [aiReading, aiLoading, step, drawnCardTypes, showInstallPrompt]);
+  }, [step, drawnCardTypes, showInstallPrompt]);
 
   // Reset function - defined before effects that use it
   const performReset = useCallback(
@@ -246,7 +250,7 @@ function NewReadingPageContent() {
       case "drawing":
         return method === "physical" ? "Enter Cards" : "Draw";
       case "results":
-        return "Reading & AI Insights";
+        return "Your Reading";
       default:
         return "";
     }
@@ -254,20 +258,25 @@ function NewReadingPageContent() {
 
   return (
       <div className="bg-ambience min-h-screen text-foreground">
-        <div className="container-narrow relative z-10 py-8 md:py-12">
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <h1 className="relative mb-4 font-bold text-foreground">
+        <div className="container-narrow relative z-10 pb-8 pt-4 md:pb-12 md:pt-8">
+          {/* Header: full on setup, a compact strip once cards are in play so the reading
+              and the Copy for AI action are reached without heavy scrolling. */}
+          <div className={step === "setup" ? "mb-8 text-center" : "mb-4 text-center"}>
+            <h1 className={`relative mb-4 font-bold text-foreground ${step === "setup" ? "" : "text-xl md:text-2xl"}`}>
               New Lenormand Reading
-              <div className="absolute -bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
+              {step === "setup" && (
+                <div className="absolute -bottom-2 left-1/2 h-0.5 w-32 -translate-x-1/2 transform rounded-full bg-gradient-to-r from-primary to-primary/60"></div>
+              )}
             </h1>
-            <p className="text-lg italic text-muted-foreground">
-              Ask a clear question. Read the cards as a sentence.
-            </p>
+            {step === "setup" && (
+              <p className="text-lg italic text-muted-foreground">
+                Ask a clear question. Read the cards as a sentence.
+              </p>
+            )}
 
             {/* Progress Indicator */}
             <div
-              className="mt-8 flex items-center justify-center space-x-3 sm:space-x-6"
+              className={`flex items-center justify-center space-x-3 sm:space-x-6 ${step === "setup" ? "mt-8" : "mt-3"}`}
               role="progressbar"
               aria-label="Reading progress"
             >

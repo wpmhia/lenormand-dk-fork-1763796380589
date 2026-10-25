@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const metadata: Metadata = {
   title: "Privacy Policy | Lenormand Intelligence",
   description:
-    "Learn how Lenormand Intelligence protects your privacy. Readings are built from your question and cards. Saved history is stored on our servers until you delete it. Connections are encrypted, and we do not sell your data.",
+    "Learn how Lenormand Intelligence protects your privacy. Readings are built from your question and cards. Saved history is kept in your browser's local storage on your device. Connections are encrypted, and we do not sell your data.",
   openGraph: {
     title: "Privacy Policy | Lenormand Intelligence",
     description:
@@ -52,9 +52,11 @@ export default function PrivacyPage() {
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Reading Data:</strong> Your questions and card
-                  selections are used to build your reading. If you save your
-                  reading to history, it is stored on our server, linked to an
-                  anonymous session identifier, until you delete it.
+                  selections are used to build your reading. When a reading is
+                  complete, it is saved automatically in your browser&apos;s
+                  local storage so it appears in your History. Readings stored in
+                  your browser stay on your device and are not uploaded to our
+                  servers.
                 </li>
                 <li>
                   <strong>AI Interpretations:</strong> When you request AI
@@ -70,9 +72,10 @@ export default function PrivacyPage() {
               </ul>
               <p className="mt-4 text-sm text-muted-foreground">
                 <strong>Key Principle:</strong> Your readings remain entirely
-                private. Only readings you save to history are kept on our
-                server, and you can delete them at any time. Sharing creates a link that contains the reading. Saved history is kept on our server until
-                you delete it.
+                private. A completed reading is saved automatically in your
+                browser&apos;s local storage, never on our servers. You can
+                delete saved readings at any time from your History page or by
+                clearing your browser&apos;s storage. Sharing creates a link that contains the reading.
               </p>
             </CardContent>
           </Card>
@@ -127,9 +130,9 @@ export default function PrivacyPage() {
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Limited Server Storage:</strong> Your questions and cards
-                  are sent to our servers to generate an AI interpretation, and
-                  saved history is kept on our servers. Other reading data stays
-                  on your device.
+                  are sent to our servers only to generate an AI interpretation.
+                  Saved history is kept in your browser&apos;s local storage on
+                  your device.
                 </li>
                 <li>
                   <strong>No User Accounts:</strong> We don&rsquo;t require
@@ -142,8 +145,9 @@ export default function PrivacyPage() {
                   1.3).
                 </li>
                 <li>
-                  <strong>Data Retention:</strong> Saved history is kept until you
-                  delete it. Retention periods for server logs and rate-limit
+                  <strong>Data Retention:</strong> Readings saved in your
+                  browser&apos;s local storage are kept on your device until you
+                  delete them. Retention periods for server logs and rate-limit
                   records are described in our retention policy.
                 </li>
                 <li>
@@ -203,7 +207,8 @@ export default function PrivacyPage() {
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Access:</strong> You can view your saved history in the
-                  History page. Data you did not save is not kept on our servers.
+                  History page. Data you did not save is not kept, and browser
+                  history never leaves your device.
                 </li>
                 <li>
                   <strong>Deletion:</strong> Clear your browser&apos;s local
@@ -257,7 +262,8 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Data Processing:</strong> AI processing is done via
-                  DeepSeek. Saved history is stored on our servers.
+                  DeepSeek. History is stored in your browser&apos;s local
+                  storage.
                 </li>
                 <li>
                   <strong>Right to be Forgotten:</strong> You can delete saved

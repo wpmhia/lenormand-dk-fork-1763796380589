@@ -149,3 +149,15 @@ describe("results hierarchy: AI action first, traditional meanings collapsed", (
     expect(html.toLowerCase()).not.toContain("curated");
   });
 });
+
+describe("Copy for AI stays available during the AI states", () => {
+  it("keeps the copy panel visible while the AI interpretation loads", () => {
+    const html = renderWithClassic({ aiRequested: true, aiReading: null, isLoading: true });
+    expect(html).toContain("Copy for AI");
+  });
+
+  it("keeps the copy panel visible after the AI interpretation arrives", () => {
+    const html = renderWithClassic({ aiRequested: true, aiReading: { reading: "## Answer\nYes." }, isLoading: false });
+    expect(html).toContain("Copy for AI");
+  });
+});

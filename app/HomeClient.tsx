@@ -14,7 +14,6 @@ import {
 } from "@/components/AIProviderMark";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
-import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import {
   ArrowRight,
   Heart,
@@ -36,12 +35,6 @@ interface HomeClientProps {
 
 export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
-  const { showInstallPrompt } = useInstallPrompt();
-
-  useEffect(() => {
-    const timer = setTimeout(() => showInstallPrompt(), 3000);
-    return () => clearTimeout(timer);
-  }, [showInstallPrompt]);
 
   const previewCards = useMemo(() => initialCards.slice(0, 6), [initialCards]);
 

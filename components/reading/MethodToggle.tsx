@@ -16,7 +16,7 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
   return (
     <div className="space-y-4">
       <div className="text-sm font-medium text-foreground">
-        Choose your method:
+        How do you want to draw your cards?
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -30,9 +30,9 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
             <Laptop className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <div className="font-medium text-foreground">Virtual Deck</div>
+            <div className="font-medium text-foreground">Draw cards online</div>
             <div className="text-xs text-muted-foreground">
-              Best for quick readings. Cards are shuffled and drawn randomly by the computer.
+              Opens the next step: cards are shuffled and drawn online.
             </div>
           </div>
         </button>
@@ -47,9 +47,9 @@ export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
             <Heart className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <div className="font-medium text-foreground">Physical Cards</div>
+            <div className="font-medium text-foreground">Enter my own cards</div>
             <div className="text-xs text-muted-foreground">
-              Use when you&apos;ve already drawn cards from your physical Lenormand deck and want the AI interpretation.
+              Opens the next step: enter the cards you already drew from your own deck.
             </div>
           </div>
         </button>

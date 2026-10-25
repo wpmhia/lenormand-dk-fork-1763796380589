@@ -24,6 +24,7 @@ import { AIProviderPicker } from "@/components/AIProviderPicker";
 import { buildCopyForAIText } from "@/lib/copy-for-ai";
 import { ActionInfoTooltip } from "@/components/ActionInfoTooltip";
 import type { SignificatorPreference } from "@/lib/significator";
+import type { SpreadId } from "@/lib/spread-definitions";
 import { CARD_CATALOG } from "@/lib/card-catalog";
 import type { ReadingCard } from "@/lib/types";
 
@@ -108,6 +109,34 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
  * single AI action (copy the prompt, or get an interpretation here), then the full traditional
  * meanings in a collapsed disclosure. No text copy of the cards is repeated.
  */
+export /** The always-available copy action. It stays rendered while the AI interpretation loads or fails. */
+function CopyForAIPanel({
+  spreadId,
+  question,
+  drawn,
+  significatorPreference,
+}: {
+  spreadId: SpreadId;
+  question: string;
+  drawn: ReadingCard[];
+  significatorPreference: SignificatorPreference;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 text-center">
+      <div className="flex flex-col items-center gap-1">
+        <h3 className="text-lg font-semibold text-foreground">Interpret your cards with AI</h3>
+        <p className="max-w-prose text-sm text-muted-foreground">
+          Your complete Lenormand prompt is ready. Copy it into your favorite AI assistant.
+        </p>
+      </div>
+      <AIProviderPicker
+        spreadId={spreadId}
+        getPromptText={() => buildCopyForAIText(spreadId, question, drawn, significatorPreference)}
+      />
+    </div>
+  );
+}
+
 export function ClassicAnalysisWithAI({
   analysis,
   onStartAI,
@@ -131,21 +160,12 @@ export function ClassicAnalysisWithAI({
   return (
     <>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex flex-col items-center gap-1">
-            <h3 className="text-lg font-semibold text-foreground">Interpret your cards with AI</h3>
-            <p className="max-w-prose text-sm text-muted-foreground">
-              Your complete Lenormand prompt is ready. Copy it into your favorite AI assistant.
-            </p>
-          </div>
-
-          <AIProviderPicker
-            spreadId={analysis.spreadId}
-            getPromptText={() =>
-              buildCopyForAIText(analysis.spreadId, analysis.question, drawn, significatorPreference)
-            }
-          />
-
+      <CopyForAIPanel
+        spreadId={analysis.spreadId}
+        question={analysis.question}
+        drawn={drawn}
+        significatorPreference={significatorPreference}
+      />
           <div className="flex items-center justify-center gap-1 pt-1">
             <Button
               variant="outline"
@@ -163,7 +183,6 @@ export function ClassicAnalysisWithAI({
             />
           </div>
         </div>
-      </div>
       <ClassicAnalysisDisclosure analysis={analysis} />
     </>
   );
@@ -237,6 +256,12 @@ export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingD
       <Card>
         <CardContent className="space-y-6 p-6">
           <QuestionBlock question={question} />
+          <CopyForAIPanel
+            spreadId={classicAnalysis.spreadId}
+            question={classicAnalysis.question}
+            drawn={classicAnalysis.cards.map((line, index) => ({ id: line.cardId, position: index }))}
+            significatorPreference={props.significatorPreference ?? "both"}
+          />
           <ClassicAnalysisDisclosure analysis={classicAnalysis} />
           <div className="border-t border-border/60 pt-6">
             <AIStateView {...props} />

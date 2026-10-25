@@ -101,14 +101,14 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
       {linksReady ? (
         <p className="text-xs text-muted-foreground" aria-live="polite">Open your AI to begin:</p>
       ) : (
-        <p className="text-xs text-muted-foreground">ChatGPT · Claude · Gemini · Any AI</p>
+        <p className="text-xs text-muted-foreground">Works with ChatGPT · Claude · Gemini · any other AI</p>
       )}
 
-      <nav aria-label="Open an AI assistant" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
-        {AI_PROVIDERS.map((provider, i) => (
-          <span key={provider.id} className="flex items-center gap-3">
-            {i > 0 && <span aria-hidden="true" className="text-muted-foreground/60">·</span>}
-            {linksReady ? (
+      {linksReady && (
+        <nav aria-label="Open an AI assistant" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
+          {AI_PROVIDERS.map((provider, i) => (
+            <span key={provider.id} className="flex items-center gap-3">
+              {i > 0 && <span aria-hidden="true" className="text-muted-foreground/60">·</span>}
               <a
                 href={provider.href}
                 target="_blank"
@@ -118,12 +118,10 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
               >
                 {provider.name}
               </a>
-            ) : (
-              <span className="text-muted-foreground">{provider.name}</span>
-            )}
-          </span>
-        ))}
-      </nav>
+            </span>
+          ))}
+        </nav>
+      )}
 
       {status === "failed" && (
         <p className="w-full text-center text-xs text-muted-foreground" role="status">
