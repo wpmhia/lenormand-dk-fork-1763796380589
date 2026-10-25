@@ -21,20 +21,20 @@ describe("significator choice: one mapping for every path", () => {
   });
 });
 
-describe("significator choice: reaches Copy for AI from the results page", () => {
+describe("significator choice: reaches the AI prompt from the results page", () => {
   it("the results page passes the mapped preference to the result component", () => {
     expect(read("app/read/new/page.tsx")).toMatch(/significatorPreference=\{significatorToPreference\(significatorType\)\}/);
   });
 
-  it("the result component forwards it to the action group and the copy button", () => {
+  it("the result component uses it in the prompt it builds for the provider picker", () => {
     const component = read("components/AIReadingDisplay.tsx");
-    expect(component).toMatch(/significatorPreference=\{significatorPreference\}/);
     expect(component).toMatch(/significatorPreference=\{props\.significatorPreference\}/);
+    expect(component).toMatch(/buildCopyForAIText\(analysis\.spreadId, analysis\.question, drawn, significatorPreference\)/);
   });
 
-  it("the copy button passes it into the shared builder", () => {
-    expect(read("components/CopyForAIButton.tsx")).toMatch(
-      /buildCopyForAIText\(spreadId, question, drawn, significatorPreference\)/,
+  it("the provider picker builds the shared prompt with the selected focus", () => {
+    expect(read("components/AIReadingDisplay.tsx")).toMatch(
+      /getPromptText=\{\(\) =>\s*buildCopyForAIText\(analysis\.spreadId, analysis\.question, drawn, significatorPreference\)/,
     );
   });
 });

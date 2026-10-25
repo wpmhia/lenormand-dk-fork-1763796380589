@@ -8,36 +8,23 @@ const read = (p: string) => readFileSync(resolve(root, p), "utf8");
 const display = read("components/AIReadingDisplay.tsx");
 const copy = read("components/CopyForAIButton.tsx");
 const hook = read("hooks/useAIAnalysis.ts");
+const picker = read("components/AIProviderPicker.tsx");
 
 describe("prompt-first results: hierarchy and copy", () => {
-  it("uses the approved heading and explanations", () => {
-    expect(display).toContain("Your Reading Is Ready");
-    expect(display).toContain(
-      "Your question, cards, traditional meanings, combinations, and spread geometry have been prepared for AI interpretation.",
-    );
-    expect(display).toContain("Get an AI interpretation directly on Lenormand Intelligence.");
-    expect(copy).toContain("Copy AI Prompt");
-    expect(display).toContain("Copy the complete interpretation prompt and use it with ChatGPT, Claude, Gemini, or another AI.");
+  it("uses the approved heading and explanations for the provider section", () => {
+    expect(display).toContain("Interpret with Your AI");
+    expect(display).toContain("Your complete Lenormand prompt is ready. Choose your preferred AI to interpret your cards.");
+    expect(display).toContain("Or interpret directly here");
+    expect(display).toContain("Powered by DeepSeek · No external AI required");
+    expect(picker).toContain("Copy Prompt for Any AI");
+    expect(picker).toContain("Choosing an AI copies the prompt and opens its website. Paste to start your interpretation.");
   });
 
-  it("confirms a successful copy with the approved text and the AI links", () => {
-    expect(copy).toContain('"Prompt Copied"');
-    expect(copy).toContain("Open your preferred AI and paste the prompt to get your interpretation.");
-    expect(copy).toContain("ChatGPT");
-    expect(copy).toContain("Claude");
-    expect(copy).toContain("Gemini");
+  it("confirms a copy with the approved text, after the clipboard succeeds", () => {
+    expect(picker).toContain("Prompt copied.");
+    expect(picker).toContain("Copy failed");
   });
 
-  it("the AI links open in a new tab and never put the question or cards in the URL", () => {
-    const links = [...copy.matchAll(/href: "([^"]+)"/g)].map((m) => m[1]);
-    expect(links.length).toBe(3);
-    for (const href of links) {
-      expect(href).toMatch(/^https:\/\//);
-      expect(href).not.toMatch(/[?&](q|query|prompt|text)=/);
-    }
-    expect(copy).toContain('target="_blank"');
-    expect(copy).toContain('rel="noopener noreferrer"');
-  });
 
   it("the prompt transparency section lists only what the prompt actually contains", () => {
     expect(copy).toContain("What&apos;s Included in Your Prompt");

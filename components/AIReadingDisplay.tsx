@@ -21,7 +21,8 @@ import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
 import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
 import { getPreviewGeometry, gridColumnsClass } from "@/lib/preview-geometry";
-import { CopyForAIButton } from "@/components/CopyForAIButton";
+import { AIProviderPicker } from "@/components/AIProviderPicker";
+import { buildCopyForAIText } from "@/lib/copy-for-ai";
 import { ActionInfoTooltip } from "@/components/ActionInfoTooltip";
 import type { SignificatorPreference } from "@/lib/significator";
 import { CARD_CATALOG } from "@/lib/card-catalog";
@@ -167,44 +168,41 @@ export function ClassicAnalysisWithAI({
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4 border-t border-border/60 pt-6 text-center">
-          <h3 className="text-lg font-semibold text-foreground">Your Reading Is Ready</h3>
-          <p className="max-w-prose text-sm text-muted-foreground">
-            Your question, cards, traditional meanings, combinations, and spread geometry have been prepared for AI interpretation.
-          </p>
-          <div className="flex w-full flex-col items-stretch gap-3">
-            <div className="flex w-full flex-col items-center gap-2">
-              <CopyForAIButton
-                spreadId={analysis.spreadId}
-                question={analysis.question}
-                drawn={drawn}
-                significatorPreference={significatorPreference}
+        <div className="flex flex-col items-center gap-6 border-t border-border/60 pt-6 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading is ready</p>
+            <h3 className="text-lg font-semibold text-foreground">Interpret with Your AI</h3>
+            <p className="max-w-prose text-sm text-muted-foreground">
+              Your complete Lenormand prompt is ready. Choose your preferred AI to interpret your cards.
+            </p>
+          </div>
+
+          <AIProviderPicker
+            spreadId={analysis.spreadId}
+            getPromptText={() =>
+              buildCopyForAIText(analysis.spreadId, analysis.question, drawn, significatorPreference)
+            }
+          />
+
+          <div className="flex w-full flex-col items-center gap-3 border-t border-border/60 pt-6">
+            <p className="text-xs text-muted-foreground">Or interpret directly here</p>
+            <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+                  onStartAI();
+                }}
+                className="h-12 w-full sm:w-auto"
+              >
+                Get AI Interpretation
+              </Button>
+              <ActionInfoTooltip
+                action="Get AI Interpretation"
+                text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
               />
-              <p className="text-xs text-muted-foreground">
-                Copy the complete interpretation prompt and use it with ChatGPT, Claude, Gemini, or another AI.
-              </p>
             </div>
-            <div className="flex w-full flex-col items-center gap-2">
-              <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
-                    onStartAI();
-                  }}
-                  className="h-12 w-full sm:w-auto"
-                >
-                  Get AI Interpretation
-                </Button>
-                <ActionInfoTooltip
-                  action="Get AI Interpretation"
-                  text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Get an AI interpretation directly on Lenormand Intelligence.
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground/80">Powered by DeepSeek · No external AI required</p>
           </div>
         </div>
       </div>
