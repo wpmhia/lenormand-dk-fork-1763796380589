@@ -107,7 +107,7 @@ describe("follow-up route: real handler with a mocked model", () => {
     expect(response.status).toBe(499);
   });
 
-  it("generates through the shared model service with the same thinking settings as readings", async () => {
+  it("generates through the shared model service with thinking disabled like readings", async () => {
     generateText.mockResolvedValueOnce({
       text: "The centre card points to a decision in the coming weeks.",
       finishReason: "stop",
@@ -119,8 +119,8 @@ describe("follow-up route: real handler with a mocked model", () => {
     expect(response.status).toBe(200);
 
     const call = generateText.mock.calls[0][0];
-    expect(call.providerOptions.deepseek.thinking).toEqual({ type: "enabled" });
-    expect(call.providerOptions.deepseek.reasoningEffort).toBe("low");
+    expect(call.providerOptions.deepseek.thinking).toEqual({ type: "disabled" });
+    expect(call.providerOptions.deepseek.reasoningEffort).toBeUndefined();
     expect(call.timeout).toEqual({ totalMs: 45_000 });
     expect(call.maxRetries).toBe(0);
   });

@@ -168,14 +168,14 @@ describe("generation: one model call, one parse path", () => {
     expect(result.ok && result.reading).not.toContain("## Timing");
   });
 
-  it("requests thinking and a bounded timeout on the single call", async () => {
+  it("requests disabled thinking and a bounded timeout on the single call", async () => {
     generateText.mockResolvedValueOnce(textOutput(validOutput));
 
     await generateReading(options());
 
     const call = generateText.mock.calls[0][0];
-    expect(call.providerOptions.deepseek.thinking).toEqual({ type: "enabled" });
-    expect(call.providerOptions.deepseek.reasoningEffort).toBe("low");
+    expect(call.providerOptions.deepseek.thinking).toEqual({ type: "disabled" });
+    expect(call.providerOptions.deepseek.reasoningEffort).toBeUndefined();
     expect(call.timeout).toEqual({ totalMs: 5_000 });
     expect(call.maxRetries).toBe(0);
   });

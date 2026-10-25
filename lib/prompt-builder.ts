@@ -34,7 +34,7 @@ Work order: first weigh the cards and write the "reading". Then state the "answe
 
 Write naturally in the user's language.`;
 
-/** Output budget covering DeepSeek's reasoning tokens and the final JSON answer. */
+/** Output budget cap. Thinking is off, so these tokens go to the final JSON answer. */
 export function getTokenBudget(cardCount: number): number {
   if (cardCount <= 1) return 4096;
   if (cardCount <= 3) return 6144;

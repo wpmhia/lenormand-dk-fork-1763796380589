@@ -6,12 +6,12 @@ import { SimpleAnswerSchema, renderSimpleAnswer, type SimpleAnswer } from "@/lib
  * settings, timeout handling and empty-output diagnostics; only the accepted output format
  * differs (JSON answer vs. plain prose).
  *
- * DeepSeek thinking mode is always on. It is fixed in code, not read from the environment, so a
- * stale override cannot silently switch it off in production. Reasoning tokens share
- * `maxOutputTokens` with the body; prompt-builder sizes that budget for both.
+ * Thinking mode is always off for the built-in interpretation. It is fixed in code, not read
+ * from the environment, so a stale override cannot silently switch it on in production. The
+ * reading quality lives in the supplied prompt and card geometry, not in paid reasoning tokens.
+ * Without reasoning, the whole `maxOutputTokens` budget is available to the body.
  */
-export const READING_THINKING = { type: "enabled" as const };
-export const READING_REASONING_EFFORT = "low" as const;
+export const READING_THINKING = { type: "disabled" as const };
 
 export type GenerationResult =
   | { ok: true; text: string }
@@ -44,7 +44,7 @@ export async function generateModelText(options: GenerationOptions): Promise<Gen
       model: options.model,
       system: options.system,
       prompt: options.prompt,
-      providerOptions: { deepseek: { thinking: READING_THINKING, reasoningEffort: READING_REASONING_EFFORT } },
+      providerOptions: { deepseek: { thinking: READING_THINKING } },
       maxOutputTokens: options.maxTokens,
       maxRetries: 0,
       abortSignal: options.signal,

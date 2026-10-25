@@ -21,11 +21,10 @@ export async function OPTIONS() {
 
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 /**
- * Thinking shares this budget with the answer, so it matches the reading budget for the same
- * spread size. A live nine-card follow-up took 24s, so the model timeout is 45s, inside the
- * route's 60s maxDuration. A slow generation then fails as a provider timeout (504), not a
- * platform kill.
- */
+  * Thinking is off (shared model service), so the entire budget goes to the answer. It matches
+  * the reading budget for the same spread size. The model timeout is 45s, inside the route's
+  * 60s maxDuration, so a slow generation fails as a provider timeout (504), not a platform kill.
+  */
 const FOLLOWUP_TOKEN_BUDGET = 12_288;
 const FOLLOWUP_TIMEOUT_MS = 45_000;
 const RATE_LIMIT = 5;

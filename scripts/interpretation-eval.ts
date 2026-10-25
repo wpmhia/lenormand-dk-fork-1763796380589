@@ -109,7 +109,7 @@ async function main() {
       model,
       system: ctx.instructions,
       prompt: [ctx.facts, ctx.jsonOutput].join("\n\n"),
-      providerOptions: { deepseek: { thinking: { type: "enabled" }, reasoningEffort: "low" } } as never,
+      providerOptions: { deepseek: { thinking: { type: "disabled" } } } as never,
       maxOutputTokens: 16384,
       maxRetries: 0,
       timeout: { totalMs: 120_000 },

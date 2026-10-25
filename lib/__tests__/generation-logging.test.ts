@@ -133,7 +133,7 @@ describe("generation logging: structured timing and usage", () => {
     await generateModelText(options());
 
     const call = generateText.mock.calls[0][0];
-    expect(call.providerOptions.deepseek).toEqual({ thinking: { type: "enabled" }, reasoningEffort: "low" });
+    expect(call.providerOptions.deepseek).toEqual({ thinking: { type: "disabled" } });
     expect(call.timeout).toEqual({ totalMs: 45_000 });
     expect(call.maxOutputTokens).toBe(6144);
     infoSpy.mockRestore();
