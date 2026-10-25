@@ -41,6 +41,7 @@ type Status = "idle" | "copied" | "failed";
 export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIProviderPickerProps) {
   const [status, setStatus] = useState<Status>("idle");
   const [activeId, setActiveId] = useState<AIProviderId | "any" | null>(null);
+  const [manualPrompt, setManualPrompt] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
@@ -54,7 +55,9 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
   };
 
   const copyPrompt = async (): Promise<boolean> => {
-    const ok = await copyTextToClipboard(getPromptText());
+    const text = getPromptText();
+    const ok = await copyTextToClipboard(text);
+    setManualPrompt(ok ? null : text);
     trackEvent("ai_prompt_copy", { spreadId, source: activeId ?? "any" });
     return ok;
   };
@@ -98,7 +101,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
 
       <p className="text-xs text-muted-foreground" aria-live="polite">
         {status === "copied"
-          ? `Prompt copied. Paste it into ${activeId && activeId !== "any" ? AI_PROVIDERS.find((p) => p.id === activeId)?.name : "your AI"} to start your interpretation.`
+          ? `Prompt copied. Paste it into ${activeId && activeId !== "any" ? AI_PROVIDERS.find((p) => p.id === activeId)?.name : "your AI"} to begin.`
           : "Your prompt is copied to the clipboard. Each AI opens as a new chat, and you paste the prompt into it yourself. The prompt is not sent automatically."}
       </p>
 
@@ -114,8 +117,24 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
 
       {status === "failed" && (
         <p className="w-full text-center text-xs text-muted-foreground" role="status">
-          Your browser blocked clipboard access, so no AI was opened. Copy the reading manually from the page, then open your AI.
+          Your browser blocked clipboard access, so no AI was opened. Copy the prompt below manually, then open your AI.
         </p>
+      )}
+
+      {manualPrompt !== null && (
+        <div className="w-full space-y-2">
+          <label htmlFor="manual-prompt" className="block text-xs font-medium text-foreground">
+            Your complete prompt
+          </label>
+          <textarea
+            id="manual-prompt"
+            readOnly
+            value={manualPrompt}
+            onFocus={(e) => e.currentTarget.select()}
+            rows={8}
+            className="w-full rounded-lg border border-border bg-card p-3 font-mono text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </div>
       )}
 
     </div>

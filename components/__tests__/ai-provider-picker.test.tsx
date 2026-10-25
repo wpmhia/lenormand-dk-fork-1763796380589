@@ -63,7 +63,8 @@ describe("AI provider picker: copy, then open, and never open on a failed copy",
   it("the copy helper is the same for every provider and the universal action", () => {
     const copies = source.match(/copyPrompt\(\)/g) ?? [];
     expect(copies.length).toBe(2);
-    expect(source).toMatch(/const copyPrompt = async[\s\S]*?copyTextToClipboard\(getPromptText\(\)\)/);
+    expect(source).toMatch(/const copyPrompt = async[\s\S]*?copyTextToClipboard\(text\)/);
+    expect(source).toMatch(/const text = getPromptText\(\)/);
   });
 
   it("tracks the provider open and the copy with spread and provider only", () => {
