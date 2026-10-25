@@ -13,11 +13,12 @@ const picker = read("components/AIProviderPicker.tsx");
 describe("prompt-first results: hierarchy and copy", () => {
   it("uses the approved heading and explanations for the provider section", () => {
     expect(display).toContain("Interpret with Your AI");
-    expect(display).toContain("Your complete Lenormand prompt is ready. Choose your preferred AI to interpret your cards.");
+    expect(display).toContain("More than just your cards.");
+    expect(display).toContain("Our Lenormand method. Your AI&apos;s understanding of you.");
     expect(display).toContain("Or interpret directly here");
     expect(display).toContain("Powered by DeepSeek · No external AI required");
     expect(picker).toContain("Copy Prompt for Any AI");
-    expect(picker).toContain("The prompt is not sent automatically.");
+    expect(picker).toContain("Choose your AI. We will copy the complete interpretation prompt for you to paste.");
   });
 
   it("confirms a copy with the approved text, after the clipboard succeeds", () => {
@@ -81,5 +82,19 @@ describe("results: keyword summary removed, completion tracked without personal 
     expect(display).toMatch(/trackEvent\("reading_completed", \{ spreadId, cardCount \}\)/);
     const completed = display.match(/trackEvent\("reading_completed"[^;]*\);/g) ?? [];
     expect(completed).toEqual(['trackEvent("reading_completed", { spreadId, cardCount });']);
+  });
+});
+
+describe("results copy: the value is explained without over-promising personal context", () => {
+  it("keeps the headline and states the core message", () => {
+    expect(display).toContain("Interpret with Your AI");
+    expect(display).toContain("Our Lenormand method. Your AI&apos;s understanding of you.");
+  });
+
+  it("makes the personal-context benefit conditional, never automatic", () => {
+    expect(display).toContain("if that is available and your settings allow it");
+    expect(display).not.toMatch(/automatically (knows|remembers|uses|includes)/i);
+    expect(display).not.toMatch(/every AI (knows|remembers)/i);
+    expect(display).not.toMatch(/will (know|remember) (you|your)/i);
   });
 });

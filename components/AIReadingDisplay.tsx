@@ -173,7 +173,13 @@ export function ClassicAnalysisWithAI({
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading is ready</p>
             <h3 className="text-lg font-semibold text-foreground">Interpret with Your AI</h3>
             <p className="max-w-prose text-sm text-muted-foreground">
-              Your complete Lenormand prompt is ready. Choose your preferred AI to interpret your cards.
+              More than just your cards. We have prepared a complete Lenormand interpretation prompt using traditional reading methods, card combinations, positions and spread geometry.
+            </p>
+            <p className="max-w-prose text-sm text-foreground">
+              Our Lenormand method. Your AI&apos;s understanding of you.
+            </p>
+            <p className="max-w-prose px-2 text-xs text-muted-foreground">
+              Your AI can interpret the reading with any personal context it already has, if that is available and your settings allow it.
             </p>
           </div>
 
