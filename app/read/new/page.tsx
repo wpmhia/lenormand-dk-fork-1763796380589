@@ -101,6 +101,26 @@ function NewReadingPageContent() {
     return buildClassicAnalysis(selectedSpread.id as never, question, drawnCards, allCards);
   }, [step, drawnCards, selectedSpread.id, question, allCards]);
 
+  // A random id for the completed spread. It is created the first time these drawn cards are
+  // shown and is reused on every later display of the same spread, so repeat visits never count
+  // again. A new draw creates a new array, and therefore a new id: two identical spreads each
+  // count. The id never encodes the question, cards or spread contents.
+  const completionIdRef = useRef<{ cards: unknown; id: string } | null>(null);
+  const completionId = useMemo(() => {
+    if (step !== "results" || drawnCards.length === 0) return completionIdRef.current?.id ?? null;
+    const existing = completionIdRef.current;
+    if (existing && existing.cards === drawnCards) return existing.id;
+    const random =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+    completionIdRef.current = { cards: drawnCards, id: random };
+    return random;
+    // The intent is identity-tracking of the drawn cards array; extra deps would mint new ids on
+    // unrelated input changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, drawnCards]);
+
   const startAI = useCallback(() => {
     setAiRequested(true);
     startAnalysis();
@@ -452,6 +472,7 @@ function NewReadingPageContent() {
                   drawnCards={drawnCardTypes.map((c) => ({ id: c.id, name: c.name }))}
                   allCards={allCards}
                   classicAnalysis={classicAnalysis}
+                  completionId={completionId}
                   onStartAI={startAI}
                   aiRequested={aiRequested}
                   significatorPreference={significatorToPreference(significatorType)}

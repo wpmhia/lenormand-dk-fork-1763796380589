@@ -5,18 +5,17 @@ import { markReadingCompleted } from "@/lib/counter";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 
-/** Maximum accepted length for a client-built completion key. */
-const MAX_KEY_LENGTH = 500;
+/**
+ * Called once per displayed new spread. The body carries only the random completion id created in
+ * the browser; the question, cards and every other spread detail never reach this route. The id
+ * must be opaque: the counter would break if content were encoded inside it.
+ */
+const ID_PATTERN = /^[0-9a-z-]{20,64}$/i;
 
 export async function OPTIONS() {
   return handleCorsPreflight();
 }
 
-/**
- * Called once per displayed new spread. Idempotency lives in the counter: the same key only
- * increments the public counter once, so refreshes or AI retries never double-count. The key
- * itself is never logged; only its hash is used as a Redis marker.
- */
 export async function POST(request: Request) {
   try {
     const limited = await rateLimit(getClientIP(request), 60);
@@ -27,23 +26,25 @@ export async function POST(request: Request) {
       });
     }
 
-    const body = (await request.json().catch(() => null)) as { key?: unknown } | null;
-    const key = typeof body?.key === "string" ? body.key.trim() : "";
-    if (!key || key.length > MAX_KEY_LENGTH) {
-      return new Response(JSON.stringify({ error: "Invalid completion key." }), {
+    const body = (await request.json().catch(() => null)) as { id?: unknown } | null;
+    const id = typeof body?.id === "string" ? body.id.trim().toLowerCase() : "";
+    if (!id || !ID_PATTERN.test(id)) {
+      return new Response(JSON.stringify({ error: "Invalid completion id." }), {
         status: 400,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    const count = await markReadingCompleted(key);
+    const count = await markReadingCompleted(id);
     return new Response(JSON.stringify({ ok: true, count }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch {
+    // Redis is configured but failing: report a temporary failure so the client retries later
+    // instead of writing a per-instance fallback that could diverge between servers.
     return new Response(JSON.stringify({ error: "Could not record the spread." }), {
-      status: 500,
+      status: 503,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   }

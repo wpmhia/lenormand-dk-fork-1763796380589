@@ -22,46 +22,56 @@ async function fetchFromRedis(): Promise<number | null> {
   }
 }
 
-/** Completed spreads already counted. The marker TTL covers revisits long enough to matter. */
+/** Completed spreads already counted. The marker holds the random completion id, never content. */
 const DONE_PREFIX = "reading_count:done:";
 const DONE_TTL_SECONDS = 60 * 60 * 24 * 30;
-const memoryDoneKeys = new Set<string>();
-const MAX_MEMORY_DONE_KEYS = 10000;
+const memoryDoneIds = new Set<string>();
+const MAX_MEMORY_DONE_IDS = 10000;
 
-function hashKey(key: string): string {
-  let hash = 0;
-  for (let i = 0; i < key.length; i++) {
-    hash = ((hash << 5) - hash + key.charCodeAt(i)) | 0;
-  }
-  return (hash >>> 0).toString(36);
-}
+/** Optional historical total used only to bootstrap a brand-new counter, never to overwrite one. */
+const HISTORICAL_TOTAL_ENV = "DEFAULT_READING_COUNT";
 
 /**
- * Counts one completed spread exactly once per reading key. The marker uses SET NX, so a repeat
- * such as a page refresh only reaches the increment when this key was never counted before.
- * The plain incr stays for other callers that do not need idempotency.
+ * Atomically counts a completed spread once per random id in a single Redis call: the missing
+ * historical total is bootstrapped from the historical baseline (only when it does not exist,
+ * never over an existing value), the id marker is created once, and the total is incremented,
+ * so no ordering or repetition across instances can produce inconsistent counts. The script
+ * returns -1 when the id was already counted.
  */
-export async function markReadingCompleted(key: string): Promise<number> {
-  const doneKey = DONE_PREFIX + hashKey(key);
+const COUNT_ONCE_SCRIPT = `
+local total = redis.call("GET", KEYS[1])
+if total == false then
+  local seed = tonumber(ARGV[3])
+  if seed == nil or seed <= 0 then seed = 0 end
+  redis.call("SET", KEYS[1], seed)
+  if seed > 0 then
+    -- Surfaced once per counted spread when it happens: this is the only moment a baseline
+    -- is written to Redis, and only when the historical total is absent.
+    redis.log(redis.LOG_WARNING, "counter: bootstrapped missing " .. KEYS[1] .. " from baseline")
+  end
+end
+if redis.call("SETNX", KEYS[2], 1) == 1 then
+  redis.call("EXPIRE", KEYS[2], tonumber(ARGV[2]))
+  return redis.call("INCR", KEYS[1])
+end
+return tonumber(total)
+`;
+
+export async function markReadingCompleted(id: string): Promise<number> {
+  const doneKey = DONE_PREFIX + id;
   if (redis) {
-    try {
-      // A fresh Redis deployment holds no counter yet: start from the historical baseline
-      // instead of counting from zero, so the public value never drops or restarts.
-      if ((await redis.get(KEY)) === null) {
-        await redis.set(KEY, String(memoryCounter));
-      }
-      const first = await (redis as unknown as {
-        set: (k: string, v: string, opts?: { nx?: boolean; ex?: number }) => Promise<unknown>;
-      }).set(doneKey, "1", { nx: true, ex: DONE_TTL_SECONDS });
-      // Upstash returns the value on success and null when the key already existed.
-      if (first === null) return (await getReadingCount());
-      cachedCount = null;
-      return await redis.incr(KEY);
-    } catch { /* fall through to memory */ }
+    const seed = parseInt(getEnv(HISTORICAL_TOTAL_ENV) || "0", 10);
+    const result = (await redis.eval(
+      COUNT_ONCE_SCRIPT,
+      [KEY, doneKey],
+      ["1", String(DONE_TTL_SECONDS), String(seed)],
+    )) as number;
+    cachedCount = null;
+    return Number(result);
   }
-  if (memoryDoneKeys.size >= MAX_MEMORY_DONE_KEYS) memoryDoneKeys.clear();
-  if (memoryDoneKeys.has(doneKey)) return getReadingCount();
-  memoryDoneKeys.add(doneKey);
+  if (memoryDoneIds.size >= MAX_MEMORY_DONE_IDS) memoryDoneIds.clear();
+  if (memoryDoneIds.has(id)) return getReadingCount();
+  memoryDoneIds.add(id);
   cachedCount = null;
   return incrementReadingCount();
 }

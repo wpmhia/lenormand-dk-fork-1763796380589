@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
+import { reportCompletion } from "@/lib/spread-completion";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
 import type { ClassicAnalysis } from "@/lib/classic-analysis";
@@ -143,6 +144,7 @@ export function ClassicAnalysisWithAI({
   allCards = CARD_CATALOG,
   significatorPreference = "both",
   countCompletion = true,
+  completionId = null,
 }: {
   analysis: ClassicAnalysis;
   onStartAI: () => void;
@@ -150,31 +152,22 @@ export function ClassicAnalysisWithAI({
   significatorPreference?: SignificatorPreference;
   /** False when an existing spread is displayed again, so it is never counted twice. */
   countCompletion?: boolean;
+  /** Random id for this completion; reused by later displays of the same spread. */
+  completionId?: string | null;
 }) {
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
 
   // One completed reading per shown result. Only the spread and card count; never the question or cards.
-  const readingKey = `${analysis.spreadId}|${analysis.question}|${analysis.cards.map((c) => c.cardId).join(",")}`;
   const cardCount = analysis.cards.length;
   const spreadId = analysis.spreadId;
   useEffect(() => {
     trackEvent("reading_completed", { spreadId, cardCount });
     // The public counter counts every completed spread: all sizes, virtual and manually entered
     // cards. Reporting an existing spread again (share page) goes through countCompletion=false.
-    if (!countCompletion) return;
-    try {
-      const doneKey = `spread_counted:${readingKey}`;
-      if (sessionStorage.getItem(doneKey)) return;
-      sessionStorage.setItem(doneKey, "1");
-    } catch { /* storage unavailable: the server-side marker still prevents double counting */ }
-    fetch("/api/readings/completed", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key: readingKey }),
-    }).catch(() => {
-      /* never block the reading on the counter */
-    });
-  }, [readingKey, spreadId, cardCount, countCompletion]);
+    // Only the random id travels to the counter; question and card content never leave the page.
+    if (!countCompletion || !completionId) return;
+    void reportCompletion(completionId);
+  }, [spreadId, cardCount, countCompletion, completionId]);
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -244,6 +237,8 @@ interface AIReadingDisplayProps {
   aiRequested?: boolean;
   /** The significator focus chosen in the UI, passed unchanged to every reading path. */
   significatorPreference?: SignificatorPreference;
+  /** Random completion id from the reading page; only used when a fresh spread is displayed. */
+  completionId?: string | null;
 }
 
 /**
@@ -263,6 +258,7 @@ export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingD
             analysis={classicAnalysis}
             onStartAI={onStartAI}
             significatorPreference={props.significatorPreference}
+            completionId={props.completionId}
           />
         </CardContent>
       </Card>
