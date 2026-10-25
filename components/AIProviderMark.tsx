@@ -37,6 +37,8 @@ export function AIProviderMark({ provider, size = 24 }: AIProviderMarkProps) {
       height={size}
       decoding="async"
       className="inline-block shrink-0"
+      // The OpenAI mark is monochrome black; on the dark theme it is made white. Only this logo is filtered.
+      style={provider === "chatgpt" ? { filter: "brightness(0) invert(1)" } : undefined}
     />
   );
 }
