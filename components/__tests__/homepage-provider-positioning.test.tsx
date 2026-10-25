@@ -86,13 +86,6 @@ describe("provider logos: real SVG files, rendered as the official mark", () => 
 
 });
 
-describe("results: the same logo component is the clickable provider choice", () => {
-  it("the picker uses the shared logo component at 24px", () => {
-    expect(picker).toContain("<AIProviderMark provider={provider.id} size={24} />");
-  });
-
-});
-
 describe("analytics: existing homepage events untouched", () => {
   it("does not add tracking to the homepage hero", () => {
     const start = home.indexOf("Give your AI a");

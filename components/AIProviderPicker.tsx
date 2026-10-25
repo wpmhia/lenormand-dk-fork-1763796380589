@@ -39,6 +39,8 @@ type Status = "idle" | "copied" | "failed";
  */
 export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIProviderPickerProps) {
   const [status, setStatus] = useState<Status>("idle");
+  // The provider links stay available after a successful copy until the user copies again.
+  const [linksReady, setLinksReady] = useState(false);
   const [activeId, setActiveId] = useState<AIProviderId | "any" | null>(null);
   const [manualPrompt, setManualPrompt] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,6 +51,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
 
   const finish = (ok: boolean) => {
     setStatus(ok ? "copied" : "failed");
+    setLinksReady(ok);
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setStatus("idle"), FEEDBACK_MS);
   };
@@ -57,7 +60,9 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
     const text = getPromptText();
     const ok = await copyTextToClipboard(text);
     setManualPrompt(ok ? null : text);
-    trackEvent("ai_prompt_copy", { spreadId, source: activeId ?? "any" });
+    // Count a copy only when it succeeded, so ai_prompt_copy matches real handoffs.
+    if (ok) trackEvent("ai_prompt_copy", { spreadId, source: activeId ?? "any" });
+    else trackEvent("ai_prompt_copy_failed", { spreadId, source: activeId ?? "any" });
     return ok;
   };
 
@@ -93,17 +98,17 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
         {status === "copied" ? "Prompt copied" : status === "failed" ? "Copy failed" : "Copy for AI"}
       </Button>
 
-      <p className="text-xs text-muted-foreground" aria-live="polite">
-        {status === "copied"
-          ? "Open your AI to begin:"
-          : "ChatGPT · Claude · Gemini · Any AI"}
-      </p>
+      {linksReady ? (
+        <p className="text-xs text-muted-foreground" aria-live="polite">Open your AI to begin:</p>
+      ) : (
+        <p className="text-xs text-muted-foreground">ChatGPT · Claude · Gemini · Any AI</p>
+      )}
 
       <nav aria-label="Open an AI assistant" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
         {AI_PROVIDERS.map((provider, i) => (
           <span key={provider.id} className="flex items-center gap-3">
             {i > 0 && <span aria-hidden="true" className="text-muted-foreground/60">·</span>}
-            {status === "copied" ? (
+            {linksReady ? (
               <a
                 href={provider.href}
                 target="_blank"
