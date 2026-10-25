@@ -17,7 +17,7 @@ describe("prompt-first results: hierarchy and copy", () => {
     expect(display).toContain("Or interpret directly here");
     expect(display).toContain("Powered by DeepSeek · No external AI required");
     expect(picker).toContain("Copy Prompt for Any AI");
-    expect(picker).toContain("Choosing an AI copies the prompt and opens its website. Paste to start your interpretation.");
+    expect(picker).toContain("The prompt is not sent automatically.");
   });
 
   it("confirms a copy with the approved text, after the clipboard succeeds", () => {

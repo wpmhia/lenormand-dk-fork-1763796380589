@@ -36,7 +36,7 @@ describe("AI provider picker: the official set and the start pages", () => {
     );
     for (const p of AI_PROVIDERS) expect(html).toContain(`aria-label="Copy the prompt and open ${p.name}"`);
     expect(html).toContain("Copy Prompt for Any AI");
-    expect(html).toContain("Choosing an AI copies the prompt and opens its website.");
+    expect(html).toContain("The prompt is not sent automatically.");
   });
 
   it("tracks no question text and no card content in its markup", () => {

@@ -99,7 +99,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
       <p className="text-xs text-muted-foreground" aria-live="polite">
         {status === "copied"
           ? `Prompt copied. Paste it into ${activeId && activeId !== "any" ? AI_PROVIDERS.find((p) => p.id === activeId)?.name : "your AI"} to start your interpretation.`
-          : "Choosing an AI copies the prompt and opens its website. Paste to start your interpretation."}
+          : "Your prompt is copied to the clipboard. Each AI opens as a new chat, and you paste the prompt into it yourself. The prompt is not sent automatically."}
       </p>
 
       <Button
