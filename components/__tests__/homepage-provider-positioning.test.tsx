@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { AIProviderMark, AI_PROVIDER_ASSETS, AI_PROVIDER_LABELS } from "@/components/AIProviderMark";
-import { getAvailableAIProviderAssets } from "@/lib/brand-assets";
 
 globalThis.React = React;
 
@@ -24,7 +23,6 @@ describe("homepage hero: the approved positioning", () => {
   it("has Start a Reading as the only primary call to action", () => {
     expect(home).toContain("Start a Reading");
     expect(home).not.toContain("Get Your Reading");
-    // Exactly one primary (default-variant) button in the hero: the Start a Reading link.
     const primaries = home.match(/<Button asChild size="lg"/g) ?? [];
     expect(primaries.length).toBe(1);
   });
@@ -58,47 +56,70 @@ describe("homepage logos are informational, not outbound navigation", () => {
     expect(block).toContain('aria-label="Works with ChatGPT, Claude and Gemini"');
     expect(block).toContain("AIProviderMark");
   });
+});
 
-  it("the provider marks are hidden from assistive technology; the name is visible text", () => {
-    const html = renderToStaticMarkup(
-      React.createElement(AIProviderMark, { provider: "chatgpt", size: 18, hasAsset: false }),
-    );
-    expect(html).toContain('aria-hidden="true"');
-    expect(html).toContain(">C<");
+describe("provider logos: real SVG files, rendered as the official mark", () => {
+  it("every provider points at an existing local SVG in /public/brand", () => {
+    for (const path of Object.values(AI_PROVIDER_ASSETS)) {
+      expect(path).toMatch(/^\/brand\/[a-z]+\.svg$/);
+      const file = resolve(root, "public", path.slice(1));
+      expect(existsSync(file), path).toBe(true);
+      expect(statSync(file).size).toBeGreaterThan(0);
+    }
+  });
+
+  it("no logo comes from a third-party URL, search result or favicon service", () => {
+    expect(JSON.stringify(AI_PROVIDER_ASSETS)).not.toMatch(/https?:|google\.com\/s2|favicon|wikimedia/);
+  });
+
+  it("each SVG is valid markup from the brand set with no script or external reference", () => {
+    for (const path of Object.values(AI_PROVIDER_ASSETS)) {
+      const svg = readFileSync(resolve(root, "public", path.slice(1)), "utf8");
+      expect(svg.trimStart().startsWith("<svg")).toBe(true);
+      expect(svg).not.toMatch(/<script|<foreignObject|xlink:href="http|href="http/);
+    }
+  });
+
+  it("the Claude and Gemini marks keep their brand colours; ChatGPT follows the text colour", () => {
+    const claude = readFileSync(resolve(root, "public/brand/claude.svg"), "utf8");
+    const gemini = readFileSync(resolve(root, "public/brand/gemini.svg"), "utf8");
+    const chatgpt = readFileSync(resolve(root, "public/brand/chatgpt.svg"), "utf8");
+    expect(claude).toContain('fill="#D97757"');
+    expect(gemini).toContain("#3186FF");
+    expect(chatgpt).toContain('fill="currentColor"');
+  });
+
+  it("renders an img with the local path, a fixed 20-24px size and hidden from assistive technology", () => {
+    for (const size of [20, 24] as const) {
+      const html = renderToStaticMarkup(React.createElement(AIProviderMark, { provider: "claude", size }));
+      expect(html).toContain('src="/brand/claude.svg"');
+      expect(html).toContain(`width="${size}"`);
+      expect(html).toContain(`height="${size}"`);
+      expect(html).toContain('alt=""');
+      expect(html).toContain('aria-hidden="true"');
+    }
+  });
+
+  it("no letter placeholder remains anywhere in the provider components", () => {
+    const mark = readFileSync(resolve(root, "components/AIProviderMark.tsx"), "utf8");
+    expect(mark).not.toMatch(/charAt\(0\)|rounded-md border border-border text-\[10px\]/);
+    expect(home).not.toMatch(/charAt\(0\)/);
+    expect(picker).not.toMatch(/charAt\(0\)/);
+  });
+
+  it("the provider names are the plain labels, with no partnership wording", () => {
+    expect(Object.values(AI_PROVIDER_LABELS)).toEqual(["ChatGPT", "Claude", "Gemini"]);
   });
 });
 
-describe("results: the same marks are the actionable provider choices", () => {
-  it("the picker uses the shared provider mark", () => {
-    expect(picker).toContain("AIProviderMark");
-    expect(picker).toContain("<AIProviderMark provider={provider.id} size={32} />");
+describe("results: the same logo component is the clickable provider choice", () => {
+  it("the picker uses the shared logo component at 24px", () => {
+    expect(picker).toContain("<AIProviderMark provider={provider.id} size={24} />");
   });
 
   it("the picker still copies first, confirms, and only then opens the provider", () => {
     const handler = picker.slice(picker.indexOf("const handleProvider"), picker.indexOf("const handleAny"));
     expect(handler.indexOf("copyPrompt()")).toBeLessThan(handler.indexOf("if (!ok) return;"));
-  });
-});
-
-describe("official brand assets: never invented, never implied", () => {
-  it("the asset paths point at /public/brand, with no search or favicon service", () => {
-    for (const path of Object.values(AI_PROVIDER_ASSETS)) {
-      expect(path).toMatch(/^\/brand\/[a-z]+\.svg$/);
-    }
-    expect(JSON.stringify(AI_PROVIDER_ASSETS)).not.toMatch(/google\.com\/s2|favicon|wikimedia|openai\.com\/static/);
-  });
-
-  it("when no logo file is supplied, every provider falls back to the neutral badge", () => {
-    const empty = getAvailableAIProviderAssets("/nonexistent-public-dir-for-test");
-    expect(empty).toEqual({ chatgpt: false, claude: false, gemini: false });
-  });
-
-  it("the provider labels are the plain names, with no partnership wording", () => {
-    expect(Object.values(AI_PROVIDER_LABELS)).toEqual(["ChatGPT", "Claude", "Gemini"]);
-  });
-
-  it("the brand folder exists for the owner to add official files", () => {
-    expect(existsSync(resolve(root, "public/brand"))).toBe(true);
   });
 });
 

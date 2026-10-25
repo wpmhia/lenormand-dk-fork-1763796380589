@@ -32,11 +32,9 @@ interface HomeClientProps {
   initialCount: number;
   initialFormatted: string;
   cards: CardType[];
-  /** Which official provider logos exist on the server. Missing logos show a neutral badge. */
-  providerAssets: Record<AIProviderKey, boolean>;
 }
 
-export function HomeClient({ initialCount, initialFormatted, cards: initialCards, providerAssets }: HomeClientProps) {
+export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
   const { showInstallPrompt } = useInstallPrompt();
 
@@ -89,7 +87,7 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start" aria-label="Works with ChatGPT, Claude and Gemini">
                   {AI_PROVIDER_KEYS.map((key) => (
                     <li key={key} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <AIProviderMark provider={key} size={18} hasAsset={providerAssets[key]} />
+                      <AIProviderMark provider={key} size={20} />
                       <span>{AI_PROVIDER_LABELS[key]}</span>
                     </li>
                   ))}

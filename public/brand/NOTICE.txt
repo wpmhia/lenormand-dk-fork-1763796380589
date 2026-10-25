@@ -1,0 +1,1 @@
+Source: @lobehub/icons-static-svg@1.98.0 (MIT). Files: openai.svg -> chatgpt.svg, claude-color.svg -> claude.svg, gemini-color.svg -> gemini.svg. Trademarks belong to OpenAI, Anthropic and Google. Used to identify the services only; no endorsement or partnership is implied.

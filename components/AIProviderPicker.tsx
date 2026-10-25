@@ -89,7 +89,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
               aria-label={`Copy the prompt and open ${provider.name}`}
               className="focus-visible:ring-ring flex min-h-[72px] w-full flex-col items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/60 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 sm:w-28"
             >
-              <AIProviderMark provider={provider.id} size={32} />
+              <AIProviderMark provider={provider.id} size={24} />
               <span>{provider.name}</span>
             </button>
           </li>
