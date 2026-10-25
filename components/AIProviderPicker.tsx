@@ -118,7 +118,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
 
       {status === "failed" && (
         <p className="w-full text-center text-xs text-muted-foreground" role="status">
-          Your browser blocked clipboard access, so no AI was opened. Copy the prompt below manually, then open your AI.
+          Your browser blocked clipboard access, so the prompt was not copied. The AI has opened; copy the prompt below and paste it there.
         </p>
       )}
 

@@ -79,7 +79,8 @@ describe("AI provider picker: the tab opens inside the click, copying follows", 
     for (const call of calls) expect(call).not.toMatch(/question|drawn|cards|reading/i);
   });
 
-  it("shows a manual-copy fallback message on failure", () => {
-    expect(source).toContain("Your browser blocked clipboard access, so no AI was opened.");
+  it("never claims that no AI was opened when the copy fails; the tab is opened first", () => {
+    expect(source).not.toContain("so no AI was opened");
+    expect(source).toContain("The AI has opened; copy the prompt below");
   });
 });

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const metadata: Metadata = {
   title: "Privacy Policy | Lenormand Intelligence",
   description:
-    "Learn how Lenormand Intelligence protects your privacy. We store readings only on your device, use encrypted connections, and never share your data with third parties.",
+    "Learn how Lenormand Intelligence protects your privacy. Readings are built from your question and cards. Saved history is stored on our servers until you delete it. Connections are encrypted, and we do not sell your data.",
   openGraph: {
     title: "Privacy Policy | Lenormand Intelligence",
     description:
@@ -52,15 +52,15 @@ export default function PrivacyPage() {
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
                   <strong>Reading Data:</strong> Your questions and card
-                  selections are stored exclusively on your device using your
-                  browser&rsquo;s local storage. We never access or see this
-                  data.
+                  selections are used to build your reading. If you save your
+                  reading to history, it is stored on our server, linked to an
+                  anonymous session identifier, until you delete it.
                 </li>
                 <li>
                   <strong>AI Interpretations:</strong> When you request AI
-                  analysis, your reading is sent securely to our AI processing
-                  service (DeepSeek). This data is not stored permanently and is
-                  deleted after the interpretation is generated.
+                  analysis, your question and cards are sent securely to our AI
+                  processing service (DeepSeek) to generate the interpretation.
+                  Follow-up questions are sent the same way.
                 </li>
                 <li>
                   <strong>Analytics:</strong> We use Umami Analytics, a
@@ -70,9 +70,9 @@ export default function PrivacyPage() {
               </ul>
               <p className="mt-4 text-sm text-muted-foreground">
                 <strong>Key Principle:</strong> Your readings remain entirely
-                private and are stored only on your device unless you choose to
-                share them via URL. We cannot and do not access your reading
-                history.
+                private. Only readings you save to history are kept on our
+                server, and you can delete them at any time. Sharing creates a link that contains the reading. Saved history is kept on our server until
+                you delete it.
               </p>
             </CardContent>
           </Card>
@@ -126,9 +126,10 @@ export default function PrivacyPage() {
               </p>
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Local-First Architecture:</strong> Your readings exist
-                  on your device only. No reading data is transmitted to our
-                  servers unless you explicitly request AI analysis.
+                  <strong>Limited Server Storage:</strong> Your questions and cards
+                  are sent to our servers to generate an AI interpretation, and
+                  saved history is kept on our servers. Other reading data stays
+                  on your device.
                 </li>
                 <li>
                   <strong>No User Accounts:</strong> We don&rsquo;t require
@@ -141,9 +142,9 @@ export default function PrivacyPage() {
                   1.3).
                 </li>
                 <li>
-                  <strong>Minimal Data Retention:</strong> AI analysis requests
-                  are processed immediately and not stored in our database.
-                  Temporary processing logs are automatically deleted.
+                  <strong>Data Retention:</strong> Saved history is kept until you
+                  delete it. Retention periods for server logs and rate-limit
+                  records are described in our retention policy.
                 </li>
                 <li>
                   <strong>No Third-Party Sharing:</strong> We never sell, trade,
@@ -201,9 +202,8 @@ export default function PrivacyPage() {
             <CardContent className="space-y-4 text-foreground">
               <ul className="ml-4 list-inside list-disc space-y-2">
                 <li>
-                  <strong>Access:</strong> You can view and inspect all data
-                  stored on your device by using your browser&rsquo;s developer
-                  tools to access Local Storage.
+                  <strong>Access:</strong> You can view your saved history in the
+                  History page. Data you did not save is not kept on our servers.
                 </li>
                 <li>
                   <strong>Deletion:</strong> Clear your browser&apos;s local
@@ -257,12 +257,11 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   <strong>Data Processing:</strong> AI processing is done via
-                  DeepSeek. Read data is not stored on our servers.
+                  DeepSeek. Saved history is stored on our servers.
                 </li>
                 <li>
-                  <strong>Right to be Forgotten:</strong> Since we store no
-                  personal data, there is nothing to delete beyond what you
-                  choose to remove from your device.
+                  <strong>Right to be Forgotten:</strong> You can delete saved
+                  readings from your history at any time.
                 </li>
                 <li>
                   <strong>International Transfers:</strong> Our service providers
