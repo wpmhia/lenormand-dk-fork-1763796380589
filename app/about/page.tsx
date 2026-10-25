@@ -13,13 +13,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About Willem Gielen | Lenormand Intelligence",
+  title: "About Lenormand Intelligence",
   description:
-    "Lenormand Intelligence is an independent structured-reasoning and AI engineering project by Willem Gielen, cardiologist and physician-builder.",
+    "Lenormand Intelligence turns traditional Lenormand readings into complete interpretation prompts for your own AI assistant. Built by Willem Gielen, cardiologist and physician-builder.",
   openGraph: {
     title: "About Lenormand Intelligence",
     description:
-      "Meet Willem Gielen and learn why he built Lenormand Intelligence as an experiment in structured reasoning and constrained AI.",
+      "Your cards. Your AI. Learn how Lenormand Intelligence prepares structured Lenormand readings for the AI assistant you already use.",
     type: "website",
   },
   alternates: {
@@ -32,19 +32,25 @@ export default function AboutPage() {
     <div className="page-layout">
       <div className="container mx-auto max-w-5xl px-4 py-12">
         <section className="mb-16 text-center">
-          <div className="mb-6 flex items-center justify-center gap-3">
+          <div className="mb-3 flex items-center justify-center gap-3">
             <Club className="h-10 w-10 text-primary" />
             <h1 className="text-5xl font-bold text-foreground">
-              Built by Willem Gielen
+              Lenormand Intelligence
             </h1>
           </div>
           <p className="mb-5 text-xl font-medium text-primary">
-            Cardiologist, physician-builder, and AI expert
+            Your cards. Your AI. A glimpse into the future.
           </p>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            Lenormand Intelligence is my independent project at the intersection
-            of traditional Lenormand, structured reasoning, and modern artificial
-            intelligence.
+          <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            We prepare a complete, traditional Lenormand reading prompt: your
+            question, the cards, their positions, combinations and spread
+            geometry. You take it to the AI assistant you already use, which
+            interprets it with the context it knows about your story.
+          </p>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            The project is built by Willem Gielen, cardiologist and
+            physician-builder, at the intersection of traditional Lenormand,
+            structured reasoning, and modern artificial intelligence.
           </p>
         </section>
 

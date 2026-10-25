@@ -72,12 +72,12 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                   </Link>
                 </Button>
                 <Button
-                  variant="outline"
-                  size="lg"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowDailyCard(true)}
-                  className="w-full gap-2 text-base sm:w-auto sm:text-sm"
+                  className="w-full gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground sm:w-auto"
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className="h-4 w-4" />
                   Daily Card
                 </Button>
               </div>

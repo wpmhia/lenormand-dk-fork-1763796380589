@@ -16,17 +16,19 @@ const BRAND_STACK = "Georgia, 'Times New Roman', serif";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lenormand.dk"),
-  title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
+  title: "Lenormand Intelligence | Give your AI a glimpse into the future",
   description:
-    "Get clear, practical answers from Lenormand cards. Not symbolism - sentences. Free readings with all spreads including Grand Tableau.",
+    "Draw traditional Lenormand cards and bring a complete reading prompt into ChatGPT, Claude, Gemini, or any AI assistant. We provide the cards and the method; your AI brings the interpretation.",
   keywords: [
     "Lenormand cards",
+    "Lenormand AI prompt",
     "Lenormand readings",
     "Lenormand sentence reading",
     "practical Lenormand",
     "Lenormand 3 card spread",
     "Lenormand 9 card spread",
     "Lenormand Grand Tableau",
+    "Lenormand prompt for ChatGPT",
     "online Lenormand",
     "lenormand vs tarot",
     "card divination",
@@ -48,29 +50,29 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://lenormand.dk",
     siteName: "Lenormand Intelligence",
-    title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
+    title: "Lenormand Intelligence | Give your AI a glimpse into the future",
     description:
-      "Get clear, practical answers from Lenormand cards. Free readings with all spreads including Grand Tableau.",
+Draw traditional Lenormand cards and bring a complete reading prompt into ChatGPT, Claude, Gemini, or any AI assistant. We provide the cards and the method; your AI brings the interpretation.
     images: [
       {
         url: "https://lenormand.dk/favicon-512.png",
         width: 512,
         height: 512,
-        alt: "Lenormand Intelligence - Clear Lenormand Card Readings",
+        alt: "Lenormand Intelligence - Your cards. Your AI.",
         type: "image/png",
       },
       {
         url: "https://lenormand.dk/images/hero-image.jpg",
         width: 1200,
         height: 800,
-        alt: "Lenormand Intelligence - Clear Lenormand Card Readings",
+        alt: "Lenormand Intelligence - Your cards. Your AI.",
         type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lenormand Intelligence | Clear Answers from the Sentence Oracle",
+    title: "Lenormand Intelligence | Give your AI a glimpse into the future",
     description:
       "Get clear, practical answers from Lenormand cards. Free readings with all spreads including Grand Tableau.",
     images: ["https://lenormand.dk/favicon-512.png"],
@@ -125,7 +127,7 @@ const structuredData = {
   "@type": "WebApplication",
   name: "Lenormand Intelligence",
   description:
-    "AI-powered Lenormand card readings and divination guidance platform",
+    "Draw traditional Lenormand cards, copy the complete reading prompt, and interpret it with your own AI assistant."
   url: "https://lenormand.dk",
   applicationCategory: "Lifestyle",
   isAccessibleForFree: true,
@@ -177,7 +179,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
-        <meta name="theme-color" content="#8b5cf6" />
+        <meta name="theme-color" content="#1a120e" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Lenormand" />

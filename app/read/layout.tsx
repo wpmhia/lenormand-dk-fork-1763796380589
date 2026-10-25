@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Lenormand Readings | AI-Powered Card Reading & Interpretation",
+  title: "Lenormand Readings | Bring Your Reading to Your AI Assistant",
   description:
-    "Get personalized Lenormand card readings powered by AI. Draw cards, interpret their meanings, and receive guidance based on the 36-card deck. Free online readings.",
+    "Draw traditional Lenormand cards, copy the complete reading prompt, and interpret it with ChatGPT, Claude, Gemini, or any AI assistant. Or get an interpretation directly on the site.",
   openGraph: {
-    title: "Lenormand Readings | AI-Powered Guidance",
+    title: "Lenormand Readings | Your Cards. Your AI.",
     description:
-      "Get personalized AI-powered Lenormand readings with professional interpretations.",
+      "We provide the cards and the Lenormand method. Your AI assistant brings the interpretation of your story.",
     type: "website",
     url: "https://lenormand.dk/read",
   },

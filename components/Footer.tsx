@@ -13,7 +13,7 @@ export function Footer() {
               </h3>
             </Link>
             <p className="mt-3 max-w-[18rem] text-xs leading-5 text-muted-foreground">
-              AI-enhanced readings for curious minds and everyday questions.
+              Your cards. Your AI. Draw traditional Lenormand cards and bring the complete reading prompt to your own AI assistant.
             </p>
           </div>
 
