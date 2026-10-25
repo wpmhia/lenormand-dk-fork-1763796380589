@@ -7,6 +7,11 @@ import heroImage from "@/public/images/hero-image.jpg";
 import { Button } from "@/components/ui/button";
 import { ReadingCounter } from "@/components/ReadingCounter";
 import { ReadingTypeCard } from "@/components/ReadingTypeCard";
+import {
+  AIProviderMark,
+  AI_PROVIDER_LABELS,
+  type AIProviderKey,
+} from "@/components/AIProviderMark";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Card as CardType } from "@/lib/types";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
@@ -21,13 +26,17 @@ import {
 
 const DailyCardModal = lazy(() => import("@/components/DailyCardModal").then(mod => ({ default: mod.DailyCardModal })));
 
+const AI_PROVIDER_KEYS: AIProviderKey[] = ["chatgpt", "claude", "gemini"];
+
 interface HomeClientProps {
   initialCount: number;
   initialFormatted: string;
   cards: CardType[];
+  /** Which official provider logos exist on the server. Missing logos show a neutral badge. */
+  providerAssets: Record<AIProviderKey, boolean>;
 }
 
-export function HomeClient({ initialCount, initialFormatted, cards: initialCards }: HomeClientProps) {
+export function HomeClient({ initialCount, initialFormatted, cards: initialCards, providerAssets }: HomeClientProps) {
   const [showDailyCard, setShowDailyCard] = useState(false);
   const { showInstallPrompt } = useInstallPrompt();
 
@@ -44,24 +53,24 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
       <div className="container-hero">
         <div className="relative grid items-center gap-10 md:grid-cols-[1.38fr_1fr] md:gap-12 lg:gap-16">
           <div className="relative z-10 text-center md:text-left">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Lenormand Intelligence
+            </p>
             <h1 className="hero-title logo-font relative mb-4 pb-2 font-bold leading-tight text-foreground">
-              <span className="relative inline-block">
-                Lenormand
-                <div className="absolute -bottom-2 left-0 right-0 h-1 rounded-full bg-gradient-to-r from-primary via-primary/80 to-primary/60 opacity-80"></div>
-              </span>
+              <span className="block">Traditional Lenormand.</span>
               <span className="block bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                Intelligence
+                Your Choice of AI.
               </span>
             </h1>
             <p className="lead mx-auto mb-8 max-w-[70ch] text-muted-foreground md:mx-0">
-              Clear, practical readings from the 36-card Lenormand system. Combination-based readings, card meanings, and learning.
+              Ask your question, draw your cards, and generate a complete Lenormand interpretation prompt for your favorite AI.
             </p>
 
             <div className="flex flex-col items-center gap-5 md:items-start">
-              <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+              <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:items-start">
                 <Button asChild size="lg" className="w-full gap-2 text-base sm:w-auto sm:text-sm">
                   <Link href="/read/new">
-                    Get Your Reading
+                    Start a Reading
                   </Link>
                 </Button>
                 <Button
@@ -73,6 +82,21 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                   <Heart className="h-5 w-5" />
                   Daily Card
                 </Button>
+              </div>
+
+              <div className="flex flex-col items-center gap-3 md:items-start">
+                <p className="text-xs text-muted-foreground">Works with your preferred AI</p>
+                <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start" aria-label="Works with ChatGPT, Claude and Gemini">
+                  {AI_PROVIDER_KEYS.map((key) => (
+                    <li key={key} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <AIProviderMark provider={key} size={18} hasAsset={providerAssets[key]} />
+                      <span>{AI_PROVIDER_LABELS[key]}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-muted-foreground/80">
+                  Or get an AI interpretation directly on Lenormand Intelligence.
+                </p>
               </div>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">

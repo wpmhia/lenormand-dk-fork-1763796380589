@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, AlertCircle } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
+import { AIProviderMark } from "@/components/AIProviderMark";
 
 /**
  * The providers offered as one-action buttons. The URL is the provider's plain start page: the
@@ -88,12 +89,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
               aria-label={`Copy the prompt and open ${provider.name}`}
               className="focus-visible:ring-ring flex min-h-[72px] w-full flex-col items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-3 text-sm font-medium text-foreground transition-colors hover:border-primary/60 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 sm:w-28"
             >
-              <span
-                aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-xs font-semibold text-muted-foreground"
-              >
-                {provider.name.charAt(0)}
-              </span>
+              <AIProviderMark provider={provider.id} size={32} />
               <span>{provider.name}</span>
             </button>
           </li>
