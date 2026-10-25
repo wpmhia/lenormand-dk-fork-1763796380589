@@ -19,8 +19,7 @@ import { ReadingMarkdown } from "@/lib/reading-parser";
 import { trackEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import type { Card as CardType } from "@/lib/types";
-import { buildCardPreview, type ClassicAnalysis } from "@/lib/classic-analysis";
-import { getPreviewGeometry, gridColumnsClass } from "@/lib/preview-geometry";
+import type { ClassicAnalysis } from "@/lib/classic-analysis";
 import { AIProviderPicker } from "@/components/AIProviderPicker";
 import { buildCopyForAIText } from "@/lib/copy-for-ai";
 import { ActionInfoTooltip } from "@/components/ActionInfoTooltip";
@@ -105,9 +104,9 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
 }
 
 /**
- * The results hierarchy: a short, factual preview of the drawn cards and their traditional phrases,
- * then the single AI action that connects the cards to the question, then the full traditional
- * meanings in a collapsed disclosure. The preview is read from the catalogue; it makes no request.
+ * The results hierarchy: the drawn cards are shown above by the reading viewer; this block gives the
+ * single AI action (copy the prompt, or get an interpretation here), then the full traditional
+ * meanings in a collapsed disclosure. No text copy of the cards is repeated.
  */
 export function ClassicAnalysisWithAI({
   analysis,
@@ -120,10 +119,6 @@ export function ClassicAnalysisWithAI({
   allCards?: CardType[];
   significatorPreference?: SignificatorPreference;
 }) {
-  const preview = {
-    ...buildCardPreview(analysis, allCards),
-    geometry: getPreviewGeometry(analysis.spreadId, analysis.cards.length),
-  };
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
 
   // One completed reading per shown result. Only the spread and card count; never the question or cards.
@@ -136,38 +131,6 @@ export function ClassicAnalysisWithAI({
   return (
     <>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading</p>
-          <h3 className="text-lg font-semibold text-foreground">What your cards reveal</h3>
-          <p className="text-sm text-muted-foreground">
-            A first look at the traditional meanings behind your spread.
-          </p>
-          <div
-            className={preview.geometry?.scrollsOnMobile ? "-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0" : undefined}
-            role={preview.geometry?.scrollsOnMobile ? "region" : undefined}
-            aria-label={preview.geometry?.scrollsOnMobile ? "Drawn cards, horizontally scrollable" : undefined}
-            tabIndex={preview.geometry?.scrollsOnMobile ? 0 : undefined}
-          >
-            <ol
-              className={`grid gap-3 ${gridColumnsClass(preview.geometry?.columns ?? 3)} ${preview.geometry?.scrollsOnMobile ? "min-w-[600px] sm:min-w-0" : ""}`}
-              data-testid="card-preview"
-              data-layout={preview.geometry?.layoutType ?? "unknown"}
-              data-columns={preview.geometry?.columns ?? 0}
-              data-rows={preview.geometry?.rows ?? 0}
-            >
-              {preview.cards.map((card) => (
-                <li
-                  key={card.position}
-                  className="flex min-w-0 flex-col gap-1 rounded-lg border border-border/60 bg-muted/30 p-3"
-                >
-                  <span className="text-sm font-semibold text-foreground">{card.name}</span>
-                  <span className="text-xs text-muted-foreground">{card.phrase}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
             <h3 className="text-lg font-semibold text-foreground">Interpret your cards with AI</h3>
