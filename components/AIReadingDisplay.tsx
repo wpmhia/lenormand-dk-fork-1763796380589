@@ -105,22 +105,22 @@ export function ClassicAnalysisView({ analysis }: { analysis: ClassicAnalysis })
   );
 }
 
-/**
- * The results hierarchy: the drawn cards are shown above by the reading viewer; this block gives the
- * single AI action (copy the prompt, or get an interpretation here), then the full traditional
- * meanings in a collapsed disclosure. No text copy of the cards is repeated.
- */
-export /** The always-available copy action. It stays rendered while the AI interpretation loads or fails. */
+/** The always-available copy action. It stays rendered while the AI interpretation loads or fails. */
 function CopyForAIPanel({
   spreadId,
   question,
   drawn,
   significatorPreference,
+  copied,
+  onCopied,
 }: {
   spreadId: SpreadId;
   question: string;
   drawn: ReadingCard[];
   significatorPreference: SignificatorPreference;
+  /** Persisted above this panel so the provider links survive the AI-state switch. */
+  copied?: boolean;
+  onCopied?: (ok: boolean) => void;
 }) {
   return (
     <div className="flex flex-col items-center gap-4 text-center">
@@ -133,6 +133,8 @@ function CopyForAIPanel({
       <AIProviderPicker
         spreadId={spreadId}
         getPromptText={() => buildCopyForAIText(spreadId, question, drawn, significatorPreference)}
+        copied={copied}
+        onCopied={onCopied}
       />
     </div>
   );
@@ -145,6 +147,8 @@ export function ClassicAnalysisWithAI({
   significatorPreference = "both",
   countCompletion = true,
   completionId = null,
+  copied,
+  onCopied,
 }: {
   analysis: ClassicAnalysis;
   onStartAI: () => void;
@@ -154,6 +158,9 @@ export function ClassicAnalysisWithAI({
   countCompletion?: boolean;
   /** Random id for this completion; reused by later displays of the same spread. */
   completionId?: string | null;
+  /** Controlled copy state from the results hierarchy, kept across AI-state switches. */
+  copied?: boolean;
+  onCopied?: (ok: boolean) => void;
 }) {
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
 
@@ -176,6 +183,8 @@ export function ClassicAnalysisWithAI({
         question={analysis.question}
         drawn={drawn}
         significatorPreference={significatorPreference}
+        copied={copied}
+        onCopied={onCopied}
       />
           <div className="flex items-center justify-center gap-1 pt-1">
             <Button
@@ -248,6 +257,9 @@ interface AIReadingDisplayProps {
  */
 export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingDisplayProps) {
   const { classicAnalysis = null, onStartAI, aiRequested = true, question } = props;
+  // Copy state lives here, above the panel, so the provider links survive the switch between
+  // the ready, loading, success and error states without losing the copied indicator.
+  const [promptCopied, setPromptCopied] = useState(false);
 
   if (classicAnalysis && !aiRequested && onStartAI) {
     return (
@@ -259,6 +271,8 @@ export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingD
             onStartAI={onStartAI}
             significatorPreference={props.significatorPreference}
             completionId={props.completionId}
+            copied={promptCopied}
+            onCopied={setPromptCopied}
           />
         </CardContent>
       </Card>
@@ -269,12 +283,13 @@ export const AIReadingDisplay = memo(function AIReadingDisplay(props: AIReadingD
     return (
       <Card>
         <CardContent className="space-y-6 p-6">
-          <QuestionBlock question={question} />
           <CopyForAIPanel
             spreadId={classicAnalysis.spreadId}
             question={classicAnalysis.question}
             drawn={classicAnalysis.cards.map((line, index) => ({ id: line.cardId, position: index }))}
             significatorPreference={props.significatorPreference ?? "both"}
+            copied={promptCopied}
+            onCopied={setPromptCopied}
           />
           <ClassicAnalysisDisclosure analysis={classicAnalysis} />
           <div className="border-t border-border/60 pt-6">

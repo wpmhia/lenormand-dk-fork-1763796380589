@@ -28,6 +28,10 @@ interface AIProviderPickerProps {
   spreadId: string;
   /** Opens the provider. Injected so tests can verify it without leaving the page. */
   openProvider?: (href: string) => void;
+  /** Controlled copy state: shows the provider links even across remounts of this panel. */
+  copied?: boolean;
+  /** Reports a successful copy to the controlled parent, if one is listening. */
+  onCopied?: (ok: boolean) => void;
 }
 
 type Status = "idle" | "copied" | "failed";
@@ -37,10 +41,12 @@ type Status = "idle" | "copied" | "failed";
  * tab. If the clipboard is blocked, the user stays on the page and sees a manual-copy message; no
  * tab is opened in that case.
  */
-export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIProviderPickerProps) {
+export function AIProviderPicker({ getPromptText, spreadId, openProvider, copied, onCopied }: AIProviderPickerProps) {
   const [status, setStatus] = useState<Status>("idle");
-  // The provider links stay available after a successful copy until the user copies again.
-  const [linksReady, setLinksReady] = useState(false);
+  // The provider links stay available after a successful copy until the user copies again. A
+  // controlled parent keeps this state when the panel is remounted by an AI state switch.
+  const [internalLinksReady, setInternalLinksReady] = useState(false);
+  const linksReady = copied ?? internalLinksReady;
   const [activeId, setActiveId] = useState<AIProviderId | "any" | null>(null);
   const [manualPrompt, setManualPrompt] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -51,7 +57,8 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
 
   const finish = (ok: boolean) => {
     setStatus(ok ? "copied" : "failed");
-    setLinksReady(ok);
+    if (copied === undefined) setInternalLinksReady(ok);
+    if (ok) onCopied?.(ok);
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setStatus("idle"), FEEDBACK_MS);
   };
@@ -114,7 +121,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("ai_provider_open", { provider: provider.id, spreadId })}
-                className="text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                className="text-underline-offset-4 focus-visible:ring-ring rounded-sm text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2"
               >
                 {provider.name}
               </a>
@@ -140,7 +147,7 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
             value={manualPrompt}
             onFocus={(e) => e.currentTarget.select()}
             rows={8}
-            className="w-full rounded-lg border border-border bg-card p-3 font-mono text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="focus-visible:ring-ring w-full rounded-lg border border-border bg-card p-3 font-mono text-xs text-foreground focus-visible:outline-none focus-visible:ring-2"
           />
         </div>
       )}
