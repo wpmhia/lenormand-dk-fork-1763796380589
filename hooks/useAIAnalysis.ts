@@ -7,6 +7,7 @@ import { Card as CardType, ReadingCard } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 import { SignificatorType } from "@/lib/spreads";
 import { significatorToPreference } from "@/lib/significator";
+import { trackEvent } from "@/lib/analytics";
 
 interface UseAIAnalysisReturn {
   aiReading: AIReadingResponse | null;
@@ -84,7 +85,8 @@ export function useAIAnalysis(
   );
 
   const startAnalysis = useCallback(async () => {
-    abortControllerRef.current?.abort();
+    // A request is already running: ignore repeated clicks instead of aborting and paying for a second one.
+    if (abortControllerRef.current) return;
     if (!enabled || drawnCards.length === 0) return;
 
     setIsLoading(true);
@@ -115,11 +117,13 @@ export function useAIAnalysis(
       if (!text.trim()) throw new Error("No reading received");
       if (abortControllerRef.current === controller) {
         setAiReading({ reading: text, source: data.source || "deepseek" });
+        trackEvent("ai_interpretation_succeeded", { spreadId: selectedSpreadId });
       }
     } catch (err: any) {
       if (err.name === "AbortError") return;
       if (abortControllerRef.current === controller) {
         setError(err.message || "Processing failed");
+        trackEvent("ai_interpretation_failed", { spreadId: selectedSpreadId });
       }
     } finally {
       if (abortControllerRef.current === controller) {

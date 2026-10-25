@@ -163,31 +163,43 @@ export function ClassicAnalysisWithAI({
         </div>
 
         <div className="flex flex-col items-center gap-4 border-t border-border/60 pt-6 text-center">
-          <p className="text-xs text-muted-foreground">
-            Explore how the cards connect to your question.
+          <h3 className="text-lg font-semibold text-foreground">Your Reading Is Ready</h3>
+          <p className="max-w-prose text-sm text-muted-foreground">
+            Your question, cards, traditional meanings, combinations, and spread geometry have been prepared for AI interpretation.
           </p>
-          <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
-            <div className="flex w-full items-center gap-1 sm:w-auto">
-              <Button
-                onClick={() => {
-                  trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
-                  onStartAI();
-                }}
-                className="h-12 w-full sm:w-auto"
-              >
-                Get AI Interpretation
-              </Button>
-              <ActionInfoTooltip
-                action="Get AI Interpretation"
-                text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
+          <div className="flex w-full flex-col items-stretch gap-3">
+            <div className="flex w-full flex-col items-center gap-2">
+              <CopyForAIButton
+                spreadId={analysis.spreadId}
+                question={analysis.question}
+                drawn={drawn}
+                significatorPreference={significatorPreference}
               />
+              <p className="text-xs text-muted-foreground">
+                Copy the complete interpretation prompt and use it with ChatGPT, Claude, Gemini, or another AI.
+              </p>
             </div>
-            <CopyForAIButton
-              spreadId={analysis.spreadId}
-              question={analysis.question}
-              drawn={drawn}
-              significatorPreference={significatorPreference}
-            />
+            <div className="flex w-full flex-col items-center gap-2">
+              <div className="flex w-full items-center justify-center gap-1 sm:w-auto">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    trackEvent("ai_interpretation_requested", { spreadId: analysis.spreadId });
+                    onStartAI();
+                  }}
+                  className="h-12 w-full sm:w-auto"
+                >
+                  Get AI Interpretation
+                </Button>
+                <ActionInfoTooltip
+                  action="Get AI Interpretation"
+                  text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Get an AI interpretation directly on Lenormand Intelligence.
+              </p>
+            </div>
           </div>
         </div>
       </div>

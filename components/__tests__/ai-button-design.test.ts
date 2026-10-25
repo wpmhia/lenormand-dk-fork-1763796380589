@@ -34,12 +34,12 @@ describe("visual polish: no decorative sparkle, glow or pulse in user-facing cod
     }
   });
 
-  it("keeps the AI button on the shared Button primary variant with no icon", () => {
+  it("keeps the AI button free of decorative icons and sparkle", () => {
     const source = readFileSync(join(root, "components/AIReadingDisplay.tsx"), "utf8");
-    const button = source.match(/<Button\s+onClick=\{\(\) => \{[\s\S]*?\}\}\s+className="[^"]*"\s*>([\s\S]*?)<\/Button>/);
+    const button = source.match(/<Button\s[^>]*onClick=\{\(\) => \{[\s\S]*?\}\}[^>]*>([\s\S]*?)<\/Button>/);
     expect(button).not.toBeNull();
-    expect(button![0]).not.toMatch(/variant=/);
     expect(button![0]).not.toMatch(/<[A-Z][A-Za-z]*\s+className="h-/);
+    expect(button![0]).not.toMatch(/<[A-Z][A-Za-z]*Icon\b/);
     expect(button![1].trim()).toBe("Get AI Interpretation");
   });
 });

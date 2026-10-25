@@ -25,10 +25,9 @@ const rendered = () =>
   );
 
 describe("Copy for AI button: presentation", () => {
-  it("renders a secondary outline button labelled 'Copy for AI'", () => {
+  it("renders the primary button labelled 'Copy AI Prompt' with the explanation", () => {
     const html = rendered();
-    expect(html).toContain("Copy for AI");
-    expect(html).toMatch(/border/);
+    expect(html).toContain("Copy AI Prompt");
   });
 
   it("uses no sparkle emoji and no decorative sparkle", () => {
@@ -74,7 +73,7 @@ describe("Copy for AI button: feedback and fallback", () => {
   const source = readFileSync(resolve(__dirname, "../CopyForAIButton.tsx"), "utf8");
 
   it("shows success and failure states", () => {
-    expect(source).toContain('"Copied"');
+    expect(source).toContain('"Prompt Copied"');
     expect(source).toContain('"Copy failed"');
   });
 
