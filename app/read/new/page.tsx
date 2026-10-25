@@ -410,6 +410,20 @@ function NewReadingPageContent() {
           {/* Step 3: Results */}
           {step === "results" && drawnCards.length > 0 && (
             <div className="step-enter space-y-6">
+              {allCards.length > 0 ? (
+                <ReadingViewer
+                  reading={readingObj}
+                  allCards={allCards}
+                  spreadId={selectedSpread.id}
+                  significatorType={significatorType}
+                  onSignificatorChange={setSignificatorType}
+                />
+              ) : (
+                <div className="p-4 text-center text-muted-foreground">
+                  Loading cards...
+                </div>
+              )}
+
               {/* AI Analysis */}
               <ErrorBoundary>
                 <AIReadingDisplay
@@ -434,20 +448,6 @@ function NewReadingPageContent() {
                   significatorPreference={significatorToPreference(significatorType)}
                 />
               </ErrorBoundary>
-
-              {allCards.length > 0 ? (
-                <ReadingViewer
-                  reading={readingObj}
-                  allCards={allCards}
-                  spreadId={selectedSpread.id}
-                  significatorType={significatorType}
-                  onSignificatorChange={setSignificatorType}
-                />
-              ) : (
-                <div className="p-4 text-center text-muted-foreground">
-                  Loading cards...
-                </div>
-              )}
 
                {/* Start New Reading */}
                 <div className="flex justify-center pt-2">

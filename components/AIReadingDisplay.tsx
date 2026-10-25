@@ -136,6 +136,38 @@ export function ClassicAnalysisWithAI({
   return (
     <>
       <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading</p>
+          <h3 className="text-lg font-semibold text-foreground">What your cards reveal</h3>
+          <p className="text-sm text-muted-foreground">
+            A first look at the traditional meanings behind your spread.
+          </p>
+          <div
+            className={preview.geometry?.scrollsOnMobile ? "-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0" : undefined}
+            role={preview.geometry?.scrollsOnMobile ? "region" : undefined}
+            aria-label={preview.geometry?.scrollsOnMobile ? "Drawn cards, horizontally scrollable" : undefined}
+            tabIndex={preview.geometry?.scrollsOnMobile ? 0 : undefined}
+          >
+            <ol
+              className={`grid gap-3 ${gridColumnsClass(preview.geometry?.columns ?? 3)} ${preview.geometry?.scrollsOnMobile ? "min-w-[600px] sm:min-w-0" : ""}`}
+              data-testid="card-preview"
+              data-layout={preview.geometry?.layoutType ?? "unknown"}
+              data-columns={preview.geometry?.columns ?? 0}
+              data-rows={preview.geometry?.rows ?? 0}
+            >
+              {preview.cards.map((card) => (
+                <li
+                  key={card.position}
+                  className="flex min-w-0 flex-col gap-1 rounded-lg border border-border/60 bg-muted/30 p-3"
+                >
+                  <span className="text-sm font-semibold text-foreground">{card.name}</span>
+                  <span className="text-xs text-muted-foreground">{card.phrase}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
             <h3 className="text-lg font-semibold text-foreground">Interpret your cards with AI</h3>
@@ -166,38 +198,6 @@ export function ClassicAnalysisWithAI({
               action="Get AI Interpretation"
               text="Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation."
             />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your reading</p>
-          <h3 className="text-lg font-semibold text-foreground">What your cards reveal</h3>
-          <p className="text-sm text-muted-foreground">
-            A first look at the traditional meanings behind your spread.
-          </p>
-          <div
-            className={preview.geometry?.scrollsOnMobile ? "-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0" : undefined}
-            role={preview.geometry?.scrollsOnMobile ? "region" : undefined}
-            aria-label={preview.geometry?.scrollsOnMobile ? "Drawn cards, horizontally scrollable" : undefined}
-            tabIndex={preview.geometry?.scrollsOnMobile ? 0 : undefined}
-          >
-            <ol
-              className={`grid gap-3 ${gridColumnsClass(preview.geometry?.columns ?? 3)} ${preview.geometry?.scrollsOnMobile ? "min-w-[600px] sm:min-w-0" : ""}`}
-              data-testid="card-preview"
-              data-layout={preview.geometry?.layoutType ?? "unknown"}
-              data-columns={preview.geometry?.columns ?? 0}
-              data-rows={preview.geometry?.rows ?? 0}
-            >
-              {preview.cards.map((card) => (
-                <li
-                  key={card.position}
-                  className="flex min-w-0 flex-col gap-1 rounded-lg border border-border/60 bg-muted/30 p-3"
-                >
-                  <span className="text-sm font-semibold text-foreground">{card.name}</span>
-                  <span className="text-xs text-muted-foreground">{card.phrase}</span>
-                </li>
-              ))}
-            </ol>
           </div>
         </div>
       </div>

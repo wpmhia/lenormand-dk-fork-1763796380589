@@ -30,12 +30,12 @@ describe("AI provider picker: the official set and the start pages", () => {
     }
   });
 
-  it("renders the three provider buttons and the universal copy action", () => {
+  it("renders the copy action and the three provider names", () => {
     const html = renderToStaticMarkup(
       React.createElement(AIProviderPicker, { getPromptText: () => "P", spreadId: "sentence-3" }),
     );
-    for (const p of AI_PROVIDERS) expect(html).toContain(`aria-label="Copy the prompt and open ${p.name}"`);
-    expect(html).toContain("Copy Prompt for Any AI");
+    for (const p of AI_PROVIDERS) expect(html).toContain(p.name);
+    expect(html).toContain("Copy for AI");
   });
 
   it("tracks no question text and no card content in its markup", () => {

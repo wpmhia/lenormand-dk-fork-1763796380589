@@ -6,7 +6,7 @@ const component = readFileSync(resolve(__dirname, "../AIReadingDisplay.tsx"), "u
 const picker = readFileSync(resolve(__dirname, "../AIProviderPicker.tsx"), "utf8");
 
 describe("results: provider picker first, universal copy action, DeepSeek secondary below a divider", () => {
-  const start = component.indexOf("Interpret with Your AI");
+  const start = component.indexOf("Interpret your cards with AI");
   const section = component.slice(start, component.indexOf("<ClassicAnalysisDisclosure", start));
 
   it("places the provider picker before the DeepSeek action", () => {
