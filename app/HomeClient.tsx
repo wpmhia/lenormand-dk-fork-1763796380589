@@ -82,6 +82,10 @@ export function HomeClient({ initialCount, initialFormatted, cards: initialCards
                 </Button>
               </div>
 
+              <p className="-mt-3 text-xs text-muted-foreground">
+                No account required. Works with your preferred AI.
+              </p>
+
               <div className="flex flex-col items-center gap-3 md:items-start">
                 <p className="text-xs text-muted-foreground">Works with your preferred AI</p>
                 <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start" aria-label="Works with ChatGPT, Claude and Gemini">
