@@ -47,13 +47,19 @@ describe("AI provider picker: the official set and the start pages", () => {
   });
 });
 
-describe("AI provider picker: copy, then open, and never open on a failed copy", () => {
+describe("AI provider picker: the tab opens inside the click, copying follows", () => {
   const source = readFileSync(resolve(__dirname, "../AIProviderPicker.tsx"), "utf8");
 
-  it("opens the provider only after a successful copy (the handler returns before opening)", () => {
+  it("opens the tab before the clipboard await, so the user gesture is not lost to a popup blocker", () => {
     const handler = source.slice(source.indexOf("const handleProvider"), source.indexOf("const handleAny"));
-    expect(handler.indexOf("copyPrompt()")).toBeLessThan(handler.indexOf("if (!ok) return;"));
-    expect(handler.indexOf("if (!ok) return;")).toBeLessThan(handler.indexOf("openProvider"));
+    expect(handler.indexOf("window.open")).toBeLessThan(handler.indexOf("copyPrompt()"));
+    expect(handler).not.toMatch(/await /);
+  });
+
+  it("reports the copy result on the page, and a failed copy leaves the user on the page", () => {
+    const handler = source.slice(source.indexOf("const handleProvider"), source.indexOf("const handleAny"));
+    expect(handler).toContain("copyPrompt().then((ok) => finish(ok))");
+    expect(source).toContain("setManualPrompt(ok ? null : text)");
   });
 
   it("opens the provider in a new tab with noopener and noreferrer", () => {

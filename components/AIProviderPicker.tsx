@@ -62,17 +62,18 @@ export function AIProviderPicker({ getPromptText, spreadId, openProvider }: AIPr
     return ok;
   };
 
-  const handleProvider = async (provider: (typeof AI_PROVIDERS)[number]) => {
+  // Open the tab synchronously inside the click, so the browser treats it as a user action and does
+  // not block it (Safari and iOS drop the activation after an await). Copying runs after the tab is
+  // opened; the status line reports the result, so a failed copy is shown on the page.
+  const handleProvider = (provider: (typeof AI_PROVIDERS)[number]) => {
     setActiveId(provider.id);
-    const ok = await copyPrompt();
-    finish(ok);
-    if (!ok) return;
     trackEvent("ai_provider_open", { provider: provider.id, spreadId });
     if (openProvider) {
       openProvider(provider.href);
     } else {
       window.open(provider.href, "_blank", "noopener,noreferrer");
     }
+    void copyPrompt().then((ok) => finish(ok));
   };
 
   const handleAny = async () => {
