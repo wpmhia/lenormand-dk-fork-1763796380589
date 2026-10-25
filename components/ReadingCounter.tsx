@@ -71,7 +71,7 @@ export function ReadingCounter({
   const displayFormatted = formatReadingCount(displayCount);
 
   // No social proof is better than a false one: hide the counter when the count is
-  // unavailable or zero instead of showing "0 readings generated".
+  // unavailable or zero instead of showing "0 spreads generated".
   if (count <= 0) return null;
 
   return (
@@ -93,7 +93,7 @@ export function ReadingCounter({
           {displayFormatted}
         </span>
         <span className="text-sm text-muted-foreground">
-          readings generated
+          spreads generated
         </span>
       </div>
 

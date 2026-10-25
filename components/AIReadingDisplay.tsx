@@ -142,11 +142,14 @@ export function ClassicAnalysisWithAI({
   onStartAI,
   allCards = CARD_CATALOG,
   significatorPreference = "both",
+  countCompletion = true,
 }: {
   analysis: ClassicAnalysis;
   onStartAI: () => void;
   allCards?: CardType[];
   significatorPreference?: SignificatorPreference;
+  /** False when an existing spread is displayed again, so it is never counted twice. */
+  countCompletion?: boolean;
 }) {
   const drawn: ReadingCard[] = analysis.cards.map((line, index) => ({ id: line.cardId, position: index }));
 
@@ -156,7 +159,22 @@ export function ClassicAnalysisWithAI({
   const spreadId = analysis.spreadId;
   useEffect(() => {
     trackEvent("reading_completed", { spreadId, cardCount });
-  }, [readingKey, spreadId, cardCount]);
+    // The public counter counts every completed spread: all sizes, virtual and manually entered
+    // cards. Reporting an existing spread again (share page) goes through countCompletion=false.
+    if (!countCompletion) return;
+    try {
+      const doneKey = `spread_counted:${readingKey}`;
+      if (sessionStorage.getItem(doneKey)) return;
+      sessionStorage.setItem(doneKey, "1");
+    } catch { /* storage unavailable: the server-side marker still prevents double counting */ }
+    fetch("/api/readings/completed", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key: readingKey }),
+    }).catch(() => {
+      /* never block the reading on the counter */
+    });
+  }, [readingKey, spreadId, cardCount, countCompletion]);
   return (
     <>
       <div className="flex flex-col gap-6">

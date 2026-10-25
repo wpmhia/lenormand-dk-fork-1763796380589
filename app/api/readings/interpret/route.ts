@@ -5,7 +5,6 @@ export const maxDuration = 60;
 import { getTokenBudget } from "@/lib/prompt-builder";
 import { buildLenormandContext } from "@/lib/lenormand-context";
 import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
-import { incrementReadingCount } from "@/lib/counter";
 import { getEnv } from "@/lib/env";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
@@ -136,7 +135,8 @@ export async function POST(request: Request) {
       return generationFailedResponse(rateLimitResult, serviceResult.reason);
     }
 
-    await incrementReadingCount();
+    // The public counter counts completed spreads, not AI interpretations; the client reports a
+    // completion through /api/readings/completed when a spread is first displayed.
     return readingResponse(serviceResult.reading, rateLimitResult);
   } catch (error: any) {
     if (error instanceof ValidationError || error.name === "SyntaxError") {

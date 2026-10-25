@@ -302,7 +302,12 @@ export default function SharedReadingPage({ params }: PageProps) {
           {!aiAttempted && sharedClassicAnalysis && (
             <Card>
               <CardContent className="space-y-6 p-6">
-                <ClassicAnalysisWithAI analysis={sharedClassicAnalysis} onStartAI={startSharedAI} />
+                <ClassicAnalysisWithAI
+                  analysis={sharedClassicAnalysis}
+                  onStartAI={startSharedAI}
+                  // Reopening an existing spread must never count it again.
+                  countCompletion={false}
+                />
               </CardContent>
             </Card>
           )}
