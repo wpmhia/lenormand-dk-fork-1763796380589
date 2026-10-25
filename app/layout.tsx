@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "Lenormand Intelligence",
     title: "Lenormand Intelligence | Give your AI a glimpse into the future",
     description:
-Draw traditional Lenormand cards and bring a complete reading prompt into ChatGPT, Claude, Gemini, or any AI assistant. We provide the cards and the method; your AI brings the interpretation.
+      "Draw traditional Lenormand cards and bring a complete reading prompt into ChatGPT, Claude, Gemini, or any AI assistant. We provide the cards and the method; your AI brings the interpretation.",
     images: [
       {
         url: "https://lenormand.dk/favicon-512.png",
@@ -74,7 +74,7 @@ Draw traditional Lenormand cards and bring a complete reading prompt into ChatGP
     card: "summary_large_image",
     title: "Lenormand Intelligence | Give your AI a glimpse into the future",
     description:
-      "Get clear, practical answers from Lenormand cards. Free readings with all spreads including Grand Tableau.",
+      "Draw traditional Lenormand cards and bring a complete reading prompt into your favorite AI assistant.",
     images: ["https://lenormand.dk/favicon-512.png"],
     creator: "@LenormandAI",
   },
@@ -127,7 +127,7 @@ const structuredData = {
   "@type": "WebApplication",
   name: "Lenormand Intelligence",
   description:
-    "Draw traditional Lenormand cards, copy the complete reading prompt, and interpret it with your own AI assistant."
+    "Draw traditional Lenormand cards, copy the complete reading prompt, and interpret it with your own AI assistant.",
   url: "https://lenormand.dk",
   applicationCategory: "Lifestyle",
   isAccessibleForFree: true,
@@ -179,7 +179,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
-        <meta name="theme-color" content="#1a120e" />
+        <meta name="theme-color" content="#8b5cf6" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Lenormand" />
