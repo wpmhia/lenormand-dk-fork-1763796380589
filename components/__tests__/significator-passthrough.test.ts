@@ -29,12 +29,12 @@ describe("significator choice: reaches the AI prompt from the results page", () 
   it("the result component uses it in the prompt it builds for the provider picker", () => {
     const component = read("components/AIReadingDisplay.tsx");
     expect(component).toMatch(/significatorPreference=\{props\.significatorPreference\}/);
-    expect(component).toMatch(/buildCopyForAIText\(analysis\.spreadId, analysis\.question, drawn, significatorPreference\)/);
+    expect(component).toMatch(/buildCopyForAIText\(spreadId, question, drawn, significatorPreference\)/);
   });
 
-  it("the provider picker builds the shared prompt with the selected focus", () => {
+  it("the copy panel builds the shared prompt with the selected focus", () => {
     expect(read("components/AIReadingDisplay.tsx")).toMatch(
-      /getPromptText=\{\(\) =>\s*buildCopyForAIText\(analysis\.spreadId, analysis\.question, drawn, significatorPreference\)/,
+      /getPromptText=\{\(\) => buildCopyForAIText\(spreadId, question, drawn, significatorPreference\)\}/,
     );
   });
 });
