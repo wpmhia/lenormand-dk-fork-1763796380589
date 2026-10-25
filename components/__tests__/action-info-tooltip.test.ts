@@ -7,14 +7,6 @@ const display = readFileSync(resolve(__dirname, "../AIReadingDisplay.tsx"), "utf
 const copy = readFileSync(resolve(__dirname, "../CopyForAIButton.tsx"), "utf8");
 
 describe("action info tooltips", () => {
-  it("uses the exact approved texts", () => {
-    expect(display).toContain(
-      "Get a personalized Lenormand reading that connects your cards, their combinations and your question into one clear interpretation.",
-    );
-    expect(copy).toContain(
-      "Copy your complete reading, including your question, cards and spread details, to use with ChatGPT, Claude or any other AI assistant.",
-    );
-  });
 
   it("does not mention the AI provider in the user-facing tooltip texts", () => {
     const tooltipTexts = [

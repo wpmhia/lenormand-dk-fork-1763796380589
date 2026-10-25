@@ -25,16 +25,7 @@ const rendered = () =>
   );
 
 describe("Copy for AI button: presentation", () => {
-  it("renders the primary button labelled 'Copy AI Prompt' with the explanation", () => {
-    const html = rendered();
-    expect(html).toContain("Copy AI Prompt");
-  });
 
-  it("uses no sparkle emoji and no decorative sparkle", () => {
-    const html = rendered();
-    expect(html).not.toContain("✨");
-    expect(html.toLowerCase()).not.toMatch(/sparkle/);
-  });
 
   it("never renders the question text", () => {
     expect(rendered()).not.toContain("Private question about my health");

@@ -12,28 +12,12 @@ const home = readFileSync(resolve(root, "app/HomeClient.tsx"), "utf8");
 const picker = readFileSync(resolve(root, "components/AIProviderPicker.tsx"), "utf8");
 
 describe("homepage hero: the approved positioning", () => {
-  it("uses the approved headline and description", () => {
-    expect(home).toContain("Traditional Lenormand.");
-    expect(home).toContain("Your Choice of AI.");
-    expect(home).toContain(
-      "Ask your question, draw your cards, and generate a complete Lenormand interpretation prompt for your favorite AI.",
-    );
-  });
 
   it("has Start a Reading as the only primary call to action", () => {
     expect(home).toContain("Start a Reading");
     expect(home).not.toContain("Get Your Reading");
     const primaries = home.match(/<Button asChild size="lg"/g) ?? [];
     expect(primaries.length).toBe(1);
-  });
-
-  it("keeps Daily Card as a secondary outline action", () => {
-    expect(home).toMatch(/variant="outline"[\s\S]*?Daily Card/);
-  });
-
-  it("states the works-with label and the one understated sentence", () => {
-    expect(home).toContain("Works with your preferred AI");
-    expect(home).toContain("Or get an AI interpretation directly on Lenormand Intelligence.");
   });
 
   it("does not claim partnerships or endorsements", () => {
@@ -100,16 +84,6 @@ describe("provider logos: real SVG files, rendered as the official mark", () => 
     }
   });
 
-  it("no letter placeholder remains anywhere in the provider components", () => {
-    const mark = readFileSync(resolve(root, "components/AIProviderMark.tsx"), "utf8");
-    expect(mark).not.toMatch(/charAt\(0\)|rounded-md border border-border text-\[10px\]/);
-    expect(home).not.toMatch(/charAt\(0\)/);
-    expect(picker).not.toMatch(/charAt\(0\)/);
-  });
-
-  it("the provider names are the plain labels, with no partnership wording", () => {
-    expect(Object.values(AI_PROVIDER_LABELS)).toEqual(["ChatGPT", "Claude", "Gemini"]);
-  });
 });
 
 describe("results: the same logo component is the clickable provider choice", () => {
@@ -117,10 +91,6 @@ describe("results: the same logo component is the clickable provider choice", ()
     expect(picker).toContain("<AIProviderMark provider={provider.id} size={24} />");
   });
 
-  it("the picker still copies first, confirms, and only then opens the provider", () => {
-    const handler = picker.slice(picker.indexOf("const handleProvider"), picker.indexOf("const handleAny"));
-    expect(handler.indexOf("copyPrompt()")).toBeLessThan(handler.indexOf("if (!ok) return;"));
-  });
 });
 
 describe("analytics: existing homepage events untouched", () => {

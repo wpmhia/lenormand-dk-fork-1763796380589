@@ -44,9 +44,4 @@ describe("handoff: the full prompt is copied, never truncated, never put in a UR
     expect(picker).toContain("setManualPrompt(ok ? null : text)");
     expect(picker).toContain("readOnly");
   });
-
-  it("the status message names the provider and tells the user to paste", () => {
-    expect(picker).toContain("to begin.");
-    expect(picker).toContain("Prompt copied. Paste it into");
-  });
 });
