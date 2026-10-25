@@ -34,6 +34,7 @@ const cardsMap = getCardCatalogMap();
 
 
 export async function POST(request: Request) {
+  const requestId = crypto.randomUUID();
   try {
     const ip = getClientIP(request);
     const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
@@ -143,9 +144,16 @@ export async function POST(request: Request) {
       timeoutMs: FOLLOWUP_TIMEOUT_MS,
       signal: request.signal,
       logLabel: "followup",
+      requestId,
     });
 
     if (!generated.ok) {
+      console.error("followup: generation rejected", {
+        requestId,
+        reason: generated.reason,
+        spreadId: validated.spreadId,
+        cardCount: validated.cards.length,
+      });
       return new Response(JSON.stringify({ error: "Generation failed", reason: generated.reason }), {
         status: 502,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -178,6 +186,19 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
+    // Same structured log as interpret: the error class name only, never provider text.
+    console.error("followup: generation error", {
+      requestId,
+      failureClass: request.signal.aborted
+        ? "client_abort"
+        : error.name === "ResponseAborted"
+          ? "provider_abort"
+          : isTimeoutError(error)
+            ? "generation_timeout"
+            : "provider_runtime",
+      name: error.name,
+      statusCode: error.statusCode ?? error.cause?.statusCode,
+    });
     const isTimeout = isTimeoutError(error);
     return new Response(
       JSON.stringify({ error: isTimeout ? "Response timed out" : "Processing failed" }),

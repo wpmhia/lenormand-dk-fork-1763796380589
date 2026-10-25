@@ -124,4 +124,22 @@ describe("follow-up route: real handler with a mocked model", () => {
     expect(call.timeout).toEqual({ totalMs: 45_000 });
     expect(call.maxRetries).toBe(0);
   });
+
+  it("logs the generation with a traceable requestId", async () => {
+    generateText.mockResolvedValueOnce({
+      text: "The centre card points to a decision in the coming weeks.",
+      finishReason: "stop",
+      usage: { outputTokens: 300, outputTokenDetails: { reasoningTokens: 200, textTokens: 100 } },
+    });
+    const { POST } = await import("@/app/api/readings/followup/route");
+    const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+
+    const response = await POST(request());
+    expect(response.status).toBe(200);
+
+    const call = infoSpy.mock.calls.find(([message]) => message === "deepseek generation")?.[1] as Record<string, unknown>;
+    expect(typeof call.requestId).toBe("string");
+    expect(call.requestId).not.toBe("");
+    infoSpy.mockRestore();
+  });
 });
