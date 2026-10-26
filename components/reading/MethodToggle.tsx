@@ -9,52 +9,41 @@ interface MethodToggleProps {
 }
 
 export function MethodToggle({ value, onChange, disabled }: MethodToggleProps) {
-  const selectMethod = (method: "virtual" | "physical") => {
-    onChange(method);
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="text-sm font-medium text-foreground">
+    <div className="space-y-2">
+      <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
         How do you want to draw your cards?
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div
+        role="radiogroup"
+        aria-label="Card drawing method"
+        className="grid grid-cols-2 gap-2"
+      >
         <button
           type="button"
-           onClick={() => selectMethod("virtual")}
+          role="radio"
+          aria-checked={value === "virtual"}
+          onClick={() => onChange("virtual")}
           disabled={disabled}
-          className={`flex flex-col items-start gap-2 rounded-lg border bg-card p-4 text-left transition-[border-color,background-color] duration-200 hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "virtual" ? "border-primary" : "border-border"}`}
+          className={`flex items-center justify-center gap-2 rounded-md border p-2.5 text-sm font-medium transition-colors ${value === "virtual" ? "border-primary bg-primary/20 text-foreground" : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"}`}
         >
-          <div className="flex w-full items-center justify-between">
-            <Laptop className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <div className="font-medium text-foreground">Draw cards online</div>
-            <div className="text-xs text-muted-foreground">
-              Opens the next step: cards are shuffled and drawn online.
-            </div>
-          </div>
+          <Laptop className="h-4 w-4" />
+          Virtual deck
         </button>
 
         <button
           type="button"
-           onClick={() => selectMethod("physical")}
+          role="radio"
+          aria-checked={value === "physical"}
+          onClick={() => onChange("physical")}
           disabled={disabled}
-          className={`flex flex-col items-start gap-2 rounded-lg border bg-card p-4 text-left transition-[border-color,background-color] duration-200 hover:border-primary hover:bg-accent/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${value === "physical" ? "border-primary" : "border-border"}`}
+          className={`flex items-center justify-center gap-2 rounded-md border p-2.5 text-sm font-medium transition-colors ${value === "physical" ? "border-primary bg-primary/20 text-foreground" : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"}`}
         >
-          <div className="flex w-full items-center justify-between">
-            <Heart className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <div className="font-medium text-foreground">Enter my own cards</div>
-            <div className="text-xs text-muted-foreground">
-              Opens the next step: enter the cards you already drew from your own deck.
-            </div>
-          </div>
+          <Heart className="h-4 w-4" />
+          My own cards
         </button>
       </div>
-
     </div>
   );
 }

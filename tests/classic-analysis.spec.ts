@@ -21,18 +21,18 @@ test("@smoke classic analysis shows first; AI runs only after the button is pres
   const threeCard = page.getByRole("option", { name: /^3-Card Sentence/ });
   await threeCard.waitFor({ state: "visible", timeout: 10_000 });
   await threeCard.click();
-  await page.getByRole("button", { name: "Draw cards online" }).click();
+  await page.getByRole("button", { name: "Draw the Cards" }).click();
   await page.getByRole("button", { name: "Draw 3 Cards", exact: true }).click();
 
-  await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Get AI Interpretation" })).toBeVisible();
+  await expect(page.getByText("Full traditional card meanings")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Get AI Interpretation", exact: true })).toBeVisible();
   expect(interpretCalls).toBe(0);
 
-  await page.getByRole("button", { name: "Get AI Interpretation" }).click();
+  await page.getByRole("button", { name: "Get AI Interpretation", exact: true }).click();
   await expect(page.getByText("Mocked answer.")).toBeVisible();
   expect(interpretCalls).toBe(1);
   // The classic analysis is still available after the AI result.
-  await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("Full traditional card meanings")).toBeVisible();
   expect(interpretCalls).toBe(1);
 });
 
@@ -67,11 +67,11 @@ test("@smoke shared link opens without a model call and offers the same AI butto
   const { encoded } = await share.json();
 
   await page.goto(`/read/shared/${encodeURIComponent(encoded)}`);
-  await expect(page.getByText("Traditional card meanings", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Get AI Interpretation" })).toBeVisible();
+  await expect(page.getByText("Full traditional card meanings")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Get AI Interpretation", exact: true })).toBeVisible();
   expect(interpretCalls).toBe(0);
 
-  await page.getByRole("button", { name: "Get AI Interpretation" }).click();
+  await page.getByRole("button", { name: "Get AI Interpretation", exact: true }).click();
   await expect(page.getByText("Shared mocked answer.")).toBeVisible();
   expect(interpretCalls).toBe(1);
 });

@@ -18,7 +18,7 @@ interface SpreadSelectProps {
 export function SpreadSelect({ value, onChange, disabled }: SpreadSelectProps) {
   return (
     <div className="space-y-2 rounded-lg border border-border bg-card/50 p-4">
-      <label className="font-medium text-foreground">Choose Your Spread:</label>
+      <label className="font-medium text-foreground">Choose your spread</label>
       <Select
         value={value.id}
         onValueChange={(spreadId) => {
