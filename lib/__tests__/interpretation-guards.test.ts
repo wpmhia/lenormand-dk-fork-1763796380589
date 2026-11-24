@@ -42,10 +42,19 @@ describe("system prompt: no overinterpretation", () => {
     expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).not.toMatch(/Answer first/);
   });
 
+  it("makes spread geometry validation mandatory and sequence-reading forbidden for grids", () => {
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/Mandatory spread geometry validation/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/silently validate every named combination/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/the numbered card order is not a sentence or a chronology/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/never join the last card of one row to the first card of the next/);
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT).toMatch(/not from the numerical sequence of the cards/);
+  });
+
   it("keeps the system prompt within a bounded size", () => {
-    // The work-order clarification lengthened the system prompt to about 2.7k characters. The bound
-    // guards against further growth without forbidding the clarification.
-    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT.length).toBeLessThan(2800);
+    // The work-order clarification lengthened the system prompt to about 2.7k characters. The
+    // mandatory spread-geometry validation block is a deliberate addition and brings it to about
+    // 3.5k; the bound now guards against further growth beyond that.
+    expect(SIMPLE_LENORMAND_SYSTEM_PROMPT.length).toBeLessThan(3600);
   });
 });
 
