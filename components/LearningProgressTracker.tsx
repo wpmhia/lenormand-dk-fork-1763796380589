@@ -51,6 +51,15 @@ function useLearningProgress() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    } catch {
+      // Storage unavailable (private mode, quota): progress stays in memory for this visit
+    }
+  }, [progress, mounted]);
+
   const markComplete = (moduleId: string) => {
     setProgress((prev) => ({
       ...prev,

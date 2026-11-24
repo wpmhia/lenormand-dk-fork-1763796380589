@@ -8,7 +8,7 @@ import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { canGenerateAIReading } from "@/lib/ai-access";
 import { generateModelText, isTimeoutError } from "@/lib/reading-service";
-import { DEFAULT_RATE_WINDOW_MS, MAX_QUESTION_LENGTH } from "@/lib/constants";
+import { MAX_QUESTION_LENGTH } from "@/lib/constants";
 import { getCardCatalogMap } from "@/lib/card-catalog";
 import { normalizeReadingRequest } from "@/lib/reading-contract";
 import { buildFollowupPrompt, FOLLOWUP_SYSTEM_PROMPT } from "@/lib/followup-prompt";
@@ -28,7 +28,6 @@ const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 const FOLLOWUP_TOKEN_BUDGET = 12_288;
 const FOLLOWUP_TIMEOUT_MS = 45_000;
 const RATE_LIMIT = 5;
-const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
 
 
@@ -36,7 +35,7 @@ export async function POST(request: Request) {
   const requestId = crypto.randomUUID();
   try {
     const ip = getClientIP(request);
-    const rateLimitResult = await rateLimit(ip, RATE_LIMIT, RATE_LIMIT_WINDOW);
+    const rateLimitResult = await rateLimit(ip, RATE_LIMIT, "followup");
 
     if (!rateLimitResult.success) {
       return new Response(

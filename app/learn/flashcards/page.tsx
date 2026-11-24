@@ -53,9 +53,13 @@ export default function FlashcardsPage() {
   const currentCard = cards[currentIndex];
   const progress = ((knownCards.length / FLASHCARDS.length) * 100).toFixed(0);
 
-  // Shuffle cards
+  // Shuffle cards (Fisher–Yates for a uniform shuffle, matching Deck.tsx)
   const shuffleCards = useCallback(() => {
-    const shuffled = [...FLASHCARDS].sort(() => Math.random() - 0.5);
+    const shuffled = [...FLASHCARDS];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
     setCards(shuffled);
     setCurrentIndex(0);
     setIsFlipped(false);

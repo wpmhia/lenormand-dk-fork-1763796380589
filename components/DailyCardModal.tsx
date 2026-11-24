@@ -30,9 +30,20 @@ export function DailyCardModal({
   const [viewState, setViewState] = useState<ViewState>("draw");
   const [card, setCard] = useState<CardType | null>(null);
   const drawTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const drawTokenRef = useRef<symbol | null>(null);
+
+  useEffect(() => () => {
+    if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
+  }, []);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // Closing mid-"drawing" cancels the pending draw so the day is not marked drawn unseen
+      if (drawTimeoutRef.current) clearTimeout(drawTimeoutRef.current);
+      drawTimeoutRef.current = null;
+      drawTokenRef.current = null;
+      return;
+    }
 
     const cached = getDailyCardCache();
     if (cached?.drawn && cached.cardId) {
@@ -51,9 +62,13 @@ export function DailyCardModal({
   const handleDraw = async () => {
     setViewState("drawing");
 
+    const token = Symbol();
+    drawTokenRef.current = token;
     await new Promise<void>((resolve) => {
       drawTimeoutRef.current = setTimeout(resolve, 800);
     });
+
+    if (drawTokenRef.current !== token) return;
 
     const cardId = drawRandomCardId();
     const drawnCard = cards.find((c) => c.id === cardId);
@@ -63,6 +78,7 @@ export function DailyCardModal({
       return;
     }
 
+    drawTokenRef.current = null;
     setCard(drawnCard);
     setDailyCardCache(cardId);
     setViewState("result");

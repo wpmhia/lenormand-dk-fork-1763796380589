@@ -34,9 +34,6 @@ export const MAX_CARD_NAME_LENGTH = 100;
 /** Default rate limit: requests per window */
 export const DEFAULT_RATE_LIMIT = 5;
 
-/** Default rate limit window in milliseconds (1 minute) */
-export const DEFAULT_RATE_WINDOW_MS = 60 * 1000;
-
 // ============================================================================
 // API Configuration
 // ============================================================================

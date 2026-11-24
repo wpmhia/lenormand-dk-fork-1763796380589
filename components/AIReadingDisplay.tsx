@@ -140,6 +140,19 @@ function CopyForAIPanel({
   );
 }
 
+/** Marks the analytics event once per reading id for this browser session (remounts do not re-fire it). */
+function shouldTrackCompletion(completionId: string): boolean {
+  if (typeof sessionStorage === "undefined") return true;
+  const key = `reading_completed_tracked:${completionId}`;
+  try {
+    if (sessionStorage.getItem(key)) return false;
+    sessionStorage.setItem(key, "1");
+  } catch {
+    return true;
+  }
+  return true;
+}
+
 export function ClassicAnalysisWithAI({
   analysis,
   onStartAI,
@@ -168,7 +181,11 @@ export function ClassicAnalysisWithAI({
   const cardCount = analysis.cards.length;
   const spreadId = analysis.spreadId;
   useEffect(() => {
-    trackEvent("reading_completed", { spreadId, cardCount });
+    // Back-and-forward navigation remounts this panel with the same completion id; the analytics
+    // event must fire once per reading, so it is marked alongside the counter's dedupe.
+    if (!completionId || shouldTrackCompletion(completionId)) {
+      trackEvent("reading_completed", { spreadId, cardCount });
+    }
     // The public counter counts every completed spread: all sizes, virtual and manually entered
     // cards. Reporting an existing spread again (share page) goes through countCompletion=false.
     // Only the random id travels to the counter; question and card content never leave the page.
@@ -332,6 +349,11 @@ const AIStateView = memo(function AIStateView({
   const [showFollowUpInput, setShowFollowUpInput] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const shareTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => () => {
+    if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+    if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+  }, []);
 
   function getPlainReadingText(reading: string): string {
     return reading

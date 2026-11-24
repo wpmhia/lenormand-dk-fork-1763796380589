@@ -7,14 +7,27 @@ const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOK
   : null;
 const redisConfigured = Boolean(getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOKEN"));
 
-const upstashRatelimit = redis
-  ? new Ratelimit({
+/**
+ * One limiter per route/limit pair. The Redis key includes the prefix but not the limit, so
+ * limiters must use distinct prefixes or their counters would be shared across routes.
+ */
+const ratelimitInstances = new Map<string, Ratelimit>();
+
+function getRatelimit(limit: number, scope: string): Ratelimit | null {
+  if (!redis) return null;
+  const instanceKey = `${scope}:${limit}`;
+  let instance = ratelimitInstances.get(instanceKey);
+  if (!instance) {
+    instance = new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(20, "1 m"),
+      limiter: Ratelimit.slidingWindow(limit, "1 m"),
       analytics: true,
-      prefix: "lenormand",
-    })
-  : null;
+      prefix: `lenormand:${scope}`,
+    });
+    ratelimitInstances.set(instanceKey, instance);
+  }
+  return instance;
+}
 
 const memCache = new Map<string, { count: number; resetTime: number }>();
 const MAX_CACHE_SIZE = 5000;
@@ -41,9 +54,9 @@ function hashIP(ip: string): string {
  * protection to one process rather than disabling it entirely. `degraded: true` lets the
  * routes log/alert and is never reported as a normal, healthy rate-limit decision.
  */
-function memoryRateLimit(key: string, limit: number): RateLimitResult {
+function memoryRateLimit(key: string, limit: number, scope: string = "default"): RateLimitResult {
   const now = Date.now();
-  const memKey = `mem:${key}:${limit}`;
+  const memKey = `mem:${scope}:${key}:${limit}`;
   const entry = memCache.get(memKey);
 
   if (entry && entry.resetTime >= now) {
@@ -69,20 +82,14 @@ function memoryRateLimit(key: string, limit: number): RateLimitResult {
 export async function rateLimit(
   ip: string,
   limit: number = 20,
-  _windowMs?: number,
+  scope: string = "default",
 ): Promise<RateLimitResult> {
   const key = hashIP(ip);
 
-  if (upstashRatelimit) {
+  if (redisConfigured) {
     try {
-      const ratelimiter = limit !== 20
-        ? new Ratelimit({
-            redis: redis!,
-            limiter: Ratelimit.slidingWindow(limit, "1 m"),
-            analytics: true,
-            prefix: "lenormand",
-          })
-        : upstashRatelimit;
+      const ratelimiter = getRatelimit(limit, scope);
+      if (!ratelimiter) throw new Error("Ratelimit instance unavailable");
 
       const { success, limit: l, remaining, reset } = await ratelimiter.limit(key);
       return { success, limit: l, remaining, reset: reset || Date.now() + 60000 };
@@ -90,14 +97,14 @@ export async function rateLimit(
       console.error("rate-limit: Redis unavailable; enforcing the in-memory fallback", {
         message: error instanceof Error ? error.message : String(error),
       });
-      return memoryRateLimit(key, limit);
+      return memoryRateLimit(key, limit, scope);
     }
   }
 
   if (!redisConfigured && process.env.NODE_ENV === "production") {
     console.error("rate-limit: Redis is not configured in production; enforcing the in-memory fallback");
   }
-  return memoryRateLimit(key, limit);
+  return memoryRateLimit(key, limit, scope);
 }
 
 export function getClientIP(request: Request): string {

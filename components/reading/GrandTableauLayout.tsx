@@ -144,7 +144,7 @@ export function GrandTableauLayout({
                     size="sm"
                     className="cursor-pointer"
                     positionLabel={isSignificator ? `Reading focus (${card!.name})` : zone?.name || undefined}
-                    positionDescription={isSignificator ? "Selected focus only; no person identity is assigned" : zoneInfo.direction ? `${zone.description}; distance ${zoneInfo.distance}` : undefined}
+                    positionDescription={isSignificator ? "Selected focus only; no person identity is assigned" : zone ? `${zone.description}; distance ${zoneInfo.distance}` : zoneInfo.direction ? `Distance ${zoneInfo.distance} from the reading focus` : undefined}
                   />
 
                 </MemoizedAnimatedCard>

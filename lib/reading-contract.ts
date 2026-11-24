@@ -63,7 +63,6 @@ interface NormalizedReadingRequest {
 function normalizeQuestion(str: string): string {
   return str
     .replace(/[\x00-\x1F\x7F-\x9F]/g, "")
-    .replace(/["]/g, '"')
     .replace(/\n|\r/g, " ");
 }
 

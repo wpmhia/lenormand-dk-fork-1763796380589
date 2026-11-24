@@ -18,7 +18,7 @@ export async function OPTIONS() {
 
 export async function POST(request: Request) {
   try {
-    const limited = await rateLimit(getClientIP(request), 60);
+    const limited = await rateLimit(getClientIP(request), 60, "completed");
     if (!limited.success) {
       return new Response(JSON.stringify({ error: "Too many requests." }), {
         status: 429,

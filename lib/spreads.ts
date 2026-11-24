@@ -125,14 +125,18 @@ export function getPositionZone(
   let direction = "";
   let zone = "surrounding";
 
+  const isDiagonal = Math.abs(rowDiff) === Math.abs(colDiff) && rowDiff !== 0;
+
   if (colDiff < 0) direction += "left";
   else if (colDiff > 0) direction += "right";
 
   if (rowDiff < 0) direction += "-above";
   else if (rowDiff > 0) direction += "-below";
 
-  if (Math.abs(rowDiff) === Math.abs(colDiff) && rowDiff !== 0) {
-    zone = direction;
+  if (isDiagonal) {
+    zone = rowDiff < 0
+      ? (colDiff < 0 ? "top-left" : "top-right")
+      : (colDiff < 0 ? "bottom-left" : "bottom-right");
   } else if (colDiff < 0) {
     zone = "left";
   } else if (colDiff > 0) {

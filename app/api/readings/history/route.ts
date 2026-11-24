@@ -13,6 +13,40 @@ const redis = getEnv("UPSTASH_REDIS_REST_URL") && getEnv("UPSTASH_REDIS_REST_TOK
 const READINGS_KEY = "user_readings";
 const MAX_READINGS = 30;
 
+/**
+ * The whole read-modify-write runs inside one Lua script so concurrent POSTs/DELETEs cannot
+ * interleave a get/set pair and silently drop a reading (Upstash Lua provides cjson).
+ */
+const APPEND_READING_SCRIPT = `
+local raw = redis.call('GET', KEYS[1])
+local arr = {}
+if raw and raw ~= '' then
+  local ok, decoded = pcall(cjson.decode, raw)
+  if ok and type(decoded) == 'table' then arr = decoded end
+end
+table.insert(arr, cjson.decode(ARGV[1]))
+local max = tonumber(ARGV[2])
+if #arr > max then
+  table.sort(arr, function(a, b) return (a.timestamp or 0) > (b.timestamp or 0) end)
+  while #arr > max do table.remove(arr) end
+end
+redis.call('SET', KEYS[1], cjson.encode(arr))
+return #arr
+`;
+
+const DELETE_READING_SCRIPT = `
+local raw = redis.call('GET', KEYS[1])
+if not raw or raw == '' then return 0 end
+local ok, arr = pcall(cjson.decode, raw)
+if not ok or type(arr) ~= 'table' then arr = {} end
+local out = {}
+for _, r in ipairs(arr) do
+  if type(r) == 'table' and r.id ~= ARGV[1] then table.insert(out, r) end
+end
+redis.call('SET', KEYS[1], cjson.encode(out))
+return #arr - #out
+`;
+
 function getSessionId(request: Request): string | null {
   const cookie = request.headers.get("cookie") || "";
   const sessionId = cookie.match(/(?:^|;\s*)reading_session=([^;]+)/)?.[1];
@@ -126,16 +160,7 @@ export async function POST(request: Request) {
     };
 
     const key = readingsKey(sessionId);
-    const raw = await redis.get(key);
-    let readings = Array.isArray(raw) ? raw : [];
-    readings.push(newReading);
-
-    if (readings.length > MAX_READINGS) {
-      readings.sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
-      readings.splice(MAX_READINGS);
-    }
-
-    await redis.set(key, readings);
+    await redis.eval(APPEND_READING_SCRIPT, [key], [JSON.stringify(newReading), String(MAX_READINGS)]);
 
     return new Response(
       JSON.stringify({ success: true, reading: newReading }),
@@ -177,11 +202,7 @@ export async function DELETE(request: Request) {
     }
 
     const key = readingsKey(sessionId);
-    const raw = await redis.get(key);
-    const readings = Array.isArray(raw) ? raw : [];
-    const filtered = readings.filter((r: any) => r.id !== id);
-
-    await redis.set(key, filtered);
+    await redis.eval(DELETE_READING_SCRIPT, [key], [id]);
 
     return new Response(
       JSON.stringify({ success: true }),

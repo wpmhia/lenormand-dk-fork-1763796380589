@@ -5,6 +5,7 @@ export const maxDuration = 10;
 import { getEnv } from "@/lib/env";
 import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { API_REQUEST_TIMEOUT_MS, ERROR_MESSAGES } from "@/lib/constants";
+import { rateLimit, getClientIP, readBodyWithLimit, BodyTooLargeError } from "@/lib/rate-limit";
 import { timingSafeEqual } from "node:crypto";
 
 export async function OPTIONS() {
@@ -42,7 +43,33 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const limited = await rateLimit(getClientIP(request), 30, "share");
+    if (!limited.success) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests." }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const raw = await readBodyWithLimit(request, 4000).catch((error) => {
+      if (!(error instanceof BodyTooLargeError)) throw error;
+      return null;
+    });
+    if (raw === null) {
+      return new Response(
+        JSON.stringify({ error: "Request body too large" }),
+        { status: 413, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+    let body: unknown;
+    try {
+      body = raw ? JSON.parse(raw) : null;
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
     
     const json = JSON.stringify(body);
     const base64 = Buffer.from(json, "utf-8").toString("base64").replace(

@@ -11,7 +11,7 @@ import { corsHeaders, handleCorsPreflight } from "@/lib/cors";
 import { readingModel } from "@/lib/ai-model";
 import { canGenerateAIReading } from "@/lib/ai-access";
 import { generateReading, isTimeoutError } from "@/lib/reading-service";
-import { DEFAULT_RATE_WINDOW_MS, GRAND_TABLEAU_CARD_COUNT, GRAND_TABLEAU_GENERATION_TIMEOUT_MS, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
+import { GRAND_TABLEAU_CARD_COUNT, GRAND_TABLEAU_GENERATION_TIMEOUT_MS, READING_GENERATION_TIMEOUT_MS } from "@/lib/constants";
 import { normalizeReadingRequest, ValidationError } from "@/lib/reading-contract";
 
 export async function OPTIONS() {
@@ -20,7 +20,6 @@ export async function OPTIONS() {
 
 const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API");
 const RATE_LIMIT = 20;
-const RATE_LIMIT_WINDOW = DEFAULT_RATE_WINDOW_MS;
 const cardsMap = getCardCatalogMap();
 
 function classifyGenerationFailure(error: Error & { name?: string; statusCode?: number }, clientAborted: boolean): string {
@@ -73,7 +72,7 @@ export async function POST(request: Request) {
     }
 
     const effectiveLimit = cardCount >= GRAND_TABLEAU_CARD_COUNT ? Math.min(RATE_LIMIT, 5) : RATE_LIMIT;
-    const rateLimitResult = await rateLimit(ip, effectiveLimit, RATE_LIMIT_WINDOW);
+    const rateLimitResult = await rateLimit(ip, effectiveLimit, `interpret:${effectiveLimit}`);
     if (rateLimitResult.degraded) console.warn("interpret: rate limit running in degraded mode", { spreadId: validated.spreadId });
 
     if (!rateLimitResult.success) {
