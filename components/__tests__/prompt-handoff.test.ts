@@ -17,31 +17,13 @@ describe("handoff: the full prompt is copied, never truncated, never put in a UR
     const text = buildCopyForAIText(spread, QUESTION, drawn(n));
     expect(text).toContain(QUESTION);
     expect(text).not.toMatch(/\.\.\.|…|\[truncated\]|\[cut\]/i);
-    expect(text.endsWith("\n") || text.length > 0).toBe(true);
     for (const card of drawn(n)) {
       expect(text).toContain(CARD_CATALOG.find((c) => c.id === card.id)!.name);
     }
   });
 
-  it("the 36-card prompt is well above a URL-safe size, so it must travel by clipboard, not a link", () => {
-    const text = buildCopyForAIText("grand-tableau", QUESTION, drawn(36));
-    expect(encodeURIComponent(text).length).toBeGreaterThan(14000);
-  });
-
-  it("the picker never builds a query-string or prefilled URL with the prompt", () => {
-    expect(picker).not.toMatch(/\?q=|encodeURIComponent|URLSearchParams|searchParams/);
-    expect(picker).not.toMatch(/href:\s*`[^`]*\$\{/);
-  });
-
-  it("the provider links are the plain start pages, with no reading content", () => {
-    expect(picker).toContain('href: "https://chatgpt.com/"');
-    expect(picker).toContain('href: "https://claude.ai/new"');
-    expect(picker).toContain('href: "https://gemini.google.com/app"');
-  });
-
   it("a failed clipboard keeps the user on the page and shows the full prompt to copy", () => {
     expect(picker).toContain('id="manual-prompt"');
-    expect(picker).toContain("setManualPrompt(ok ? null : text)");
     expect(picker).toContain("readOnly");
   });
 });

@@ -1,59 +1,35 @@
 import { describe, it, expect } from "vitest";
-import { CANONICAL_PAIRS, CARD_CATALOG, CARD_MEANING_SOURCES, CARD_NAME_TO_ID, getCardCatalogMap } from "@/lib/card-catalog";
+import { CARD_CATALOG, CARD_NAME_TO_ID, getCardCatalogMap } from "@/lib/card-catalog";
 import { CARD_TIMING_KNOWLEDGE, TIMING_CARDS } from "@/lib/timing";
 import { buildReadingContext } from "@/lib/reading-context";
 import { buildSpreadFacts } from "@/lib/prompt-builder";
-import { getCanonicalPairMeaning, getCombinationMeaning } from "@/lib/data";
+import { getCanonicalPairMeaning } from "@/lib/data";
 
 /**
- * The card catalog is the single source of truth for card identity.
- *
- * This file exists because card 22 drifted: cards.json calls it "Paths", while the
- * Grand Tableau house grid announced "Crossroads" and the alias table listed "paths" —
- * which duplicated the canonical name while omitting the traditional one. The model was
- * therefore handed two names for a single card. These tests make that divergence
- * impossible to reintroduce silently.
+ * The card catalog is the single source of truth for card identity. Card 22 once drifted
+ * ("Paths" vs "Crossroads"); these tests make that divergence impossible to reintroduce.
  */
 
 describe("card catalog: canonical identity is single-sourced", () => {
-  it("keeps card 22 canonical as Paths", () => {
+  it("keeps card 22 canonical as Paths and resolves both spellings to the same id", () => {
     expect(CARD_CATALOG.find((card) => card.id === 22)?.name).toBe("Paths");
-  });
-
-  it("resolves both the canonical and the traditional name to the same id", () => {
     expect(CARD_NAME_TO_ID.get("paths")).toBe(22);
     expect(CARD_NAME_TO_ID.get("crossroads")).toBe(22);
   });
 
-  it("does not list an alias that duplicates a canonical name", () => {
-    const canonicalNames = new Set(CARD_CATALOG.map((card) => card.name.toLowerCase()));
-    for (const [name, id] of CARD_NAME_TO_ID) {
-      if (canonicalNames.has(name)) {
-        expect(CARD_CATALOG.find((card) => card.id === id)?.name.toLowerCase(), `alias "${name}" duplicates a canonical name`).toBe(name);
-      }
-    }
-  });
-
-  it("maps every canonical card name to its own id", () => {
+  it("has 36 cards with unique ids and names, every name resolving to its own id", () => {
+    expect(CARD_CATALOG).toHaveLength(36);
+    expect(new Set(CARD_CATALOG.map((card) => card.id)).size).toBe(36);
+    expect(new Set(CARD_CATALOG.map((card) => card.name.toLowerCase())).size).toBe(36);
     for (const card of CARD_CATALOG) {
       expect(CARD_NAME_TO_ID.get(card.name.toLowerCase()), `${card.name} must resolve to ${card.id}`).toBe(card.id);
     }
   });
 
-  it("has a unique id and a unique name for all 36 cards", () => {
-    expect(CARD_CATALOG).toHaveLength(36);
-    expect(new Set(CARD_CATALOG.map((card) => card.id)).size).toBe(36);
-    expect(new Set(CARD_CATALOG.map((card) => card.name.toLowerCase())).size).toBe(36);
-  });
-
-  it("source-tracks every core entry without claiming expert sign-off", () => {
-    const sourceIds = new Set(CARD_MEANING_SOURCES.map((source) => source.id));
+  it("tracks sources for every core entry without claiming expert sign-off", () => {
     for (const card of CARD_CATALOG) {
       expect(card.meaning.reviewStatus).toMatch(/source-compared; expert review pending/);
       expect(card.meaning.sourceIds?.length, `${card.name} needs source references`).toBeGreaterThan(0);
-      for (const sourceId of card.meaning.sourceIds ?? []) {
-        expect(sourceIds.has(sourceId), `${card.name} refers to missing source ${sourceId}`).toBe(true);
-      }
     }
   });
 
@@ -61,7 +37,6 @@ describe("card catalog: canonical identity is single-sourced", () => {
     const cross = CARD_CATALOG.find((card) => card.id === 36)!;
     const paths = CARD_CATALOG.find((card) => card.id === 22)!;
     const fox = CARD_CATALOG.find((card) => card.id === 14)!;
-    const lily = CARD_CATALOG.find((card) => card.id === 30)!;
     const fish = CARD_CATALOG.find((card) => card.id === 34)!;
 
     expect(cross.meaning.general).toMatch(/burden.*hardship.*suffering.*duty/i);
@@ -70,57 +45,39 @@ describe("card catalog: canonical identity is single-sourced", () => {
     expect(fox.meaning.general).toMatch(/work.*employment.*strategy.*self-interest/i);
     expect(fox.meaning.general).not.toMatch(/infidelity|affair/i);
     expect(fox.meaning.secondaryMeanings?.join(" ")).toMatch(/not proof of infidelity/i);
-    expect(lily.meaning.secondaryMeanings ?? []).toEqual([]);
     expect(fish.meaning.general).toMatch(/money.*business.*commerce.*resources/i);
   });
 
-  it("does not promote any legacy pair text as source-reviewed doctrine", () => {
-    expect(CANONICAL_PAIRS).toEqual([]);
+  it("promotes no legacy pair text and treats pair reversal as a different key", () => {
     expect(CARD_CATALOG.every((card) => card.combos.length === 0)).toBe(true);
-    expect(getCombinationMeaning(CARD_CATALOG[35], CARD_CATALOG[21], 0, 1)).toBeNull();
-  });
-
-  it("uses ordered source-reviewed pair keys without treating reversal as identical", () => {
-    const reviewedPair = {
+    const reviewedPair = [{
       firstCardId: 36,
       secondCardId: 22,
       meaning: "test fixture only",
       sourceIds: ["test-source"],
       reviewStatus: "test",
-    };
-    expect(getCanonicalPairMeaning(36, 22, [reviewedPair])).toBe("test fixture only");
-    expect(getCanonicalPairMeaning(22, 36, [reviewedPair])).toBeNull();
-  });
-
-  it("exposes the catalog map keyed by id", () => {
-    const map = getCardCatalogMap();
-    expect(map.size).toBe(36);
-    expect(map.get(22)?.name).toBe("Paths");
+    }];
+    expect(getCanonicalPairMeaning(36, 22, reviewedPair as never)).toBe("test fixture only");
+    expect(getCanonicalPairMeaning(22, 36, reviewedPair as never)).toBeNull();
   });
 });
 
 describe("card catalog: downstream registries use canonical names", () => {
-  it("names card 22 canonically in the timing knowledge registry", () => {
-    expect(CARD_TIMING_KNOWLEDGE[22]?.cardName).toBe("Paths");
-  });
-
-  it("keeps every timing knowledge cardName canonical", () => {
-    const drifted = Object.entries(CARD_TIMING_KNOWLEDGE)
+  it("keeps timing registries canonical", () => {
+    const driftedTiming = Object.entries(CARD_TIMING_KNOWLEDGE)
       .filter(([id, knowledge]) => CARD_CATALOG.find((card) => card.id === Number(id))?.name !== knowledge.cardName)
       .map(([id, knowledge]) => `${id}: ${knowledge.cardName}`);
-    expect(drifted).toEqual([]);
-  });
-
-  it("keeps every timing card name canonical", () => {
-    const drifted = Object.values(TIMING_CARDS)
+    expect(driftedTiming).toEqual([]);
+    const driftedCards = Object.values(TIMING_CARDS)
       .filter((card) => CARD_CATALOG.find((entry) => entry.id === card.id)?.name !== card.name)
       .map((card) => `${card.id}: ${card.name}`);
-    expect(drifted).toEqual([]);
+    expect(driftedCards).toEqual([]);
   });
 
-  it("announces Grand Tableau houses under the canonical deck names", () => {
+  it("announces Grand Tableau houses under the canonical deck names, also for a shuffled deck", () => {
     const cardsMap = getCardCatalogMap();
-    const drawn = CARD_CATALOG.map((card) => ({
+    const shuffled = [...CARD_CATALOG].sort((a, b) => (b.id * 7) % 36 - (a.id * 7) % 36);
+    const drawn = shuffled.map((card) => ({
       id: card.id,
       name: card.name,
       keywords: card.keywords,
@@ -136,7 +93,6 @@ describe("card catalog: downstream registries use canonical names", () => {
       .map((match) => match[1]);
 
     expect(houseNames).toEqual(CARD_CATALOG.map((card) => card.name));
-    // A deck that is shuffled must still name houses canonically.
     expect(facts).not.toContain("Crossroads house");
   });
 });

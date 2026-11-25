@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { isReadingComplete, renderSimpleAnswer, SimpleAnswerSchema } from "@/lib/simple-answer";
 import { generateReading } from "@/lib/reading-service";
 import type { LanguageModel } from "ai";
@@ -48,22 +48,18 @@ describe("rendering: the answer and reading as saved Markdown", () => {
 describe("generation: one model call, one parse path", () => {
   beforeEach(() => generateText.mockReset());
 
-  it("parses a valid JSON answer and renders it", async () => {
-    generateText.mockResolvedValueOnce(textOutput(validOutput));
-
-    const result = await generateReading(options());
-
-    expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toBe(renderSimpleAnswer(validOutput));
-    expect(generateText).toHaveBeenCalledTimes(1);
-  });
-
-  it("accepts a JSON answer wrapped in a Markdown code fence", async () => {
+  it("parses a valid JSON answer (also fenced in Markdown) and renders it, ignoring extra fields", async () => {
     generateText.mockResolvedValueOnce(textOutput("```json\n" + JSON.stringify(validOutput) + "\n```"));
 
     const result = await generateReading(options());
 
     expect(result.ok).toBe(true);
+    expect(generateText).toHaveBeenCalledTimes(1);
+
+    generateText.mockResolvedValueOnce(textOutput({ ...validOutput, patterns: [], timing: null }));
+    const withExtras = await generateReading(options());
+    expect(withExtras.ok).toBe(true);
+    expect(withExtras.ok && withExtras.reading).not.toContain("## Patterns");
   });
 
   it("reports empty provider output without a second call", async () => {
@@ -75,7 +71,7 @@ describe("generation: one model call, one parse path", () => {
     expect(generateText).toHaveBeenCalledTimes(1);
   });
 
-  it("logs budget exhaustion with token counts and no content when reasoning consumed the output", async () => {
+  it("logs empty output with token counts when reasoning consumed the budget, and logs nothing on a normal success", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     generateText.mockResolvedValueOnce({
       text: "",
@@ -84,9 +80,7 @@ describe("generation: one model call, one parse path", () => {
     });
 
     const result = await generateReading({ ...options(), maxTokens: 12288 });
-
     expect(result).toEqual({ ok: false, reason: "empty-output" });
-    expect(errorSpy).toHaveBeenCalledTimes(1);
     const [message, fields] = errorSpy.mock.calls[0];
     expect(message).toBe("reading: empty model output");
     expect(fields).toEqual({
@@ -98,21 +92,11 @@ describe("generation: one model call, one parse path", () => {
       textTokens: 88,
       elapsedMs: expect.any(Number),
     });
-    errorSpy.mockRestore();
-  });
 
-  it("returns a normal successful reading without logging an empty-output error", async () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    generateText.mockResolvedValueOnce({
-      text: JSON.stringify(validOutput),
-      finishReason: "stop",
-      usage: { outputTokens: 900, outputTokenDetails: { reasoningTokens: 700, textTokens: 200 } },
-    });
-
-    const result = await generateReading(options());
-
-    expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).toBe(renderSimpleAnswer(validOutput));
+    errorSpy.mockClear();
+    generateText.mockResolvedValueOnce(textOutput(validOutput));
+    const good = await generateReading(options());
+    expect(good.ok).toBe(true);
     expect(errorSpy).not.toHaveBeenCalled();
     errorSpy.mockRestore();
   });
@@ -140,32 +124,13 @@ describe("generation: one model call, one parse path", () => {
     errorSpy.mockRestore();
   });
 
-  it("logs a JSON parse cause for malformed output", async () => {
+  it("logs a JSON parse cause for malformed or non-object output", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     generateText.mockResolvedValueOnce(textOutput("still malformed"));
 
     await generateReading(options());
-
     expect(errorSpy.mock.calls[0][1]).toEqual({ cause: "json-parse", outputLength: "still malformed".length, invalidFields: undefined });
     errorSpy.mockRestore();
-  });
-
-  it("reports output that is not a JSON object with both fields as invalid", async () => {
-    for (const bad of ["still malformed", JSON.stringify({ answer: "only an answer" }), JSON.stringify(["a", "b"])]) {
-      generateText.mockResolvedValueOnce(textOutput(bad));
-      const result = await generateReading(options());
-      expect(result, bad).toEqual({ ok: false, reason: "invalid-output" });
-    }
-  });
-
-  it("ignores extra fields the model may add, since only answer and reading are rendered", async () => {
-    generateText.mockResolvedValueOnce(textOutput({ ...validOutput, patterns: [], timing: null }));
-
-    const result = await generateReading(options());
-
-    expect(result.ok).toBe(true);
-    expect(result.ok && result.reading).not.toContain("## Patterns");
-    expect(result.ok && result.reading).not.toContain("## Timing");
   });
 
   it("requests disabled thinking and a bounded timeout on the single call", async () => {

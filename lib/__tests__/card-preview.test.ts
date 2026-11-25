@@ -7,15 +7,9 @@ const byName = (name: string) => CARD_CATALOG.find((c) => c.name === name)!;
 const drawn = (names: string[]) => names.map((n, i) => ({ id: byName(n).id, position: i }));
 
 describe("shortCardPhrase: from the catalogue, never invented", () => {
-  it("takes the first traditional phrase, up to three keywords", () => {
+  it("takes the first traditional phrase up to three keywords, stops at a sentence break, and never invents text", () => {
     expect(shortCardPhrase("News, messages, arrival, movement.")).toBe("News, messages, arrival");
-  });
-
-  it("stops at the first sentence or semicolon", () => {
     expect(shortCardPhrase("Ending, loss, grief; rest, absence.")).toBe("Ending, loss, grief");
-  });
-
-  it("returns an empty phrase for empty input rather than inventing text", () => {
     expect(shortCardPhrase("")).toBe("");
   });
 
@@ -33,35 +27,28 @@ describe("buildCardPreview: the drawn cards, in order, with their own phrase", (
   const analysis = buildClassicAnalysis("sentence-5", "Will this move forward?", drawn(names));
   const preview = buildCardPreview(analysis);
 
-  it("lists exactly the drawn cards in drawn order", () => {
+  it("lists exactly the drawn cards in drawn order, each with the phrase from its own core meaning", () => {
     expect(preview.cards.map((c) => c.name)).toEqual(names);
     expect(preview.cards.map((c) => c.position)).toEqual([1, 2, 3, 4, 5]);
-  });
-
-  it("gives each card the phrase from its own core meaning", () => {
     expect(preview.cards[0].phrase).toBe(shortCardPhrase(byName("Book").meaning.general));
     expect(preview.cards[4].phrase).toBe(shortCardPhrase(byName("Woman").meaning.general));
   });
 
-  it("states the themes as a factual sentence built only from the card keywords", () => {
+  it("states factual keyword themes and makes no prediction or combination claim", () => {
     expect(preview.themes.startsWith("Your 5 cards carry themes of ")).toBe(true);
     expect(preview.themes).toContain("knowledge");
     expect(preview.themes).toContain("hope");
-    expect(preview.themes).toContain("a person");
-  });
-
-  it("makes no prediction and no combination claim", () => {
     const text = JSON.stringify(preview).toLowerCase();
     expect(text).not.toMatch(/will |likely|expect|predict|combination|soon|months?|weeks?|guarantee/);
   });
-});
 
-describe("buildCardPreview: all spread sizes resolve every card", () => {
-  it.each([1, 3, 5, 9, 36])("%i cards each get a non-empty phrase", (count) => {
-    const cards = CARD_CATALOG.slice(0, count).map((c, i) => ({ id: c.id, position: i }));
-    const preview = buildCardPreview(buildClassicAnalysis("grand-tableau", "Q", cards));
-    expect(preview.cards).toHaveLength(count);
-    expect(preview.cards.every((c) => c.phrase.length > 0)).toBe(true);
+  it("resolves every card for all spread sizes", () => {
+    for (const count of [1, 3, 5, 9, 36]) {
+      const cards = CARD_CATALOG.slice(0, count).map((c, i) => ({ id: c.id, position: i }));
+      const preview = buildCardPreview(buildClassicAnalysis("grand-tableau", "Q", cards));
+      expect(preview.cards).toHaveLength(count);
+      expect(preview.cards.every((c) => c.phrase.length > 0)).toBe(true);
+    }
   });
 
   it("uses the id, so a name collision cannot pick the wrong card", () => {

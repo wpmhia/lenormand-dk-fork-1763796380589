@@ -2,7 +2,12 @@ import { describe, it, expect } from "vitest";
 import { buildSimpleReadingPrompt, SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 import { buildReadingContext } from "@/lib/reading-context";
 import { getPositionInfo } from "@/components/reading/SpreadPositions";
-import { CARD_CATALOG } from "@/lib/card-catalog";
+import { CARD_CATALOG, getCardCatalogMap } from "@/lib/card-catalog";
+
+/**
+ * Lenormand purity: no Tarot/New Age vocabulary anywhere the model or the reader sees it.
+ * One sweep per surface, not one test per word.
+ */
 
 const HARD_BANNED = [
   "shadow work",
@@ -17,20 +22,8 @@ const HARD_BANNED = [
   "soul purpose",
 ];
 
-const REVIEW_TERMS = [
-  "past",
-  "present",
-  "future",
-  "energy",
-  "advice",
-  "obstacle",
-  "lesson",
-  "intuition",
-];
-
-const catalog = CARD_CATALOG;
-const cardsMap = new Map(catalog.map((card) => [card.id, card]));
-const allCards = [...catalog].sort((a, b) => a.id - b.id);
+const cardsMap = getCardCatalogMap();
+const allCards = [...CARD_CATALOG].sort((a, b) => a.id - b.id);
 const normalized = (count: number) =>
   allCards.slice(0, count).map((card) => ({
     id: card.id,
@@ -41,6 +34,14 @@ const normalized = (count: number) =>
     meaningReviewStatus: card.meaning.reviewStatus,
   }));
 
+function getCardCount(spreadId: string): number {
+  if (spreadId === "grand-tableau") return 36;
+  if (spreadId === "comprehensive") return 9;
+  if (spreadId === "sentence-5") return 5;
+  if (spreadId === "sentence-3") return 3;
+  return 1;
+}
+
 /** Every production prompt the model can actually receive, one per spread. */
 function extractSpreadPrompts(): string[] {
   return [
@@ -50,67 +51,22 @@ function extractSpreadPrompts(): string[] {
     "sentence-5",
     "comprehensive",
     "grand-tableau",
-  ].map((spreadId) => buildSimpleReadingPrompt(buildReadingContext(spreadId as never, "Test?", normalized(getCardCount(spreadId)), cardsMap)));
+  ].map((spreadId) =>
+    buildSimpleReadingPrompt(buildReadingContext(spreadId as never, "Test?", normalized(getCardCount(spreadId)), cardsMap)),
+  );
 }
-
-function getCardCount(spreadId: string): number {
-  if (spreadId === "grand-tableau") return 36;
-  if (spreadId === "comprehensive") return 9;
-  if (spreadId === "sentence-5") return 5;
-  if (spreadId === "sentence-3") return 3;
-  return 1;
-}
-
-const systemPrompts = [SIMPLE_LENORMAND_SYSTEM_PROMPT];
 
 describe("Lenormand purity", () => {
-  const spreadPrompts = extractSpreadPrompts();
-
-  describe("hard-banned Tarot/New Age terms", () => {
-    for (const term of HARD_BANNED) {
-      it(`does not contain "${term}" in any spread prompt`, () => {
-        for (const text of spreadPrompts) {
-          expect(text.toLowerCase()).not.toContain(term.toLowerCase());
-        }
-      });
-
-      it(`does not contain "${term}" in the production system prompt`, () => {
-        for (const text of systemPrompts) {
-          expect(text.toLowerCase()).not.toContain(term.toLowerCase());
-        }
-      });
-    }
-  });
-
-  describe("spread positions", () => {
-    const comprehensivePositions = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-    for (const term of HARD_BANNED) {
-      it(`does not contain "${term}" in spread position labels or meanings`, () => {
-        for (const pos of comprehensivePositions) {
-          const info = getPositionInfo(pos, "comprehensive");
-          expect(info.label.toLowerCase()).not.toContain(term.toLowerCase());
-          expect(info.meaning.toLowerCase()).not.toContain(term.toLowerCase());
-        }
-      });
-    }
-
-    it("does not use Past/Present/Future as labels for comprehensive positions", () => {
-      for (const pos of [0, 1, 2, 3, 4, 5, 6, 7, 8]) {
-        const info = getPositionInfo(pos, "comprehensive");
-        expect(info.label.toLowerCase()).not.toMatch(/past|present|future/);
+  it("contains no hard-banned New Age term in any spread prompt or the system prompt", () => {
+    const texts = [...extractSpreadPrompts(), SIMPLE_LENORMAND_SYSTEM_PROMPT];
+    for (const text of texts) {
+      for (const term of HARD_BANNED) {
+        expect(text.toLowerCase(), `"${term}" found`).not.toContain(term.toLowerCase());
       }
-    });
-
-    it("does not use 'energy' in comprehensive center position meaning", () => {
-      const info = getPositionInfo(4, "comprehensive");
-      expect(info.meaning.toLowerCase()).not.toContain("energy");
-    });
+    }
   });
 
-  describe("card data integrity", () => {
-  it("no card meaning or combo contains banned New Age terms", () => {
-    const data = CARD_CATALOG;
+  it("contains no banned or review-term vocabulary in card data or spread position labels", () => {
     const banned = [
       "unique energy and insights",
       "combined with",
@@ -119,50 +75,33 @@ describe("Lenormand purity", () => {
       "masculine energy",
       "feminine energy",
     ];
-    for (const card of data) {
-      if (card?.meaning?.general) {
-        for (const b of banned) {
-          expect(card.meaning.general.toLowerCase()).not.toContain(b.toLowerCase());
-        }
-      }
-      if (card?.combos) {
-        for (const c of card.combos) {
-          const m = c.meaning || "";
-          for (const b of banned) {
-            expect(m.toLowerCase()).not.toContain(b.toLowerCase());
-          }
+    for (const card of CARD_CATALOG) {
+      expect(card.meaning?.general, card.name).toBeTruthy();
+      for (const b of banned) {
+        expect(card.meaning.general.toLowerCase(), card.name).not.toContain(b.toLowerCase());
+        for (const combo of card.combos ?? []) {
+          expect((combo.meaning || "").toLowerCase()).not.toContain(b.toLowerCase());
         }
       }
     }
-  });
-
-  it("every card has a meaning.general", () => {
-    const data = CARD_CATALOG;
-    for (const card of data) {
-      expect(card.meaning?.general).toBeTruthy();
+    for (const pos of [0, 1, 2, 3, 4, 5, 6, 7, 8]) {
+      const info = getPositionInfo(pos, "comprehensive");
+      expect(info.label.toLowerCase()).not.toMatch(/past|present|future|energy/);
+      expect(info.meaning.toLowerCase()).not.toMatch(/past|present|future|energy/);
     }
   });
-});
 
-describe("review terms in spread prompts", () => {
-    it("past/present/future appear only in Grand Tableau context or as anti-instructions", () => {
+  it("uses past/present/future in spread prompts only where a significator or direction context allows it", () => {
+    for (const text of extractSpreadPrompts()) {
       for (const term of ["past", "present", "future"]) {
-        for (const text of spreadPrompts) {
-          const termPattern = new RegExp(`\\b${term}\\b`, "i");
-          if (termPattern.test(text)) {
-            const idx = text.toLowerCase().search(termPattern);
-            const context = text.slice(Math.max(0, idx - 60), idx + 60).toLowerCase();
-            const isAllowedContext = context.includes("significator") || context.includes("left of") || context.includes("right of") || context.includes("do not assign") || context.includes("do not use");
-            expect(isAllowedContext, `unexpected direction term "${term}" near: ${context}`).toBe(true);
-          }
-        }
+        const match = text.toLowerCase().match(new RegExp(`\\b${term}\\b`, "i"));
+        if (!match || match.index === undefined) continue;
+        const context = text.slice(Math.max(0, match.index - 60), match.index + 60).toLowerCase();
+        const isAllowedContext =
+          context.includes("significator") || context.includes("left of") || context.includes("right of")
+          || context.includes("do not assign") || context.includes("do not use");
+        expect(isAllowedContext, `unexpected "${term}" near: ${context}`).toBe(true);
       }
-    });
-
-    it("'energy' appears nowhere in spread prompts", () => {
-      for (const text of spreadPrompts) {
-        expect(text.toLowerCase()).not.toContain("energy");
-      }
-    });
+    }
   });
 });

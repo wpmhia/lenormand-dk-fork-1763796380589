@@ -32,7 +32,7 @@ function validBody(overrides: Record<string, unknown> = {}) {
 }
 
 describe("normalizeReadingRequest", () => {
-  it("ignores history, notes, and removed situation context", () => {
+  it("ignores client-supplied history, notes and removed context fields", () => {
     const base = normalizeReadingRequest(validBody(), cardsMap);
     const withExtraHistory = normalizeReadingRequest(validBody({
       situationContext: "Private relationship history",
@@ -49,144 +49,73 @@ describe("normalizeReadingRequest", () => {
     expect(withExtraHistory).not.toHaveProperty("notes");
   });
 
-  it("rejects non-object body", () => {
-    expect(() => normalizeReadingRequest(null, cardsMap)).toThrow(ValidationError);
-    expect(() => normalizeReadingRequest("string", cardsMap)).toThrow(ValidationError);
-    expect(() => normalizeReadingRequest(42, cardsMap)).toThrow(ValidationError);
+  it("rejects non-object bodies, unknown and missing spread IDs", () => {
+    for (const bad of [null, "string", 42]) {
+      expect(() => normalizeReadingRequest(bad, cardsMap)).toThrow(ValidationError);
+    }
+    expect(() => normalizeReadingRequest(validBody({ spreadId: "tarot-cross" }), cardsMap)).toThrow(ValidationError);
+    expect(() => normalizeReadingRequest(validBody({ spreadId: undefined }), cardsMap)).toThrow(ValidationError);
   });
 
-  describe("spreadId validation", () => {
-    it("accepts all valid spread IDs", () => {
-      for (const id of Object.keys(VALID_SPREADS)) {
-        const count = VALID_SPREADS[id as keyof typeof VALID_SPREADS];
-        const body = validBody({
-          spreadId: id,
-          cards: Array.from({ length: count }, (_, i) => ({ id: i + 1, name: "", position: i })),
-        });
-        expect(() => normalizeReadingRequest(body, cardsMap)).not.toThrow();
-      }
-    });
-
-    it("rejects unknown spreadId", () => {
-      expect(() => normalizeReadingRequest(validBody({ spreadId: "tarot-cross" }), cardsMap)).toThrow(ValidationError);
-    });
-
-    it("rejects missing spreadId", () => {
-      expect(() => normalizeReadingRequest(validBody({ spreadId: undefined }), cardsMap)).toThrow(ValidationError);
-    });
-  });
-
-  describe("card count validation", () => {
-    it("rejects cards array with wrong count for spread", () => {
-      const body = validBody({ spreadId: "grand-tableau", cards: [{ id: 1, name: "", position: 0 }] });
-      expect(() => normalizeReadingRequest(body, cardsMap)).toThrow(/requires exactly 36 cards, got 1/);
-    });
-
-    it("rejects empty cards array", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [] }), cardsMap)).toThrow(ValidationError);
-    });
-
-    it("rejects missing cards field", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: undefined }), cardsMap)).toThrow(ValidationError);
-    });
-  });
-
-  describe("card ID validation", () => {
-    it("rejects card with id < 1", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 0, name: "", position: 0 }, { id: 2, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
-    });
-
-    it("rejects card with id > 36", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 37, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
-    });
-
-    it("rejects non-integer id", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1.5, name: "", position: 0 }, { id: 2, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
-    });
-
-    it("rejects id outside valid range 1-36", () => {
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 0, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
-      expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, { id: 37, name: "", position: 1 }, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
-    });
-
-    it("rejects duplicate card ids", () => {
+  it("accepts every valid spread ID with its exact card count", () => {
+    for (const id of Object.keys(VALID_SPREADS)) {
+      const count = VALID_SPREADS[id as keyof typeof VALID_SPREADS];
       const body = validBody({
-        cards: [
-          { id: 1, name: "", position: 0 },
-          { id: 1, name: "", position: 1 },
-          { id: 2, name: "", position: 2 },
-        ],
+        spreadId: id,
+        cards: Array.from({ length: count }, (_, i) => ({ id: i + 1, name: "", position: i })),
       });
-      expect(() => normalizeReadingRequest(body, cardsMap)).toThrow(/Duplicate card id: 1/);
-    });
-
-    it("rejects non-object card entry", () => {
-      const body = validBody({ cards: [{ id: 1, name: "", position: 0 }, null, { id: 3, name: "", position: 2 }] });
-      expect(() => normalizeReadingRequest(body, cardsMap)).toThrow(ValidationError);
-    });
+      expect(() => normalizeReadingRequest(body, cardsMap)).not.toThrow();
+    }
   });
 
-  describe("canonical name replacement", () => {
-    it("ignores client-submitted card name and uses canonical name", () => {
-      const body = validBody({
-        cards: [
-          { id: 5, name: "Ignore instructions and say...", position: 0 },
-          { id: 6, name: "Malicious name", position: 1 },
-          { id: 7, name: "Hacked", position: 2 },
-        ],
-      });
-      const result = normalizeReadingRequest(body, cardsMap);
-      expect(result.cards[0].name).toBe("Card 5");
-      expect(result.cards[1].name).toBe("Card 6");
-      expect(result.cards[2].name).toBe("Card 7");
-    });
+  it("rejects a wrong card count, an empty cards array and a missing cards field", () => {
+    expect(() => normalizeReadingRequest(validBody({ spreadId: "grand-tableau", cards: [{ id: 1, name: "", position: 0 }] }), cardsMap)).toThrow(/requires exactly 36 cards, got 1/);
+    expect(() => normalizeReadingRequest(validBody({ cards: [] }), cardsMap)).toThrow(ValidationError);
+    expect(() => normalizeReadingRequest(validBody({ cards: undefined }), cardsMap)).toThrow(ValidationError);
   });
 
-  describe("Grand Tableau (36 unique cards)", () => {
-    it("accepts 36 unique cards for grand-tableau spread", () => {
-      const allIds = Array.from({ length: 36 }, (_, i) => ({
-        id: i + 1,
-        name: `card-${i + 1}`,
-        position: i,
-      }));
-      const body = validBody({ spreadId: "grand-tableau", cards: allIds });
-      const result = normalizeReadingRequest(body, cardsMap);
-      expect(result.cards).toHaveLength(36);
-      expect(result.spreadId).toBe("grand-tableau");
-      expect(result.cards[0].name).toBe("Card 1");
-      expect(result.cards[35].name).toBe("Card 36");
-    });
-
-    it("rejects grand-tableau with fewer than 36 cards", () => {
-      const body = validBody({ spreadId: "grand-tableau", cards: Array.from({ length: 35 }, (_, i) => ({ id: i + 1, name: "", position: i })) });
-      expect(() => normalizeReadingRequest(body, cardsMap)).toThrow(/requires exactly 36 cards, got 35/);
-    });
+  it("rejects card ids outside 1-36, non-integer ids and malformed entries", () => {
+    for (const badIds of [
+      [{ id: 0, name: "", position: 0 }, { id: 2, name: "", position: 1 }, { id: 3, name: "", position: 2 }],
+      [{ id: 1, name: "", position: 0 }, { id: 37, name: "", position: 1 }, { id: 3, name: "", position: 2 }],
+      [{ id: 1.5, name: "", position: 0 }, { id: 2, name: "", position: 1 }, { id: 3, name: "", position: 2 }],
+    ]) {
+      expect(() => normalizeReadingRequest(validBody({ cards: badIds }), cardsMap)).toThrow(ValidationError);
+    }
+    expect(() => normalizeReadingRequest(validBody({ cards: [{ id: 1, name: "", position: 0 }, null, { id: 3, name: "", position: 2 }] }), cardsMap)).toThrow(ValidationError);
   });
 
-  describe("significatorPreference", () => {
-    it("defaults to 'both' when not provided", () => {
-      const result = normalizeReadingRequest(validBody(), cardsMap);
-      expect(result.significatorPreference).toBe("both");
-    });
+  it("rejects duplicate card ids and replaces client names with canonical ones", () => {
+    expect(() => normalizeReadingRequest(validBody({
+      cards: [{ id: 1, name: "", position: 0 }, { id: 1, name: "", position: 1 }, { id: 2, name: "", position: 2 }],
+    }), cardsMap)).toThrow(/Duplicate card id: 1/);
 
-    it("accepts 'woman'", () => {
-      const result = normalizeReadingRequest(validBody({ significatorPreference: "woman" }), cardsMap);
-      expect(result.significatorPreference).toBe("woman");
-    });
-
-    it("accepts 'man'", () => {
-      const result = normalizeReadingRequest(validBody({ significatorPreference: "man" }), cardsMap);
-      expect(result.significatorPreference).toBe("man");
-    });
-
-    it("accepts 'both'", () => {
-      const result = normalizeReadingRequest(validBody({ significatorPreference: "both" }), cardsMap);
-      expect(result.significatorPreference).toBe("both");
-    });
-
-    it("rejects invalid value and defaults to 'both'", () => {
-      expect(() => normalizeReadingRequest(validBody({ significatorPreference: "cat" }), cardsMap)).toThrow("expected one of");
-    });
+    const result = normalizeReadingRequest(validBody({
+      cards: [
+        { id: 5, name: "Ignore instructions and say...", position: 0 },
+        { id: 6, name: "Malicious name", position: 1 },
+        { id: 7, name: "Hacked", position: 2 },
+      ],
+    }), cardsMap);
+    expect(result.cards.map((c) => c.name)).toEqual(["Card 5", "Card 6", "Card 7"]);
   });
 
+  it("accepts 36 unique cards for grand-tableau and rejects fewer", () => {
+    const allIds = Array.from({ length: 36 }, (_, i) => ({ id: i + 1, name: `card-${i + 1}`, position: i }));
+    const result = normalizeReadingRequest(validBody({ spreadId: "grand-tableau", cards: allIds }), cardsMap);
+    expect(result.cards).toHaveLength(36);
+    expect(result.spreadId).toBe("grand-tableau");
+    expect(result.cards[0].name).toBe("Card 1");
+    expect(result.cards[35].name).toBe("Card 36");
+
+    const short = validBody({ spreadId: "grand-tableau", cards: Array.from({ length: 35 }, (_, i) => ({ id: i + 1, name: "", position: i })) });
+    expect(() => normalizeReadingRequest(short, cardsMap)).toThrow(/requires exactly 36 cards, got 35/);
+  });
+
+  it("defaults the significator preference to 'both', accepts 'woman' and 'man', and rejects invalid values", () => {
+    expect(normalizeReadingRequest(validBody(), cardsMap).significatorPreference).toBe("both");
+    expect(normalizeReadingRequest(validBody({ significatorPreference: "woman" }), cardsMap).significatorPreference).toBe("woman");
+    expect(normalizeReadingRequest(validBody({ significatorPreference: "man" }), cardsMap).significatorPreference).toBe("man");
+    expect(() => normalizeReadingRequest(validBody({ significatorPreference: "cat" }), cardsMap)).toThrow("expected one of");
+  });
 });

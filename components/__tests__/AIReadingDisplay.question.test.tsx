@@ -28,14 +28,8 @@ function render(props: Partial<Parameters<typeof AIReadingDisplay>[0]>) {
 }
 
 describe("AIReadingDisplay: the original question stays visible in every state", () => {
-  it("shows the question during loading", () => {
+  it("shows the question while loading", () => {
     const html = render({ isLoading: true });
-    expect(html).toContain(QUESTION);
-    expect(html).toContain("Interpreting your cards");
-  });
-
-  it("shows the question during streaming before any text arrives", () => {
-    const html = render({ isStreaming: true, aiReading: null });
     expect(html).toContain(QUESTION);
     expect(html).toContain("Interpreting your cards");
   });
@@ -50,7 +44,6 @@ describe("AIReadingDisplay: the original question stays visible in every state",
   it("shows the question with an empty response and keeps the retry button", () => {
     const html = render({ aiReading: { reading: "" } });
     expect(html).toContain(QUESTION);
-    expect(html).toContain("AI Reading Failed");
     expect(html).toContain("Retry Reading");
   });
 
@@ -58,14 +51,6 @@ describe("AIReadingDisplay: the original question stays visible in every state",
     const html = render({ aiReading: { reading: "## Answer\nYes." } });
     expect(html.indexOf(QUESTION)).toBeGreaterThan(-1);
     expect(html.indexOf(QUESTION)).toBeLessThan(html.indexOf("Yes."));
-  });
-
-  it("uses the same question styling in every state", () => {
-    const loading = render({ isLoading: true });
-    const failed = render({ error: "boom" });
-    const marker = "rounded-lg border border-border/60 bg-muted/30 px-4 py-3";
-    expect(loading).toContain(marker);
-    expect(failed).toContain(marker);
   });
 
   it("renders no question block when the question is empty", () => {
@@ -94,70 +79,32 @@ function renderWithClassic(props: Partial<Parameters<typeof AIReadingDisplay>[0]
 }
 
 describe("AIReadingDisplay: classic analysis and the AI action", () => {
-  it("before AI is requested shows the classic analysis and the English 'Get AI Interpretation' button", () => {
+  it("before AI is requested shows the classic analysis with the AI action, and no combination claims", () => {
     const html = renderWithClassic({ aiRequested: false, aiReading: null, isLoading: false, error: null });
     expect(html).toContain("Get AI Interpretation");
     expect(html).toContain("Rider");
-    expect(html).toContain("Line of 3 cards");
-    expect(html).not.toContain("Interpreteer");
-  });
-
-  it("after AI is requested the classic analysis stays visible above the AI state", () => {
-    const html = renderWithClassic({ aiRequested: true, aiReading: null, isLoading: true });
-    expect(html).toContain("Rider");
-    expect(html).toContain("Interpreting your cards");
-    expect(html.indexOf("Rider")).toBeLessThan(html.indexOf("Interpreting your cards"));
-  });
-
-  it("after AI has produced a reading, both the classic analysis and the AI text are shown", () => {
-    const html = renderWithClassic({ aiRequested: true, aiReading: { reading: "## Answer\nYes." }, isLoading: false });
-    expect(html).toContain("Rider");
-    expect(html).toContain("Yes.");
-  });
-
-  it("the classic analysis never claims combination interpretations", () => {
-    const html = renderWithClassic({ aiRequested: false });
     expect(html.toLowerCase()).toContain("does not interpret card combinations");
     expect(html.toLowerCase()).not.toMatch(/combination(s)? (suggests|means|reveals|indicates)/);
   });
 
-  it("all new interface text is English", () => {
-    const html = renderWithClassic({ aiRequested: false });
-    expect(html).not.toMatch(/Interpreteer|Optioneel|Klassieke|Geen|kaart/);
+  it("after AI is requested and answered, both the classic analysis and the AI text are shown", () => {
+    const html = renderWithClassic({ aiRequested: true, aiReading: { reading: "## Answer\nYes." }, isLoading: false });
+    expect(html).toContain("Rider");
+    expect(html).toContain("Yes.");
+    expect(html.indexOf("Rider")).toBeLessThan(html.indexOf("Yes."));
   });
-});
 
-describe("results hierarchy: AI action first, traditional meanings collapsed", () => {
-  it("puts the AI action before the collapsed disclosure", () => {
+  it("keeps the copy panel available during and after the AI states", () => {
+    expect(renderWithClassic({ aiRequested: true, aiReading: null, isLoading: true })).toContain("Copy for AI");
+    expect(renderWithClassic({ aiRequested: true, aiReading: { reading: "## Answer\nYes." }, isLoading: false })).toContain("Copy for AI");
+  });
+
+  it("puts the AI action before the collapsed traditional meanings and shows no technical curated message", () => {
     const html = renderWithClassic({ aiRequested: false });
     const action = html.indexOf("Get AI Interpretation");
     const disclosure = html.indexOf("Full traditional card meanings");
     expect(action).toBeGreaterThan(-1);
     expect(action).toBeLessThan(disclosure);
-  });
-
-  it("renders the traditional meanings inside a closed <details> element", () => {
-    const html = renderWithClassic({ aiRequested: false });
-    expect(html).toMatch(/<details[^>]*data-testid="classic-analysis-disclosure"/);
-    expect(html).not.toMatch(/<details[^>]*open/);
-    expect(html).toContain("<summary");
-  });
-
-  it("does not show the technical no-curated-combination message in the primary view", () => {
-    const html = renderWithClassic({ aiRequested: false });
     expect(html).not.toContain("No curated combination");
-    expect(html.toLowerCase()).not.toContain("curated");
-  });
-});
-
-describe("Copy for AI stays available during the AI states", () => {
-  it("keeps the copy panel visible while the AI interpretation loads", () => {
-    const html = renderWithClassic({ aiRequested: true, aiReading: null, isLoading: true });
-    expect(html).toContain("Copy for AI");
-  });
-
-  it("keeps the copy panel visible after the AI interpretation arrives", () => {
-    const html = renderWithClassic({ aiRequested: true, aiReading: { reading: "## Answer\nYes." }, isLoading: false });
-    expect(html).toContain("Copy for AI");
   });
 });

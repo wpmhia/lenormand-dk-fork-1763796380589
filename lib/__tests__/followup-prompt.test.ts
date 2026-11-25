@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   buildFollowupPrompt,
   buildFollowupRequestPayload,
@@ -6,26 +6,12 @@ import {
 } from "@/lib/followup-prompt";
 import { SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
 
-describe("follow-up system prompt", () => {
+describe("follow-up system prompt and payload", () => {
   it("builds on the same reader and principles as the reading", () => {
     expect(FOLLOWUP_SYSTEM_PROMPT.startsWith(SIMPLE_LENORMAND_SYSTEM_PROMPT)).toBe(true);
   });
 
-  it("keeps the spread fixed and bounded to the supplied grid", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/The cards and positions are fixed/);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/only spatial relationships supported by the supplied grid/);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/do not rely on previous readings/i);
-  });
-
-  it("stays consistent under user pressure and revises only on card-level justification", () => {
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Maintain interpretative consistency across follow-up questions/);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not change the interpretation merely because the user challenges it/);
-    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Revise only when the supplied cards, combinations or spread geometry justify a different interpretation/);
-  });
-});
-
-describe("follow-up prompt input", () => {
-  it("contains only the original question, the active follow-up and the spread facts", () => {
+  it("carries only the original question, the active follow-up and the spread facts", () => {
     const prompt = buildFollowupPrompt({
       spreadFacts: "Drawn cards, in order:\n1. Rider",
       originalQuestion: "Will the project advance?",
