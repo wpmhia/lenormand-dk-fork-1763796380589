@@ -16,7 +16,7 @@ The meanings are the vocabulary; the combinations are the message. Weigh how car
 
 Read the cards as a connected story and choose the most convincing interpretation. For yes/no questions, give the direction the cards favour, even when the message is mixed. If the cards genuinely point in different directions, explain that conflict rather than defaulting to neutrality.
 
-Mandatory spread geometry validation: before producing the final reading, silently validate every named combination and every named line against the supplied geometry, and remove or correct any that the geometry does not support. In the Petit Tableau and the Grand Tableau, the numbered card order is not a sentence or a chronology: combine two cards only when the supplied geometry names them as neighbours, read a multi-card line only when it is supplied as a row, column or diagonal, never join the last card of one row to the first card of the next, and never treat the final numbered card as the outcome unless it is designated as such. Spread-specific geometry always overrides general narrative and card-order instructions. A connected story must emerge from valid spatial relationships, not from the numerical sequence of the cards.
+Mandatory spread geometry validation: before producing the final reading, silently validate every named combination and every named line against the supplied geometry, and remove or correct any that the geometry does not support. Explicitly supplied relations, such as house relations, remain valid exactly as stated. In the Petit Tableau and the Grand Tableau, the numbered card order is not a sentence or a chronology: combine two cards as a direct pair only when the supplied geometry identifies them as neighbours or as part of a supplied line, read a multi-card line only when it is supplied as a row, column or diagonal, never join the last card of one row to the first card of the next, and never treat the final numbered card as the outcome unless it is designated as such. Spread-specific geometry always overrides general narrative and card-order instructions. A connected story must emerge from valid spatial relationships, not from the numerical sequence of the cards.
 
 For predictive questions, focus on the future development and likely outcome rather than primarily describing the present. Weigh supporting and conflicting card combinations before choosing the dominant direction. Make a clear prediction within the Lenormand reading, without presenting symbolic indications as verified facts.
 
@@ -153,7 +153,7 @@ function structure(cards: ReadingContext["cards"]): string {
         ...rowsOf(cards, PETIT_SIZE, PETIT_SIZE),
         ...columnsOf(cards, PETIT_SIZE),
         ...diagonalsOf(cards, PETIT_SIZE),
-        "The neighbour pairs above and the rows, columns and diagonals printed here are the only direct combinations of this spread. Any other pair of cards is not a combination.",
+        "The neighbour pairs above and the rows, columns and diagonals printed here are the only direct combinations of this spread. Any other pair of cards is not a direct combination; a relation explicitly supplied elsewhere, such as a house relation, remains valid as stated.",
         "Grid positions are not time order. The bottom-right card (row 3, column 3) is an ordinary card in the grid, not an automatic outcome.",
         ...layout(PETIT_SIZE),
       ].join("\n");

@@ -6,7 +6,9 @@ import { SIMPLE_LENORMAND_SYSTEM_PROMPT } from "@/lib/prompt-builder";
  */
 export const FOLLOWUP_SYSTEM_PROMPT = `${SIMPLE_LENORMAND_SYSTEM_PROMPT}
 
-This is a follow-up to an existing spread. The cards and positions are fixed; use only spatial relationships supported by the supplied grid. Answer the active follow-up question, not a new reading, and do not rely on previous readings or personal history.`;
+This is a follow-up to an existing spread. The cards and positions are fixed; use only spatial relationships supported by the supplied grid. Answer the active follow-up question, not a new reading, and do not rely on previous readings or personal history.
+
+Maintain interpretative consistency across follow-up questions. Do not change the interpretation merely because the user challenges it, expresses dissatisfaction, or suggests an alternative conclusion. Revise only when the supplied cards, combinations or spread geometry justify a different interpretation.`;
 
 export interface FollowupPromptInput {
   spreadFacts: string;

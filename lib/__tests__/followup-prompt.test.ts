@@ -16,6 +16,12 @@ describe("follow-up system prompt", () => {
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/only spatial relationships supported by the supplied grid/);
     expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/do not rely on previous readings/i);
   });
+
+  it("stays consistent under user pressure and revises only on card-level justification", () => {
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Maintain interpretative consistency across follow-up questions/);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Do not change the interpretation merely because the user challenges it/);
+    expect(FOLLOWUP_SYSTEM_PROMPT).toMatch(/Revise only when the supplied cards, combinations or spread geometry justify a different interpretation/);
+  });
 });
 
 describe("follow-up prompt input", () => {
